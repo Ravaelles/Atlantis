@@ -40,10 +40,12 @@ public class TuningScenarioTest {
     public void boundsMatchFactoryRegistration() {
         Map<String, double[]> bounds = scenario.paramBounds();
 
-        assertEquals(26, bounds.size(), "one entry per registered param, no more no less");
+        assertEquals(32, bounds.size(), "one entry per registered param, no more no less");
         assertBounds(bounds, "KiteStepTiles", 1.5, 3.0);
         assertBounds(bounds, "DragoonLowHp", 30, 60);
         assertBounds(bounds, "DragoonPinchMeleeTiles", 1.5, 2.5);
+        assertBounds(bounds, "EscapeStaticWeight", 5.0, 15.0);
+        assertBounds(bounds, "EscapeEnemyRadiusTiles", 15.0, 25.0);
         for (Map.Entry<String, double[]> bound : bounds.entrySet()) {
             assertTrue(bound.getValue().length == 2 && bound.getValue()[0] < bound.getValue()[1],
                 "usable range: " + bound.getKey());

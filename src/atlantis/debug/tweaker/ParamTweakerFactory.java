@@ -1,6 +1,7 @@
 package atlantis.debug.tweaker;
 
 import atlantis.battle.kite.CombatTuning;
+import atlantis.battle.escape.EscapeTuning;
 
 import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.ARandom;
@@ -154,6 +155,39 @@ public class ParamTweakerFactory extends ParamTweaker {
                 () -> CombatTuning.current().getDragoonSurroundedStandDistTiles(),
                 () -> { applyOrRandomize("DragoonSurroundedStandDistTiles", 20, 40, 10.0, v -> CombatTuning.install(CombatTuning.current().withDragoonSurroundedStandDistTiles(v))); return null; }
         ));
+        // Escape scoring (NEXT #172 step 5): weights explore around the
+        // hand-tuned scoring constants, never blind. Radii and the pocket
+        // definition stay structural (candidate count, pocket meaning).
+        tweaker.addParam(new Param(
+                "EscapeStaticWeight",
+                () -> EscapeTuning.current().getStaticWeight(),
+                () -> { applyOrRandomize("EscapeStaticWeight", 50, 150, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withStaticWeight(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "EscapeCornerWeight",
+                () -> EscapeTuning.current().getCornerWeight(),
+                () -> { applyOrRandomize("EscapeCornerWeight", 40, 120, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withCornerWeight(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "EscapePocketExtra",
+                () -> EscapeTuning.current().getPocketExtra(),
+                () -> { applyOrRandomize("EscapePocketExtra", 100, 300, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withPocketExtra(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "EscapeEnemyWeight",
+                () -> EscapeTuning.current().getEnemyWeight(),
+                () -> { applyOrRandomize("EscapeEnemyWeight", 20, 80, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withEnemyWeight(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "EscapeStaticRadiusTiles",
+                () -> EscapeTuning.current().getStaticRadiusTiles(),
+                () -> { applyOrRandomize("EscapeStaticRadiusTiles", 20, 40, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withStaticRadiusTiles(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "EscapeEnemyRadiusTiles",
+                () -> EscapeTuning.current().getEnemyRadiusTiles(),
+                () -> { applyOrRandomize("EscapeEnemyRadiusTiles", 150, 250, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withEnemyRadiusTiles(v))); return null; }
+        ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,
@@ -231,6 +265,12 @@ public class ParamTweakerFactory extends ParamTweaker {
         bounds.put("DragoonPinchMeleeTiles", new double[] { 1.5, 2.5 });
         bounds.put("DragoonSurroundedStandCooldown", new double[] { 4, 8 });
         bounds.put("DragoonSurroundedStandDistTiles", new double[] { 2.0, 4.0 });
+        bounds.put("EscapeStaticWeight", new double[] { 5.0, 15.0 });
+        bounds.put("EscapeCornerWeight", new double[] { 4.0, 12.0 });
+        bounds.put("EscapePocketExtra", new double[] { 10.0, 30.0 });
+        bounds.put("EscapeEnemyWeight", new double[] { 2.0, 8.0 });
+        bounds.put("EscapeStaticRadiusTiles", new double[] { 2.0, 4.0 });
+        bounds.put("EscapeEnemyRadiusTiles", new double[] { 15.0, 25.0 });
         return bounds;
     }
 

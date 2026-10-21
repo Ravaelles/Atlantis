@@ -169,6 +169,7 @@ public class BattleCommander extends Commander {
 
     public static void clearForTests() {
         CombatTuning.resetToDefaults();
+        atlantis.battle.escape.EscapeTuning.resetToDefaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
         FightTrace.clearForTests();

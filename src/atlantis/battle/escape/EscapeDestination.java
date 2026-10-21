@@ -35,9 +35,11 @@ public final class EscapeDestination {
             if (tx < 0 || ty < 0 || !walk.isWalkable(tx, ty)) continue;
             if (!corridorClear(ux, uy, dir, stepTiles, wide, walk)) continue;
             APosition dest = APosition.create(tx, ty);
-            double score = EscapeScoring.staticPenalty(dest, blockers, EscapeScoring.STATIC_RADIUS_TILES)
+            double score = EscapeScoring.staticPenalty(
+                    dest, blockers, EscapeTuning.current().getStaticRadiusTiles())
                 + EscapeScoring.cornerPenalty(EscapeRays.clearance(dest, 6, walk))
-                + EscapeScoring.enemyPressure(dest, enemies, EscapeScoring.ENEMY_RADIUS_TILES);
+                + EscapeScoring.enemyPressure(
+                    dest, enemies, EscapeTuning.current().getEnemyRadiusTiles());
             double dist = dest.distTo(threat);
             if (score < bestScore - 0.001 || (Math.abs(score - bestScore) <= 0.001 && dist > bestDist)) {
                 bestScore = score;

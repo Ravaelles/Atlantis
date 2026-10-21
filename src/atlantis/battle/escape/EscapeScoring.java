@@ -8,34 +8,25 @@ import java.util.List;
 /**
  * Destination scoring for escape candidates. Every term is a pure
  * function of positions, so duels, chokes and mineral lines pin without
- * a map. Tunable weights live here, one constant per term (NEXT #172:
- * the batch tuner optimizes them against win-then-hits-then-seconds).
+ * a map. Tunable weights live in {@code EscapeTuning} (NEXT #172 step 5:
+ * the batch tuner optimizes them against win-then-hits-then-seconds);
+ * this class only applies them.
  */
 public final class EscapeScoring {
 
     private EscapeScoring() {
     }
 
-    /** Blockers inside this radius of a destination count against it. */
-    public static final double STATIC_RADIUS_TILES = 3;
-
-    /** Weight of one close blocker, in the same arbitrary units as all terms. */
-    public static final double STATIC_WEIGHT = 10;
+    /**
+     * Tunable weights live in {@code EscapeTuning} (NEXT #172 step 5:
+     * the batch tuner optimizes them); this class only applies them.
+     * Radii stay explicit parameters (callers read the tuning holder);
+     * {@code BLOCKED_RAY_TILES} stays a constant: it defines what a
+     * pocket wall is, not what it costs.
+     */
 
     /** Rays shorter than this count as blocked (pocket walls, not fields). */
     public static final double BLOCKED_RAY_TILES = 3;
-
-    /** Weight per blocked ray. */
-    public static final double CORNER_WEIGHT = 8;
-
-    /** Extra penalty when the single most open direction is still short. */
-    public static final double POCKET_EXTRA = 20;
-
-    /** Enemies this far from the destination count against it. */
-    public static final double ENEMY_RADIUS_TILES = 20;
-
-    /** Weight of enemy pressure, same units as the other terms. */
-    public static final double ENEMY_WEIGHT = 5;
 
     /**
      * Corner/peninsula penalty from the 8-dir clearance at the
@@ -51,8 +42,8 @@ public final class EscapeScoring {
             if (c < BLOCKED_RAY_TILES) blocked++;
             if (c > best) best = c;
         }
-        double penalty = blocked * CORNER_WEIGHT;
-        if (best < BLOCKED_RAY_TILES * 2) penalty += POCKET_EXTRA;
+        double penalty = blocked * EscapeTuning.current().getCornerWeight();
+        if (best < BLOCKED_RAY_TILES * 2) penalty += EscapeTuning.current().getPocketExtra();
         return penalty;
     }
 
@@ -72,7 +63,7 @@ public final class EscapeScoring {
             double dist = dest.distTo(enemy);
             if (dist < radiusTiles) pressure += (radiusTiles - dist);
         }
-        return pressure * ENEMY_WEIGHT;
+        return pressure * EscapeTuning.current().getEnemyWeight();
     }
 
     /**
@@ -90,6 +81,6 @@ public final class EscapeScoring {
             double dist = dest.distTo(blocker);
             if (dist < radiusTiles) penalty += (radiusTiles - dist);
         }
-        return penalty * STATIC_WEIGHT;
+        return penalty * EscapeTuning.current().getStaticWeight();
     }
 }

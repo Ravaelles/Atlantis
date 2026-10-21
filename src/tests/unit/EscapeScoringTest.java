@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.escape.EscapeScoring;
+import atlantis.battle.escape.EscapeTuning;
 import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class EscapeScoringTest {
         double penalty = EscapeScoring.staticPenalty(
             APosition.create(30, 20),
             Arrays.asList(APosition.create(50, 50), APosition.create(10, 10)),
-            EscapeScoring.STATIC_RADIUS_TILES);
+            EscapeTuning.defaults().getStaticRadiusTiles());
 
         assertEquals(0.0, penalty, 0.001);
     }
@@ -38,7 +39,7 @@ public class EscapeScoringTest {
             dest, Collections.singletonList(APosition.create(32, 20)), 3);
 
         assertTrue(near > far, "1 tile hurts more than 2: " + near + " vs " + far);
-        assertEquals((3 - 1) * EscapeScoring.STATIC_WEIGHT, near, 0.001);
+        assertEquals((3 - 1) * EscapeTuning.defaults().getStaticWeight(), near, 0.001);
     }
 
     @Test
@@ -70,7 +71,7 @@ public class EscapeScoringTest {
         double pressure = EscapeScoring.enemyPressure(
             APosition.create(30, 20),
             Collections.singletonList(APosition.create(60, 60)),
-            EscapeScoring.ENEMY_RADIUS_TILES);
+            EscapeTuning.defaults().getEnemyRadiusTiles());
 
         assertEquals(0.0, pressure, 0.001);
     }
