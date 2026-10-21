@@ -308,9 +308,15 @@ TEE_ERR=("$LOG_DIR/WINE_DEBUG")
 # the OpenBW path: --map= wins over Main's choices; bare names resolve
 # under maps/ums and maps/sscai first.
 CLIENT_MAP_ARG="--map=${RESOLVED_MAP:-$MAP}"
+# Array, not a string: an --env= path with spaces (e.g. under "E2E OpenBW
+# LOGS") must survive as ONE argv element. The unquoted $CLIENT_ENV_ARG
+# split it at the first space and the client saw a truncated path
+# (measured 2026-10-21: "ENV file doesn't exist (Z:\sc-ai\E2)").
+CLIENT_ARGS=("$CLIENT_MAP_ARG")
+[ -n "$CLIENT_ENV_ARG" ] && CLIENT_ARGS+=("$CLIENT_ENV_ARG")
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" $CLIENT_ENV_ARG \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "${CLIENT_ARGS[@]}" \
     > >(tee "${TEE_OUT[@]}") 2> >(tee "${TEE_ERR[@]}" >&2) < /dev/null &
   # CLIENT_PID is now wine itself, not tee (better liveness: it dies when
   # the game ends, while tee may linger flushing). Tees inherit the
@@ -318,7 +324,7 @@ if [ "$LIVE_OUTPUT" = "1" ]; then
   CLIENT_PID=$!
 else
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" $CLIENT_ENV_ARG \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "${CLIENT_ARGS[@]}" \
     > >(tee "${TEE_OUT[@]}" > /dev/null) 2> >(tee "${TEE_ERR[@]}" > /dev/null) < /dev/null &
   CLIENT_PID=$!
 fi
