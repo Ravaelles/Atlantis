@@ -3,7 +3,10 @@
 # the next params from the hall of fame, repeat.
 #
 # Usage:
-#   bash scripts/run-wine-tune.sh "1Drag_v_1Zeal.scm" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim]
+#   bash scripts/run-wine-tune.sh "1Drag_v_1Zeal.scm" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim] [--headless]
+#
+# Visible by default (owner 2026-10-21: IDE runs must show the game);
+# pass --headless for unattended tuning (forwarded to run-wine-batch.sh).
 #
 # Engines (atlantis.debug.tweaker.TuningEngines, the source of truth -
 # the strings below mirror it): wine tunes today; openbw and sim fail
@@ -28,6 +31,7 @@ ROUNDS=""
 K=""
 OUTDIR=""
 ENV_ARG=""
+HEADLESS_ARG=""
 ENGINE="wine"
 SEED="$RANDOM"
 STEP=""
@@ -35,6 +39,8 @@ RADIUS=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_ARG="$arg" ;;
+    --headless|--hidden) HEADLESS_ARG="--headless" ;;
+    --visible) HEADLESS_ARG="" ;;
     --seed=*) SEED="${arg#--seed=}" ;;
     --step=*) STEP="${arg#--step=}" ;;
     --radius=*) RADIUS="${arg#--radius=}" ;;
@@ -48,7 +54,7 @@ for arg in "$@"; do
   esac
 done
 [ -n "$MAP" ] && [ "$ROUNDS" -gt 0 2>/dev/null ] && [ "$K" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] \
-  || { echo "usage: run-wine-tune.sh \"<map.scm>\" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim]" >&2; exit 1; }
+  || { echo "usage: run-wine-tune.sh \"<map.scm>\" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim] [--headless]" >&2; exit 1; }
 case "$ENGINE" in
   wine) BATCH="scripts/run-wine-batch.sh" ;;
   openbw|sim)
@@ -82,11 +88,11 @@ while [ "$r" -lt "$ROUNDS" ]; do
   # shellcheck disable=SC2086
   if [ -s "$FRAG" ]; then
     # shellcheck disable=SC2046
-    bash "$BATCH" "$MAP" "$K" "$RDIR" $(grep -v '^#' "$FRAG") ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
+    bash "$BATCH" "$MAP" "$K" "$RDIR" $(grep -v '^#' "$FRAG") ${ENV_ARG:+$ENV_ARG} ${HEADLESS_ARG:+$HEADLESS_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
       || echo "[wine-tune] round $r: batch runner failed, continuing"
   else
     # shellcheck disable=SC2086
-    bash "$BATCH" "$MAP" "$K" "$RDIR" ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
+    bash "$BATCH" "$MAP" "$K" "$RDIR" ${ENV_ARG:+$ENV_ARG} ${HEADLESS_ARG:+$HEADLESS_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
       || echo "[wine-tune] round $r: batch runner failed, continuing"
   fi
   if [ ! -f "$RDIR/manifest.txt" ]; then

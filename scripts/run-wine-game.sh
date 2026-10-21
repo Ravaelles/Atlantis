@@ -6,7 +6,10 @@
 # game (visible on the X display), injects BWAPI, and starts the Java client.
 #
 # Usage:
-#   run-wine-game.sh [map-name]           # default: 1a2a3a Micro 2.scx
+#   run-wine-game.sh [map-name] [--headless]   # default: 1a2a3a Micro 2.scx, visible
+#
+# Visible by default (owner 2026-10-21: IDE runs must show the game).
+# Pass --headless for unattended runs (Xvfb :99, nothing on the desktop).
 #
 # Paths (change in ENV, see bwapi-data/AI/ENV):
 #   STARCRAFT_DIR       - the game install            (/sc-ai/starcraft)
@@ -20,7 +23,19 @@ set -euo pipefail
 STARCRAFT_DIR="${STARCRAFT_DIR:-/sc-ai/starcraft}"
 BWAPI_DIST_DIR="${BWAPI_DIST_DIR:-/sc-ai/BWAPI}"
 REPLAYS_DIR="${REPLAYS_DIR:-/sc-ai/REPLAYS}"
-MAP="${1:-1a2a3a Micro 2.scx}"
+MAP=""
+HIDDEN=0
+for arg in "$@"; do
+  case "$arg" in
+    --headless|--hidden) HIDDEN=1 ;;
+    --visible) HIDDEN=0 ;;
+    -h|--help)
+      sed -n '1,21p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+      exit 0 ;;
+    *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-game] ignoring extra arg: $arg" >&2; } ;;
+  esac
+done
+[ -n "$MAP" ] || MAP="1a2a3a Micro 2.scx"
 RACE="${RACE:-Protoss}"
 ENEMY_RACE="${ENEMY_RACE:-Zerg}"
 
@@ -50,6 +65,22 @@ LOG_DIR="/sc-ai/Atlantis/out/wine"
 mkdir -p "$LOG_DIR"
 WINE_ROOT="${WINEPREFIX:-$HOME/.wine}"
 GAME_ROOT="$WINE_ROOT/drive_c/sc"
+
+# Visible by default; --headless runs the whole session under Xvfb :99.
+# Unlike run-wine-full.sh this script exits right after starting the game,
+# so the X server is left running for the game (no trap kills it here).
+if [ "${HIDDEN:-0}" = "1" ]; then
+  if ! pgrep -f "[X]vfb :99" >/dev/null; then
+    rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock 2>/dev/null || true
+    setsid Xvfb :99 -screen 0 1280x1024x24 >"$LOG_DIR/xvfb.log" 2>&1 < /dev/null &
+    for _ in $(seq 1 100); do
+      [ -e /tmp/.X11-unix/X99 ] && break
+      sleep 0.1
+    done
+  fi
+  export DISPLAY=:99
+  echo "[wine-game] hidden Wine desktop on :99 (Xvfb, invisible)"
+fi
 
 # --- 1. Prepare the game directory under drive_c (symlinks, no 116 MB copy)
 mkdir -p "$GAME_ROOT"

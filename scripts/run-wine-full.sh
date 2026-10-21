@@ -20,10 +20,10 @@
 #
 # Usage:
 #   scripts/run-wine-full.sh [map-name]        # default: 1a2a3a Micro 2.scx
-#   scripts/run-wine-full.sh [map-name] --visible   # watch on the desktop
+#   scripts/run-wine-full.sh [map-name] --headless    # Xvfb :99, invisible
 #
-# Hidden by default (Xvfb :99): unattended runs must never take over the
-# desktop, even by accident. One Wine game per box, enforced by a lock:
+# Visible by default (owner 2026-10-21: IDE runs must show the game).
+# One Wine game per box, enforced by a lock:
 # a second simultaneous game is refused instead of mutually killing both
 # (measured 2026-10-21: a verification duel's cleanup pkill'd the JVM
 # and wineserver of a running macro mid-game - truncated log, unflushed
@@ -44,6 +44,8 @@
 # Exit code 0 = HELLO_ATLANTIS seen (bot attached). Non-zero otherwise; on
 # failure everything is killed so no stray process survives.
 set -u
+
+say() { echo "[wine-full] $*"; }
 
 # =============================================================================
 # CONFIGURATION - edit here, nothing below needs touching
@@ -92,6 +94,7 @@ for arg in "$@"; do
     --env=*) ENV_FILE_ARG="${arg#--env=}" ;;
     --visible) HIDDEN=0 ;;
     --hidden) HIDDEN=1 ;;
+    --headless) HIDDEN=1 ;;
     -h|--help)
       sed -n '1,45p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
       exit 0 ;;
@@ -138,16 +141,15 @@ JAR="$JAR_OUT"
 mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
 CLIENT_LOG="$LOG_DIR/WINE_LOG"
 
-# Hidden Wine desktop, ON BY DEFAULT (owner 2026-10-21: unattended runs
-# must never take over the desktop, even by accident - a forgotten flag
-# once played a macro on the live screen). HIDDEN=1 starts Xvfb on :99
-# and points the whole session (client, game, ChaosLauncher) at it -
-# nothing ever maps on :0, no resolution switch, no window to minimize.
-# Pass --visible only to WATCH a game on the desktop. The supervisor
-# key relay is display-independent (file-based), so nothing else changes.
+# Visible by default (owner 2026-10-21: IDE runs must show the game;
+# hidden-by-default hijacked them). Pass --headless for unattended runs:
+# HIDDEN=1 starts Xvfb on :99 and points the whole session (client,
+# game, ChaosLauncher) at it - nothing ever maps on :0, no resolution
+# switch, no window to minimize. The supervisor key relay is
+# display-independent (file-based), so nothing else changes.
 XVFB_DISPLAY=":99"
 XVFB_PID=""
-if [ "${HIDDEN:-1}" != "0" ]; then
+if [ "${HIDDEN:-0}" = "1" ]; then
   if [ -e /tmp/.X11-unix/X99 ] && ! pgrep -f "[X]vfb :99" >/dev/null; then
     rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock
   fi
@@ -161,8 +163,6 @@ if [ "${HIDDEN:-1}" != "0" ]; then
   [ -e /tmp/.X11-unix/X99 ] || { echo "[wine-full] Xvfb :99 did not come up" >&2; exit 1; }
   export DISPLAY=:99
 fi
-
-say() { echo "[wine-full] $*"; }
 
 # Wall-clock markers. The owner asked why a start takes so long, and guessing is
 # what made this slow before: print one line per phase so the next run shows

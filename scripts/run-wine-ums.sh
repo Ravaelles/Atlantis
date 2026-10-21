@@ -2,7 +2,7 @@
 # Play one StarCraft map under Wine.
 #
 # Usage:
-#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [--env=FILE] [--visible]
+#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [--env=FILE] [--headless]
 #
 #   map   : bare map file name (resolved under the game's maps/ tree,
 #           e.g. "1Drag_v_1Zeal.scm") or a maps/-relative path.
@@ -11,9 +11,10 @@
 #           (speed 0, frameskip 1000, GUI off). Relative paths resolve
 #           against the repo root. Without it the bot reads the shared
 #           ENV (your watched-game settings, untouched by this script).
-#   --hidden : (accepted, now the default) run the whole session under
-#           Xvfb :99 - nothing ever maps on the desktop (no window, no
-#           resolution switch). Pass --visible only to watch a game.
+#   --headless : run the whole session under Xvfb :99 - nothing ever
+#           maps on the desktop (no resolution change, no window).
+#           Visible by default (owner 2026-10-21: IDE runs must
+#           show the game).
 #
 # Thin wrapper over scripts/run-wine-full.sh (the tested core: jar
 # rebuild, teardown). Exists so a Wine launch is one obvious command
@@ -33,19 +34,19 @@ set -u
 
 MAP=""
 ENV_ARG=""
-HIDDEN_ARG="--hidden"
+HIDDEN_ARG=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_ARG="$arg" ;;
-    --hidden) HIDDEN_ARG="--hidden" ;;
+    --headless|--hidden) HIDDEN_ARG="--headless" ;;
     --visible) HIDDEN_ARG="" ;;
     *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-ums] ignoring extra arg: $arg" >&2; } ;;
   esac
 done
-[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [--env=FILE] [--visible]" >&2; exit 1; }
+[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [--env=FILE] [--headless]" >&2; exit 1; }
 
-# Hidden by default (owner 2026-10-21): unattended runs must never take
-# over the desktop, even by accident. Pass --visible only to watch.
+# Visible by default (owner 2026-10-21: IDE runs must show the game).
+# --headless runs the whole session under Xvfb :99 instead.
 if [ -n "$HIDDEN_ARG" ]; then
   echo "[wine-ums] hidden Wine desktop (Xvfb :99, invisible)"
   export HIDDEN=1
@@ -53,10 +54,6 @@ else
   export HIDDEN=0
 fi
 
-if [ -n "$HIDDEN_ARG" ]; then
-  echo "[wine-ums] hidden Wine desktop (Xvfb :99, invisible)"
-  export HIDDEN=1
-fi
 if [ -n "$ENV_ARG" ]; then
   echo "[wine-ums] map=$MAP env=$ENV_ARG"
 else
@@ -64,9 +61,11 @@ else
 fi
 
 if [ -n "$ENV_ARG" ]; then
-  bash "$(dirname "$0")/run-wine-full.sh" "$MAP" "$ENV_ARG"
+  # shellcheck disable=SC2086
+  bash "$(dirname "$0")/run-wine-full.sh" "$MAP" "$ENV_ARG" $HIDDEN_ARG
 else
-  bash "$(dirname "$0")/run-wine-full.sh" "$MAP"
+  # shellcheck disable=SC2086
+  bash "$(dirname "$0")/run-wine-full.sh" "$MAP" $HIDDEN_ARG
 fi
 EXIT=$?
 

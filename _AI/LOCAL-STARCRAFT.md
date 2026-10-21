@@ -43,9 +43,9 @@ bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" --env=bwapi-data/AI/ENV-WINE-FA
 bash scripts/run-wine-full.sh "(3)TauCross.scx" --env=bwapi-data/AI/ENV-WINE-FAST
 ```
 
-Hidden runs (owner: model-launched games must not take over the
-desktop; local games stay visible): append `--hidden` to the UMS
-command (the batch hides by default, `--visible` opts out). The whole
+Headless runs (owner 2026-10-21: IDE runs must show the game, so
+visible is the default everywhere): append `--headless` to the UMS
+command (unattended runs, overnight batches etc.). The whole
 session plays on Xvfb :99 - proven 2026-10-19: attach, super-fast
 mode and event triple all work headless, no window ever maps on :0,
 the server dies with the session.

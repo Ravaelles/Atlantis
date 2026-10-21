@@ -2,7 +2,7 @@
 # Overnight kite tuning loop on the real duel (Wine 1Drag_v_1Zeal).
 #
 # Usage:
-#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...] [--env=FILE] [--visible]
+#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...] [--env=FILE] [--headless]
 #
 # Runs N Wine games. Each game gets a private env file (OUTDIR/game-N/env:
 # a copy of --env=FILE, default bwapi-data/AI/ENV-WINE-FAST, plus
@@ -17,9 +17,7 @@
 # The per-game copy below reads that fixed name (freshness-checked),
 # never a newest-pick of the archive.
 #
-# Hidden by default (Xvfb :99, nothing on the desktop): the batch is the
-# model's unattended vehicle - watched games use run-wine-full.sh / the
-# IDE, which stay visible. --visible runs a batch on the desktop.
+# Visible by default; pass --headless for unattended runs.
 #
 # Examples:
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 30 /tmp/opencode/tune1
@@ -36,12 +34,12 @@ MAP=""
 N=""
 OUTDIR=""
 ENV_BASE="bwapi-data/AI/ENV-WINE-FAST"
-HIDDEN_FLAG="--hidden"
+HIDDEN_FLAG=""
 EXTRA=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_BASE="${arg#--env=}" ;;
-    --hidden) HIDDEN_FLAG="--hidden" ;;
+    --hidden|--headless) HIDDEN_FLAG="--headless" ;;
     --visible) HIDDEN_FLAG="" ;;
     *=*) EXTRA="$EXTRA $arg" ;;
     *)
@@ -51,7 +49,7 @@ for arg in "$@"; do
       else echo "[wine-batch] ignoring extra arg: $arg" >&2; fi ;;
   esac
 done
-[ -n "$MAP" ] && [ "$N" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] || { echo "usage: run-wine-batch.sh \"<map.scm>\" N OUTDIR [KEY=VALUE ...] [--env=FILE]" >&2; exit 1; }
+[ -n "$MAP" ] && [ "$N" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] || { echo "usage: run-wine-batch.sh \"<map.scm>\" N OUTDIR [KEY=VALUE ...] [--env=FILE] [--headless]" >&2; exit 1; }
 [ -f "$ENV_BASE" ] || { echo "[wine-batch] no such base env: $ENV_BASE" >&2; exit 1; }
 
 mkdir -p "$OUTDIR"

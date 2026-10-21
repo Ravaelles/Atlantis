@@ -73,15 +73,16 @@ bash scripts/run-wine-full.sh "sscai/(3)TauCross.scx"
 
 That is the whole command: it builds the jar, plays one game, prints the log to
 your terminal, and exits. Exit code 0 means the bot attached (`HELLO_WORLD`).
-The game runs hidden (Xvfb :99) by default since 2026-10-21 - nothing ever
-takes over the desktop, even without flags. Pass `--visible` to watch it.
+The game shows on your desktop by default (owner 2026-10-21: IDE
+runs must be visible). Pass `--headless` for unattended runs
+(Xvfb :99, nothing takes over the desktop).
 
 Useful variations:
 
 ```bash
 BUILD=0 bash scripts/run-wine-full.sh "sscai/(3)TauCross.scx"   # keep the jar
 LIVE_OUTPUT=0 bash scripts/run-wine-full.sh "maps/ums/x.scx"    # quiet
-bash scripts/run-wine-full.sh "maps/ums/x.scx" --visible        # watch it
+bash scripts/run-wine-full.sh "maps/ums/x.scx" --headless        # Xvfb, invisible
 JAR_OUT=/tmp/x.jar bash scripts/run-wine-full.sh                # build elsewhere
 ```
 
