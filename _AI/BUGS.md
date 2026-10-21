@@ -71,23 +71,25 @@ a long post-mortem belongs in an ADR or a commit message.
 > 1799-frame wall → 0. Test: `OrphanedConstructionTest` (2). Full mechanism in
 > `_AI/CASE-STUDIES.md` (#53); the original report lives in git history.
 
-## B-42 — bot KILLED counter inflates per-frame on multi-unit UMS maps
+## B-42 — bot KILLED counter inflates per-frame on multi-unit UMS maps (OpenBW-only)
 
 - **Where:** `Atlantis.KILLED++` in `OnUnitDestroyed.onEnemyUnitDestroyed`
   (fires on every BWAPI `onUnitDestroy`, no real-unit filter - the
   `isRealUnit()` check is commented out).
-- **Measured 2026-10-21** (`bash scripts/build-openbw.sh --game ...`):
-  8Drag_v_8Drag KILLED 7078 / 307 game-s (~23/s), Drag_v_LingsUpg2 KILLED
-  31004 / 195 game-s (~159/s), while the UNIT_DIED twin fired 0-1 times
-  and 1Drag_v_1Zeal in the same session reported a clean 0/0. Shape fits
-  destroy events re-firing per visible enemy per frame, mechanism open.
-- **Consequence:** `--game` verdict unaffected (fails only on explicit
-  0/0/0; TIMES_HIT is event-sourced and sane), but a tuner reading
-  KILLED would conclude massacres. Tuner objective (NEXT #160) uses
-  win/hits/seconds, so nothing downstream consumes it today.
-- **How to settle it:** name the destroy source (log unit IDs in
-  `onEnemyUnitDestroyed` for one 8Drag run: repeat IDs = re-fire,
-  revealer IDs = wrong population), then filter or fix the counter.
+- **Measured 2026-10-21:** OpenBW ZealDrag_v_LingsUpg batch: KILLED
+  17002-88051 over ~260 game-sec while the UNIT_DIED twin fired 0-4x;
+  same counter on Wine (same bot, same map, same tuner path): 25-32 -
+  exactly the real kills. So this is NOT a bot counting bug: on OpenBW
+  the server never resets `eventCount` (`Server.cpp`: reset only in
+  `initializeSharedMemory`, per-frame reset covers strings/commands but
+  not events), and the client re-processes stale destroys every frame.
+  Wine's real BWAPI does not do this.
+- **Status 2026-10-21: PARKED with all OpenBW work** (owner: Wine only
+  for now). Nothing downstream is affected: `--game` fails only on
+  explicit 0/0/0, TIMES_HIT is event-sourced and sane on both
+  platforms, the tuner objective uses win/hits/seconds. Reopen with the
+  OpenBW track, fix at the server event queue (reset/drain per frame),
+  not in the counter.
 
 ## How to add an entry
 
