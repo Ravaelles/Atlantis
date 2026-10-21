@@ -1518,6 +1518,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  attacked, break formation and attack. Test vehicle is the map
  itself (ZealDrag_v_Zeal.scm): first prove the march (no
  standstill, #177), then the coordination (win, not just move).
+ 2026-10-22: VICTORY 12/5 in 43 s with hold+withdraw+long-vector
+ +reinforce (first zealot death pushed to f243, dragoon 186 zero
+ hits all game, no idle half; telemetry+pins hold).
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
