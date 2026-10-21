@@ -1,10 +1,18 @@
 package atlantis.battle.strategy;
 
+import atlantis.map.position.APosition;
+import atlantis.units.AUnit;
+
 /**
  * The army-wide approaches a unit can fight under. One enum value per
  * approach; the decisions live in their own classes, picked by
  * {@link BattleStrategies} from the detected setup - never by scattered
  * if-branches at the call sites.
+ *
+ * The same holds for the no-contact regroup point below: it is answered
+ * here, per value, so callers never switch on the enum. Values without a
+ * strategy point (duel, open field) answer null and the caller falls back
+ * to the formation.
  */
 public enum BattleStrategy {
     /** Tiny baseless duel: kite off to range minus a step, hunt lost contact. */
@@ -16,5 +24,39 @@ public enum BattleStrategy {
     /** Bait pulled the enemy into the funnel and the line crushes: join the bait at the mouth. */
     COLLAPSE,
     /** Everything else: the standing fight. */
-    OPEN_FIELD
+    OPEN_FIELD;
+
+    /**
+     * Where this approach regroups with no enemy in reach, or null when it
+     * has no point and the formation fallback owns the unit.
+     */
+    public APosition regroupPointFor(AUnit unit) {
+        switch (this) {
+            case COLLAPSE:
+                return ChokeCollapse.collapsePointFor(unit);
+            case SCOUT_BAIT:
+                return SquadScout.baitPointFor(unit);
+            case CHOKE_HOLD:
+                return ChokeStandoff.holdPointFor(unit);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Move tag for the regroup point above. Meaningful only when
+     * {@link #regroupPointFor} answers non-null.
+     */
+    public String regroupTag() {
+        switch (this) {
+            case COLLAPSE:
+                return "ClusterCollapse";
+            case SCOUT_BAIT:
+                return "ClusterBait";
+            case CHOKE_HOLD:
+                return "ClusterStandoff";
+            default:
+                return "ClusterMove";
+        }
+    }
 }

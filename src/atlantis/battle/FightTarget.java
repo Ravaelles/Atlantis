@@ -44,7 +44,7 @@ public final class FightTarget {
     }
 
     /** Last engaged point while visible, or null when this unit never fought. */
-    static APosition lastContact(AUnit unit) {
+    public static APosition lastContact(AUnit unit) {
         return lastContactPos.get(unit.id());
     }
 
