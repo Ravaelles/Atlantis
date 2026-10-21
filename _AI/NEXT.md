@@ -1519,6 +1519,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  open ground, only save HP that would otherwise be donated.
  Prove in sim first (zealot vs lings: HP saved per cooldown),
  then live on the ling maps.
+ 2026-10-22 sim slice: the withdraw intent never reached the ground -
+ `ZealotWithdraw.should` gated into `shouldKite`, but the step math
+ below is ranged-hold (desired minus dist <= 0 for melee-vs-melee),
+ so every withdrawing zealot read stuck-no-step (sim: 130/130, zero
+ moves) and stood through the cooldown anyway. The margin branch now
+ takes a full footwork step for withdrawing zealots (cadence gate
+ unchanged, direction still MoveAway; dragoon math bit-identical).
+ Pinned `ZealotWithdrawSimTest` (wounded vs 2 lings: displaces, move
+ steps, still trades; mutation-proofed). Live proof rides the
+ owner-run ling maps.
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
  (owner 2026-10-21/22): on the new map the bot first does not move
  at all, then loses on zealot/dragoon miscoordination - zealots

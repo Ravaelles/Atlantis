@@ -180,8 +180,23 @@ public final class FightTarget {
             // the glide then donates the walk back. That overshoot
             // is the measured "ucieka za daleko" shape; holding at
             // the formula's point keeps shooting instead.
-            double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
-                Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+            //
+            // Zealot withdraw (NEXT #178): a withdrawing zealot has no
+            // hold point - the formula above is built for ranged hold
+            // and yields no step for melee-vs-melee, so the spent-weapon
+            // intent died here (sim: 130/130 stuck-no-step, zero moves).
+            // Take a full footwork step back instead of standing through
+            // the cooldown; the cadence gate above keeps it to one step
+            // per window, the direction still comes from MoveAway.
+            double stepLen;
+            if (unit.isZealot()
+                && atlantis.battle.kite.ZealotWithdraw.should(unit, threat)) {
+                stepLen = CombatTuning.current().getKiteStepTiles();
+            }
+            else {
+                stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
+                    Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+            }
             APosition dest = stepLen > 0
                 ? MoveAway.bestDestination(unit, threat, stepLen)
                 : null;
