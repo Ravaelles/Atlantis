@@ -3,7 +3,6 @@ package tests.unit.sim;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.util.AMath;
 import tests.fakes.FakeUnit;
 

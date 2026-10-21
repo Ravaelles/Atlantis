@@ -1,9 +1,7 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.util.AConsole;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;

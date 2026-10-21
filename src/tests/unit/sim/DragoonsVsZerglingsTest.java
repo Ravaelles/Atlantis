@@ -3,7 +3,6 @@ package tests.unit.sim;
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Dragoons vs Zerglings on the fast behavior sim (NEXT #161): the whole

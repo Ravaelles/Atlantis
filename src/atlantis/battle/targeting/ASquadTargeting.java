@@ -2,7 +2,6 @@ package atlantis.battle.targeting;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class ASquadTargeting {
@@ -22,7 +21,7 @@ public class ASquadTargeting {
 
             return enemy;
         }
-        
+
         return null;
     }
 

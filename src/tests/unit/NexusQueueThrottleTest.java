@@ -3,7 +3,6 @@ package tests.unit;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
-import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.expansion.protoss.ProtossExpandNow;
 import atlantis.production.orders.production.queue.Queue;

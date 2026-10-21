@@ -3,7 +3,6 @@ package atlantis.information.strategy.response;
 import atlantis.battle.cluster.Alpha;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
-import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Missions;
 
 import atlantis.information.strategy.AStrategy;

@@ -6,7 +6,6 @@ import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
 import atlantis.units.special.SleepUntilFrameGate;
 

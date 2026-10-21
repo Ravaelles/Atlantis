@@ -9,7 +9,6 @@ import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;

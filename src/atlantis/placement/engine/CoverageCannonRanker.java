@@ -5,7 +5,6 @@ import atlantis.map.analysis.DefenseSpots;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
-import atlantis.placement.core.NeighbourhoodRegistry;
 
 /**
  * Ordering for a defensive structure by weapon coverage, not by distance.

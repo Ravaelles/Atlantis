@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
-import atlantis.information.generic.Army;
 import atlantis.production.orders.production.queue.RemoveFromQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;

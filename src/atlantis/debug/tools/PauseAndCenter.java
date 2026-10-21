@@ -4,7 +4,6 @@ import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import bwapi.Color;
 

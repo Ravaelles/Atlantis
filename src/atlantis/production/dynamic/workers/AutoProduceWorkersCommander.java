@@ -153,11 +153,9 @@ public class AutoProduceWorkersCommander extends Commander {
 
         if (We.zerg()) {
             if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return dont("EarlyReserved");
-            ;
             if (Have.spawningPoolWithUnfinished() && Count.zerglingsWithUnfinished() <= 3)
                 return A.hasMinerals(100) && Count.larvas(3);
             if (!A.hasMinerals(75 * Count.creepColonies())) return dont("CreepColonies");
-            ;
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
                 if (order != null && order.supplyRequirementFulfilled(0)) {

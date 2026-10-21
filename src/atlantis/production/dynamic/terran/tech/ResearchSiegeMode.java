@@ -5,12 +5,8 @@ import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.tech.TechResearchCommander;
-import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
 import bwapi.TechType;
 

@@ -5,7 +5,6 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 
 public class HaveBunkerAtNaturalChoke extends HaveBunkerAt {
     @Override

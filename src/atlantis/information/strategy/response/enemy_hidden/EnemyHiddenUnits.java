@@ -2,7 +2,6 @@ package atlantis.information.strategy.response.enemy_hidden;
 
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.strategy.response.RaceStrategyResponse;
-import atlantis.information.strategy.response.protoss.RequestProtossDetection;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 

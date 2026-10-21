@@ -1,7 +1,5 @@
 package atlantis.map.analysis;
 
-import atlantis.map.position.HasPosition;
-import atlantis.map.position.APosition;
 import atlantis.map.ReachableTiles;
 
 /**

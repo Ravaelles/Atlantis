@@ -8,7 +8,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
-import bwapi.Color;
 
 public class AvoidLurkers extends Manager {
 

@@ -3,7 +3,6 @@ package atlantis.map.base;
 import atlantis.map.AMap;
 import atlantis.map.analysis.BaseRoles;
 import atlantis.map.analysis.EngineGroundLink;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.select.Select;
 import bwem.Area;

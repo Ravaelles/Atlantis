@@ -1,6 +1,5 @@
 package atlantis.production.constructions.position.base;
 
-import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;

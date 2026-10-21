@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeMapTiles;
-import tests.fakes.FakeUnit;
 
 import java.util.HashSet;
 import java.util.Set;

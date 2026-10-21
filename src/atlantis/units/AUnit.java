@@ -13,7 +13,6 @@ import atlantis.battle.avoid.margin.UnitRange;
 import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Squad;
-import atlantis.battle.cluster.Alpha;
 import atlantis.battle.eval.tweaks.ProtossJfapTweaksConsiderChokesEtc;
 import atlantis.battle.running.ARunningManager;
 

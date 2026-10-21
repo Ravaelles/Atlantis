@@ -12,7 +12,7 @@ public class DefineMainChoke {
     public static AChoke define() {
         AChoke mainChoke = defineFromMainBaseRegion();
         if (mainChoke != null) return mainChoke;
-        
+
         return defineFromJbwebOrCustomSolution();
     }
 

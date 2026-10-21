@@ -9,7 +9,6 @@ import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 
 import atlantis.util.AConsole;
 import atlantis.util.AFile;
-import java.io.File;
 
 public class ACherryVisLogger implements AbstractCherryVisLogger {
     private ACherryVisConfig config;

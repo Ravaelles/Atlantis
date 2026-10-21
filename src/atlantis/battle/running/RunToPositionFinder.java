@@ -4,7 +4,6 @@ import atlantis.battle.running.any_direction.RunInAnyDirection;
 import atlantis.battle.running.show_back.RunShowingBackToEnemy;
 import atlantis.battle.running.to_building.ShouldRunTowardsBase;
 import atlantis.battle.running.to_building.ShouldRunTowardsCB;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;

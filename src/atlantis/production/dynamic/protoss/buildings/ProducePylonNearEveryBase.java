@@ -10,7 +10,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.*;
 
 public class ProducePylonNearEveryBase {

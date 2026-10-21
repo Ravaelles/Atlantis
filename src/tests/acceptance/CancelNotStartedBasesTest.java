@@ -10,7 +10,6 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
-import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Gateway;

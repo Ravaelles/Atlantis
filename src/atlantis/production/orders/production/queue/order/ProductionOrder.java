@@ -12,7 +12,6 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;

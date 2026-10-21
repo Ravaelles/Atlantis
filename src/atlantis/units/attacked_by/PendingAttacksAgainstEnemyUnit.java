@@ -2,7 +2,6 @@ package atlantis.units.attacked_by;
 
 import atlantis.map.bullets.ABullet;
 import atlantis.units.AUnit;
-import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Collection;

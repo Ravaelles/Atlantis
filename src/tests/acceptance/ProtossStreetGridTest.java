@@ -1,13 +1,11 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtossStreetGridTest extends WorldStubForTests {
     @Test

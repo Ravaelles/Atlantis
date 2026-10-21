@@ -12,7 +12,6 @@ import bwapi.UpgradeType;
 
 import java.io.*;
 import java.time.Instant;
-import java.util.List;
 import java.util.*;
 import atlantis.util.GameClock;
 

@@ -4,7 +4,6 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.util.Vector;
-import atlantis.util.We;
 
 public class ChokeBlockerPosition {
     public static APosition positionForBlocker(AUnit unit) {

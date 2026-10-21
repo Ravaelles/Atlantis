@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
-import atlantis.game.player.Enemy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 

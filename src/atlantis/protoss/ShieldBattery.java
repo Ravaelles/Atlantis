@@ -1,7 +1,6 @@
 package atlantis.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 

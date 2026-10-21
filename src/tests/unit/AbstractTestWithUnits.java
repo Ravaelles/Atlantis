@@ -25,11 +25,9 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeFoggedUnit;
-import atlantis.units.select.BaseSelect;
 import atlantis.util.AConsole;
 import atlantis.util.GameClock;
 import atlantis.util.Options;
-import atlantis.util.cache.Cache;
 import tests.fakes.UnitStatsTable;
 
 import bwapi.Game;
@@ -39,7 +37,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
-import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeResearch;
 import tests.fakes.FakeOrderFallback;
@@ -54,7 +51,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class AbstractTestWithUnits extends UnitTest {
     public Game game;

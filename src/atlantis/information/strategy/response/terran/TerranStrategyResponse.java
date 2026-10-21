@@ -6,7 +6,6 @@ import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;

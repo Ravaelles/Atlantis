@@ -137,7 +137,7 @@ public class ActiveMap {
         return null;
     }
 
-    public static boolean isMap(String ...mapPartialName) {
+    public static boolean isMap(String... mapPartialName) {
         if (ActiveMap.mapName == null) return false;
 
         for (String subname : mapPartialName){

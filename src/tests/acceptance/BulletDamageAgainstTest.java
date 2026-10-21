@@ -8,7 +8,6 @@ import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Dragoon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BulletDamageAgainstTest extends AbstractTestWithWorld {
     private FakeUnit hydra;

@@ -6,7 +6,6 @@ import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.production.orders.production.queue.CountInQueue;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

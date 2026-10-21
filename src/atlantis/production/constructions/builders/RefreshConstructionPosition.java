@@ -5,7 +5,6 @@ import atlantis.game.player.Enemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.orders.production.queue.add.AddToQueue;

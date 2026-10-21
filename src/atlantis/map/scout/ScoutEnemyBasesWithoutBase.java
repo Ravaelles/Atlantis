@@ -7,7 +7,6 @@ import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.define.BaseLocationsNearestTo;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;

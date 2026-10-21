@@ -3,7 +3,6 @@ package atlantis.map.choke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
-import atlantis.map.region.MainRegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 

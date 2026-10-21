@@ -1,6 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.game.A;
 import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import atlantis.map.path.OurClosestBaseToEnemy;

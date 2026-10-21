@@ -1,6 +1,5 @@
 package atlantis.cherryvis.simple;
 
-import atlantis.battle.cluster.Missions;
 
 import atlantis.battle.cluster.Mission;
 import atlantis.game.A;

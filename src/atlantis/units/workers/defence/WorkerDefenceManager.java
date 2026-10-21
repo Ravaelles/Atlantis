@@ -8,7 +8,6 @@ import atlantis.units.select.Have;
 import atlantis.units.workers.defence.fight.WorkerDefenceFight;
 import atlantis.units.workers.defence.fight.WorkerDefenceHelpCannon;
 import atlantis.units.workers.defence.fight.WorkerDefenceStopFighting;
-import atlantis.units.workers.defence.fight.WorkerHelpCombatUnitsFight;
 import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import atlantis.units.workers.defence.special.BuddyRepair;
 import atlantis.util.We;

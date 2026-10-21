@@ -1,12 +1,8 @@
 package tests.acceptance;
 
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
 import tests.fakes.FakeUnit;
-import tests.unit.MockEverything;
-import tests.unit.UnitTest;
 
 public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
     @AfterEach

@@ -2,7 +2,6 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.map.base.define.UnexploredBaseLocationNearEnemy;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

@@ -1,6 +1,5 @@
 package atlantis.battle;
 
-import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.formation.CoverWithdraw;
 import atlantis.battle.formation.FormationTwin;
 import atlantis.battle.kite.CombatTuning;

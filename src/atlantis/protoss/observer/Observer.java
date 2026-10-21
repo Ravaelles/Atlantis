@@ -1,6 +1,5 @@
 package atlantis.protoss.observer;
 
-import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.battle.detectors.MobileDetector;

@@ -1,7 +1,5 @@
 package tests.acceptance;
 
-import atlantis.map.base.BaseLocations;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.conditions.IsProbablyInAnotherRegion;

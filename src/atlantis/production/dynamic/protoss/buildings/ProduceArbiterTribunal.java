@@ -2,13 +2,10 @@ package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
 import atlantis.information.generic.Army;
-import atlantis.information.tech.ATechRequests;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
-import bwapi.TechType;
 
-import static atlantis.units.AUnitType.Protoss_Arbiter;
 import static atlantis.units.AUnitType.Protoss_Arbiter_Tribunal;
 
 public class ProduceArbiterTribunal {

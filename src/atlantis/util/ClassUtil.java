@@ -1,6 +1,5 @@
 package atlantis.util;
 
-import atlantis.information.decisions.terran.TerranDecisions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

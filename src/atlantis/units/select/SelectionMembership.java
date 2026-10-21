@@ -2,10 +2,8 @@ package atlantis.units.select;
 
 import atlantis.battle.cluster.Squad;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.bullets.DeadMan;
 import atlantis.map.position.HasPosition;
-import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Action;

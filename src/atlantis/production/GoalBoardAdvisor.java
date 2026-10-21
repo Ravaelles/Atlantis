@@ -1,6 +1,5 @@
 package atlantis.production;
 
-import atlantis.battle.cluster.Missions;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;

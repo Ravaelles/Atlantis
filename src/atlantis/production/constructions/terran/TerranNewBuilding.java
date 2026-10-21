@@ -7,7 +7,6 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.We;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;

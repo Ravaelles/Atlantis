@@ -11,7 +11,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.util.We;
 
-import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ProtossCriticalStuffInQueue {
     public static boolean hasEnoughResources() {

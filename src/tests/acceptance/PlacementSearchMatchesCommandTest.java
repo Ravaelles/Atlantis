@@ -4,7 +4,6 @@ import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
 import bwapi.Race;

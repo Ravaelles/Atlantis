@@ -2,9 +2,7 @@ package atlantis.debug.tweaker;
 
 import atlantis.battle.kite.CombatTuning;
 
-import atlantis.battle.BattleCommander;
 import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
-import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.util.AConsole;
 

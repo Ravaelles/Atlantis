@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Check Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<!--
+  Atlantis Java style gate (Checkstyle). Run: bash scripts/checkstyle.sh
+  Scope: src/ ONLY (production code and tests). src-old/ and everything else
+  are never checked.
+
+  A rule is listed here only if the tree is green under it; a red-on-day-one
+  rule helps nobody. Deliberately DEFERRED (measured 2026-10-21, counts on
+  src/ with 1443 files):
+  - UnusedImports (477 hits, fixed in setup): KEPT on senior decision
+    2026-10-21 despite the commented-code concern. Reason: this script runs
+    on demand (~1/200 commits), never as a gate, so you run it on FINISHED
+    work - commented-out WIP and a lint sweep never meet. At that cadence
+    the churn tax is ~zero, while dead imports are the largest hygiene
+    signal in the tree. Guidance is in scripts/checkstyle.sh: run after a
+    feature lands, not mid-refactor.
+  - NeedBraces (4687 hits): the codebase writes braceless single-statement
+    ifs everywhere. Enforcing braces would be a style revolution, not a gate.
+  - AvoidStarImport (100 hits in 89 files): entrenched, same reason.
+  - LineLength (61 lines over 140): rewraps need human judgment per line.
+  - EqualsHashCode (1 hit, INVERTED: ARegion defines hashCode() without
+    equals()): adding equals() would change equality semantics. Dropped, not
+    fixed - a check must never demand a behavior change.
+  - Indentation (998 hits) / EmptyLineSeparator (1489 hits): churn
+    class, measured 2026-10-21. The tree was never formatted by a tool, so
+    enforcing layout retroactively means thousands of judgment-free diffs
+    that bury real history (git blame) for zero behavior gain. New code
+    follows the neighbors; no gate. Kept from this family only the two
+    zero-burden micro-rules: NoWhitespaceBefore (2 hits, fixed) and
+    WhitespaceAfter (1 hit, fixed).
+-->
+<module name="Checker">
+  <module name="NewlineAtEndOfFile"/>
+  <module name="FileTabCharacter"/>
+  <module name="RegexpSingleline">
+    <property name="format" value="\s+$"/>
+    <property name="message" value="Trailing whitespace."/>
+  </module>
+  <module name="TreeWalker">
+    <module name="UnusedImports"/>
+    <module name="RedundantImport"/>
+    <module name="EmptyStatement"/>
+    <module name="NoWhitespaceBefore"/>
+    <module name="WhitespaceAfter"/>
+  </module>
+</module>

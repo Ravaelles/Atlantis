@@ -5,21 +5,12 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.Strategy;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
-import atlantis.map.position.APosition;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.dynamic.protoss.prioritize.PrioritizeGatewaysVsProtoss;
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ProtossShouldExpandToThirdAndLaterBase extends ProtossShouldExpand {

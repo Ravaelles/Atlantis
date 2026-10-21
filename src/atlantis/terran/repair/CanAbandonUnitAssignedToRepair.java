@@ -3,7 +3,6 @@ package atlantis.terran.repair;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
 
 public class CanAbandonUnitAssignedToRepair {
     public static boolean check(AUnit unit) {

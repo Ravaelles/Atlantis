@@ -8,7 +8,6 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.units.ProduceZealot;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -19,8 +18,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
-import atlantis.util.AConsole;
-import static atlantis.units.AUnitType.Protoss_Assimilator;
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
 public class ProduceCyberneticsCore {

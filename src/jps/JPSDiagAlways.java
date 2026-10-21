@@ -24,30 +24,30 @@ public class JPSDiagAlways<T extends Node> extends JPS<T> {
 
             // search diagonally
             if (dx != 0 && dy != 0) {
-                if (graph.isWalkable(x, y + dy)) 
+                if (graph.isWalkable(x, y + dy))
                     neighbors.add(graph.getNode(x, y + dy));
-                if (graph.isWalkable(x + dx, y)) 
+                if (graph.isWalkable(x + dx, y))
                     neighbors.add(graph.getNode(x + dx, y));
-                if (graph.isWalkable(x + dx, y + dy)) 
+                if (graph.isWalkable(x + dx, y + dy))
                     neighbors.add(graph.getNode(x + dx, y + dy));
-                if (!graph.isWalkable(x - dx, y)) 
+                if (!graph.isWalkable(x - dx, y))
                     neighbors.add(graph.getNode(x - dx, y + dy));
-                if (!graph.isWalkable(x, y - dy)) 
+                if (!graph.isWalkable(x, y - dy))
                     neighbors.add(graph.getNode(x + dx, y - dy));
             } else { // search horizontally/vertically
                 if (dx == 0) {
-                    if (graph.isWalkable(x, y + dy)) 
+                    if (graph.isWalkable(x, y + dy))
                         neighbors.add(graph.getNode(x, y + dy));
-                    if (!graph.isWalkable(x + 1, y)) 
+                    if (!graph.isWalkable(x + 1, y))
                         neighbors.add(graph.getNode(x + 1, y + dy));
-                    if (!graph.isWalkable(x - 1, y)) 
+                    if (!graph.isWalkable(x - 1, y))
                         neighbors.add(graph.getNode(x - 1, y + dy));
                 } else {
-                    if (graph.isWalkable(x + dx, y)) 
+                    if (graph.isWalkable(x + dx, y))
                         neighbors.add(graph.getNode(x + dx, y));
-                    if (!graph.isWalkable(x, y + 1)) 
+                    if (!graph.isWalkable(x, y + 1))
                         neighbors.add(graph.getNode(x + dx, y + 1));
-                    if (!graph.isWalkable(x, y - 1)) 
+                    if (!graph.isWalkable(x, y - 1))
                         neighbors.add(graph.getNode(x + dx, y - 1));
                 }
             }

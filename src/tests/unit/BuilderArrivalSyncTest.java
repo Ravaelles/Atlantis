@@ -18,7 +18,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

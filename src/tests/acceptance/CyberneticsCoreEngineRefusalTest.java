@@ -13,7 +13,6 @@ import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
-import tests.fakes.FakeUnit;
 import bwapi.Race;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

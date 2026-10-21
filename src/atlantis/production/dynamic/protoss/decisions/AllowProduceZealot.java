@@ -3,7 +3,6 @@ package atlantis.production.dynamic.protoss.decisions;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.Strategy;
-import atlantis.production.dynamic.protoss.units.ProduceDarkTemplar;
 import atlantis.units.select.Select;
 
 import static atlantis.units.AUnitType.Protoss_Citadel_of_Adun;

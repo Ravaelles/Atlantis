@@ -3,7 +3,6 @@ package atlantis.production.constructions.position.conditions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
-import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;

@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.battle.cluster.FightOrFlight;
 
 import atlantis.battle.twins.ShotTwin;
 import atlantis.units.AUnitType;

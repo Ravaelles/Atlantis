@@ -1,7 +1,6 @@
 package atlantis.battle.avoid.dont.protoss;
 
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 
 public class DTDontAvoid {
     public static boolean dontAvoid(AUnit unit) {

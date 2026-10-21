@@ -4,7 +4,6 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

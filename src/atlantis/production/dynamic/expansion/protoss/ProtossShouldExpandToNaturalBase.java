@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.expansion.protoss;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;

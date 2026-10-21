@@ -10,7 +10,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;

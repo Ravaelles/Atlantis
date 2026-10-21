@@ -3,10 +3,8 @@ package atlantis.decisions;
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.config.env.Env;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 /**

@@ -1,9 +1,7 @@
 package atlantis.debug.profiler;
 
 import atlantis.game.A;
-import atlantis.game.ARandom;
 import atlantis.util.AConsole;
-import atlantis.util.log.ErrorLog;
 
 public class LongFrames {
     private static int framesOver85 = 0;

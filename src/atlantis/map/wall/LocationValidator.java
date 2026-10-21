@@ -1,11 +1,8 @@
 package atlantis.map.wall;
 
 import atlantis.Atlantis;
-import atlantis.game.AGame;
-import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.units.select.Select;
-import bwapi.Position;
 
 public class LocationValidator {
     public static boolean isValidLocation(int x, int y, Structure struct, int depth) {

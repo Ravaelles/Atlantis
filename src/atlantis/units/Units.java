@@ -1,7 +1,5 @@
 package atlantis.units;
 
-import atlantis.battle.cluster.Squad;
-import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

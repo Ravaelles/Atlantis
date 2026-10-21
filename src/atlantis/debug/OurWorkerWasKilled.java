@@ -1,8 +1,6 @@
 package atlantis.debug;
 
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 

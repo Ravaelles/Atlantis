@@ -2,7 +2,6 @@ package atlantis.battle.avoid.dont.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.util.We;
 
 public class WraithDontAvoidEnemy extends Manager {
     public WraithDontAvoidEnemy(AUnit unit) {

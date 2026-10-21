@@ -11,7 +11,6 @@ import tests.fakes.FakeUnitHelper;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Queue1Test extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;

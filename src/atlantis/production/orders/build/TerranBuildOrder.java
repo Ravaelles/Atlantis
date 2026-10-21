@@ -4,7 +4,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 
 public class TerranBuildOrder extends ABuildOrder {
 

@@ -40,7 +40,7 @@ public class NameUtil {
 
         return null;
     }
-    
+
     public static TechType getTechTypeByName(String name) {
         name = name.replace(" ", "_").toLowerCase();
 

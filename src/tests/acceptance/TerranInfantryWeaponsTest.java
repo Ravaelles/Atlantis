@@ -3,8 +3,6 @@ package tests.acceptance;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.terran.tech.TerranInfantryWeapons;
-import atlantis.util.Options;
-import bwapi.UpgradeType;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeResearch;
 import tests.fakes.FakeUnit;

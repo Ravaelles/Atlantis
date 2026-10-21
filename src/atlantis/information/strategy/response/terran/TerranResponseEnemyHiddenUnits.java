@@ -10,7 +10,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 import atlantis.map.choke.AChoke;
 
 public class TerranResponseEnemyHiddenUnits extends StrategyResponse {

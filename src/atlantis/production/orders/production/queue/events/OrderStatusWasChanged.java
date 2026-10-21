@@ -4,7 +4,6 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.util.AConsole;
 
 public class OrderStatusWasChanged {
     public static void update(ProductionOrder order) {

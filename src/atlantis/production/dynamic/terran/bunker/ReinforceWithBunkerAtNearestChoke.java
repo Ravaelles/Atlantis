@@ -1,12 +1,9 @@
 package atlantis.production.dynamic.terran.bunker;
 
 import atlantis.architecture.Commander;
-import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 
-import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class ReinforceWithBunkerAtNearestChoke extends Commander {
     private HasPosition initialPositionToReinforce;

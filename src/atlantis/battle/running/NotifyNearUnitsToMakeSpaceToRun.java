@@ -8,7 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 import bwapi.Color;
 

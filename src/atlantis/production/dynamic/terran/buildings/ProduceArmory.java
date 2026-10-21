@@ -5,7 +5,6 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Have;
 
 import static atlantis.units.AUnitType.Terran_Armory;
-import static atlantis.units.AUnitType.Terran_Factory;
 
 public class ProduceArmory {
     public static boolean armory() {

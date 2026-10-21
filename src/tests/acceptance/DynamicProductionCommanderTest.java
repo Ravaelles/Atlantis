@@ -19,7 +19,6 @@ import tests.unit.helpers.ClearAllCaches;
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicProductionCommanderTest extends WorldStubForTests {
     private int nextX = 20;

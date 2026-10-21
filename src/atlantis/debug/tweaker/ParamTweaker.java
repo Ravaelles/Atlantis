@@ -1,6 +1,5 @@
 package atlantis.debug.tweaker;
 
-import atlantis.game.A;
 
 import atlantis.util.AConsole;
 import java.util.ArrayList;

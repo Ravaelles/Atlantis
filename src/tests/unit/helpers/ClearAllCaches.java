@@ -1,8 +1,6 @@
 package tests.unit.helpers;
 
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
-import atlantis.battle.cluster.Squad;
-import atlantis.battle.cluster.Alpha;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;

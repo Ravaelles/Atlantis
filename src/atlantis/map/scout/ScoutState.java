@@ -1,6 +1,5 @@
 package atlantis.map.scout;
 
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;

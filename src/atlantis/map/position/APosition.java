@@ -1,11 +1,9 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
-import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.ReachableTiles;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;

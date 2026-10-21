@@ -5,7 +5,6 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.builders.ShouldNotTravelToConstructYet;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import bwapi.Race;

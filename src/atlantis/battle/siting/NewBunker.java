@@ -1,6 +1,5 @@
 package atlantis.battle.siting;
 
-import atlantis.battle.siting.NewBunkerApproximatePosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.terran.buildings.ShouldProduceNewBunker;
 import atlantis.production.orders.production.queue.add.AddToQueue;

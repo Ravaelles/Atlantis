@@ -2,12 +2,8 @@ package atlantis.map.path;
 
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 import bwem.CPPath;
 
 public class ClosestToEnemyBase {

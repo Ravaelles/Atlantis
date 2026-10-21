@@ -7,7 +7,6 @@ import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 
 public class IsOrderInProgress {
     public static boolean isInProgress(ProductionOrder order) {

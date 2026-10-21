@@ -3,7 +3,6 @@ package atlantis.terran.repair;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.gather.GatherResources;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;

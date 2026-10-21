@@ -1,6 +1,5 @@
 package atlantis.game.event;
 
-import atlantis.game.A;
 import atlantis.util.AConsole;
 import atlantis.util.ClassScanner;
 

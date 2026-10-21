@@ -41,7 +41,7 @@ public class ARegion implements HasPosition {
         ARegion region = new ARegion();
         region.id = area.getId().intValue();
         region.area = area;
-        region.position = APosition.create(area.getBoundingBoxSize());;
+        region.position = APosition.create(area.getBoundingBoxSize());
 
         instances.put(area, region);
 
@@ -129,7 +129,7 @@ public class ARegion implements HasPosition {
                     (area.getTopLeft().y + area.getBottomRight().y) * 32 / 2
                 );
 //                System.err.println("center CALC = " + center);
-    
+
                 if (!center.isWalkable()) {
                     center = center.makeWalkable(8, 2, this);
 //                    System.err.println("WALKABLE center = " + center);

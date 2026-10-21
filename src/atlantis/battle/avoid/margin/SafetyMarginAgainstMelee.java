@@ -6,11 +6,8 @@ import atlantis.battle.avoid.margin.special.SafetyMarginAgainstMelee_Special;
 import atlantis.battle.avoid.margin.terran.FirebatSafetyMarginAgainstMelee;
 import atlantis.battle.avoid.margin.terran.MarineSafetyMarginAgainstMelee;
 import atlantis.battle.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.AConsole;
 import atlantis.util.We;
-import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;

@@ -87,7 +87,7 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
 //        System.err.println("AAAAA lurkerEgg = " + lurkerEgg);
 //        EnemyUnits.discovered().print("Discovered 1st");
     }
-    
+
     private double armyStrengthUnchached() {
         ArmyStrength.clearCache();
 //        EnemyUnits.clearCountCache();

@@ -1,6 +1,5 @@
 package atlantis.map.base.define;
 
-import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;

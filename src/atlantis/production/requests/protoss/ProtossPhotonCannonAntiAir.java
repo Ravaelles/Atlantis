@@ -5,7 +5,6 @@ import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.GamePhase;
 import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;

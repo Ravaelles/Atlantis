@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.battle.cluster.Missions;
 
 import atlantis.production.v2.Producible;
 import atlantis.production.v2.ProductionGoal;

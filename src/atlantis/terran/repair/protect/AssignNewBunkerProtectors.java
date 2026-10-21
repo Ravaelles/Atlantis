@@ -1,7 +1,6 @@
 package atlantis.terran.repair.protect;
 
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.game.A;
 import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;

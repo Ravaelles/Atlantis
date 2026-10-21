@@ -7,7 +7,6 @@ import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import main.Main;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class AtlantisIgniter {

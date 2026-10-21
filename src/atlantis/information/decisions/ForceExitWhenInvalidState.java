@@ -3,11 +3,9 @@ package atlantis.information.decisions;
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.config.env.Env;
-import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
-import atlantis.util.log.ErrorLog;
 
 public class ForceExitWhenInvalidState extends Commander {
     /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */

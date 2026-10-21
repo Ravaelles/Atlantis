@@ -1,12 +1,10 @@
 package atlantis.map.path;
 
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import atlantis.units.select.CacheKey;

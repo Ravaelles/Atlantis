@@ -1,6 +1,5 @@
 package atlantis.map.choke;
 
-import atlantis.game.A;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

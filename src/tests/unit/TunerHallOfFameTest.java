@@ -1,7 +1,6 @@
 package tests.unit;
 
 import atlantis.debug.tweaker.TunerHallOfFame;
-import atlantis.debug.tweaker.TunerHallOfFame.Entry;
 import atlantis.debug.tweaker.TunerObjective.Row;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

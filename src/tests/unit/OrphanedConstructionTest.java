@@ -6,7 +6,6 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

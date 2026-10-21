@@ -3,7 +3,6 @@ package atlantis.units.workers.defence;
 import atlantis.architecture.Manager;
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class WorkerAvoidManager extends Manager {

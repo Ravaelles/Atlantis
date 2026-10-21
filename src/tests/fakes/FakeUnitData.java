@@ -2,7 +2,6 @@ package tests.fakes;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
 import java.util.List;

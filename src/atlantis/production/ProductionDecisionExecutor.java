@@ -6,7 +6,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
-import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 
 /**

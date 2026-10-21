@@ -21,7 +21,6 @@ import static atlantis.units.AUnitType.Terran_Command_Center;
 import static atlantis.units.AUnitType.Terran_SCV;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * B-9: a rising building must consume its own order, whether or not the

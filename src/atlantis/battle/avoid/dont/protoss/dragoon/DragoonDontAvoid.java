@@ -8,7 +8,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.protoss.ProtossContinueAttack;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
 
 public class DragoonDontAvoid {
     public static boolean dontAvoid(AUnit unit) {

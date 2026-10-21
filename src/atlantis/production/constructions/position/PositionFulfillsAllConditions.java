@@ -11,7 +11,6 @@ import atlantis.production.constructions.position.terran.TerranPositionFinder;
 import atlantis.production.constructions.position.terran.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 

@@ -1,17 +1,11 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.decisions.board.BoardState;
-import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.Army;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
-import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
-import static atlantis.units.AUnitType.Protoss_Fleet_Beacon;
 import static atlantis.units.AUnitType.Protoss_Stargate;
 
 public class ProduceStargate {

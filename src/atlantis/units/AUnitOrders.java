@@ -13,7 +13,6 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.util.AConsole;
-import atlantis.util.We;
 import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;

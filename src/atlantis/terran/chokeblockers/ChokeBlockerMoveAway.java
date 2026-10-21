@@ -1,7 +1,6 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;

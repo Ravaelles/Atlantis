@@ -2,10 +2,7 @@ package atlantis.units.select;
 
 import atlantis.battle.eval.estimate.Estimate;
 import atlantis.battle.cluster.Squad;
-import atlantis.game.A;
-import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.bullets.DeadMan;
 import atlantis.map.path.ClosestToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -14,13 +11,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
-import atlantis.units.actions.Actions;
-import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.units.select.CacheKey;
-import atlantis.util.log.ErrorLog;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
     protected Selection(Collection<? extends AUnit> unitsData, String initCachePath) {

@@ -1,7 +1,6 @@
 package atlantis.production.orders.production.queue.order;
 
 import atlantis.game.A;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.QueueLastStatus;
 
 import atlantis.util.AConsole;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
     private final ArrayList<ProductionOrder> orders = new ArrayList<>();

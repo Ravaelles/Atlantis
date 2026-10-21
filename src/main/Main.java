@@ -1,7 +1,6 @@
 package main;
 
 import atlantis.Atlantis;
-import atlantis.config.ActiveMap;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.GameLauncherFactory;
 import atlantis.game.util.GameSummary;

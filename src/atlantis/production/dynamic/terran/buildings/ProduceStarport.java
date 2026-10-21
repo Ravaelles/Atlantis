@@ -14,7 +14,7 @@ public class ProduceStarport {
         if (shouldBuild()) {
             return AddToQueue.toHave(Terran_Starport);
         }
-        
+
         return false;
     }
 

@@ -3,13 +3,10 @@ package atlantis.units.actions.move;
 import atlantis.battle.kite.CombatTuning;
 
 import atlantis.battle.running.IsReasonablePositionToRunTo;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
-import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class MoveAway {

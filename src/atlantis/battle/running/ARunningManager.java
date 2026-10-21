@@ -1,6 +1,5 @@
 package atlantis.battle.running;
 
-import atlantis.battle.running.fallback.RunAttackFallback;
 import atlantis.battle.running.show_back.RunShowingBackToEnemy;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -10,7 +9,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 

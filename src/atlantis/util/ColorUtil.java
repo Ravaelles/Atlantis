@@ -57,6 +57,6 @@ public class ColorUtil {
             return "\u001F";
         }
 
-        return "";	//default
+        return ""; //default
     }
 }

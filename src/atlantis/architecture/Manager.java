@@ -1,7 +1,6 @@
 package atlantis.architecture;
 
 import atlantis.game.A;
-import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.util.log.ErrorLog;

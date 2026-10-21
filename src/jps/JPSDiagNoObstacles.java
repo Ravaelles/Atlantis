@@ -56,7 +56,7 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
                         neighbors.add(graph.getNode(x, y - 1));
                 } else if (dy != 0) {
                     boolean nextWalkable = graph.isWalkable(x, y + dy);
-                    boolean rightWalkable = graph.isWalkable(x + 1 , y);
+                    boolean rightWalkable = graph.isWalkable(x + 1, y);
                     boolean leftWalkable = graph.isWalkable(x - 1, y);
 
                     if (nextWalkable) {

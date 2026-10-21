@@ -43,7 +43,7 @@ public class SpellCoordinator {
 
     public static void newSpellAt(APosition usedAt, TechType tech) {
         if (usedAt == null) return;
-        
+
         recentSpellsPositionToName.set(usedAt.toStringPixels(), 105, tech.toString());
         recentSpellsPosition.set(usedAt.toStringPixels(), 105, usedAt);
     }

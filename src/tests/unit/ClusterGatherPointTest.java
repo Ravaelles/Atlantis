@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.ClusterRally;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;

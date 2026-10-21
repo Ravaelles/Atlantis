@@ -14,7 +14,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
-import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 import static atlantis.units.AUnitType.Protoss_Pylon;
 

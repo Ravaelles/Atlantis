@@ -5,7 +5,6 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.AbstractPositionFinder;
-import atlantis.production.constructions.position.conditions.EnemyTooCloseToUnstartedConstruction;
 import atlantis.production.constructions.position.conditions.EnemiesTooClose;
 import atlantis.production.constructions.position.conditions.OtherConstructionTooClose;
 import atlantis.units.AUnitType;

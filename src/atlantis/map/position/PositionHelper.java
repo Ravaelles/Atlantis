@@ -1,6 +1,5 @@
 package atlantis.map.position;
 
-import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -150,7 +149,7 @@ public class PositionHelper {
     // === Translate position ============================
 
     /**
-     * Returns a <b>new</b> Position that represents the effect of moving this position by 
+     * Returns a <b>new</b> Position that represents the effect of moving this position by
      * [deltaTileX, deltaTileY].
      */
 //    public static APosition translateByTiles(APosition position, int deltaTileX, int deltaTileY) {

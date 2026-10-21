@@ -1,11 +1,7 @@
 package benchmark;
 
-import atlantis.Atlantis;
-import atlantis.config.ActiveMap;
 import atlantis.debug.painter.APainter;
-import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
-import atlantis.map.AMap;
 
 import atlantis.util.AFile;
 import java.io.FileWriter;

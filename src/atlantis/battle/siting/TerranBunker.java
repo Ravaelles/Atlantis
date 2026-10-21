@@ -4,10 +4,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.dynamic.terran.buildings.ProduceBunker;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
-import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class TerranBunker extends AntiLandBuildingCommander {
     @Override

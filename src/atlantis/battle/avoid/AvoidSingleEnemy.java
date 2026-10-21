@@ -1,7 +1,6 @@
 package atlantis.battle.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.avoid.dont.DontAvoidEnemy;
 import atlantis.battle.avoid.terran.ShouldNotAvoidSingleEnemyBunker;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

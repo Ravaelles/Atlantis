@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.Log;

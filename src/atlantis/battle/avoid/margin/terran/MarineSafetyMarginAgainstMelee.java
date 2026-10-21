@@ -1,9 +1,7 @@
 package atlantis.battle.avoid.margin.terran;
 
 import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.range.OurMarineRange;
 import atlantis.util.AMath;
 

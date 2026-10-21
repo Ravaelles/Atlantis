@@ -1,8 +1,6 @@
 package atlantis.information.enemy;
 
 import atlantis.config.env.Env;
-import atlantis.game.A;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;

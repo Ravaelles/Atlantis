@@ -1,8 +1,6 @@
 package atlantis.keyboard.actions;
 
-import atlantis.Atlantis;
 import atlantis.config.env.Env;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
 import atlantis.util.ProcessHelper;

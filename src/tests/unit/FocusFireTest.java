@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.battle.cluster.FightOrFlight;
 
 import atlantis.battle.formation.FocusFire;
 import atlantis.map.bullets.DeadMan;

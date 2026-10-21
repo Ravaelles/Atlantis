@@ -2,16 +2,13 @@ package tests.unit;
 
 import atlantis.Atlantis;
 import atlantis.config.AtlantisConfigChanger;
-import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.game.race.EnemyRace;
-import atlantis.information.tech.ATech;
 import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
 import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 import bwapi.*;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import tests.fakes.FakeBaseLocations;
 import tests.fakes.FakeChokes;

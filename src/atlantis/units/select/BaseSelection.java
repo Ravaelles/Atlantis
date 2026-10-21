@@ -1,7 +1,6 @@
 package atlantis.units.select;
 
 import atlantis.units.AUnit;
-import atlantis.util.Callback;
 import atlantis.util.cache.Copyable;
 
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class BaseSelection implements Copyable<Selection> {
 
         // Remove duplicates from newData list
 //        newData = new ArrayList<>(newData);
-        
+
         return new Selection(newData, null);
     }
 

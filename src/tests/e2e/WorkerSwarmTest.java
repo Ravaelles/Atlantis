@@ -5,7 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits;
-import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;

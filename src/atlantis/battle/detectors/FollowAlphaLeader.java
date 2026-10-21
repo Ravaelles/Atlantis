@@ -3,7 +3,6 @@ package atlantis.battle.detectors;
 import atlantis.architecture.Manager;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
@@ -13,7 +12,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.log.ErrorLog;
-import bwapi.Color;
 
 public class FollowAlphaLeader extends Manager {
     private HasPosition followPoint;

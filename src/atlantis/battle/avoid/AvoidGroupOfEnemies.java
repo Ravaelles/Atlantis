@@ -2,15 +2,10 @@ package atlantis.battle.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.avoid.dont.DontAvoidEnemy;
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 
-import atlantis.util.AConsole;
 import static atlantis.units.actions.Actions.RUN_ENEMY;
 
 public class AvoidGroupOfEnemies extends Manager {

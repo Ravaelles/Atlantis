@@ -1,6 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.battle.twins.FightTrace;
 
 import atlantis.Atlantis;
 import atlantis.battle.cluster.Missions;

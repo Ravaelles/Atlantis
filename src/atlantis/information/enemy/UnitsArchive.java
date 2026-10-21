@@ -1,6 +1,5 @@
 package atlantis.information.enemy;
 
-import atlantis.battle.cluster.Missions;
 
 import atlantis.game.A;
 import atlantis.map.bullets.ABullet;

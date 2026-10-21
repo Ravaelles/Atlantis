@@ -15,7 +15,6 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
-import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceTurretForBunker {

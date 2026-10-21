@@ -1,6 +1,5 @@
 package atlantis.battle.kite;
 
-import atlantis.battle.BattleCommander;
 import atlantis.units.AUnit;
 import atlantis.units.special.SleepUntilFrameGate;
 

@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.gather.GatherResources;
-import atlantis.util.log.ErrorLog;
 
 public class IdleWorker extends Manager {
     public IdleWorker(AUnit unit) {

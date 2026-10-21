@@ -5,7 +5,6 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.builders.BuilderDiagnostics;
 import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;

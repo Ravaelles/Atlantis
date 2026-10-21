@@ -1,6 +1,5 @@
 package atlantis.information.strategy.terran;
 
-import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.strategy.AStrategy;
 
 public class Sparks extends AStrategy {

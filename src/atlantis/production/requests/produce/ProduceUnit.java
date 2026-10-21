@@ -8,7 +8,6 @@ import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.AConsole;
 
 public class ProduceUnit {
     // See ProduceWorker: the executor registers on first wrapper load,

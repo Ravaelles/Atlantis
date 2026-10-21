@@ -1,7 +1,6 @@
 package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.ClusterTactic;
 import atlantis.units.AUnitType;
 import bwapi.Race;

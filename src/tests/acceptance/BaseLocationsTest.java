@@ -5,7 +5,6 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
-import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeUnit;
 

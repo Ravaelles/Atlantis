@@ -4,14 +4,12 @@ import atlantis.core.world.UnitSnapshot;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.UnitOrigin;
 import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 
 import java.util.TreeMap;
 

@@ -5,7 +5,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.BuildingTilesAreOccupied;
 
 /**
  * What the map knows about a single tile: is it walkable, has it been explored,

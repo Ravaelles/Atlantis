@@ -2,7 +2,6 @@ package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

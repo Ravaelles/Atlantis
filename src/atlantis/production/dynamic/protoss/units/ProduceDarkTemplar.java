@@ -6,9 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceDarkTemplar {
     public static int requested = 0;

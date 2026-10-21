@@ -2,7 +2,6 @@ package tests.e2e;
 
 import atlantis.game.A;
 import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.engine.GameStateSnapshot;
 import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

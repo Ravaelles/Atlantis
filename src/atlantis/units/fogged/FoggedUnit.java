@@ -52,7 +52,7 @@ public class FoggedUnit extends AbstractFoggedUnit {
     public int y() {
         return position().getY();
     }
-    
+
     @Override
     public int hp() {
         int hp = super.hp();

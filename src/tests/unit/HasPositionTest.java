@@ -2,7 +2,6 @@ package tests.unit;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ public class HasPositionTest extends AbstractTestWithWorld {
         assertTrue(p1.distToMoreThan(p2, 4.9));
         assertTrue(p1.distToMoreThan(p2, 5.0));
         assertFalse(p1.distToMoreThan(p2, 5.1));
-        
+
         // Null checks
         assertEquals(999.0, p1.distToOr999(null), 0.001);
         assertEquals(-1.0, p1.distToOrMinus1(null), 0.001);
@@ -76,7 +75,7 @@ public class HasPositionTest extends AbstractTestWithWorld {
         // Should be at 2,0
         assertEquals(2, moved.tx());
         assertEquals(0, moved.ty());
-        
+
         // translatePercentTowards
         HasPosition movedPercent = start.translatePercentTowards(target, 50);
         // Should be at 50% distance = 5,0
@@ -94,11 +93,11 @@ public class HasPositionTest extends AbstractTestWithWorld {
         assertEquals(ty, p.ty());
         assertEquals(tx * 32, p.x());
         assertEquals(ty * 32, p.y());
-        
+
         assertTrue(p.toStringPixels().contains("px:160"));
         assertTrue(p.toStringPixels().contains("py:256"));
     }
-    
+
     @Test
     public void equality() {
         HasPosition p1 = APosition.create(10, 20);
@@ -110,7 +109,7 @@ public class HasPositionTest extends AbstractTestWithWorld {
         assertFalse(p1.equals(p3));
         assertFalse(p1.equals(null));
     }
-    
+
     @Test
     public void mapBoundsChecks() {
         // Assume standard map size, usually handled by Env/Map setups in fakes
@@ -118,7 +117,7 @@ public class HasPositionTest extends AbstractTestWithWorld {
         // APosition.create uses (int, int), assumes tiles in create(x,y)?
         // Wait, APosition.create(x, y) usually means TILES.
         // APosition.createFromPixels(x, y) means PIXELS.
-        
+
         // Let's verify what APosition.create does by checking logic in previous tests or assume creates tiles.
         // In previous test: APosition.create(10, 10) was used.
         // In this file: APosition.create(13, 14) -> dist to (10,10) was 5.
@@ -130,11 +129,11 @@ public class HasPositionTest extends AbstractTestWithWorld {
         // If both created with create(10,10) (tiles), then their pixels are 320, 320.
         // Dist in pixels is 5 * 32 = 160.
         // Dist in tiles is 5.
-        // I asserted 5.0. 
+        // I asserted 5.0.
         // If distTo returns PIXELS, my assertion fails.
         // If distTo returns TILES, assertion passes.
         // Most Atlantis distance methods return TILES.
-        
+
         // Let's assume TILES for now, as that's standard for AI logic separation.
     }
 

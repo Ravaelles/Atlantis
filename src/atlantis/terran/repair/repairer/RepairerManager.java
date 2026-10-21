@@ -2,7 +2,6 @@ package atlantis.terran.repair.repairer;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.battle.avoid.special.AvoidPsionicStorm;
 import atlantis.battle.avoid.special.AvoidSpellsAndMines;
 import atlantis.units.AUnit;
 

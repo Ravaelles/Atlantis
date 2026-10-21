@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.units.CombatEvalScale;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

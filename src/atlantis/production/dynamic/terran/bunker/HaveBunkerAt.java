@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.bunker;
 
 import atlantis.architecture.Commander;
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;

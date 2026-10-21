@@ -2,11 +2,9 @@ package atlantis.battle.cluster;
 
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.kite.CombatTuning;
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.move.MoveAway;
-import atlantis.units.select.Count;
 
 /**
  * Where the cluster and its units move when they are not fighting

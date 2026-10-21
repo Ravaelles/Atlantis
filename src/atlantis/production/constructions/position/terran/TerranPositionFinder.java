@@ -1,6 +1,5 @@
 package atlantis.production.constructions.position.terran;
 
-import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -11,10 +10,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.units.select.CacheKey;
-import atlantis.util.log.ErrorLog;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
     /**

@@ -10,7 +10,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 import atlantis.util.AConsole;
-import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.*;
 

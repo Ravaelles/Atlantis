@@ -22,7 +22,7 @@ public abstract class SpreadOutAirUnits extends Manager {
 
     public Manager handle() {
         if (separateFrom == null) return null;
-        
+
         AUnit otherUnit = separateFrom.nearestTo(unit);
         if (otherUnit == null) return null;
         if (unit.id() < otherUnit.id()) return null; // Older units don't separate, only newer ones do it

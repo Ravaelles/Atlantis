@@ -8,7 +8,6 @@ import atlantis.battle.scout.ScoutUnitManagers;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
-import atlantis.game.CameraCommander;
 import atlantis.game.state.BulletsCommander;
 import atlantis.information.enemy.EnemyUnitsCommander;
 import atlantis.information.strategy.StrategyCommander;

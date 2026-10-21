@@ -1,10 +1,8 @@
 package tests.e2e;
 
-import atlantis.game.A;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;

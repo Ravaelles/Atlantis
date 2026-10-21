@@ -1,6 +1,5 @@
 package atlantis.map.position;
 
-import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 
@@ -145,7 +144,6 @@ public class Positions<T extends HasPosition> implements Serializable {
                     distToU1 = 99999;
                 }
                 double distToU2 = position.position().groundDistanceTo(p2);
-                ;
 
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }

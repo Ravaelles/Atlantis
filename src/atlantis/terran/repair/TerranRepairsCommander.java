@@ -2,7 +2,6 @@ package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
-import atlantis.terran.chokeblockers.ChokeBlockersCommander;
 import atlantis.terran.repair.protect.ProtectorCommander;
 import atlantis.util.We;
 

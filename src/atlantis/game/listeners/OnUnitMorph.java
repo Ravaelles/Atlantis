@@ -1,7 +1,6 @@
 package atlantis.game.listeners;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.strategy.response.protoss.AsProtossUnitDiscoveredResponse;

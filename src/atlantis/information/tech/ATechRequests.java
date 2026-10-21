@@ -1,6 +1,5 @@
 package atlantis.information.tech;
 
-import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

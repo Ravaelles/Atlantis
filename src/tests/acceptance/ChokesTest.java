@@ -3,7 +3,6 @@ package tests.acceptance;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
-import tests.acceptance.WorldStubForTests;
 
 public class ChokesTest extends WorldStubForTests {
     @Test

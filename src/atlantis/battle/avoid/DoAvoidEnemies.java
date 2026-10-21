@@ -1,11 +1,8 @@
 package atlantis.battle.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.AConsole;
-import bwapi.Color;
 
 public class DoAvoidEnemies extends Manager {
     private ProcessAvoid avoid;

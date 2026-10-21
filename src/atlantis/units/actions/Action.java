@@ -12,7 +12,7 @@ public class Action {
     private boolean run;
 
     // =========================================================
-    
+
     protected Action() {
         this(false);
     }

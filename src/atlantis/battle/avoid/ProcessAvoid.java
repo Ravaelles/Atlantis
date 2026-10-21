@@ -1,14 +1,11 @@
 package atlantis.battle.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Selection;
-import atlantis.util.AConsole;
-import bwapi.Color;
 
 public class ProcessAvoid extends Manager {
     protected AUnit enemy;

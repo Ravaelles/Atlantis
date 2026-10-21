@@ -1,6 +1,5 @@
 package atlantis.config;
 
-import atlantis.game.A;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;

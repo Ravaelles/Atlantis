@@ -1,12 +1,10 @@
 package tests.acceptance;
 
-import atlantis.battle.cluster.Missions;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
-import atlantis.util.Angle;
 import atlantis.map.position.Vectors;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;

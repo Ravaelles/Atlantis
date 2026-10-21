@@ -6,7 +6,6 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.util.AConsole;
 import bwapi.Bullet;
 import bwapi.BulletType;
 

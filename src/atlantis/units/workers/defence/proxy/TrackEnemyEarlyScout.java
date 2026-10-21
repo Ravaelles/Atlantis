@@ -2,7 +2,6 @@ package atlantis.units.workers.defence.proxy;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
 import atlantis.units.AUnit;
 
 public class TrackEnemyEarlyScout extends Manager {

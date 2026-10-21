@@ -6,7 +6,6 @@ import atlantis.battle.running.SeparateEarlyFromFriends;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.util.AConsole;
 import atlantis.util.Vector;
 import atlantis.util.We;
 

@@ -2,7 +2,6 @@ package atlantis.debug.tools;
 
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

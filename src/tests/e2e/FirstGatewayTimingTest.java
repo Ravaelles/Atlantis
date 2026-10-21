@@ -2,7 +2,6 @@ package tests.e2e;
 
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;

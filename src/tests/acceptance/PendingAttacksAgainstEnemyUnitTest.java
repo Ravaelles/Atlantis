@@ -4,10 +4,8 @@ import atlantis.units.AttackState;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnitType;
-import atlantis.units.attacked_by.Bullets;
 import atlantis.units.attacked_by.PendingAttacksAgainstEnemyUnit;
 import org.junit.jupiter.api.Test;
-import tests.fakes.FakeBullet;
 import tests.fakes.FakeUnit;
 
 import java.util.Collection;

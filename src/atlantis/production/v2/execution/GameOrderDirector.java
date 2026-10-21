@@ -8,7 +8,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.Producible;
 import atlantis.production.v2.TechProducible;
-import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.UpgradeProducible;
 import atlantis.units.AUnit;

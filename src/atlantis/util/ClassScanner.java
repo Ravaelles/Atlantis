@@ -1,6 +1,5 @@
 package atlantis.util;
 
-import atlantis.game.A;
 
 import java.io.File;
 import java.io.IOException;

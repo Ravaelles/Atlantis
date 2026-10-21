@@ -4,7 +4,6 @@ import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.dynamic.expansion.terran.TerranShouldExpand;
 import atlantis.units.select.Count;
 

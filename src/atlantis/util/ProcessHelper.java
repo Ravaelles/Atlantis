@@ -4,8 +4,6 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.WineWindowConfig;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Kills and starts processes: the Starcraft game itself and Chaoslauncher on

@@ -22,7 +22,6 @@ import atlantis.util.log.LogKey;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 
-import static atlantis.production.AbstractDynamicUnits.trainIfPossible;
 import static atlantis.production.dynamic.protoss.units.ProduceZealot.produceZealot;
 import static atlantis.units.AUnitType.*;
 

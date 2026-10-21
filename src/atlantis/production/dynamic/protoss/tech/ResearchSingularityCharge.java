@@ -1,24 +1,16 @@
 package atlantis.production.dynamic.protoss.tech;
 
-import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
-import atlantis.game.player.Enemy;
-import atlantis.units.select.Select;
 import bwapi.UpgradeType;
 
-import java.util.List;
 
 import static bwapi.UpgradeType.Singularity_Charge;
 

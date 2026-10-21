@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
-import tests.fakes.FakeUnit;
 
 import java.io.File;
 import java.nio.file.Files;

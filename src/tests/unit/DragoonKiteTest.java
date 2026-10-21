@@ -1,8 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.cluster.FightOrFlight;
 
-import atlantis.battle.BattleCommander;
 import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;

@@ -1,6 +1,5 @@
 package tests.acceptance.production;
 
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.base.FindPositionForBaseNearestFree;

@@ -2,7 +2,6 @@ package atlantis.production.constructions.builders;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;

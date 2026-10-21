@@ -3,7 +3,6 @@ package atlantis.units.workers.gather;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class GatherResources extends Manager {
     public GatherResources(AUnit unit) {

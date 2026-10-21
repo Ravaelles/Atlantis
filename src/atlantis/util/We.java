@@ -1,6 +1,5 @@
 package atlantis.util;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;

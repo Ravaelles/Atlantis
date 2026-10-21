@@ -1,9 +1,6 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.util.Counter;
 
 public class ThisManyUnitsByDefault {
     public static int numOfUnits(AUnitType type) {

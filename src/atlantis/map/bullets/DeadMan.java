@@ -1,6 +1,5 @@
 package atlantis.map.bullets;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.attacked_by.Bullets;
 import atlantis.util.cache.Cache;

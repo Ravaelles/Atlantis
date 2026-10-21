@@ -3,7 +3,6 @@ package atlantis.production.orders.production.queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
-import atlantis.util.AConsole;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;

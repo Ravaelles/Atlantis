@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
 import atlantis.map.AMap;
-import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import atlantis.util.WriteJsonToFile;
 

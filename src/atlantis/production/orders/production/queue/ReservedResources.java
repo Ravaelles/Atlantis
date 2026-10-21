@@ -1,7 +1,6 @@
 package atlantis.production.orders.production.queue;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.util.AConsole;

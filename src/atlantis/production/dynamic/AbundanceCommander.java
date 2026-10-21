@@ -7,7 +7,7 @@ public class AbundanceCommander extends Commander {
     @Override
     public boolean applies() {
         if (A.everyFrameExceptNthFrame(17)) return false;
-        
+
         return true;
     }
 }

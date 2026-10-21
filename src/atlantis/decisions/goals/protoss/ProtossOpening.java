@@ -1,7 +1,6 @@
 package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.Goal;
-import atlantis.decisions.board.GoalBoard;
 
 import java.util.ArrayList;
 import java.util.List;

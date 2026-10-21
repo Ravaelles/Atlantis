@@ -19,11 +19,8 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
-import atlantis.util.AConsole;
-import atlantis.util.AMath;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceGateway {
@@ -90,7 +87,7 @@ public class ProduceGateway {
         }
 
         if (freeGateways <= 1 && existingGateways <= 4 && A.hasMinerals(150)) return produceGateway() && log("150");
-        if (freeGateways == 0 && existingGateways <= 2 && Army.strength() <= 130 && A.hasMinerals(230)) return produceGateway();;
+        if (freeGateways == 0 && existingGateways <= 2 && Army.strength() <= 130 && A.hasMinerals(230)) return produceGateway();
 
         if (ConstructionRequests.notFinished().size() >= (A.hasMinerals(550) ? 2 : 1) && !A.hasMinerals(600)) return false;
 

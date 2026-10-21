@@ -1,6 +1,5 @@
 package atlantis.config.launcher;
 
-import atlantis.config.env.Env;
 
 /**
  * Window geometry for the Wine virtual desktop that hosts StarCraft.

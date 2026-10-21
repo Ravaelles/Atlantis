@@ -1,9 +1,6 @@
 package atlantis.production.constructions.position.protoss;
 
 import atlantis.game.A;
-import atlantis.game.ARandom;
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.Bases;

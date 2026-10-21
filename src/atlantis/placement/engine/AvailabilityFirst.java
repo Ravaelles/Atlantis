@@ -1,7 +1,6 @@
 package atlantis.placement.engine;
 
 import atlantis.placement.core.BuildLocation;
-import atlantis.placement.core.BuildLocationCatalogue;
 
 /**
  * Shared first key of every location ranking: a tile usable now beats one

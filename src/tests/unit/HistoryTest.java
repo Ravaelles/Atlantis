@@ -1,7 +1,5 @@
 package tests.unit;
 
-import atlantis.map.position.APosition;
-import atlantis.map.position.Positions;
 import atlantis.production.orders.production.queue.add.History;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

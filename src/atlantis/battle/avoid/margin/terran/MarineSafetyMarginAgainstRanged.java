@@ -1,9 +1,7 @@
 package atlantis.battle.avoid.margin.terran;
 
 import atlantis.battle.avoid.margin.SafetyMarginAgainstRanged;
-import atlantis.battle.avoid.margin.protoss.KeepDragoonBattleLineVsRanged;
 import atlantis.units.AUnit;
-import atlantis.units.range.OurDragoonRange;
 
 public class MarineSafetyMarginAgainstRanged extends SafetyMarginAgainstRanged {
     public MarineSafetyMarginAgainstRanged(AUnit defender) {

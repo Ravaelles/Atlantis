@@ -1,7 +1,6 @@
 package atlantis.map.bullets;
 
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.WeaponUtil;
 import bwapi.WeaponType;
 

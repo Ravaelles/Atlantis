@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.terran.abundance;
 
-import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.AbundanceCommander;

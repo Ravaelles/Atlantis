@@ -1,11 +1,8 @@
 package atlantis.map.region;
 
-import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.select.Have;
-import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;

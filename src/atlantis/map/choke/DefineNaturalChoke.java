@@ -1,13 +1,9 @@
 package atlantis.map.choke;
 
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.region.ARegion;
-import atlantis.units.select.Select;
-import bwapi.Color;
 
-import java.util.List;
 
 public class DefineNaturalChoke {
     public static AChoke define() {

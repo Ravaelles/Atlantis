@@ -12,7 +12,6 @@
 
 package bwem;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.select.Select;
 import bwapi.*;

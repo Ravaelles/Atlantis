@@ -2,7 +2,6 @@ package atlantis.battle.detectors;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
 public class SpreadOutDetectors extends SpreadOutAirUnits {
     public SpreadOutDetectors(AUnit unit) {

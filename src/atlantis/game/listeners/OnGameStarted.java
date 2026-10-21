@@ -1,19 +1,14 @@
 package atlantis.game.listeners;
 
-import atlantis.battle.twins.ShotTwin;
 
-import atlantis.battle.twins.HitTwin;
 
 import atlantis.Atlantis;
-import atlantis.battle.cluster.Missions;
-import atlantis.battle.cluster.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.profiler.RealTime;
 import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.game.init.DetectInitialTechs;
@@ -27,7 +22,6 @@ import atlantis.game.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.information.generic.InitialMainPosition;
 import atlantis.map.scout.ScoutState;
-import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
@@ -35,7 +29,6 @@ import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import bwapi.Race;
 import main.Main;
-import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
 import atlantis.cherryvis.ACherryVis;
