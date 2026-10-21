@@ -1,7 +1,6 @@
 package atlantis.battle.strategy;
 
 import atlantis.map.choke.AChoke;
-import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -27,6 +26,9 @@ public final class SquadScout {
         if (Count.bases() == 0) return false;
         if (!ChokeStandoff.applies(unit, anchor)) return false;
         if (BattleSetup.combatants() < 3) return false;
+        // No contact: baiting mid-fight splits the line that is already
+        // trading. The bait goes out only while nobody shoots back.
+        if (!unit.enemiesNear().isEmpty()) return false;
         AChoke choke = BattleSetup.chokeNear(unit);
         if (choke == null || choke.center() == null) return false;
         if (BattleSetup.enemiesNear(choke.center(), ChokeStandoff.CONTEST_TILES) == 0) return false;
