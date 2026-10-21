@@ -2801,7 +2801,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int enemiesNearInRadius(double maxDist) {
-        return enemiesNear().inRadius(maxDist, this).count();
+        return AUnitNearCounts.enemiesNear(this, maxDist);
 //        return ((Selection) cache.get(
 //            "enemiesNearInRadius:" + maxDist,
 //            5,
@@ -2813,7 +2813,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "meleeEnemiesNearCount",
             3,
-            () -> enemiesNear().melee().inRadius(2.7, this).size()
+            () -> AUnitNearCounts.meleeEnemiesNear(this)
         );
     }
 
@@ -2821,7 +2821,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "ourBuildingsNearCount:" + A.digit(radius),
             3,
-            () -> friendsNear().buildings().inRadius(radius, this).size()
+            () -> AUnitNearCounts.ourBuildingsNear(this, radius)
         );
     }
 
@@ -2829,7 +2829,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "friendsNearCount",
             3,
-            () -> friendsNear().size()
+            () -> AUnitNearCounts.friendsNear(this)
         );
     }
 
