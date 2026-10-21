@@ -145,6 +145,14 @@ write_env "$BOT_RUN_DIR/ENV"
 mkdir -p "$BOT_ROOT/AI"
 write_env "$BOT_ROOT/ENV"
 write_env "$BOT_ROOT/AI/ENV"
+# Batch/tuner extra lines (e.g. PARAM_TWEAKER=1 plus KEY=VALUE overrides)
+# ride the batch script's OPENBW_EXTRA_ENV, newline-separated. Empty by
+# default, so plain runs are unaffected and the shared ENV shape is unchanged.
+if [ -n "${OPENBW_EXTRA_ENV:-}" ]; then
+  for f in "$BOT_RUN_DIR/ENV" "$BOT_ROOT/ENV" "$BOT_ROOT/AI/ENV"; do
+    printf '%s\n' "$OPENBW_EXTRA_ENV" >> "$f"
+  done
+fi
 if [ ! -e "$BOT_ROOT/AI/build_orders" ]; then
   ln -s "$BWAPI_DATA_ROOT/AI/build_orders" "$BOT_ROOT/AI/build_orders"
 fi
