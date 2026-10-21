@@ -23,6 +23,14 @@ public final class EscapeTuning {
     private double staticRadiusTiles = 3.0;
     private double enemyRadiusTiles = 20.0;
 
+    /**
+     * Arc-retreat blend (NEXT #175): 0 = straight escape steps (today,
+     * bit-identical), 1 = bend fully toward the squad center. Deliberately
+     * NOT in the batch-tuner registry (like BLOCKED_RAY_TILES and
+     * RADII_TILES): no sim efficacy proof yet, so no tuner dimension.
+     */
+    private double arcBlend = 0.0;
+
     private EscapeTuning() {
     }
 
@@ -55,6 +63,7 @@ public final class EscapeTuning {
         enemyWeight = other.enemyWeight;
         staticRadiusTiles = other.staticRadiusTiles;
         enemyRadiusTiles = other.enemyRadiusTiles;
+        arcBlend = other.arcBlend;
     }
 
     public double getStaticWeight() {
@@ -79,6 +88,10 @@ public final class EscapeTuning {
 
     public double getEnemyRadiusTiles() {
         return enemyRadiusTiles;
+    }
+
+    public double getArcBlend() {
+        return arcBlend;
     }
 
     public EscapeTuning withStaticWeight(double value) {
@@ -114,6 +127,12 @@ public final class EscapeTuning {
     public EscapeTuning withEnemyRadiusTiles(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.enemyRadiusTiles = value;
+        return copy;
+    }
+
+    public EscapeTuning withArcBlend(double value) {
+        EscapeTuning copy = new EscapeTuning(this);
+        copy.arcBlend = value;
         return copy;
     }
 }

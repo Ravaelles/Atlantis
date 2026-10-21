@@ -185,6 +185,7 @@ public final class FightTarget {
             APosition dest = stepLen > 0
                 ? MoveAway.bestDestination(unit, threat, stepLen)
                 : null;
+            if (dest != null) dest = bendTowardSquad(unit, dest);
             if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
                 KiteTwin.steppedAside(unit, threat);
                 lastStepFrame.put(unit.id(), now);
@@ -194,6 +195,40 @@ public final class FightTarget {
             KiteTwin.nowhereToStep(unit, threat);
         }
         return false;
+    }
+
+    /**
+     * Arc retreat (NEXT #175): bend the straight kite step back toward the
+     * squad instead of running straight away. Default blend is zero, so this
+     * returns the step unchanged unless the sim or the tuner asks for the
+     * arc - bit-identical straight kiting until then. Far units (beyond the
+     * squad radius) and squadless units keep the straight step.
+     */
+    private static APosition bendTowardSquad(AUnit unit, APosition dest) {
+        double blend;
+        try {
+            blend = atlantis.battle.escape.EscapeTuning.current().getArcBlend();
+        } catch (Exception ignored) {
+            return dest;
+        }
+        if (!(blend > 0)) return dest;
+        try {
+            // Own squad first; Alpha roster as the fallback (units never
+            // get a back-ref assigned - Alpha.gather fills the roster only,
+            // so unit.squad() reads null in games and in the sim).
+            APosition center = null;
+            atlantis.battle.cluster.Squad squad = unit.squad();
+            if (squad != null && squad.isNotEmpty()) center = squad.median();
+            if (center == null) {
+                atlantis.battle.cluster.Squad alpha = atlantis.battle.cluster.Alpha.get();
+                if (alpha != null && alpha.isNotEmpty()) center = alpha.median();
+            }
+            if (center == null) return dest;
+            if (unit.distTo(center) > atlantis.battle.escape.EscapeArc.SQUAD_RADIUS_TILES) return dest;
+            return atlantis.battle.escape.EscapeArc.bend(unit.position(), dest, center, blend);
+        } catch (Exception ignored) {
+            return dest;
+        }
     }
 
     /**

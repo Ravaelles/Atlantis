@@ -1455,6 +1455,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  first (arc policy vs straight policy, N games: win rate, time-to-win,
  army-split distance), then live. (#174 stays with the tuner slice
  series; this takes the next free number.)
+ 2026-10-22 sim-first slice LANDED (no behavior change, default blend 0):
+ `EscapeArc` pure geometry (blend rotates the away-vector toward the
+ squad, length kept) + `EscapeTuning.arcBlend` (deliberately untuned,
+ no registry row until efficacy proves) wired default-off into the
+ margin-kite branch (Alpha roster fallback: units carry no back-ref,
+ `unit.squad()` reads null live and in sim). Sim A/B 3v3 dragoons vs
+ zealots, 400 ticks each: peak split 4.21 -> 3.10 tiles, deaths equal
+ (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
+ (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
+ Live proof + tuner registration ride the owner-run game.
 - **#176** Death-log issuer attribution (owner 2026-10-21/22, HIGH priority):
  combat death logs show WHAT but never WHO. Live datum (1Drag Zealot#135):
  rows of `Attack_Unit/a:ATTACK_UNIT/null` with frame numbers, no hint
