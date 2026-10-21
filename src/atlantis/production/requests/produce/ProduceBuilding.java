@@ -280,7 +280,7 @@ public class ProduceBuilding {
             // A PREPARING construction already holds a picked site: adopt it
             // (or keep waiting for a free builder) instead of searching anew.
             if (order.construction() != null
-                && order.construction().status() == ConstructionOrderStatus.PREPARING) {
+                && order.construction().status().isWaiting()) {
                 return adoptPreparedSite(order);
             }
 

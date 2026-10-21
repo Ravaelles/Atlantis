@@ -150,7 +150,7 @@ public class ConstructionRequests {
     public static int countPreparingOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.PREPARING
+            if (construction.status().isWaiting()
                 && construction.buildingType().equals(type)
                 && construction.positionToBuildCenter() != null
                 && position.distTo(construction.positionToBuildCenter()) <= radius) {

@@ -895,7 +895,7 @@ public class AAdvancedPainter extends APainter {
             // lists it, but the owner watches tiles (NEXT #150: Pylon
             // PREPARING 33 s with no map object at all).
             Color tileColor = color;
-            if (order.status() == ConstructionOrderStatus.PREPARING) {
+            if (order.status().isWaiting()) {
                 tileColor = Color.Orange;
             }
             else if (order.status() != ConstructionOrderStatus.NOT_STARTED) {
