@@ -32,6 +32,17 @@ public class HighGroundTest {
     }
 
     @Test
+    public void steppedWideBeatsNarrowFlat() {
+        // The entry's headline case (NEXT #171): one step of height pays
+        // for four extra tiles of funnel (10 - 8 = 2 vs 0 - 2 = -2).
+        double steppedWide = HighGround.defensiveValue(1, 0, 8);
+        double narrowFlat = HighGround.defensiveValue(0, 0, 2);
+
+        assertTrue(steppedWide > narrowFlat,
+            "a step is worth the wider mouth: " + steppedWide + " vs " + narrowFlat);
+    }
+
+    @Test
     public void symmetricGroundScoresFunnelOnly() {
         assertEquals(-6.0, HighGround.defensiveValue(1, 1, 6), 0.001);
     }
