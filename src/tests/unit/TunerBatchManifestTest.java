@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -51,6 +53,47 @@ public class TunerBatchManifestTest {
         assertTrue(text.contains("game-1|WIN|8|20|"), text);
         assertTrue(text.contains("game-2|LOSS|30|45|"), text);
         assertEquals(Arrays.asList("game-1", "game-2"), TunerBatchManifest.gameDirs(text));
+    }
+
+    @Test
+    public void renderedRowsParseBack() {
+        String text = TunerBatchManifest.render("1Drag_v_1Zeal.scm", "abc123",
+            Arrays.asList(
+                game("game-1", true, 8, 20, "step", 2.5, "margin", 1.0),
+                game("game-2", false, 30, 45, "step", 3.0, "margin", 1.0)));
+
+        java.util.List<TunerBatchManifest.Game> games = TunerBatchManifest.parseGames(text);
+        assertEquals(2, games.size());
+        assertEquals("game-1", games.get(0).dir);
+        assertTrue(games.get(0).row.win());
+        assertEquals(8, games.get(0).row.hitsTaken());
+        assertEquals(20, games.get(0).row.seconds());
+        assertEquals(2.5, games.get(0).vector.get("step"), 0.0001);
+        assertEquals("game-2", games.get(1).dir);
+        assertTrue(!games.get(1).row.win());
+    }
+
+    @Test
+    public void malformedRowsAreSkipped() {
+        String text = "map=m\njar=j\ngames=3\n"
+            + "game-1|WIN|8|20|abc|step=2.5\n"
+            + "not a row\n"
+            + "game-2|DRAW|8|20|abc|step=2.5\n"
+            + "game-3|WIN|NaN|20|abc|step=\n";
+
+        java.util.List<TunerBatchManifest.Game> games = TunerBatchManifest.parseGames(text);
+        assertEquals(1, games.size(), "only the clean row survives");
+        assertEquals("game-1", games.get(0).dir);
+    }
+
+    @Test
+    public void parseMapReadsHeader() {
+        String text = TunerBatchManifest.render("1Drag_v_1Zeal.scm", "abc123",
+            Arrays.asList(game("game-1", true, 8, 20, "step", 2.5, "margin", 1.0)));
+
+        assertEquals("1Drag_v_1Zeal.scm", TunerBatchManifest.parseMap(text));
+        assertNull(TunerBatchManifest.parseMap("garbage without header"));
+        assertNull(TunerBatchManifest.parseMap(null));
     }
 
     @Test

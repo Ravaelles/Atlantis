@@ -1011,7 +1011,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   verdict, hits, seconds, param digest + full vector; invalid games stay
   in batch.log), proven by a 1-game batch (WIN, manifest validated:
   structure, digest recomputation, batch.csv agreement). The overnight
-  N-game sweep stays owner-called.
+  N-game sweep stays owner-called. Step 6 (gradient loop) LANDED
+  2026-10-21: scalar fitness TIMES_HIT x GAME_minutes (lower wins,
+  WIN always outranks LOSS), abstract TuningScenario + concrete
+  DuelHitsMinutesScenario (map, replicates, full 26-param bounds as
+  the single source of truth), TunerGradient (least-squares slopes,
+  span-fraction descent, frozen-respecting jitter), TunerProposer +
+  TunerDriver (halloffame + manifest in, KEY=VALUE fragment out) and
+  the run-wine-tune.sh outer loop (batch, propose, halve step/radius
+  when the best stops improving). Proven live: 2 rounds x 2 duels,
+  best fitness 4.33 -> 2.67 (13 -> 8 hits), ints render integral so
+  the factory never silently randomizes.
 - **#161** Fast behavior sim for micro/formation (owner 2026-10-20:
   restore the *capability* lost with StarEngine, not necessarily the
   code verbatim). Need: fully controlled fights (counts, map,

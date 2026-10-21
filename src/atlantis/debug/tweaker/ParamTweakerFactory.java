@@ -197,6 +197,64 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker.initParamValues();
     }
 
+    /**
+     * The single source of truth for tuner param bounds (NEXT #160, step 6):
+     * the same [min, max] the registration lambdas above randomize in
+     * (values already divided - these are game units, not raw ints).
+     * The gradient proposer and the batch loop read this table instead of
+     * re-spelling ranges; adding a param here without registering it above
+     * (or vice versa) is a bug, pinned by the registry test.
+     */
+    public static java.util.Map<String, double[]> bounds() {
+        java.util.LinkedHashMap<String, double[]> bounds = new java.util.LinkedHashMap<>();
+        bounds.put("SafetyMeleeInfantryBaseNoMedic", new double[] { 2.2, 2.5 });
+        bounds.put("SafetyMeleeInfantryWoundNoMedic", new double[] { 70, 85 });
+        bounds.put("KiteEnemyTiles", new double[] { 4.0, 6.0 });
+        bounds.put("KiteGlueTiles", new double[] { 0.3, 0.8 });
+        bounds.put("KiteStepTiles", new double[] { 1.5, 3.0 });
+        bounds.put("KiteHuntedTiles", new double[] { 0.0, 1.0 });
+        bounds.put("KiteFacedTiles", new double[] { 0.0, 1.0 });
+        bounds.put("KiteMarginBaseTiles", new double[] { 0.5, 1.5 });
+        bounds.put("KiteMarginDyingTiles", new double[] { 3.0, 5.0 });
+        bounds.put("KiteMarginPerHitTiles", new double[] { 0.15, 0.35 });
+        bounds.put("KiteZealotPassDamage", new double[] { 14.0, 18.0 });
+        bounds.put("KiteStandoffInsetTiles", new double[] { 0.0, 1.0 });
+        bounds.put("KiteGlideDeadbandTiles", new double[] { 0.2, 0.8 });
+        bounds.put("KiteRideFrames", new double[] { 20, 40 });
+        bounds.put("KiteWoundedHitsLeft", new double[] { 4.0, 8.0 });
+        bounds.put("KiteWoundedEdgeInsetTiles", new double[] { 0.2, 0.8 });
+        bounds.put("KiteStickyChaseTiles", new double[] { 0.5, 1.5 });
+        bounds.put("DragoonLowHp", new double[] { 30, 60 });
+        bounds.put("DragoonLowHpHoldTiles", new double[] { 2.0, 4.0 });
+        bounds.put("DragoonLowHpFireCooldown", new double[] { 3, 8 });
+        bounds.put("DragoonSurroundedMeleeCount", new double[] { 2, 4 });
+        bounds.put("DragoonPinchHp", new double[] { 60, 100 });
+        bounds.put("DragoonPinchMeleeCount", new double[] { 1, 3 });
+        bounds.put("DragoonPinchMeleeTiles", new double[] { 1.5, 2.5 });
+        bounds.put("DragoonSurroundedStandCooldown", new double[] { 4, 8 });
+        bounds.put("DragoonSurroundedStandDistTiles", new double[] { 2.0, 4.0 });
+        return bounds;
+    }
+
+    /**
+     * Params rendered without decimals in env/tweaker rows (the factory
+     * parses them with {@code Integer.parseInt}, which rejects "49.0" and
+     * silently falls back to random - so the proposer must render integral
+     * values for exactly these names).
+     */
+    public static java.util.Set<String> integerParams() {
+        java.util.Set<String> ints = new java.util.HashSet<>();
+        ints.add("SafetyMeleeInfantryWoundNoMedic");
+        ints.add("KiteRideFrames");
+        ints.add("DragoonLowHp");
+        ints.add("DragoonLowHpFireCooldown");
+        ints.add("DragoonSurroundedMeleeCount");
+        ints.add("DragoonPinchHp");
+        ints.add("DragoonPinchMeleeCount");
+        ints.add("DragoonSurroundedStandCooldown");
+        return ints;
+    }
+
     private static void applyOrRandomize(String name, int min, int max, double div, java.util.function.DoubleConsumer setter) {
         String raw = atlantis.config.env.Env.rawEnv(name);
         double value;

@@ -37,6 +37,65 @@ public final class TunerBatchManifest {
         }
     }
 
+    /**
+     * Parses back the game rows of a manifest written by {@link #render}:
+     * {@code dir|WIN|hits|seconds|digest|k=v,...} lines; header lines and
+     * malformed rows are skipped, never ranked. The digest is an integrity
+     * hint for humans, not a gate - a hand-tweaked vector still loads, so
+     * the loop never stalls on a cosmetic field.
+     */
+    public static java.util.List<Game> parseGames(String manifest) {
+        java.util.List<Game> games = new java.util.ArrayList<>();
+        if (manifest == null) return games;
+        for (String line : manifest.split("\n")) {
+            if (line.isEmpty() || line.indexOf('|') < 0) continue;
+            String[] cols = line.split("\\|", -1);
+            if (cols.length != 6) continue;
+            String dir = cols[0].trim();
+            boolean win;
+            if (cols[1].trim().equals("WIN")) win = true;
+            else if (cols[1].trim().equals("LOSS")) win = false;
+            else continue;
+            int hits;
+            int seconds;
+            try {
+                hits = Integer.parseInt(cols[2].trim());
+                seconds = Integer.parseInt(cols[3].trim());
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            java.util.LinkedHashMap<String, Double> vector = new java.util.LinkedHashMap<>();
+            boolean bad = cols[5].trim().isEmpty();
+            if (!bad) {
+                for (String pair : cols[5].split(",")) {
+                    int eq = pair.indexOf('=');
+                    if (eq < 0) {
+                        bad = true;
+                        break;
+                    }
+                    try {
+                        vector.put(pair.substring(0, eq), Double.parseDouble(pair.substring(eq + 1)));
+                    } catch (NumberFormatException e) {
+                        bad = true;
+                        break;
+                    }
+                }
+            }
+            if (bad || vector.isEmpty()) continue;
+            games.add(new Game(dir, new TunerObjective.Row(dir, win, hits, seconds), vector));
+        }
+        return games;
+    }
+
+    /** The played map from the manifest header, or null when absent. */
+    public static String parseMap(String manifest) {
+        if (manifest == null) return null;
+        for (String line : manifest.split("\n")) {
+            if (line.startsWith("map=") && line.length() > 4) return line.substring(4).trim();
+        }
+        return null;
+    }
+
     /** Deterministic digest of a param vector (sorted keys, full precision). */
     public static String digest(Map<String, Double> vector) {
         try {
