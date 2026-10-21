@@ -1084,7 +1084,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   T5a pins cover-over-nearer-ling, T5b rows COVER live, T4b rows
   MAKE_WAY live, T2b pins the wipe branch deterministically;
   suite 1018/0 fast, strict arch 5/7 unchanged, game jar builds
-  clean). Live UMS proof waits on the ticking match (#94).
+  clean). Live UMS proof waits on the ticking match (#94). 2026-10-21: COVER proved live (LingsUpg, 50 rows, two dragoons covering escaper vs pursuer at frame 105); MAKE_WAY zero rows AND zero opportunities across three fights (M&M 2:31, TauCross 11:10, LingsUpg 3:22 - trace analysis: no hurt-pressured dragoon ever had another within 1.5 tiles), so the gate correctly refuses everywhere measured. Remainder: one live MAKE_WAY row, opportunistic watch. 2026-10-21: M&M ticks but cannot trigger (marines are not dragoons, so isWithdrawing never holds); TauCross macro 11:10 zero rows with mechanism - cover veto correct (never hurt-pressured + free-healthy together in 35 trace frames), escaper&3+ co-hold zero times (line wipes before it withdraws). (Archive said LingsUpg: the map arg missed the .scm extension so bwapi.ini kept TauCross - verify the hosted map from the ### Map line, never the archive name.) Proof needs dragoon + melee + surviving-line vehicle.
   live UMS fight, no blind patch.
 - **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
   logic/changes, other model gets independent file-scoped tasks).
@@ -1136,13 +1136,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   7th_rav proof, per-gate proofs); (f) commit permission for
   `docs/` + other-model scripts (until then: review only).
   Optional `IDEAS.md` only if the ideas list outgrows NEXT.
-- **#169** Kite off while cooling vs melee (owner 2026-10-20, Wine 1v1:
-  WIN but 10 hits taken, target <2): while the weapon cools, step off
-  every melee threat to `range - 0.4` tiles, unless the threat shows its
-  back (flees - then chase, never yield ground to a runner). Only when
-  no shot is lost by stepping (cooldown would idle anyway). First
-  suspected gap: desired distance vs the ride/step cadence - measure in
-  the sim (1v1 dragoon vs zealot, hits taken), then Wine proof.
 - **#170** Choke-point battle doctrine + SquadScout (owner 2026-10-20,
   highest priority): never push a narrow choke into a nearby enemy
   without crushing superiority; on defense wait as long as possible;
