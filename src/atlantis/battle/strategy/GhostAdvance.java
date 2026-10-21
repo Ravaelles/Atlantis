@@ -64,6 +64,15 @@ public final class GhostAdvance {
     /** No position change this long while creeping: give up, rally elsewhere. */
     public static final int STUCK_FRAMES = 100;
 
+    /**
+     * Personal contact older than this is history, not a destination (10 game
+     * seconds, same brake as the army-level contact): the unit falls through
+     * to fogged memory, then to unexplored ground, instead of ping-ponging
+     * one stale tile all game. HuntLastContact keeps its own policy (baseless
+     * re-acquire) - this gate owns the UMS creep only.
+     */
+    public static final int STALE_CONTACT_FRAMES = 240;
+
     private static final Map<Integer, Integer> firstGhostFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastCreepPos = new HashMap<>();
     private static final Map<Integer, Integer> lastCreepFrame = new HashMap<>();
@@ -231,6 +240,25 @@ public final class GhostAdvance {
         }
     }
 
+    /**
+     * This unit's own contact, only while fresh: a stale tile belongs to
+     * fogged memory or exploration, never to the creep. Null-safe by
+     * construction (no frame recorded means no contact).
+     */
+    private static APosition freshContactFor(AUnit unit) {
+        if (unit == null) return null;
+        APosition last = atlantis.battle.FightTarget.lastContact(unit);
+        if (last == null) return null;
+        try {
+            Integer frame = atlantis.battle.FightTarget.lastContactFrame(unit);
+            if (frame == null) return null;
+            if (atlantis.game.A.now() - frame > STALE_CONTACT_FRAMES) return null;
+        } catch (Exception ignored) {
+            return null;
+        }
+        return last;
+    }
+
     /** Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait. */
     public static boolean isVanguard(AUnit unit) {
         if (unit == null) return false;
@@ -251,7 +279,7 @@ public final class GhostAdvance {
      * remembers anything - then the formation fallback owns the unit.
      */
     public static APosition ghostPointFor(AUnit unit) {
-        APosition last = atlantis.battle.FightTarget.lastContact(unit);
+        APosition last = freshContactFor(unit);
         if (last != null) return last;
         try {
             Selection seen = EnemyUnits.discovered();

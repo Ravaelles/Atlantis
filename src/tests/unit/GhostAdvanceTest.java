@@ -335,6 +335,64 @@ public class GhostAdvanceTest extends WorldStubForTests {
     }
 
     @Test
+    public void freshPersonalContactBeatsFoggedMemory() {
+        // Priority order, fresh side: this unit's own contact from last
+        // frame beats the fogged address of the same enemy elsewhere.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 29);
+
+        world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                return;
+            }
+            if (now != 2) return;
+
+            APosition contact = atlantis.battle.FightTarget.lastContact(dragoon);
+            assertNotNull(contact, "contact snapshot exists");
+            zealot.isVisibleUnitOnMap = false;
+            zealot.position = APosition.createFromPixels(70 * 32, 29 * 32);
+
+            assertEquals(contact, GhostAdvance.ghostPointFor(dragoon),
+                "fresh personal contact wins over fogged memory: " + contact);
+        });
+    }
+
+    @Test
+    public void stalePersonalContactFallsThroughToFogged() {
+        // NEXT #177, staleness: a contact older than STALE_CONTACT_FRAMES
+        // is history - the creep falls through to fogged memory instead of
+        // ping-ponging one stale tile all game. Same setup as above, only
+        // the clock moves past the brake.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 29);
+
+        world(300, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                return;
+            }
+            if (now == 2) {
+                zealot.isVisibleUnitOnMap = false;
+                zealot.position = APosition.createFromPixels(70 * 32, 29 * 32);
+                return;
+            }
+            if (now != 300) return;
+
+            APosition stale = atlantis.battle.FightTarget.lastContact(dragoon);
+            assertNotNull(stale, "the snapshot itself never expires, only its use");
+            assertEquals(zealot.position(), GhostAdvance.ghostPointFor(dragoon),
+                "stale contact drops, fogged memory owns the march: " + stale);
+        });
+    }
+
+    @Test
     public void heldChokeStillBeatsTheGhost() {
         // Same contested-choke shape as ChokeStandoffTest (dragoon 11 tiles
         // south of choke (28,18), zealot inside the 12-tile contest ring):

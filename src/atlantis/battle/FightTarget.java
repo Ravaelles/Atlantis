@@ -36,6 +36,7 @@ public final class FightTarget {
     private static final Map<Integer, APosition> lastMovedPos = new HashMap<>();
     private static final Map<Integer, Integer> lastRepositionFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastContactPos = new HashMap<>();
+    private static final Map<Integer, Integer> lastContactFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
@@ -48,12 +49,18 @@ public final class FightTarget {
         return lastContactPos.get(unit.id());
     }
 
+    /** Frame of the last visible contact snapshot, or null when never fought. */
+    public static Integer lastContactFrame(AUnit unit) {
+        return lastContactFrame.get(unit.id());
+    }
+
     public static void clearForTests() {
         lastStepFrame.clear();
         lastMovedFrame.clear();
         lastMovedPos.clear();
         lastRepositionFrame.clear();
         lastContactPos.clear();
+        lastContactFrame.clear();
         lastGhostFrame.clear();
     }
 
@@ -64,7 +71,10 @@ public final class FightTarget {
         // this - the squad remembered the target, its position did not).
         // Only visible contacts refresh it: an invisible "fight" must not
         // drag the last-known point onto a ghost.
-        if (target.isVisibleUnitOnMap() && target.position() != null) lastContactPos.put(unit.id(), target.position());
+        if (target.isVisibleUnitOnMap() && target.position() != null) {
+            lastContactPos.put(unit.id(), target.position());
+            lastContactFrame.put(unit.id(), A.now());
+        }
         // (moved to BattleCommander.act: kiting units never reach fight(),
         // so the army contact must be recorded at acquisition, not here)
         if (!target.isVisibleUnitOnMap()) {
