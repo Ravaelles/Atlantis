@@ -9,6 +9,7 @@ import atlantis.battle.cluster.LeaveBreachedBase;
 import atlantis.battle.retreating.RetreatFromLostFight;
 import atlantis.battle.strategy.BattleStrategies;
 import atlantis.battle.strategy.BattleStrategy;
+import atlantis.battle.strategy.GhostAdvance;
 import atlantis.battle.strategy.HuntLastContact;
 import atlantis.battle.targeting.AcquireTarget;
 import atlantis.battle.targeting.StickyTarget;
@@ -106,7 +107,7 @@ public class BattleCommander extends Commander {
             return;
         }
         if (HuntLastContact.hunt(unit)) return;
-        regroup(unit, anchor, leader, strategy);
+        regroup(unit, tactic, anchor, leader, strategy);
     }
 
     /** Throttled CLUSTER twin: posture, tactic, size, anchor. JSON-only, stderr. */
@@ -125,16 +126,26 @@ public class BattleCommander extends Commander {
     /**
      * Nothing to fight: the approach owns its regroup point (collapse joins
      * the bait at the funnel mouth, bait pulls, the line holds the standoff),
-     * answered on the enum so no call site switches on it. Without a strategy
-     * point the formation fallback owns the unit: take a formation slot when
+     * then the ghost advance creeps after a remembered contact instead of
+     * standing (the hunt owns the far baseless case; inside it the gather
+     * rule used to march the unit back home every frame), answered on the
+     * enum so no call site switches on it. Without a strategy point or a
+     * ghost the formation fallback owns the unit: take a formation slot when
      * the cluster forms up (3+ combat units, known pivot), else bunch on the
      * leader so the cluster advances (or retreats) as one instead of a line
      * (owner 2026-10-19: march and retreat both strung out). The leader sets
      * the pace; stragglers catch up instead of everyone racing the anchor.
      */
-    private static void regroup(AUnit unit, HasPosition anchor, AUnit leader, BattleStrategy strategy) {
+    private static void regroup(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
+    ) {
         APosition regroup = strategy.regroupPointFor(unit);
         if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag())) {
+            FightTarget.markRepositioned(unit);
+            return;
+        }
+        APosition ghost = GhostAdvance.advancePointFor(unit, tactic);
+        if (ghost != null && unit.move(ghost, Actions.MOVE_ENGAGE, GhostAdvance.advanceTagFor(unit))) {
             FightTarget.markRepositioned(unit);
             return;
         }
