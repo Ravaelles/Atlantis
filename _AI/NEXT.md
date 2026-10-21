@@ -350,10 +350,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   averageShields, +1 test): cross-context readers stay put until their dependencies are
   fixed - moving them re-spells frozen violations instead of removing
   them (measured, see NOTES.md arch mechanics; slices verified:
-  same 2 pre-existing failures, store diff empty). Remainder is
-  container views (`units()`, `list()`, `size/count/isEmpty`),
-  thin dispatchers and multi-statement logic needing designed splits,
-  not verbatim moves.
+  same 2 pre-existing failures, store diff empty). 2026-10-21 ninth
+  slice (`inShootRangeOf` x2 + `combatBuildingsAnti` dispatcher to
+  `SelectionMembership`, dispatch pinned first): the remainder text
+  above predates slices 6-8 (views, mutations, aggregates already
+  moved) - the rest is thin dispatchers and multi-statement logic
+  needing designed splits, not verbatim moves.
 - **#11** Split `AUnit` (577 public methods, measured 2026-10-17): the
   order-emission surface needs no verbatim slice - `AUnit` holds zero
   direct engine-order calls (all 17 `u().` uses are pure reads; emission
@@ -367,7 +369,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (`AUnitHealth`: isFullyHealthy, hpPercent x2, woundHp,
   woundPercent, woundPercentMin/Max, isWounded, `AUnitHealthTest`
   3/3) moved verbatim with one-line delegates, zero call-site
-  changes - the Selection-slice recipe.
+  changes - the Selection-slice recipe. Second slice 2026-10-21:
+  near-counters (`AUnitNearCounts`). Third slice the same day:
+  hp thresholds into `AUnitHealth`, shield family into new
+  `AUnitShield` seam (NaN contract travels with the code); the pin
+  tests caught a latent bug on the way (`shieldWoundPercent`
+  multiplied by 100/maxShields again - dead code, no callers, fixed
+  in the seam with the reason recorded).
 
 ## Stage I — physical migration
 
@@ -678,6 +686,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   removal/mint paths for the untwinned exit, no blind patch).
   2026-10-21 Wine macro: Pylon#1 warped 0:48@8 (BO expects supply
   8) - pipeline healthy, no new #84 instance.
+  2026-10-21 twin gap closed in code (stub-pinned
+  `WarpStartedTwinTest` 2/2, suite + checkstyle green): one STARTED
+  row per construction via `ProduceBuilding.noteStarted` - adopt names
+  the site as before, the warp observer names the warp tile when
+  adoption never rowed it (the cid=96 class). Live proof rides the
+  next legacy-minted warp game.
+  2026-10-21 mint-answer verified, no twin added per the decision:
+  retained TauCross macros show siteless CANCELs carrying cid+oid+
+  reason (e.g. cid=102/oid=82 "Null position for Assimilator",
+  tile "-") - the CANCEL reason reads as designed.
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -875,6 +893,23 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Who plays the enemy on each platform (OpenBW: nobody - engine default
   AI only; Wine: the map's scripts): `_AI/CHALLENGES/UmsDuelOpponents.md`.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
+  2026-10-21 OpenBW speed + verdict slice (this model): the engine
+  ticks ~600 fps on current builds (12.7k frames inside the 20 s bot
+  cap - the 24 fps reading in the other model's research doc dates
+  from the pre-pump stall era; the hasSynced gating it verified in
+  code still holds, it is just no longer the bottleneck). Two fixes
+  on our side: (a) halt() instead of exit() in the OpenBW exit path
+  (the JVM lingered to SIGKILL, burning the cap + 5 s every game -
+  now 20 s/124 instead of 25 s/137); (b) WIN/LOSS/DRAW verdicts in
+  `build-openbw.sh --game` (a blanket PASS hid undecided games -
+  DRAW = completed with zero losses, investigate engagement not
+  defeat; fixture-pinned 8/8, live DRAW proven 0/0/6 on 1Drag);
+  plus a `TIMEOUT_SECONDS` env knob (15 s smoke plays 175 game-sec).
+  Stronger evidence on the 1Drag slot problem the same day: the
+  enemy zealot deals damage at 0.5 tiles (HIT rows) while `enemy: `
+  stays empty all game - spawned and hostile, but never visible to
+  the client. Engine-side (other model's territory), filed here as
+  the shape to name, not to fix blind.
 
 ## Needs owner or upstream (blocked here)
 
@@ -1171,6 +1206,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   when the best stops improving). Proven live: 2 rounds x 2 duels,
   best fitness 4.33 -> 2.67 (13 -> 8 hits), ints render integral so
   the factory never silently randomizes.
+  2026-10-21 sim batch runner LANDED (NEXT #160-sim): `SimTunerBatch`
+  in-JVM duels with the wine-batch contract (tweaker.csv + batch.csv
+  + manifest.txt), `scripts/run-sim-batch.sh` wrapper, by-value
+  `apply()` for all 32 params, SimEngine wired (`--engine=sim` works),
+  batch->parse->driver loop proven in-test (SimTunerBatchTest 6/6)
+  plus a live 1-game run (WIN, digest + override honored).
 - **#161** Fast behavior sim for micro/formation (owner 2026-10-20:
   restore the *capability* lost with StarEngine, not necessarily the
   code verbatim). Need: fully controlled fights (counts, map,
@@ -1191,7 +1232,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   rides on it (#162). Since: T-duel (1v1 hits pin, #169), T-ghost
   (stale-target drop), T-collapse (4v1 funnel wipe, #170), T-run
   (probe outruns chaser via managers, #172), pinch A/B + gate,
-  make-way/cover rows, hunt/no-hunt - 19 tests.
+  make-way/cover rows, hunt/no-hunt - 19 tests, plus 2026-10-21:
+  T-creep (hunt 11->9 hands to creep 9->2, holds, never bunches back -
+  the GhostAdvance loop at tick level, fails with the call disabled)
+  and T-wall (ling raid through a walled gap dies on 2 scripted
+  cannons untouched - the #97 wall-HOLD geometry proof the FE loss
+  could not supply: the wall holds, the line died away from it).
   2026-10-20: LANDED the vehicle (`tests.unit.sim`: `SimWorld` tick
   driver + `SimArena` obstacles + `DragoonsVsZerglingsTest` 4/4:
   T0 engine-data pins, T1 surrounded flees+survives, T2 group
@@ -1310,6 +1356,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   corner scoring; enemy-20 avoidance; size-aware clearance; tuner
   wiring. First consumer: `DuelKite.yieldStep` (replaces
   `MoveAway.bestDestination`), second: `ARunningManager`.
+  2026-10-21 tuner wiring landed in code (no behavior change while
+  the tweaker is off): `EscapeTuning` record (6 weights/radii, same
+  recipe as CombatTuning, defaults equal the hand-tuned constants) +
+  registration and bounds (32 params, registry test counts it) +
+  `ParamTweakerFactory.apply` by-value write path. Slices #174-182
+  (probe, candidates, static scoring, corner + enemy-20, size-aware,
+  DuelKite wiring, pinch gate, second consumer, high-ground scorer)
+  are closed; what remains is live superiority proof (needs games)
+  plus tuner efficacy. Center-pull deliberately not added: the
+  corner rays measure edge risk directly at each destination, a
+  center prior would bias away from measured data.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
@@ -1458,7 +1515,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   WINE_DEBUG / WINE_DECISIONS triple + BUILDINGS.json collected
   (#96 file-outputs half verified; painter labels stay visual).
   Open question: SUPPLY_BLOCKED twin silent through the 90/90
-  blocks (twin gap?).
+  blocks (twin gap?). ANSWERED 2026-10-21 and fixed the same day:
+  the twin lived in the V2 snapshot only, so OFF games (144848: 286
+  near-90/90 rows, 162311: 269, both zero twin rows) never emitted it
+  while the V2 game in the same window filed 111 rows. Same rows now
+  from a shared `SupplyBlockedTwin` (V2 delegates, OFF games sample
+  through ProductionOrdersCommander; DRY_RUN/LIVE untouched),
+  stub-pinned `SupplyBlockedTwinTest` 2/2. Fires from the next OFF
+  game; the sample already distinguishes coming==0 (demand-side) from
+  named blockers.
 
 - Wine `TauCross` LONG FE (2026-10-20, 11.7 game-min, 9/42 loss,
   FE-forced + reverted right after): Forge 2:07, PhotonC sited at
