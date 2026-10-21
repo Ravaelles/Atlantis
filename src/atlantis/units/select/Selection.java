@@ -459,6 +459,10 @@ public class Selection extends BaseSelection {
         return SelectionViews.totalHits(this);
     }
 
+    public int totalKills() {
+        return SelectionViews.totalKills(this);
+    }
+
     public Selection inSquad(Squad squad)  {
         return SelectionMembership.inSquad(this, squad);
     }

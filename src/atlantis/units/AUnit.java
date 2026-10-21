@@ -4049,6 +4049,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return _totalHitCount;
     }
 
+    /**
+     * Engine kill count of this unit (how many kills it scored). Zero by
+     * construction for fakes (null handle); the duel-exit reads it live.
+     */
+    public int killCount() {
+        return u == null ? 0 : u.getKillCount();
+    }
+
     public void increaseHitCount() {
         _hitCount++;
         _totalHitCount++;

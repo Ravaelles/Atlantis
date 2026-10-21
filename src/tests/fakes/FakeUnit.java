@@ -648,6 +648,18 @@ public class FakeUnit extends AUnit implements Serializable {
         return this;
     }
 
+    public int killCount;
+
+    @Override
+    public int killCount() {
+        return killCount;
+    }
+
+    public FakeUnit setKillCount(int killCount) {
+        this.killCount = killCount;
+        return this;
+    }
+
     public FakeUnit setFakeTarget(FakeUnit target) {
         this.target = target;
         return this;

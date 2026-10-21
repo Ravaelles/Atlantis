@@ -154,6 +154,12 @@ final class SelectionViews {
             .reduce(0, Integer::sum);
     }
 
+    static int totalKills(Selection selection) {
+        return selection.data.stream()
+            .map(AUnit::killCount)
+            .reduce(0, Integer::sum);
+    }
+
     static int averageShields(Selection selection) {
         if (selection.data.isEmpty()) return 0;
 

@@ -9,6 +9,7 @@ import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
 import atlantis.game.state.BulletsCommander;
+import atlantis.information.decisions.ForceExitWhenDuelUndecidable;
 import atlantis.information.enemy.EnemyUnitsCommander;
 import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
@@ -70,6 +71,8 @@ public class AtlantisGameCommander extends Commander {
             PainterCommander::new,
 
             DebugCommander::new,
+
+            ForceExitWhenDuelUndecidable::new,
         };
     }
 }

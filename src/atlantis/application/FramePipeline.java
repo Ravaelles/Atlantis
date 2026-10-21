@@ -7,6 +7,7 @@ import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
 import atlantis.game.CameraCommander;
 import atlantis.game.state.BulletsCommander;
+import atlantis.information.decisions.ForceExitWhenDuelUndecidable;
 import atlantis.information.enemy.EnemyUnitsCommander;
 import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
@@ -66,6 +67,12 @@ public final class FramePipeline {
             PainterCommander.class,
 
             DebugCommander.class,
+
+            // Undecidable UMS duels (1Drag): exits early once the duel is
+            // provably over. Last so it observes the frame after everyone
+            // decided; its own gates (local + UMS + listed + hits + kills
+            // + grace) keep it shut everywhere else.
+            ForceExitWhenDuelUndecidable.class,
         };
     }
 }

@@ -39,7 +39,10 @@ public class FramePipelineTest {
         "CameraCommander",
         "MapSpecificCommander",
         "PainterCommander",
-        "DebugCommander"
+        "DebugCommander",
+        // 2026-10-21, reviewed: ForceExitWhenDuelUndecidable appended last
+        // (1Drag --game 25-31 s -> 14 s; gates keep it shut elsewhere).
+        "ForceExitWhenDuelUndecidable"
     );
 
     @Test

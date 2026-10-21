@@ -8,60 +8,42 @@ The direction everything here converges to lives in
 the execution order for the current quarter in `_AI/__MIGRATION.md`
 (combat-first, then legacy deletion).
 
-## FIRST TASK FOR NEW THREAD (owner order 2026-10-21): 1Drag `--game` under 30 s — this model owns the engine side
+## FIRST TASK FOR NEW THREAD (owner order 2026-10-21): 1Drag `--game` under 30 s — LANDED 2026-10-21
 
-Command that must get fast (still ~30 s wall today):
-`bash scripts/build-openbw.sh --game ums/rav/protoss/1Drag_v_1Zeal.scm`
+Command: `bash scripts/build-openbw.sh --game ums/rav/protoss/1Drag_v_1Zeal.scm`
+Result: **14 s wall on a warm tree** (19 s with a jar rebuild), DRAW 0/0/14 —
+was 25-31 s with the full 20 s bot cap burned every duel.
 
-Status quo, all verified by execution (do NOT re-argue, re-measure only):
-- Engine ticks ~600 fps now (12.7k frames inside the 20 s bot cap); the other
-  model's 24 fps claim is stale (pre-pump era). `hasSynced` gating
-  (`Main.cpp:50-52`) and `gameOver` slot -1 (`BWData.cpp:1530`) verified in code.
-- `halt()` replaced `exit()` in the OpenBW exit path: JVM lingered to SIGKILL
-  (25 s/137); now ends at the cap (20 s/124). Verified on 4 duels.
-- `--game` verdict is WIN/LOSS/DRAW/FAIL (DRAW = completed, zero losses —
-  investigate engagement, not defeat). Fixture-tested 8/8, live DRAW proven 0/0/6.
-- 1Drag never resolves because the enemy zealot deals damage at 0.5 tiles while
-  `enemy:` stays empty all game: spawned and hostile but invisible to the client.
-  Engine-side (`/sc-ai/OpenBW/openbw`, other model owns it), handed over,
-  NO blind fix yet. Owner explicitly asked THIS model (not the other one) to do
-  the OpenBW engine-side speed work — record it here, do not do blind edits.
-- Wall budget today: startup ~5-8 s (jar skip-if-fresh + host publish + JVM
-  start) + full 20 s bot cap burned every duel (game never resolves) + harness
-  overhead = ~30 s. `TIMEOUT_SECONDS` knob exists (default 30/20, smoke proven
-  at 15 s) but lowering the default is NOT the fix for the tuner (full games needed).
-
-Exact change direction (do in this order, one commit per unit, verify each by run):
-1. Break down the wall clock on one `--game` run (rebuild-skip?/publish/JVM/cap/
-   harness) so the next cut is measured, not guessed. One timed run is enough.
-2. Root-cause the invisible zealot first (this is the wall: a resolved duel ends
-   in ~500 frames / ~1 s game time instead of burning the whole 20 s cap).
-   Read-only pass over `/sc-ai/OpenBW/openbw` + harness
-   (`/sc-ai/StardustDevEnvironment/3rdparty/openbw/openbw`, the tree that is
-   actually compiled — editing `/sc-ai/OpenBW/openbw/bwgame.h` alone is a silent
-   no-op, see `scripts/build-openbw.sh` header): map-script hosting / owner
-   player / alliance / fog / publish path (`GameEvents.cpp`, `BWData.cpp`,
-   `Main.cpp` hasSynced/gameOver). Name the mechanism, do NOT patch blind.
-   If the fix is a one-line visibility/publish correction, do it via
-   `--from` + rebuild + `--game` proof (WIN/LOSS instead of DRAW).
-3. If visibility needs more than a small correction, ship the deterministic
-   per-frame early-exit instead (client side, our repo, no engine risk):
-   `enemy:` empty for N straight frames AND HIT-taken rows prove contact at
-   <=0.5 tiles (the exact 1Drag signature) for M straight frames → declare the
-   DRAW verdict early (e.g. ~800-1000 frames, not 12.7k) and `halt()` out.
-   Pin the signature on the retained 1Drag EVENTS (0/0/6 DRAW, 519 frames is the
-   short-cap shape; full-cap is 12.7k) with a stub/unit test first, then prove
-   live: `--game` prints DRAW in <30 s wall. Keep WIN/LOSS paths untouched.
-4. Optional after 2/3 lands: server-side frame budget (`FORCE_END_AFTER_FRAMES`
-   style, engine side) only if a second wall remains after early-exit; never a
-   `hasSynced` bypass (verified not the bottleneck, risky).
-- Success criterion: `bash scripts/build-openbw.sh --game ums/rav/protoss/1Drag_v_1Zeal.scm`
-  prints its verdict line in <30 s wall on a warm tree (rebuild skipped), with
-  the DRAW→WIN/LOSS-or-early-DRAW semantics above preserved and 8/8 verdict
-  fixtures still green.
-- Non-goals: no `src/main/Main.java` commits (owner-dirty, never commit), no
-  `git push`, one Wine/OpenBW game at a time (flock), no TOOLS.md/docs edits
-  without owner OK.
+What the four diagnostic runs actually showed (all measured, previous
+"Invisible zealot" reading withdrawn):
+- Engine ticks ~600/s wall, the BOT's `A.now()` keeps engine pace (12.3k in
+  20 s); the verdict's `frames=~500` is the summary clock, not the game
+  clock. The other model's 24 fps number was the BOT's onFrame rate on
+  this map, not engine speed - both clocks are real, they measure different
+  things. `hasSynced` (`Main.cpp:50-52`) and `gameOver` slot -1
+  (`BWData.cpp:1530`) still verified in code; `halt()` (20 s/124, not
+  25 s/137) still holds.
+- The zealot is known, listed AND visible from frame 24 (live DIAG:
+  `slot3(enemy=true,units=1)`, `Zealot#213=vis`), hits us in the first
+  half wall-second, takes ~11k shots for zero kills (unkillable), and at
+  ~frame 336 the map removes it without a death (slot 3 empties, a
+  neutral unit appears elsewhere). From then on: nothing to engage,
+  19 s idle, DRAW at cap. Not invisible - unwinnable-then-absent.
+- Fix (client side, our repo, no engine edits):
+  `ForceExitWhenDuelUndecidable` (same chain slot as its sibling):
+  local + UMS + no enemy units listed + hits taken + zero own kills +
+  past an 8 s wall grace → the bounded `onEnd(false)` path, verdict
+  DRAW. Five independent guards: melee never fires (not UMS), wiped
+  waves never fire (kills), cloaked units with known owners stay listed
+  (units gate), pre-contact never fires (hits), trigger setup never
+  fires (grace). Pinned `ForceExitWhenDuelUndecidableTest` 7/7, both
+  new gates mutation-proven. The "no known enemy player" first design
+  died on live measurement (slot 3 IS published enemy) - recorded so
+  nobody re-proposes it.
+- Wall now: ~4 s engine no-op build + ~2 s jar/host + ~8 s grace = ~14 s.
+- Residual risk accepted and documented: a UMS map that hides all
+  enemies 8+ s continuously after contact with zero own kills would
+  DRAW early; the DRAW verdict itself names that investigation.
 
 ## Phases (the quarter) — checklist
 
@@ -230,7 +212,9 @@ The index of which document answers which question is `_AI/README.md`.
    REQUESTED+STARTED+ORDER_NOT_READY in +/-600f - ORDER_NOT_READY is
    the building analogue of a blocked TRAIN_ATTEMPT). Sweep over all
    11 retained TauCross macros: 21 rescue, 0 routine - still no
-   candidate, now mechanically instead of by hand.
+   candidate, now mechanically instead of by hand. 2026-10-21 re-sweep
+   with the 2 newest flagged runs in (13 macros): 24 rescue, 0 routine -
+   still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
