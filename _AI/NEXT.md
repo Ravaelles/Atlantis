@@ -449,8 +449,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   -> setConstruction) BEFORE siting, while REQUESTED fires only
   post-addConstruction with a tile - so read the CANCEL reason for these.
   Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
-  should have refused the second pick; why it did not is the next
-  measured branch - no blind patch. FE scoping landed the same day
+  should have refused the second pick; ANSWERED 2026-10-21 (no patch):
+  the guard's world is unfinished-buildings-only by pinned design, so
+  the standing Gateway [114,18] is skipped and proximity-finish cancels
+  the grazer same-frame (disjoint worlds, same as #151's no-merge).
+  FE scoping landed the same day
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). Live overlap game still unplayed; the resite seam
