@@ -170,7 +170,12 @@ The index of which document answers which question is `_AI/README.md`.
    deletion (proof game after the cut still required). 7th datum 2026-10-21 Wine macro: BOARD_FED x2 (sustained-dragoon 5:18 with 29 DRAGOON_TRAINs in +/-600f, sustained-zealot 12:57 with 7 TRAIN_ATTEMPTs + 1 train in +/-1500f) - pumps present both times (attempting counts as present: a blocked pump is still rescue, not routine); still no candidate. 8th datum 2026-10-21 second Wine macro: BOARD_FED x1 (sustained-dragoon 6:05, 3 DRAGOON_TRAINs + 4 TRAIN_ATTEMPTs in +/-1500f - pumps present, rescue again). Deletions
    wait for routine feeder coverage, never batch rewrites;
    board-invisible production (Forge, cannons) is capability,
-   not duplication.
+   not duplication. 2026-10-21 tooling: `scripts/attribute-board-fed.py`
+   automates the verdict (army: TRAIN rows in +/-1500f; buildings:
+   REQUESTED+STARTED+ORDER_NOT_READY in +/-600f - ORDER_NOT_READY is
+   the building analogue of a blocked TRAIN_ATTEMPT). Sweep over all
+   11 retained TauCross macros: 21 rescue, 0 routine - still no
+   candidate, now mechanically instead of by hand.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
