@@ -170,8 +170,10 @@ find src -name "*.java" \
 # because "the game ran an old jar" cost real sessions: the code was changed, the
 # play used a previous build, and the bug being hunted was already fixed (owner's
 # report, 2026-10-08). A timestamp check only catches the files someone remembered
-# to list; a hash of the whole tree catches all of them.
-SOURCE_FINGERPRINT="$(while read -r f; do printf '%s ' "$f"; md5sum "$f" | cut -d' ' -f1; done < "$WORK/sources.txt" | md5sum | cut -d' ' -f1)"
+# to list; a hash of the whole tree catches all of them. Batched md5sum, not one
+# process per file (measured 2026-10-21: 1400 spawns cost 1.5 s per launch) -
+# same exact semantics, still content hashes, never timestamps.
+SOURCE_FINGERPRINT="$(xargs -r -a "$WORK/sources.txt" -d '\n' md5sum | md5sum | cut -d' ' -f1)"
 echo "[build-bot-jar] source fingerprint: $SOURCE_FINGERPRINT"
 
 # Skip the build when the existing jar already matches: javac over ~1400

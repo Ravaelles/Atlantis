@@ -102,13 +102,54 @@ for arg in "$@"; do
   esac
 done
 
+# Xvfb starts BEFORE the box lock on purpose: background children inherit
+# every open fd, including the lock - a persisting Xvfb started after flock
+# would hold the lock forever and refuse every later game (measured
+# 2026-10-21: REFUSED with the previous Xvfb as the sole holder). Started here
+# it never sees the lock fd. Two scripts racing the start is harmless (the
+# loser fails to bind :99 and exits; the stale-socket guard covers crashes).
+# Xvfb holds no game state, so it is never killed at teardown - the next
+# run reuses it instead of paying its boot again.
+XVFB_DISPLAY=":99"
+XVFB_PID=""
+if [ "${HIDDEN:-0}" = "1" ]; then
+  if [ -e /tmp/.X11-unix/X99 ] && ! pgrep -f "[X]vfb :99" >/dev/null; then
+    rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock
+  fi
+  if pgrep -f "[X]vfb :99" >/dev/null; then
+    say "  Hidden Wine desktop on :99 (Xvfb, invisible - reused, not restarted)"
+  else
+    say "  Hidden Wine desktop on :99 (Xvfb, invisible)"
+    bgs Xvfb :99 -screen 0 1280x1024x24 >"$LOG_DIR/xvfb.log" 2>&1 < /dev/null
+    XVFB_PID=$!
+  fi
+  for _ in $(seq 1 100); do
+    [ -e /tmp/.X11-unix/X99 ] && break
+    sleep 0.1
+  done
+  [ -e /tmp/.X11-unix/X99 ] || { echo "[wine-full] Xvfb :99 did not come up" >&2; exit 1; }
+  export DISPLAY=:99
+fi
+
 # One Wine game per box, enforced (not documented): the trap cleanup below
-# kills by process NAME (StarCraft.exe, ChaosLauncher, java.exe) plus
-# wineserver -k, so a second game started alongside a running one does not
-# just fail - its cleanup murders the first game mid-play (and vice versa).
+# kills by process NAME (StarCraft.exe, ChaosLauncher, java.exe), so a second
+# game started alongside a running one does not just fail - its cleanup
+# murders the first game mid-play (and vice versa).
 # flock is kernel-held: no stale lockfiles, released on any death.
 WINE_GAME_LOCK="/tmp/atlantis-wine-game.lock"
 exec {WINE_GAME_LOCK_FD}>"$WINE_GAME_LOCK" || { echo "[wine-full] cannot open lock $WINE_GAME_LOCK" >&2; exit 2; }
+# Background children inherit every open fd, including the box lock above:
+# a surviving child (Xvfb, wineserver, a stuck tee) would hold the lock
+# forever and refuse every later game (measured 2026-10-21: REFUSED with
+# the previous Xvfb as the sole holder). Every background child therefore
+# starts via bgs(), which closes the lock copy first - the script keeps its
+# own, so the lock still guards the run. Foreground `wine` calls are short
+# and cannot hold anything, except the wineserver itself: it is pre-started
+# via bgs() below so it never inherits the fd. NOTE: call bgs WITHOUT a
+# trailing `&` (it backgrounds internally); an extra `&` spawns a throwaway
+# wrapper whose instant exit makes CLIENT_PID look dead (measured).
+close_lock_fd() { eval "exec ${WINE_GAME_LOCK_FD:-9}>&-" 2>/dev/null || true; }
+bgs() { ( close_lock_fd; exec setsid "$@" ) & }
 if ! flock -n "$WINE_GAME_LOCK_FD" 2>/dev/null; then
   # fuser names the actual lock holders (our own fd is filtered out);
   # pgrep on the script name would also match this very check.
@@ -120,6 +161,11 @@ if ! flock -n "$WINE_GAME_LOCK_FD" 2>/dev/null; then
   echo "[wine-full] REFUSED: another Wine game holds the box lock (${holder_cmds:-unknown holder}); one game at a time" >&2
   exit 2
 fi
+# Warm server, taken while the lock is ours: the first `wine` call of a
+# cold box pays ~0.5 s forking wineserver; a spawned -p server answers every
+# later call, and (via bgs) never sees the lock fd. Redundant when one
+# already runs (it just exits).
+bgs wineserver -p >/dev/null 2>&1 || true
 [ -z "$MAP" ] && MAP="1a2a 3a Micro 2.scx"
 MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
 # Explicit per-run env file (owner: scripts never edit shared ENV files).
@@ -147,22 +193,7 @@ CLIENT_LOG="$LOG_DIR/WINE_LOG"
 # game, ChaosLauncher) at it - nothing ever maps on :0, no resolution
 # switch, no window to minimize. The supervisor key relay is
 # display-independent (file-based), so nothing else changes.
-XVFB_DISPLAY=":99"
-XVFB_PID=""
-if [ "${HIDDEN:-0}" = "1" ]; then
-  if [ -e /tmp/.X11-unix/X99 ] && ! pgrep -f "[X]vfb :99" >/dev/null; then
-    rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock
-  fi
-  say "  Hidden Wine desktop on :99 (Xvfb, invisible)"
-  setsid Xvfb :99 -screen 0 1280x1024x24 >"$LOG_DIR/xvfb.log" 2>&1 < /dev/null &
-  XVFB_PID=$!
-  for _ in $(seq 1 100); do
-    [ -e /tmp/.X11-unix/X99 ] && break
-    sleep 0.1
-  done
-  [ -e /tmp/.X11-unix/X99 ] || { echo "[wine-full] Xvfb :99 did not come up" >&2; exit 1; }
-  export DISPLAY=:99
-fi
+
 
 # Wall-clock markers. The owner asked why a start takes so long, and guessing is
 # what made this slow before: print one line per phase so the next run shows
@@ -179,8 +210,9 @@ cleanup() {
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
-  wineserver -k 2>/dev/null
-  if [ -n "$XVFB_PID" ]; then kill "$XVFB_PID" 2>/dev/null || true; fi
+  # No wineserver -k and no Xvfb kill: both are reused by the next run (see
+  # above for why that is safe). If a stale table ever attaches, the missing
+  # -k is the first suspect.
 }
 
 # Belt and braces: the paths below call cleanup() explicitly, but a signal
@@ -217,11 +249,16 @@ say "Killing leftovers"
 # Only what must die before a game can start, and only by exact name (-x): a
 # -f pattern also matches this script's own command line.
 #
-# What is deliberately NOT killed:
-#   - java.exe: the CLIENT JVM is started a few lines below, and killing it here
-#     only makes this script wait for a fresh JVM under Wine (seconds).
-#   - wineserver: killing it makes every subsequent `wine` call pay for a cold
-#     server start, which is the single biggest fixed cost of a run.
+# What dies here, and why the warm wineserver stays safe:
+#   - StarCraft/ChaosLauncher: a second instance breaks the BWAPI injection.
+#   - java.exe (8 chars, -x matches): a stray CLIENT JVM from a killed run
+#     would hold the previous game's BWAPI sections open, and the next game
+#     would attach to a stale table instead of failing loudly. The client for
+#     THIS run starts a few lines below, so killing a leftover costs nothing.
+#   - wineserver is deliberately NOT killed (measured 2026-10-21: a cold
+#     server start costs the first `wine` call of every run ~0.5 s). Keeping
+#     it warm is safe because every section holder is dead before anything
+#     attaches: the trap below kills them all, and this block re-kills them.
 # The one thing that MUST go is a leftover StarCraft/ChaosLauncher, because a
 # second instance breaks the BWAPI injection.
 pkill -9 -x StarCraft.exe 2>/dev/null
@@ -231,7 +268,15 @@ pkill -9 -x StarCraft.exe 2>/dev/null
 # an 8v8 request played the previous 1v1). The bracket keeps pgrep
 # from matching this shell's own command line (GameExecution.md #2).
 pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
-sleep 1
+pkill -9 -x java.exe 2>/dev/null
+# Poll instead of a fixed sleep: pkill is async, but a dead box returns in
+# one tick while a dying process still gets up to 3 s (measured 2026-10-21:
+# the fixed sleep cost every fast start 1.0 s).
+for _ in $(seq 1 30); do
+  if ! pgrep -x StarCraft.exe >/dev/null 2>&1 \
+      && ! pgrep -f "[C]haoslauncher.exe" >/dev/null 2>&1; then break; fi
+  sleep 0.1
+done
 if pgrep -x StarCraft.exe >/dev/null 2>&1 || pgrep -f "[C]haoslauncher.exe" >/dev/null 2>&1; then
   say "FATAL: a leftover game survived the kill - refusing to attach to a stale map."
   exit 1
@@ -285,7 +330,22 @@ fi
 # loading a DIFFERENT jar than the one being built, so changes never appeared
 # (measured 2026-10-07 - the owner tested hours-old code and the prints added in
 # between never showed up).
-WIN_JAR="$(winepath -w "$JAR" 2>/dev/null || true)"
+# The unix->windows jar translation is constant per jar path, but winepath
+# spawns a whole Wine process to print it (~0.4 s each run, measured
+# 2026-10-21). Cache it in /tmp; a changed jar path simply misses.
+WINEPATH_CACHE="/tmp/atlantis-winepath-cache"
+WIN_JAR=""
+if [ -f "$WINEPATH_CACHE" ]; then
+  if [ "$(head -1 "$WINEPATH_CACHE" 2>/dev/null)" = "$JAR" ]; then
+    WIN_JAR="$(tail -1 "$WINEPATH_CACHE" 2>/dev/null)"
+  fi
+fi
+if [ -z "$WIN_JAR" ]; then
+  WIN_JAR="$(winepath -w "$JAR" 2>/dev/null || true)"
+  if [ -n "$WIN_JAR" ]; then
+    { echo "$JAR"; echo "$WIN_JAR"; } > "$WINEPATH_CACHE" 2>/dev/null || true
+  fi
+fi
 if [ -z "$WIN_JAR" ]; then
   # Fallback if winepath is unavailable: map /sc-ai -> Z:\sc-ai by hand, which
   # is what Wine's default Z: drive does for the filesystem root.
@@ -349,17 +409,17 @@ CLIENT_MAP_ARG="--map=${RESOLVED_MAP:-$MAP}"
 CLIENT_ARGS=("$CLIENT_MAP_ARG")
 [ -n "$CLIENT_ENV_ARG" ] && CLIENT_ARGS+=("$CLIENT_ENV_ARG")
 if [ "$LIVE_OUTPUT" = "1" ]; then
-  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+  bgs env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "${CLIENT_ARGS[@]}" \
-    > >(tee "${TEE_OUT[@]}") 2> >(tee "${TEE_ERR[@]}" >&2) < /dev/null &
+    > >(close_lock_fd; exec tee "${TEE_OUT[@]}") 2> >(close_lock_fd; exec tee "${TEE_ERR[@]}" >&2) < /dev/null
   # CLIENT_PID is now wine itself, not tee (better liveness: it dies when
   # the game ends, while tee may linger flushing). Tees inherit the
   # redirection, so no output is lost when the client exits first.
   CLIENT_PID=$!
 else
-  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+  bgs env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "${CLIENT_ARGS[@]}" \
-    > >(tee "${TEE_OUT[@]}" > /dev/null) 2> >(tee "${TEE_ERR[@]}" > /dev/null) < /dev/null &
+    > >(close_lock_fd; exec tee "${TEE_OUT[@]}" > /dev/null) 2> >(close_lock_fd; exec tee "${TEE_ERR[@]}" > /dev/null) < /dev/null
   CLIENT_PID=$!
 fi
 say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
@@ -475,13 +535,13 @@ cd "$GAME_ROOT"
 # proves ChaosLauncher injection works through it.
 if [ -n "${WINE_VIRTUAL_DESKTOP:-}" ]; then
   say "  Virtual desktop $WINE_VIRTUAL_DESKTOP (contained window)"
-  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+  bgs env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine explorer /desktop=atlantis,"$WINE_VIRTUAL_DESKTOP" chaoslauncher/Chaoslauncher.exe \
-    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
+    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null
 else
-  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+  bgs env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine chaoslauncher/Chaoslauncher.exe \
-    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
+    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null
 fi
 
 # Poll for StarCraft instead of a fixed 40 s sleep: the game usually comes up
