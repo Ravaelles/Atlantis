@@ -310,6 +310,14 @@ public class ConstructionStatusChanger extends Commander {
     private static final int DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES = 150;
 
     /**
+     * Frames after IN_PROGRESS start past which a still-unfinished warp
+     * with a dead builder is named frozen. Longest legal Protoss warp is
+     * 1800 frames (Nexus, measured jbwapi-2.2.0), so 2400 leaves margin
+     * for accept latency without ever catching a healthy warp.
+     */
+    private static final int FROZEN_WARP_OBSERVED_FRAMES = 2400;
+
+    /**
      * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
      *
      * <p>Public as a seam so the rule is assertable without running a game
@@ -324,7 +332,11 @@ public class ConstructionStatusChanger extends Commander {
     public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
         if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
         if (construction.buildPosition() == null) return false;
-        if (buildingNearSite(construction)) return false;
+        AUnit warping = warpingNearSite(construction);
+        if (warping != null) {
+            twinFrozenWarp(construction, builder, warping);
+            return false;
+        }
         if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
 
         // No builder at all (measured on Wine: setStatus(IN_PROGRESS) releases
@@ -350,9 +362,31 @@ public class ConstructionStatusChanger extends Commander {
         return true;
     }
 
-    private static boolean buildingNearSite(Construction construction) {
+    private static AUnit warpingNearSite(Construction construction) {
         return Select.ourWithUnfinishedOfType(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition()).notEmpty();
+            .inRadius(2.5, construction.buildPosition()).first();
+    }
+
+    /**
+     * Names a frozen warp (NEXT #150, cid-331 shape): IN_PROGRESS older
+     * than any legal build, builder dead, warping entity still on the
+     * site. The demote path above is shielded by its own self-match, so
+     * without this row the freeze is silent. Names only, never removes
+     * or demotes; twinned once per construction.
+     */
+    private static void twinFrozenWarp(Construction construction, AUnit builder, AUnit warping) {
+        if (construction.isFrozenWarpTwinned()) return;
+        if (builder == null || !builder.isDead()) return;
+        if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return;
+        construction.markFrozenWarpTwinned();
+        EventLog.key(LogKey.FROZEN_WARP)
+            .param("cid", construction.id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition().toString())
+            .param("builder", "#" + builder.id())
+            .param("startedAgo", construction.startedAgo())
+            .param("warpingHp", warping.hp())
+            .log(A.now(), A.minSec());
     }
 
     private static void logDemote(Construction construction, String detail) {

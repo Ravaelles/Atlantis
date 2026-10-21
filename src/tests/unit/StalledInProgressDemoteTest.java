@@ -8,6 +8,7 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -249,4 +250,52 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
             }
         });
     }
+
+    @Test
+    public void frozenWarpWithDeadBuilderTwinsOnce() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit deadProbe = fake(AUnitType.Protoss_Probe, 12, 10);
+        FakeUnit liveProbe = fake(AUnitType.Protoss_Probe, 30, 30);
+        FakeUnit warpingDead = fake(AUnitType.Protoss_Cybernetics_Core, 12, 10);
+        warpingDead.setCompleted(false);
+        FakeUnit warpingLive = fake(AUnitType.Protoss_Cybernetics_Core, 30, 30);
+        warpingLive.setCompleted(false);
+
+        world(2600, units(nexus, deadProbe, liveProbe, warpingDead, warpingLive), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                UnitsArchive.markUnitAsDestroyed(deadProbe);
+                frozenStalled = stalledCoreAt(deadProbe, 12, 10);
+                healthyStalled = stalledCoreAt(liveProbe, 30, 30);
+            }
+
+            if (A.now() == 2500) {
+                assertTrue(
+                    UnitsArchive.isDestroyed(deadProbe.id()),
+                    "the archive must still know the frame-10 death");
+                assertEquals(
+                    ConstructionOrderStatus.IN_PROGRESS, frozenStalled.status(),
+                    "the world must not have demoted it first (self-match holds)");
+                assertFalse(
+                    ConstructionStatusChanger.demoteStalledInProgress(frozenStalled, deadProbe),
+                    "self-match still shields the demote - the twin names it, nothing moves");
+                assertTrue(
+                    frozenStalled.isFrozenWarpTwinned(),
+                    "the twin fired once startedAgo crossed 2400 (the flag is the durable proof - the row itself may already have flushed to the log file, so the buffer is not the witness)");
+                EventLog.clearForTests();
+                ConstructionStatusChanger.demoteStalledInProgress(frozenStalled, deadProbe);
+                assertFalse(
+                    EventLog.toJsonLines().contains("FROZEN_WARP"),
+                    "twins once per construction, not every frame");
+                EventLog.clearForTests();
+                ConstructionStatusChanger.demoteStalledInProgress(healthyStalled, liveProbe);
+                assertFalse(
+                    EventLog.toJsonLines().contains("FROZEN_WARP"),
+                    "a live builder never twins, however old the warp");
+            }
+        });
+    }
+
+    private Construction frozenStalled;
+    private Construction healthyStalled;
+
 }

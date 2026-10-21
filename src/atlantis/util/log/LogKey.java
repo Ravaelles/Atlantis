@@ -55,6 +55,11 @@ public enum LogKey {
     UPGRADE_COMPLETED,
     /** A warp matched no reservation; oldest-waiting fallback adopted it, with candidates. */
     ADOPTED_CONSTRUCTION,
+    /** An IN_PROGRESS warp older than any legal build with a dead builder
+      and a warping entity still on the site (NEXT #150, cid-331 shape):
+      the demote path is shielded by its own self-match, so without this
+      row the freeze is silent. Names only, never removes. */
+    FROZEN_WARP,
     /** A V2 supply-provider goal reached the scheduler, with the emitting
       list (WO-144 open question: which goal re-fires a duplicate Pylon
       pair - build-order re-fire, pipeline overlap, or a door hole). */

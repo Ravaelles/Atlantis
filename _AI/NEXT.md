@@ -457,7 +457,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). Live overlap game still unplayed; the resite seam
-  fires live (adopt-resited 1x in each of two long runs). No blind patch.
+  fires live (adopt-resited 1x in each of two long runs). 2026-10-21:
+  zero ADOPTED rows in 2 fresh macros (20:09 + 7:53) - consistent, not
+  broken: adoption needs a waiting PREPARING site and both games were
+  builder-rich (sites start immediately, nothing waits to adopt;
+  storms mint+cancel same-frame so nothing survives to adopt). No blind patch.
   2026-10-21 Wine macro: twin gap named - warping Observatory
   [118,30] (STARTED 12:35) whose builder #126 died to lings 12:28
   leaves zero further rows (no cancel, no death, no warp): the

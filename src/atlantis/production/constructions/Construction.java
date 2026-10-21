@@ -33,6 +33,12 @@ public class Construction implements Comparable<Construction> {
      * accepted attempt).
      */
     private int lastBuildAttemptFrame = -999999;
+    /**
+     * Whether the frozen-warp twin already named this construction. A warp
+     * that never completes would otherwise re-twin every frame for the
+     * rest of the game; the row is a witness, not a heartbeat.
+     */
+    private boolean frozenWarpTwinned;
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
@@ -354,6 +360,14 @@ public class Construction implements Comparable<Construction> {
 
     public int startedAgo() {
         return A.ago(timeBecameInProgress);
+    }
+
+    public boolean isFrozenWarpTwinned() {
+        return frozenWarpTwinned;
+    }
+
+    public void markFrozenWarpTwinned() {
+        frozenWarpTwinned = true;
     }
 
     public void setLastBuildAttemptNow() {
