@@ -480,7 +480,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection combatBuildingsAnti(AUnit unit) {
-        return unit.isGroundUnit() ? combatBuildingsAntiLand() : combatBuildingsAntiAir();
+        return SelectionMembership.combatBuildingsAnti(this, unit);
     }
 
     public Selection onlyCompleted()  {
@@ -760,11 +760,11 @@ public class Selection extends BaseSelection {
     }
 
     public Selection inShootRangeOf(AUnit attacker) {
-        return canBeAttackedBy(attacker, 0);
+        return SelectionMembership.inShootRangeOf(this, attacker);
     }
 
     public Selection inShootRangeOf(double shootingRangeBonus, AUnit attacker) {
-        return canBeAttackedBy(attacker, shootingRangeBonus);
+        return SelectionMembership.inShootRangeOf(this, shootingRangeBonus, attacker);
     }
 
     public Selection facingThisUnit(AUnit subject)  {

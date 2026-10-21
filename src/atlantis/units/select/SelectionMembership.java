@@ -403,6 +403,18 @@ final class SelectionMembership {
         );
         }
 
+    static Selection combatBuildingsAnti(Selection selection, AUnit unit)  {
+        return unit.isGroundUnit() ? combatBuildingsAntiLand(selection) : combatBuildingsAntiAir(selection);
+        }
+
+    static Selection inShootRangeOf(Selection selection, AUnit attacker) {
+        return canBeAttackedBy(selection, attacker, 0);
+        }
+
+    static Selection inShootRangeOf(Selection selection, double shootingRangeBonus, AUnit attacker) {
+        return canBeAttackedBy(selection, attacker, shootingRangeBonus);
+        }
+
 /**
      * Selects military buildings like Photon Cannon, Bunker, Spore Colony, Sunken Colony
      */
