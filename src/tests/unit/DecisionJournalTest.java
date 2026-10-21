@@ -90,6 +90,33 @@ public class DecisionJournalTest extends WorldStubForTests {
     }
 
     @Test
+    public void journalNamesTheDecidingClass() {
+        // NEXT #176: rows used to say WHAT (Attack_Unit/...) but never
+        // WHO. The funnel stamps the first project frame above itself,
+        // so a corpse names its killer's author, not just the order.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(), () -> {
+            dragoon.noteDecision("ProbeTag");
+
+            assertTrue(dragoon.commandHistory().toString().contains("ProbeTag/DecisionJournalTest"),
+                "direct call names the test class: " + dragoon.commandHistory());
+        });
+    }
+
+    @Test
+    public void funnelOrdersNameTheCallerToo() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(), () -> {
+            dragoon.move(APosition.create(32, 20), Actions.MOVE_ENGAGE, "ClusterReengage", true);
+
+            assertTrue(dragoon.commandHistory().toString().contains("ClusterReengage/DecisionJournalTest"),
+                "funnel stamps the caller past FakeUnit.move: " + dragoon.commandHistory());
+        });
+    }
+
+    @Test
     public void armyActWritesDecisionsWithoutManagers() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);

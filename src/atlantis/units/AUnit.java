@@ -3486,12 +3486,49 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     public void noteDecision(String tag) {
         if (tag == null || tag.isEmpty()) return;
-        if (commandHistory.lastMessageWas(tag)) {
-            commandHistory.replaceLastWith(tag, A.now());
+        String signed = withIssuer(tag);
+        if (commandHistory.lastMessageWas(signed)) {
+            commandHistory.replaceLastWith(signed, A.now());
         }
         else {
-            commandHistory.addMessage(tag, A.now());
+            commandHistory.addMessage(signed, A.now());
         }
+    }
+
+    /**
+     * Who issued this order, for the death log (NEXT #176): the first
+     * project frame above the funnel ({@code AUnit}, {@code AUnitOrders},
+     * {@code FakeUnit} in tests). Bounded walk on a hot path: orders are
+     * tens per frame, the walk stops at the first project frame -
+     * microseconds, never a pass over the whole stack. Null when unknown
+     * (engine frames); callers omit the suffix then.
+     */
+    private static String issuerClass() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (StackTraceElement frame : stack) {
+            String cls = frame.getClassName();
+            if (cls == null) continue;
+            if (cls.equals("java.lang.Thread")
+                || cls.equals(AUnit.class.getName())
+                || cls.equals(atlantis.units.AUnitOrders.class.getName())
+                || cls.equals("tests.fakes.FakeUnit")) continue;
+            if (cls.startsWith("java.") || cls.startsWith("javax.")
+                || cls.startsWith("sun.") || cls.startsWith("jdk.")
+                || cls.startsWith("org.") || cls.startsWith("com.")
+                || cls.startsWith("net.") || cls.startsWith("io.")
+                || cls.startsWith("kotlin.") || cls.startsWith("scala.")) continue;
+            String base = cls;
+            int dollar = base.indexOf('$');
+            if (dollar >= 0) base = base.substring(0, dollar);
+            int dot = base.lastIndexOf('.');
+            return dot < 0 ? base : base.substring(dot + 1);
+        }
+        return null;
+    }
+
+    private static String withIssuer(String tag) {
+        String issuer = issuerClass();
+        return issuer == null ? tag : tag + "/" + issuer;
     }
 
     private void addManagerLogMessage(String message) {
@@ -4080,7 +4117,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(
-            command.name() + "/a:" + action().name() + "/" + tooltip, A.now()
+            withIssuer(command.name() + "/a:" + action().name() + "/" + tooltip), A.now()
         );
     }
 
