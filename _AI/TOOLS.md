@@ -23,6 +23,14 @@ open ideas wait for a game or a need, then get built or dropped.
   EVENTS.jsonl + per-game CSV (W/L, seconds, killed, lost, hits taken,
   shots fired, score, values). Answers: which regions of parameter
   space win fast with few hits.
+- `scripts/run-openbw-batch.sh` [4/5 - proven vehicle (20-game ZealDrag run), parked with OpenBW] `"maps/ums/<map>.scm" N OUTDIR [KEY=VALUE ...]` -
+  same loop on headless OpenBW: per-game ENV passthrough
+  (OPENBW_EXTRA_ENV), per-game wall/game-sec timing, batch.csv,
+  manifest (NEXT #160 step-5 shape), SUMMARY.md into OUTDIR plus
+  `/sc-ai/E2E OpenBW LOGS/PARAM_TWEAKER_LOGS/` (dated + `latest`).
+  Validity rule mirrors wine (fresh EVENTS + GAME_END). Caveat, measured:
+  OpenBW duels cannot resolve the way Wine ones do (no scripted enemy),
+  so W/L here is anti-blob-surround, not the matchup.
 - `scripts/summarize-fight.py` [5/5 - the morning readout; invariants flag what a skimmed log never shows] EVENTS.jsonl` - one-game digest with
   invariant flags (HITS_TAKEN <= 2, shot cadence vs 30f cooldown,
   cornered ratio). Answers: did the duel meet the domain rules.
