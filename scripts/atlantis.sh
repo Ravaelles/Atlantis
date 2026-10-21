@@ -12,12 +12,18 @@
 #                         harness GAME_DIR (a bare name gets "maps/" prepended
 #                         by build-openbw.sh). Required for OpenBW, optional
 #                         for Wine (which falls back to its own default map).
-#   --headless            Wine only: Xvfb :99, invisible (unattended runs).
-#                         OpenBW is headless by design; passing it with
-#                         --engine openbw warns and drops the flag.
+#   Wine runs headless by default (Xvfb :99, invisible) with the repo's
+#   unattended-speed env (bwapi-data/AI/ENV-WINE-FAST: WINE_SUPER_FAST_MODE,
+#   speed 0, frameskip, GUI off - the speed lives in the env file, headless
+#   is only the display). A short notice is printed every headless run.
+#   --visible             Watch the game (Wine virtual desktop), like the old
+#                         default: no fast env is forced, only an explicit
+#                         --env= applies.
+#   --headless|--hidden   Explicit headless (the default for Wine).
 #   --env=FILE            Wine only: per-run env file (never a shared ENV -
 #                         scripts must not edit those). Resolved against the
-#                         repo root when relative.
+#                         repo root when relative. Overrides the headless
+#                         default env; works in both display modes.
 #   --dry-run             Print the dispatched command without running it.
 #   -h|--help             This text.
 #
@@ -29,9 +35,10 @@
 #
 # Anything else is forwarded verbatim to the underlying script
 # (run-wine-full.sh, which warns on extras, or build-openbw.sh, which
-# fails on unknown flags) - this script is only the gateway, it adds
-# no behaviour of its own. One game at a time: the Wine runner holds
-# its own flock; do not start a second game of either backend alongside.
+# fails on unknown flags) - beyond the Wine headless/fast-env defaults
+# above, this script adds no behaviour of its own. One game at a time:
+# the Wine runner holds its own flock; do not start a second game of
+# either backend alongside.
 #
 # Exit code is the underlying script's exit code.
 set -euo pipefail
@@ -40,8 +47,14 @@ ATLANTIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 ENGINE="wine"
 MAP=""
-HEADLESS=0
+# Wine display mode: headless=1 unless --visible. Speed lives in the env
+# file (WINE_SUPER_FAST_MODE), headless is only the display - but the two
+# ship together by default: unattended runs want both.
+HEADLESS=1
+HEADLESS_EXPLICIT=0
+VISIBLE_FLAG=0
 ENV_FILE=""
+ENV_EXPLICIT=0
 DRY_RUN=0
 EXTRA=()
 
@@ -59,9 +72,9 @@ while [ $# -gt 0 ]; do
     --map)
       [ $# -ge 2 ] || { echo "[atlantis] --map requires a path" >&2; exit 2; }
       MAP="$2"; shift 2 ;;
-    --env=*) ENV_FILE="${1#--env=}"; shift ;;
-    --headless|--hidden) HEADLESS=1; shift ;;
-    --visible) HEADLESS=0; shift ;;
+    --env=*) ENV_FILE="${1#--env=}"; ENV_EXPLICIT=1; shift ;;
+    --headless|--hidden) HEADLESS=1; HEADLESS_EXPLICIT=1; shift ;;
+    --visible) HEADLESS=0; VISIBLE_FLAG=1; shift ;;
     --dry-run) DRY_RUN=1; shift ;;
     -h|--help) usage; exit 0 ;;
     --*) EXTRA+=("$1"); shift ;;
@@ -86,6 +99,15 @@ run() {
 }
 
 if [ "$ENGINE" = "wine" ]; then
+  # Unattended default: headless display plus the repo's fast env, unless
+  # the caller asked otherwise. --visible alone restores the old watched
+  # default (no forced env); an explicit --env= always wins.
+  if [ "$VISIBLE_FLAG" -eq 0 ] && [ "$ENV_EXPLICIT" -eq 0 ]; then
+    ENV_FILE="bwapi-data/AI/ENV-WINE-FAST"
+  fi
+  if [ "$HEADLESS" -eq 1 ]; then
+    echo "Running headless... If you want to see StarCraft, pass --visible"
+  fi
   CMD=(bash "$ATLANTIS_DIR/scripts/run-wine-full.sh")
   [ -n "$MAP" ] && CMD+=("$MAP")
   [ -n "$ENV_FILE" ] && CMD+=("--env=$ENV_FILE")
@@ -97,8 +119,10 @@ fi
 
 # OpenBW: build-openbw.sh --game is the proven vehicle (rebuild when stale,
 # real 1v1 with verdict line). --headless is meaningless here (always
-# headless) and build-openbw.sh would reject it, so drop it loudly.
-if [ "$HEADLESS" -eq 1 ]; then
+# headless) and build-openbw.sh would reject it, so drop it loudly -
+# but only when the caller really passed it (headless is the Wine
+# default, not an OpenBW request).
+if [ "$HEADLESS_EXPLICIT" -eq 1 ]; then
   echo "[atlantis] note: --headless is Wine-only, OpenBW is headless by design - dropping it" >&2
 fi
 if [ -n "$ENV_FILE" ]; then
