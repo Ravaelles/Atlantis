@@ -144,9 +144,7 @@ public class BattleCommander extends Commander {
             FightTarget.markRepositioned(unit);
             return;
         }
-        APosition ghost = GhostAdvance.advancePointFor(unit, tactic);
-        if (ghost != null && unit.move(ghost, Actions.MOVE_ENGAGE, GhostAdvance.advanceTagFor(unit))) {
-            FightTarget.markRepositioned(unit);
+        if (GhostAdvance.move(unit, tactic)) {
             return;
         }
         HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor);
@@ -170,6 +168,7 @@ public class BattleCommander extends Commander {
     public static void clearForTests() {
         CombatTuning.resetToDefaults();
         atlantis.battle.escape.EscapeTuning.resetToDefaults();
+        atlantis.battle.strategy.GhostAdvance.clearForTests();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
         FightTrace.clearForTests();

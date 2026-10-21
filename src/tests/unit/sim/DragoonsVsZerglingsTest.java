@@ -730,6 +730,63 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    // =========================================================
+    // T-creep: the hunt hands off to the creep inside 9 tiles, the
+    // creep walks 9 -> 2, then the ghost holds instead of bunching
+    // back (owner, Wine duel: ClusterHunt forward, gather back,
+    // forever 2-3 tiles from the slot).
+    // =========================================================
+
+    @Test
+    public void creepClosesLostContactWithoutBunchingBack() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
+        ling.setEnemy();
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 5; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(ling.hp > 0, "setup: the quarry must survive phase 1");
+
+            // Phase 2: contact lost just outside the squad envelope - the
+            // hunt marches 11 -> 9, the creep walks 9 -> 2, then holds.
+            // The ghost is the phase-1 contact (32,20), not the teleported
+            // ling: the quarry must also leave the 9-tile fight envelope.
+            world.teleport(dragoon, APosition.create(21, 20));
+            world.teleport(ling, APosition.create(55, 20));
+            dragoon.lastCommand = "Stop";
+            dragoon.target = null;
+            dragoon.targetPosition = null;
+            double anchorDist = dragoon.distTo(APosition.create(32, 20));
+            assertTrue(anchorDist > 9 && anchorDist <= 12, "setup: creep handoff zone: " + anchorDist);
+            final double[] maxDist = { anchorDist };
+            for (int i = 0; i < 300; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+                maxDist[0] = Math.max(maxDist[0], dragoon.distTo(APosition.create(32, 20)));
+            }
+            assertTrue(dragoon.distTo(APosition.create(32, 20)) < 2.5,
+                "creep closed the ghost and holds it: " + dragoon.position);
+            assertTrue(maxDist[0] <= anchorDist + 1.0,
+                "never bunched back while closing: " + maxDist[0]);
+        }
+        finally {
+            world.close();
+        }
+    }
+
     @Test
     public void noHuntOnBasedMaps() {
         // Negative control: same lost contact, but a base exists FAR from
