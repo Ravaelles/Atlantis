@@ -3,6 +3,7 @@
 
 Usage:
     python3 scripts/attribute-board-fed.py out/wine_runs/<run>/EVENTS.jsonl [--army-window 1500] [--supply-window 600]
+    python3 scripts/attribute-board-fed.py by-author out/wine_runs/<run>/EVENTS.jsonl
 
 For every BOARD_FED row the script counts legacy pump rows in a window
 around it and prints rescue vs routine-shaped, using the file's own
@@ -24,6 +25,7 @@ Pump proxies (documented approximations, same as the hand verdicts):
   core         same three row kinds for Cybernetics
 """
 import json
+import re
 import sys
 
 BUILDING_FEDS = {
@@ -49,6 +51,9 @@ def load(path):
 
 
 def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if args and args[0] == "by-author" and len(args) > 1:
+        return by_author(args[1])
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     army_window = 1500
     supply_window = 600
@@ -101,6 +106,35 @@ def main():
     print("boardfed=%d routine-shaped=%d" % (len(fed), len(nominations)))
     for producer in sorted(nominations):
         print("NOMINATE: %s (proof game required after the cut)" % producer)
+    return 0
+
+
+def by_author(path):
+    # NEXT #144 evidence: who authored the demand, BO rows ("At N ...")
+    # vs dynamic re-requests (trailing "*", see ProductionOrder.toString).
+    # Same twin, no new rows - just the author split per building type.
+    import collections
+
+    rows = load(path)
+    split = collections.defaultdict(collections.Counter)
+    for r in rows:
+        if r.get("key") != "CONSTRUCTION_REQUESTED":
+            continue
+        # Trailing "*" directly after the type name marks dynamic
+        # re-requests (ProductionOrder.toString); plain "At N ..." is BO.
+        order = str(r.get("order", ""))
+        m = re.match(r"At \d+ (\S+?)(\*)?\s", order)
+        if m:
+            author = "dynamic" if m.group(2) else "BO"
+        else:
+            author = "other:" + order[:20]
+        split[str(r.get("type", "?"))][author] += 1
+    for building in sorted(split):
+        total = sum(split[building].values())
+        dyn = split[building].get("dynamic", 0)
+        print("%s: %d demand rows, %d%% dynamic (%s)" % (
+            building, total, round(100.0 * dyn / total),
+            dict(split[building])))
     return 0
 
 
