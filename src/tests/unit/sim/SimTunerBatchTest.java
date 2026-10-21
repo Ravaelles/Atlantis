@@ -123,6 +123,19 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void mapPathWithDirectoriesIsAcceptedByFileName() throws Exception {
+        Path outdir = Files.createTempDirectory("sim-tuner-batch-path-test");
+
+        int exit = SimTunerBatch.run(
+            new String[] { "maps/ums/rav/protoss/1Drag_v_1Zeal.scm", "1", outdir.toString() });
+
+        assertEquals(0, exit, "tune drivers pass map paths, the scenario is picked by file name");
+        String manifest = new String(Files.readAllBytes(outdir.resolve("manifest.txt")), StandardCharsets.UTF_8);
+        assertTrue(TunerBatchManifest.parseMap(manifest).equals("1Drag_v_1Zeal.scm"),
+            "manifest records the scenario map, not the caller path");
+    }
+
+    @Test
     public void unknownBatchParamFailsLoudly() throws Exception {
         Path outdir = Files.createTempDirectory("sim-tuner-batch-param-test");
 

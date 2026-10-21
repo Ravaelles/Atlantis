@@ -89,9 +89,10 @@ public final class SimTunerBatch {
         }
 
         TuningScenario scenario = new DuelHitsMinutesScenario();
-        if (!map.equals(scenario.mapFile())) {
+        String mapFile = java.nio.file.Paths.get(map).getFileName().toString();
+        if (!mapFile.equals(scenario.mapFile())) {
             System.err.println("sim tunes only the duel scenario (" + scenario.mapFile()
-                + "), got: " + map);
+                + "), got: " + map + " (use its file name, any directory is fine)");
             return 2;
         }
         if (!scenario.frozenParams().isEmpty()) {
@@ -140,7 +141,7 @@ public final class SimTunerBatch {
         }
 
         Files.write(out.resolve("manifest.txt"),
-            TunerBatchManifest.render(map, "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
+            TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
         System.out.println("[sim-batch] done: " + games + " games, manifest: "
             + out.resolve("manifest.txt"));
         return 0;
