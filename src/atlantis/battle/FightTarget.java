@@ -65,6 +65,8 @@ public final class FightTarget {
         // Only visible contacts refresh it: an invisible "fight" must not
         // drag the last-known point onto a ghost.
         if (target.isVisibleUnitOnMap() && target.position() != null) lastContactPos.put(unit.id(), target.position());
+        // (moved to BattleCommander.act: kiting units never reach fight(),
+        // so the army contact must be recorded at acquisition, not here)
         if (!target.isVisibleUnitOnMap()) {
             // Fighting an invisible target: the order cannot land (measured
             // 1Drag_v_1Zeal: 9 min of shot-fired with zero damage while

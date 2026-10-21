@@ -52,6 +52,7 @@ public final class UnitTelemetry {
         int dragoon = distX10(unit, nearestAllyOfType(unit, AUnitType.Protoss_Dragoon));
         int zealot = distX10(unit, nearestAllyOfType(unit, AUnitType.Protoss_Zealot));
         int foes2 = foesNear(unit, 2.0);
+        int target = currentTargetId(unit);
 
         EventLog.key(LogKey.UNIT_TELEMETRY)
             .param("unit", unit.id())
@@ -62,6 +63,7 @@ public final class UnitTelemetry {
             .param("dragoon", dragoon)
             .param("zealot", zealot)
             .param("foes2", foes2)
+            .param("tgt", target)
             .param("ux", unit.x() / 32)
             .param("uy", unit.y() / 32)
             .log(now, A.minSec());
@@ -72,7 +74,8 @@ public final class UnitTelemetry {
             trails.put(unit.id(), trail);
         }
         trail.addLast("f" + now + " hp" + hp + " sh" + shields
-            + " foe" + foe + " dg" + dragoon + " zl" + zealot + " n2:" + foes2);
+            + " foe" + foe + " dg" + dragoon + " zl" + zealot + " n2:" + foes2
+            + " tgt" + (target < 0 ? "-" : target));
         while (trail.size() > TRAIL_LENGTH) trail.removeFirst();
     }
 
@@ -112,6 +115,15 @@ public final class UnitTelemetry {
             return allies == null ? null : allies.nearestTo(unit);
         } catch (Exception ignored) {
             return null;
+        }
+    }
+
+    private static int currentTargetId(AUnit unit) {
+        try {
+            AUnit target = unit.target();
+            return target == null ? -1 : target.id();
+        } catch (Exception ignored) {
+            return -1;
         }
     }
 

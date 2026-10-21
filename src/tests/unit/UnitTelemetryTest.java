@@ -56,6 +56,7 @@ public class UnitTelemetryTest extends WorldStubForTests {
             assertTrue(rows.contains("\"dragoon\":"), "got: " + rows);
             assertTrue(rows.contains("\"zealot\":"), "got: " + rows);
             assertTrue(rows.contains("\"foes2\":"), "got: " + rows);
+            assertTrue(rows.contains("\"tgt\":"), "got: " + rows);
         });
     }
 

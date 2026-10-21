@@ -104,6 +104,13 @@ public class BattleCommander extends Commander {
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null) {
+            // Army-level contact for the split-cluster join (NEXT #181):
+            // recorded at acquisition, not in fight(), because kiting
+            // units never reach fight() yet still engage the enemy.
+            // FIGHT only: a routing unit must not pull the army into it.
+            if (tactic == FightOrFlight.Tactic.FIGHT) {
+                atlantis.battle.ArmyContact.noteFight(unit, target);
+            }
             FightTarget.fight(unit, target, strategy);
             return;
         }
@@ -148,6 +155,21 @@ public class BattleCommander extends Commander {
         if (GhostAdvance.move(unit, tactic)) {
             return;
         }
+        // Split-cluster reinforcement (NEXT #181): one part fights
+        // while another holds formation slots with no target - the
+        // idle part marches at the freshest fight instead of waiting.
+        // Only on FIGHT (retreats own the unit above), only on UMS
+        // (melee keeps its anchor/formation discipline: a scouting
+        // skirmish must not drag the home army across the map), and
+        // only when nothing else owned it yet (ghost first, static
+        // slots after).
+        if (tactic == FightOrFlight.Tactic.FIGHT && atlantis.game.A.isUms()) {
+            APosition reinforce = atlantis.battle.ArmyContact.reinforcePointFor(unit);
+            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, "ClusterReinforce")) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
         HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor);
         if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
@@ -174,6 +196,7 @@ public class BattleCommander extends Commander {
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
         atlantis.battle.twins.UnitTelemetry.clearForTests();
+        atlantis.battle.ArmyContact.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
     }

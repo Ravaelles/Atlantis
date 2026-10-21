@@ -48,6 +48,7 @@ public class ClearAllCaches {
         Worlds.reset();
 
         Missions.reset();
+        atlantis.battle.ArmyContact.clearForTests();
         UnitsArchive.reset();
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
