@@ -8,11 +8,8 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.special.SleepUntilFrameGate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,15 +58,14 @@ public final class DuelKite {
 
     /** Step toward the hold point: escape-scored first, MoveAway when nothing scores. */
     public static APosition yieldStep(AUnit unit, AUnit threat) {
-        return yieldStep(unit, threat,
-            (x, y) -> {
-                try {
-                    return APosition.create(x, y).isWalkable();
-                } catch (Exception ignored) {
-                    return false;
-                }
-            },
-            nearbyBlockers(unit), nearbyEnemies(unit));
+        double gap = holdDistance(unit) - unit.distTo(threat);
+        if (gap <= 0) return null;
+        double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
+        if (stepLen <= 0) return null;
+        int step = Math.max(1, (int) Math.round(stepLen));
+        APosition dest = atlantis.battle.escape.EscapeScoredStep.pickScored(unit, threat, step);
+        if (dest != null) return dest;
+        return MoveAway.bestDestination(unit, threat, stepLen);
     }
 
     /** Same decision with caller-supplied context: the unit-testable seam. */
@@ -87,27 +83,6 @@ public final class DuelKite {
         return MoveAway.bestDestination(unit, threat, stepLen);
     }
 
-    private static List<HasPosition> nearbyBlockers(AUnit unit) {
-        List<HasPosition> blockers = new ArrayList<>();
-        try {
-            Selection minerals = Select.mineralsAndGeysers();
-            if (minerals != null) blockers.addAll(minerals.inRadius(12, unit).list());
-            Selection buildings = Select.ourBuildings();
-            if (buildings != null) blockers.addAll(buildings.inRadius(12, unit).list());
-        } catch (Exception ignored) {
-        }
-        return blockers;
-    }
-
-    private static List<AUnit> nearbyEnemies(AUnit unit) {
-        try {
-            Selection enemies = unit.enemiesNear();
-            if (enemies == null) return new ArrayList<>();
-            return new ArrayList<>(enemies.combatUnits().list());
-        } catch (Exception ignored) {
-            return new ArrayList<>();
-        }
-    }
 
     /** Shared cadence with every other step: re-issues at most every 10 frames, rides between. */
     public static boolean yieldNow(int now, Integer lastStep) {
