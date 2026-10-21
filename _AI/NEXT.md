@@ -8,6 +8,61 @@ The direction everything here converges to lives in
 the execution order for the current quarter in `_AI/__MIGRATION.md`
 (combat-first, then legacy deletion).
 
+## FIRST TASK FOR NEW THREAD (owner order 2026-10-21): 1Drag `--game` under 30 s — this model owns the engine side
+
+Command that must get fast (still ~30 s wall today):
+`bash scripts/build-openbw.sh --game ums/rav/protoss/1Drag_v_1Zeal.scm`
+
+Status quo, all verified by execution (do NOT re-argue, re-measure only):
+- Engine ticks ~600 fps now (12.7k frames inside the 20 s bot cap); the other
+  model's 24 fps claim is stale (pre-pump era). `hasSynced` gating
+  (`Main.cpp:50-52`) and `gameOver` slot -1 (`BWData.cpp:1530`) verified in code.
+- `halt()` replaced `exit()` in the OpenBW exit path: JVM lingered to SIGKILL
+  (25 s/137); now ends at the cap (20 s/124). Verified on 4 duels.
+- `--game` verdict is WIN/LOSS/DRAW/FAIL (DRAW = completed, zero losses —
+  investigate engagement, not defeat). Fixture-tested 8/8, live DRAW proven 0/0/6.
+- 1Drag never resolves because the enemy zealot deals damage at 0.5 tiles while
+  `enemy:` stays empty all game: spawned and hostile but invisible to the client.
+  Engine-side (`/sc-ai/OpenBW/openbw`, other model owns it), handed over,
+  NO blind fix yet. Owner explicitly asked THIS model (not the other one) to do
+  the OpenBW engine-side speed work — record it here, do not do blind edits.
+- Wall budget today: startup ~5-8 s (jar skip-if-fresh + host publish + JVM
+  start) + full 20 s bot cap burned every duel (game never resolves) + harness
+  overhead = ~30 s. `TIMEOUT_SECONDS` knob exists (default 30/20, smoke proven
+  at 15 s) but lowering the default is NOT the fix for the tuner (full games needed).
+
+Exact change direction (do in this order, one commit per unit, verify each by run):
+1. Break down the wall clock on one `--game` run (rebuild-skip?/publish/JVM/cap/
+   harness) so the next cut is measured, not guessed. One timed run is enough.
+2. Root-cause the invisible zealot first (this is the wall: a resolved duel ends
+   in ~500 frames / ~1 s game time instead of burning the whole 20 s cap).
+   Read-only pass over `/sc-ai/OpenBW/openbw` + harness
+   (`/sc-ai/StardustDevEnvironment/3rdparty/openbw/openbw`, the tree that is
+   actually compiled — editing `/sc-ai/OpenBW/openbw/bwgame.h` alone is a silent
+   no-op, see `scripts/build-openbw.sh` header): map-script hosting / owner
+   player / alliance / fog / publish path (`GameEvents.cpp`, `BWData.cpp`,
+   `Main.cpp` hasSynced/gameOver). Name the mechanism, do NOT patch blind.
+   If the fix is a one-line visibility/publish correction, do it via
+   `--from` + rebuild + `--game` proof (WIN/LOSS instead of DRAW).
+3. If visibility needs more than a small correction, ship the deterministic
+   per-frame early-exit instead (client side, our repo, no engine risk):
+   `enemy:` empty for N straight frames AND HIT-taken rows prove contact at
+   <=0.5 tiles (the exact 1Drag signature) for M straight frames → declare the
+   DRAW verdict early (e.g. ~800-1000 frames, not 12.7k) and `halt()` out.
+   Pin the signature on the retained 1Drag EVENTS (0/0/6 DRAW, 519 frames is the
+   short-cap shape; full-cap is 12.7k) with a stub/unit test first, then prove
+   live: `--game` prints DRAW in <30 s wall. Keep WIN/LOSS paths untouched.
+4. Optional after 2/3 lands: server-side frame budget (`FORCE_END_AFTER_FRAMES`
+   style, engine side) only if a second wall remains after early-exit; never a
+   `hasSynced` bypass (verified not the bottleneck, risky).
+- Success criterion: `bash scripts/build-openbw.sh --game ums/rav/protoss/1Drag_v_1Zeal.scm`
+  prints its verdict line in <30 s wall on a warm tree (rebuild skipped), with
+  the DRAW→WIN/LOSS-or-early-DRAW semantics above preserved and 8/8 verdict
+  fixtures still green.
+- Non-goals: no `src/main/Main.java` commits (owner-dirty, never commit), no
+  `git push`, one Wine/OpenBW game at a time (flock), no TOOLS.md/docs edits
+  without owner OK.
+
 ## Phases (the quarter) — checklist
 
 Merged here 2026-10-18 from `_AI/MASTER-PLAN.md` (deleted, same change):
@@ -715,7 +770,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   [105,16] two builders (#5, #117) stalled 119/134f same frame, warped
   7:30 - stall-with-recovery, twin worked as designed, no code change
   (would be blind). The dual-builder same-tile stall is the
-  alternating-handoff shape to watch for.
+  alternating-handoff shape to watch for. G1 short flagged macro: clean.
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
