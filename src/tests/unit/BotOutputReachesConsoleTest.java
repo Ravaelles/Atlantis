@@ -71,22 +71,28 @@ public class BotOutputReachesConsoleTest {
         }
 
         @Test
-        public void hiddenWineDesktopStaysOptIn() throws IOException {
-                // Owner: hidden runs exist only for model-launched games
-                // (batch/--hidden). Local games stay on the desktop.
+        public void hiddenWineDesktopIsTheDefault() throws IOException {
+                // Owner 2026-10-21: unattended runs must never take over the
+                // desktop, even by accident (a forgotten flag played a macro
+                // on the live screen). Hidden is the default everywhere;
+                // --visible is the only way to watch.
                 String script = read(WINE_FULL);
                 String ums = read(WINE_UMS);
 
-                assertTrue(script.contains("\"${HIDDEN:-0}\""),
-                                "hidden mode must be opt-in, never the default");
+                assertTrue(script.contains("\"${HIDDEN:-1}\""),
+                                "hidden mode must be the default, never opt-in");
+                assertTrue(script.contains("--visible)"),
+                                "watching a game stays possible, explicitly");
                 assertTrue(script.contains("Xvfb :99"),
                                 "hidden mode runs its own X server");
                 assertTrue(script.contains("export DISPLAY=:99"),
                                 "hidden mode points the whole session at it");
                 assertTrue(script.contains("kill \"$XVFB_PID\""),
                                 "the hidden server dies with the session");
-                assertTrue(ums.contains("--hidden"),
-                                "single UMS games opt in with --hidden");
+                assertTrue(ums.contains("HIDDEN_ARG=\"--hidden\""),
+                                "single UMS games default to hidden");
+                assertTrue(ums.contains("--visible)"),
+                                "single UMS games can still be watched, explicitly");
         }
 
         @Test
