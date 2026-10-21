@@ -163,7 +163,7 @@ The index of which document answers which question is `_AI/README.md`.
    BOARD-authored DECISIONS) - rescue, not routine; no candidate. 5th
    run 2026-10-20 (Wine FE short): BOARD_FED 3x on 3 different
    demands - gateway 2:45, assimilator 4:53, supply-pylon 5:38 -
-   every one built within 600 frames (ORDER_NOT_READY clears,
+   every one built within 600 frames (ORDER_NOT_READY clears, 6th datum 2026-10-21 TauCross macro: single BOARD_FED sustained-dragoon 6:31 with pumps training through it and zero BOARD-authored DECISIONS - rescue again, not routine; no candidate),
    CONSTRUCTION_REQUESTED +13f, BUILDING_STARTED +113f); pumps
    silent on all three. First routine-shaped evidence: nominates
    the legacy demand producers behind those rows for per-gate
