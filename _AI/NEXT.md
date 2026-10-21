@@ -773,11 +773,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `ForceExitNeedsPublishedSupplyTest` 2/2; their
   GameEvents.cpp:150 theory falsified by our own ForceExit
   banner + GAME_END twin at frame 2). What the unblocked game
-  surfaced (NEXT #163): 69k shot-orders vs 17 hits (order spam
-  or twin counting?) and 10k UNIT_DIED rows for ~30 marines
-  (twin re-fires per dead unit per frame?) - data-quality
-  follow-ups, not verdicts. Verdict quality (W/L) still needs
-  longer than the 30 s UMS cap.
+  surfaced became NEXT #163, closed the same day (commit
+  `a598229c2`: SHOT counts acquisitions by design, UNIT_DIED latch
+  holds 3 rows for 3 marines). Cross-platform confirmation
+  2026-10-21: per-unit SHOT rate identical on Wine and OpenBW
+  (~0.5/frame - totals scale with duration x units, no twin bug),
+  UNIT_DIED fires for our deaths only (silent on Wine 1Drag with
+  10 kills and 0 own losses - by design, not a miss). Verdict
+  quality (W/L) still needs longer than the 30 s UMS cap.
   Detail: `docs/openbw-run-regression.md` (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
@@ -857,7 +860,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   supply-4/bank-74 deadlock shape absent again). Re-checked 2026-10-21
   TauCross macro: lowest-supply reserved>=250 at sup 20 (Pylon,
   supply-blocked with bank 302, game flowed to 11:15) - the supply-4
-  deadlock shape absent again.
+  deadlock shape absent again. Re-checked 2026-10-21 across 99 archived
+  Wine + 46 UMS logs (ORDER_NOT_READY twin supplyUsed): 1136 rows
+  >= 250, lowest sup 10 (frame-3 BO-load CyberneticsC, bank 250,
+  transient like the earlier sup-10 row) then sup 13+ in flowing games -
+  the stuck-at-low-supply shape absent everywhere.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
