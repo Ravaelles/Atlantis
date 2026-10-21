@@ -167,7 +167,7 @@ The index of which document answers which question is `_AI/README.md`.
    CONSTRUCTION_REQUESTED +13f, BUILDING_STARTED +113f); pumps
    silent on all three. First routine-shaped evidence: nominates
    the legacy demand producers behind those rows for per-gate
-   deletion (proof game after the cut still required). 7th datum 2026-10-21 Wine macro: BOARD_FED x2 (sustained-dragoon 5:18 with 29 DRAGOON_TRAINs in +/-600f, sustained-zealot 12:57 with 7 TRAIN_ATTEMPTs + 1 train in +/-1500f) - pumps present both times (attempting counts as present: a blocked pump is still rescue, not routine); still no candidate. Deletions
+   deletion (proof game after the cut still required). 7th datum 2026-10-21 Wine macro: BOARD_FED x2 (sustained-dragoon 5:18 with 29 DRAGOON_TRAINs in +/-600f, sustained-zealot 12:57 with 7 TRAIN_ATTEMPTs + 1 train in +/-1500f) - pumps present both times (attempting counts as present: a blocked pump is still rescue, not routine); still no candidate. 8th datum 2026-10-21 second Wine macro: BOARD_FED x1 (sustained-dragoon 6:05, 3 DRAGOON_TRAINs + 4 TRAIN_ATTEMPTs in +/-1500f - pumps present, rescue again). Deletions
    wait for routine feeder coverage, never batch rewrites;
    board-invisible production (Forge, cannons) is capability,
    not duplication.
@@ -604,6 +604,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (short of 700 s again - the 1-base lottery continues).
   2026-10-21 Wine macro (20:09, 4 bases from 6:56): ORDER_SAVING 0 -
   correctly silent again (multi-base, the shape not the duration).
+  2026-10-21 second Wine macro (7:53 Defeat, 1 base the whole game):
+  ORDER_SAVING 0 - right shape (1 base), 227 s short of 700. The
+  lottery continues, one axis at a time.
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -702,6 +705,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   7:30, Legs 13:37, Weapons L1 14:33, L2 17:43 (UPGRADE_COMPLETED twin
   4x, 4 bases by 15:54) - the post-Forge window EXISTS and completes
   through L2; L3 still never reached, still pending its richer window.
+  2026-10-21 second Wine macro (7:53 Defeat): Singularity completed
+  7:30 anyway - the window opens even in a lost short game.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). 2026-10-18 datum (`143800`, Terran vs Zerg, 212
   game-s): the bot plays Terran with the Protoss build order (`Zealot
@@ -1028,7 +1033,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Gate evidence from live games (all named, firing as designed):
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
-  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
+  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. 2026-10-21 second Wine macro (7:53 Defeat, quiet construction game: CANCEL 1, REQUESTED 10): min-supply 4, funding 2, core-priority 2, pylon-cap 1, unstarted-pylon 1, warping-link 1 (first live sighting of the warping-link refusal) - previously-proven gates re-fire, no earlier-reserve storm this time. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
