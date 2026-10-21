@@ -1474,6 +1474,59 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  reason). Done when: a test dragoon driven through two different
  seams names a different deciding class per row; live: a 1Drag
  death log names the class behind every order row.
+- **#177** Blind-enemy advance (owner 2026-10-21/22, HIGH priority):
+ ZealDrag_v_LingsUpg: the enemy splits, ours stand still with
+ ClusterMove + ClusterGhost tags - no visible enemies, only fogged
+ ones, and nothing moves. Mechanism (verified in code): `act()`
+ with no target falls to `HuntLastContact` (baseless + remembered
+ contact >9 only) then `GhostAdvance` (needs a remembered ghost
+ inside 2-12) then formation/gather slots - every step is anchored
+ to a static point, so with no contact memory the cluster holds a
+ static formation forever; `formationSlotFor` itself needs a
+ *visible* pivot (nearest engageable within 30), fogged enemies do
+ not count. Direction: (a) march on fogged knowledge: with zero
+ visible enemies but known fogged positions, advance toward the
+ nearest fogged address (not stand); (b) loosen the ghost: the
+ ClusterGhost scout is fully exempt from formation until it sees
+ ANY enemy unit (today the hold-at-ghost + bunch-back logic can
+ pin it); (c) formation creep: the formation as a whole advances
+ toward the enemy every frame (crescent re-centered on a moving
+ pivot, never a static tile); (d) UMS shrink-to-enemy rule: on UMS
+ maps, independent of Combat Evaluation, keep a base
+ distance-to-enemy that shrinks ~0.3 tiles/sec until contact -
+ the cluster always closes, never waits. (d) is the owner's
+ explicit ask; (a)-(c) are the mechanisms that make it move.
+ Proof: ZealDrag_v_LingsUpg live (army displaces toward the split
+ enemy instead of standing), then ZealDrag_v_Zeal.
+- **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
+ so vs faster-attacking enemies (zerglings attack faster than
+ zealots) they stand through the cooldown and bleed. Rule: after
+ the zealot attacks with cooldown remaining, withdraw a step when
+ (a) wounded, (b) locally outnumbered (more enemies than allies
+ around), or (c) the foe attacks faster - skip entirely while
+ ~unhurt (~10 damage is no wound). Mirror of the dragoon DuelKite
+ footwork, zealot-flavored: the step must not break the line on
+ open ground, only save HP that would otherwise be donated.
+ Prove in sim first (zealot vs lings: HP saved per cooldown),
+ then live on the ling maps.
+- **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
+ (owner 2026-10-21/22): on the new map the bot first does not move
+ at all, then loses on zealot/dragoon miscoordination - zealots
+ break formation and attack first. Discipline: until a ranged
+ weapon fires inside the cluster (assuming the cluster has one),
+ zealots do not attack on their own; the moment a zealot is
+ attacked, break formation and attack. Test vehicle is the map
+ itself (ZealDrag_v_Zeal.scm): first prove the march (no
+ standstill, #177), then the coordination (win, not just move).
+- **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
+ #176): the death log gains meaning only with the fight around
+ it. Every second log per unit: zealot-dragoon distances, HP,
+ and enemy count within 2 tiles of the unit. Store compactly
+ (throttled twin, one row per unit per second, not per frame);
+ the dead-unit log then shows the class that decided (#176) plus
+ the 5-second approach that killed it. Delete or thin when the
+ coordination items close - diagnostics, not a permanent feed.
+
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
