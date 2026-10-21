@@ -903,12 +903,7 @@ public class Selection extends BaseSelection {
     }
 
     public boolean areAllBusy() {
-        for (Iterator<AUnit> it = (Iterator) data.iterator(); it.hasNext(); ) {
-            AUnit unit = it.next();
-            if (!unit.isBusy()) return false;
-        }
-
-        return true;
+        return SelectionAccessors.areAllBusy(this);
     }
 
     // === Operations on set of units ==========================
@@ -1096,13 +1091,7 @@ public class Selection extends BaseSelection {
     }
 
     public String unitIds() {
-        StringBuilder result = new StringBuilder("ids(");
-
-        for (AUnit unit : list()) {
-            result.append(unit.id()).append(",");
-        }
-
-        return result.append(")").toString();
+        return SelectionAccessors.unitIds(this);
     }
 
     public double estimate() {

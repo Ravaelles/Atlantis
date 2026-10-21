@@ -44,6 +44,27 @@ public class SelectionAccessorsTest extends WorldStubForTests {
     }
 
     @Test
+    public void busyAndIdAnswers() {
+        FakeUnit a = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(1, fakeOurs(a, b), fakeEnemies(), () -> {
+            Selection ours = Select.our();
+
+            assertEquals(false, ours.areAllBusy(), "idle probes are not all busy");
+            a.busy = true;
+            assertEquals(false, ours.areAllBusy(), "one idle probe vetoes");
+            b.busy = true;
+            assertEquals(true, ours.areAllBusy(), "all busy means all busy");
+
+            String ids = ours.unitIds();
+            assertTrue(ids.startsWith("ids(") && ids.endsWith(")"), "cache-path shape: " + ids);
+            assertTrue(ids.contains(String.valueOf(a.id())), "names a: " + ids);
+            assertTrue(ids.contains(String.valueOf(b.id())), "names b: " + ids);
+        });
+    }
+
+    @Test
     public void emptySelectionAnswersNull() {
         world(1, fakeOurs(), fakeEnemies(), () -> {
             Selection ours = Select.our();

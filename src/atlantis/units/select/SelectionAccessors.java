@@ -39,4 +39,23 @@ final class SelectionAccessors {
     static AUnit random(Selection selection) {
         return (AUnit) ARandom.getRandomElement(selection.data);
     }
+
+    static boolean areAllBusy(Selection selection) {
+        for (java.util.Iterator<AUnit> it = (java.util.Iterator) selection.data.iterator(); it.hasNext(); ) {
+            AUnit unit = it.next();
+            if (!unit.isBusy()) return false;
+        }
+
+        return true;
+    }
+
+    static String unitIds(Selection selection) {
+        StringBuilder result = new StringBuilder("ids(");
+
+        for (AUnit unit : selection.list()) {
+            result.append(unit.id()).append(",");
+        }
+
+        return result.append(")").toString();
+    }
 }
