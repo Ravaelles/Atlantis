@@ -95,6 +95,12 @@ public final class FightTarget {
         int now = A.now();
         Integer lastStep = lastStepFrame.get(unit.id());
         if (makeWay(unit, now, lastStep)) return;
+        // Zealot hold-fire discipline (NEXT #179): until a ranged weapon
+        // fires inside the cluster, zealots hold instead of initiating -
+        // the moment one is really hit, the formation breaks and it
+        // attacks. Lone-zealot armies never hold (they would stare).
+        if (unit.isZealot()
+            && atlantis.battle.strategy.ZealotHoldFire.hold(unit)) return;
         if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
         if (reengage(unit, target, now, lastStep)) return;
         rearmAttack(unit, target);

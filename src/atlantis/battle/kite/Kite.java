@@ -59,9 +59,13 @@ public final class Kite {
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null) return false;
-        // Zealots trade contact, except on a spent weapon: with 7+ frames
-        // of cooldown left a step back costs no DPS (owner direction).
-        if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
+        // Zealots trade contact, except wounded on a spent weapon: with
+        // 7+ frames of cooldown left a step back costs no DPS, and a
+        // wounded zealot saves HP against faster attackers instead of
+        // standing through the cooldown (NEXT #178, owner direction).
+        // Unwounded zealots keep trading - withdrawing whole would
+        // string the line out for nothing.
+        if (!unit.isDragoon() && !ZealotWithdraw.should(unit, threat)) return false;
         if (unit.isDragoon()) {
             boolean lowHp = unit.hp() + unit.shields() < CombatTuning.current().getDragoonLowHp();
             // Pinch retreat (owner): two or more melee enemies inside 2

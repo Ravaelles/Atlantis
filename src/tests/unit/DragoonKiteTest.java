@@ -161,11 +161,12 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void zealotsKiteOnlyOnSpentWeapon() {
-        // Owner direction (was: never kite): a Zealot with 7+ frames of
-        // cooldown left steps back instead of standing through it - the
-        // shot is gone either way, distance is free. Fresh weapon holds
-        // contact as before.
+    public void zealotsKiteOnlyWhenWoundedOnSpentWeapon() {
+        // Owner direction, NEXT #178 (was: kite on spent weapon alone): a
+        // Zealot with 7+ frames of cooldown left steps back ONLY when
+        // wounded - the shot is gone either way, but an unwounded line
+        // trading contact must not string itself out. Fresh weapon holds
+        // contact as before; the wound matrix lives in ZealotWithdrawTest.
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
         FakeUnit foe = fake(AUnitType.Protoss_Zealot, 30.5, 20);
 
@@ -173,7 +174,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             zealot.cooldown = 6;
             assertFalse(Kite.shouldKite(zealot, foe), "fresh weapon holds contact");
             zealot.cooldown = 7;
-            assertTrue(Kite.shouldKite(zealot, foe), "spent weapon steps back");
+            assertFalse(Kite.shouldKite(zealot, foe),
+                "spent but unwounded: trade contact, don't string the line");
+            zealot.setHp(zealot.maxHp() - 20);
+            assertTrue(Kite.shouldKite(zealot, foe), "spent and wounded: step back");
             assertFalse(Kite.shouldKite(null, foe));
             assertFalse(Kite.shouldKite(zealot, null));
         });
@@ -503,11 +507,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void zealotTradesContactInsteadOfStepping() {
-        // Range-0 units compute desired distance 0, so the kite step
-        // length is always 0 past point blank: a Zealot trades contact
-        // with or without Dragoons behind it (the cd>=7 exception never
-        // produces a step - pinned so reviving it stays conscious).
+    public void zealotHoldsFormationInsteadOfStepping() {
+        // NEXT #179 (was: trade contact): with Dragoons behind, a Zealot
+        // holds instead of initiating - the old pin below assumed the
+        // attack it now withholds. Pinned so reviving it stays conscious.
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 60, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 62, 20);
         FakeUnit foe = fake(AUnitType.Protoss_Zealot, 61, 20);
@@ -519,10 +522,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
             assertFalse(
                 hasOrder(ordersOf(zealot), zealot.id(), "move"),
-                "contact, not steps - with Dragoons behind: " + ordersOf(zealot));
-            assertTrue(
+                "no sidestep, the line stays packed: " + ordersOf(zealot));
+            assertFalse(
                 hasOrder(ordersOf(zealot), zealot.id(), "attackUnit"),
-                "line trades contact instead: " + ordersOf(zealot));
+                "no ranged shot yet: hold, don't initiate: " + ordersOf(zealot));
         });
     }
 
