@@ -32,6 +32,22 @@ public class TunerFitnessTest {
     }
 
     @Test
+    public void lossCarriesMillionPenalty() {
+        TunerObjective.Row loss = new TunerObjective.Row("a", false, 10, 30);
+
+        assertEquals(10 * (30.0 / 60.0) + TunerFitness.LOSS_PENALTY, TunerFitness.fitness(loss), 0.0001);
+    }
+
+    @Test
+    public void lossesTuneTowardDyingSlower() {
+        TunerObjective.Row quickBloodyLoss = new TunerObjective.Row("a", false, 50, 30);
+        TunerObjective.Row slowCleanLoss = new TunerObjective.Row("b", false, 5, 240);
+
+        assertTrue(TunerFitness.compare(slowCleanLoss, quickBloodyLoss) < 0,
+            "among losses, slower and cleaner wins: dying slower is tunable");
+    }
+
+    @Test
     public void lowerFitnessWinsWithinOutcome() {
         TunerObjective.Row quick = new TunerObjective.Row("a", true, 10, 30);
         TunerObjective.Row bloody = new TunerObjective.Row("b", true, 10, 60);

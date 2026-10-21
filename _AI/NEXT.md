@@ -1012,6 +1012,21 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   in batch.log), proven by a 1-game batch (WIN, manifest validated:
   structure, digest recomputation, batch.csv agreement). The overnight
   N-game sweep stays owner-called. Step 6 (gradient loop) LANDED
+  2026-10-21: TunerFitness TIMES_HIT x GAME_minutes (lower wins; a LOSS
+  carries +1M so one scalar orders everything and losses still tune
+  toward dying slower), abstract TuningScenario + concrete
+  DuelHitsMinutesScenario (map, 3 replicates, all 26 params with a
+  bounds registry as the single source of truth), TunerGradient
+  (least-squares slopes vote the sign, span-fraction descent,
+  frozen-respecting jitter, integral rendering for int params),
+  TunerProposer + TunerDriver (hof + manifest in, env fragment out,
+  BEST/STEP/RADIUS out, map-mismatch warning) and run-wine-tune.sh
+  (batch, propose, halve step/radius when the best stops improving).
+  Proved live: 2 rounds x 2 duels, best fitness 4.33 -> 2.67
+  (13 -> 8 hits taken). Engines are addressable (TuningEngine +
+  wine/openbw/sim descriptors, --engine flag); only wine tunes today,
+  the others fail loudly with their reason (no tweaker rows on
+  OpenBW, no sim batch runner yet). Step 6 (gradient loop) LANDED
   2026-10-21: scalar fitness TIMES_HIT x GAME_minutes (lower wins,
   WIN always outranks LOSS), abstract TuningScenario + concrete
   DuelHitsMinutesScenario (map, replicates, full 26-param bounds as

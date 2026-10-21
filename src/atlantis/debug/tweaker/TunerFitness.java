@@ -5,16 +5,23 @@ package atlantis.debug.tweaker;
  * lower is better. A duel that ends fast with few hits on us beats a
  * long bloody one, whatever the absolute scales are.
  *
- * <p>The win gate is deliberate, not an afterthought: without it a fast
- * loss with few hits would outrank a hard-fought win, which is exactly
- * backwards for a combat tuner. Wins always rank above losses; the
- * scalar only orders within the same outcome. Unknown counters (the
- * {@code ?} rows) read as infinitely bad - a fully-instrumented game
- * always beats a blind one.
+ * <p>A loss carries a flat +1M penalty on top, so one number orders
+ * every row: wins compete on speed and blood, losses compete on dying
+ * slower and cleaner, and no loss ever outranks a win (1M dwarfs any
+ * realistic score - hundreds of hits times tens of minutes). The
+ * penalty is the reusable half for other scenarios: it keeps a single
+ * comparable scalar instead of a two-tier gate, so gradient slopes stay
+ * meaningful across mixed outcomes (a constant shifts nothing - least
+ * squares centers it away - while the ordering still prefers winning).
+ * Unknown counters (the {@code ?} rows) read as infinite:
+ * a fully-instrumented game always beats a blind one.
  *
  * <p>Pure tooling, no game-loop callers.
  */
 public final class TunerFitness {
+
+    /** Flat loss penalty: dwarfs any realistic hits x minutes score. */
+    public static final double LOSS_PENALTY = 1000000.0;
 
     private TunerFitness() {
     }
@@ -37,19 +44,25 @@ public final class TunerFitness {
         return hitsTaken * minutes;
     }
 
-    /** Scalar fitness of a batch row. */
+    /**
+     * Scalar fitness of a batch row: TIMES_HIT x GAME_minutes, plus the
+     * flat loss penalty for a LOSS. Unknown rows stay infinite, never
+     * arithmetic on a sentinel.
+     */
     public static double fitness(TunerObjective.Row row) {
         if (row == null) return Double.MAX_VALUE;
-        return fitness(row.hitsTaken(), row.seconds());
+        double base = fitness(row.hitsTaken(), row.seconds());
+        if (base == Double.MAX_VALUE) return Double.MAX_VALUE;
+        return row.win() ? base : base + LOSS_PENALTY;
     }
 
     /**
-     * Negative when {@code a} is the better game: a WIN always beats a
-     * LOSS, then lower fitness wins, then the game name breaks ties so
-     * rankings are stable across runs.
+     * Negative when {@code a} is the better game: lower fitness wins,
+     * then the game name breaks ties so rankings are stable across
+     * runs. The loss penalty inside the scalar already orders every
+     * loss below every win, so no separate outcome branch is needed.
      */
     public static int compare(TunerObjective.Row a, TunerObjective.Row b) {
-        if (a.win() != b.win()) return a.win() ? -1 : 1;
         int byFitness = Double.compare(fitness(a), fitness(b));
         if (byFitness != 0) return byFitness;
         return a.game().compareTo(b.game());

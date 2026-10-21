@@ -3,7 +3,11 @@
 # the next params from the hall of fame, repeat.
 #
 # Usage:
-#   bash scripts/run-wine-tune.sh "1Drag_v_1Zeal.scm" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D]
+#   bash scripts/run-wine-tune.sh "1Drag_v_1Zeal.scm" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim]
+#
+# Engines (atlantis.debug.tweaker.TuningEngines, the source of truth -
+# the strings below mirror it): wine tunes today; openbw and sim fail
+# fast with the reason instead of running a broken loop.
 #
 # Each round runs run-wine-batch.sh with K games (duels are noisy -
 # the scenario wants replicates) and the current fragment as KEY=VALUE
@@ -24,6 +28,7 @@ ROUNDS=""
 K=""
 OUTDIR=""
 ENV_ARG=""
+ENGINE="wine"
 SEED="$RANDOM"
 STEP=""
 RADIUS=""
@@ -33,6 +38,7 @@ for arg in "$@"; do
     --seed=*) SEED="${arg#--seed=}" ;;
     --step=*) STEP="${arg#--step=}" ;;
     --radius=*) RADIUS="${arg#--radius=}" ;;
+    --engine=*) ENGINE="${arg#--engine=}" ;;
     *)
       if [ -z "$MAP" ]; then MAP="$arg";
       elif [ -z "$ROUNDS" ]; then ROUNDS="$arg";
@@ -42,7 +48,17 @@ for arg in "$@"; do
   esac
 done
 [ -n "$MAP" ] && [ "$ROUNDS" -gt 0 2>/dev/null ] && [ "$K" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] \
-  || { echo "usage: run-wine-tune.sh \"<map.scm>\" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D]" >&2; exit 1; }
+  || { echo "usage: run-wine-tune.sh \"<map.scm>\" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim]" >&2; exit 1; }
+case "$ENGINE" in
+  wine) BATCH="scripts/run-wine-batch.sh" ;;
+  openbw|sim)
+    echo "[wine-tune] engine '$ENGINE' is declared but not tunable yet:" >&2
+    echo "[wine-tune] openbw writes no tweaker rows and its duel map does not tick;" >&2
+    echo "[wine-tune] sim has no batch runner yet (defined next slice)." >&2
+    exit 2 ;;
+  *) echo "[wine-tune] unknown engine '$ENGINE' (wine|openbw|sim)" >&2; exit 2 ;;
+esac
+[ -n "$ENV_ARG" ] || ENV_ARG="--env=bwapi-data/AI/ENV-WINE-FAST"
 
 cd "$ATLANTIS_DIR" || exit 1
 mkdir -p "$OUTDIR"
@@ -66,11 +82,11 @@ while [ "$r" -lt "$ROUNDS" ]; do
   # shellcheck disable=SC2086
   if [ -s "$FRAG" ]; then
     # shellcheck disable=SC2046
-    bash scripts/run-wine-batch.sh "$MAP" "$K" "$RDIR" $(grep -v '^#' "$FRAG") ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
+    bash "$BATCH" "$MAP" "$K" "$RDIR" $(grep -v '^#' "$FRAG") ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
       || echo "[wine-tune] round $r: batch runner failed, continuing"
   else
     # shellcheck disable=SC2086
-    bash scripts/run-wine-batch.sh "$MAP" "$K" "$RDIR" ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
+    bash "$BATCH" "$MAP" "$K" "$RDIR" ${ENV_ARG:+$ENV_ARG} > "$OUTDIR/round-$r.log" 2>&1 \
       || echo "[wine-tune] round $r: batch runner failed, continuing"
   fi
   if [ ! -f "$RDIR/manifest.txt" ]; then

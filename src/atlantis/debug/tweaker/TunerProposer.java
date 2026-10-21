@@ -11,11 +11,12 @@ import java.util.Random;
 /**
  * Proposal step of the gradient loop (NEXT #160, step 6): from the hall
  * of fame, through the scenario's fitness, to the next param vector.
- * Wins outrank losses before fitness is even read (a fast loss with few
- * hits must never outrank a hard win); within an outcome the scenario
- * scalar decides. Slopes run over wins when there are at least two,
- * otherwise over everything played - a heuristic optimizer documents
- * its data rule instead of pretending losses carry no information.
+ * One scalar orders everything: the loss penalty inside the fitness
+ * puts every loss below every win, so losses still tune toward dying
+ * slower and cleaner without ever outranking a win. Slopes run over
+ * wins when there are at least two, otherwise over everything played -
+ * a heuristic optimizer documents its data rule instead of pretending
+ * losses carry no information.
  *
  * <p>Pure tooling, no game-loop callers. Deterministic given the same
  * archive and seed.
@@ -25,14 +26,13 @@ public final class TunerProposer {
     private TunerProposer() {
     }
 
-    /** Best-first by scenario: wins first, then lower fitness, then game name. */
+    /** Best-first by scenario fitness, then game name. The loss penalty inside the scalar already orders every loss below every win. */
     public static List<TunerHallOfFame.Entry> rank(TuningScenario scenario, List<TunerHallOfFame.Entry> entries) {
         ArrayList<TunerHallOfFame.Entry> ranked = new ArrayList<>();
         if (entries != null) ranked.addAll(entries);
         Collections.sort(ranked, new Comparator<TunerHallOfFame.Entry>() {
             @Override
             public int compare(TunerHallOfFame.Entry a, TunerHallOfFame.Entry b) {
-                if (a.row().win() != b.row().win()) return a.row().win() ? -1 : 1;
                 int byFitness = Double.compare(scenario.fitness(a.row()), scenario.fitness(b.row()));
                 if (byFitness != 0) return byFitness;
                 return a.row().game().compareTo(b.row().game());
