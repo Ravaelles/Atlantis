@@ -186,6 +186,19 @@ final class SelectionSorting {
         return nearest != null && nearest.distTo(position) <= maxDist;
     }
 
+    static boolean nearestToDistMore(Selection selection, HasPosition position, double maxDist) {
+        AUnit nearest = nearestTo(selection, position);
+        return nearest != null && nearest.distTo(position) >= maxDist;
+    }
+
+    static AUnit mostDistantToBase(Selection selection) {
+        return mostDistantTo(selection, Select.mainOrAnyBuilding());
+    }
+
+    static AUnit nearestToMain(Selection selection) {
+        return nearestTo(selection, Select.mainOrAnyUnit());
+    }
+
     static AUnit groundNearestTo(Selection selection, HasPosition position) {
         List<AUnit> data = selection.data;
         if (data.isEmpty() || position == null) return null;

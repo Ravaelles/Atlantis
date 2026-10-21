@@ -814,8 +814,7 @@ public class Selection extends BaseSelection {
     }
 
     public boolean nearestToDistMore(HasPosition position, double maxDist) {
-        AUnit nearest = nearestTo(position);
-        return nearest != null && nearest.distTo(position) >= maxDist;
+        return SelectionSorting.nearestToDistMore(this, position, maxDist);
     }
 
     public AUnit mostDistantTo(HasPosition position) {
@@ -823,11 +822,11 @@ public class Selection extends BaseSelection {
     }
 
     public AUnit mostDistantToBase() {
-        return mostDistantTo(Select.mainOrAnyBuilding());
+        return SelectionSorting.mostDistantToBase(this);
     }
 
     public AUnit nearestToMain() {
-        return nearestTo(Select.mainOrAnyUnit());
+        return SelectionSorting.nearestToMain(this);
     }
 
     public AUnit closestToEnemyBase() {
@@ -1061,7 +1060,7 @@ public class Selection extends BaseSelection {
 //    }
 
     public APosition center() {
-        return units().average();
+        return SelectionViews.center(this);
     }
 
     public Selection removeDuplicates() {

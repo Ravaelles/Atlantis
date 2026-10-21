@@ -3,6 +3,7 @@ package atlantis.units.select;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.map.position.APosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,10 @@ final class SelectionViews {
 
     static Units units(Selection selection) {
         return new Units(selection.data);
+    }
+
+    static APosition center(Selection selection) {
+        return units(selection).average();
     }
 
     static int count(Selection selection) {
