@@ -461,9 +461,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21 Wine macro: twin gap named - warping Observatory
   [118,30] (STARTED 12:35) whose builder #126 died to lings 12:28
   leaves zero further rows (no cancel, no death, no warp): the
-  orphan-drop twin does not cover builder-dead warps. Next: extend
-  the orphan-drop twin to builder death, proof is cid 331's shape
-  twinning on the next run. 2026-10-21 mechanism, no blind patch:
+  orphan-drop twin does not cover builder-dead warps. 2026-10-21
+  mechanism, no blind patch: demoteStalledInProgress checks
+  buildingNearSite FIRST, so a standing warp entity self-matches
+  and shields everything below (incl. the archive-aware dead
+  branch) - correct for a progressing Protoss warp, fatal for a
+  frozen one. The log cannot tell "frozen entity" from "completed
+  but unlogged" (no Observatory death twin, no ledger row either
+  way); the fix is progress-based demote (building HP static over
+  N frames), not presence-based, pinned in stub + proven on a
+  builder-death game - WO-sized, not a drive-by. 2026-10-21 mechanism, no blind patch:
   the corpse may read alive - ghost UNIT_TRACE rows exist for 30
   dead ids (e.g. Dragoon 177 dead 14848, traced 16396 at hp 7 with
   garbage dist 671088639), so any liveness predicate in the fix
@@ -729,6 +736,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   datum (TauCross, ledger): Gateways 1:27/1:53/4:11/6:01 + dynamic
   7:51 [105,16] and 8:06 [123,26], all warped - lateness pattern
   not reproduced. No blind patch.
+  2026-10-21: 5th-8th clean runs in a row (1:25-1:28 / 1:47-1:56,
+  all warps) vs 3 late runs in the archive (2:37, 3:10/3:52,
+  2:53/3:03) - intermittent, still no blind patch; the ledger
+  keeps naming the layer when it recurs.
   2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
   + 17:19/18:18, all warped - lateness not reproduced again.
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
