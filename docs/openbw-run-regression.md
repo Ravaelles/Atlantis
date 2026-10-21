@@ -2459,3 +2459,221 @@ other player), which is on the other side.
 Remove the temporary `A14:` audit lines (they are stderr noise) and keep the
 finding documented. Then, if the rule still needs a decision, it can be taken
 against a map that actually declares a Victory.
+
+---
+
+## 71. Twenty trigger-semantics tests + __BUGS.md
+
+New `tests/trigger_semantics_test.cpp` (T01-T20), run by the existing
+`tests/run.sh` together with the behaviour suite.
+
+| id | what it pins |
+|---|---|
+| T01 | a UMS map loads and places units |
+| T02 | neutral resources exist |
+| T03 | revealers stay out of the visible/army list |
+| T04 | map triggers attached to playable slots |
+| T05-T08 | comparators: at-least, at-most, exactly, boundaries |
+| T09 | unknown comparator is false (never accidentally true) |
+| T10 | "Always" true for every slot |
+| T11 | "Elapsed time" compares the frame counter |
+| T12 | switch condition follows switch state |
+| T13 | out-of-range switch index is false, not UB |
+| T14 | death table starts empty for an empty slot |
+| T15 | `kill_unit` increments exactly the owner's entry |
+| T16 | group 229 sees recorded deaths |
+| T17 | `get_unit` round-trips a visible unit |
+| T18 | 300 frames without abort |
+| T19 | two identical runs agree (determinism) |
+| T20 | map dimensions and start locations sane |
+
+### 71a. The tests found real problems - recorded, not fixed
+
+Per instruction, nothing was fixed. `__BUGS.md` (committed in the repo) has five
+entries, each with reproduction and a suggested fix that was **not** applied:
+
+- **BUG-1** condition 4 ignores switch state in this tree (T12, T13 fail)
+- **BUG-2** engine copies drifted: the harness has fixes this tree lacks
+- **BUG-3** `get_unit(index)` does not round-trip `unit->index`
+- **BUG-4** map-declared defeat is not logged
+- **BUG-5** unsupported trigger types abort the whole simulation
+
+### 71b. Results, both engines
+
+```
+harness engine (with the fixes):   20/20 passed
+this repository:                   18/20 passed  (T12, T13 = BUG-1)
+both maps                         same result
+```
+
+That difference is the point: the suite measures the drift instead of hiding it.
+
+---
+
+## 72. Twenty trigger-ACTION tests (A01-A20)
+
+`tests/trigger_actions_test.cpp`, same rules as before: engine-only, drives the
+real `execute_trigger_action()` entry point, nothing fixed on failure.
+
+| id | what it pins |
+|---|---|
+| A01 | preserve trigger sets the repeat flag |
+| A02 | wait blocks the first time |
+| A03 | wait: block while waiting, resume once, block again |
+| A04 | set switch on then off |
+| A05 | out-of-range switch index is harmless |
+| A06-A08 | set resources: set minerals, set gas without touching minerals, add mode |
+| A09 | create unit adds a unit |
+| A10 | kill unit reduces the owner's units |
+| A11 | kill "any unit" (229) does not throw |
+| A12 | move location keeps the region size |
+| A13 | AI-script action is counted |
+| A14 | known action returns true |
+| A15 | victory writes state for a playable slot |
+| A16 | defeat writes state for a playable slot |
+| A17 | neutral slot is not marked victorious |
+| A18 | set unit resources does not throw |
+| A19 | state stays consistent after a burst of actions |
+| A20 | simulation continues after actions |
+
+### 72a. Results
+
+```
+M&M_v_ZealDrag.scx : 20/20
+1Drag_v_1Zeal.scm  : 19/20   (A12)
+harness engine     : same as this tree (A12 fails there too)
+```
+
+All three suites together: **103 checks**, 6 suite-runs over 2 maps.
+
+### 72b. Two more bugs found, recorded not fixed
+
+`__BUGS.md` now has seven entries:
+
+- **BUG-6** `move location` does not preserve region size (A12): dx 160 -> 256.
+  The move adds the centre delta to the *target* region's corners and clamps
+  each corner independently, so a region changes size when the two regions
+  differ. Maps that move a region start matching the wrong area.
+- **BUG-7** the wait action cannot be exercised in isolation: its resume path
+  lives in `process_triggers()`, so the action and the scheduler share one state
+  machine. Testability gap, no user-visible symptom.
+
+It is worth noting that A12 passes on M&M and fails on 1Drag: the defect is
+geometry-dependent, which is exactly why it survived unnoticed.
+
+### 72c. Process note
+
+A03's first two versions failed for reasons in the *test*, not the engine
+(sharing `trigger_waiting` with an earlier test; assuming the wait flag is
+consumed on the second call). Both were corrected by reading `case 4` rather
+than by weakening the assertion. The final test drives the three real branches.
+
+### 72d. Uncommitted work in the repository (deliberate, not lost)
+
+`git status` in `/sc-ai/OpenBW/openbw` shows `M bwgame.h` with a small pending
+change:
+
+- `case 4` implementing the real switch read (the fix for BUG-1),
+- two `fprintf` lines for trigger victory/defeat (the BUG-4 diagnostic).
+
+It was **not committed** with the test work on purpose: the tests must first
+fail against the current behaviour, otherwise the regression they encode
+disappears. Saved as `/tmp/bwgame.pending.patch` so it cannot be lost if the
+working tree is reset. Applying it should turn T12/T13 green; that is the
+acceptance check for BUG-1 and BUG-4.
+
+---
+
+## 73. Fifty unit-data and game-state tests (D01-D50)
+
+`tests/state_and_data_test.cpp`. These pin the invariants everything else
+assumes but nothing checked before: the static tables, ownership counters,
+map geometry and the UMS setup defaults.
+
+| block | ids | coverage |
+|---|---|---|
+| unit type table | D01-D20 | table size, id/index agreement, hp/shield, costs for Zealot/Dragoon/Marine/Zergling, build times, buildings, weapons, worker flags, resources table |
+| ownership and counts | D21-D35 | valid owners/types, units inside the map, per-owner lists, neutral resources, counter non-negativity, supply, starting resources, no pre-set victory, playable slots |
+| map geometry | D36-D42 | tile/pixel dimensions consistent, tile table size, mega tile indices, start locations, regions |
+| UMS setup defaults | D43-D50 | USE_MAP_SETTINGS defaults, no melee units, 50 minerals, resource type, condition/action type ranges, one frame runs |
+
+### 73a. Results
+
+```
+both maps, both engine copies: 50/50
+whole suite (4 binaries x 2 maps): 21+21+20+50 and 21+21+21+50 checks
+```
+
+### 73b. Four wrong assumptions of mine, corrected in the test - engine was right
+
+Writing these produced four failures that were **not** engine bugs:
+
+1. `hitpoints` is fp8: `25600` means 100 hp, not 100 raw.
+2. Zergling costs **50/0** in the BroodWar `units.dat` this engine loads; the
+   25/0 figure is original StarCraft.
+3. Four special building types legitimately have no build time, so "every
+   building has a build time" is a wrong assertion; it now allows up to five.
+4. `supply_used` / `supply_available` are per-race arrays, not scalars.
+
+Each is now documented in the test itself, so the next reader does not repeat
+the mistake.
+
+### 73c. Current state of the whole suite
+
+```
+engine_behaviour_test   21/21   (both maps)
+trigger_semantics_test  21/21   (both maps)   T12/T13 green after a46a66e
+trigger_actions_test    20/21   A12 = BUG-6 (open)
+state_and_data_test     50/50   (both maps)
+```
+
+`FAILED` in the runner currently comes from exactly one check: A12, the
+documented `move location` resizing bug. Nothing else fails.
+
+---
+
+## 74. __BUGS.md restructured + 100 more tests (I001-I100)
+
+### 74a. `__BUGS.md` now opens with N01-N20
+
+Twenty measured "non-obvious facts" before the bug list: the three unit lists and
+which one to count, revealers in `unit_counts`, the 255-entry MRGN (and the
+whole-map region at index 63), Melee.trg-only triggers, per-controller trigger
+attachment, map-declared defeat, the blocking `callOnFrame()`, the shared
+segment that must stay linked, fp8 hitpoints, BroodWar costs, per-race supply,
+and the group-overlap and unit-lookup traps.
+
+### 74b. One hundred invariant tests
+
+| block | ids | coverage |
+|---|---|---|
+| unit types | I001-I025 | hp/shields/costs/flags for the reference units, weapon and flingy pointers inside their tables, armor |
+| state and lists | I026-I050 | list disjointness, unique indices, owner validity, tile flags, map edge unbuildable, region sanity, trigger vector integrity, two loads agree |
+| triggers | I051-I075 | attachment per force/slot, neutral slots have none, comparator boundaries, switch indices 0/255/-1, death counts, group predicates, condition evaluation is side-effect free |
+| map and simulation | I076-I100 | dimension arithmetic, cv5/mega-tile bounds, start locations, setup defaults, frame advance, determinism, hp/shield bounds, engine still steps after everything |
+
+### 74c. Results and what the writing taught
+
+```
+both maps: 101/101 (100 tests + I067b)
+whole suite: 21 + 21 + 20 + 50 + 101 checks per map
+FAILED overall: only A12 (BUG-6, open)
+```
+
+Every failure during authoring was **my wrong assumption**, and each is now
+documented inside the test:
+
+1. `unit_type_t::shield_points` is a data slot, not a capability flag: Marine and
+   Zergling both carry **100**. "Marine has no shield" was false.
+2. Buildings and factories **overlap by design** (12 types match both), so a
+   disjointness assertion across 230/231/232 is wrong. What holds is that *men*
+   never overlap a building group.
+3. `MRGN` is 255 records and real regions are **not contiguous**: 63 real,
+   then empty slots, with a whole-map region at index 63.
+4. `unit_t::hp` vs `unit_type_t::shield_points` mix fp8 with plain ints.
+
+### 74d. Committed
+
+```
+2c0b549 tests: 100 engine invariants (I001-I100) + non-obvious facts in __BUGS.md
+```
