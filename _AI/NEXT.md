@@ -44,6 +44,12 @@ What the four diagnostic runs actually showed (all measured, previous
 - Residual risk accepted and documented: a UMS map that hides all
   enemies 8+ s continuously after contact with zero own kills would
   DRAW early; the DRAW verdict itself names that investigation.
+- Same map on Wine (super-fast, 2026-10-21, via `scripts/atlantis.sh`):
+  14 s wall, VICTORY 1/0 in 20 game-sec - a real fight against a
+  killable zealot. The OpenBW DRAW is a backend divergence (enemy
+  unkillable, then removed ~f336 with no death), not bot play.
+  Gateway `scripts/atlantis.sh` (`--engine wine|openbw`, default wine)
+  proven live on both backends the same day.
 
 ## Phases (the quarter) — checklist
 
