@@ -233,7 +233,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notFinishedOfType(AUnitType type) {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() != ConstructionOrderStatus.FINISHED
+            if (!construction.status().isTerminal()
                 && (type == null || construction.buildingType().equals(type))) {
                 notStarted.add(construction);
             }
@@ -254,7 +254,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notFinished() {
         ArrayList<Construction> notFinished = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() != ConstructionOrderStatus.FINISHED) {
+            if (!construction.status().isTerminal()) {
                 notFinished.add(construction);
             }
         }

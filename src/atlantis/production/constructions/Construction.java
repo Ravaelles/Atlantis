@@ -297,7 +297,7 @@ public class Construction implements Comparable<Construction> {
             if (building != null && building.isProtoss()) setBuilder(null);
         }
 
-        if (status.equals(ConstructionOrderStatus.FINISHED)) {
+        if (status.isTerminal()) {
             ConstructionRequests.removeOrder(this);
         }
     }
@@ -383,7 +383,7 @@ public class Construction implements Comparable<Construction> {
     }
 
     public boolean notFinished() {
-        return !ConstructionOrderStatus.FINISHED.equals(status);
+        return !status.isTerminal();
     }
 
     public static void clearCache() {
