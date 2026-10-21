@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.game.A;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -54,6 +55,7 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
     @AfterEach
     public void cleanConstructions() {
         ConstructionRequests.constructions.clear();
+        UnitsArchive.reset();
     }
 
     @Test
@@ -207,6 +209,44 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
                     + " server-side - demoting on the pre-attempt standstill"
                     + " clock kills fresh warps (measured: demote 7f after an"
                     + " accepted attempt)");
+        });
+    }
+
+    private Construction archivedStalled;
+
+    /**
+     * The cid-331 shape (Wine macro 2026-10-21): the builder died
+     * (UNIT_DIED twin fired, archive knows) but the wrapper still
+     * reports hp &gt; 0, and the corpse lies far from the site. Pins
+     * that {@code isDead} honors the archive - the link this demote
+     * depends on: without it neither the dead-builder branch
+     * (isDead lies) nor the standstill branch (dist &gt; 3.5)
+     * ever fires and the warp freezes with zero twin rows.
+     */
+    @Test
+    public void archivedDeadBuilderFarFromSiteDemotes() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        world(130, units(nexus, probe), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                UnitsArchive.markUnitAsDestroyed(probe);
+                archivedStalled = stalledCoreAt(probe, 12, 10);
+            }
+
+            if (A.now() == 120) {
+                assertTrue(
+                    probe.isAlive(),
+                    "fixture check: stale hp still reads alive (else this"
+                        + " pins the wrong shape)");
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(archivedStalled, probe),
+                    "archived-dead reads as dead despite stale hp and a far"
+                        + " corpse: re-arm to NOT_STARTED so the retry path"
+                        + " can reassign");
+                assertEquals(
+                    ConstructionOrderStatus.NOT_STARTED, archivedStalled.status());
+            }
         });
     }
 }

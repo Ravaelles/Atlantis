@@ -5,6 +5,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.PrepareConstructionSite;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -60,6 +61,7 @@ public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
         ConstructionRequests.constructions.clear();
         GoalBoardFeeder.clearForTests();
         EventLog.clearForTests();
+        UnitsArchive.reset();
     }
 
     @AfterEach
@@ -71,6 +73,7 @@ public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
         GoalBoardFeeder.clearForTests();
+        UnitsArchive.reset();
     }
 
     @Test
@@ -148,6 +151,51 @@ public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
             assertEquals(
                 1, countRows("builder-dead-retry"),
                 "a dead builder reads the same as none: "
+                    + EventLog.toJsonLines());
+        });
+    }
+
+    @Test
+    public void archivedDeadBuilderRetriesLikeNoBuilder() {
+        currentSupplyUsed = 20;
+        currentSupplyTotal = 25;
+        currentMinerals = 300;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 24)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            // Builder died (UNIT_DIED twin fired, archive knows) but the
+            // wrapper still reports hp > 0 - the live cid-331 shape
+            // (Wine macro 2026-10-21). The retry path must read the
+            // archive, not the stale hp, or the site rots silently.
+            FakeUnit probe = fake(AUnitType.Protoss_Probe, 22, 24);
+            UnitsArchive.markUnitAsDestroyed(probe);
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            Queue.get().addNew(0, order);
+            Construction construction = new Construction(AUnitType.Protoss_Pylon);
+            construction.setProductionOrder(order);
+            order.setConstruction(construction);
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            construction.setBuilder(probe);
+            construction.setPositionToBuild(
+                atlantis.map.position.APosition.create(95, 72));
+            ConstructionRequests.addConstruction(construction);
+            order.consume();
+            EventLog.clearForTests();
+
+            PrepareConstructionSite.dropOrphanedPreparing();
+
+            assertTrue(
+                probe.isAlive(),
+                "fixture check: stale hp still reads alive (else this"
+                    + " pins the wrong shape)");
+            assertEquals(
+                1, countRows("builder-dead-retry"),
+                "an archived-dead builder retries visibly instead of"
+                    + " rotting silently: "
                     + EventLog.toJsonLines());
         });
     }
