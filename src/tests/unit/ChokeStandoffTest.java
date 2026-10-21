@@ -52,6 +52,29 @@ public class ChokeStandoffTest extends WorldStubForTests {
     }
 
     @Test
+    public void crushingLineEngagesInsteadOfHolding() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 27, 29);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 29, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 21);
+        zealot.setEnemy();
+
+        world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
+            // 3 vs 1 at the choke is crushing: no hold, no bait, the line fights.
+            assertTrue(
+                atlantis.battle.strategy.BattleStrategies.pick(a, null)
+                    == atlantis.battle.strategy.BattleStrategy.OPEN_FIELD,
+                "crushing superiority pushes through instead of holding");
+            BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+            assertNotNull(a.targetPosition, "engages instead of idling");
+            assertTrue(a.targetPosition.distTo(zealot.position()) < a.distTo(zealot),
+                "closing toward the zealot (out of range, so a move, not a standoff hold): "
+                + a.targetPosition);
+        });
+    }
+
+    @Test
     public void baitDetachesWhileLineHolds() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 31);
