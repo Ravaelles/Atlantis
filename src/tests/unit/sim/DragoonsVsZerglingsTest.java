@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemy;
 
 /**
  * Dragoons vs Zerglings on the fast behavior sim (NEXT #161): the whole
@@ -784,6 +785,115 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
         finally {
             world.close();
+        }
+    }
+
+    // =========================================================
+    // T-wall: an attack onto the wall, simmed (NEXT #97: the FE game
+    // never took an attack on its wall, so no game can settle whether
+    // the funnel + static DPS holds - this runs that attack: a ling
+    // raid committing through the gap must die on the cannons, in the
+    // funnel, without any army help).
+    // =========================================================
+
+    @Test
+    public void wallFunnelHoldsRaidWithoutHelp() {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit[] lings = new FakeUnit[] {
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 12),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 13),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 14),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 15),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 16),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 17),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 18),
+            fakeEnemy(AUnitType.Zerg_Zergling, 10, 19),
+        };
+        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, lings, arena);
+        APosition gap = APosition.create(30, 15);
+        int cannonHpStart = cannonA.hp + cannonB.hp;
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 600; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, lings);
+                    scriptCannon(cannonB, lings);
+                    for (FakeUnit ling : lings) {
+                        scriptWallRaid(ling, gap, ours);
+                    }
+                });
+                boolean wiped = true;
+                for (FakeUnit ling : lings) {
+                    if (ling.hp > 0) wiped = false;
+                }
+                if (wiped) break;
+            }
+            for (FakeUnit ling : lings) {
+                assertTrue(ling.hp <= 0, "the raid dies committing into the funnel: " + ling.position);
+                assertTrue(ling.position.distTo(gap) < 9,
+                    "killed in the funnel, not chased across the map: " + ling.position);
+            }
+            assertTrue(cannonA.hp > 0 && cannonB.hp > 0, "wall guns survive the raid");
+            assertTrue(cannonA.hp + cannonB.hp > cannonHpStart / 2,
+                "margin, not a trade: cannons keep over half their hit points");
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    /** Static gun: trade with the nearest quarry inside cannon range, else hold. */
+    static void scriptCannon(FakeUnit cannon, FakeUnit[] foes) {
+        if (cannon.hp <= 0) return;
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit foe : foes) {
+            if (foe == null || foe.hp <= 0) continue;
+            double dist = cannon.distTo(foe);
+            if (dist < best) {
+                best = dist;
+                nearest = foe;
+            }
+        }
+        if (nearest != null && best <= SimWorld.reachTiles(cannon, nearest)) {
+            cannon.lastCommand = "AttackUnit";
+            cannon.target = nearest;
+            cannon.targetPosition = nearest.position;
+        }
+        else {
+            cannon.lastCommand = "Hold";
+        }
+    }
+
+    /** Raid script: run at the gap, then trade with the nearest gun. */
+    static void scriptWallRaid(FakeUnit ling, APosition gap, FakeUnit[] guns) {
+        if (ling.hp <= 0) return;
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit gun : guns) {
+            if (gun == null || gun.hp <= 0) continue;
+            double dist = ling.distTo(gun);
+            if (dist < best) {
+                best = dist;
+                nearest = gun;
+            }
+        }
+        if (nearest != null && ling.distTo(nearest) <= SimWorld.reachTiles(ling, nearest)) {
+            ling.lastCommand = "AttackUnit";
+            ling.target = nearest;
+            ling.targetPosition = nearest.position;
+        }
+        else {
+            ling.lastCommand = "Move";
+            ling.target = null;
+            ling.targetPosition = ling.distTo(gap) > 1 ? gap.position() : nearest.position;
         }
     }
 
