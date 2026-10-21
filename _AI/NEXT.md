@@ -840,7 +840,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   no twin rows at all - the sweep instruments the visible band only.
   Re-checked 2026-10-20 across 12 retained logs (earmarks >= 250 in
   3 runs, all frame 4500+ mid/late game, banks 144-658 - the
-  supply-4/bank-74 deadlock shape absent again).
+  supply-4/bank-74 deadlock shape absent again). Re-checked 2026-10-21
+  TauCross macro: lowest-supply reserved>=250 at sup 20 (Pylon,
+  supply-blocked with bank 302, game flowed to 11:15) - the supply-4
+  deadlock shape absent again.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
