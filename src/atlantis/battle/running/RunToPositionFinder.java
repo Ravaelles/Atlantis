@@ -5,6 +5,7 @@ import atlantis.battle.running.show_back.RunShowingBackToEnemy;
 import atlantis.battle.running.to_building.ShouldRunTowardsBase;
 import atlantis.battle.running.to_building.ShouldRunTowardsCB;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
@@ -89,8 +90,17 @@ public class RunToPositionFinder {
 //        System.out.println("@ " + unit.nameWithId() + " - failed show back, RUN ANY DIR");
 
         // === Run as far from enemy as possible =====================
+        // Escape-scored first (NEXT #172): the 8-tile pick that avoids
+        // corners, blockers and the second enemy, then the old
+        // farthest-point search as fallback. Only for unit threats (the
+        // pick scores distance to a threat, not to a position).
 
         running._lastRunMode = "AnyDir";
+        if (runAwayFrom instanceof AUnit) {
+            APosition scored = atlantis.battle.escape.EscapeScoredStep
+                .pickScored(unit, (AUnit) runAwayFrom, 8);
+            if (scored != null) return running.setRunTo(scored);
+        }
         return running.setRunTo(runInAnyDirection.runInAnyDirection(runAwayFrom));
     }
 

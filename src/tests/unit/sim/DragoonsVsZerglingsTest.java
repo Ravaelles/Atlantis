@@ -819,6 +819,45 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    // =========================================================
+    // T-run: a probe flees a chasing zealot through the running
+    // managers (NEXT #172, second consumer). The probe outruns the
+    // zealot (4.92 vs 4.0), so survival means the escape chain issued
+    // somewhere away instead of freezing or circling back.
+    // =========================================================
+
+    @Test
+    public void probeOutrunsChaserThroughRunningManagers() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 10, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 14, 20);
+        zealot.setEnemy();
+        double startDist = probe.distTo(zealot);
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { probe }, new FakeUnit[] { zealot }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 400; i++) {
+                world.tick(() -> {
+                    if (probe.hp > 0) {
+                        probe.runningManager().runFrom(
+                            zealot, 4, atlantis.units.actions.Actions.RUN_ENEMY, false);
+                    }
+                    scriptChaser(zealot, probe);
+                });
+                if (zealot.hp <= 0 || probe.hp <= 0) break;
+            }
+            assertTrue(probe.hp > 0, "the faster probe escapes the chase");
+            assertTrue(probe.distTo(zealot) > startDist,
+                "distance opened instead of circling back: " + probe.distTo(zealot) + " vs " + startDist);
+        }
+        finally {
+            world.close();
+        }
+    }
+
     /** Map-AI-like chaser: face the quarry, move into range, trade. */
     private static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
         if (foe.hp <= 0 || dragoon.hp <= 0) {
