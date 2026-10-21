@@ -167,7 +167,7 @@ The index of which document answers which question is `_AI/README.md`.
    CONSTRUCTION_REQUESTED +13f, BUILDING_STARTED +113f); pumps
    silent on all three. First routine-shaped evidence: nominates
    the legacy demand producers behind those rows for per-gate
-   deletion (proof game after the cut still required). Deletions
+   deletion (proof game after the cut still required). 7th datum 2026-10-21 Wine macro: BOARD_FED x2 (sustained-dragoon 5:18 with 29 DRAGOON_TRAINs in +/-600f, sustained-zealot 12:57 with 7 TRAIN_ATTEMPTs + 1 train in +/-1500f) - pumps present both times (attempting counts as present: a blocked pump is still rescue, not routine); still no candidate. Deletions
    wait for routine feeder coverage, never batch rewrites;
    board-invisible production (Forge, cannons) is capability,
    not duplication.
@@ -458,6 +458,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). Live overlap game still unplayed; the resite seam
   fires live (adopt-resited 1x in each of two long runs). No blind patch.
+  2026-10-21 Wine macro: 57 DISTINCT Gateway oids each CANCEL "Null
+  position" once (siteless mint death, no storm - the untwinned door
+  at scale, read the CANCEL reason per the mint answer); Stargate*
+  #134 refused at covered [105,2] then warped [123,26] 9:07 (guard
+  correct, resite worked).
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
   REQUESTED then proximity-cancelled the same frame, ~20 constructions
@@ -488,6 +493,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-20: two short Wine games too quiet for new instances
   (supply-50 exits, no construction twins past the opening) -
   still awaiting the covered-tile game.
+  2026-10-21 Wine macro IS the game, at unprecedented scale: 463
+  proximity-finish CANCELs in 4.1 game-min (9:45-13:50), THREE Pylon
+  oids (152: 227, 212: 163, 151: 73) re-minting tile [119,12]
+  against the STANDING Pylon covering it. The pick-time guard only
+  covers unfinished buildings and the spiral's standing-cover
+  refusal lives on the finder path - the re-minting door is a sited/
+  exact-tile path that never checks standing cover. Next: remember
+  the refused tile per order (backoff) or check standing cover at
+  mint; proof is the same tile going quiet.
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -577,6 +591,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Lottery 2026-10-19 (`154329`: 428 s, Nexus=1): still short of 700 s,
   never a saving shape. 2026-10-21 TauCross macro: 1 base, 670 s, ORDER_SAVING 0
   (short of 700 s again - the 1-base lottery continues).
+  2026-10-21 Wine macro (20:09, 4 bases from 6:56): ORDER_SAVING 0 -
+  correctly silent again (multi-base, the shape not the duration).
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -628,6 +644,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   at 8:07 with zero REQUESTED rows anywhere (terminal without
   origin - request-twin gap on some re-request door; next: read the
   removal/mint paths for the untwinned exit, no blind patch).
+  2026-10-21 Wine macro: Pylon#1 warped 0:48@8 (BO expects supply
+  8) - pipeline healthy, no new #84 instance.
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -637,6 +655,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the Pylon warped on schedule. Transient stall, twin worked as
   designed, no code change (would be blind). The reservation→starter
   link reads cleanly off the new cid/oid chain on the next flagged run.
+  2026-10-21 Wine macro (BUILDER_LOG=1): Pylon [123,30] builder #128
+  stalled 159f travelling then moved (self-recovered); Gateway
+  [105,16] two builders (#5, #117) stalled 119/134f same frame, warped
+  7:30 - stall-with-recovery, twin worked as designed, no code change
+  (would be blind). The dual-builder same-tile stall is the
+  alternating-handoff shape to watch for.
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
@@ -663,6 +687,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-19 (`185237`): refusedBy names the gates live (no-forge 204,
   bank-700-or-3rd 93, weapons-l1 108) - the twin works, tuning stays
   owner-side (D5).
+  2026-10-21 Wine macro (20:09, Forge 6:52): Singularity completed
+  7:30, Legs 13:37, Weapons L1 14:33, L2 17:43 (UPGRADE_COMPLETED twin
+  4x, 4 bases by 15:54) - the post-Forge window EXISTS and completes
+  through L2; L3 still never reached, still pending its richer window.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). 2026-10-18 datum (`143800`, Terran vs Zerg, 212
   game-s): the bot plays Terran with the Protoss build order (`Zealot
@@ -685,6 +713,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   datum (TauCross, ledger): Gateways 1:27/1:53/4:11/6:01 + dynamic
   7:51 [105,16] and 8:06 [123,26], all warped - lateness pattern
   not reproduced. No blind patch.
+  2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
+  + 17:19/18:18, all warped - lateness not reproduced again.
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
   0/0, scouts find nothing in 18 min). Plumbing verified correct;
@@ -978,7 +1008,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Gate evidence from live games (all named, firing as designed):
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
-  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven.
+  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence, still no new gate proof claimed (the guard needs a full game of firing-correctly first).
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
