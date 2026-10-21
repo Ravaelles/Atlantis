@@ -1039,6 +1039,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
   `GoalBoardWallet`/`ReservedResources`) with different sorting and
   exclusions - every duplicate-Pylon race reads a different sum.
+  Inventory 2026-10-21 (four models, not three): (A) `earlierUnfinishedCost`
+  - universe live constructions, order by order id, excludes self /
+  orderless / null-type / already-paid (live building unit = warping
+  counts as paid), sums full prices; read by earlier-reserve +
+  funding gates (they agree with each other). (B) `earlierUnpaid` -
+  universe queue rows in priority order, stop at self, orderless self
+  counts everything (hold rather than overspend); same paid rule.
+  (C) `GoalBoardWallet.funded` - universe ranked GOALS (ladder order,
+  neither queue nor id order), top-down virtual-bank spend.
+  (D) `ReservedResources` - mutable global earmark counter (reserve/
+  release, capped 500/300), no "already paid" concept at all.
+  Divergence trigger: any queue re-prioritization moves B but not A;
+  C moves on ladder re-rank. The duplicate-Pylon race (WO-144) reads
+  a different sum from each - unification picks ONE ordering
+  (queue position, the only one all producers share) with "already
+  paid = has building unit" as the single exclusion.
   Unify behind one ordered reserve ("already paid = has building
   unit") with twin-pinned duplicate rows as the proof; WO-145/147
   territory, never a blind merge.
