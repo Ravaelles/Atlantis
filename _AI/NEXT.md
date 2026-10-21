@@ -470,13 +470,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   but unlogged" (no Observatory death twin, no ledger row either
   way); the fix is progress-based demote (building HP static over
   N frames), not presence-based, pinned in stub + proven on a
-  builder-death game - WO-sized, not a drive-by. 2026-10-21 mechanism, no blind patch:
-  the corpse may read alive - ghost UNIT_TRACE rows exist for 30
-  dead ids (e.g. Dragoon 177 dead 14848, traced 16396 at hp 7 with
-  garbage dist 671088639), so any liveness predicate in the fix
-  must first prove it distinguishes the 12:28 corpse (frames
-  17825-28800, builder #126). Until then: twin-only naming, no
-  removal, no retry.
+  builder-death game - WO-sized, not a drive-by. 2026-10-21 liveness
+  resolution: isDead() already consults the archive, so the demote
+  path was archive-aware all along - the blind one was the retry
+  path (FIXED: dropBuilderlessNotStarted honors UnitsArchive,
+  RED->GREEN pinned, game proof pending on the next builder-death
+  shape). A blocked-demote twin without a progress signal would
+  mislabel healthy builderless warps, so no twin until the signal
+  exists; the signal design is the WO slice.
   2026-10-21 Wine macro: 57 DISTINCT Gateway oids each CANCEL "Null
   position" once (siteless mint death, no storm - the untwinned door
   at scale, read the CANCEL reason per the mint answer); Stargate*
@@ -1239,6 +1240,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   strategies plug per detected setup (choke near? outnumbered?
   duel?). First slice: the decider + standoff/hold-vs-push choice;
   bait and collapse ride later slices, each with sim + game proof.
+  2026-10-21 live-shape finding (2 full Wine macros, 30 game-min):
+  the strategy-regroup branch fired 0x (regroup fallback
+  "ClusterMove" 9x) - the army is either in contact (fight branch)
+  or away from chokes when quiet. The no-contact-near-choke shape
+  these games never produce is exactly what the live proof needs;
+  duels can't supply it either (baseless forces kite/fallback).
 - **#171** High-ground choke scoring (owner 2026-10-20, formation
   follow-up): for every choke, score BOTH sides as defensive spots -
   height delta first. A wide choke with a step is not "pointless": the
