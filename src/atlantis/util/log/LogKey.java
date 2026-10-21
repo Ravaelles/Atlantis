@@ -96,6 +96,8 @@ public enum LogKey {
     SHOT,
     /** Per-unit fight trace, throttled (hp, shields, dist x10 to nearest enemy). */
     UNIT_TRACE,
+    /** Per-second unit telemetry (hp, shields, dist x10 to nearest foe/dragoon/zealot, foes in 2). */
+    UNIT_TELEMETRY,
     /** Our unit died (type, frame, dist x10 to nearest enemy at death). */
     UNIT_DIED,
     /** Engaging a target that is not visible (unit, target, dist x10): the order cannot land. */

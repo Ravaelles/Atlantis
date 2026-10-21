@@ -1527,6 +1527,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  the 5-second approach that killed it. Delete or thin when the
  coordination items close - diagnostics, not a permanent feed.
 
+- **#181** Split-cluster reinforcement (owner 2026-10-26, HIGH priority):
+ ZealDrag_v_Zeal live: the cluster splits in two - one group is being
+ shredded by many zealots while the other half waits and does not
+ fight. Unknown yet whether two clusters or one split cluster, but
+ they start as one - detect the shape. Direction: (a) detect: per
+ frame, if one part of the army takes damage while another part has
+ no orders/no target for N seconds, that is the split - log it
+ loudly (extends #180 telemetry); (b) if two clusters: merge toward
+ the fighting one (the idle cluster's anchor becomes the fight);
+ (c) if one cluster: forbid waiting - units without a target join
+ the fight instead of holding formation slots. Suspects before
+ measuring: engageable range caps (nearestEngageableEnemy 9),
+ squad assignment splitting the army, anchor/formation fallback
+ holding the far half. Prove on ZealDrag_v_Zeal: no idle half
+ while the other half dies (per-part damage + orders in the log).
+
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

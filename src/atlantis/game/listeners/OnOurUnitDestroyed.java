@@ -76,6 +76,13 @@ public class OnOurUnitDestroyed {
         if (!unit.commandHistory().isEmpty()) {
             System.out.println(prefix + "Orders: " + orders);
         }
+        java.util.List<String> trail = atlantis.battle.twins.UnitTelemetry.trailFor(unit.id());
+        if (!trail.isEmpty()) {
+            System.out.println(prefix + "Telemetry (last " + trail.size() + "s):");
+            for (String row : trail) {
+                System.out.println(prefix + "  " + row);
+            }
+        }
         System.out.println(prefix + "_____________________________");
     }
 }

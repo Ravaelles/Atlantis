@@ -210,6 +210,56 @@ public class GhostAdvanceTest extends WorldStubForTests {
     }
 
     @Test
+    public void umsFarGhostStillMarches() {
+        // NEXT #177: with no visible enemy in reach, a ghost beyond the
+        // 12-tile contact envelope is still the only address the army
+        // has - UMS closes the distance instead of standing. Melee
+        // keeps the give-up (cross-map marches there are reinforcement
+        // calls, not scouting).
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 70, 29);
+        zealot.setEnemy();
+        zealot.isVisibleUnitOnMap = false;
+
+        // Past the 15 s UMS opening stand-ground (pinned separately):
+        // the march owns every frame after it.
+        world(400, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 365) return;
+
+            assertNotNull(GhostAdvance.ghostPointFor(dragoon),
+                "the fogged zealot is remembered even though nobody sees it");
+            assertNotNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
+                "UMS marches to the far ghost instead of standing");
+            assertTrue(GhostAdvance.move(dragoon, FightOrFlight.Tactic.FIGHT),
+                "the vanguard owns the march, the formation does not hold it");
+            assertNotNull(dragoon.targetPosition, "a step was ordered");
+        });
+    }
+
+    @Test
+    public void meleeFarGhostStillGivesUp() {
+        // The other half of the UMS rule above: melee keeps the
+        // 12-tile give-up, a far ghost belongs to reinforcements.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 70, 29);
+        zealot.setEnemy();
+        zealot.isVisibleUnitOnMap = false;
+
+        world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertNotNull(GhostAdvance.ghostPointFor(dragoon),
+                "the ghost is found - only the LOST gate may refuse it");
+            assertNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
+                "melee gives up far ghosts as before");
+        });
+    }
+
+    @Test
     public void heldChokeStillBeatsTheGhost() {
         // Same contested-choke shape as ChokeStandoffTest (dragoon 11 tiles
         // south of choke (28,18), zealot inside the 12-tile contest ring):

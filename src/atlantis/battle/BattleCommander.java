@@ -97,6 +97,7 @@ public class BattleCommander extends Commander {
      * never interrupted, otherwise it attacks, hunts or regroups.
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
+        atlantis.battle.twins.UnitTelemetry.sample(unit);
         if (RetreatFromLostFight.retreat(unit, tactic, anchor, leader)) return;
         if (LeaveBreachedBase.leave(unit)) return;
 
@@ -172,6 +173,7 @@ public class BattleCommander extends Commander {
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
+        atlantis.battle.twins.UnitTelemetry.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
     }

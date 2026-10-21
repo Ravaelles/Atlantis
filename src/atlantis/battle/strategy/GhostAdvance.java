@@ -111,7 +111,12 @@ public final class GhostAdvance {
             return false;
         }
         if (dist < REACHED_TILES) return true;
-        if (dist > LOST_TILES) {
+        // UMS far march (NEXT #177): with no visible enemy in reach, a
+        // ghost beyond the contact envelope is still the only address
+        // the army has - closing beats standing, so the LOST give-up
+        // does not apply (melee keeps it: cross-map marches there are
+        // reinforcement calls, not scouting).
+        if (dist > LOST_TILES && !atlantis.game.A.isUms()) {
             forget(unit);
             return false;
         }
@@ -190,7 +195,8 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return null;
         }
-        if (dist < REACHED_TILES || dist > LOST_TILES) return null;
+        if (dist < REACHED_TILES
+            || (dist > LOST_TILES && !atlantis.game.A.isUms())) return null;
 
         double step = isVanguard(unit) ? SCOUT_STEP_TILES : LINE_STEP_TILES;
         try {
