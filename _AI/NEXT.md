@@ -521,7 +521,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10/10 WINS ~20 s each, hits 6-19 (avg 11.4), tuner randomizes per
   game through the CombatTuning record (incl. the 3 new pinch
   params); the overnight batch stays a standing vehicle for the
-  real sweep. 2026-10-20 UMS duel on the fixed anchor rule
+  real sweep. 2026-10-21 replication, 10/10 WINS, 20-23 game-sec,
+  hits 6-16, shots 13-17 (same shape, tighter spread; per-game
+  EVENTS + tweaker.csv + SUMMARY archived under PARAM_TWEAKER_LOGS,
+  vehicle proven end to end). 2026-10-20 UMS duel on the fixed anchor rule
   (baseless ATTACK marches from the army center): WIN 1/0 in 499
   frames, 34 stepped-aside vs 9 stuck, cadence 33 - the idle-dragoon
   shape is gone.
@@ -1093,24 +1096,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   verbatim restore: the old mover/canvas/demo stay in history
   (their jobs live in current harness); the missing combat half +
   arena + accel/brake/turn are new, test-scope only.
-- **#162** Formation coordination on the sim (make-way + cover, the
-  wounded-first-rank case). Contract: a withdrawing wounded unit
-  (pinch-yielding Dragoon - exact pinch semantics reused, no new
-  knobs) publishes its escape ray; a healthy unit blocking that
-  corridor steps laterally one step and resumes (gated: 3+ army
-  units so duels stay frozen, urgent only - escaper within 1.5
-  tiles); a healthy unit with no immediate threat (2-tile envelope,
-  not the kite envelope - deliberately) covers the pursuer instead
-  of its nearest (fills the uncommitted gap after FocusFire;
-  pursue-validity is NOT focus-validity: lings are covered, focus
-  would never pick them). LANDED + TWINS 2026-10-20
-  (`CoverWithdraw` selection results + `FormationTwin`
-  MAKE_WAY/COVER rows at the act() call sites + 10/10 sim.
-  T5a pins cover-over-nearer-ling, T5b rows COVER live, T4b rows
-  MAKE_WAY live, T2b pins the wipe branch deterministically;
-  suite 1018/0 fast, strict arch 5/7 unchanged, game jar builds
-  clean). Live UMS proof waits on the ticking match (#94). 2026-10-21: COVER proved live (LingsUpg, 50 rows, two dragoons covering escaper vs pursuer at frame 105); MAKE_WAY zero rows AND zero opportunities across three fights (M&M 2:31, TauCross 11:15, LingsUpg 3:22 - trace analysis: no hurt-pressured dragoon ever had another within 1.5 tiles), so the gate correctly refuses everywhere measured. Remainder: one live MAKE_WAY row, opportunistic watch. 2026-10-21: M&M ticks but cannot trigger (marines are not dragoons, so isWithdrawing never holds); TauCross macro 11:10 zero rows with mechanism - cover veto correct (never hurt-pressured + free-healthy together in 35 trace frames), escaper&3+ co-hold zero times (line wipes before it withdraws). (Archive said LingsUpg: the map arg missed the .scm extension so bwapi.ini kept TauCross - verify the hosted map from the ### Map line, never the archive name.) Proof needs dragoon + melee + surviving-line vehicle.
-  live UMS fight, no blind patch.
 - **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
   logic/changes, other model gets independent file-scoped tasks).
   Single source of truth: `/sc-ai/OpenBW/openbw` clean fork
@@ -1227,8 +1212,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21): pinch OFF loses ~half (avg 3.2 vs 6.0 over 10 games;
   fixed-defaults arms 2.0 vs 4.0) - yielding to faster lings on
   contact breaks the line; standing trades better. Default stays ON
-  (1v1 never triggers it, spread shapes untested); next is a
-  standoff gate with spread-map proof (NEXT #159). Tuner batch:
+  (1v1 never triggers it, spread shapes proven in sim only - #159
+  closed with the verdict + wired gate, default call parked
+  owner-side). Tuner batch:
   10/10 wins (NEXT #152).
 - Wine `(3)TauCross` macro vs Zerg (2026-10-21, BUILDER_LOG=1,
   fresh jar): 9.7 game-min Defeat by Hydras. Opening healthy
