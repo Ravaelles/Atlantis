@@ -811,7 +811,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             }
             assertTrue(zealot.hp <= 0, "the dragoon wins the duel");
             int taken = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
-            assertTrue(taken <= 80, "standoff keeps the hits down, taken=" + taken
+            assertTrue(taken <= 48, "standoff keeps the hits down, taken=" + taken
                 + " (measured 40 on the DuelKite rule; the live Wine target is <2 hits, NEXT #169)");
         }
         finally {
