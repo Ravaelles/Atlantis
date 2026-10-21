@@ -44,4 +44,24 @@ public class AUnitNearCountsTest extends WorldStubForTests {
             assertEquals(1, AUnitNearCounts.ourBuildingsNear(dragoon, 5));
         });
     }
+
+    @Test
+    public void parameterizedTwinsDispatchToTheSeam() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 31, 20);
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 32, 20);
+        FakeUnit nearLing = fake(AUnitType.Zerg_Zergling, 31, 20);
+        nearLing.setEnemy();
+        FakeUnit farLing = fake(AUnitType.Zerg_Zergling, 40, 20);
+        farLing.setEnemy();
+
+        world(1, fakeOurs(dragoon, probe, nexus), fakeEnemies(nearLing, farLing), () -> {
+            assertEquals(1, dragoon.enemiesNearCount(2), "only the close ling");
+            assertEquals(1, AUnitNearCounts.enemiesNearCount(dragoon, 2));
+            assertEquals(2, dragoon.enemiesNearCount(15), "both lings in the wide ring");
+            assertEquals(1, dragoon.meleeEnemiesNearCount(2), "melee at 1 tile");
+            assertEquals(1, AUnitNearCounts.meleeEnemiesNearCount(dragoon, 2));
+            assertEquals(0, dragoon.meleeEnemiesNearCount(0.5), "nothing that close");
+        });
+    }
 }

@@ -3016,7 +3016,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "enemiesNearCount:" + maxDistToEnemy,
             2,
-            () -> enemiesNear().combatUnits().inRadius(maxDistToEnemy, this).size()
+            () -> AUnitNearCounts.enemiesNearCount(this, maxDistToEnemy)
         );
     }
 
@@ -3024,7 +3024,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "meleeEnemiesNear:" + maxDistToEnemy,
             2,
-            () -> enemiesNear().melee().inRadius(maxDistToEnemy, this).size()
+            () -> AUnitNearCounts.meleeEnemiesNearCount(this, maxDistToEnemy)
         );
     }
 
@@ -3041,15 +3041,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public boolean shieldDamageAtMost(int maxDamage) {
-        if (!We.protoss()) return false;
-
-        return shields() + maxDamage >= maxShields();
+        return AUnitShield.shieldDamageAtMost(this, maxDamage);
     }
 
     public boolean shieldDamageAtLeast(int minDamage) {
-        if (!We.protoss()) return false;
-
-        return shields() + minDamage <= maxShields();
+        return AUnitShield.shieldDamageAtLeast(this, minDamage);
     }
 
     public boolean targetPositionAtLeastAway(double minTiles) {

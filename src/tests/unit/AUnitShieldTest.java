@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.units.AUnitShield;
 import atlantis.units.AUnitType;
+import bwapi.Race;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
@@ -20,6 +21,11 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("infra")
 public class AUnitShieldTest extends WorldStubForTests {
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
 
     @Test
     public void fullShieldReadsHealthy() {
@@ -68,6 +74,25 @@ public class AUnitShieldTest extends WorldStubForTests {
             assertTrue(AUnitShield.shieldHealthy(marine));
             assertFalse(marine.shieldWounded());
             assertFalse(AUnitShield.shieldWounded(marine));
+        });
+    }
+
+    @Test
+    public void damageBoundsReadThroughTheSeam() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 10);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(), () -> {
+            int half = dragoon.maxShields() / 2;
+            dragoon.setShields(half);
+
+            assertTrue(dragoon.shieldDamageAtMost(half));
+            assertTrue(AUnitShield.shieldDamageAtMost(dragoon, half));
+            assertFalse(dragoon.shieldDamageAtLeast(half + 1));
+            assertFalse(AUnitShield.shieldDamageAtLeast(dragoon, half + 1));
+            assertTrue(dragoon.shieldDamageAtLeast(
+                dragoon.maxShields() - dragoon.shields()));
+            assertTrue(AUnitShield.shieldDamageAtLeast(
+                dragoon, dragoon.maxShields() - dragoon.shields()));
         });
     }
 }

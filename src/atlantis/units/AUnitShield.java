@@ -67,4 +67,16 @@ public final class AUnitShield {
     public static boolean shieldWounded(AUnit unit) {
         return unit.shields() < unit.maxShields();
     }
+
+    public static boolean shieldDamageAtMost(AUnit unit, int maxDamage) {
+        if (!atlantis.util.We.protoss()) return false;
+
+        return unit.shields() + maxDamage >= unit.maxShields();
+    }
+
+    public static boolean shieldDamageAtLeast(AUnit unit, int minDamage) {
+        if (!atlantis.util.We.protoss()) return false;
+
+        return unit.shields() + minDamage <= unit.maxShields();
+    }
 }

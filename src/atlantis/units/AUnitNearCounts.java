@@ -31,4 +31,14 @@ public final class AUnitNearCounts {
         if (unit == null) return 0;
         return unit.friendsNear().size();
     }
+
+    public static int enemiesNearCount(AUnit unit, double maxDistToEnemy) {
+        if (unit == null) return 0;
+        return unit.enemiesNear().combatUnits().inRadius(maxDistToEnemy, unit).size();
+    }
+
+    public static int meleeEnemiesNearCount(AUnit unit, double maxDistToEnemy) {
+        if (unit == null) return 0;
+        return unit.enemiesNear().melee().inRadius(maxDistToEnemy, unit).size();
+    }
 }
