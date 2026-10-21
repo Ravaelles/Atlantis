@@ -21,6 +21,12 @@ Lings; 6 triggers = Melee.trg only, nothing map-authored).
   the map has bases so the baseless hunt never fires - and the bot
   force-leaves into a DEFEAT twin. Wine IDE on defaults: 32-8
   VICTORY in 36 game-sec. Same bot, same map, opposite games.
+  Easy variant `ZealDrag_v_Lings2_easy.scm` (verified by smoke:
+  same 12 ours, 26 lings instead of 32): Wine 3/5, same bimodal
+  shape - fast full-wipe wins (20-43 s) or 202 s grinds with
+  partial clears. Losers stay FIGHT throughout (FIGHT 127-156,
+  FLEE 0-29 in the twin); the evaluator never refuses the open
+  blob, and FLEE is banned baseless anyway.
 - Do NOT compare W/L across platforms. OpenBW duels tune
   anti-blob-surround, Wine tunes anti-script. A Wine victory proves
   nothing about OpenBW and reverse.

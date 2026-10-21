@@ -561,7 +561,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   real sweep. 2026-10-21 replication, 10/10 WINS, 20-23 game-sec,
   hits 6-16, shots 13-17 (same shape, tighter spread; per-game
   EVENTS + tweaker.csv + SUMMARY archived under PARAM_TWEAKER_LOGS,
-  vehicle proven end to end). 2026-10-20 UMS duel on the fixed anchor rule
+  vehicle proven end to end). 2026-10-21 easy-map duels
+  (ZealDrag_v_Lings2_easy, 12 ours vs 26 lings verified by smoke,
+  3/5 W): losers fight to the end (FIGHT 127-156, FLEE 0-29),
+  winners mix FIGHT+FLEE - the evaluator never refuses the open
+  blob, and FLEE is banned baseless anyway (falls through to
+  fight), so unwinnable opens have no exit today. 2026-10-20 UMS
+  duel on the fixed anchor rule
   (baseless ATTACK marches from the army center): WIN 1/0 in 499
   frames, 34 stepped-aside vs 9 stuck, cadence 33 - the idle-dragoon
   shape is gone.
