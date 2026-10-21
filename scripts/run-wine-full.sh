@@ -82,6 +82,8 @@ ENV_FILE_ARG=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_FILE_ARG="${arg#--env=}" ;;
+    --visible) HIDDEN=0 ;;
+    --hidden) HIDDEN=1 ;;
     *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-full] ignoring extra arg: $arg" >&2; } ;;
   esac
 done
@@ -106,14 +108,16 @@ JAR="$JAR_OUT"
 mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
 CLIENT_LOG="$LOG_DIR/WINE_LOG"
 
-# Hidden Wine desktop (owner: unattended runs must not take over the
-# desktop). HIDDEN=1 starts Xvfb on :99 and points the whole session
-# (client, game, ChaosLauncher) at it - nothing ever maps on :0, no
-# resolution switch, no window to minimize. The supervisor key relay
-# is display-independent (file-based), so nothing else changes.
+# Hidden Wine desktop, ON BY DEFAULT (owner 2026-10-21: unattended runs
+# must never take over the desktop, even by accident - a forgotten flag
+# once played a macro on the live screen). HIDDEN=1 starts Xvfb on :99
+# and points the whole session (client, game, ChaosLauncher) at it -
+# nothing ever maps on :0, no resolution switch, no window to minimize.
+# Pass --visible only to WATCH a game on the desktop. The supervisor
+# key relay is display-independent (file-based), so nothing else changes.
 XVFB_DISPLAY=":99"
 XVFB_PID=""
-if [ "${HIDDEN:-0}" = "1" ]; then
+if [ "${HIDDEN:-1}" != "0" ]; then
   if [ -e /tmp/.X11-unix/X99 ] && ! pgrep -f "[X]vfb :99" >/dev/null; then
     rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock
   fi
