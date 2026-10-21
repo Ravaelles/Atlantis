@@ -872,7 +872,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   same day (11.7 min, archived): wall pieces warped (Forge 2:07,
   PhotonC 2:36) but the base fell 9/42 ~12:00 with bank 3750 hoarded
   - siting proven, HOLD not proven (zealot line wiped 8:30, dragoons
-  10:30; open whether the wall ever had the DPS)) [ ] M5 module extraction (assessed
+  10:30; open whether the wall ever had the DPS). 2026-10-21
+  re-analysis of that loss: only 14 of 370 HITs landed near the wall
+  anchor [106,42]; deaths cluster at [54,110] then [70,86], away from
+  it. No attack onto the wall occurred, so the game cannot settle
+  DPS-sufficiency either way - HOLD proof needs an attack onto the
+  wall (or a sim siege), not just another FE macro.) [ ] M5 module extraction (assessed
   2026-10-17: 7 files, engine-import-free except own map types +
   `AUnitType`; single engine-coupled adapter (`EngineGroundLink`) already
   isolated behind `GroundLink` - physical extraction is build/repo
