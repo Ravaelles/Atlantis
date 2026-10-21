@@ -148,12 +148,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection regionsMatch(HasPosition position) {
-        if (position == null) return null;
-
-        return cloneByRemovingIf(
-            (unit -> !unit.regionsMatch(position)),
-            "regionsMatch:" + position.toString()
-        );
+        return SelectionMembership.regionsMatch(this, position);
     }
 
     public Selection effVisible()  {
@@ -753,25 +748,11 @@ public class Selection extends BaseSelection {
 
 
     public Selection hasPathFrom(HasPosition fromPosition) {
-        if (fromPosition == null) return cloneByRemovingIf((unit) -> true, "hasPathFrom:" + fromPosition);
-
-        return cloneByRemovingIf(
-            (unit -> !unit.hasPathTo(fromPosition)), "hasPathFrom:" + fromPosition
-        );
+        return SelectionMembership.hasPathFrom(this, fromPosition);
     }
 
     public Selection hasPathFromUs() {
-        AUnit we = Select.mainOrAnyUnit();
-        if (we == null) we = Select.our().groundUnits().first();
-        if (we == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("hasPathFromUs: 'we' unit is null");
-            return cloneByRemovingIf((unit) -> true, "hasPathFromUs");
-        }
-
-        AUnit finalWe = we;
-        return cloneByRemovingIf(
-            (unit -> !unit.hasPathTo(finalWe)), "hasPathFromUs"
-        );
+        return SelectionMembership.hasPathFromUs(this);
     }
 
     public Selection canBeAttackedBy(AUnit attacker, double extraMargin)  {

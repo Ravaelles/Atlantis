@@ -9,6 +9,8 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
@@ -94,6 +96,35 @@ public class SelectionMembershipTest extends WorldStubForTests {
             assertEquals(1, ours.marines().size());
             assertEquals(4, ours.onlyCompleted().size());
             assertEquals(0, ours.notCompleted().size());
+        });
+    }
+
+    @Test
+    public void regionAndPathFilters() {
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 12, 10);
+
+        world(1, fakeOurs(a, b), fakeEnemies(), () -> {
+            Selection ours = Select.our();
+
+            // Null position: null, never an exception.
+            assertNull(ours.regionsMatch(null), "no position: no selection");
+
+            // Stub regions carry no position (FakeRegion has none), so the
+            // region guard always refuses: nothing passes in the stub world.
+            // Production needs real BWEM regions; this pins the stub shape.
+            assertEquals(0, ours.regionsMatch(a.position()).size(), "stub regions never match");
+
+            // Null origin: the explicit remove-all branch (reachable from
+            // nowhere means nobody, never a crash).
+            assertEquals(0, ours.hasPathFrom(null).size(), "null origin keeps nothing");
+
+            // FakeUnit always has a path: nothing filtered.
+            assertEquals(2, ours.hasPathFrom(a.position()).size(), "stub world is fully pathed");
+            // AUnit-overload reachability answers false for every pair without
+            // an engine (ReachableTiles probe), so the march filter empties in
+            // the stub world. Production needs real regions; this pins it.
+            assertEquals(0, ours.hasPathFromUs().size(), "stub has no tile reachability");
         });
     }
 }

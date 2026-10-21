@@ -1009,6 +1009,37 @@ final class SelectionMembership {
         );
         }
 
+    static Selection regionsMatch(Selection selection, HasPosition position) {
+        if (position == null) return null;
+
+        return selection.cloneByRemovingIf(
+            (unit -> !unit.regionsMatch(position)),
+            "regionsMatch:" + position.toString()
+        );
+    }
+
+    static Selection hasPathFrom(Selection selection, HasPosition fromPosition) {
+        if (fromPosition == null) return selection.cloneByRemovingIf((unit) -> true, "hasPathFrom:" + fromPosition);
+
+        return selection.cloneByRemovingIf(
+            (unit -> !unit.hasPathTo(fromPosition)), "hasPathFrom:" + fromPosition
+        );
+    }
+
+    static Selection hasPathFromUs(Selection selection) {
+        AUnit we = Select.mainOrAnyUnit();
+        if (we == null) we = Select.our().groundUnits().first();
+        if (we == null) {
+            atlantis.util.log.ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("hasPathFromUs: 'we' unit is null");
+            return selection.cloneByRemovingIf((unit) -> true, "hasPathFromUs");
+        }
+
+        AUnit finalWe = we;
+        return selection.cloneByRemovingIf(
+            (unit -> !unit.hasPathTo(finalWe)), "hasPathFromUs"
+        );
+    }
+
     static boolean typeMatches(AUnit unit, AUnitType... haystack) {
         for (AUnitType type : haystack) {
             if (
