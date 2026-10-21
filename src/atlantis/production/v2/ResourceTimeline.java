@@ -158,6 +158,7 @@ public final class ResourceTimeline {
         int frame = index(absoluteFrame);
         if (frame < 0 || frame >= horizon)
             return false;
+
         for (int f = frame; f < horizon; f++) {
             if (minerals[f] < cost.minerals() || gas[f] < cost.gas() || supplyAvailable[f] < cost.supply())
                 return false;
@@ -218,8 +219,10 @@ public final class ResourceTimeline {
     private int clamp(int frame) {
         if (frame < 0)
             return 0;
+
         if (frame >= horizon)
             return horizon - 1;
+
         return frame;
     }
 }

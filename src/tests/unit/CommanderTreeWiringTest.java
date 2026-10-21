@@ -177,6 +177,7 @@ public class CommanderTreeWiringTest {
                 for (Commander child : childrenOf(commander)) {
                         if (type.isInstance(child))
                                 return type.cast(child);
+
                         T nested = find(child, type);
                         if (nested != null)
                                 return nested;

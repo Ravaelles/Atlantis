@@ -245,6 +245,7 @@ public final class DynamicGoals {
 
         if (state.workers >= ABSOLUTE_WORKER_CAP)
             return;
+
         if (state.workers >= WORKERS_PER_BASE * Math.max(1, state.bases))
             return;
 
@@ -325,6 +326,7 @@ public final class DynamicGoals {
         else {
             if (state.hasCore && state.minerals < 275)
                 return;
+
             army = race.armyUnitType();
             have = state.armySize;
         }
@@ -385,14 +387,19 @@ public final class DynamicGoals {
 
         if (state.supplyUsed < 40)
             return;
+
         if (state.bases < 2)
             return;
+
         if (!(state.gas < state.minerals && state.minerals >= 105))
             return;
+
         if (!(state.gas <= 150 || state.armySize >= 12))
             return;
+
         if (!(state.bases > state.gasBuildings))
             return;
+
         if (!(state.minerals >= 400 || state.hasCore))
             return;
 
@@ -418,6 +425,7 @@ public final class DynamicGoals {
 
         if (state.workers < WORKERS_PER_BASE * state.bases)
             return;
+
         if (state.bases >= 4)
             return;
 

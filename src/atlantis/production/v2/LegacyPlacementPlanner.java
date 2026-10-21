@@ -170,6 +170,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
                 .findPositionForGasBuilding(unitType, resolveNear(constraint));
             if (gas == null)
                 return PlacementReservation.failure();
+
             return PlacementReservation.success(gas.tx(), gas.ty(), targetFrame);
         }
 
@@ -212,6 +213,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         int chosen = candidateResolver.choose(candidates, building);
         if (chosen < 0)
             return PlacementReservation.failure();
+
         position = candidates.get(chosen);
 
         String tile = position.tx() + ":" + position.ty();
@@ -322,10 +324,13 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         switch (constraint.mode()) {
             case EXACT_TILE:
                 return APosition.create(constraint.exactTileX() * 32, constraint.exactTileY() * 32);
+
             case NEIGHBOURHOOD:
                 return APosition.create(constraint.tileX() * 32, constraint.tileY() * 32);
+
             case NAMED_AREA:
                 return areaCentre(constraint.areaName());
+
             case ANYWHERE:
             default:
                 // The legacy finder requires a centre to search around (it

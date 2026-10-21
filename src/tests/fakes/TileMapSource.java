@@ -116,6 +116,7 @@ public class TileMapSource implements MapTiles.Source {
     public boolean isWalkable(HasPosition at) {
         if (at == null)
             return false;
+
         return defaultWalkable && !unwalkable.contains(key(at.tx(), at.ty()));
     }
 
@@ -123,6 +124,7 @@ public class TileMapSource implements MapTiles.Source {
     public boolean isExplored(HasPosition at) {
         if (at == null)
             return false;
+
         return defaultExplored && !unexplored.contains(key(at.tx(), at.ty()));
     }
 
@@ -135,8 +137,10 @@ public class TileMapSource implements MapTiles.Source {
     public boolean isBuildable(HasPosition at, boolean alsoCheckBuildings) {
         if (at == null)
             return false;
+
         if (unbuildable.contains(key(at.tx(), at.ty())))
             return false;
+
         return defaultBuildable;
     }
 

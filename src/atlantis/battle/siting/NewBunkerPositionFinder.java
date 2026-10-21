@@ -88,6 +88,7 @@ public class NewBunkerPositionFinder {
 
         // @FIX?
         return nearestBasePosition == null && naturalBase == null;
+
 //        return nearestBasePosition == null || naturalBase == null;
     }
 }

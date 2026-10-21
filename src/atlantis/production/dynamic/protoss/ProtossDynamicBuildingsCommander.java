@@ -26,9 +26,11 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (!AGame.everyNthGameFrame(17)) return rejectForAssimilator("Throttle");
         if (!(A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4))
             return rejectForAssimilator("MineralsOrQueueSize");
+
         if (!applyForStandardCases()) return rejectForAssimilator("StandardResourcesOrExpansion");
         if (!ProtossCriticalStuffInQueue.hasEnoughResources())
             return rejectForAssimilator("CriticalQueueResources");
+
         return true;
     }
 

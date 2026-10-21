@@ -321,6 +321,7 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int shields() {
         return 0;
+
 //        return _shields;
     }
 

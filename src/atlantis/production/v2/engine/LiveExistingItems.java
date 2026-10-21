@@ -30,8 +30,10 @@ public final class LiveExistingItems implements ExistingItems {
     public int availableFrom(Producible item) {
         if (item instanceof UnitProducible)
             return unitAvailableFrom(((UnitProducible) item).type());
+
         if (item instanceof TechProducible)
             return ATech.isResearched(((TechProducible) item).tech()) ? now : MISSING;
+
         if (item instanceof UpgradeProducible) {
             UpgradeProducible upgrade = (UpgradeProducible) item;
             return ATech.getUpgradeLevel(upgrade.upgrade()) >= upgrade.level() ? now : MISSING;

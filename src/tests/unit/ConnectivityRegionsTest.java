@@ -67,6 +67,7 @@ public class ConnectivityRegionsTest {
             public boolean isWalkable(int tx, int ty) {
                 if (tx < 0 || ty < 0 || tx >= width || ty >= height)
                     return false;
+
                 return walkable[tx][ty];
             }
         };

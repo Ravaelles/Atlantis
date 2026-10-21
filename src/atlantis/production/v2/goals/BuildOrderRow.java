@@ -56,6 +56,7 @@ public final class BuildOrderRow {
     static int parseMultiplicity(String modifier) {
         if (!isMultiplier(modifier))
             return 1;
+
         try {
             return Math.max(1, Integer.parseInt(modifier.trim().substring(1)));
         } catch (NumberFormatException e) {
@@ -71,10 +72,13 @@ public final class BuildOrderRow {
     private static Producible producibleOf(ProductionOrder order) {
         if (order.unitType() != null)
             return UnitProducible.of(order.unitType());
+
         if (order.tech() != null)
             return TechProducible.of(order.tech());
+
         if (order.upgrade() != null)
             return UpgradeProducible.of(order.upgrade());
+
         return null;
     }
 

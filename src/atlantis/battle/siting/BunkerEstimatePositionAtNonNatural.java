@@ -16,6 +16,7 @@ public class BunkerEstimatePositionAtNonNatural {
         }
 
         return positionToSecure.translateByTiles(3, 1);
+
 //        return Select.ourBasesWithUnfinished().last();
     }
 }

@@ -40,6 +40,7 @@ public class TerranStrategies extends AStrategy {
 
         if (Enemy.protoss()) {
             return TerranStrategies.TERRAN_2_Rax_AllIn;
+
 //            return TERRAN_Sparks;
 //            return TerranStrategies.TERRAN_Shallow_Two_vP;
 //            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
@@ -48,10 +49,12 @@ public class TerranStrategies extends AStrategy {
         }
         else if (Enemy.terran()) {
             return TERRAN_Mech;
+
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
             return TerranStrategies.TERRAN_2_Rax_AllIn;
+
 //            return TERRAN_Sparks;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;

@@ -88,6 +88,7 @@ public class PlacementPipelineTest {
         private boolean withinBlocked(int tx, int ty) {
             if (blockedW <= 0)
                 return false;
+
             return tx >= blockedX && tx < blockedX + blockedW
                     && ty >= blockedY && ty < blockedY + blockedH;
         }

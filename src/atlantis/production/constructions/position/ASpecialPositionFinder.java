@@ -39,6 +39,7 @@ public class ASpecialPositionFinder {
 
         if (modifier.equals(PositionModifier.MAIN_CHOKE)) {
             return PositionAtMainChoke.atMainChoke(construction);
+
 //            AChoke mainChoke = Chokes.mainChoke();
 //            if (mainChoke != null) {
 //                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.3);

@@ -212,6 +212,7 @@ public final class ProductionEngine {
     private List<BuildOrderRow> buildOrderRows() {
         if (CurrentBuildOrder.get() == null)
             return Collections.emptyList();
+
         return BuildOrderRow.fromLegacy(CurrentBuildOrder.get().productionOrders());
     }
 

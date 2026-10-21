@@ -39,6 +39,17 @@
     <property name="format" value="\s+$"/>
     <property name="message" value="Trailing whitespace."/>
   </module>
+  <!-- Blank line after every single-line return (empty or valued).
+    Judgment call, measured 2026-10-21: returns immediately before '}'
+    are EXEMPT (7616 of 7787 literal hits - forcing a blank before the
+    brace is noise, and it would split '} else {' / '} catch {'). The rule
+    fires only when real code follows the return (171 hits, all fixed).
+    Limitation: multi-line returns ('return foo(' ...) are not matched -
+    the ';' must sit on the return's own line. -->
+  <module name="RegexpMultiline">
+    <property name="format" value="^[ \t]*return\b[^;\n]*;[ \t]*\n(?![ \t]*(?:\r?\n|\}))"/>
+    <property name="message" value="Return must be followed by a blank line."/>
+  </module>
   <module name="TreeWalker">
     <module name="UnusedImports"/>
     <module name="RedundantImport"/>

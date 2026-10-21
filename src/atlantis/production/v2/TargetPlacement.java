@@ -87,10 +87,13 @@ public final class TargetPlacement {
         switch (mode) {
             case ANYWHERE:
                 return "anywhere";
+
             case NEIGHBOURHOOD:
                 return "near(" + tileX + "," + tileY + ")";
+
             case EXACT_TILE:
                 return "exact(" + exactTileX + "," + exactTileY + ")";
+
             case NAMED_AREA:
                 return "area(" + areaName + ")";
         }

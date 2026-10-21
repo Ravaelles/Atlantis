@@ -143,6 +143,7 @@ public class Graph<T extends Node> {
         switch (diagonal) {
             case NEVER:
                 return neighbors;
+
             case NO_OBSTACLES:
                 ne = n && e;
                 nw = n && w;

@@ -455,6 +455,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (isOur()) return hp() > 0;
 
         return (hp() > 0) || !UnitsArchive.isDestroyed(id());
+
 //        return ((hp() > 0) || !UnitsArchive.isDestroyed(id()));
 //        return exists() && ((hp() > 0) || !UnitsArchive.isDestroyed(id()));
     }
@@ -2695,6 +2696,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
 //                ErrorLog.printMaxOncePerMinute("Cant find loaded into for " + this);
                 return null;
+
 //                throw new RuntimeException("Cant find loaded into");
             }
         );
@@ -2801,6 +2803,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public int enemiesNearInRadius(double maxDist) {
         return AUnitNearCounts.enemiesNear(this, maxDist);
+
 //        return ((Selection) cache.get(
 //            "enemiesNearInRadius:" + maxDist,
 //            5,
@@ -3346,11 +3349,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
         return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
+
 //            && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
     public boolean lastPositioningActionLessThanAgo(int minFramesAgo) {
         return lastActionLessThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
+
 //            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 

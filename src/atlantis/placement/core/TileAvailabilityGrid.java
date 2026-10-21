@@ -92,6 +92,7 @@ public final class TileAvailabilityGrid {
     public void block(int tx, int ty) {
         if (!inBounds(tx, ty))
             return;
+
         flags[index(tx, ty)] |= BLOCKED;
 
         for (int dx = -1; dx <= 1; dx++) {
@@ -168,6 +169,7 @@ public final class TileAvailabilityGrid {
             for (int y = top; y < top + h; y++) {
                 if (!inBounds(x, y))
                     return false;
+
                 if (flags[index(x, y)] != 0)
                     return false;
             }

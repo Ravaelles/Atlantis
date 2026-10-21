@@ -22,6 +22,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     @Override
     public boolean applies() {
         return We.protoss();
+
 //            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }
 
@@ -50,6 +51,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
             if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
                 return decision(false, "MissingMinerals");
+
 //            if (reservedGas > 0 && !A.hasGas(gasMargin + reservedMinerals))
 //                return decision(false, "MissingGas");
         }

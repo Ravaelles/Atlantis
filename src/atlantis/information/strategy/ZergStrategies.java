@@ -74,6 +74,7 @@ public class ZergStrategies extends AStrategy {
         if (Enemy.protoss()) {
 //            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
             return ZERG_9_Hatch_Fast_Expo;
+
 //            return ZergStrategies.ZERG_9_Pool_vP;
 //            return ZergStrategies.ZERG_3_Hatch_Lurker;
         }
@@ -82,6 +83,7 @@ public class ZergStrategies extends AStrategy {
         }
         else {
             return ZERG_2_Hatch_Hydra_vP;
+
 //            return ZergStrategies.ZERG_9_Hatch_Fast_Expo;
 //            return ZergStrategies.ZERG_9_Pool_vZ;
         }

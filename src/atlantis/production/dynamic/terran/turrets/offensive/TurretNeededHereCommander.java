@@ -14,6 +14,7 @@ public class TurretNeededHereCommander extends Commander {
     @Override
     public boolean applies() {
         return turretNeeded();
+
 //            && EnemyInfo.hasLotOfAirUnits();
     }
 

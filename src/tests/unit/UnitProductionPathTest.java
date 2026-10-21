@@ -150,6 +150,7 @@ public class UnitProductionPathTest {
         for (Commander child : children(commander)) {
             if (type.isInstance(child))
                 return type.cast(child);
+
             T nested = find(child, type);
             if (nested != null)
                 return nested;

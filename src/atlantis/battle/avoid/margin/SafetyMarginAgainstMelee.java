@@ -109,6 +109,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //                defender.paintCircleFilled(12, Color.Red);
 //                System.out.println(A.fr + " DefenderTargetted ");
                 return 2.5;
+
 //                return 3.2;
             }
 

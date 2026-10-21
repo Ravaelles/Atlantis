@@ -128,10 +128,13 @@ public final class OpenBWConfig {
     public String missingRequirement() {
         if (!AFile.directoryExists(harnessDir))
             return "harness dir missing: " + harnessDir;
+
         if (!AFile.directoryExists(gameDir))
             return "harness game dir missing: " + gameDir;
+
         if (!AFile.fileExists(serverScript))
             return "host script missing: " + serverScript;
+
         if (!AFile.fileExists(launcherBinary())) {
             return "BWAPILauncher not built: " + launcherBinary() + " (cmake --build " + harnessDir + "/build)";
         }

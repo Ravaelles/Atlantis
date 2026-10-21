@@ -241,6 +241,7 @@ public class RequestBuildingNearTest extends WorldStubForTests {
 
     private static ProductionOrder securePositionWithCannon(HasPosition secure) {
         return (new ProtossSecureBaseWithCannons(secure)).reinforce();
+
 //        return RequestCannonAt.at(secure);
     }
 

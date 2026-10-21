@@ -39,6 +39,7 @@ public class AvoidLurkers extends Manager {
 //        if (beBraveWithDetectorsNearby()) return false;
 
         return false;
+
 //        return lurker.distTo(unit) <= (8.3 + unit.woundPercent() / 40.0)
 //            || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
     }

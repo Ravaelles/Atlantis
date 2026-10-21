@@ -32,6 +32,7 @@ public class ProduceHighTemplar {
         if (A.supplyUsed() <= 180) return 4;
 
         return 6;
+
 //        return Math.max(Count.dragoons() / 4, 8);
     }
 }

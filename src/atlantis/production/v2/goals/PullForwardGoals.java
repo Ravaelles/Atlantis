@@ -82,8 +82,10 @@ public final class PullForwardGoals {
         AUnitType refinery = race.gasBuildingType();
         if (refinery == null)
             return;
+
         if (state.refineries >= state.desiredRefineries)
             return;
+
         if (state.minerals < RICH_MINERALS)
             return;
 

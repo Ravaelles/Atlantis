@@ -34,10 +34,13 @@ public enum BattleStrategy {
         switch (this) {
             case COLLAPSE:
                 return ChokeCollapse.collapsePointFor(unit);
+
             case SCOUT_BAIT:
                 return SquadScout.baitPointFor(unit);
+
             case CHOKE_HOLD:
                 return ChokeStandoff.holdPointFor(unit);
+
             default:
                 return null;
         }
@@ -51,10 +54,13 @@ public enum BattleStrategy {
         switch (this) {
             case COLLAPSE:
                 return "ClusterCollapse";
+
             case SCOUT_BAIT:
                 return "ClusterBait";
+
             case CHOKE_HOLD:
                 return "ClusterStandoff";
+
             default:
                 return "ClusterMove";
         }

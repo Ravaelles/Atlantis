@@ -168,10 +168,13 @@ public abstract class JPS<T extends Node> {
             switch (diagonal) {
                 case ALWAYS:
                     return new JPSDiagAlways<>(graph);
+
                 case ONE_OBSTACLE:
                     return new JPSDiagOneObstacle<>(graph);
+
                 case NO_OBSTACLES:
                     return new JPSDiagNoObstacles<>(graph);
+
                 case NEVER:
                     return new JPSDiagNever<>(graph);
             }

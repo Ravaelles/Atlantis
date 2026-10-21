@@ -168,6 +168,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
     private int minHp() {
         if (Enemy.protoss()) {
             return 36;
+
 //                + (unit.meleeEnemiesNearCount(3.5) > 0 ? 18 : 0);
         }
 

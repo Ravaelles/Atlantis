@@ -171,6 +171,7 @@ public final class OpenBWHost {
 
             if (handle != null && !handle.isAlive() && !anotherHostIsRunning())
                 return -1;
+
             sleepQuietly(500);
         }
         return -1;
@@ -192,6 +193,7 @@ public final class OpenBWHost {
             byte[] all = Files.readAllBytes(Paths.get(path));
             if (all.length == 0)
                 return null;
+
             int length = Math.min(count, all.length);
             byte[] slice = new byte[length];
             System.arraycopy(all, 0, slice, 0, length);
@@ -233,6 +235,7 @@ public final class OpenBWHost {
         String[] names = dir.list();
         if (names == null)
             return;
+
         for (String name : names) {
             if (name.startsWith(prefix))
                 files.add(new File(dir, name).getAbsolutePath());

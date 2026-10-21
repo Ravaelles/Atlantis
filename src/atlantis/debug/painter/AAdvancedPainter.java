@@ -779,13 +779,17 @@ public class AAdvancedPainter extends APainter {
         switch (order.status()) {
             case NOT_READY:
                 return Grey;
+
             case READY_TO_PRODUCE:
                 return order.canAffordWithReserved() ? Red : Brown;
+
             case IN_PROGRESS:
                 return order.isBuildingAndConstructionStarted() ? Purple : Yellow;
+
 //                return order.con() != null ? Yellow;
             case FINISHED:
                 return Green;
+
             default:
                 return Black;
         }

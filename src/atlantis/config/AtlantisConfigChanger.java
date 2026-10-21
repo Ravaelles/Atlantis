@@ -31,12 +31,15 @@ public class AtlantisConfigChanger {
             case "protoss":
                 useConfigForProtoss();
                 return;
+
             case "terran":
                 useConfigForTerran();
                 return;
+
             case "zerg":
                 useConfigForZerg();
                 return;
+
             default:
                 throw new IllegalStateException(
                         "Main.ourRace() must name a race, got: " + Main.ourRace());

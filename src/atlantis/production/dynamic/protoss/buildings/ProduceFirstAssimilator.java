@@ -33,6 +33,7 @@ public class ProduceFirstAssimilator {
         AUnit cc;
         if ((cc = Select.ourWithUnfinished(Protoss_Cybernetics_Core).first()) == null)
             return blocked("NoCyberneticsCore");
+
         if (cc.getRemainingBuildTimeInSeconds() >= 80) return blocked("CyberneticsCoreNotNearCompletion");
 
 
@@ -49,6 +50,7 @@ public class ProduceFirstAssimilator {
                 return true;
             }
             return blocked("QueueRejected");
+
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 

@@ -176,49 +176,62 @@ public class Env {
             case "BWAPI_DATA_PATH":
                 AtlantisIgniter.setBwapiDataPath(value);
                 return true;
+
             case "CHAOS_LAUNCHER_PATH":
                 AtlantisIgniter.setChaosLauncherPath(value);
                 return true;
+
             case "FORCE_GG_FOR_ENEMY":
                 GGForEnemy.allowed = "true".equals(value);
                 return true;
+
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
                 // Cap enforced again here, so a hand-edited ENV cannot widen the
                 // wall-clock limit past the OpenBW simulation cap (CONVENTIONS §17).
                 ForceExitLocallyAfterSomeTime.realSecondsLimit = Math.max(toInt(value), -1);
                 return true;
+
             case "FORCE_END_GAME_AFTER_INGAME_SECONDS":
                 ForceExitLocallyAfterSomeTime.inGameSecondsLimit = toInt(value);
                 return true;
+
             case "LOCAL":
                 isLocal = trueFalse(value);
                 return true;
+
             case "END_GAME_VIA_ENGINE":
                 endGameViaEngine = trueFalse(value);
                 return true;
+
             case "GENERATE_CHERRYVIS_REPLAY":
                 generateCherryVisReplay = trueFalse(value);
                 return true;
+
             case "MODIFY_BWAPI_INI":
                 modifyBwapiIni = trueFalse(value);
                 return true;
+
             case "PRODUCTION_V2":
                 productionV2 = ProductionV2Mode.parse(value);
                 return true;
+
             case "BUILDER_LOG":
                 builderLog = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
+
             case "WINE_SUPER_FAST_MODE":
                 wineSuperFast = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
+
             case "FORCE_END_AT_SUPPLY":
                 // Debug-run horizon, not a hard limit (owner 2026-10-19):
                 // stop spending game time once defects had room to show
                 // (they show by supply 25-30); 0 or absent disables it.
                 forceEndAtSupply = toInt(value == null ? "" : value.trim());
                 return true;
+
             case "CORE_AND_DRAGOON_GATE":
                 // --short tier of the OpenBW E2E: end the game as soon as the opening is
                 // PROVEN (a finished Cybernetics Core and at least one Dragoon), instead of
@@ -226,6 +239,7 @@ public class Env {
                 // so a run that exits early without them is still a failure.
                 coreAndDragoonGate = trueFalse(value);
                 return true;
+
             case "PLACEMENT":
                 // Which placement implementation answers the scheduler's seam:
                 // CATALOGUE selects the rewritten planner (_AI/redesign/03_PLACEMENT.md),
@@ -235,6 +249,7 @@ public class Env {
                 // 2026-10-08 - the flag was written to ENV and silently ignored).
                 placementCatalogue = "CATALOGUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
+
             case "GAME_LAUNCHER":
                 // CHAOS (default, Windows + ChaosLauncher), OPENBW (Linux +
                 // BWAPILauncher server) or WINE (Linux + real StarCraft under
@@ -244,6 +259,7 @@ public class Env {
                 wine = launcher.equalsIgnoreCase("WINE");
                 wineClient = launcher.equalsIgnoreCase("WINECLIENT");
                 return true;
+
             case "PARAM_TWEAKER":
                 // Overnight tuning loop (owner): the game randomizes the
                 // registered coefficients at start and appends W/L, frames,
@@ -251,6 +267,7 @@ public class Env {
                 paramTweaker = "1".equals(value == null ? "" : value.trim())
                     || trueFalse(value);
                 return true;
+
             default:
                 // Wine game-window geometry, tweakable without recompiling.
                 atlantis.config.launcher.WineWindowConfig.applyEnvValue(key, value);

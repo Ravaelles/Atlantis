@@ -32,10 +32,13 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
     public int produced(Producible item) {
         if (item instanceof UnitProducible)
             return producedUnits(((UnitProducible) item).type());
+
         if (item instanceof TechProducible)
             return producedTech(((TechProducible) item).tech());
+
         if (item instanceof UpgradeProducible)
             return producedUpgrade(((UpgradeProducible) item).upgrade());
+
         return 0;
     }
 
@@ -50,6 +53,7 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
     private int inTrainingQueues(AUnitType type) {
         if (type.isABuilding())
             return 0;
+
         int total = 0;
         for (AUnit facility : Select.ourBuildings().list()) {
             for (AUnitType queued : facility.trainingQueue()) {
@@ -66,17 +70,21 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
     static int startingCount(AUnitType type) {
         if (type.isWorker())
             return STARTING_WORKERS;
+
         if (type.equals(AUnitType.Protoss_Nexus) || type.equals(AUnitType.Terran_Command_Center)
                 || type.equals(AUnitType.Zerg_Hatchery))
             return 1;
+
         if (type.equals(AUnitType.Zerg_Overlord))
             return 1;
+
         return 0;
     }
 
     private int producedTech(TechType tech) {
         if (ATech.isResearched(tech))
             return 1;
+
         for (AUnit facility : Select.ourBuildings().list()) {
             if (facility.isResearching() && tech.equals(facility.whatIsResearching()))
                 return 1;

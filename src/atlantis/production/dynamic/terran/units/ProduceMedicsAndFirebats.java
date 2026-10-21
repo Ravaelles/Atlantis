@@ -88,11 +88,13 @@ public class ProduceMedicsAndFirebats {
 
     private static boolean produceFirebat() {
         return ForceProduceUnit.forceProduce(Terran_Firebat);
+
 //        return AddToQueue.maxAtATime(Terran_Firebat, 1) != null;
     }
 
     private static boolean produceMedic() {
         return ForceProduceUnit.forceProduce(Terran_Medic);
+
 //        return AddToQueue.maxAtATime(Terran_Medic, 2) != null;
     }
 

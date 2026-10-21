@@ -113,6 +113,7 @@ public final class CompletedUnitsHistory {
     public static int completedCount(AUnitType type) {
         if (type == null)
             return 0;
+
         return completed.getOrDefault(type, 0);
     }
 
@@ -122,6 +123,7 @@ public final class CompletedUnitsHistory {
     public static int firstCompletedFrame(AUnitType type) {
         if (type == null)
             return Integer.MAX_VALUE;
+
         return firstCompletedAt.getOrDefault(type, Integer.MAX_VALUE);
     }
 

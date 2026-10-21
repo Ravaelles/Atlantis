@@ -31,6 +31,7 @@ public class Tooltip {
 //            return tooltipToReturn;
 //        } else {
         return tooltip;
+
 //        }
     }
 

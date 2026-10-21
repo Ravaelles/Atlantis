@@ -314,6 +314,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         AUnitType unitType = resolveUnitType(building);
         if (unitType == null)
             return PlacementReservation.failure();
+
         if (unitType.getTilesWidth() <= 0 || unitType.getTilesHeights() <= 0) {
             return PlacementReservation.failure();
         }
@@ -570,8 +571,10 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         switch (constraint.mode()) {
             case NEIGHBOURHOOD:
                 return APosition.create(constraint.tileX(), constraint.tileY());
+
             case NAMED_AREA:
                 return areaCentre(constraint.areaName());
+
             case ANYWHERE:
             default:
                 return baseCentre();

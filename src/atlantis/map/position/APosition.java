@@ -112,6 +112,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
 //            instances.put(p, position);
         return position;
+
 //        }
     }
 

@@ -21,6 +21,7 @@ public class ProducePylonNearEveryBase {
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
             if (base.friendsNear().ofType(type()).empty()) {
                 return AddToQueue.withStandardPriority(type(), nearTo(base)) != null;
+
 //                    && AConsole.println(A.s + "s: ------- ProducePylonNearEveryBase (index:" + index + ")");
             }
             index++;

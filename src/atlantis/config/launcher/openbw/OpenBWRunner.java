@@ -94,6 +94,7 @@ public final class OpenBWRunner {
     private int lastFrame(String log) {
         if (log == null)
             return 0;
+
         Matcher matcher = FRAME.matcher(log);
         int last = 0;
         while (matcher.find())
@@ -106,6 +107,7 @@ public final class OpenBWRunner {
             File file = new File(path);
             if (!file.isFile())
                 return null;
+
             List<String> lines = Files.readAllLines(file.toPath());
             StringBuilder builder = new StringBuilder();
             for (String line : lines)

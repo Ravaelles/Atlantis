@@ -90,6 +90,7 @@ public final class ConnectivityRegions {
     public int regionAt(int tx, int ty) {
         if (tx < 0 || ty < 0 || tx >= width || ty >= height)
             return NO_REGION;
+
         return regionOf[index(tx, ty)];
     }
 

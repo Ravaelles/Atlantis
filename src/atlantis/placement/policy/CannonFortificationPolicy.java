@@ -93,6 +93,7 @@ public final class CannonFortificationPolicy {
     private static int mutaBonus(Context context) {
         if (context.enemyMutalisks <= 0)
             return 0;
+
         return context.enemyMutalisks / 4 + context.minerals / 500;
     }
 

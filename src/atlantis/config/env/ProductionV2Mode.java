@@ -36,8 +36,10 @@ public enum ProductionV2Mode {
         String normalized = value.trim().toUpperCase();
         if (normalized.equals("DRY_RUN") || normalized.equals("DRYRUN"))
             return DRY_RUN;
+
         if (normalized.equals("TRUE") || normalized.equals("LIVE") || normalized.equals("ON"))
             return LIVE;
+
         return OFF;
     }
 

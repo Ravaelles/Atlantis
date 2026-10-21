@@ -63,8 +63,10 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
         switch (verdict) {
             case NEEDS_NEW_PYLON:
                 return AvailabilityVerdict.NEEDS_SUPPORT;
+
             case REFUSE:
                 return AvailabilityVerdict.REFUSE;
+
             case ACCEPT:
             default:
                 return AvailabilityVerdict.AVAILABLE;

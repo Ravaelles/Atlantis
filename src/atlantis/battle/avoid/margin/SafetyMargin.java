@@ -67,6 +67,7 @@ public class SafetyMargin {
 //        System.err.println("TargetedBy= " + defender.isTargetedBy(attacker) + " / AttMoving= " + attacker.isMoving());
         if (attacker.isMoving() || attacker.isAttacking()) {
             return 0.6;
+
 //            boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
 //            return defender.isTargetedBy(attacker) ? 1.3 : -0.2;
 //            return defender.isTargetedBy(attacker)
@@ -143,6 +144,7 @@ public class SafetyMargin {
         double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
 
         return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
+
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
     }
 

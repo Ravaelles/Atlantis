@@ -40,6 +40,7 @@ public final class EngineWalkabilityGrid implements WalkabilityGrid {
     public boolean isWalkable(int tx, int ty) {
         if (tx < 0 || ty < 0 || tx >= mapWidth() || ty >= mapHeight())
             return false;
+
         if (Atlantis.game() == null)
             return false;
 
