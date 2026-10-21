@@ -133,4 +133,60 @@ public class ChokeStandoffTest extends WorldStubForTests {
             }
         });
     }
+
+    @Test
+    public void baitPullsLineIntoTheFunnelWhenEnemyCommits() {
+        // The doctrine loop at tick level (NEXT #170): the bait walks out
+        // while the line holds, then the enemy commits into the funnel and
+        // the line joins the bait at the mouth instead of standing off.
+        // No pure bait-hold steady state is asserted on purpose: with the
+        // no-contact veto at 15 tiles, the contest ring at 12 and the
+        // engage envelope at 9, contact always intervenes first - the bait
+        // is inherently transient (walk out, contact, collapse). The
+        // numbers stay non-crushing (3v2) so HOLD, not COLLAPSE, owns the
+        // quiet phase; crushing lines collapse by design (pinned above).
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 31);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 31);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit z1 = fake(AUnitType.Protoss_Zealot, 34, 14);
+        FakeUnit z2 = fake(AUnitType.Protoss_Zealot, 36, 15);
+        final APosition[] aStart = new APosition[1];
+
+        world(150, fakeOurs(nexus, a, b, c), fakeEnemies(z1, z2), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                aStart[0] = a.position();
+            }
+            if (now == 61) {
+                // The enemy commits into the funnel: contact from here on.
+                z1.position = APosition.createFromPixels(30 * 32, 16 * 32);
+                z2.position = APosition.createFromPixels(31 * 32, 15 * 32);
+            }
+            for (AUnit u : new AUnit[] { a, b, c }) {
+                BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
+            }
+            if (now != 55 && now != 150) return;
+
+            APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
+            if (now == 55) {
+                assertTrue(atlantis.battle.strategy.SquadScout.pickBait(
+                        atlantis.units.select.Select.ourCombatUnits()).id() == a.id(),
+                    "lowest id scouts while the line holds");
+                assertTrue(a.position().distTo(aStart[0]) >= 2.0,
+                    "the scout walked out toward the funnel: " + a.position());
+                for (FakeUnit u : new FakeUnit[] { b, c }) {
+                    double hold = u.position().distTo(choke);
+                    assertTrue(hold >= 6 && hold <= 13,
+                        "holders keep the standoff while the bait walks out: " + u.position());
+                }
+                return;
+            }
+            for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+                assertTrue(u.position().distTo(choke) < 7,
+                    "the line joined the bait at the funnel mouth after the commit: "
+                        + u.position());
+            }
+        });
+    }
 }
