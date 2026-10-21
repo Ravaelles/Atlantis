@@ -46,14 +46,36 @@ public class MoveAway {
      * distance, else there is no step and the caller fights).
      */
     /**
+     * Full-length escape step (NEXT #173, owner doctrine): walk straight
+     * out as far as possible - 5 tiles. Never imported from
+     * {@code battle.escape}: core must not depend on its consumers
+     * (CONVENTIONS section 5), so the constant lives here with a pointer.
+     */
+    public static final double LONG_STEP_TILES = 5.0;
+
+    /**
      * Validate-only half of the escape choice: every aim through the
      * shared gates, the one opening the most distance wins. Null means
      * no direction steps (all blocked, all micro-hops, or nothing
      * opens past the gain floor) - the caller fights instead.
+     * A needed step that validates nowhere at short range is not
+     * "hold": walls clamp every aim below the gain floor, so retry once
+     * at full length instead of shuffling in place (NEXT #173). Micro
+     * gaps below one tile keep the old null - leaping 5 for 0.3 tiles
+     * of needed ground would donate the standoff (the overshoot the
+     * kite step documents against).
      */
     public static APosition bestDestination(AUnit unit, HasPosition from, double moveDistance) {
         if (from == null || moveDistance < 0.01) return null;
 
+        APosition dest = bestAt(unit, from, moveDistance);
+        if (dest == null && moveDistance < LONG_STEP_TILES && moveDistance >= 1.0) {
+            dest = bestAt(unit, from, LONG_STEP_TILES);
+        }
+        return dest;
+    }
+
+    private static APosition bestAt(AUnit unit, HasPosition from, double moveDistance) {
         java.util.List<APosition> valid = new java.util.ArrayList<>();
         for (HasPosition aim : allAims(unit, from)) {
             APosition dest = destinationFor(unit, aim, moveDistance, from);

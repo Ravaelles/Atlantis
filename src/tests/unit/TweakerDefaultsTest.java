@@ -32,7 +32,7 @@ public class TweakerDefaultsTest {
         assertEquals(4.0, defaults.getKiteMarginDyingTiles());
         assertEquals(0.25, defaults.getKiteMarginPerHitTiles());
         assertEquals(16.0, defaults.getKiteZealotPassDamage());
-        assertEquals(0.5, defaults.getKiteStandoffInsetTiles());
+        assertEquals(0.2, defaults.getKiteStandoffInsetTiles());
         assertEquals(0.5, defaults.getKiteGlideDeadbandTiles());
         assertEquals(30, defaults.getKiteRideFrames());
         assertEquals(0.3, defaults.getKiteMinStepGainTiles());

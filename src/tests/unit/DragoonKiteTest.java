@@ -10,6 +10,8 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -298,8 +300,12 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
     @Test
     public void noRealStepMeansFightNotIdle() {
-        // Every compass point mineral-covered: fromBest finds nothing,
-        // so the Dragoon attacks instead of standing still.
+        // Every compass point mineral-covered at short range: the old
+        // contract fought in place, but a full-length sidestep exists
+        // (NEXT #173: long-vector-first), so the Dragoon steps out and
+        // kites instead of trading a lost fight at 20 hp.
+        // Standing still stays forbidden - the step replaces the
+        // attack, not the idle.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
@@ -317,11 +323,9 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             });
 
             assertTrue(
-                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
-                "no step anywhere: fight in place: " + ordersOf(dragoon));
-            assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
-                "no futile moves: " + ordersOf(dragoon));
+                "mineral-boxed short step retries long instead of trading: "
+                    + ordersOf(dragoon));
         }
         finally {
             neutralInWorld = null;
@@ -776,6 +780,37 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                 hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
                 "no attack order that a step would cancel: " + ordersOf(dragoon));
         });
+    }
+
+    @Test
+    public void boxedShortStepRetriesLongInsteadOfStanding() {
+        // NEXT #173, owner doctrine: the mineral line eats every short aim
+        // (straight vetoed, laterals gain-vetoed), so short validates
+        // nowhere - instead of fighting in place, one full-length step
+        // out. Micro-gaps below one tile keep the old null: leaping 5
+        // for 0.5 tiles of needed ground would donate the standoff.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.setHp(40);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 20, 20);
+        neutralInWorld = new FakeUnit[] {
+            fake(AUnitType.Resource_Mineral_Field, 31, 20).setNeutral()
+        };
+
+        try {
+            world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                assertNull(
+                    atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 0.5),
+                    "micro-gaps keep the old null - no 5-tile leaps for 0.5 tiles of need");
+                atlantis.map.position.APosition dest =
+                    atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 1.5);
+                assertNotNull(dest, "boxed short step retries long instead of standing");
+                assertTrue(Math.abs(dragoon.distTo(dest) - 5.0) < 0.15,
+                    "full-length sidestep past the mineral line: " + dest);
+            });
+        }
+        finally {
+            neutralInWorld = null;
+        }
     }
 
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {

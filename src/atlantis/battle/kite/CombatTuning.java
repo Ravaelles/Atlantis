@@ -28,7 +28,12 @@ public final class CombatTuning {
     private double kiteMarginDyingTiles = 4.0;
     private double kiteMarginPerHitTiles = 0.25;
     private double kiteZealotPassDamage = 16.0;
-    private double kiteStandoffInsetTiles = 0.5;
+    /**
+     * Reengage standoff: range minus this. Owner 2026-10-22: approach to
+     * range-0.2 so the dragoon shoots instead of hugging - 0.5 walked it
+     * too close to the zealot before firing.
+     */
+    private double kiteStandoffInsetTiles = 0.2;
     private double kiteGlideDeadbandTiles = 0.5;
     private double kiteMeleeCloserTiles = 1.0;
     private double kiteMeleeEdgeTiles = 2.0;
