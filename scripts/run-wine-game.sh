@@ -24,6 +24,16 @@ MAP="${1:-1a2a3a Micro 2.scx}"
 RACE="${RACE:-Protoss}"
 ENEMY_RACE="${ENEMY_RACE:-Zerg}"
 
+# Same one-game lock as run-wine-full.sh (a watched game started over a
+# running batch kills both - the cleanup kills by process name). Fail
+# here instead, before touching anything.
+WINE_GAME_LOCK="/tmp/atlantis-wine-game.lock"
+exec {WINE_GAME_LOCK_FD}>"$WINE_GAME_LOCK" || { echo "[wine-game] cannot open lock $WINE_GAME_LOCK" >&2; exit 2; }
+if ! flock -n "$WINE_GAME_LOCK_FD" 2>/dev/null; then
+  echo "[wine-game] REFUSED: another Wine game holds the box lock; one game at a time" >&2
+  exit 2
+fi
+
 # StarCraft's own window inside the Wine desktop (see [window] in bwapi.ini).
 # windowed = OFF makes the game fill the whole Wine desktop - the desktop
 # itself is the window the host sees, so the game looks fullscreen while Wine

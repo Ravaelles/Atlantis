@@ -48,7 +48,13 @@ open ideas wait for a game or a need, then get built or dropped.
 - `scripts/kill-leftovers.sh` [4/5 - box discipline before every game] - kills stray StarCraft/ChaosLauncher/BWAPILauncher/Atlantis
   processes and clears shm/socket transport, refuses to report quiet
   while strays live. Two Wine games on one box cross-attach and
-  mutually kill (measured 2026-10-20).
+  mutually kill (measured 2026-10-20; re-measured 2026-10-21 when a
+  verification duel's trap pkill'd a running macro's JVM + wineserver
+  mid-game). Since then the box is enforced, not just documented:
+  `run-wine-full.sh` (and the watched path `run-wine-game.sh`) hold
+  an flock on `/tmp/atlantis-wine-game.lock` and refuse a second
+  game instead of mutually killing (all Wine entry points funnel
+  through it).
 - `scripts/run-staredit.sh` [3/5 - scenario editing for UMS proofs] [map]` - StarEdit under Wine from the game root.
   Needed to re-stage micro scenarios (e.g. spread armies so the
   formation has time to form).

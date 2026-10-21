@@ -20,6 +20,14 @@
 #
 # Usage:
 #   scripts/run-wine-full.sh [map-name]        # default: 1a2a3a Micro 2.scx
+#   scripts/run-wine-full.sh [map-name] --visible   # watch on the desktop
+#
+# Hidden by default (Xvfb :99): unattended runs must never take over the
+# desktop, even by accident. One Wine game per box, enforced by a lock:
+# a second simultaneous game is refused instead of mutually killing both
+# (measured 2026-10-21: a verification duel's cleanup pkill'd the JVM
+# and wineserver of a running macro mid-game - truncated log, unflushed
+# twins, no verdict; the trap cleanup is global by design).
 #
 # Seeing the bot's output in the IDE console:
 #   The bot is a SEPARATE process (a Windows JVM under Wine), so its
@@ -84,9 +92,31 @@ for arg in "$@"; do
     --env=*) ENV_FILE_ARG="${arg#--env=}" ;;
     --visible) HIDDEN=0 ;;
     --hidden) HIDDEN=1 ;;
+    -h|--help)
+      sed -n '1,45p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+      exit 0 ;;
     *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-full] ignoring extra arg: $arg" >&2; } ;;
   esac
 done
+
+# One Wine game per box, enforced (not documented): the trap cleanup below
+# kills by process NAME (StarCraft.exe, ChaosLauncher, java.exe) plus
+# wineserver -k, so a second game started alongside a running one does not
+# just fail - its cleanup murders the first game mid-play (and vice versa).
+# flock is kernel-held: no stale lockfiles, released on any death.
+WINE_GAME_LOCK="/tmp/atlantis-wine-game.lock"
+exec {WINE_GAME_LOCK_FD}>"$WINE_GAME_LOCK" || { echo "[wine-full] cannot open lock $WINE_GAME_LOCK" >&2; exit 2; }
+if ! flock -n "$WINE_GAME_LOCK_FD" 2>/dev/null; then
+  # fuser names the actual lock holders (our own fd is filtered out);
+  # pgrep on the script name would also match this very check.
+  holder_pids="$(fuser "$WINE_GAME_LOCK" 2>/dev/null | tr ' ' '\n' | grep -E '^[0-9]+$' | grep -v "^$$\$" | head -3 | tr '\n' ' ')"
+  holder_cmds=""
+  for _pid in $holder_pids; do
+    holder_cmds="$holder_cmds$(ps -o comm= -p "$_pid" 2>/dev/null | head -1)[${_pid}] "
+  done
+  echo "[wine-full] REFUSED: another Wine game holds the box lock (${holder_cmds:-unknown holder}); one game at a time" >&2
+  exit 2
+fi
 [ -z "$MAP" ] && MAP="1a2a 3a Micro 2.scx"
 MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
 # Explicit per-run env file (owner: scripts never edit shared ENV files).
