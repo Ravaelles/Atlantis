@@ -458,6 +458,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). Live overlap game still unplayed; the resite seam
   fires live (adopt-resited 1x in each of two long runs). No blind patch.
+  2026-10-21 Wine macro: twin gap named - warping Observatory
+  [118,30] (STARTED 12:35) whose builder #126 died to lings 12:28
+  leaves zero further rows (no cancel, no death, no warp): the
+  orphan-drop twin does not cover builder-dead warps. Next: extend
+  the orphan-drop twin to builder death, proof is cid 331's shape
+  twinning on the next run.
   2026-10-21 Wine macro: 57 DISTINCT Gateway oids each CANCEL "Null
   position" once (siteless mint death, no storm - the untwinned door
   at scale, read the CANCEL reason per the mint answer); Stargate*
@@ -496,12 +502,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21 Wine macro IS the game, at unprecedented scale: 463
   proximity-finish CANCELs in 4.1 game-min (9:45-13:50), THREE Pylon
   oids (152: 227, 212: 163, 151: 73) re-minting tile [119,12]
-  against the STANDING Pylon covering it. The pick-time guard only
-  covers unfinished buildings and the spiral's standing-cover
-  refusal lives on the finder path - the re-minting door is a sited/
-  exact-tile path that never checks standing cover. Next: remember
-  the refused tile per order (backoff) or check standing cover at
-  mint; proof is the same tile going quiet.
+  against the STANDING Pylon covering it. Mint path traced: the legacy
+  ConstructionFinder chain (`DefineExactPositionForNewConstruction`),
+  not the spiral - no local patch (would duplicate the guard in the
+  dying path); the fix rides #145, this storm class is its acceptance
+  test (goes quiet after cutover).
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -977,6 +982,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
     catalogue-only sited demand through the adapter funnel
     (03_PLACEMENT.md; exact tile honored verbatim, power + refusal twins).
     Exit: every construction sited by the catalogue, the chain in src-old/.
+    2026-10-21 mechanism + acceptance test (Wine macro): the [119,12]
+    storm (463 same-tile proximity-finish CANCELs, 3 Pylon oids,
+    4.1 game-min) mints through THIS chain
+    (`DefineExactPositionForNewConstruction.exactPositionForNewConstruction`),
+    which has no standing-cover check - the spiral's refusal lives in
+    the other funnel (`RequestBuildingNear`). No local patch (would
+    duplicate the guard in the dying path); after cutover this storm
+    class goes quiet (0 same-tile storms) because the catalogue refuses
+    standing-covered sites.
   - **#146** `APositionFinder` legacy path → deleted after the catalogue
     default + parity (D1 pointer; ~25 files still route through it).
     Exit: zero `Can't find place` across retained runs, legacy path gone.
@@ -1008,7 +1022,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Gate evidence from live games (all named, firing as designed):
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
-  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence, still no new gate proof claimed (the guard needs a full game of firing-correctly first).
+  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
