@@ -997,8 +997,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (`mutateAroundUnfrozen` + test 6/6 in `TunerHallOfFameTest`:
   frozen params ride at champion values, rest explore inside
   bounds; suite 1008/1008 + arch unchanged). Step 5 (archive)
-  rides the intensive session: per-game dirs + batch.csv already
-  persist, the missing piece is only the batch-level manifest.
+  LANDED 2026-10-21: run-wine-batch.sh writes OUTDIR/manifest.txt in
+  TunerBatchManifest.render's line format (map, jar md5, per game: dir,
+  verdict, hits, seconds, param digest + full vector; invalid games stay
+  in batch.log), proven by a 1-game batch (WIN, manifest validated:
+  structure, digest recomputation, batch.csv agreement). The overnight
+  N-game sweep stays owner-called.
 - **#161** Fast behavior sim for micro/formation (owner 2026-10-20:
   restore the *capability* lost with StarEngine, not necessarily the
   code verbatim). Need: fully controlled fights (counts, map,
