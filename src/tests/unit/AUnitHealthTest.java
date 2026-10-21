@@ -70,4 +70,20 @@ public class AUnitHealthTest {
                 "full hp with empty shields is still wounded - the shield gap counts");
         assertTrue(AUnitHealth.isWounded(dragoon));
     }
+
+    @Test
+    public void thresholdsDelegateToTheSeam() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 10, 10);
+        probe.setHp(10);
+        probe.setShields(probe.maxShields());
+
+        assertTrue(probe.hpLessThan(11));
+        assertTrue(AUnitHealth.hpLessThan(probe, 11));
+        assertFalse(probe.hpLessThan(10));
+        assertTrue(probe.hpMoreThan(9));
+        assertTrue(AUnitHealth.hpMoreThan(probe, 9));
+        assertFalse(probe.hpMoreThan(10));
+        assertFalse(probe.isHealthy());
+        assertFalse(AUnitHealth.isHealthy(probe));
+    }
 }

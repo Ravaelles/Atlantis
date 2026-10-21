@@ -44,4 +44,16 @@ public final class AUnitHealth {
     public static boolean isWounded(AUnit unit) {
         return unit.hp() < unit.maxHp() || unit.shields() < unit.maxShields();
     }
+
+    public static boolean hpLessThan(AUnit unit, int min) {
+        return unit.hp() < min;
+    }
+
+    public static boolean hpMoreThan(AUnit unit, int max) {
+        return unit.hp() > max;
+    }
+
+    public static boolean isHealthy(AUnit unit) {
+        return !isWounded(unit);
+    }
 }
