@@ -10,61 +10,6 @@ Scope note (per the last instruction): `AUnit.java`, `AUnitType.java` and all co
 are **excluded**. Abstract test infrastructure (`AbstractTestWithUnits`) and test fakes/harnesses are kept,
 because they are shared infrastructure rather than the tests of one specific feature.
 
-The exclusion list is applied first, then the remaining files are sorted by byte size; the table below is
-the result (the 50 largest remaining `.java` files).
-
-| # | File | Bytes | Lines |
-|---|---|---:|---:|
-| 1 | `src/atlantis/debug/painter/AAdvancedPainter.java` | 74 937 | 1915 |
-| 2 | `src/atlantis/units/AUnitOrders.java` | 40 867 | 922 |
-| 3 | `src/atlantis/units/select/SelectionMembership.java` | 36 177 | 1064 |
-| 4 | `src/atlantis/units/select/Selection.java` | 31 178 | 1095 |
-| 5 | `src/atlantis/production/constructions/commanders/ConstructionStatusChanger.java` | 29 271 | 579 |
-| 6 | `src/atlantis/placement/engine/CataloguePlacementPlanner.java` | 26 628 | 622 |
-| 7 | `src/atlantis/debug/tweaker/ParamTweakerFactory.java` | 25 226 | 471 |
-| 8 | `src/main/Main.java` | 23 828 | 437 |
-| 9 | `src/atlantis/production/requests/produce/ProduceBuilding.java` | 20 664 | 438 |
-| 10 | `src/atlantis/units/select/Select.java` | 20 404 | 624 |
-| 11 | `src/tests/unit/AbstractTestWithUnits.java` | 19 732 | 479 |
-| 12 | `src/atlantis/production/v2/goals/DynamicGoals.java` | 18 962 | 446 |
-| 13 | `src/atlantis/config/env/Env.java` | 18 864 | 504 |
-| 14 | `src/atlantis/production/constructions/NewConstructionRequest.java` | 17 830 | 392 |
-| 15 | `src/bwem/BWMap.java` | 17 489 | 487 |
-| 16 | `src/atlantis/production/orders/production/queue/order/ProductionOrder.java` | 17 456 | 580 |
-| 17 | `src/atlantis/production/constructions/Construction.java` | 17 386 | 482 |
-| 18 | `src/atlantis/battle/kite/CombatTuning.java` | 17 326 | 492 |
-| 20 | `src/tests/fakes/FakeUnit.java` | 16 937 | 667 |
-| 21 | `src/atlantis/Atlantis.java` | 16 601 | 492 |
-| 22 | `src/atlantis/battle/FightTarget.java` | 16 272 | 310 |
-| 23 | `src/atlantis/units/select/Count.java` | 16 253 | 506 |
-| 24 | `src/atlantis/production/orders/production/queue/add/AddToQueue.java` | 15 981 | 381 |
-| 25 | `src/atlantis/production/v2/LegacyPlacementPlanner.java` | 15 923 | 359 |
-| 26 | `src/atlantis/production/dynamic/workers/AutoProduceWorkersCommander.java` | 15 848 | 365 |
-| 27 | `src/atlantis/util/ProcessHelper.java` | 15 489 | 386 |
-| 28 | `src/atlantis/production/constructions/builders/RefreshConstructionPosition.java` | 15 315 | 313 |
-| 29 | `src/atlantis/map/AMap.java` | 15 114 | 395 |
-| 30 | `src/atlantis/map/base/BaseLocations.java` | 15 061 | 418 |
-| 31 | `src/tests/unit/sim/SimWorld.java` | 15 046 | 381 |
-| 32 | `src/atlantis/units/workers/defence/run/WorkerDefenceRun.java` | 14 999 | 390 |
-| 33 | `src/atlantis/production/v2/ProductionScheduler.java` | 14 694 | 317 |
-| 34 | `src/atlantis/production/constructions/position/protoss/ProtossPositionFinder.java` | 14 593 | 307 |
-| 35 | `src/atlantis/production/v2/engine/GameStateSnapshot.java` | 14 460 | 328 |
-| 36 | `src/atlantis/production/constructions/builders/BuilderDiagnostics.java` | 14 100 | 268 |
-| 37 | `src/atlantis/production/constructions/commanders/CancelTooLongConstructions.java` | 14 015 | 315 |
-| 38 | `src/atlantis/map/position/HasPosition.java` | 13 954 | 431 |
-| 39 | `src/atlantis/production/constructions/ConstructionRequests.java` | 13 888 | 388 |
-| 40 | `src/atlantis/units/Units.java` | 13 681 | 501 |
-| 41 | `src/atlantis/production/requests/produce/BuildGates.java` | 13 343 | 303 |
-| 42 | `src/atlantis/map/position/APosition.java` | 13 293 | 418 |
-| 43 | `src/atlantis/game/A.java` | 13 175 | 434 |
-| 44 | `src/atlantis/production/constructions/builders/IssueBuildOrder.java` | 13 147 | 226 |
-| 45 | `src/jfap/JFAP.java` | 12 803 | 340 |
-| 46 | `src/atlantis/production/dynamic/protoss/units/ProduceZealot.java` | 12 680 | 305 |
-| 47 | `src/atlantis/game/listeners/OnGameStarted.java` | 12 643 | 257 |
-| 48 | `src/atlantis/production/orders/production/queue/add/PreventDuplicateOrders.java` | 12 461 | 327 |
-| 49 | `src/atlantis/production/dynamic/terran/turrets/TurretsForMain.java` | 12 162 | 347 |
-| 50 | `src/atlantis/config/MapSpecificCommander.java` | 11 843 | 326 |
-
 ## How to read the entries
 
 Each entry gives: what the file actually does (from its code), where its single responsibility breaks (SRP),

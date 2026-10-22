@@ -34,7 +34,7 @@ public class CenterCamera {
     }
 
     public static void onFirstCombatUnit() {
-        on(Select.ourCombatUnits().first());
+        on(Select.ourCombatUnits().combatUnits().havingWeapon().first());
     }
 
     public static void onMainChoke() {
