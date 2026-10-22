@@ -227,6 +227,10 @@ The index of which document answers which question is `_AI/README.md`.
    first (`args[0]`) - now iterates all files with a run prefix; re-sweep
    over all 52 retained logs: 2 BOARD_FED, both rescue (pumps 8 and 14) -
    tally 26 rescue, 0 routine, still no candidate.
+ 2026-10-23 re-sweep over 64 unique retained logs (latest-symlink
+ deduped): BOARD_FED still 2, both rescue - tally unchanged, no
+ candidate; the 4 newest runs are UMS duels (no construction twins,
+ no new #150/#151/#92/#84/#74 instances).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -1058,6 +1062,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
  Re-checked 2026-10-22 (later, 52 logs): still zero - the deadlock shape
  absent everywhere again.
+ Re-checked 2026-10-23 (64 unique logs, latest symlink deduped): zero
+ deadlock shape; single transient frame-3 BO-load CyberneticsC (300 @
+ sup 10, the known load shape, not a stall).
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
@@ -1752,6 +1759,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  threatened-by-melee still vetoes first. Pinned 16/16 FormationHold.
  Note: the looping unit was NOT the vanguard (lowest-id alive was
  #106) - the gate keys on ghost+unthreatened, no scout special-case.
+ 2026-10-23 nobody waits while the cluster fights (owner: ranged
+ advance to range, melee join - holding slots during someone else's
+ brawl is over): Regroup.march reinforces an ONGOING fight (new
+ ArmyContact.isOngoingFight, 72f, not the 240f freshness) ahead of
+ formation slots and the ghost creep, UMS+FIGHT only (melee keeps
+ anchor discipline). Pinned: ongoing window 1f/99f, reinforce beats
+ slots with 3 ours, idle army keeps slots without a fight; suite
+ 1293/1293. Live shape it targets (game 200532): half the army parks
+ while the rest fights; the idle half held slots with no target
+ instead of joining.
 
 Priority note (owner 2026-10-22): the three items below slot BELOW
 the production ratchet (#45, #144-147 per-gate deletions) - small

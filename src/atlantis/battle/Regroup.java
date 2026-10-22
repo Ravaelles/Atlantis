@@ -46,6 +46,21 @@ public final class Regroup {
 
             return;
         }
+        // Join an ongoing fight before taking a slot (owner: nobody waits
+        // in formation while the cluster fights - melee joins, ranged
+        // advances to range). Only while contact is fresh (ongoing, not
+        // old news - old fights must not drag the line out of formation),
+        // only on FIGHT, only on UMS (melee keeps its anchor/formation
+        // discipline: a scouting skirmish must not drag the army across
+        // the map). Ghosts and static slots wait below.
+        if (tactic == FightOrFlight.Tactic.FIGHT && A.isUms() && ArmyContact.isOngoingFight()) {
+            APosition reinforce = ArmyContact.reinforcePointFor(unit);
+            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
+                FightTarget.markRepositioned(unit);
+
+                return;
+            }
+        }
         // March in formation (owner 2026-10-26): the line takes slots
         // facing the expected enemy before anyone creeps - the vanguard
         // still detaches fast, everyone else advances as a line, never
@@ -63,22 +78,6 @@ public final class Regroup {
         }
         if (GhostAdvance.move(unit, tactic)) {
             return;
-        }
-        // Split-cluster reinforcement (NEXT #181): one part fights
-        // while another holds formation slots with no target - the
-        // idle part marches at the freshest fight instead of waiting.
-        // Only on FIGHT (retreats own the unit above), only on UMS
-        // (melee keeps its anchor/formation discipline: a scouting
-        // skirmish must not drag the home army across the map), and
-        // only when nothing else owned it yet (ghost first, static
-        // slots after).
-        if (tactic == FightOrFlight.Tactic.FIGHT && A.isUms()) {
-            APosition reinforce = ArmyContact.reinforcePointFor(unit);
-            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
-                FightTarget.markRepositioned(unit);
-
-                return;
-            }
         }
         HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
         if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);

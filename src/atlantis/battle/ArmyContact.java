@@ -21,6 +21,15 @@ public final class ArmyContact {
     /** A contact older than this is history, not a destination (10 game seconds). */
     public static final int FRESH_FRAMES = 240;
 
+    /**
+     * A fight counts as ongoing this long after its last report (3 game
+     * seconds): a brawl re-reports every frame, so anything older is a
+     * finished skirmish, not a reason to leave formation. Narrower than
+     * {@link #FRESH_FRAMES} on purpose - the old news still answers an
+     * address, but only an ongoing fight outranks the formation slots.
+     */
+    public static final int ONGOING_FRAMES = 72;
+
     /** Already fighting next to it: join nothing. */
     public static final double ARRIVED_TILES = 5.0;
 
@@ -47,6 +56,23 @@ public final class ArmyContact {
 
         lastFightAt = target.position();
         lastFightFrame = A.now();
+    }
+
+    /**
+     * Whether the cluster is fighting right now (as opposed to having
+     * fought recently): the last report is inside {@link #ONGOING_FRAMES}.
+     * The no-target march uses this, not freshness - an idle unit joins
+     * an ongoing brawl instead of holding a slot, but old news never
+     * pulls the line out of formation.
+     */
+    public static boolean isOngoingFight() {
+        try {
+            if (lastFightAt == null) return false;
+
+            return A.now() - lastFightFrame <= ONGOING_FRAMES;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
