@@ -60,6 +60,7 @@ public class Regions {
         ARegion regionToVisit = null;
 
         for (ARegion reachableRegion : region.getReachableRegions()) {
+            if (reachableRegion == null || reachableRegion.center() == null) continue;
             if (!reachableRegion.center().isExplored()) {
                 regionToVisit = reachableRegion;
 //                return APosition.createFrom(regionToVisit.getCenter());

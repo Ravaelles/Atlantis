@@ -119,7 +119,8 @@ public class ARegion implements HasPosition {
 
     public APosition center() {
         if (center == null) {
-            if (area != null && area.getTopLeft().x < 2000000) {
+            try {
+                if (area != null && area.getTopLeft().x < 2000000) {
 //                System.err.println("area.getTopLeft().x = " + area.getTopLeft().x);
 //                System.err.println("area.getBottomRight().x = " + area.getBottomRight().x);
 //                System.err.println("area.getTopLeft().y = " + area.getTopLeft().y);
@@ -133,6 +134,23 @@ public class ARegion implements HasPosition {
                 if (!center.isWalkable()) {
                     center = center.makeWalkable(8, 2, this);
 //                    System.err.println("WALKABLE center = " + center);
+                }
+                }
+            } catch (Exception ignored) {
+                center = null;
+            }
+            if (center == null) {
+                // Degenerate bounding box (UMS maps carry sentinel boxes
+                // the guard above rejects): the highest-altitude walk
+                // tile is inside the area by construction, so it needs
+                // no box at all. Without this every center reads null
+                // and the whole ghost chain parks in silence.
+                try {
+                    if (area != null && area.getTop() != null) {
+                        center = APosition.create(area.getTop());
+                    }
+                } catch (Exception ignored) {
+                    center = null;
                 }
             }
         }
