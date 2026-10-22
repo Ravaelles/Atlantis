@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -42,13 +44,20 @@ public class FrozenWatchTest extends WorldStubForTests {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         dragoon.cooldown = 0;
 
-        world(FrozenWatch.FROZEN_FRAMES + 5,
+        world(FrozenWatch.FROZEN_FRAMES + 10,
             fakeOurs(dragoon), fakeEnemies(), () -> {
+                int now = atlantis.game.A.now();
+                if (now <= 4) {
+                    // Bank deployment first: the opening march is not a
+                    // freeze, a stop after moving is.
+                    dragoon.position = atlantis.map.position.APosition.createFromPixels(
+                        dragoon.position.x() + 32, dragoon.position.y());
+                }
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
                     Actions.MOVE_ENGAGE, "ClusterHold", true);
                 FrozenWatch.note(dragoon);
 
-                if (atlantis.game.A.now() == FrozenWatch.FROZEN_FRAMES + 1) {
+                if (now == FrozenWatch.FROZEN_FRAMES + 6) {
                     assertTrue(FrozenWatch.isFrozen(dragoon),
                         "move order riding, no displacement, no cooldown: frozen");
                 }
@@ -124,14 +133,68 @@ public class FrozenWatchTest extends WorldStubForTests {
         zealot.setEnemy();
         dragoon.cooldown = 0;
 
-        world(FrozenWatch.FROZEN_FRAMES + 5,
+        world(FrozenWatch.FROZEN_FRAMES + 10,
             fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                int now = atlantis.game.A.now();
+                if (now <= 4) {
+                    dragoon.position = atlantis.map.position.APosition.createFromPixels(
+                        dragoon.position.x() + 32, dragoon.position.y());
+                }
                 dragoon.attackUnit(zealot);
                 FrozenWatch.note(dragoon);
 
-                if (atlantis.game.A.now() == FrozenWatch.FROZEN_FRAMES + 1) {
+                if (now == FrozenWatch.FROZEN_FRAMES + 6) {
                     assertTrue(FrozenWatch.isFrozen(dragoon),
                         "attack order riding, no displacement, nothing in range: frozen");
+                }
+            });
+    }
+
+    @Test
+    public void secondConsecutiveFreezeFilesAnError() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.cooldown = 0;
+
+        world(FrozenWatch.FROZEN_FRAMES + 10,
+            fakeOurs(dragoon), fakeEnemies(), () -> {
+                int now = atlantis.game.A.now();
+                if (now <= 4) {
+                    dragoon.position = atlantis.map.position.APosition.createFromPixels(
+                        dragoon.position.x() + 32, dragoon.position.y());
+                }
+                dragoon.move(atlantis.map.position.APosition.create(40, 20),
+                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                FrozenWatch.note(dragoon);
+
+                if (now == FrozenWatch.FROZEN_FRAMES + 5) {
+                    assertTrue(FrozenWatch.isFrozen(dragoon), "still frozen: " + now);
+                    assertTrue(FrozenWatch.frozenStreak(dragoon) >= 2,
+                        "consecutive frozen notes accumulate: " + FrozenWatch.frozenStreak(dragoon));
+                    assertNotNull(FrozenWatch.frozenErrorFrame(dragoon),
+                        "second consecutive freeze files the error");
+                }
+            });
+    }
+
+    @Test
+    public void movementResetsTheStreak() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.cooldown = 0;
+
+        world(FrozenWatch.FROZEN_FRAMES + 10,
+            fakeOurs(dragoon), fakeEnemies(), () -> {
+                int now = atlantis.game.A.now();
+                if (now <= 4 || now == FrozenWatch.FROZEN_FRAMES + 3) {
+                    dragoon.position = atlantis.map.position.APosition.createFromPixels(
+                        dragoon.position.x() + 32, dragoon.position.y());
+                }
+                dragoon.move(atlantis.map.position.APosition.create(40, 20),
+                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                FrozenWatch.note(dragoon);
+
+                if (now == FrozenWatch.FROZEN_FRAMES + 4) {
+                    assertEquals(0, FrozenWatch.frozenStreak(dragoon),
+                        "one step of progress resets the episode");
                 }
             });
     }
