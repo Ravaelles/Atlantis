@@ -142,6 +142,8 @@ public class BattleCommander extends Commander {
         int foeDist = -1;
         String ghostSource = "-";
         int ghostDist = -1;
+        int ghostX = -1;
+        int ghostY = -1;
         try {
             if (center != null) {
                 AUnit nearest = atlantis.units.select.Select.enemy()
@@ -153,7 +155,11 @@ public class BattleCommander extends Commander {
                 ghostSource = atlantis.battle.strategy.GhostAdvance.ghostSourceFor(leader);
                 atlantis.map.position.APosition ghost =
                     atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
-                if (ghost != null) ghostDist = (int) (leader.distTo(ghost) * 10);
+                if (ghost != null) {
+                    ghostDist = (int) (leader.distTo(ghost) * 10);
+                    ghostX = ghost.tx();
+                    ghostY = ghost.ty();
+                }
             }
         } catch (Exception ignored) {
         }
@@ -168,6 +174,8 @@ public class BattleCommander extends Commander {
             .param("foe", foeDist)
             .param("ghost", ghostSource)
             .param("gdist", ghostDist)
+            .param("gx", ghostX)
+            .param("gy", ghostY)
             .log(A.now(), A.minSec());
     }
 
