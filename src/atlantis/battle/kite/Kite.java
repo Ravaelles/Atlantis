@@ -99,15 +99,21 @@ public final class Kite {
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost
             // ready or the nearest enemy is far enough to trade with.
-            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= CombatTuning.current().getDragoonSurroundedMeleeCount()
+            // A chewer already on the guns voids even this: standing
+            // through contact is never trading (owner order: kiting has
+            // absolute precedence, measured 348 chewed sim frames).
+            if (!isBeingChewed(unit)
+                && unit.enemiesNear().melee().inRadius(3, unit).size() >= CombatTuning.current().getDragoonSurroundedMeleeCount()
                 && (unit.cooldown() <= CombatTuning.current().getDragoonSurroundedStandCooldown()
                     || unit.distTo(threat) >= CombatTuning.current().getDragoonSurroundedStandDistTiles())) return false;
             // Low-HP Dragoon holds fire unless the shot is safe: at least
             // 3.2 tiles of room or an imminent weapon (owner, converging
             // with Stardust: cooldown <= latency + 2 attacks instead of
             // stepping). Below half health the threatened step would only
-            // delay the one shot that still matters.
-            if (lowHp && unit.cooldown() <= CombatTuning.current().getDragoonLowHpFireCooldown()) return false;
+            // delay the one shot that still matters. Chewed low-hp guns
+            // kite anyway: the imminent shot is not worth contact.
+            if (lowHp && !isBeingChewed(unit)
+                && unit.cooldown() <= CombatTuning.current().getDragoonLowHpFireCooldown()) return false;
             // ...otherwise it yields ground early: holding fire means
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
@@ -133,14 +139,42 @@ public final class Kite {
      * shoots on ready instead of yielding ground for the margin. Public
      * as a seam: the discipline pins without running the frame.
      */
+    /**
+     * A melee enemy this close is already hitting the guns: the screen
+     * is not screening. Same edge the sim measures contact with.
+     */
+    static final double CHEWING_TILES = 0.5;
+
     public static boolean hasMeatScreen(AUnit unit) {
         if (unit == null || !unit.isDragoon()) return false;
 
         try {
-            return unit.hp() + unit.shields() >= 40 && unit.friendlyZealotsNearCount(8) > 0;
+            if (unit.hp() + unit.shields() < 40) return false;
+            // A screen that lets a chewer through screens nothing: with a
+            // melee enemy already on the guns the stand-and-shoot
+            // discipline becomes stand-and-bleed (measured: 333/333 chewed
+            // sim frames stood on the screen, one dragoon 260 -> 60 hp
+            // while the pack watched; live game 185100 the same shape).
+            if (isBeingChewed(unit)) return false;
+
+            return unit.friendlyZealotsNearCount(8) > 0;
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    /** True when a listed melee enemy is already in hitting range. Public as a seam. */
+    public static boolean isBeingChewed(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+
+            for (AUnit foe : unit.enemiesNear().melee().list()) {
+                if (foe == null || !foe.isAlive()) continue;
+                if (unit.distTo(foe) <= CHEWING_TILES) return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 
     /**

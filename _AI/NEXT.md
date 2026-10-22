@@ -1490,6 +1490,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  by-name apply + 3 count tests 32->33) and the tuner picks the
  value. Pinned (`halfBlendBeatsStraightAndFull`,
  `arcHoldsWhenOutnumbered`, mutation-proofed).
+ 2026-10-23 follow-up (no code): the chew-kites doctrine costs the arc
+ arm one dragoon in the contact-start 3v5 (stand donated 0) - the bend
+ aims at the squad, which in a surround is into the chewers. The arc
+ deaths bound now allows +1 with the reason; contact-aware bending
+ (bend away from contact, not just toward the squad) is open work for
+ the #175 slice series.
  2026-10-22 forced-blend duel (1Drag, all 33 params pinned from a
  per-game env, `EscapeArcBlend=0.5 (ENV)` in the log): WIN in 22 s,
  1/0, 12 hits, 14 shots - inside the baseline band (10/10 wins,
@@ -1826,6 +1832,19 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  only at f400) - not a hold-into-chews, so this gate does not rewrite
  that death; it closes the band class. Meat-screen stand itself is a
  separate owner call.
+ 2026-10-23 chewed voids every stand (owner order, absolute kite
+ precedence): Kite.hasMeatScreen returns false while a melee enemy is
+ in hitting range (new CHEWING_TILES 0.5 seam + isBeingChewed), and
+ the same chew voids the surrounded stand and the low-hp imminent-shot
+ hold. Repro StarEngine scenario (4 dragoons + 3 zealots vs 8 zealots,
+ ~10 tiles): 348 chewed frames / 348 max-consecutive before, 196 / 23
+ after, doctrine counter kiteFalseWhileChewed 333 -> 0 (pinned in-test).
+ Cost, measured honestly: arc 3v5 contact-start donates 1 dragoon where
+ the stand donated 0 (straight arm holds 0 while kiting too - the donor
+ is the arc bend toward the squad, i.e. into the surround, not kiting
+ itself). Arc deaths bound relaxed to +1 with the reason; the split
+ bound (the test's main claim) untouched; contact-aware bend filed as
+ #175 follow-up, no code.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.

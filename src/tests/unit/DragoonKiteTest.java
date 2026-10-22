@@ -177,6 +177,74 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void chewedDragoonVoidsTheScreen() {
+        // A screen that lets a chewer through screens nothing (game
+        // 185100, sim 333/333): with a melee enemy already on the guns
+        // the stand-and-shoot discipline becomes stand-and-bleed, so the
+        // screen voids and the margin answers instead. The approach
+        // screen (chewer outside hitting range) still holds - pinned
+        // next door by meatScreenHoldsFireInsteadOfYielding.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit screen = fake(AUnitType.Protoss_Zealot, 31, 21);
+        FakeUnit chewer = fake(AUnitType.Protoss_Zealot, 30.5, 20);
+        chewer.setEnemy();
+        dragoon.cooldown = 15;
+        dragoon.hp = 52;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon, screen),
+            fakeEnemies(chewer), () -> {
+                assertTrue(Kite.isBeingChewed(dragoon), "0.5 tiles: already hitting");
+                assertFalse(Kite.hasMeatScreen(dragoon), "chewed guns have no screen");
+                assertTrue(Kite.shouldKite(dragoon, chewer),
+                    "the margin answers once the screen voids");
+            });
+    }
+
+    @Test
+    public void chewedDragoonVoidsTheSurroundedStand() {
+        // Owner order: kiting has absolute precedence. Three melee around
+        // (surrounded shape) but one already chewing at 0.5 tiles: the
+        // stand-and-shoot rule voids, the margin answers. The plain
+        // surrounded stand (chewers at 1.0+, no contact) still holds -
+        // pinned next door by surroundedDragoonStandsAndShoots.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit lingA = fake(AUnitType.Protoss_Zealot, 61, 20);
+        FakeUnit lingB = fake(AUnitType.Protoss_Zealot, 61, 21);
+        FakeUnit chewer = fake(AUnitType.Protoss_Zealot, 60.5, 20);
+        lingA.setEnemy();
+        lingB.setEnemy();
+        chewer.setEnemy();
+        dragoon.hp = 100;
+        dragoon.shields = 0;
+        dragoon.cooldown = 4;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon),
+            fakeEnemies(lingA, lingB, chewer), () -> {
+                assertTrue(Kite.isBeingChewed(dragoon), "0.5 tiles: already hitting");
+                assertTrue(Kite.shouldKite(dragoon, chewer),
+                    "chewed while surrounded: the kite voids the stand");
+            });
+    }
+
+    @Test
+    public void chewedLowHpDragoonKitesDespiteImminentShot() {
+        // Low hp, weapon ready in 3 frames, chewer on the guns: the
+        // imminent-shot hold voids too - the shot is not worth contact.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit chewer = fake(AUnitType.Protoss_Zealot, 60.5, 20);
+        chewer.setEnemy();
+        dragoon.hp = 30;
+        dragoon.shields = 0;
+        dragoon.cooldown = 3;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon),
+            fakeEnemies(chewer), () -> {
+                assertTrue(Kite.shouldKite(dragoon, chewer),
+                    "chewed at low hp: kite even with the shot almost ready");
+            });
+    }
+
+    @Test
     public void distantEnemyIsApproachedNotKited() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 36, 20);
