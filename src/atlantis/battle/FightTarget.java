@@ -342,6 +342,15 @@ public final class FightTarget {
                 && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
                 fireAt = target.position()
                     .translateTilesTowards(unit, unit.distTo(target) - standOff);
+                // Glide target must be walkable (live: Dragoon ordered
+                // into [43,53] every frame while being chewed - the move
+                // refuses, the wait below pins the unit standing). An
+                // unwalkable glide is no glide at all: null it so the
+                // frame falls through to the attack order below, which
+                // the engine chases around obstacles on its own.
+                if (fireAt != null && unit.isGroundUnit() && !fireAt.isWalkable()) {
+                    fireAt = null;
+                }
                 if (fireAt != null
                     && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
                     && unit.move(fireAt, Actions.MOVE_ENGAGE, Behavior.REENGAGE.tag())) {

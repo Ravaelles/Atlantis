@@ -49,8 +49,10 @@ public final class Regroup {
         // facing the expected enemy before anyone creeps - the vanguard
         // still detaches fast, everyone else advances as a line, never
         // as a blob chasing the scout. No slot (duels, truly blind on
-        // FLEE) falls through to the creep below.
-        if (!GhostAdvance.isVanguard(unit)) {
+        // FLEE) falls through to the creep below. Melee on top of the
+        // unit skips the slots too (hard veto, same as the calm hold):
+        // formation never stands into chews, with or without a target.
+        if (!GhostAdvance.isVanguard(unit) && !FormationHold.hasCloseMeleeEnemy(unit)) {
             HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
             if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
                 FightTarget.markRepositioned(unit);

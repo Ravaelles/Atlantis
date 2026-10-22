@@ -30,6 +30,31 @@ public final class FormationHold {
     /** Contact breaks the hold: this close the phalanx becomes the fight. */
     public static final double CONTACT_TILES = 2.5;
 
+    /**
+     * Hard veto (owner 2026-10-26): melee on top of the unit, no
+     * discussion. Literally never hold formation with a melee enemy
+     * within 2 tiles - no slot is worth standing into chews. Raw
+     * distance on listed melee enemies only: no weapon, range,
+     * visibility or cooldown plumbing that can fail open.
+     */
+    public static final double CLOSE_MELEE_TILES = 2.0;
+
+    /**
+     * True when a listed melee enemy stands within {@link #CLOSE_MELEE_TILES}
+     * of the unit. The only formation question that matters up close.
+     */
+    public static boolean hasCloseMeleeEnemy(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+            for (AUnit foe : unit.enemiesNear().melee().list()) {
+                if (foe == null || !foe.isAlive()) continue;
+                if (unit.distTo(foe) <= CLOSE_MELEE_TILES) return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
+
     private FormationHold() {
     }
 
@@ -44,6 +69,7 @@ public final class FormationHold {
      */
     public static boolean shouldHold(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
         if (unit == null || target == null || !unit.isAlive()) return false;
+        if (hasCloseMeleeEnemy(unit)) return false;
         if (tactic != FightOrFlight.Tactic.FIGHT) return false;
         try {
             if (!unit.isCombatUnit()) return false;

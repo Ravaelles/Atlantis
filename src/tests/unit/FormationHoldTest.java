@@ -134,4 +134,40 @@ public class FormationHoldTest extends WorldStubForTests {
                 "hold the line while the enemy is still far");
         });
     }
+
+    @Test
+    public void meleeOnTopNeverHolds() {
+        // Owner 2026-10-26, hard veto: a melee enemy within 2 tiles ends
+        // every formation discussion - literally never hold into chews.
+        // Live dragoons stood in slots while zealots shredded them; the
+        // contact, damage and kite gates all failed open on that board,
+        // so the raw distance answers first with no plumbing to fail.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 20, 20);
+        FakeUnit chewer = fake(AUnitType.Protoss_Zealot, 21.5, 20);
+        chewer.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(chewer), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertTrue(FormationHold.hasCloseMeleeEnemy(dragoon), "veto sees the chewer");
+            assertFalse(FormationHold.shouldHold(dragoon, chewer, FightOrFlight.Tactic.FIGHT),
+                "melee at 1.5 tiles: literally never hold");
+            assertFalse(FormationHold.holdIfCalm(dragoon, chewer, FightOrFlight.Tactic.FIGHT, dragoon, null),
+                "the calm hold honors the veto too");
+        });
+    }
+
+    @Test
+    public void vetoEndsAtTwoTiles() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 23, 20);
+        zealot.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.hasCloseMeleeEnemy(dragoon),
+                "3 tiles is pressure, not melee on top - other gates decide");
+        });
+    }
 }
