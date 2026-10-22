@@ -223,4 +223,55 @@ public class FormationHoldTest extends WorldStubForTests {
             }
         });
     }
+
+    @Test
+    public void fightKitePreemptsHoldInMarginBand() {
+        // Owner doctrine: FormHold never outranks kiting. A wounded dragoon
+        // (hp 48) with a ling at 3.12 tiles sits in the band the raw gate
+        // cannot see: outside veto (3.0), contact (2.5) and canAttackMe+3,
+        // yet inside the fight's own margin (required 3.25 at this hp). The hold must decline exactly when the fight would
+        // kite - same threat, same predicate, no second opinion.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.hp = 48;
+        dragoon.shields = 0;
+        dragoon.cooldown = 0;
+        FakeUnit hunter = fake(AUnitType.Zerg_Zergling, 33.12, 20);
+        hunter.setEnemy();
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(hunter, far), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.hasCloseMeleeEnemy(dragoon),
+                "3.12 tiles: outside the veto, the band this test pins");
+            assertFalse(FormationHold.needsKite(dragoon),
+                "raw 3-tile check is blind here - old code held the slot");
+            assertFalse(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                "the fight would kite this threat, so the hold must decline");
+        });
+    }
+
+    @Test
+    public void holdStandsWhenFightWouldNotKite() {
+        // No overcorrection: full-hp dragoon, same geometry - the fight's
+        // margin is satisfied (required 1.0 at full hp), so the hold still
+        // marches. Old and new code agree here by construction.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.hp = 180;
+        dragoon.shields = 80;
+        dragoon.cooldown = 0;
+        FakeUnit hunter = fake(AUnitType.Zerg_Zergling, 33.12, 20);
+        hunter.setEnemy();
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(hunter, far), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.needsKite(dragoon), "same raw input as the band test");
+            assertTrue(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                "fight would not kite: the hold still marches");
+        });
+    }
 }

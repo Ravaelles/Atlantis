@@ -1813,6 +1813,19 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  the kite branch for ~160-280f (zero KITE, full hp, VETO correctly
  broken). The "no churn: switches bounded per frame" test requirement
  above is exactly this shape; no new code until the cut lands.
+ 2026-10-23 fight-mirror gate LANDED (owner: FormHold never outranks
+ kiting): decide() asks Kite.shouldKite with the fight's own threat
+ (nearestEngageableEnemy inside the kite envelope) before the raw
+ canAttackMe(3) backstop - same membership source, same predicate, no
+ second opinion. Pinned 13/13 FormationHold (margin band declines at
+ hp 48 / ling 3.12 while raw stays blind; full-hp control still holds).
+ Live read on the user's Dragoon#165 (game 185100, f298 HOLD at foe 4.5
+ then death f429): the f265/f298 holds were legitimate approach
+ (fight agreed - its margin was satisfied too), the kill came under
+ fight ownership (VETO since f305, meat-screen stand, no shots, kite
+ only at f400) - not a hold-into-chews, so this gate does not rewrite
+ that death; it closes the band class. Meat-screen stand itself is a
+ separate owner call.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.

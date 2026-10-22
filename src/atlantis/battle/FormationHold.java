@@ -2,6 +2,9 @@ package atlantis.battle;
 
 import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.kite.CombatTuning;
+import atlantis.battle.kite.Kite;
+import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.battle.twins.HoldTwin;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -125,6 +128,7 @@ public final class FormationHold {
 
             AUnit nearest = nearestEnemyOf(unit);
             if (nearest != null && unit.distTo(nearest) <= CONTACT_TILES) return HoldVerdict.CONTACT;
+            if (fightWouldKite(unit)) return HoldVerdict.KITE;
             if (needsKite(unit)) return HoldVerdict.KITE;
         } catch (Exception ignored) {
             return HoldVerdict.OTHER;
@@ -145,6 +149,31 @@ public final class FormationHold {
     public static boolean needsKite(AUnit unit) {
         try {
             return unit.enemiesThatCanAttackMe(3).count() >= 1;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * The fight's own kite verdict, asked before the hold marches (owner:
+     * FormHold never outranks kiting). Same threat the fight loop kites
+     * from ({@code nearestEngageableEnemy} inside the kite envelope) and
+     * the same predicate ({@code Kite.shouldKite}) - one membership source,
+     * one decision, no second opinion that can fail open. The raw
+     * {@link #needsKite} below stays as the backstop (it has no doctrine
+     * exceptions, so the surrounded stand still reaches the fight instead
+     * of marching to a slot). No behavior change wherever both agree;
+     * the hold only declines in the margin band the raw 3-tile check
+     * cannot see (wounded or hunted units the fight would already kite).
+     */
+    static boolean fightWouldKite(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+
+            AUnit threat = ASquadTargeting.nearestEngageableEnemy(
+                unit, CombatTuning.current().getKiteEnemyTiles());
+
+            return threat != null && Kite.shouldKite(unit, threat);
         } catch (Exception ignored) {
             return false;
         }
