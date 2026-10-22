@@ -1664,6 +1664,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22: VICTORY 12/5 in 43 s with hold+withdraw+long-vector
  +reinforce (first zealot death pushed to f243, dragoon 186 zero
  hits all game, no idle half; telemetry+pins hold).
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 5/9 in 44 s, first game
+ on the Behavior + commander-story commit): journal tags unchanged
+ by the rename (all 9 death tooltips ClusterKite, zero FormHold -
+ no stand-and-die holds; SHOT 385 + ATTACK 22, instant contact so
+ the hold correctly never fired). March from frame 0 (cx 56->68,
+ ghost none->contact, foe 161->10). FLEE from f372 displaces while
+ dying (deaths drift (69,35)->(56,41), ~13 tiles - the old
+ 550-frame static center is gone; FLEE issues no arcs). Zero
+ FROZEN rows; one KITE frozen-reset (kite preemption breaks a
+ stuck unit). Sweep unexercised live (contact visible throughout)
+ - stays sim-proven only. Single-game noise per §14; loss shape is
+ a lost even brawl + unwinnable run, not a formation freeze.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
