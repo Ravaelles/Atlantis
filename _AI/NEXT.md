@@ -1194,7 +1194,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   minerals for block time).
  2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
  2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
- 2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - open whether the latter is expected on UMS or a writer gap.
+ 2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - answered the same day: by design, not a gap (DecisionLog.flush() no-ops on empty rows; record() fires only from production paths, duels produce nothing).
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1589,6 +1589,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  fires only when a wall eats the ray; open ground keeps the short step
  bit-identical). Engagement proof still needs a walled pocket map, not
  more open duels.
+ 2026-10-26 yield-path visibility LANDED (KiteTwin.yielded rows
+ `duel-yield` next to stepped-aside, pin fires on the act-level yield
+ board): 2-duel batch on the current tree reads 2+3 duel-yield rows -
+ the pickEscape path IS alive, just rare (the cooling kite preempts
+ the margin first on most cycles). So the long-deflect zero is
+ explained, not vacuous: the branch gets ~2-3 chances per game and
+ the maps are open (zoo batch: 14/8/4 VICTORY, still zero deflects
+ despite 23% no-step in game 1 - where the away-ray is eaten, no
+ 5-tile pick exists either, so silence is correct). Main kite path
+ deliberately still on MoveAway (rollout order: DuelKite yield
+ first, ARunningManager second). Remaining proof unchanged: a truly
+ walled pocket map, not more open duels.
  2026-10-23 kite-distance grid, 1Drag_v_1Zeal, all-33-pinned baseline +
  3 one-knob arms (K=3 each, headless Wine): A defaults 18/15/19 (mean
  17.3), B step 3.0 (was 2.0) 12/18/13 (14.3), C margin-base 2.0 (was
