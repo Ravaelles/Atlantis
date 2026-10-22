@@ -84,7 +84,7 @@ public final class FightTarget {
         // holdSwing owns the animation itself; this owns the frames
         // after it. Calibrates per unit from observed swings, so no
         // hand-written stop frames anywhere.
-        if (attackSettleHold(unit)) return;
+        if (attackSettleHold(unit, target)) return;
 
         // A Dragoon steps back only when the enemy is inside its
         // safety margin - otherwise it stands and lets the standing
@@ -139,14 +139,17 @@ public final class FightTarget {
      * any swing was ever seen there is nothing to settle. Public as a
      * seam: the window pins without running frames.
      */
-    public static boolean attackSettleHold(AUnit unit) {
+    public static boolean attackSettleHold(AUnit unit, AUnit target) {
         if (unit == null || !unit.isAlive()) return false;
 
         try {
             // Finished shooting: the shot committed 1-2 frames ago, so
             // there is no animation tail to settle - release immediately
             // instead of waiting out start + observed duration + 2.
-            if (DuelMemory.finishedShooting(unit)) return false;
+            if (DuelMemory.finishedShooting(unit)) {
+                ShotTwin.released(unit, target);
+                return false;
+            }
             if (unit.isAttackFrame() || unit.isStartingAttack()) {
                 if (!DuelMemory.attackAnimOpen(unit)) {
                     DuelMemory.openAttackAnim(unit, atlantis.game.A.now());

@@ -30,7 +30,7 @@ public class AttackSettleTest extends WorldStubForTests {
         world(2, fakeOurs(dragoon), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 1) return;
 
-            assertFalse(FightTarget.attackSettleHold(dragoon),
+            assertFalse(FightTarget.attackSettleHold(dragoon, null),
                 "no swing ever seen: nothing to settle");
         });
     }
@@ -54,7 +54,7 @@ public class AttackSettleTest extends WorldStubForTests {
             // stub latency 3) - the pre-calibration default 6 would
             // still hold at frame 7, the calibrated window releases.
             dragoon.attackFrame = now == 5 || now == 6;
-            boolean held = FightTarget.attackSettleHold(dragoon);
+            boolean held = FightTarget.attackSettleHold(dragoon, zealot);
 
             if (now == 5 || now == 6) {
                 assertTrue(held, "mid-swing holds at frame " + now);

@@ -33,6 +33,10 @@ public class ShotTwin {
         row(unit, target, "holding-shot");
     }
 
+    public static void released(AUnit unit, AUnit target) {
+        row(unit, target, "released-finished");
+    }
+
     private static void row(AUnit unit, AUnit target, String result) {
         EventLog.key(LogKey.SHOT)
             .param("unit", unit.id())

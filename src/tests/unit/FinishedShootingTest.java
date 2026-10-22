@@ -108,12 +108,17 @@ public class FinishedShootingTest extends WorldStubForTests {
                     dragoon.setLastBullet(new FakeBullet(dragoon, zealot, true));
                 }
                 if (now == 2) {
+                    atlantis.util.log.EventLog.clearForTests();
                     BattleCommander.act(
                         dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
                     assertTrue(
                         hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                         "bullet age 1: swing hold and settle release, the kite step issues: "
                             + ordersOf(dragoon));
+                    assertTrue(
+                        atlantis.util.log.EventLog.toJsonLines().contains("released-finished"),
+                        "the release twins, so live logs show the latch firing: "
+                            + atlantis.util.log.EventLog.toJsonLines());
                 }
             });
         }
