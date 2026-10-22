@@ -287,6 +287,10 @@ PylonNeedsRoomAround 4/4, BaselessAttackExplores 2/2; 2026-10-21:
 unit 991/991 (new tests minus the 16 OpenBWLauncherTest moved to
 the full tier by tag; acceptance still 17 reds byte-identical to
 the baseline every run - re-verified by worktree diff).
+2026-10-26: unit 1267/1267 (Behavior vocabulary + commander
+table-of-contents, Region center fallback, melee veto + glide
+guard, arc matrix + registry, 3 new pin files; acceptance unmeasured
+this turn - last measured 17 reds, byte-identical to baseline).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -1708,6 +1712,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  mutation-proofed). Honest gap: the user's game ended at 0:24 with
  no EVENTS, so the full standing shape stays underdetermined -
  live proof of both fixes rides the next Wine game.
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 1/9 in 41 s, first game
+ on veto + glide guard): zero unwalkable errors in WINE_DEBUG (the
+ [43,53] shape did not recur), zero FROZEN, all 9 deaths
+ ClusterKite - no FormHold deaths. The single FormHold order (f383,
+ dragoon#96 attacking from the hold) transitioned to kite and died
+ kiting at f622: the hold no longer pins anyone. Razor edge noted:
+ telemetry sampled nearest foe at 1.8 tiles one second after the
+ f383 hold - within a second's movement of the 2.0 veto line, so
+ not a proven miss, but the boundary is live-fire thin. Loss
+ driver this game is not standing: one enemy zealot (#195) took 8
+ of 9 kills unfocused while the army kited (94 stepped-aside + 14
+ frozen-reset, movement healthy).
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
