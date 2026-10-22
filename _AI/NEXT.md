@@ -1581,6 +1581,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 headless ZealDrag_v_Zeal: Defeat 10/9 in 88 s, 0
+ ClusterHold rows - correct, both armies collided into instant
+ contact (hold only owns the 2.5-9 tile approach window). FROZEN
+ fired 63x incl. a frame-40 whole-army storm while deploying:
+ freezing now requires banked deployment first.
  2026-10-26 frozen error row (owner): the second consecutive freeze
  files `minSec Dragoon#12 FROZEN <order> <ago>f ago, still <n>f` to
  the error log via `AConsole.errPrintln` - the block hunt starts
