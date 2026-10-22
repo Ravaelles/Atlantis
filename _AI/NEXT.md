@@ -261,15 +261,14 @@ The index of which document answers which question is `_AI/README.md`.
  2026-10-23 Wine TauCross DRY_RUN macro 002228 (VICTORY 9/1, 432 s,
  V2 planning alongside, legacy playing): BOARD_FED 2x
  (sustained-zealot f5550 pumps 9, sustained-dragoon f7680 pumps 8) -
- both rescue; tally 42 rescue, 0 routine, still no candidate.
- 2026-10-26 Wine TauCross macro 003419 (VICTORY 1/1, 384 s, supply-cap
- exit at 51): BOARD_FED 3x (sustained-zealot f5010 pumps 7,
- supply-pylon f6750 pumps 1, sustained-dragoon f7530 pumps 8) - all
- rescue; tally 46 rescue, 0 routine, still no candidate.
+ both rescue; tally 40 rescue, 0 routine, still no candidate.
  2026-10-26 Wine TauCross macro 003012 (VICTORY 4/0, 427 s, supply-cap
  exit at 51): BOARD_FED 1x sustained-dragoon f7530 (pumps present 29) -
- rescue; tally 43 rescue, 0 routine, still no candidate.
+ rescue; tally 41 rescue, 0 routine, still no candidate.
  Tooling: multi-file sweep deduped by realpath (the `latest`
+ 2026-10-26 Wine TauCross macro 003419 (ended f9150, 381s game, 1 own death): BOARD_FED 3x (sustained-zealot f5010 pumps 7,
+ supply-pylon f6750 pumps 1, sustained-dragoon f7530 pumps 8) - all
+ rescue; tally 44 rescue, 0 routine, still no candidate.
  symlink double-counted one run before).
  2026-10-23 re-sweep over 97 unique retained logs: 9 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 33 rescue / 0
@@ -289,10 +288,10 @@ The index of which document answers which question is `_AI/README.md`.
  all rescue, 0 routine - cumulative tally holds at 40 rescue / 0
  routine, still no candidate.
  2026-10-26 re-sweep over 142 unique retained logs: 17 BOARD_FED rows,
- all rescue, 0 routine - cumulative tally holds at 43 rescue / 0
+ all rescue, 0 routine - cumulative tally holds at 41 rescue / 0
  routine, still no candidate.
  2026-10-26 re-sweep over 143 unique retained logs: 20 BOARD_FED rows,
- all rescue, 0 routine - cumulative tally holds at 46 rescue / 0
+ all rescue, 0 routine - cumulative tally holds at 44 rescue / 0
  routine, still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
@@ -637,7 +636,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 2026-10-23 macro 231335 (370 s): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED_IN_PROGRESS console x2 (first live sighting, BUILDER_LOG-gated, untwinned - Gateway [18,47] and Pylon [13,58], both recovered: 12 STARTED, final Pylon=6/Gateway=4); Gateway [14,51] self-block resited to [16,52] with NO cancel row (refresh path without CANCEL twin - the 225319 class, third occurrence of the tile).
 2026-10-23 macro 235430 (380 s): 0 ADOPTED; 0 CANCELs; 0 DEMOTE rows (twin live from this game on, nothing fired - pipeline healthy); Pylon [118,19] refresh at 3:45 with no cancel (third resite-without-cancel shape); Nexus#2 queued 5:43 READY but unwarped at the supply-cap exit (final Nexus=1, the 224120 shape).
 2026-10-26 DRY_RUN macro 002228 (VICTORY 9/1, 432 s, V2 planning alongside): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin fired 2x live (FIRST live rows: CyberneticsC [13,54] f4571 stoodStill 90f, Gateway [17,47] f9079 stoodStill 90f - both recovered, re-armed and warped, no stuck freeze); Pylon#1 f947; Nexus#2 STARTED f8764 but unwarped at the supply-cap exit (final Nexus=1).
-2026-10-26 macro 003419 (VICTORY 1/1, 384 s): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin 2x (Pylon [118,16] f4589 + Gateway [116,23] f6015, both stoodStill 90f, both recovered - fourth/fifth live demotes); Pylon#1 f957; Gateway [116,23] breakdown f5760 (worker Harvest3, dist 11.1, partial buildability canBuild000/010=false) then demoted+re-armed; Nexus#2 never queued (final Nexus=1). First flee death in a while: Dragoon#174 died WITHDRAWING vs Hydralisks (ClusterFlee/RetreatFromLostFight f8520/f8794, telemetry hp171->41) - retreat engaged, not a stand.
+2026-10-26 macro 003419 (ended f9150, 381s game, 1 own death): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin 2x (Pylon [118,16] f4589 + Gateway [116,23] f6015, stoodStill 90f; both re-armed and warped per ledger f4669/f6147 - fourth/fifth live demotes); Pylon#1 f957 [113,15]; Gateway [116,23] breakdown f5760 (travelling builder, stoodStill 75f) then demoted+re-armed; Nexus queued once (NOT_READY f8113) never started (final Nexus=1). Dragoon#174 died STANDING at (56,109) under contact: 98 consecutive stuck-no-step, 16 hits all moving=false, zero displacement for 90f+, 0 FROZEN rows, latch releasing throughout - the #182 freeze shape recurring live (pocket-vs-logic undecided from twins alone; SHOT twin kept firing, so it died trading, not idle).
 2026-10-26 macro 001819 (380 s): 0 ADOPTED; 1 CANCEL (Pylon refresh-cancel f5244 buildable:true, re-requested tile [113,8] warped f5371 ~135f later - cancel-and-replace live); 15 STARTED, Nexus=1 all game (Nexus#2 never queued); Pylon#1 f958. V2_GOAL_SOURCE twin silent all game - root-caused, not a twin bug: PRODUCTION_V2 defaults OFF and no Wine env sets DRY_RUN, so the engine never plans (twin wired and pinned, engine simply off - see #144 datum).
 2026-10-26 macro 003012 (VICTORY 4/0, 427 s): 0 ADOPTED; 2 CANCELs (Pylon refresh f8316; Gateway siteless f8937 "Not powered by a Pylon", the known mint-death mechanism - second live instance after 212818 Assimilator x4); DEMOTE_STALLED 1x (Forge [83,124] f9371 stoodStill 90f, recovered - third live demote, second stalled type); BO audit only 3 mismatches; Nexus#2 STARTED f8940 unwarped at the cap (final Nexus=1); ORDER_WAITING Nexus-for-Forge f8937 (funding priority, part of the Nexus#2 delay).
 
@@ -831,7 +830,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 235430 (380 s VICTORY, supply-cap exit at 51, Nexus=1 all game): right shape (1 base), 320 s short of 700 s - lottery continues.
  2026-10-26 DRY_RUN macro 002228 (432 s VICTORY, supply-cap exit at 51, Nexus#2 STARTED f8764 but unwarped at the cap): multi-base trajectory - not the 1-base 700 s+ lottery shape.
  2026-10-26 macro 001819 (380 s VICTORY, supply-cap exit at 51, Nexus=1 all game, no Nexus queue at all): right shape (1 base), 320 s short of 700 s - lottery continues.
- 2026-10-26 macro 003419 (384 s VICTORY, supply-cap exit at 51, Nexus=1 all game, no Nexus queue at all): right shape (1 base), 320 s short of 700 s - lottery continues.
+ 2026-10-26 macro 003419 (ended f9150, 381s game, 1 base, Nexus queued once never started): right shape (1 base), far too short for the 700 s+ lottery - exit cause and verdict unlogged in the archive.
  2026-10-26 macro 003012 (427 s VICTORY, supply-cap exit at 51, Nexus#2 STARTED f8940 but unwarped at the cap): multi-base trajectory - not the 1-base 700 s+ lottery shape.
 
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
@@ -905,7 +904,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 235430 (VICTORY 1/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f957, 13 STARTED, 0 CANCELs, 0 BREAKDOWNs (quietest opening yet - no builder-on-site stall this game); Nexus#2 queued 5:43 READY but unwarped at the cap (final Nexus=1). STUCK_WORKER 222x across 25 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 DRY_RUN macro 002228 (VICTORY 9/1, BUILDER_LOG=1, V2 planning): pipeline healthy - Pylon#1 f947, 16 STARTED, 0 CANCELs, BREAKDOWN x2 Pylon (f3390/f8100, travelling builders, self-recovered); the 2 demotes were CyberneticsC + Gateway (see #150 twin datum). Nexus#2 STARTED f8764 unwarped at the cap (final Nexus=1). STUCK_WORKER 230x across 23 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 001819 (VICTORY 1/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f958, 15 STARTED, 1 CANCEL (Pylon refresh [117,12]->[113,8], both warped), 0 BREAKDOWNs; Nexus never queued (final Nexus=1). STUCK_WORKER 220x across 24 workers at ~30f cadence - cyclic, not stalls.
- 2026-10-26 macro 003419 (VICTORY 1/1, BUILDER_LOG=1): pipeline healthy - Pylon#1 f957, 13 STARTED, 0 CANCELs, BREAKDOWN x1 Gateway (f5760, worker Harvest3 gathering, dist 11.1, partial buildability) then demoted f6015 + re-armed; DEMOTE twin 2x, both recovered. STUCK_WORKER 228x across 24 workers at ~30f cadence - cyclic, not stalls.
+ 2026-10-26 macro 003419 (BUILDER_LOG=1): pipeline healthy - Pylon#1 f957 [113,15], 13 STARTED, 0 CANCELs, BREAKDOWN x1 Gateway [116,23] f5760 (travelling builder, stoodStill 75f) then demoted f6015 + re-armed; DEMOTE twin 2x, both recovered per ledger. STUCK_WORKER 228x across 23 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 003012 (VICTORY 4/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f964, 18 STARTED, 2 CANCELs (Pylon refresh f8316; Gateway siteless f8937), BREAKDOWN x2 Pylon self-recovered; DEMOTE_STALLED 1x Forge (twin live, recovered); BO audit only 3 mismatches. STUCK_WORKER 234x across 25 workers at ~30f cadence - cyclic, not stalls.
 
 - **#74** Wine builder variance remainder (requeue/distances/debounce
@@ -1246,6 +1245,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
  2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
  2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - answered the same day: by design, not a gap (DecisionLog.flush() no-ops on empty rows; record() fires only from production paths, duels produce nothing).
+ 2026-10-26 attribution rule (learned the hard way): a live console belongs to an archived game only if Pylon#1 tile + maxframe + STARTED rows match - similar-looking macros blur together in memory. Never quote console details (verdict, kills, BO audit) into a game datum without the archive cross-check.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
