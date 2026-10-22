@@ -99,3 +99,43 @@ iterates the chain - pure delegation, CONVENTIONS §23 intact.
   learned policy safe to deploy at all.
 - #45, #144-147: the production cut lands first. Slices here stay
   spec + sim pins until then.
+
+## 5. First slice candidate: FormLine behavior (spec)
+
+Owner direction: line-marching as a concrete behavior class, so the
+future learner addresses behaviors, not code paths. FormLine is the
+natural first slice - it is already seam-shaped (gate chain +
+verdict enum + throttled twin + sim pins), which is exactly why it
+goes first and proves the migration recipe the rest follow.
+
+- `applies(unit)`: the current `FormationHold.decide` chain, unchanged
+  semantics: FIGHT tactic, melee-only enemy, no contact (2.5), no
+  battle-hook damage, own guns out of range, no kite preemption (margin
+  band via the fight's own threat), no ghost contact unless threatened,
+  veto at 3.0 melee. Returns the verdict, not a boolean - the verdict
+  is the L1 decision record.
+- `act(unit)`: march at `formationSlotFor`; NO_SLOT and MOVE_FAILED
+  keep today's fallthrough (duels untouched, fight owns failures).
+  Zero behavior change on extraction: the call site keeps calling the
+  same seam in the same order position, suite green.
+- L2 params out (the learner's positional feedback): the behavior does
+  not just fire - it names its parameters. The HOLD twin already
+  carries verdict + nearest-foe distance + own position; the slice adds
+  the slot coordinates (x, y in tiles), so every hold row reads as
+  "unit U held because V, stood at S, nearest foe F tiles out". That
+  row is the training example: features in (existing telemetry),
+  L1 choice (verdict), L2 params (slot). No new log family - one twin,
+  extended.
+- What the net learns (NEXT #185 direction, confirmed): WHEN to hold
+  (the gate conditions), never pixel positions. The slot geometry
+  stays computed; the net replaces hand-written thresholds, not
+  arithmetic. A continuous position output would be a different
+  action space and a separate owner decision - not this slice.
+- Disjointness (§2): FormLine vs Kite vs Fight in one sim matrix -
+  sweep distance/hp/wound/cooldown/visibility across every threshold
+  and assert exactly one owner per cell. The kite-preempts-hold and
+  ghost-gated pins already cover two rows of that matrix.
+- Migration order: FormLine first (proves extract + twin-params +
+  matrix), then the kite/glide/re-arm pieces one by one, each zero
+  behavior change with suite green, order kept 1:1 until every
+  branch is a class and only then does the order become data.
