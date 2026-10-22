@@ -220,7 +220,7 @@ The index of which document answers which question is `_AI/README.md`.
    11 retained TauCross macros: 21 rescue, 0 routine - still no
    candidate, now mechanically instead of by hand. 2026-10-21 re-sweep
    with the 2 newest flagged runs in (13 macros): 24 rescue, 0 routine -
-   still no candidate. 2026-10-26 re-sweep (retained archive holds only
+   still no candidate. 2026-10-22 re-sweep (retained archive holds only
    today's macro: 2 BOARD_FED, both rescue - pumps present 8 and 14):
    26 rescue, 0 routine - still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
@@ -289,7 +289,7 @@ PylonNeedsRoomAround 4/4, BaselessAttackExplores 2/2; 2026-10-21:
 unit 991/991 (new tests minus the 16 OpenBWLauncherTest moved to
 the full tier by tag; acceptance still 17 reds byte-identical to
 the baseline every run - re-verified by worktree diff).
-2026-10-26: unit 1267/1267 (Behavior vocabulary + commander
+2026-10-22: unit 1267/1267 (Behavior vocabulary + commander
 table-of-contents, Region center fallback, melee veto + glide
 guard, arc matrix + registry, 3 new pin files; acceptance unmeasured
 this turn - last measured 17 reds, byte-identical to baseline).
@@ -551,7 +551,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   at scale, read the CANCEL reason per the mint answer); Stargate*
   #134 refused at covered [105,2] then warped [123,26] 9:07 (guard
   correct, resite worked).
- 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): quiet game - 0 CANCELs, 0 ADOPTED (builder-rich, nothing waited), no overlap rows; resite/adopt seams unfired, not broken.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): quiet game - 0 CANCELs, 0 ADOPTED (builder-rich, nothing waited), no overlap rows; resite/adopt seams unfired, not broken.
 
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
@@ -591,7 +591,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   not the spiral - no local patch (would duplicate the guard in the
   dying path); the fix rides #145, this storm class is its acceptance
   test (goes quiet after cutover).
- 2026-10-26 Wine TauCross macro (VICTORY 6:49): no same-tile storms - 0 proximity CANCELs in 6.8 game-min; spiral and mint both quiet.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49): no same-tile storms - 0 proximity CANCELs in 6.8 game-min; spiral and mint both quiet.
 
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
@@ -693,7 +693,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21 second Wine macro (7:53 Defeat, 1 base the whole game):
   ORDER_SAVING 0 - right shape (1 base), 227 s short of 700. The
   lottery continues, one axis at a time.
- 2026-10-26 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
 
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
@@ -758,7 +758,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   retained TauCross macros show siteless CANCELs carrying cid+oid+
   reason (e.g. cid=102/oid=82 "Null position for Assimilator",
   tile "-") - the CANCEL reason reads as designed.
- 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): pipeline healthy - Pylon#1 0:39@8, 17 STARTED with 0 CANCELs, zero stuck constructions, no new #84 instance and no twin gaps this game.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): pipeline healthy - Pylon#1 0:39@8, 17 STARTED with 0 CANCELs, zero stuck constructions, no new #84 instance and no twin gaps this game.
 
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
@@ -775,7 +775,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   7:30 - stall-with-recovery, twin worked as designed, no code change
   (would be blind). The dual-builder same-tile stall is the
   alternating-handoff shape to watch for. G1 short flagged macro: clean.
- 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): transient stalls only - 13 MOVE_BUILD (max 133f) + 4 BUILD, all self-recovered, 17/17 warped; no alternating-handoff shape.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): transient stalls only - 13 MOVE_BUILD (max 133f) + 4 BUILD, all self-recovered, 17/17 warped; no alternating-handoff shape.
 
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
@@ -837,7 +837,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   keeps naming the layer when it recurs.
   2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
   + 17:19/18:18, all warped - lateness not reproduced again.
- 2026-10-26 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
@@ -1044,7 +1044,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   >= 250, lowest sup 10 (frame-3 BO-load CyberneticsC, bank 250,
   transient like the earlier sup-10 row) then sup 13+ in flowing games -
   the stuck-at-low-supply shape absent everywhere.
- 2026-10-26 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
+ 2026-10-22 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
@@ -1060,7 +1060,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-17; lever if still late is `IsReadyToProduceOrder` pull-forward
   amounts, currently +1 below 19 / +3 above - earlier pylons trade tech
   minerals for block time).
- 2026-10-26 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
+ 2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1167,7 +1167,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
   across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. 2026-10-21 second Wine macro (7:53 Defeat, quiet construction game: CANCEL 1, REQUESTED 10): min-supply 4, funding 2, core-priority 2, pylon-cap 1, unstarted-pylon 1, warping-link 1 (first live sighting: PhotonC #60 @ [19,19] 7:33@41, bank 254, duplicate-cannon-shaped) - previously-proven gates re-fire, no earlier-reserve storm this time. 2026-10-21 audit: all 11 gates have stub behavior pins (LiveConstructionGuardTest 6x, power-not-funded fires+passes in BuildRefusedTwinTest); the two never-fired-live gates are narrow by design, not broken - power-not-funded needs Pylon-less poverty no BO produces, live-construction needs an adopted-live re-request and cancelled rows are terminal (that's why the 463-storm never tripped it: terminal is not live). No more pins without games; live proof rides shapes that may never come - accept stub coverage for these two. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
- 2026-10-26 Wine TauCross macro (VICTORY 6:49): previously-proven gates re-fire - min-supply 6, pylon-cap 6, earlier-reserve 3, unstarted-pylon 3, funding 2, core-priority 2; no new gate proven.
+ 2026-10-22 Wine TauCross macro (VICTORY 6:49): previously-proven gates re-fire - min-supply 6, pylon-cap 6, earlier-reserve 3, unstarted-pylon 3, funding 2, core-priority 2; no new gate proven.
 
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
@@ -1211,7 +1211,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   or different predicates (hasStarted mixes, buildingUnit==null pairs),
   not disjunctions - migration complete pending per-reader game proof,
   which rides normal macros (no dedicated games).
- 2026-10-26 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
+ 2026-10-22 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
 
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
@@ -1365,7 +1365,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10-tile rule on flat). Proof: pure unit tests on synthetic choke
   geometry (high side outscores low; stepped-wide beats narrow-flat),
   then a live game where the line demonstrably holds the high side.
- 2026-10-26 wiring LANDED (high side preferred via HighGround.preferFoeSide + ChokeStandoff.chooseHold + foe-side candidate, #170-guarded: never march through the enemy to reach it). Pins: preferFoeSide 4/4 + chooseHold (mutation-proofed); the holdPointFor wiring itself is live-only by construction (test heights always read unknown, so the fallback path is behavior-identical in-JVM) - the TauCross macro never engaged it (Hydralisks are ranged, hold correctly silent). Live proof still rides a melee-choke game.
+ 2026-10-22 wiring LANDED (high side preferred via HighGround.preferFoeSide + ChokeStandoff.chooseHold + foe-side candidate, #170-guarded: never march through the enemy to reach it). Pins: preferFoeSide 4/4 + chooseHold (mutation-proofed); the holdPointFor wiring itself is live-only by construction (test heights always read unknown, so the fallback path is behavior-identical in-JVM) - the TauCross macro never engaged it (Hydralisks are ranged, hold correctly silent). Live proof still rides a melee-choke game.
 - **#172** Region-aware escape destinations (owner 2026-10-20, PurpleWave
   match review: losing won games to corner traps, Dragoons most of all).
   Small units slip through, large ones (Dragoon) die on a failed escape -
@@ -1435,7 +1435,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  `pick()` (walkability is prefix-closed - verified no-fire; the
  differential lives in the validation clamps and gain floors, not
  in the scoring). Proof: unit pins + Wine duel (fewer hits than
- the 15-hit datum, no standstill frames). 2026-10-26 3-duel mini-batch on the current tree (all VICTORY 20-22 s): 16/16/14 hits taken, mean 15.3 vs the 15-hit datum - NOT proven (noise band), standstill clean (113 stepped-aside, 1 frozen-reset, 11 stuck-no-step across the batch). Honest gap: no twin marks the long deflect firing, so the batch cannot say whether the branch even engaged - observability first, then measurement. 2026-10-26 observability LANDED: the long branch rows `long-deflect` via KiteTwin (unthrottled, rarity is the throttle; diagnostics wrapped so they never break the decision), pinned by twin-presence + twin-absence tests, mutation-proofed. Re-run the duel batch to read engagement off the rows.
+ the 15-hit datum, no standstill frames). 2026-10-22 3-duel mini-batch on the current tree (all VICTORY 20-22 s): 16/16/14 hits taken, mean 15.3 vs the 15-hit datum - NOT proven (noise band), standstill clean (113 stepped-aside, 1 frozen-reset, 11 stuck-no-step across the batch). Honest gap: no twin marks the long deflect firing, so the batch cannot say whether the branch even engaged - observability first, then measurement. 2026-10-22 observability LANDED: the long branch rows `long-deflect` via KiteTwin (unthrottled, rarity is the throttle; diagnostics wrapped so they never break the decision), pinned by twin-presence + twin-absence tests, mutation-proofed. Re-run the duel batch to read engagement off the rows.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
@@ -1458,7 +1458,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  zealots, 400 ticks each: peak split 4.21 -> 3.10 tiles, deaths equal
  (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
  (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
- 2026-10-26 efficacy matrix + registration: blend sweep {0, 0.5, 1.0}
+ 2026-10-22 efficacy matrix + registration: blend sweep {0, 0.5, 1.0}
  on 3v3 (split 18.17 -> 1.99 / 1.98, kills 1 -> 2 / 2, shots 18 ->
  42 / 50, zero dragoon donations) and 3v5 (split 10.68 -> 1.99,
  kills 2 -> 3, shots 33 -> 38, zero donations) - the arc collapses
@@ -1468,13 +1468,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  by-name apply + 3 count tests 32->33) and the tuner picks the
  value. Pinned (`halfBlendBeatsStraightAndFull`,
  `arcHoldsWhenOutnumbered`, mutation-proofed).
- 2026-10-26 forced-blend duel (1Drag, all 33 params pinned from a
+ 2026-10-22 forced-blend duel (1Drag, all 33 params pinned from a
  per-game env, `EscapeArcBlend=0.5 (ENV)` in the log): WIN in 22 s,
  1/0, 12 hits, 14 shots - inside the baseline band (10/10 wins,
  20-23 s, 6-16 hits), so no regression and no miracle either.
  Wiring proven end to end (33/33 values from env, zero random);
  the value decision stays with the tuner - one game is noise.
- 2026-10-26 death-log dedup (owner): one issued order means one journal
+ 2026-10-22 death-log dedup (owner): one issued order means one journal
  row - the `lastCommandIssuedNow` attempt row doubled every issue row.
  Pinned `DecisionJournalTest` 9/9.
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
@@ -1513,7 +1513,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  attacked, break formation and attack. Test vehicle is the map
  itself (ZealDrag_v_Zeal.scm): first prove the march (no
  standstill, #177), then the coordination (win, not just move).
- 2026-10-26 formation hold (owner, Stardust doctrine): engaging no
+ 2026-10-22 formation hold (owner, Stardust doctrine): engaging no
  longer dissolves the line - with a melee-only enemy and nobody in
  contact (2.5 tiles, damage taken, own ranged able to fire), units
  march at formation slots instead of charging one by one. FLEE and
@@ -1521,7 +1521,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
- 2026-10-26 kite outranks holding, unconditionally (owner: ClusterHold
+ 2026-10-22 kite outranks holding, unconditionally (owner: ClusterHold
  dragoons stood while chewed): FormationHold breaks on any close
  enemy that can hit the unit - the earlier wound/cooldown gate
  stayed silent through shields (HP history misses them) and past
@@ -1534,14 +1534,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  hardening along the way (roster outlives corpses in the sim):
  formation slots filter the dead, targeting skips addressless
  enemies. Suite green, both new pins mutation-proofed.
- 2026-10-26 fogged snapshots, own copies only (owner: store our own
+ 2026-10-22 fogged snapshots, own copies only (owner: store our own
  APosition, never invisible coordinates; drop the address when its
  tile is seen empty): updateLastPosition skips invisible units, and
  foggedUnitNoLongerWhereItWasBefore clears the address instead of
  re-snapshotting from an invisible unit. The unit stays known, only
  the address goes - the ghost chain falls through to unexplored
  ground. Pinned FoggedPositionTest 2/2, both branches mutation-proofed.
- 2026-10-26 kite outranks holding and trading (owner: ClusterHold /
+ 2026-10-22 kite outranks holding and trading (owner: ClusterHold /
  ClusterReengage dragoons stood while zealots chewed them): holding
  breaks when a close enemy can hit the unit and the weapon cools
  (cd >= 8) or it is wounded (< 80 hp + shields); the glued-trade
@@ -1550,7 +1550,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  sim DPS (no order-cancellation model there) with no live proof,
  so re-arm stays on the equality discipline plus the post-swing
  settle gate. Pinned (needsKite, glued-trade removal), suite green.
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 6/9, 40 s): the ghost
+ 2026-10-22 headless ZealDrag_v_Zeal (Defeat 6/9, 40 s): the ghost
  readout works end to end - none (f0-93, marching on the anchor)
  then contact f124 to the end, closing 161 -> 6. Approach marches
  from frame 0 (no standstill; scout release holds). 2 ClusterForm
@@ -1562,7 +1562,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  goes nowhere (visible-pivot slots face the pursuer on FLEE,
  pre-existing, not this slice). Single-game variance stays high
  (12/5 win vs 4/9 and 6/9 losses vs 8/3 timeout on one build).
- 2026-10-26 shoot-now targeting (owner: dragoons walked past
+ 2026-10-22 shoot-now targeting (owner: dragoons walked past
  in-range targets to chase a squadmate's kill 10 tiles out, taking
  5-6 hits): `AcquireTarget` returns the weakest valid in-range
  target first (focus preserved inside range, no walk-past), squad/
@@ -1573,7 +1573,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  gate). Sight snapshots into the ghost march even when the fight
  declines. Pinned `AcquireTargetTest` 4/4 + re-arm pin (both
  mutation-proofed); full suite green.
- 2026-10-26 post-swing settle (owner hypothesis CONFIRMED in
+ 2026-10-22 post-swing settle (owner hypothesis CONFIRMED in
  PurpleWave `AttackDelay.scala`: units stick when a move lands
  right after the attack animation - wait start + stopFrames + 2,
  +2 empirically eliminates sticking; second trigger: retargeting
@@ -1583,17 +1583,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Pinned `AttackSettleTest` 2/2, mutation-proofed; sims unaffected
  (no attack frames there), live proof rides the next headless
  Wine game.
- 2026-10-26 headless ZealDrag_v_Zeal: Defeat 10/9 in 88 s, 0
+ 2026-10-22 headless ZealDrag_v_Zeal: Defeat 10/9 in 88 s, 0
  ClusterHold rows - correct, both armies collided into instant
  contact (hold only owns the 2.5-9 tile approach window). FROZEN
  fired 63x incl. a frame-40 whole-army storm while deploying:
  freezing now requires banked deployment first.
- 2026-10-26 frozen error row (owner): the second consecutive freeze
+ 2026-10-22 frozen error row (owner): the second consecutive freeze
  files `minSec Dragoon#12 FROZEN <order> <ago>f ago, still <n>f` to
  the error log via `AConsole.errPrintln` - the block hunt starts
  from unit + last order + its age. Pinned (streak, error frame,
  reset), mutation-proofed.
- 2026-10-26 frozen-unit detection (owner: a dragoon held a move
+ 2026-10-22 frozen-unit detection (owner: a dragoon held a move
  mission standing still until Hold Position was pressed by hand):
  `FrozenWatch` notes per-frame displacement in the battle hook and
  the painter draws four unfilled purple rings (10/12/14/16) on units
@@ -1604,7 +1604,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22: VICTORY 12/5 in 43 s with hold+withdraw+long-vector
  +reinforce (first zealot death pushed to f243, dragoon 186 zero
  hits all game, no idle half; telemetry+pins hold).
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 5/9 in 44 s, first game
+ 2026-10-22 headless ZealDrag_v_Zeal (Defeat 5/9 in 44 s, first game
  on the Behavior + commander-story commit): journal tags unchanged
  by the rename (all 9 death tooltips ClusterKite, zero FormHold -
  no stand-and-die holds; SHOT 385 + ATTACK 22, instant contact so
@@ -1616,7 +1616,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  stuck unit). Sweep unexercised live (contact visible throughout)
  - stays sim-proven only. Single-game noise per §14; loss shape is
  a lost even brawl + unwinnable run, not a formation freeze.
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 7/9 in 43 s, first game
+ 2026-10-22 headless ZealDrag_v_Zeal (Defeat 7/9 in 43 s, first game
  on the table-of-contents refactor): journal byte-identical by
  construction (same calls, same order, frozen tags) - all 9 deaths
  ClusterKite, zero FROZEN, SHOT 308 + ATTACK 18, KITE 88
@@ -1624,7 +1624,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  new ClusterTwin.sample (34 rows, ghost none->contact). Result in
  the known variance band (wins 12/5 vs losses 4/9, 6/9, 5/9,
  10/9); what the game proves is no new pathology, not the score.
- 2026-10-26 owner's ZealDrag_v_Zeal game (ended 0:24, truncated logs):
+ 2026-10-22 owner's ZealDrag_v_Zeal game (ended 0:24, truncated logs):
  Dragoon#165 died kiting while its reengage glide ordered into the
  unwalkable [43,53] every frame - move() refuses unwalkable ground
  and the wait below pinned the unit standing while Zealot#199 chewed
@@ -1638,7 +1638,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  mutation-proofed). Honest gap: the user's game ended at 0:24 with
  no EVENTS, so the full standing shape stays underdetermined -
  live proof of both fixes rides the next Wine game.
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 1/9 in 41 s, first game
+ 2026-10-22 headless ZealDrag_v_Zeal (Defeat 1/9 in 41 s, first game
  on veto + glide guard): zero unwalkable errors in WINE_DEBUG (the
  [43,53] shape did not recur), zero FROZEN, all 9 deaths
  ClusterKite - no FormHold deaths. The single FormHold order (f383,
@@ -1650,7 +1650,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  driver this game is not standing: one enemy zealot (#195) took 8
  of 9 kills unfocused while the army kited (94 stepped-aside + 14
  frozen-reset, movement healthy).
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 1/9 in 33 s): opening
+ 2026-10-22 headless ZealDrag_v_Zeal (Defeat 1/9 in 33 s): opening
  sweep again at f0 (Regions fix holding), contact f124, brawl
  lost by f562 (7 deaths around (65,40)), last dragoons run to
  (50,48) and die f766/782. Zero unwalkable, zero FROZEN, all 9
@@ -1669,7 +1669,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  the 5-second approach that killed it. Delete or thin when the
  coordination items close - diagnostics, not a permanent feed.
 
-- **#181** Split-cluster reinforcement (owner 2026-10-26, HIGH priority):
+- **#181** Split-cluster reinforcement (owner 2026-10-22, HIGH priority):
  ZealDrag_v_Zeal live: the cluster splits in two - one group is being
  shredded by many zealots while the other half waits and does not
  fight. Unknown yet whether two clusters or one split cluster, but
@@ -1693,35 +1693,37 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  the army marches but never finishes. The timeout shape (5-9
  SHOT/100f vs 47-55 in wins, foe=-1 late) is the open end, not the
  reinforce.
- 2026-10-26 the open end moved: with region centers repaired
+ 2026-10-22 the open end moved: with region centers repaired
  (degenerate-box fallback) the ghost chain reaches sweep, and
  ZealDrag_v_LingsUpg is a VICTORY 31/8 in 31 s - ghost=sweep from
  frame 0, no foe=-1 tail, no parking. The timeout shape was the
  dead Regions path, not the reinforce.
 
-Priority note (owner 2026-10-26): the three items below slot BELOW
+Priority note (owner 2026-10-22): the three items below slot BELOW
 the production ratchet (#45, #144-147 per-gate deletions) - small
 sim-pinned slices, game-verified one at a time, never preempting
 the deletion order. Combat work stays off the commanders
 (CONVENTIONS §23): new logic lives in FormationHold / FightTarget /
 AcquireTarget seams, BattleCommander only keeps delegating.
 
-- **#182** FormHold stands into chews; frozen holders have no remedy (owner 2026-10-26, HIGH priority):
+- **#182** FormHold stands into chews; frozen holders have no remedy (owner 2026-10-22, HIGH priority):
  ZealDrag_v_Zeal live, game 144553: Dragoon#162 holds formation slots f82-282 while 5-8 zealots stay within 2 tiles (telemetry n2), hp 260→~90, then kites f362+ with ZERO displacement until death (ux/uy frozen f112-412) - stood 300 frames, died standing. Zero FROZEN rows all game.
  Mechanism, verified in code (no guessing): (a) all proximity gates (veto 2.0, contact 2.5, needsKite) read `unit.enemiesNear()` (AliveEnemies, 5-frame cached selection) while shooting and telemetry read `Select.enemy().combatUnits()` - two membership sources; when they disagree the hold is blind and only HP-drop breaks it; (b) the damage gate is structurally dead for steady holders, see #183; (c) remedy gap: `unstickFrozenQueue` (FightTarget) only watches kite-steppers (`lastStep` fresh <48f) - a holder takes no kite steps, so it can never trip; FrozenWatch is passive by design (paints + logs) and DEPLOYED-gated (never flags units that banked <3 tiles of movement - #162 banked ~2).
  Direction (senior): commanders stay clean - remedy lives in FightTarget next to unstickFrozenQueue, detection stays in FrozenWatch/UnitTelemetry. (1) Owner doctrine, no exceptions: melee within 3 tiles breaks the hold - veto 2.0→3.0, contact stays 2.5 as the inner ring (widening alone fixes nothing while (a) stands, hence (2)-(4) first); (2) HOLD twin row (throttled): veto/contact/damage/nearest-listed inputs + verdict, so the next report is decidable from logs instead of forensics; (3) extend the unstick watch to holders (no kite step riding + no displacement + order age): STOP once + fresh order, same cadence discipline as the kite path, never every frame; (4) relax FrozenWatch DEPLOYED gate for already-decided units (a unit with a fresh combat order that never displaced is the stuck shape even at 0 banked tiles) - or document why not after measuring false positives on the opening march.
  Prove in sim first (holder with wedged queue gets STOP + displaces; no-op on healthy holders - mutation-proofed), then live on ZealDrag_v_Zeal: no 200f stands, FormHold deaths carry prior FROZEN/until rows or none at all. Non-goals: touching the kite/fight order flow; retreat logic untouched.
 
-- **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-26, HIGH priority):
+- **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
  Direction: damage detection must not depend on manager-updated history. Snapshot previous-frame hp in the battle hook (BattleCommander.observe, own map, cleared in clearForTests) and answer `tookDamageSinceLastBattleFrame` from it; rewire the hold + zealot gates to the battle-side signal; audit-then-migrate the Terran/repair/interrupt consumers one by one (no batch). Alternative considered and rejected: moving UnitStateManager after battle - pipeline-global, touches everything, same class of coupling that created this.
  Prove: unit tests (damage between observes flips the bit; identical hp does not) + sim (holder breaks on first damage frame) + live: hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal. Non-goal: changing what counts as damage (shields already count).
 
-- **#184** Targeting: skeptical partial restore of ATargeting, NOT a port (owner 2026-10-26):
+- **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
  Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them. Two compounding causes read off the call chain: (a) `focusInRangeTarget` stickiness (AcquireTarget.java:66-70) returns the current target without scanning when it is valid and in range - the chewer is never considered; (b) `ASquadTargeting.isValidTarget` bans `hp<=15`, ALL zerglings and ALL workers from EVER being targeted - an 8hp chewer is literally unselectable, so the kite/focus chain shoots past it. The user's one-shot rule is the exact inverse of the current ban.
- Refuse the full port (senior): src-old targeting is ~2000 lines, mostly commented-out branches, entangled with the deleted combat package (old BattleSetup/Env/EnemyUnits, AttackNearbyEnemies), Terran/Zerg-specific, and its pins were deleted with it (3c563e42e) - restoring it is weeks of regression risk on maps that currently work (ZealDrag_v_Zeal duels, LingsUpg VICTORY). Restore only the verified mechanisms as small additive seams in the AcquireTarget chain: (1) chewer override - if an enemy is damaging me (battle-side signal from #183) and my current target is not threatening me, switch (kills the exact reported shape); (2) one-shot priority among in-range threats (killable = hp+shields <= own per-shot damage), as tiebreak first - full priority only if sim shows no churn (everyone retargeting the same 8hp zealot IS focus, but ignoring a closer full-HP killer to snipe far is not); (3) melee-proximity no-target gate (old line 13: melee within 2.5 → no shooting target, run instead) - dovetails with #182: a unit that must not shoot must be owned by movement that frame.
+ Agreed refactor shape (owner 2026-10-22): full audit first - ~1150 live lines across 13 files, measured file by file (the earlier "mostly commented out" estimate was wrong and is withdrawn - the ladder is real knowledge). Keep the ladder, drop the coordination: squad-last-target, leader-picked target and current-target stickiness go (each removal sim-proven with no regression; if sim shows churn, the rule stays bounded instead of deleted). Concretely, as an ordered RULE LIST in atlantis.battle.targeting (new TargetLadder, pure static functions, no new package): (0) wounded→closest when hurt (ShouldTargetClosestEnemy - the chewed-hits-back rule); (1) melee-proximity no-target gate (old line 13: melee within 2.5 → null, run instead - dovetails with #182: a unit that must not shoot must be owned by movement that frame); (2) one-shot killable in range, non-swarm (exact inverse of the hp<=15 ban; lings keep SpreadFire - pack focus on swarm wastes DPS, verified old wisdom, not a contradiction); (3) mostWoundedOrNearest in range (dragoon-priority vs Protoss per GoonGoonz; zealot radius escalation 1→2 per ImpZealot_A/B); (4) C5a chase (nearest within 9, attackable+2); (5) fallback nearest engageable (existing, untouched).
+ Dropped for now, with reasons: the three coordination prefs above; Terran-specific (tanks, firebats, wraiths, vessels, SCV-repair); air incl. observers/carriers (no air on duel maps); transports; buildings/bases/creep/pylons (macro-map logic, not duels); disabled code (TargetingWhenDefendingAroundFocus returns false); Hydra-in-range special (covered by rule 3 unless sim says otherwise).
+ Performance (owner ask): ladder short-circuits top-down (cheapest/highest-hit rules first: chewer check and no-target gate are O(nearby) before any radius scan); no per-frame garbage beyond the current chain (reuse Selection views, no intermediate lists per rule); per-rule debug tag into the journal (extends #176 attribution, so live logs show which rule fired). Readability (owner ask): one ordered list, each rule a named pure function with its sim pin; old code stays untouched in src-old as the archive (no file moves dragging dead branches and deleted-package imports).
  Audit first, in this order: why the `hp<=15`, `isZergling`, `isWorker` bans exist (overkill? morph states? engine quirks?) - each ban gets a named reason or gets deleted; same for `preventForZealots` interplay with #179. Tests: sim pins (8hp chewer gets focused; far-target stickiness breaks when chewed; no churn: switches bounded per frame); suite green; live proof on ZealDrag_v_Zeal + LingsUpg (kill attribution per target class already exists via #176).
- Non-goals: building targeting, air, Terran/Zerg races (D8), the squad/shared chain shape (FocusFire stays unless sim says otherwise).
+ Non-goals: building targeting, air, transports, Terran-specific branches (D8 covers all non-Protoss-enemy scope; Zerg-relevant rules stay - LingsUpg is a proof vehicle), squad-last-target (removed per above, not preserved).
 
 ## Current game state (updated 2026-10-21)
 

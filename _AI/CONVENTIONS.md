@@ -459,7 +459,7 @@ same hours are not spent twice.
   the end of every finished feature, not per edit. Detail and the
   area map live in `DOCS/TESTING.md`.
 
-## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-26)
+## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-22)
 
 - Commander classes (`BattleCommander` and its kin) **only delegate**:
   one public entry per frame (`act`), one private step per domain move
@@ -483,7 +483,7 @@ same hours are not spent twice.
   bottom as the battle story (observe, retreat if beaten, leave a
   breached base, acquire, hold, fight, hunt, regroup). Any branch that
   needs a comment explaining *what* it is gets a named method instead.
-- Table-of-contents test (owner 2026-10-26, perfectionist pass): a
+- Table-of-contents test (owner 2026-10-22, perfectionist pass): a
   non-programmer reads `handle()` and `act()` and can retell the battle
   story without opening a single implementation. If a line needs a
   programmer to parse, it lives in the wrong class.
