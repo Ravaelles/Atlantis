@@ -120,6 +120,10 @@ public final class FightTarget {
         // shot that just started must be allowed to land, so an
         // animating unit gets no new order at all this frame.
         if (unit.isAttackFrame() || unit.isStartingAttack()) {
+            // Finished shooting: the projectile is confirmed away, so
+            // the damage is committed - release the hold and let the
+            // kite run instead of riding the animation out.
+            if (DuelMemory.finishedShooting(unit)) return false;
             ShotTwin.holding(unit, target);
 
             return true;
@@ -139,6 +143,10 @@ public final class FightTarget {
         if (unit == null || !unit.isAlive()) return false;
 
         try {
+            // Finished shooting: the shot committed 1-2 frames ago, so
+            // there is no animation tail to settle - release immediately
+            // instead of waiting out start + observed duration + 2.
+            if (DuelMemory.finishedShooting(unit)) return false;
             if (unit.isAttackFrame() || unit.isStartingAttack()) {
                 if (!DuelMemory.attackAnimOpen(unit)) {
                     DuelMemory.openAttackAnim(unit, atlantis.game.A.now());

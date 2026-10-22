@@ -75,6 +75,26 @@ public final class DuelMemory {
         }
     }
 
+    /**
+     * Finished shooting (owner): one of our observed projectiles is 1-2
+     * frames old, so the damage is committed and the attacker is free.
+     * The window mirrors the old attack-state determinator (bullet age
+     * 1-2 meant FINISHED): age 0 is the firing frame itself, age 3+ is
+     * a previous cycle. No bullet, no latch - fail-closed, the swing
+     * hold and the settle below keep today's behavior.
+     */
+    public static boolean finishedShooting(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return false;
+
+        try {
+            int age = unit.lastBulletAge();
+
+            return age >= 1 && age <= 2;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     private DuelMemory() {
     }
 
