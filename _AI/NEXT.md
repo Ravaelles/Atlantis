@@ -298,6 +298,12 @@ the baseline every run - re-verified by worktree diff).
 table-of-contents, Region center fallback, melee veto + glide
 guard, arc matrix + registry, 3 new pin files; acceptance unmeasured
 this turn - last measured 17 reds, byte-identical to baseline).
+2026-10-22 re-measure after the #182/#183 commits
+(`bash scripts/run-tests.sh`): unit 1279/1279 (FormationHold 11/11,
+HoldTwin 3/3, HolderUnstickSim 1/1 included); architecture advisory
+unchanged 9/11 (same 2 pre-existing edges, empty store diff); our
+files checkstyle-clean (the 100 whole-tree violations are pre-existing
+debt in foreign files, untouched).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -1445,6 +1451,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  differential lives in the validation clamps and gain floors, not
  in the scoring). Proof: unit pins + Wine duel (fewer hits than
  the 15-hit datum, no standstill frames). 2026-10-22 3-duel mini-batch on the current tree (all VICTORY 20-22 s): 16/16/14 hits taken, mean 15.3 vs the 15-hit datum - NOT proven (noise band), standstill clean (113 stepped-aside, 1 frozen-reset, 11 stuck-no-step across the batch). Honest gap: no twin marks the long deflect firing, so the batch cannot say whether the branch even engaged - observability first, then measurement. 2026-10-22 observability LANDED: the long branch rows `long-deflect` via KiteTwin (unthrottled, rarity is the throttle; diagnostics wrapped so they never break the decision), pinned by twin-presence + twin-absence tests, mutation-proofed. Re-run the duel batch to read engagement off the rows.
+ 2026-10-22 re-run, 5 duels on the #182/#183 tree (all VICTORY 20-23 s,
+ 497-563f, hits 14/17/16/14/12): zero `long-deflect` rows in 254 KITE
+ rows (182 stepped-aside, 69 stuck-no-step, 3 frozen-reset) - the branch
+ never engaged on open ground, which is the designed shape (deflect
+ fires only when a wall eats the ray; open ground keeps the short step
+ bit-identical). Engagement proof still needs a walled pocket map, not
+ more open duels.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
@@ -1669,6 +1682,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  zealots get mopped after - DPS lost early, not formation
  standing. Six-game Zeal band: one 12/5 win vs five losses;
  the win needs the early brawl, not the march.
+ 2026-10-22 two more games on the #182/#183 tree (Defeat 3/9, 662f +
+ Defeat 3/9, 794f): coordination held first (~150f of FormHold attacks
+ in the journals, zealots broke to the fight as designed), then both
+ brawls lost the same way - dragoons die in the first contact minute
+ and zealots get mopped after. Eight-game band: one 12/5 win vs seven
+ losses; the freeze shapes are gone (zero FROZEN, all deaths mobile -
+ see #182), what is open is winnability (early-brawl DPS), not
+ coordination.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
@@ -1730,6 +1751,27 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  0 STOPs + displace, UNSTICK row in the log); suite 1279/1279, our
  files checkstyle-clean. Live proof pending: ZealDrag_v_Zeal (no 200f
  stands; FormHold deaths carry prior FROZEN/UNSTICK rows or none).
+ 2026-10-22 live proof, 2 ZealDrag_v_Zeal games on this tree (Defeat
+ 3/9 in 662f + Defeat 3/9 in 794f): the #182 freeze shape did NOT
+ recur - zero FROZEN rows both games, every death tooltip ClusterKite
+ (all 9+9 died moving), UNSTICK fired live (1 hold-unstick + 17 kite
+ frozen-resets in game 1), the veto fires on the boundary live (HOLD
+ foe 27-30 x10 = 2.7-3.0 tiles), throttle holds (6-10 HOLD rows/game).
+ New shape found instead, twice, same signature (dragoon#188 g1:
+ ~280f f161-438; dragoon#98 g2: ~160f f264-426): enemy inside 3 tiles,
+ hp full, ZERO kite steps, same tile, hold correctly broken (VETO) -
+ a fight-loop stall, not a hold freeze. Evidence: SHOT dist jumps
+ 34->19->30->20->6->13 at a standing unit (target switching, not one
+ chewer), telemetry tgt flips 178->156->169->211 across the stall,
+ unit.target() null in UNIT_TRACE throughout (engine holds no order
+ while the funnel names targets), `shot-fired` rows on cooldown 26/16
+ and 3 fires in 4 frames (order spam, not projectiles - the twin logs
+ issuance). Both units reacted only to damage (first HIT f439 -> first
+ KITE f482; f360 -> f426) and died displacing. Fight code untouched by
+ the #182/#183 commits, so this is not their regression - it is the
+ churn the #184 ladder is designed to bound (rule 0 + switch bound).
+ No implementation here (#184 stays sequenced post-cut); the sim/repro
+ isolation is the next measurement.
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
@@ -1741,6 +1783,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  damageBreaksAnOtherwiseCalmHold (far enemy, one wound breaks, unwounded
  twin keeps holding) in FormationHold 11/11; suite 1279/1279. Live proof
  pending (hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal).
+ 2026-10-22 live read, 2 ZealDrag_v_Zeal games: DAMAGE verdict 0 rows
+ both games - expected, not a latch failure: VETO (melee inside 3) and
+ the guns-in-range gate shadow it by design on every board the games
+ produced (holds exist only at foe 8.7-9.0 while marching, then VETO or
+ guns own the unit). The latch stays a backstop for boards the games
+ never produced; the sim pin carries the mechanism proof.
  Correction 2026-10-22: the #179 zealot gate never read this signal
  (ZealotHoldFire.isWounded compares hp+shields against MAX, immune to the
  freshness bug) - no migration needed there. Real consumers of the
@@ -1756,6 +1804,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Performance (owner ask): ladder short-circuits top-down (cheapest/highest-hit rules first: chewer check and no-target gate are O(nearby) before any radius scan); no per-frame garbage beyond the current chain (reuse Selection views, no intermediate lists per rule); per-rule debug tag into the journal (extends #176 attribution, so live logs show which rule fired). Readability (owner ask): one ordered list, each rule a named pure function with its sim pin; old code stays untouched in src-old as the archive (no file moves dragging dead branches and deleted-package imports).
  Audit first, in this order: why the `hp<=15`, `isZergling`, `isWorker` bans exist (overkill? morph states? engine quirks?) - each ban gets a named reason or gets deleted; same for `preventForZealots` interplay with #179. Tests: sim pins (8hp chewer gets focused; far-target stickiness breaks when chewed; no churn: switches bounded per frame); suite green; live proof on ZealDrag_v_Zeal + LingsUpg (kill attribution per target class already exists via #176).
  Non-goals: building targeting, air, transports, Terran-specific branches (D8 covers all non-Protoss-enemy scope; Zerg-relevant rules stay - LingsUpg is a proof vehicle). Coordination prefs are review candidates (see above), not pre-decided removals. Relation to #185: the ladder built here is the learner's future action space; hand-written gate conditions are what the learner will replace.
+ 2026-10-22 live observation for the audit (NOT implementation - the
+ ladder stays sequenced post-cut): 2 ZealDrag_v_Zeal games show the
+ churn the ladder must bound - attack orders re-issued onto switching
+ targets (SHOT dist 34->19->30->20->6->13 at a standing unit,
+ telemetry tgt flips, `shot-fired` on cooldown 26/16 and 3 fires in 4
+ frames = order spam, not projectiles) while holdSwing/settle starve
+ the kite branch for ~160-280f (zero KITE, full hp, VETO correctly
+ broken). The "no churn: switches bounded per frame" test requirement
+ above is exactly this shape; no new code until the cut lands.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.
