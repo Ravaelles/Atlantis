@@ -237,4 +237,50 @@ public class DuelKiteTest extends WorldStubForTests {
                 "the whole line must agree on one bait: the lowest id");
         });
     }
+
+    @Test
+    public void yieldStepTwinsItsOwnPath() {
+        // The yield path (margin holds, standoff yields anyway) must be
+        // visible in the logs, or a zero long-deflect count could mean
+        // a starved path instead of open maps. Board: healthy dragoon,
+        // cooldown 6 (cooling rule silent, margin holds at 2.5), zealot
+        // inside the 3.6 standoff - the yield step issues and rows
+        // duel-yield next to stepped-aside.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        zealot.setEnemy();
+        dragoon.cooldown = 6;
+        atlantis.battle.BattleCommander.clearForTests();
+
+        try {
+            world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                if (atlantis.game.A.now() != 1) return;
+
+                atlantis.util.log.EventLog.clearForTests();
+                atlantis.battle.BattleCommander.act(
+                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                assertTrue(
+                    hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                    "yield step issues while the margin holds: " + ordersOf(dragoon));
+                assertTrue(
+                    atlantis.util.log.EventLog.toJsonLines().contains("duel-yield"),
+                    "the yield path twins itself: " + atlantis.util.log.EventLog.toJsonLines());
+            });
+        }
+        finally {
+            atlantis.battle.BattleCommander.clearForTests();
+        }
+    }
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
 }

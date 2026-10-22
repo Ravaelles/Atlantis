@@ -208,6 +208,7 @@ public final class FightTarget {
             APosition yield = DuelKite.yieldStep(unit, threat);
             if (yield != null && unit.move(yield, Actions.MOVE_AVOID, Behavior.DUEL_YIELD.tag())) {
                 KiteTwin.steppedAside(unit, threat);
+                KiteTwin.yielded(unit, threat);
                 DuelMemory.stepped(unit, now);
 
                 return true;

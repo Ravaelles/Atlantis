@@ -42,6 +42,17 @@ public class KiteTwin {
         row(dragoon, threat, "long-deflect");
     }
 
+    /**
+     * The duel-standoff yield fired (NEXT #169/#173): the margin held
+     * but the standoff yielded to hold distance anyway. Rows next to
+     * stepped-aside (same move, path attribution): without it the
+     * yield path is invisible in the logs and the long-deflect zero
+     * could mean a starved path instead of open maps.
+     */
+    public static void yielded(AUnit dragoon, AUnit threat) {
+        row(dragoon, threat, "duel-yield");
+    }
+
     private static void row(AUnit dragoon, AUnit threat, String result) {
         EventLog.key(LogKey.KITE)
             .param("unit", dragoon.id())
