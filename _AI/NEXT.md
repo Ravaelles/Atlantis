@@ -222,12 +222,17 @@ The index of which document answers which question is `_AI/README.md`.
    with the 2 newest flagged runs in (13 macros): 24 rescue, 0 routine -
    still no candidate. 2026-10-22 re-sweep (retained archive holds only
    today's macro: 2 BOARD_FED, both rescue - pumps present 8 and 14):
-   26 rescue, 0 routine - still no candidate.
+   26 rescue, 0 routine - still no candidate. 2026-10-22 tooling fix:
+   `attribute-board-fed.py` with several files silently read only the
+   first (`args[0]`) - now iterates all files with a run prefix; re-sweep
+   over all 52 retained logs: 2 BOARD_FED, both rescue (pumps 8 and 14) -
+   tally 26 rescue, 0 routine, still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
    deleted - the rest still 7 on the same excluded tracks, production
-   holds ZERO - was 47: 24 died with the combat cutover, 1 orphan
+   holds ZERO (re-verified 2026-10-22: same 7 files, all on excluded
+   battle/micro/interrupt/terran-info tracks) - was 47: 24 died with the combat cutover, 1 orphan
    (TransitionToCorsairs) absorbed, 14 more with the targeting + battle
    src-old sweeps; counting down, no new ones per §21); the class dies
    at zero, not before. All 7 survivors sit on excluded tracks
@@ -1045,6 +1050,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   transient like the earlier sup-10 row) then sup 13+ in flowing games -
   the stuck-at-low-supply shape absent everywhere.
  2026-10-22 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
+ Re-checked 2026-10-22 (later, 52 logs): still zero - the deadlock shape
+ absent everywhere again.
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
@@ -1212,6 +1219,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   not disjunctions - migration complete pending per-reader game proof,
   which rides normal macros (no dedicated games).
  2026-10-22 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
+ 2026-10-22 re-sweep: still zero (only the isWaiting() definition, one
+ isWaiting-based radius reader, and single-state checks).
 
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
@@ -1711,11 +1720,29 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Mechanism, verified in code (no guessing): (a) all proximity gates (veto 2.0, contact 2.5, needsKite) read `unit.enemiesNear()` (AliveEnemies, 5-frame cached selection) while shooting and telemetry read `Select.enemy().combatUnits()` - two membership sources; when they disagree the hold is blind and only HP-drop breaks it; (b) the damage gate is structurally dead for steady holders, see #183; (c) remedy gap: `unstickFrozenQueue` (FightTarget) only watches kite-steppers (`lastStep` fresh <48f) - a holder takes no kite steps, so it can never trip; FrozenWatch is passive by design (paints + logs) and DEPLOYED-gated (never flags units that banked <3 tiles of movement - #162 banked ~2).
  Direction (senior): commanders stay clean - remedy lives in FightTarget next to unstickFrozenQueue, detection stays in FrozenWatch/UnitTelemetry. (1) Owner doctrine, no exceptions: melee within 3 tiles breaks the hold - veto 2.0→3.0, contact stays 2.5 as the inner ring (widening alone fixes nothing while (a) stands, hence (2)-(4) first); (2) HOLD twin row (throttled): veto/contact/damage/nearest-listed inputs + verdict, so the next report is decidable from logs instead of forensics; (3) extend the unstick watch to holders (no kite step riding + no displacement + order age): STOP once + fresh order, same cadence discipline as the kite path, never every frame; (4) relax FrozenWatch DEPLOYED gate for already-decided units (a unit with a fresh combat order that never displaced is the stuck shape even at 0 banked tiles) - or document why not after measuring false positives on the opening march.
  Prove in sim first (holder with wedged queue gets STOP + displaces; no-op on healthy holders - mutation-proofed), then live on ZealDrag_v_Zeal: no 200f stands, FormHold deaths carry prior FROZEN/until rows or none at all. Non-goals: touching the kite/fight order flow; retreat logic untouched.
+ 2026-10-22 sim-first slice LANDED (no behavior change without the trip):
+ veto 2.0→3.0, HoldVerdict + throttled HOLD twin (flip + 150f heartbeat,
+ foe dist + foes-in-2), holder unstick (48f still + >1 tile from slot →
+ STOP once + forgetMotion). Pins: FormationHold 11/11 (veto 2.9 breaks,
+ 3.5 holds; wound breaks an otherwise calm hold with unwounded-twin
+ control), HoldTwin 3/3 (verdict rows, throttle ≤3 rows/200f, flips
+ always row), HolderUnstickSim 1/1 (wedged STOPs ≥1, healthy marchers
+ 0 STOPs + displace, UNSTICK row in the log); suite 1279/1279, our
+ files checkstyle-clean. Live proof pending: ZealDrag_v_Zeal (no 200f
+ stands; FormHold deaths carry prior FROZEN/UNSTICK rows or none).
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
  Direction: damage detection must not depend on manager-updated history. Snapshot previous-frame hp in the battle hook (BattleCommander.observe, own map, cleared in clearForTests) and answer `tookDamageSinceLastBattleFrame` from it; rewire the hold + zealot gates to the battle-side signal; audit-then-migrate the Terran/repair/interrupt consumers one by one (no batch). Alternative considered and rejected: moving UnitStateManager after battle - pipeline-global, touches everything, same class of coupling that created this.
  Prove: unit tests (damage between observes flips the bit; identical hp does not) + sim (holder breaks on first damage frame) + live: hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal. Non-goal: changing what counts as damage (shields already count).
+ 2026-10-22 LANDED: battle-hook hp snapshot (DuelMemory.noteBattleFrame
+ in observe, latch tookDamageSinceLastBattleFrame, cleared in
+ clearForTests) rewired into shouldHold; pinned by
+ damageBreaksAnOtherwiseCalmHold (far enemy, one wound breaks, unwounded
+ twin keeps holding) in FormationHold 11/11; suite 1279/1279. Live proof
+ pending (hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal).
+ Open: the #179 zealot gate + Terran/repair/interrupt consumers still read
+ isUnderAttack() - audit-then-migrate one by one, no batch.
 
 - **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
  Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them. Two compounding causes read off the call chain: (a) `focusInRangeTarget` stickiness (AcquireTarget.java:66-70) returns the current target without scanning when it is valid and in range - the chewer is never considered; (b) `ASquadTargeting.isValidTarget` bans `hp<=15`, ALL zerglings and ALL workers from EVER being targeted - an 8hp chewer is literally unselectable, so the kite/focus chain shoots past it. The user's one-shot rule is the exact inverse of the current ban.
