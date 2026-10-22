@@ -722,6 +722,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 V2 significance batch (6 games, same build): 13/10/6/8/10/8,
  all VICTORY 1/0 - combined V2 mean 9.6 over 9 games vs V0 15.7 over 3.
  The floor holds: no freeze, no DPS loss anywhere on the ladder.
+ 2026-10-23 step-amplitude grid (owner question: escape steps stuck at
+ 1.7-2.0 tiles): KiteStepTiles 2.0/2.5/3.0 x 3-4 games, PARAM_TWEAKER=0:
+ S2.0 11/13/4/14 (mean 10.5), S2.5 10/10/18 (12.7), S3.0 11/12/10 (11.0),
+ all VICTORY 1/0 - no gradient. Amplitude is NOT the binding constraint
+ (consistent with the 24% no-step rate: longer steps need room the map
+ does not have, and the S2.5 18-hit game showed 39% no-step). Latency
+ was the constraint and the latch fixed it; the remainder is separation
+ physics (~1px/f) + pocket geometry. No ParamTweaker random sweep needed
+ for this knob - answered by grid, cheaper and interpretable.
   Game 3 of V2 may have run with the #183 migration in-tree
   (jar rebuild race) - proven behavior-neutral (the only caller
   of the migrated consumer is dead code), batch stands.
