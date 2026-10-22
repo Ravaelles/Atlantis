@@ -54,7 +54,7 @@ public class FrozenWatchTest extends WorldStubForTests {
                         dragoon.position.x() + 32, dragoon.position.y());
                 }
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
-                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                    Actions.MOVE_ENGAGE, "FormHold", true);
                 FrozenWatch.note(dragoon);
 
                 if (now == FrozenWatch.FROZEN_FRAMES + 6) {
@@ -77,7 +77,7 @@ public class FrozenWatchTest extends WorldStubForTests {
                         dragoon.position.x() + 32, dragoon.position.y());
                 }
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
-                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                    Actions.MOVE_ENGAGE, "FormHold", true);
                 FrozenWatch.note(dragoon);
 
                 if (now == FrozenWatch.FROZEN_FRAMES + 1) {
@@ -95,7 +95,7 @@ public class FrozenWatchTest extends WorldStubForTests {
         world(FrozenWatch.FROZEN_FRAMES + 5,
             fakeOurs(dragoon), fakeEnemies(), () -> {
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
-                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                    Actions.MOVE_ENGAGE, "FormHold", true);
                 FrozenWatch.note(dragoon);
 
                 if (atlantis.game.A.now() == FrozenWatch.FROZEN_FRAMES + 1) {
@@ -163,7 +163,7 @@ public class FrozenWatchTest extends WorldStubForTests {
                         dragoon.position.x() + 32, dragoon.position.y());
                 }
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
-                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                    Actions.MOVE_ENGAGE, "FormHold", true);
                 FrozenWatch.note(dragoon);
 
                 if (now == FrozenWatch.FROZEN_FRAMES + 5) {
@@ -189,7 +189,7 @@ public class FrozenWatchTest extends WorldStubForTests {
                         dragoon.position.x() + 32, dragoon.position.y());
                 }
                 dragoon.move(atlantis.map.position.APosition.create(40, 20),
-                    Actions.MOVE_ENGAGE, "ClusterHold", true);
+                    Actions.MOVE_ENGAGE, "FormHold", true);
                 FrozenWatch.note(dragoon);
 
                 if (now == FrozenWatch.FROZEN_FRAMES + 4) {

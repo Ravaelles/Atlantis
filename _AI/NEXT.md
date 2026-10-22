@@ -1581,6 +1581,19 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 kite outranks holding, unconditionally (owner: ClusterHold
+ dragoons stood while chewed): FormationHold breaks on any close
+ enemy that can hit the unit - the earlier wound/cooldown gate
+ stayed silent through shields (HP history misses them) and past
+ contact range. The glued-trade branch is gone too: only an
+ in-flight swing still trades. `ClusterHold` renamed to `FormHold`
+ (order tag, not a manager - managers live in the Commander tree).
+ Live sim tripwire `PhalanxVsPackSimTest` (2+2 vs 5 zealots, 600
+ ticks, in-JVM): no zealot inside melee reach, no dragoon under
+ 150 hp, every dragoon issues attack orders. Null-position
+ hardening along the way (roster outlives corpses in the sim):
+ formation slots filter the dead, targeting skips addressless
+ enemies. Suite green, both new pins mutation-proofed.
  2026-10-26 fogged snapshots, own copies only (owner: store our own
  APosition, never invisible coordinates; drop the address when its
  tile is seen empty): updateLastPosition skips invisible units, and

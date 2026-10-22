@@ -57,16 +57,17 @@ public final class FormationHold {
     }
 
     /**
-     * Kite preemption (owner 2026-10-26): a close enemy that can hit
-     * this unit outranks the formation - with a cooling weapon
-     * (cooldown >= 8) or a real wound it breaks to the fight (and
-     * its kite) instead of holding the slot while being chewed.
-     * Public as a seam: the preemption pins without running the frame.
+     * Kite preemption (owner 2026-10-26): kiting outranks holding,
+     * unconditionally. A close enemy that can hit this unit breaks
+     * the hold - waiting for damage (HP history misses shield damage
+     * entirely) or for contact let chewed dragoons hold their slots
+     * while being shredded. Safety of the single unit first; the
+     * wound/cooldown nuances live inside the fight (margin scaling,
+     * trade discipline), not in the hold gate.
      */
     public static boolean needsKite(AUnit unit) {
         try {
-            if (unit.enemiesThatCanAttackMe(3).count() < 1) return false;
-            return unit.cooldown() >= 8 || unit.hp() + unit.shields() < 80;
+            return unit.enemiesThatCanAttackMe(3).count() >= 1;
         } catch (Exception ignored) {
             return false;
         }

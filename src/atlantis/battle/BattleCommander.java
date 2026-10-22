@@ -118,7 +118,7 @@ public class BattleCommander extends Commander {
             // No slot means no formation (duels fall through untouched).
             if (FormationHold.shouldHold(unit, target, tactic)) {
                 HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-                if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "ClusterHold")) {
+                if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "FormHold")) {
                     FightTarget.markRepositioned(unit);
                     return;
                 }

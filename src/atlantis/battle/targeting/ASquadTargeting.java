@@ -41,6 +41,9 @@ public class ASquadTargeting {
 
     public static boolean isValidTarget(AUnit unit, AUnit enemy) {
         if (enemy == null) return false;
+        // Positionless fogged memory is not a target (owner 2026-10-26:
+        // cleared addresses must not crash or attract acquisition).
+        if (!enemy.hasPosition()) return false;
         if (enemy.isABuilding() && !enemy.isCombatBuilding()) return false;
         if (enemy.isZergling()) return false;
         if (enemy.isWorker()) return false;
@@ -69,6 +72,7 @@ public class ASquadTargeting {
         double bestDist = maxDist;
         for (AUnit enemy : enemies.list()) {
             if (enemy == null || !enemy.isAlive()) continue;
+            if (!enemy.hasPosition()) continue;
             if (!unit.hasWeaponToAttackThisUnit(enemy)) continue;
             double dist = unit.distTo(enemy);
             if (dist < bestDist) {

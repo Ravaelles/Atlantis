@@ -186,6 +186,41 @@ public class ClusterRallyTest extends WorldStubForTests {
     }
 
     @Test
+    public void deadRosterEntriesHoldNoSlots() {
+        // A sim corpse: dead with no position (the engine stops
+        // reporting it) while the roster outlives it. The formation
+        // must not crash for the living - found via the phalanx sim.
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 12, 10);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 11, 12);
+        FakeUnit corpse = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 20, 15);
+        foe.setEnemy();
+        corpse.hp = 0;
+        corpse.position = null;
+
+        world(3, fakeOurs(a, b, c, corpse), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.get().addUnit(a);
+            Alpha.get().addUnit(b);
+            Alpha.get().addUnit(c);
+            Alpha.get().addUnit(corpse);
+            try {
+                HasPosition slot = ClusterRally.formationSlotFor(
+                    a, a, null, FightOrFlight.Tactic.FIGHT);
+                assertNotNull(slot, "corpses hold no slots, the living still form up");
+            }
+            finally {
+                Alpha.get().removeUnit(a);
+                Alpha.get().removeUnit(b);
+                Alpha.get().removeUnit(c);
+                Alpha.get().removeUnit(corpse);
+            }
+        });
+    }
+
+    @Test
     public void fleeingNeverMarchesAtMemories() {
         // FLEE with no visible pivot: no ghost slots, no anchor slots -
         // the retreat bunches home instead of marching at a memory.

@@ -77,6 +77,13 @@ public final class FormationSlots {
         cachedSlots = new HashMap<>();
 
         List<AUnit> units = new ArrayList<>(cluster.list());
+        // Corpses hold no slots: a dead or positionless roster entry must
+        // not crash the formation for the living (found via the sim,
+        // where the roster outlives the unit).
+        // Corpses hold no slots: a dead or positionless roster entry must
+        // not crash the formation for the living - found via the phalanx sim,
+        // where the roster outlives the unit.
+        units.removeIf(u -> u == null || !u.isAlive() || u.position() == null);
         if (units.size() < MIN_CLUSTER_SIZE) return;
 
         AUnit leader = units.get(0);
@@ -84,7 +91,7 @@ public final class FormationSlots {
         if (radius < MIN_RADIUS_TILES) return;
         radius = Math.min(radius, MAX_RADIUS_TILES);
 
-        APosition center = cluster.center();
+        APosition center = averageOf(units);
         if (center == null) return;
         center = nudgeTowardRegionCenter(center);
 
@@ -142,6 +149,26 @@ public final class FormationSlots {
         }
         catch (RuntimeException ignored) {
             return center;
+        }
+    }
+
+    /**
+     * Mean position of the filtered roster: corpses must not drag the
+     * crescent's center (or crash averaging it) - the living own the
+     * formation. All callers filter first, so this never sees nulls.
+     */
+    private static APosition averageOf(List<AUnit> units) {
+        try {
+            if (units == null || units.isEmpty()) return null;
+            long sx = 0;
+            long sy = 0;
+            for (AUnit u : units) {
+                sx += u.position().x();
+                sy += u.position().y();
+            }
+            return APosition.createFromPixels((int) (sx / units.size()), (int) (sy / units.size()));
+        } catch (Exception ignored) {
+            return null;
         }
     }
 }
