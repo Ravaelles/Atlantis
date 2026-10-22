@@ -1581,6 +1581,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 post-swing settle (owner hypothesis CONFIRMED in
+ PurpleWave `AttackDelay.scala`: units stick when a move lands
+ right after the attack animation - wait start + stopFrames + 2,
+ +2 empirically eliminates sticking; second trigger: retargeting
+ a chasing unit mid-swing). Our `holdSwing` covered only the
+ animation itself; `attackSettleHold` owns the frames after it,
+ calibrating per unit from observed swings (no hand stop frames).
+ Pinned `AttackSettleTest` 2/2, mutation-proofed; sims unaffected
+ (no attack frames there), live proof rides the next headless
+ Wine game.
  2026-10-26 headless ZealDrag_v_Zeal: Defeat 10/9 in 88 s, 0
  ClusterHold rows - correct, both armies collided into instant
  contact (hold only owns the 2.5-9 tile approach window). FROZEN

@@ -20,6 +20,9 @@ import java.util.Map;
  */
 public final class DuelMemory {
 
+    /** Settle window before any swing was ever observed (covers a zealot swing + margin). */
+    static final int PRE_CALIBRATION_SETTLE_FRAMES = 6;
+
     private static final Map<Integer, Integer> lastStepFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastMovedFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastMovedPos = new HashMap<>();
@@ -27,6 +30,9 @@ public final class DuelMemory {
     private static final Map<Integer, APosition> lastContactPos = new HashMap<>();
     private static final Map<Integer, Integer> lastContactFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
+    private static final Map<Integer, Integer> attackAnimOpenFrame = new HashMap<>();
+    private static final Map<Integer, Integer> lastAttackStartFrame = new HashMap<>();
+    private static final Map<Integer, Integer> attackSettleFrames = new HashMap<>();
 
     private DuelMemory() {
     }
@@ -39,6 +45,9 @@ public final class DuelMemory {
         lastContactPos.clear();
         lastContactFrame.clear();
         lastGhostFrame.clear();
+        attackAnimOpenFrame.clear();
+        lastAttackStartFrame.clear();
+        attackSettleFrames.clear();
     }
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
@@ -100,5 +109,40 @@ public final class DuelMemory {
         lastStepFrame.remove(unit.id());
         lastMovedFrame.remove(unit.id());
         lastMovedPos.remove(unit.id());
+    }
+
+    /**
+     * Post-swing calibration (PurpleWave AttackDelay): the attack
+     * animation just opened - remember when, so the settle window can
+     * be measured instead of guessed.
+     */
+    static void openAttackAnim(AUnit unit, int now) {
+        attackAnimOpenFrame.put(unit.id(), now);
+        lastAttackStartFrame.put(unit.id(), now);
+    }
+
+    static boolean attackAnimOpen(AUnit unit) {
+        return attackAnimOpenFrame.containsKey(unit.id());
+    }
+
+    /**
+     * The animation just closed: the settle window is the observed
+     * duration plus PurpleWave's empirical +2. Stored per unit, so a
+     * dragoon's long swing and a zealot's short one calibrate apart.
+     */
+    static void closeAttackAnim(AUnit unit, int now) {
+        Integer open = attackAnimOpenFrame.remove(unit.id());
+        if (open != null && now - open > 0) {
+            attackSettleFrames.put(unit.id(), now - open + 2);
+        }
+    }
+
+    static Integer lastAttackStart(AUnit unit) {
+        return lastAttackStartFrame.get(unit.id());
+    }
+
+    /** Observed settle window, or the pre-calibration default. */
+    static int attackSettle(AUnit unit) {
+        return attackSettleFrames.getOrDefault(unit.id(), PRE_CALIBRATION_SETTLE_FRAMES);
     }
 }

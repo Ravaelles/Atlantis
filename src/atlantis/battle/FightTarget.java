@@ -74,6 +74,14 @@ public final class FightTarget {
             }
         }
         if (holdSwing(unit, target)) return;
+        // Post-swing settle (PurpleWave AttackDelay, owner 2026-10-26):
+        // a move or target switch landing right after the attack
+        // animation sticks the unit - the order must arrive no earlier
+        // than animation start + observed duration + 2 (latency-aware).
+        // holdSwing owns the animation itself; this owns the frames
+        // after it. Calibrates per unit from observed swings, so no
+        // hand-written stop frames anywhere.
+        if (attackSettleHold(unit)) return;
         // A Dragoon steps back only when the enemy is inside its
         // safety margin - otherwise it stands and lets the standing
         // attack order fire the instant the cooldown hits zero
@@ -111,6 +119,40 @@ public final class FightTarget {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Post-swing settle, the observable half of {@link DuelMemory}'s
+     * calibration (PurpleWave AttackDelay): while an attack animation
+     * runs the start is recorded; after it closes, follow-up orders
+     * wait until start + observed duration + 2, latency-aware. Before
+     * any swing was ever seen there is nothing to settle. Public as a
+     * seam: the window pins without running frames.
+     */
+    public static boolean attackSettleHold(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return false;
+        try {
+            if (unit.isAttackFrame() || unit.isStartingAttack()) {
+                if (!DuelMemory.attackAnimOpen(unit)) {
+                    DuelMemory.openAttackAnim(unit, atlantis.game.A.now());
+                }
+                return true;
+            }
+            if (DuelMemory.attackAnimOpen(unit)) {
+                DuelMemory.closeAttackAnim(unit, atlantis.game.A.now());
+            }
+            Integer start = DuelMemory.lastAttackStart(unit);
+            if (start == null) return false;
+            int latency;
+            try {
+                latency = atlantis.units.special.SleepUntilFrameGate.latencyFrames();
+            } catch (Exception ignored) {
+                latency = 0;
+            }
+            return atlantis.game.A.now() + latency < start + DuelMemory.attackSettle(unit);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /** Corridor clearing (#162): step out of a withdrawing ally's escape ray. */
