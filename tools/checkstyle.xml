@@ -62,6 +62,17 @@
     <property name="format" value="^[ \t]*return\b[^;\n]*;[ \t]*\n(?![ \t]*(?:\r?\n|\}|//|/\*|\*))"/>
     <property name="message" value="Return must be followed by a blank line."/>
   </module>
+  <!-- Same rule for guard-style one-line returns ('if (...) return ...;').
+    Added 2026-10-22: the line-start rule above is blind to them, so files
+    full of guard clauses passed while violating the spirit of the rule.
+    Same exemptions as the rule above (brace, blank, comment-only next
+    line - separating live returns from comments is the same noise class
+    as blank-before-brace, measured 2026-10-21 with 67 blanks dropped);
+    single-line methods and trailing '}' lines stay untouched by construction. -->
+  <module name="RegexpMultiline">
+    <property name="format" value="^[ \t]*(?:else[ \t]+)?if\b.*\breturn\b[^;\n]*;[ \t]*\n(?![ \t]*(?:\r?\n|\}|//|/\*|\*))"/>
+    <property name="message" value="Return must be followed by a blank line (guard style)."/>
+  </module>
   <module name="TreeWalker">
     <module name="UnusedImports"/>
     <module name="RedundantImport"/>
