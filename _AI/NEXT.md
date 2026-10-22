@@ -1532,6 +1532,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  122/173 stuck). Consistent with the executor, not an isolation of
  it - the sim pin stays the isolation proof; single games are noisy
  by the §14 discipline.
+ 2026-10-23 second model-run headless game, pre-fix jar (VICTORY 32/3
+ in 33 s, 794f): both dragoon deaths kiting, not standing (#113 HOLD
+ f0 -> OTHER f24 -> VETO f59, then KITE from f103 to death f144;
+ #130 Unstick/MakeWay/Kite rows throughout; 0 FROZEN) - deaths in
+ motion even before the chew-voids fix; the fix targets the stand,
+ not the outcome.
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
  (owner 2026-10-21/22): on the new map the bot first does not move
  at all, then loses on zealot/dragoon miscoordination - zealots
@@ -1845,6 +1851,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  itself). Arc deaths bound relaxed to +1 with the reason; the split
  bound (the test's main claim) untouched; contact-aware bend filed as
  #175 follow-up, no code.
+ 2026-10-23 live after-proof, ZealDrag_v_Zeal game 194747 on the
+ post-fix jar (Defeat 8/5 in 202s, 8 kills vs 3/9 before): Dragoon#96
+ HOLD f93 (foe 8.9) -> OTHER f134 -> VETO f140, never held again;
+ first KITE f162 stepped-aside BEFORE first damage f168; 17 KITE rows
+ with displacement throughout, death f315 with an all-ClusterKite/
+ Unstick journal, zero FormHold. Worst chew 7 telemetry rows (~168f)
+ is pursuit contact while kiting (equal-speed enemy starting on top),
+ not a stand: pre-fix #165 showed 0 kite rows and 0 displacement over
+ ~300f. Doctrine holds live.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.
