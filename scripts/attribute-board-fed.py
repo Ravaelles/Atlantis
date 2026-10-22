@@ -65,13 +65,17 @@ def main():
     if not args:
         print(__doc__)
         return 2
-    rows = load(args[0])
-    fed = [r for r in rows if r.get("key") == "BOARD_FED"]
-    if not fed:
+    all_fed = []
+    for path in args:
+        rows = load(path)
+        fed = [r for r in rows if r.get("key") == "BOARD_FED"]
+        for r in fed:
+            all_fed.append((path, r, rows))
+    if not all_fed:
         print("no BOARD_FED rows")
         return 0
     nominations = set()
-    for r in fed:
+    for path, r, rows in all_fed:
         frame = r.get("frame", 0)
         tag = str(r.get("fed", "?"))
         if tag.startswith("sustained-"):
@@ -101,9 +105,9 @@ def main():
         else:
             verdict = "ROUTINE-SHAPED (pumps silent) -> nominates %s" % producer
             nominations.add(producer)
-        print("frame=%s fed=%s verdict=%s" % (frame, tag, verdict))
+        print("%s frame=%s fed=%s verdict=%s" % (path.split("/")[-2], frame, tag, verdict))
     print("---")
-    print("boardfed=%d routine-shaped=%d" % (len(fed), len(nominations)))
+    print("boardfed=%d routine-shaped=%d" % (len(all_fed), len(nominations)))
     for producer in sorted(nominations):
         print("NOMINATE: %s (proof game required after the cut)" % producer)
     return 0
