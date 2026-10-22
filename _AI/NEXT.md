@@ -1933,6 +1933,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  1293/1293. Live shape it targets (game 200532): half the army parks
  while the rest fights; the idle half held slots with no target
  instead of joining.
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 3/9): no idle half - all
+ 9 units took 219-301 damage each, everybody engaged until death
+ (per-part damage from the log, the item's own detector). Weak
+ positive for the reinforce (one game, lost brawl); the 200532
+ park-while-fighting shape did not recur.
 
 Priority note (owner 2026-10-22): the three items below slot BELOW
 the production ratchet (#45, #144-147 per-gate deletions) - small
