@@ -1511,51 +1511,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  funnel paths name the caller class; same-caller duplicates still
  collapse, different callers split - that IS the point). Live proof
  rides the next headless Wine duel game.
-- **#177** Blind-enemy advance (owner 2026-10-21/22, HIGH priority):
- ZealDrag_v_LingsUpg: the enemy splits, ours stand still with
- ClusterMove + ClusterGhost tags - no visible enemies, only fogged
- ones, and nothing moves. Mechanism (verified in code): `act()`
- with no target falls to `HuntLastContact` (baseless + remembered
- contact >9 only) then `GhostAdvance` (needs a remembered ghost
- inside 2-12) then formation/gather slots - every step is anchored
- to a static point, so with no contact memory the cluster holds a
- static formation forever; `formationSlotFor` itself needs a
- *visible* pivot (nearest engageable within 30), fogged enemies do
- not count. Direction: (a) march on fogged knowledge: with zero
- visible enemies but known fogged positions, advance toward the
- nearest fogged address (not stand); (b) loosen the ghost: the
- ClusterGhost scout is fully exempt from formation until it sees
- ANY enemy unit (today the hold-at-ghost + bunch-back logic can
- pin it); (c) formation creep: the formation as a whole advances
- toward the enemy every frame (crescent re-centered on a moving
- pivot, never a static tile); (d) UMS shrink-to-enemy rule: on UMS
- maps, independent of Combat Evaluation, keep a base
- distance-to-enemy that shrinks ~0.3 tiles/sec until contact -
- the cluster always closes, never waits. (d) is the owner's
- explicit ask; (a)-(c) are the mechanisms that make it move.
- Proof: ZealDrag_v_LingsUpg live (army displaces toward the split
- enemy instead of standing), then ZealDrag_v_Zeal.
- 2026-10-22 code slices (all stub-pinned + mutation-proofed, fast
- suite green; live proof of each rides the next headless Wine UMS games):
- far march (UMS ignores the 12-tile give-up, melee keeps it),
- unexplored-region fallback (contact, then fogged memory, then
- nearest unexplored region; melee keeps the old null), per-second
- `UNIT_TELEMETRY` with march destination and target id, and contact
- staleness (personal contact older than 240 frames drops out of the
- creep and falls through to fogged/unexplored instead of
- ping-ponging one stale tile; `HuntLastContact` keeps its own
- baseless re-acquire policy). (d) not built as a separate rule: the
- address chain above closes on the best-known address every frame
- with no standstill branch between its links.
- 2026-10-26 scout release + blind formation (owner: units clumped tens
- of seconds, scout must detach 10-50x faster, formation must face the
- expected enemy): the 15 s tactical stand-ground stays for the retreat
- decision, but the vanguard walks after ~1 s (24 frames, 15x faster);
- the crescent faces the last-seen address on UMS and the main choke at
- the home base on melee instead of collapsing (truly blind keeps the
- old bunching). Pinned (`GhostAdvanceTest` release pin +
- `ClusterRallyTest` 3/3, both mutation-proofed); live proof rides the
- next headless Wine game.
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
  so vs faster-attacking enemies (zerglings attack faster than
  zealots) they stand through the cooldown and bleed. Rule: after
@@ -1762,6 +1717,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  the army marches but never finishes. The timeout shape (5-9
  SHOT/100f vs 47-55 in wins, foe=-1 late) is the open end, not the
  reinforce.
+ 2026-10-26 the open end moved: with region centers repaired
+ (degenerate-box fallback) the ghost chain reaches sweep, and
+ ZealDrag_v_LingsUpg is a VICTORY 31/8 in 31 s - ghost=sweep from
+ frame 0, no foe=-1 tail, no parking. The timeout shape was the
+ dead Regions path, not the reinforce.
 
 ## Current game state (updated 2026-10-21)
 
