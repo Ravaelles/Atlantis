@@ -468,6 +468,51 @@ public class GhostAdvanceTest extends WorldStubForTests {
     }
 
     @Test
+    public void ghostSourceNamesTheAddress() {
+        // The idle-army readout: contact beats fogged beats unexplored.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 29);
+
+        world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                return;
+            }
+            if (now != 2) return;
+
+            assertEquals("contact", GhostAdvance.ghostSourceFor(dragoon),
+                "fresh snapshot names contact");
+            assertEquals("-", GhostAdvance.ghostSourceFor(null),
+                "null-safe by construction");
+        });
+    }
+
+    @Test
+    public void ghostSourceFallsThroughToUnexplored() {
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+
+        atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(region);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals("unexplored", GhostAdvance.ghostSourceFor(dragoon),
+                    "no memory, unseen ground: explore");
+            });
+        }
+    }
+
+    @Test
     public void heldChokeStillBeatsTheGhost() {
         // Same contested-choke shape as ChokeStandoffTest (dragoon 11 tiles
         // south of choke (28,18), zealot inside the 12-tile contest ring):

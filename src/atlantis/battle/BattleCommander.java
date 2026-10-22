@@ -140,11 +140,20 @@ public class BattleCommander extends Commander {
         // give. Cadence stays the handle's own every-31-frames.
         HasPosition center = Alpha.get().center();
         int foeDist = -1;
+        String ghostSource = "-";
+        int ghostDist = -1;
         try {
             if (center != null) {
                 AUnit nearest = atlantis.units.select.Select.enemy()
                     .combatUnits().nearestTo(center);
                 if (nearest != null) foeDist = (int) (center.distTo(nearest) * 10);
+            }
+            AUnit leader = Alpha.get().leader();
+            if (leader != null && leader.isAlive()) {
+                ghostSource = atlantis.battle.strategy.GhostAdvance.ghostSourceFor(leader);
+                atlantis.map.position.APosition ghost =
+                    atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
+                if (ghost != null) ghostDist = (int) (leader.distTo(ghost) * 10);
             }
         } catch (Exception ignored) {
         }
@@ -157,6 +166,8 @@ public class BattleCommander extends Commander {
             .param("cx", center == null ? -1 : center.tx())
             .param("cy", center == null ? -1 : center.ty())
             .param("foe", foeDist)
+            .param("ghost", ghostSource)
+            .param("gdist", ghostDist)
             .log(A.now(), A.minSec());
     }
 

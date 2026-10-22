@@ -309,6 +309,38 @@ public final class GhostAdvance {
     }
 
     /**
+     * Which memory the ghost marches at, for the idle-army readout:
+     * contact (fresh personal snapshot), fogged (remembered enemy),
+     * unexplored (unseen ground) or none. The timeout hunt needs this
+     * next to the cluster center: a parked army names its address.
+     */
+    public static String ghostSourceFor(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return "-";
+        try {
+            if (freshContactFor(unit) != null) return "contact";
+        } catch (Exception ignored) {
+        }
+        try {
+            Selection seen = EnemyUnits.discovered();
+            if (seen != null) {
+                Selection foes = seen.combatUnits();
+                if (foes != null) {
+                    for (AUnit foe : foes.list()) {
+                        if (foe != null && !foe.isVisibleUnitOnMap() && foe.hasPosition()
+                            && foe.position() != null) return "fogged";
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+            if (unexploredDestinationFor(unit) != null) return "unexplored";
+        } catch (Exception ignored) {
+        }
+        return "none";
+    }
+
+    /**
      * The scout owns the first step out: one frame past contact the
      * vanguard is already gone, the line never waits the tactical
      * stand-ground out. Only the UMS opening holds it, and only for
