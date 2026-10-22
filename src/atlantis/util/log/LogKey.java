@@ -60,6 +60,11 @@ public enum LogKey {
       the demote path is shielded by its own self-match, so without this
       row the freeze is silent. Names only, never removes. */
     FROZEN_WARP,
+    /** A stalled IN_PROGRESS construction demoted back to NOT_STARTED
+      (NEXT #70 + #150 lifecycle): cid, type, tile and which demote
+      path fired (builder gone vs stood-still). Fires per demote, not
+      once per construction - a re-armed construction can stall again. */
+    DEMOTE_STALLED,
     /** A V2 supply-provider goal reached the scheduler, with the emitting
       list (WO-144 open question: which goal re-fires a duplicate Pylon
       pair - build-order re-fire, pipeline overlap, or a door hole). */

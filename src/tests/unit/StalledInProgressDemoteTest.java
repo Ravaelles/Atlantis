@@ -298,5 +298,55 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
 
     private Construction frozenStalled;
     private Construction healthyStalled;
+    private Construction standstill;
+    private Construction builderless;
+
+    @Test
+    public void demoteTwinsCidTypeTileAndReasonOnBothPaths() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit live = fake(AUnitType.Protoss_Probe, 12, 10);
+        FakeUnit dead = fake(AUnitType.Protoss_Probe, 30, 30);
+        dead.setHp(0);
+
+        world(130, units(nexus, live, dead), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                live.unitState().setLastPositionChanged(A.now());
+                standstill = stalledCoreAt(live, 12, 10);
+                builderless = stalledCoreAt(dead, 30, 30);
+            }
+
+            if (A.now() == 120) {
+                EventLog.clearForTests();
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(standstill, live),
+                    "fixture check: idle builder at an empty site demotes");
+                String stoodRows = EventLog.toJsonLines();
+                assertTrue(
+                    stoodRows.contains("DEMOTE_STALLED") && stoodRows.contains("stoodStillFor="),
+                    "standstill demote twins cid/type/tile/reason, not just console: "
+                        + stoodRows);
+
+                EventLog.clearForTests();
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(builderless, dead),
+                    "fixture check: old builderless stall demotes");
+                String goneRows = EventLog.toJsonLines();
+                assertTrue(
+                    goneRows.contains("DEMOTE_STALLED") && goneRows.contains("builder gone"),
+                    "builder-gone demote twins cid/type/tile/reason, not just console: "
+                        + goneRows);
+
+                EventLog.clearForTests();
+                Construction fresh = stalledCoreAt(live, 12, 10);
+                fresh.setLastBuildAttemptNow();
+                assertFalse(
+                    ConstructionStatusChanger.demoteStalledInProgress(fresh, live),
+                    "recent attempt holds fire");
+                assertFalse(
+                    EventLog.toJsonLines().contains("DEMOTE_STALLED"),
+                    "a healthy flip twins nothing");
+            }
+        });
+    }
 
 }

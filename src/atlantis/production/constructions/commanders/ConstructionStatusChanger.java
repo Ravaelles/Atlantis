@@ -355,6 +355,7 @@ public class ConstructionStatusChanger extends Commander {
             if (construction.startedAgo() < STALLED_IN_PROGRESS_DEMOTE_FRAMES) return false;
 
             logDemote(construction, "builder gone");
+            twinDemote(construction, "builder gone");
             construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
 
             return true;
@@ -365,6 +366,7 @@ public class ConstructionStatusChanger extends Commander {
         if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
 
         logDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
+        twinDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
 
         return true;
@@ -403,6 +405,23 @@ public class ConstructionStatusChanger extends Commander {
             System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
                 + " at=" + construction.buildPosition() + " " + detail);
         }
+    }
+
+    /**
+     * Names a stall demote (NEXT #70 + #150 lifecycle): a stalled
+     * IN_PROGRESS construction handed back to NOT_STARTED so the
+     * travel/issue/cancel/requeue machinery recovers it. Names only,
+     * never demotes by itself - the two call sites above do that.
+     * Fires per demote (a re-armed construction can stall again),
+     * unlike the once-per-construction frozen-warp twin.
+     */
+    private static void twinDemote(Construction construction, String reason) {
+        EventLog.key(LogKey.DEMOTE_STALLED)
+            .param("cid", construction.id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition() == null ? "-" : construction.buildPosition().toString())
+            .param("reason", reason)
+            .log(A.now(), A.minSec());
     }
 
     /**
