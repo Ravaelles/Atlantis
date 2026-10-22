@@ -1207,6 +1207,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   or different predicates (hasStarted mixes, buildingUnit==null pairs),
   not disjunctions - migration complete pending per-reader game proof,
   which rides normal macros (no dedicated games).
+ 2026-10-26 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
+
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
   Steps, in order, each a game-proven slice: (1) write the objective
@@ -1282,40 +1284,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `apply()` for all 32 params, SimEngine wired (`--engine=sim` works),
   batch->parse->driver loop proven in-test (SimTunerBatchTest 6/6)
   plus a live 1-game run (WIN, digest + override honored).
-- **#161** Fast behavior sim for micro/formation (owner 2026-10-20:
-  restore the *capability* lost with StarEngine, not necessarily the
-  code verbatim). Need: fully controlled fights (counts, map,
-  obstacles) that UMS cannot give today (byte-2 dead until the
-  server pump lands; no obstacle map authored) and Wine only gives
-  on owner call. Ground rules, non-negotiable: test scope only
-  (jar payload check keeps it out of the game jar), real engine
-  data where the binding has it (probe 2026-10-20: Dragoon
-  topSpeed 5.0 / cooldown 30 / range 128px; Zergling 5.49 / 8 /
-  15px; Zealot 4.0 / 22 / 15px - `maxSpeed()`/`cooldownAbsolute()`
-  already read these live), sim-local constants only where the
-  binding has nothing (attack-animation splits are PurpleWave
-  model params, documented as such), assertions on behavior +
-  coarse outcomes (fled? withdrew? survived? made way?), never
-  exact HP as engine truth. First scenarios: surrounded dragoon
-  flees, wounded dragoons withdraw and survive, obstacle course
-  without permanent wedges; then the formation coordination proof
-  rides on it (#162). Since: T-duel (1v1 hits pin, #169), T-ghost
-  (stale-target drop), T-collapse (4v1 funnel wipe, #170), T-run
-  (probe outruns chaser via managers, #172), pinch A/B + gate,
-  make-way/cover rows, hunt/no-hunt - 19 tests, plus 2026-10-21:
-  T-creep (hunt 11->9 hands to creep 9->2, holds, never bunches back -
-  the GhostAdvance loop at tick level, fails with the call disabled)
-  and T-wall (ling raid through a walled gap dies on 2 scripted
-  cannons untouched - the #97 wall-HOLD geometry proof the FE loss
-  could not supply: the wall holds, the line died away from it).
-  2026-10-20: LANDED the vehicle (`tests.unit.sim`: `SimWorld` tick
-  driver + `SimArena` obstacles + `DragoonsVsZerglingsTest` 4/4:
-  T0 engine-data pins, T1 surrounded flees+survives, T2 group
-  withdraws-or-wipes with zero left behind, T3 mover through a gap;
-  suite 1012/1012 fast, arch strict unchanged). Deliberately NOT a
-  verbatim restore: the old mover/canvas/demo stay in history
-  (their jobs live in current harness); the missing combat half +
-  arena + accel/brake/turn are new, test-scope only.
 - **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
   logic/changes, other model gets independent file-scoped tasks).
   Single source of truth: `/sc-ai/OpenBW/openbw` clean fork
