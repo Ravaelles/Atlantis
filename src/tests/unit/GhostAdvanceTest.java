@@ -206,7 +206,38 @@ public class GhostAdvanceTest extends WorldStubForTests {
 
             assertNotNull(atlantis.battle.FightTarget.lastContact(dragoon), "ghost exists");
             assertNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
-                "first 15 s on UMS: stand, do not scout out of the line");
+                "first second on UMS: stand, do not scout out of the line");
+        });
+    }
+
+    @Test
+    public void umsScoutReleasesAfterOneSecond() {
+        // Owner 2026-10-26: the 15 s tactical stand-ground stays for the
+        // retreat decision, but the scout walks after ~1 s (24 frames,
+        // 15x faster) - the group no longer stands tens of seconds.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 28, 24);
+
+        world(40, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                zealot.position = APosition.createFromPixels(28 * 32, 45 * 32);
+                // The frame-1 fight may step the dragoon onto the contact
+                // tile (reached-hold would mask the release): keep it
+                // 11 tiles off so the march has somewhere to go.
+                dragoon.position = APosition.createFromPixels(28 * 32, 35 * 32);
+                return;
+            }
+            if (now != 30) return;
+
+            assertNotNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
+                "past the 1 s release the vanguard owns the march: "
+                    + atlantis.battle.FightTarget.lastContact(dragoon));
+            assertTrue(GhostAdvance.move(dragoon, FightOrFlight.Tactic.FIGHT),
+                "the march issues steps instead of holding the line");
         });
     }
 

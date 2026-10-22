@@ -1466,6 +1466,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
  (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
  Live proof + tuner registration ride the next headless Wine game.
+ 2026-10-26 death-log dedup (owner): one issued order means one journal
+ row - the `lastCommandIssuedNow` attempt row doubled every issue row.
+ Pinned `DecisionJournalTest` 9/9.
 - **#176** Death-log issuer attribution (owner 2026-10-21/22, HIGH priority):
  combat death logs show WHAT but never WHO. Live datum (1Drag Zealot#135):
  rows of `Attack_Unit/a:ATTACK_UNIT/null` with frame numbers, no hint
@@ -1525,6 +1528,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  baseless re-acquire policy). (d) not built as a separate rule: the
  address chain above closes on the best-known address every frame
  with no standstill branch between its links.
+ 2026-10-26 scout release + blind formation (owner: units clumped tens
+ of seconds, scout must detach 10-50x faster, formation must face the
+ expected enemy): the 15 s tactical stand-ground stays for the retreat
+ decision, but the vanguard walks after ~1 s (24 frames, 15x faster);
+ the crescent faces the last-seen address on UMS and the main choke at
+ the home base on melee instead of collapsing (truly blind keeps the
+ old bunching). Pinned (`GhostAdvanceTest` release pin +
+ `ClusterRallyTest` 3/3, both mutation-proofed); live proof rides the
+ next headless Wine game.
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
  so vs faster-attacking enemies (zerglings attack faster than
  zealots) they stand through the cooldown and bleed. Rule: after

@@ -52,13 +52,43 @@ public final class ClusterRally {
      * crescent around the leader's nearest enemy. Null when the
      * formation does not apply (too few units, no pivot, pivot in
      * contact, no walkable slot) - the caller bunches on the leader.
+     *
+     * <p>No visible pivot does not mean no direction (owner 2026-10-26):
+     * a blind crescent still faces where the enemy is expected - the
+     * last-seen enemy center on UMS, the main choke at the home base on
+     * melee - instead of collapsing into a clump facing nowhere. Truly
+     * blind (explored map, no memory, away from home) keeps the old
+     * null: bunching is the honest fallback there.</p>
      */
     public static HasPosition formationSlotFor(AUnit unit, AUnit leader, HasPosition anchor) {
         if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
         if (leader == null || !leader.isAlive()) return null;
-        AUnit pivot = atlantis.battle.targeting.ASquadTargeting
+        HasPosition pivot = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
+        if (pivot == null) pivot = expectedDirectionPoint(leader);
         if (pivot == null) return null;
         return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
+    }
+
+    /**
+     * Where the enemy is expected when nobody sees it: the whole ghost
+     * chain (fresh contact, then fogged memory, then unexplored ground)
+     * on UMS; the main choke when the cluster holds the home base on
+     * melee. Null-safe by construction - the choke library and the
+     * ghost chain both answer null outside their world.
+     */
+    private static HasPosition expectedDirectionPoint(AUnit leader) {
+        try {
+            if (atlantis.game.A.isUms()) {
+                return atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
+            }
+            if (atlantis.battle.cluster.ClusterTactic.holdsHomeGround()) {
+                atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.mainChoke();
+                if (choke == null || choke.center() == null) return null;
+                return choke.center();
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

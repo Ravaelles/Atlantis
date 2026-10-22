@@ -1,6 +1,5 @@
 package atlantis.battle.strategy;
 
-import atlantis.battle.cluster.ClusterTactic;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
@@ -61,6 +60,17 @@ public final class GhostAdvance {
     /** The line holds this long to let the scout go first, then follows. */
     public static final int HEAD_START_FRAMES = 24;
 
+    /**
+     * UMS scout release (owner 2026-10-26): with no visible enemy the
+     * vanguard walks after ~1 second, not after the 15-second tactical
+     * stand-ground - that gate stays for the retreat decision
+     * ({@code ClusterTactic.earlyUmsStandGround}), but holding the scout
+     * with it left the group standing tens of seconds doing nothing.
+     * 15x faster than the old 360-frame wait, still past the contact
+     * frame so the vanguard never sprints before first sight.
+     */
+    public static final int UMS_SCOUT_RELEASE_FRAMES = 24;
+
     /** No position change this long while creeping: give up, rally elsewhere. */
     public static final int STUCK_FRAMES = 100;
 
@@ -95,7 +105,7 @@ public final class GhostAdvance {
      */
     public static boolean move(AUnit unit, FightOrFlight.Tactic tactic) {
         if (unit == null || !unit.isAlive()) return false;
-        if (tactic != FightOrFlight.Tactic.FIGHT || ClusterTactic.earlyUmsStandGround()) {
+        if (tactic != FightOrFlight.Tactic.FIGHT || scoutHeld()) {
             forget(unit);
             return false;
         }
@@ -189,7 +199,7 @@ public final class GhostAdvance {
     public static APosition advancePointFor(AUnit unit, FightOrFlight.Tactic tactic) {
         if (unit == null || !unit.isAlive()) return null;
         if (tactic != FightOrFlight.Tactic.FIGHT) return null;
-        if (ClusterTactic.earlyUmsStandGround()) return null;
+        if (scoutHeld()) return null;
 
         // A visible target belongs to the fight branch above the caller -
         // never shadow it with a creep order.
@@ -257,6 +267,18 @@ public final class GhostAdvance {
             return null;
         }
         return last;
+    }
+
+    /**
+     * The scout owns the first step out: one frame past contact the
+     * vanguard is already gone, the line never waits the tactical
+     * stand-ground out. Only the UMS opening holds it, and only for
+     * {@link #UMS_SCOUT_RELEASE_FRAMES} - the 15-second
+     * {@code ClusterTactic.earlyUmsStandGround} still owns the retreat
+     * decision above, it just no longer pins the scout with it.
+     */
+    private static boolean scoutHeld() {
+        return atlantis.game.A.isUms() && atlantis.game.A.now() < UMS_SCOUT_RELEASE_FRAMES;
     }
 
     /** Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait. */
