@@ -17,7 +17,10 @@ public class PreventAttacksInMissionDefend {
         // (eval >= 1.3). Shots incoming, or an enemy inside 3 tiles, means the fight is
         // here whether the unit wants it or not; the chase-prevention below still
         // applies to everything farther away.
-        if (unit.lastUnderAttackLessThanAgo(45)) return false;
+        // Damage signal is the battle-hook latch (NEXT #183), not the
+        // manager history: a steady defender re-issues no orders, so its
+        // history reads fresh by construction and can never fire.
+        if (atlantis.battle.DuelMemory.damagedLessThanAgo(unit, 45)) return false;
         if (unit.enemiesNear().nearestToDistLess(unit, 3)) return false;
 
         if (unit.distToFocusPoint() >= 15) return true;

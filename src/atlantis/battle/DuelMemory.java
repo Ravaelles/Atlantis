@@ -46,6 +46,7 @@ public final class DuelMemory {
      */
     private static final Map<Integer, Integer> lastBattleHp = new HashMap<>();
     private static final Map<Integer, Boolean> battleDamage = new HashMap<>();
+    private static final Map<Integer, Integer> lastBattleDamageFrame = new HashMap<>();
 
     /**
      * Snapshots current hp and latches whether it dropped since the
@@ -58,9 +59,30 @@ public final class DuelMemory {
 
             int now = unit.hp();
             Integer prev = lastBattleHp.get(unit.id());
-            battleDamage.put(unit.id(), prev != null && now < prev);
+            boolean dropped = prev != null && now < prev;
+            battleDamage.put(unit.id(), dropped);
+            if (dropped) lastBattleDamageFrame.put(unit.id(), A.now());
             lastBattleHp.put(unit.id(), now);
         } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * Window version of the damage latch (NEXT #183): true when hp
+     * dropped within the last {@code framesAgo} battle frames. Replaces
+     * the manager-history {@code lastUnderAttackLessThanAgo} for
+     * battle-observed units, for which that history reads fresh by
+     * construction and can never fire.
+     */
+    public static boolean damagedLessThanAgo(AUnit unit, int framesAgo) {
+        if (unit == null) return false;
+
+        try {
+            Integer last = lastBattleDamageFrame.get(unit.id());
+
+            return last != null && A.now() - last <= framesAgo;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 
@@ -113,6 +135,7 @@ public final class DuelMemory {
         attackSettleFrames.clear();
         lastBattleHp.clear();
         battleDamage.clear();
+        lastBattleDamageFrame.clear();
     }
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
