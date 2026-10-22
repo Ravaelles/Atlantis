@@ -1740,6 +1740,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  ZealDrag_v_LingsUpg is a VICTORY 31/8 in 31 s - ghost=sweep from
  frame 0, no foe=-1 tail, no parking. The timeout shape was the
  dead Regions path, not the reinforce.
+ 2026-10-23 vanguard/ghost recall fixed (owner report: after killing
+ half the enemy the army parks while the rest hides, one unit pings
+ HOLD/UNSTICK on a ghost instead of hunting - game 200532, dragoon#214
+ f1399-1956 HOLD/UNSTICK x5 on fogged contacts 8 tiles out, army in
+ DEFEND): FormationHold declines ghost contacts unless the unit is
+ really threatened (enemiesThatCanAttackMe(3.2) > 0, owner rule, raw
+ distance like the veto) - new GHOST verdict, hunt owns a safe unit,
+ the cluster owns a threatened one. Threatened ghost still falls
+ back; visible far enemies still hold the arc (both pinned);
+ threatened-by-melee still vetoes first. Pinned 16/16 FormationHold.
+ Note: the looping unit was NOT the vanguard (lowest-id alive was
+ #106) - the gate keys on ghost+unthreatened, no scout special-case.
 
 Priority note (owner 2026-10-22): the three items below slot BELOW
 the production ratchet (#45, #144-147 per-gate deletions) - small

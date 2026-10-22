@@ -253,6 +253,68 @@ public class FormationHoldTest extends WorldStubForTests {
     }
 
     @Test
+    public void unthreatenedGhostDeclinesHold() {
+        // Live game 200532: a dragoon held formation slots for ~500f on
+        // a fogged contact 8 tiles out (UNSTICK x5, army parked) instead
+        // of hunting forward. A ghost contact holds nothing: with no
+        // attacker in 3.2 tiles the hunt owns the unit, not the slot.
+        // Owner rule: fall back only when really threatened.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ghost = fake(AUnitType.Protoss_Zealot, 38, 20);
+        ghost.setEnemy();
+        ghost.isVisibleUnitOnMap = false;
+
+        world(2, fakeOurs(dragoon), fakeEnemies(ghost), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.shouldHold(dragoon, ghost, FightOrFlight.Tactic.FIGHT),
+                "fogged contact 8 tiles out, nothing can hit us: hunt, don't hold");
+        });
+    }
+
+    @Test
+    public void threatenedGhostStillFallsBack() {
+        // Same ghost, but a real ling at 3.1 tiles can hit us (threat
+        // radius 3.2): falling back to the cluster under pressure stays
+        // allowed, so the hold marches (none of the other gates fires
+        // on this board either).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.hp = 180;
+        dragoon.shields = 80;
+        dragoon.cooldown = 0;
+        FakeUnit ghost = fake(AUnitType.Protoss_Zealot, 38, 20);
+        ghost.setEnemy();
+        ghost.isVisibleUnitOnMap = false;
+        FakeUnit presser = fake(AUnitType.Zerg_Zergling, 33.1, 20);
+        presser.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(ghost, presser), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.hasCloseMeleeEnemy(dragoon), "3.57 tiles: no veto");
+            assertTrue(FormationHold.shouldHold(dragoon, ghost, FightOrFlight.Tactic.FIGHT),
+                "threatened with a ghost contact: the fallback still holds");
+        });
+    }
+
+    @Test
+    public void visibleFarEnemyStillHolds() {
+        // No regression for the designed shape: a VISIBLE far enemy keeps
+        // the arc march (the ghost gate only fires on unseen contacts).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.cooldown = 0;
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+
+        world(2, fakeOurs(dragoon), fakeEnemies(far), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertTrue(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                "visible enemy 8 tiles out: the arc still marches");
+        });
+    }
+
+    @Test
     public void holdStandsWhenFightWouldNotKite() {
         // No overcorrection: full-hp dragoon, same geometry - the fight's
         // margin is satisfied (required 1.0 at full hp), so the hold still

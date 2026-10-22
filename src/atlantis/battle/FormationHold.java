@@ -57,6 +57,16 @@ public final class FormationHold {
     public static final double CLOSE_MELEE_TILES = 3.0;
 
     /**
+     * Threat radius for a ghost contact (owner rule): anything that can
+     * hit this unit inside these tiles counts as threatened, visible or
+     * not - raw distance, same no-plumbing philosophy as the veto. A
+     * threatened unit may fall back to the cluster; an unthreatened one
+     * with only a ghost contact keeps hunting forward instead of
+     * recalling to a slot.
+     */
+    public static final double SCOUT_THREAT_TILES = 3.2;
+
+    /**
      * True when a listed melee enemy stands within {@link #CLOSE_MELEE_TILES}
      * of the unit. The only formation question that matters up close.
      */
@@ -91,6 +101,15 @@ public final class FormationHold {
         DAMAGE,
         /** A close enemy can hit this unit - kite outranks holding, unconditionally. */
         KITE,
+        /**
+         * Ghost contact and nothing can hit this unit: formation holds
+         * nothing, the hunt owns it. Recalling to a slot on a fogged
+         * memory parks the army while the enemy hides (live: a dragoon
+         * marched at slots for 500f on a ghost 8 tiles out, UNSTICK x5).
+         * Threatened units fall through to the normal gates below -
+         * falling back to the cluster under pressure stays allowed.
+         */
+        GHOST,
         /** Anything else that declines the hold (tactic, ranged enemy, ...). */
         OTHER,
         /** Hold decided, but no formation slot exists (duels fall through). */
@@ -119,6 +138,7 @@ public final class FormationHold {
         if (unit == null || target == null || !unit.isAlive()) return HoldVerdict.OTHER;
         if (hasCloseMeleeEnemy(unit)) return HoldVerdict.VETO;
         if (tactic != FightOrFlight.Tactic.FIGHT) return HoldVerdict.OTHER;
+        if (!target.isVisibleUnitOnMap() && !isThreatened(unit)) return HoldVerdict.GHOST;
 
         try {
             if (!unit.isCombatUnit()) return HoldVerdict.OTHER;
@@ -176,6 +196,22 @@ public final class FormationHold {
             return threat != null && Kite.shouldKite(unit, threat);
         } catch (Exception ignored) {
             return false;
+        }
+    }
+
+    /**
+     * Real attackers close by (owner rule): anything that can hit this
+     * unit inside {@link #SCOUT_THREAT_TILES} counts as threatened. Fail
+     * closed toward the old behavior - on any doubt (or any exception)
+     * the unit counts as threatened and the normal gates decide.
+     */
+    static boolean isThreatened(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return true;
+
+            return unit.enemiesThatCanAttackMe(SCOUT_THREAT_TILES).count() > 0;
+        } catch (Exception ignored) {
+            return true;
         }
     }
 
