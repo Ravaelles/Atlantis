@@ -237,6 +237,12 @@ The index of which document answers which question is `_AI/README.md`.
  rescue, 0 routine, still no candidate. Dragoon demand-side rule
  live proof #2 (NEXT #45): Core warped 2:48, DRAGOON_TRAIN from 4:24,
  3 Dragoons warped.
+ 2026-10-23 long Wine TauCross macro 212818 (18.5 game-min, Defeat
+ 54/158, lurker contain late): BOARD_FED 3x, all rescue
+ (sustained-zealot, sustained-dragoon, supply-pylon - pumps present
+ 53/52/1) - tally 31 rescue, 0 routine, still no candidate.
+ Tooling: multi-file sweep deduped by realpath (the `latest`
+ symlink double-counted one run before).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -574,6 +580,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   correct, resite worked).
  2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): quiet game - 0 CANCELs, 0 ADOPTED (builder-rich, nothing waited), no overlap rows; resite/adopt seams unfired, not broken.
  2026-10-23 Wine TauCross macro 203305 (VICTORY 1/0, 374 s, supply-cap exit): same quiet shape - 0 CANCELs, 0 ADOPTED, builder-rich; no overlap rows.
+2026-10-23 long macro 212818 (18.5 game-min, Defeat 54/158): 0 ADOPTED; Assimilator null-buildPosition CANCELs x4 (f11905-12354, siteless-mint death, gas instance of the known mechanism); 3 Nexus warps (6:39/11:38/15:55, later overrun) - adoption/resite seams unfired again.
 
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
@@ -717,6 +724,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   lottery continues, one axis at a time.
  2026-10-22 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
  2026-10-23 macro 203305: supply-cap exit at 374 s, Nexus#2 queued 6:11 but unwarped at the cap - too short and multi-base trajectory, not the lottery shape.
+ 2026-10-23 long macro 212818 (18.5 game-min, multi-base from 6:39, supply collapse 53->9 late): ORDER_SAVING 0, correctly silent (predicate needs 1 base + bank<550); lottery continues.
 
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
@@ -801,6 +809,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   alternating-handoff shape to watch for. G1 short flagged macro: clean.
  2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): transient stalls only - 13 MOVE_BUILD (max 133f) + 4 BUILD, all self-recovered, 17/17 warped; no alternating-handoff shape.
  2026-10-23 macro 203305: BUILD_BREAKDOWN once (Assimilator, self-recovered); no alternating-handoff shape.
+ 2026-10-23 long macro 212818: no MOVE_BUILD rows in this log's schema (handoff shape unobservable here); no alternating-handoff evidence either way.
 
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
@@ -864,6 +873,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   + 17:19/18:18, all warped - lateness not reproduced again.
  2026-10-22 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
  2026-10-23 macro 203305: same +1 lag, systematic (Gateway #2 sup 11 vs BO At 10, #3 sup 13 vs At 12, Pylon #5 sup 17, Assimilator sup 25) - no 3-min lateness, warped all.
+2026-10-23 long macro 212818: identical +1 systematic lag (#2 sup 11, #3 sup 13, #5 sup 16, #8 sup 23, #11 sup 32) - still lateness-free.
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
@@ -1092,6 +1102,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   amounts, currently +1 below 19 / +3 above - earlier pylons trade tech
   minerals for block time).
  2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
+ 2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1199,7 +1210,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
   across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. 2026-10-21 second Wine macro (7:53 Defeat, quiet construction game: CANCEL 1, REQUESTED 10): min-supply 4, funding 2, core-priority 2, pylon-cap 1, unstarted-pylon 1, warping-link 1 (first live sighting: PhotonC #60 @ [19,19] 7:33@41, bank 254, duplicate-cannon-shaped) - previously-proven gates re-fire, no earlier-reserve storm this time. 2026-10-21 audit: all 11 gates have stub behavior pins (LiveConstructionGuardTest 6x, power-not-funded fires+passes in BuildRefusedTwinTest); the two never-fired-live gates are narrow by design, not broken - power-not-funded needs Pylon-less poverty no BO produces, live-construction needs an adopted-live re-request and cancelled rows are terminal (that's why the 463-storm never tripped it: terminal is not live). No more pins without games; live proof rides shapes that may never come - accept stub coverage for these two. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
  2026-10-22 Wine TauCross macro (VICTORY 6:49): previously-proven gates re-fire - min-supply 6, pylon-cap 6, earlier-reserve 3, unstarted-pylon 3, funding 2, core-priority 2; no new gate proven.
- 2026-10-23 macro 203305 (374 s, supply-cap exit): BUILD_REFUSED Pylon 5 + Gateway 3 (counts only - gate attribution not pulled from this run); no new gate proven.
+ 2026-10-23 macro 203305 (374 s, supply-cap exit): BUILD_REFUSED Pylon 5 + Gateway 3 (min-supply 4, earlier-reserve 2, funding 1, core-priority 1 re-fire); no new gate proven.
+ 2026-10-23 long macro 212818 (38 warps): re-fire across min-supply, earlier-reserve (incl. 28x PhotonC + 3x Pylon + 4x Nexus + Gateway/CyberneticsC/Assimilator singles), warping-link 8x PhotonC, unstarted-pylon 5x, pylon-cap 2x, core-priority 2x, funding 1x, Stargate prepare-site-overlap 7x. Still zero live fires: live-construction, power-not-funded, core-single-instance, pylon-overstock (stub-pinned only, unchanged).
 
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`

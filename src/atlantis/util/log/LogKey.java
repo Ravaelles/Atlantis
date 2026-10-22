@@ -80,6 +80,8 @@ public enum LogKey {
     WORKER_GATE,
     /** Cluster posture/tactic/size/anchor, throttled. */
     CLUSTER,
+    /** Global mission transition (from, to, reason). Rows only on change. */
+    MISSION,
     /** A Nexus train/queue attempt (supply, remaining, engine answer). */
     TRAIN_ATTEMPT,
     /** A catalogue answer for a legacy site search: answered tile or decline reason. */

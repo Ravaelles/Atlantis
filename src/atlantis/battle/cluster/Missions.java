@@ -1,5 +1,9 @@
 package atlantis.battle.cluster;
 
+import atlantis.game.A;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
+
 /**
  * The global mission value. Phase 0 of the combat cutover
  * (_AI/__PLAN-COMBAT.md): the state machine that used to move it
@@ -19,13 +23,34 @@ public class Missions {
     }
 
     public static void forceGlobalMissionDefend(String reason) {
-        currentGlobalMission = DEFEND;
-        historyCount++;
+        setGlobalMission(DEFEND, reason);
     }
 
     public static void forceGlobalMissionAttack(String reason) {
-        currentGlobalMission = ATTACK;
+        setGlobalMission(ATTACK, reason);
+    }
+
+    /**
+     * Single setter behind both force calls: counts every call, but
+     * rows the twin only on an actual change (followPosture runs every
+     * frame, so an unconditional row would flood the log with
+     * no-op defends). Gives the unenaction sanity check a name and a
+     * reason: which transition happened, when, and why.
+     */
+    private static void setGlobalMission(Mission next, String reason) {
+        Mission prev = currentGlobalMission;
+        currentGlobalMission = next;
         historyCount++;
+        if (prev != null && prev.equals(next)) return;
+
+        try {
+            EventLog.key(LogKey.MISSION)
+                .param("from", prev == null ? "-" : prev.name())
+                .param("to", next == null ? "-" : next.name())
+                .param("reason", reason == null ? "-" : reason)
+                .log(A.now(), A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 
     /**
