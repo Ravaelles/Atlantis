@@ -70,7 +70,14 @@ public final class DuelMemory {
         return lastContactFrame.get(unit.id());
     }
 
-    static void snapshotContact(AUnit unit, APosition position) {
+    /**
+     * Contact memory is sight, not engagement: a visible target snapshots
+     * here even when the engagement is refused below (imminent shot,
+     * formation hold) - otherwise refusing to chase would also blind the
+     * ghost march that closes the distance instead. Public: the
+     * acquisition chain lives in another package.
+     */
+    public static void snapshotContact(AUnit unit, APosition position) {
         lastContactPos.put(unit.id(), position);
         lastContactFrame.put(unit.id(), A.now());
     }

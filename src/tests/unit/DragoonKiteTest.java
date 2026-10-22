@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -146,6 +147,34 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertTrue(Kite.shouldKite(dragoon, toward),
                 "Zealot facing us commits to the swing - yield half a tile early");
         });
+    }
+
+    @Test
+    public void meatScreenHoldsFireInsteadOfYielding() {
+        // Owner 2026-10-26: with friendly zealots screening inside 8
+        // tiles and 40+ hp, the dragoon stands and shoots on ready
+        // instead of yielding - the screen tanks, the guns speak.
+        // Below 40 hp the old yield answers (dying trades nothing).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit screen = fake(AUnitType.Protoss_Zealot, 31, 21);
+        FakeUnit toward = fake(AUnitType.Protoss_Zealot, 32, 20);
+        toward.setEnemy();
+        toward.setAngle(Math.PI);
+        dragoon.cooldown = 15;
+        dragoon.hp = 52;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon, screen),
+            fakeEnemies(toward), () -> {
+                assertTrue(Kite.hasMeatScreen(dragoon), "screen in 8, hp 52: screened");
+                assertFalse(Kite.shouldKite(dragoon, toward),
+                    "screened dragoon holds and shoots instead of yielding");
+
+                dragoon.hp = 20;
+                dragoon.shields = 0;
+                assertFalse(Kite.hasMeatScreen(dragoon), "hp 20: no screen discipline");
+                assertTrue(Kite.shouldKite(dragoon, toward),
+                    "below 40 hp the old yield answers - dying trades nothing");
+            });
     }
 
     @Test
@@ -816,8 +845,42 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         }
     }
 
+    @Test
+    public void switchAttacksOnceThenHolds() {
+        // Owner 2026-10-26: a genuine target switch fires exactly one
+        // attack - then the standing order shoots on its own. Re-firing
+        // on a later frame just because a kite step cleared the engine
+        // target is the alternating spam that lands zero shots while
+        // bleeding: the presser keeps kite steps riding, the far switch
+        // fires once the first step lands and never again.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit presser = fake(AUnitType.Zerg_Zergling, 31, 20);
+        presser.setEnemy();
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 38, 20);
+        zealot.setEnemy();
+        dragoon.cooldown = 0;
+
+        world(13, fakeOurs(dragoon), fakeEnemies(presser, zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now < 1) return;
+
+            presser.target = dragoon;
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            if (now != 12) return;
+
+            int attacks = 0;
+            for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
+                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacks++;
+            }
+            assertEquals(1, attacks,
+                "one switch, one attack - the riding step does not re-fire it: "
+                    + ordersOf(dragoon));
+        });
+    }
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
-
 }

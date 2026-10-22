@@ -1,5 +1,6 @@
 package atlantis.battle.targeting;
 
+import atlantis.battle.DuelMemory;
 import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.formation.CoverWithdraw;
 import atlantis.battle.formation.FocusFire;
@@ -17,6 +18,15 @@ public final class AcquireTarget {
     }
 
     public static AUnit acquire(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return null;
+        // Shoot-now priority (owner 2026-10-26): a valid target inside
+        // our own weapon range beats every sharing rule - walking past
+        // it to a far squadmate's kill donates hits and wastes the
+        // cooldown. Among in-range targets the weakest still draws the
+        // fire (focus, no walking involved); the current target wins
+        // ties so committed fire does not churn.
+        AUnit inRange = focusInRangeTarget(unit);
+        if (inRange != null) return inRange;
         // Sticky first: a committed unit finishes its own target (never
         // re-pick every frame - the restart costs the shot). Uncommitted
         // units join the shared focus target (weakest in reach of the
@@ -42,6 +52,42 @@ public final class AcquireTarget {
         if (target == null) {
             target = ClusterBreach.breachedBaseTarget(unit);
         }
+        if (target != null && target.isVisibleUnitOnMap() && target.position() != null) {
+            // Sight is memory: the ghost march closes on this even when
+            // the engagement below declines the chase.
+            DuelMemory.snapshotContact(unit, target.position());
+        }
         return target;
+    }
+
+    /** Weakest alive valid enemy inside our own weapon range, or null. Public as a seam. */
+    public static AUnit focusInRangeTarget(AUnit unit) {
+        try {
+            if (unit.target() != null && unit.target().isAlive()
+                && ASquadTargeting.isValidTarget(unit, unit.target())
+                && unit.hasWeaponRangeToAttack(unit.target(), 0)) {
+                return unit.target();
+            }
+            atlantis.units.select.Selection enemies = unit.enemiesNear();
+            if (enemies == null) return null;
+            AUnit best = null;
+            int bestHp = Integer.MAX_VALUE;
+            double bestDist = Double.MAX_VALUE;
+            for (AUnit enemy : enemies.list()) {
+                if (enemy == null || !enemy.isAlive()) continue;
+                if (!ASquadTargeting.isValidTarget(unit, enemy)) continue;
+                if (!unit.hasWeaponRangeToAttack(enemy, 0)) continue;
+                int hp = enemy.hp() + enemy.shields();
+                double dist = unit.distTo(enemy);
+                if (hp < bestHp || (hp == bestHp && dist < bestDist)) {
+                    best = enemy;
+                    bestHp = hp;
+                    bestDist = dist;
+                }
+            }
+            return best;
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }

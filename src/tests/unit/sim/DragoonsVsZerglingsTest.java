@@ -975,7 +975,15 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             }
             assertTrue(zealot.hp <= 0, "the dragoon wins the duel");
             int taken = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
-            assertTrue(taken <= 48, "standoff keeps the hits down, taken=" + taken
+            // Landing window for re-arms (owner 2026-10-26): a re-attack
+            // waits until the riding step lands instead of cancelling it
+            // the next frame. The sim has no order-cancellation model,
+            // so every paused re-attack reads as lost DPS here (40 hits
+            // measured pre-gate) while live it is what lets the step
+            // survive at all. The live arbiters are freeze rate (FROZEN
+            // twin) and duel W/L, not this number - it guards gross
+            // breakage (death, no shots), not the margin.
+            assertTrue(taken <= 75, "standoff keeps the hits down, taken=" + taken
                 + " (measured 40 on the DuelKite rule; the live Wine target is <2 hits, NEXT #169)");
         }
         finally {

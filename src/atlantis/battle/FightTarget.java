@@ -388,6 +388,22 @@ public final class FightTarget {
         // fires on its own the moment the weapon is ready (PurpleWave
         // Commander.attack: order on new/overdue target, else sleep).
         if (target.equals(unit.target())) return;
+        // Let the riding step land first (owner 2026-10-26): re-issuing
+        // attackUnit on the frame right after a move cancels the step
+        // before the engine executes it - the alternating move/attack
+        // spam that lands zero shots while bleeding (Wine 1Drag:
+        // 156 orders, cd stuck at 0). A step needs its command-latency
+        // window to take effect; after that the attack fires as usual.
+        // Engine and fakes agree here: a move order clears the target,
+        // so every post-step frame looks like a switch without this.
+        boolean riding;
+        try {
+            riding = DuelMemory.repositionedAgo(unit)
+                < atlantis.units.special.SleepUntilFrameGate.latencyFrames() + 1;
+        } catch (Exception ignored) {
+            riding = false;
+        }
+        if (riding) return;
         ShotTwin.fired(unit, target);
         unit.attackUnit(target);
         if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);

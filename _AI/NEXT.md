@@ -1581,6 +1581,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 shoot-now targeting (owner: dragoons walked past
+ in-range targets to chase a squadmate's kill 10 tiles out, taking
+ 5-6 hits): `AcquireTarget` returns the weakest valid in-range
+ target first (focus preserved inside range, no walk-past), squad/
+ shared/nearest stay as fallbacks; re-arm fires once per switch
+ and waits while a step rides (landing window = latency + 1) so
+ the chase no longer cancels the step - alternating spam verified
+ fixed in-test (`move, attackUnit, move, attackUnit` without the
+ gate). Sight snapshots into the ghost march even when the fight
+ declines. Pinned `AcquireTargetTest` 4/4 + re-arm pin (both
+ mutation-proofed); full suite green.
  2026-10-26 post-swing settle (owner hypothesis CONFIRMED in
  PurpleWave `AttackDelay.scala`: units stick when a move lands
  right after the attack animation - wait start + stopFrames + 2,

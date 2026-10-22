@@ -82,9 +82,10 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         dragoon.cooldown = 30;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(foe), () -> {
-            // dist 2.0, cd 30: cooldownDistance 3.75 -> desired min(4, 4 + (3.75+2)/2) = 4,
-            // no melee term (4 !<= 4 - 2).
-            assertEquals(4.0, Kite.desiredKiteDistance(dragoon, foe), 0.01);
+            // dist 2.0, cd 30: cooling hold owns the answer (owner
+            // 2026-10-26) - range - 0.4 = 3.6, in range yet safe,
+            // instead of the old closing formula's 4.0 edge.
+            assertEquals(3.6, Kite.desiredKiteDistance(dragoon, foe), 0.01);
         });
     }
 
@@ -100,9 +101,9 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            // hp 20 + shields 0 = 1.25 survived passes: WOUNDED, so the
-            // hold is the max-range edge (4 - 0.4 = 3.6), not the healthy
-            // 3.0. Gap 0.1 stays under the step-gain floor: hold + shoot.
+            // hp 20 + shields 0, cd 15: the cooling hold owns the answer
+            // (owner 2026-10-26) - range - 0.4 = 3.6, in range yet safe.
+            // Gap 0.1 stays under the step-gain floor: hold + shoot.
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
@@ -152,11 +153,10 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         wounded.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), healthy, wounded), fakeEnemies(zealot), () -> {
-            // Same fight, same cooldown: full health (11.25 passes) holds
-            // 3.0 with the melee-closer, the bleeding unit (1.25 passes)
-            // holds the 3.6 edge - the back line stays back without any
-            // cross-unit synchronization.
-            assertEquals(3.0, Kite.desiredKiteDistance(healthy, zealot), 0.01);
+            // Same fight, same cooldown: the cooling hold owns both
+            // answers now (owner 2026-10-26) - range - 0.4 = 3.6, in
+            // range yet safe, instead of the old close/edge split.
+            assertEquals(3.6, Kite.desiredKiteDistance(healthy, zealot), 0.01);
             assertEquals(3.6, Kite.desiredKiteDistance(wounded, zealot), 0.01);
         });
     }
@@ -170,9 +170,9 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            // 100 / 16 = 6.25 passes: just above the 6.0 wound line,
-            // still the healthy 3.0 close.
-            assertEquals(3.0, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
+            // 100 hp at cd 15: the cooling hold owns the answer (owner
+            // 2026-10-26) - 3.6, in range yet safe, not the old close.
+            assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
         });
     }
 

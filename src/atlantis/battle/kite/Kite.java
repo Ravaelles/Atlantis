@@ -31,6 +31,14 @@ public final class Kite {
      */
     public static double desiredKiteDistance(AUnit unit, AUnit threat) {
         double myRange = unit.groundWeaponRange();
+        // Cooling dragoon holds firing distance (owner 2026-10-26): with
+        // 15+ cooldown frames left there is time to brake and be weapon-
+        // ready, so hold range - 0.4 - still in range, still safe - and
+        // spend the tiles adjusting position instead of closing. Below
+        // 15 the closing formula owns the last frames before the shot.
+        if (unit.isDragoon() && unit.cooldown() >= 15) {
+            return Math.max(0.0, myRange - 0.4);
+        }
         double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
         double dist = unit.distTo(threat);
         double tilesPerFrame = unit.maxSpeed() / 32.0;
@@ -103,13 +111,35 @@ public final class Kite {
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
             // default constants, this keeps it true whatever they become.
-            if (lowHp
+            // Meat-screen discipline (owner 2026-10-26) stands above it:
+            // with friendly zealots screening inside 8 tiles and 40+ hp
+            // the dragoon holds and shoots on ready instead of yielding -
+            // the screen tanks, the guns speak. Pinch and surrounded
+            // above still yield: a closing pocket is dying, not trading.
+            if (!hasMeatScreen(unit) && lowHp
                 && unit.distTo(threat) < CombatTuning.current().getDragoonLowHpHoldTiles()
                 && unit.cooldown() > CombatTuning.current().getDragoonLowHpFireCooldown()) return true;
         }
         if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
+        if (unit.isDragoon() && hasMeatScreen(unit)) return false;
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
+
+    /**
+     * Meat screen (owner 2026-10-26): friendly zealots inside 8 tiles and
+     * 40+ hp on the dragoon. The screen tanks, so the dragoon stands and
+     * shoots on ready instead of yielding ground for the margin. Public
+     * as a seam: the discipline pins without running the frame.
+     */
+    public static boolean hasMeatScreen(AUnit unit) {
+        if (unit == null || !unit.isDragoon()) return false;
+        try {
+            return unit.hp() + unit.shields() >= 40 && unit.friendlyZealotsNearCount(8) > 0;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     /**
      * Tiles the threat still must close before it can hit us, minus
      * half a tile when its order target is exactly this unit and minus
