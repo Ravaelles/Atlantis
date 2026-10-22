@@ -510,3 +510,26 @@ same hours are not spent twice.
   `sample`, `reset`). The commander names the intent, the
   collaborator owns the machinery.
 
+## 24. Readability by extraction: named things over clever code (owner's ruling, 2026-10-22)
+
+- Every method reads as sentences, one level of abstraction at a
+  time. A compound condition, an inline best-tracking loop, or a
+  multi-step computation inside a larger method is extracted - never
+  left inline with a comment explaining it. If a reviewer must
+  simulate the code in their head to understand a line, the code
+  owes them a name.
+- Prefer, in this order: a named local variable (names the value),
+  a named private method (names the step), a dedicated class (names
+  the concept and owns its state). The `focusInRangeTarget` split is
+  the reference shape: `keepableCurrentTarget` (the gate) plus
+  `WeakestInRange` (the scan with its mutable best-tracking)
+  instead of interleaved null-checks and `bestHp`/`bestDist` locals.
+- An extraction never changes behavior: the pinning tests stay green
+  untouched. A readability refactor that alters behavior is a behavior
+  change wearing a disguise - split the commits.
+- The "one more line" rule: an extra line that names something is
+  always cheaper than a dense line that computes it. Density is not
+  elegance.
+- Applies to tests and scripts as well: fixture setup that needs a
+  paragraph of comments wants a named helper instead.
+
