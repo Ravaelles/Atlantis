@@ -1676,6 +1676,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  stuck unit). Sweep unexercised live (contact visible throughout)
  - stays sim-proven only. Single-game noise per §14; loss shape is
  a lost even brawl + unwinnable run, not a formation freeze.
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 7/9 in 43 s, first game
+ on the table-of-contents refactor): journal byte-identical by
+ construction (same calls, same order, frozen tags) - all 9 deaths
+ ClusterKite, zero FROZEN, SHOT 308 + ATTACK 18, KITE 88
+ stepped-aside + 23 frozen-reset. CLUSTER twin flows through the
+ new ClusterTwin.sample (34 rows, ghost none->contact). Result in
+ the known variance band (wins 12/5 vs losses 4/9, 6/9, 5/9,
+ 10/9); what the game proves is no new pathology, not the score.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
