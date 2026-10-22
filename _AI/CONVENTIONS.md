@@ -458,3 +458,29 @@ same hours are not spent twice.
   tier (`scripts/run-full-tests.sh`) runs everything, and runs at
   the end of every finished feature, not per edit. Detail and the
   area map live in `DOCS/TESTING.md`.
+
+## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-26)
+
+- Commander classes (`BattleCommander` and its kin) **only delegate**:
+  one public entry per frame (`act`), one private step per domain move
+  (`retreatIfBeaten`, `leaveIfBreached`, `holdFormationIfCalm`, `fight`,
+  `huntLastContact`, `regroup`). The how lives in the step's own class,
+  never in the commander. A commander that computes is a manager in
+  disguise - split it.
+- Names use the **ubiquitous language of StarCraft** (DDD strategic
+  sense, §5): retreat, formation, kite, reengage, reinforce, hunt,
+  regroup, breach, standoff. Never machinery words: `order`, `process`,
+  `handle-unit`, `trace`, `strategy-tag`, `manager`, `aspect`. A generic
+  name is a design smell, not brevity - rename on sight.
+- The per-unit vocabulary has one home: **`atlantis.battle.Behavior`**.
+  `Behavior` is the *reason* (why the unit moves: `KITE`,
+  `HOLD_FORMATION`, `GHOST_CREEP`); `Actions`/`Action` is the *order*
+  (what the engine is told: move, attack, hold). Call sites read as
+  `unit.move(dest, Actions.MOVE_ENGAGE, Behavior.KITE.tag())` - "move
+  because we kite". The `tag()` strings are frozen journal spellings
+  (death logs and tooling read them); only the enum names evolve.
+- Private steps stay one verb deep: the commander's `act` reads top to
+  bottom as the battle story (observe, retreat if beaten, leave a
+  breached base, acquire, hold, fight, hunt, regroup). Any branch that
+  needs a comment explaining *what* it is gets a named method instead.
+

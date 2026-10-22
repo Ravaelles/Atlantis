@@ -1,5 +1,6 @@
 package atlantis.battle.cluster;
 
+import atlantis.battle.Behavior;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -30,7 +31,7 @@ public final class LeaveBreachedBase {
         ) {
             HasPosition rally = ClusterBreach.breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
-                unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
+                unit.move(rally, Actions.RUN_ENEMY, Behavior.BREACH_RETREAT.tag());
                 return true;
             }
         }

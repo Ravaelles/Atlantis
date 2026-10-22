@@ -513,6 +513,66 @@ public class GhostAdvanceTest extends WorldStubForTests {
     }
 
     @Test
+    public void sweepCyclesRegionsWhenMapExplored() {
+        // Last resort (owner 2026-10-26): contact stale, no fogged
+        // memory, map explored - march at the nearest region center
+        // beyond reach. Arriving excludes it, so the army cycles
+        // regions instead of parking while unseen enemies live.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+
+        atlantis.map.region.ARegion here = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(here.center()).thenReturn(APosition.create(28, 29));
+        atlantis.map.region.ARegion far = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(far.center()).thenReturn(APosition.create(50, 30));
+        java.util.List<atlantis.map.region.ARegion> all =
+            java.util.Arrays.asList(here, far);
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(atlantis.map.region.Regions::regions).thenReturn(all);
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(null);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(APosition.create(50, 30), GhostAdvance.ghostPointFor(dragoon),
+                    "standing in A marches at B, not in place");
+                assertEquals("sweep", GhostAdvance.ghostSourceFor(dragoon),
+                    "the readout names the sweep branch");
+            });
+        }
+    }
+
+    @Test
+    public void sweepRotatesOnArrival() {
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 50, 30);
+
+        atlantis.map.region.ARegion here = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(here.center()).thenReturn(APosition.create(28, 29));
+        atlantis.map.region.ARegion far = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(far.center()).thenReturn(APosition.create(50, 30));
+        java.util.List<atlantis.map.region.ARegion> all =
+            java.util.Arrays.asList(here, far);
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(atlantis.map.region.Regions::regions).thenReturn(all);
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(null);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(APosition.create(28, 29), GhostAdvance.ghostPointFor(dragoon),
+                    "arrived at B: march back at A, no memory needed");
+            });
+        }
+    }
+
+    @Test
     public void heldChokeStillBeatsTheGhost() {
         // Same contested-choke shape as ChokeStandoffTest (dragoon 11 tiles
         // south of choke (28,18), zealot inside the 12-tile contest ring):

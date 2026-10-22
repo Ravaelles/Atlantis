@@ -52,22 +52,25 @@ public final class ClusterRally {
      * Formation slot for a unit with no enemy in reach (Phase A): the
      * crescent around the leader's nearest enemy. Null when the
      * formation does not apply (too few units, no pivot, pivot in
-     * contact, no walkable slot) - the caller bunches on the leader.
+     * contact, no walkable slot, or any FLEE) - the caller bunches on
+     * the leader or rallies home instead of standing in an arc.
      *
      * <p>No visible pivot does not mean no direction (owner 2026-10-26):
      * on FIGHT the blind crescent still faces where the enemy is
      * expected - the last-seen enemy center on UMS, the main choke at
      * the home base on melee, the mission anchor past that - instead
-     * of collapsing into a clump facing nowhere. On FLEE only a
-     * visible pivot forms up (retreats never march at memories);
-     * truly blind on FIGHT still bunches, honestly standing instead
-     * of guessing.</p>
+     * of collapsing into a clump facing nowhere. FLEE never forms up:
+     * arcs facing the pursuer pinned retreating armies in place
+     * (ZealDrag_v_Zeal: static center through 550 frames of FLEE),
+     * so the retreat owns movement instead. Truly blind on FIGHT
+     * still bunches, honestly standing instead of guessing.</p>
      */
     public static HasPosition formationSlotFor(
         AUnit unit, AUnit leader, HasPosition anchor, FightOrFlight.Tactic tactic
     ) {
         if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
         if (leader == null || !leader.isAlive()) return null;
+        if (tactic == FightOrFlight.Tactic.FLEE) return null;
         HasPosition pivot = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
         if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {

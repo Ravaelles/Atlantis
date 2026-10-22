@@ -221,17 +221,15 @@ public class ClusterRallyTest extends WorldStubForTests {
     }
 
     @Test
-    public void fleeingNeverMarchesAtMemories() {
-        // FLEE with no visible pivot: no ghost slots, no anchor slots -
-        // the retreat bunches home instead of marching at a memory.
-        aGame.when(AGame::isUms).thenReturn(true);
-
+    public void fleeingNeverFormsUp() {
+        // FLEE never forms up (owner 2026-10-26): arcs facing the
+        // pursuer pinned a retreating army in place for 550 frames.
+        // The retreat owns movement, even with a visible enemy.
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
         FakeUnit b = fake(AUnitType.Protoss_Dragoon, 21, 20);
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 20, 21);
-        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 25, 20);
         foe.setEnemy();
-        foe.isVisibleUnitOnMap = false;
 
         world(3, fakeOurs(a, b, c), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 2) return;
@@ -241,8 +239,8 @@ public class ClusterRallyTest extends WorldStubForTests {
             Alpha.get().addUnit(c);
             try {
                 assertNull(ClusterRally.formationSlotFor(
-                    a, a, APosition.create(60, 20), FightOrFlight.Tactic.FLEE),
-                    "retreats never march at memories");
+                    a, a, null, FightOrFlight.Tactic.FLEE),
+                    "visible pursuer or not: FLEE means move, never arc");
             }
             finally {
                 Alpha.get().removeUnit(a);
@@ -251,7 +249,6 @@ public class ClusterRallyTest extends WorldStubForTests {
             }
         });
     }
-
     @Test
     public void regroupMarchesLineInFormationScoutAhead() {
         // The approach march: the vanguard detaches with the ghost

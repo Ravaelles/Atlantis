@@ -1,5 +1,6 @@
 package atlantis.battle.retreating;
 
+import atlantis.battle.Behavior;
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.ClusterRally;
@@ -57,7 +58,7 @@ public final class RetreatFromLostFight {
             }
             HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
             if (point != null && unit.distTo(point) >= 0.2) {
-                unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
+                unit.move(point, Actions.RUN_ENEMY, Behavior.FLEE.tag());
                 return true;
             }
         }

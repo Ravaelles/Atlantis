@@ -166,7 +166,7 @@ public final class FightTarget {
         if (makeWay != null) aside = makeWay.dest;
         if (aside != null
             && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
-            && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
+            && unit.move(aside, Actions.MOVE_AVOID, Behavior.MAKE_WAY.tag())) {
             FormationTwin.madeWay(unit, makeWay.escaper, aside);
             DuelMemory.stepped(unit, now);
             return true;
@@ -185,7 +185,7 @@ public final class FightTarget {
             // cooling, but the duel is lost by standing - yield to hold
             // distance first, argue about the margin after.
             APosition yield = DuelKite.yieldStep(unit, threat);
-            if (yield != null && unit.move(yield, Actions.MOVE_AVOID, "ClusterDuelYield")) {
+            if (yield != null && unit.move(yield, Actions.MOVE_AVOID, Behavior.DUEL_YIELD.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
                 return true;
@@ -223,7 +223,7 @@ public final class FightTarget {
                 ? MoveAway.bestDestination(unit, threat, stepLen)
                 : null;
             if (dest != null) dest = bendTowardSquad(unit, dest);
-            if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
+            if (dest != null && unit.move(dest, Actions.MOVE_AVOID, Behavior.KITE.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
                 return true;
@@ -289,7 +289,7 @@ public final class FightTarget {
             && now - lastMoved >= 48 && unit.distTo(lastMovedAt) < 0.5;
         if (trying && motionless) {
             KiteTwin.frozenReset(unit, threat);
-            unit.stop("ClusterUnstick");
+            unit.stop(Behavior.UNSTICK.tag());
             DuelMemory.forgetMotion(unit);
             return true;
         }
@@ -344,7 +344,7 @@ public final class FightTarget {
                     .translateTilesTowards(unit, unit.distTo(target) - standOff);
                 if (fireAt != null
                     && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
-                    && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
+                    && unit.move(fireAt, Actions.MOVE_ENGAGE, Behavior.REENGAGE.tag())) {
                     DuelMemory.stepped(unit, now);
                     return true;
                 }

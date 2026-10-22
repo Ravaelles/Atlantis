@@ -1,5 +1,6 @@
 package atlantis.battle.strategy;
 
+import atlantis.battle.Behavior;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
@@ -47,22 +48,22 @@ public enum BattleStrategy {
     }
 
     /**
-     * Move tag for the regroup point above. Meaningful only when
+     * Move behavior for the regroup point above. Meaningful only when
      * {@link #regroupPointFor} answers non-null.
      */
-    public String regroupTag() {
+    public Behavior regroupTag() {
         switch (this) {
             case COLLAPSE:
-                return "ClusterCollapse";
+                return Behavior.COLLAPSE;
 
             case SCOUT_BAIT:
-                return "ClusterBait";
+                return Behavior.BAIT;
 
             case CHOKE_HOLD:
-                return "ClusterStandoff";
+                return Behavior.STANDOFF;
 
             default:
-                return "ClusterMove";
+                return Behavior.GATHER;
         }
     }
 }

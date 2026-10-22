@@ -1,5 +1,6 @@
 package atlantis.battle.strategy;
 
+import atlantis.battle.Behavior;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
@@ -190,7 +191,7 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return false;
         }
-        if (dest != null && unit.move(dest, Actions.MOVE_ENGAGE, advanceTagFor(unit))) {
+        if (dest != null && unit.move(dest, Actions.MOVE_ENGAGE, advanceTagFor(unit).tag())) {
             noteProgress(unit);
             atlantis.battle.FightTarget.markRepositioned(unit);
             return true;
@@ -265,8 +266,8 @@ public final class GhostAdvance {
     }
 
     /** Move tag for the creep: the scout walks out, the line follows. */
-    public static String advanceTagFor(AUnit unit) {
-        return isVanguard(unit) ? "ClusterScout" : "ClusterGhost";
+    public static Behavior advanceTagFor(AUnit unit) {
+        return isVanguard(unit) ? Behavior.GHOST_SCOUT : Behavior.GHOST_CREEP;
     }
 
     /**
@@ -337,7 +338,47 @@ public final class GhostAdvance {
             if (unexploredDestinationFor(unit) != null) return "unexplored";
         } catch (Exception ignored) {
         }
+        try {
+            if (sweepDestinationFor(unit) != null) return "sweep";
+        } catch (Exception ignored) {
+        }
         return "none";
+    }
+
+    /**
+     * Last-resort march (owner 2026-10-26): contact stale, no fogged
+     * memory, map explored - the nearest region center beyond reach.
+     * Arriving excludes it next time (inside REACHED_TILES), so the
+     * army cycles regions instead of parking on a stale ghost while
+     * unseen enemies still live. UMS only: melee keeps formation
+     * discipline when blind. Null when nowhere else to walk.
+     */
+    private static APosition sweepDestinationFor(AUnit unit) {
+        if (unit == null || !atlantis.game.A.isUms()) return null;
+        try {
+            java.util.List<atlantis.map.region.ARegion> regions =
+                atlantis.map.region.Regions.regions();
+            if (regions == null || regions.isEmpty()) return null;
+            atlantis.map.region.ARegion best = null;
+            double bestDist = Double.MAX_VALUE;
+            for (atlantis.map.region.ARegion region : regions) {
+                if (region == null || region.center() == null) continue;
+                double dist;
+                try {
+                    dist = unit.distTo(region.center());
+                } catch (Exception ignored) {
+                    continue;
+                }
+                if (dist < REACHED_TILES) continue;
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = region;
+                }
+            }
+            return best == null ? null : best.center();
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     /**
@@ -393,6 +434,12 @@ public final class GhostAdvance {
             if (nearest != null) return nearest.position();
         } catch (Exception ignored) {
         }
-        return unexploredDestinationFor(unit);
+        APosition unseen = unexploredDestinationFor(unit);
+        if (unseen != null) return unseen;
+        // Blind and the map is explored: sweep region centers instead
+        // of standing (owner 2026-10-26, timeout anatomy) - the nearest
+        // center beyond reach, so arriving rotates to the next one on
+        // its own, with no per-unit memory to drift.
+        return sweepDestinationFor(unit);
     }
 }

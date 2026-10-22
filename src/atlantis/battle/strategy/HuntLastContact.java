@@ -1,5 +1,6 @@
 package atlantis.battle.strategy;
 
+import atlantis.battle.Behavior;
 import atlantis.battle.FightTarget;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -31,7 +32,7 @@ public final class HuntLastContact {
         if (Count.bases() == 0) {
             APosition last = FightTarget.lastContact(unit);
             if (last != null && unit.distTo(last) > 9) {
-                if (unit.move(last, Actions.MOVE_ENGAGE, "ClusterHunt")) {
+                if (unit.move(last, Actions.MOVE_ENGAGE, Behavior.HUNT.tag())) {
                     FightTarget.markRepositioned(unit);
                     return true;
                 }

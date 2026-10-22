@@ -73,65 +73,101 @@ public class BattleCommander extends Commander {
         // Throttled state line: the only per-game proof of what the
         // cluster does (posture, tactic, size, anchor). JSON-only, stderr.
         if (A.everyNthGameFrame(31)) {
-            traceCluster(posture, tactic, anchor);
+            recordClusterState(posture, tactic, anchor);
         }
 
         for (AUnit unit : Alpha.get().selection().list()) {
-            order(unit, tactic, anchor, Alpha.get().leader());
+            if (unit == null || !unit.isAlive()) continue;
+            act(unit, tactic, anchor, Alpha.get().leader());
         }
 
         return false;
     }
 
-    private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
-        if (unit == null || !unit.isAlive()) return;
-
-        act(unit, tactic, anchor, leader);
-    }
-
     /**
-     * One unit's act for the frame, extracted so the composition pins
-     * without a game: FLEE with nowhere to go falls through to the
-     * fight logic (no DoNothing deaths on baseless maps), a cooling
-     * Dragoon with a close threat steps back, a mid-animation unit is
-     * never interrupted, otherwise it attacks, hunts or regroups.
+     * One unit's act for the frame, in reading order: observe, retreat
+     * if beaten, leave a breached base, acquire a target, then either
+     * hold formation and march, fight, hunt the last contact, or
+     * regroup. Each branch below is one named domain step; the how
+     * lives in that step, never here.
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
-        atlantis.battle.twins.UnitTelemetry.sample(unit);
-        atlantis.battle.FrozenWatch.note(unit);
-        if (RetreatFromLostFight.retreat(unit, tactic, anchor, leader)) return;
-        if (LeaveBreachedBase.leave(unit)) return;
+        observe(unit);
+        if (retreatIfBeaten(unit, tactic, anchor, leader)) return;
+        if (leaveIfBreached(unit)) return;
 
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null) {
-            // Army-level contact for the split-cluster join (NEXT #181):
-            // recorded at acquisition, not in fight(), because kiting
-            // units never reach fight() yet still engage the enemy.
-            // FIGHT only: a routing unit must not pull the army into it.
-            if (tactic == FightOrFlight.Tactic.FIGHT) {
-                atlantis.battle.ArmyContact.noteFight(unit, target);
-            }
-            // Formation hold (owner 2026-10-26, Stardust doctrine): while
-            // the enemy is melee-only and nobody is in contact, the line
-            // marches in formation instead of dissolving into a charge.
-            // No slot means no formation (duels fall through untouched).
-            if (FormationHold.shouldHold(unit, target, tactic)) {
-                HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-                if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "FormHold")) {
-                    FightTarget.markRepositioned(unit);
-                    return;
-                }
-            }
-            FightTarget.fight(unit, target, strategy);
+            noteArmyContact(unit, target, tactic);
+            if (holdFormationIfCalm(unit, target, tactic, anchor, leader)) return;
+            fight(unit, target, strategy);
             return;
         }
-        if (HuntLastContact.hunt(unit)) return;
+        if (huntLastContact(unit)) return;
         regroup(unit, tactic, anchor, leader, strategy);
     }
 
+    /** Twin + frozen-watch sampling, once per unit per frame. */
+    private static void observe(AUnit unit) {
+        atlantis.battle.twins.UnitTelemetry.sample(unit);
+        atlantis.battle.FrozenWatch.note(unit);
+    }
+
+    /** Retreat owns routing units before anything else looks at them. */
+    private static boolean retreatIfBeaten(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
+    ) {
+        return RetreatFromLostFight.retreat(unit, tactic, anchor, leader);
+    }
+
+    /** A breached base is left, never defended into a wipe. */
+    private static boolean leaveIfBreached(AUnit unit) {
+        return LeaveBreachedBase.leave(unit);
+    }
+
+    /**
+     * Army-level contact for the split-cluster join (NEXT #181):
+     * recorded at acquisition, not in fight(), because kiting
+     * units never reach fight() yet still engage the enemy.
+     * FIGHT only: a routing unit must not pull the army into it.
+     */
+    private static void noteArmyContact(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
+        if (tactic == FightOrFlight.Tactic.FIGHT) {
+            atlantis.battle.ArmyContact.noteFight(unit, target);
+        }
+    }
+
+    /**
+     * Formation hold (owner 2026-10-26, Stardust doctrine): while
+     * the enemy is melee-only and nobody is in contact, the line
+     * marches in formation instead of dissolving into a charge.
+     * No slot means no formation (duels fall through untouched).
+     */
+    private static boolean holdFormationIfCalm(
+        AUnit unit, AUnit target, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
+    ) {
+        if (!FormationHold.shouldHold(unit, target, tactic)) return false;
+        HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+        if (slot == null || !unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
+            return false;
+        }
+        FightTarget.markRepositioned(unit);
+        return true;
+    }
+
+    /** The engaged frame: swing discipline, kite, glide, re-arm. */
+    private static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
+        FightTarget.fight(unit, target, strategy);
+    }
+
+    /** Lost contact on a baseless map marches the remembered point. */
+    private static boolean huntLastContact(AUnit unit) {
+        return HuntLastContact.hunt(unit);
+    }
+
     /** Throttled CLUSTER twin: posture, tactic, size, anchor. JSON-only, stderr. */
-    private static void traceCluster(
+    private static void recordClusterState(
         ClusterMission.Posture posture, FightOrFlight.Tactic tactic, HasPosition anchor
     ) {
         // Cluster center readout (owner 2026-10-26): the file carries
@@ -196,7 +232,7 @@ public class BattleCommander extends Commander {
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
     ) {
         APosition regroup = strategy.regroupPointFor(unit);
-        if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag())) {
+        if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag().tag())) {
             FightTarget.markRepositioned(unit);
             return;
         }
@@ -207,7 +243,7 @@ public class BattleCommander extends Commander {
         // FLEE) falls through to the creep below.
         if (!GhostAdvance.isVanguard(unit)) {
             HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-            if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "ClusterForm")) {
+            if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
                 FightTarget.markRepositioned(unit);
                 return;
             }
@@ -225,14 +261,14 @@ public class BattleCommander extends Commander {
         // slots after).
         if (tactic == FightOrFlight.Tactic.FIGHT && atlantis.game.A.isUms()) {
             APosition reinforce = atlantis.battle.ArmyContact.reinforcePointFor(unit);
-            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, "ClusterReinforce")) {
+            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
                 FightTarget.markRepositioned(unit);
                 return;
             }
         }
         HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
         if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
-        if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
+        if (point != null && unit.move(point, Actions.MOVE_ENGAGE, Behavior.GATHER.tag())) {
             FightTarget.markRepositioned(unit);
         }
     }
