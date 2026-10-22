@@ -1687,6 +1687,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  #130 Unstick/MakeWay/Kite rows throughout; 0 FROZEN) - deaths in
  motion even before the chew-voids fix; the fix targets the stand,
  not the outcome.
+ 2026-10-23 model-run headless game on the current tree (VICTORY 32/7
+ in 37 s, 893f): all 7 deaths ClusterKite, zero standing - zealots
+ withdraw instead of donating contact. KITE 290 rows (272
+ stepped-aside / 13 frozen-reset / 5 stuck-no-step): the sim-predicted
+ pathology (130/130 stuck, zero moves) is gone live. Consistent with
+ the executor; single-game noise per §14.
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
  (owner 2026-10-21/22): on the new map the bot first does not move
  at all, then loses on zealot/dragoon miscoordination - zealots
