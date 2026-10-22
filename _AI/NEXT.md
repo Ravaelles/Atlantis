@@ -719,6 +719,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   exists: without a projectile there is nothing committed). Live
   proof the wider window fires (released-finished 45 rows/game,
   3 per cycle). Ladder totals: V0 15.7 -> V1 12.0 -> V2 10.3.
+ 2026-10-23 V2 significance batch (6 games, same build): 13/10/6/8/10/8,
+ all VICTORY 1/0 - combined V2 mean 9.6 over 9 games vs V0 15.7 over 3.
+ The floor holds: no freeze, no DPS loss anywhere on the ladder.
   Game 3 of V2 may have run with the #183 migration in-tree
   (jar rebuild race) - proven behavior-neutral (the only caller
   of the migrated consumer is dead code), batch stands.
@@ -1943,6 +1946,13 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  churn the #184 ladder is designed to bound (rule 0 + switch bound).
  No implementation here (#184 stays sequenced post-cut); the sim/repro
  isolation is the next measurement.
+ 2026-10-23 rearm side verified clean in the 1v1 latch batches (V0/V1/V2,
+ 11 games): shot-rows 16/16/22 per game with 3-in-4f bursts are re-arms
+ after glides (null->foe transitions), not cancelled shots - all games
+ VICTORY 1/0 with normal frame counts, DPS intact. Rearm's own
+ discipline (re-issue only on target change + step-ride guards) holds;
+ the #182 spam shape needs multi-foe target churn to manifest, which
+ duels cannot produce - still #184's switch bound to own.
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
@@ -1966,6 +1976,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  history-backed flags are the manager's own lastUnderAttack/hitCount,
  read only on Terran lift/scout/repair, ChokeBlocker and Defend-interrupt
  tracks: audit-then-migrate those one by one, no batch.
+ 2026-10-23 audit outcome: PreventAttacksInMissionDefend (the one live
+ Protoss consumer, defend-mission units are battle-observed) MIGRATED
+ to DuelMemory.damagedLessThanAgo(45), pinned 2/2. The rest stay on
+ history, each for a stated reason, no blind migration: Terran
+ lift/scout/repair (7 sites) + ChokeBlocker (incl. the lone
+ underAttackLessThanAgo selector caller) are Terran-only tracks on
+ units the battle hook never observes - the latch would never fire
+ for them, migration would silently neuter them; and D8 is
+ Protoss-only, so all of it is dormant anyway.
 
 - **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
  Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them. Two compounding causes read off the call chain: (a) `focusInRangeTarget` stickiness (AcquireTarget.java:66-70) returns the current target without scanning when it is valid and in range - the chewer is never considered; (b) `ASquadTargeting.isValidTarget` bans `hp<=15`, ALL zerglings and ALL workers from EVER being targeted - an 8hp chewer is literally unselectable, so the kite/focus chain shoots past it. The user's one-shot rule is the exact inverse of the current ban.
