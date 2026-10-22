@@ -1501,6 +1501,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  (approach + first contacts), 2 on one f277 re-close; longest holds
  at 2-4 tiles (shots at dist 35-40) with zero hits. Next: push the
  margin out (E: margin 2.5 + step 3.0) instead of more blind grid.
+ 2026-10-23 round 2 (K=4): E (margin 2.5 + step 3.0) 12/18/14/15
+ (mean 14.75) does NOT beat D; D-replicates 4/16/13/11 (D combined
+ n=7: mean 11.4, best singles 6 and 4). Knob plateau confirmed:
+ pushing margin 2.0->2.5 adds nothing (difference within noise,
+ t~1.4). Same-config spread (4..16) dominates between-config gaps.
+ D-rep game-1 vs game-2 anatomy: 4-hit game escapes to 2.7-4.4 tiles
+ by f144 and holds it (0 further hits); 16-hit game oscillates
+ 0.5-1.9 all game. Bistable: the opening ~100f decides the attractor
+ (escape vs glued), knobs only shift the odds. Next lever is opening
+ discipline + per-cycle standstill, not longer steps.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
