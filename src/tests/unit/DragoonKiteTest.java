@@ -44,15 +44,28 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void healthyDragoonHoldsFireAtTwoTiles() {
+    public void coolingDragoonKitesBeforeProjectedContact() {
+        // Projected-contact doctrine (owner; the old hold-at-2-tiles is
+        // withdrawn as dangerous): at 1.5 tiles with 15 frames of
+        // cooldown the Zealot closes ~1.9 tiles before the weapon is
+        // ready - contact is projected, so the Dragoon kites while
+        // cooling (costs no DPS) instead of standing into the swing.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 31.5, 20);
         dragoon.cooldown = 15;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            assertTrue(Kite.shouldKite(dragoon, zealot),
+                "contact projected before the shot is ready - kite while cooling");
+        });
+
+        // Same pair, weapon nearly ready: the Zealot closes ~0.6 tiles
+        // in 5 frames, no contact before the shot - hold and fire.
+        dragoon.cooldown = 5;
+        zealot.position = atlantis.map.position.APosition.createFromPixels(1040, 640);
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             assertFalse(Kite.shouldKite(dragoon, zealot),
-                "healthy Dragoon holds to ~1 tile and shoots through the cooldown - "
-                + "the Zealot may come much closer than 3.5 tiles");
+                "no contact projected - stand and fire instead of stepping back");
         });
     }
 
@@ -127,24 +140,64 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void facingZealotTriggersEarlierYield() {
-        // Total 132: margin required 1.94 tiles. At dist 2 the base
-        // margin (2.0) holds - unless the Zealot faces us (-0.5),
-        // which is PurpleWave's commitment read (targeted + facing-dot):
-        // the Dragoon yields as the Zealot commits to the swing.
+    public void longCooldownKitesRegardlessOfFacing() {
+        // Projected-contact doctrine (owner): at 15 frames of cooldown
+        // the Zealot turns in 1 frame and closes ~1.9 tiles before the
+        // shot - current facing is noise, projected contact decides.
+        // Healthy band, dist 1.8: the margin would still hold
+        // (1.8/1.3 vs required ~1.19), so a kite here pins the cooling
+        // rule, not the margin.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit away = fake(AUnitType.Protoss_Zealot, 31.8, 20);
+        FakeUnit toward = fake(AUnitType.Protoss_Zealot, 31.8, 20);
+        dragoon.cooldown = 15;
+        away.setAngle(0);
+        toward.setAngle(Math.PI);
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(away, toward), () -> {
+            assertTrue(Kite.shouldKite(dragoon, away),
+                "Zealot facing away still closes before the shot - kite, facing is noise at long cooldown");
+            assertTrue(Kite.shouldKite(dragoon, toward),
+                "Zealot facing us commits to the swing - kite");
+        });
+
+        // Wounded reach: at 2.4 tiles the healthy radius (2.0) stays
+        // silent - only the wounded radius (2.6) kites, so hurt guns
+        // yield from farther out while they cannot shoot anyway.
+        FakeUnit hurtDragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.4, 20);
+        hurtDragoon.cooldown = 15;
+        hurtDragoon.hp = 80;
+        hurtDragoon.shields = 0;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), hurtDragoon), fakeEnemies(foe), () -> {
+            assertTrue(Kite.shouldKite(hurtDragoon, foe),
+                "wounded at 2.4: yield early, every tile kept is a swing avoided");
+        });
+    }
+
+    @Test
+    public void shortCooldownStillReadsFacing() {
+        // Same distance, weapon nearly ready: the Zealot closes ~0.6
+        // tiles in 5 frames, so contact is NOT projected - the cooling
+        // rule stays silent, the margin gate decides, and facing still
+        // discriminates there. Band just above wounded (140/16 = 8.75
+        // hits left, required margin ~1.81): away holds at 2.0, toward
+        // yields at 1.5.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit away = fake(AUnitType.Protoss_Zealot, 32, 20);
         FakeUnit toward = fake(AUnitType.Protoss_Zealot, 32, 20);
-        dragoon.cooldown = 15;
-        dragoon.hp = 52;
+        dragoon.cooldown = 5;
+        dragoon.hp = 140;
+        dragoon.shields = 0;
         away.setAngle(0);
         toward.setAngle(Math.PI);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(away, toward), () -> {
             assertFalse(Kite.shouldKite(dragoon, away),
-                "Zealot facing away is not committing - hold and shoot");
+                "Zealot facing away is not committing and contact is not projected - hold and shoot");
             assertTrue(Kite.shouldKite(dragoon, toward),
-                "Zealot facing us commits to the swing - yield half a tile early");
+                "Zealot facing us commits - the faced margin yields even with the shot near");
         });
     }
 
@@ -536,14 +589,15 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     public void coolingDragoonHoldsItsOrderInsteadOfRespamming() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
-        dragoon.cooldown = 15;
+        dragoon.cooldown = 5;
 
-        // Healthy at 2 tiles: margin holds, so the Dragoon stands and
-        // shoots instead of stepping back. Two acts, one order: the
-        // standing attack order fires on its own when the weapon is
-        // ready (PurpleWave: order on new target, else sleep).
-        // Based on purpose: order discipline, not kiting - baseless
-        // duels step off while cooling (NEXT #169).
+        // Weapon nearly ready at 2 tiles: no contact projected, the
+        // cooling rule stays silent and the margin holds, so the
+        // Dragoon stands and shoots instead of stepping back.
+        // Two acts, one order: the standing attack order fires on its
+        // own when the weapon is ready (PurpleWave: order on new
+        // target, else sleep).
+        // Based on purpose: order discipline, not kiting.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
@@ -565,7 +619,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     @Test
     public void coolingDragoonKeepsItsTargetWhenAnotherComesNearer() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit zealotA = fake(AUnitType.Protoss_Zealot, 32, 20);
+        FakeUnit zealotA = fake(AUnitType.Protoss_Zealot, 33, 20);
         FakeUnit zealotB = fake(AUnitType.Protoss_Zealot, 34, 20);
         dragoon.cooldown = 15;
 
@@ -575,14 +629,16 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         // new/overdue discipline) - per-frame re-picking restarts the
         // attack animation faster than it completes (Wine ZealDrag:
         // 519 acquisitions for 19 kills). Only A's death re-arms the pick.
-        // Based on purpose: target stickiness, not kiting - baseless duels
-        // step off while cooling (NEXT #169).
+        // Based on purpose: target stickiness, not kiting. Both zealots
+        // stay outside the projected-contact radius (A at 3.0, B steps
+        // to 2.8 - nearer, still beyond 2.6), so the cooling rule stays
+        // silent and the standoff is about the pick, not the step.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealotA, zealotB), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 1, "acquires A: " + ordersOf(dragoon));
 
-            zealotB.position = atlantis.map.position.APosition.createFromPixels(31 * 32, 20 * 32);
+            zealotB.position = atlantis.map.position.APosition.createFromPixels(1050, 20 * 32);
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 1,

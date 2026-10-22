@@ -452,7 +452,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     @Test
     public void pinchGateTogglesYieldVsHold() {
         FakeUnit dragoon = woundedDragoon(30, 20, 70);
-        dragoon.cooldown = 20;
+        dragoon.cooldown = 5;
         FakeUnit quarry = fake(AUnitType.Zerg_Zergling, 35, 20);
         quarry.setEnemy();
         FakeUnit f1 = fake(AUnitType.Zerg_Zergling, 28.5, 20);
@@ -467,12 +467,24 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             BattleCommander.clearForTests();
             atlantis.battle.kite.CombatTuning.install(
                 atlantis.battle.kite.CombatTuning.defaults());
+            // Cooldown 5 keeps the projected-contact rule silent (it
+            // needs 9+), so this leg isolates the pinch: hurt + 2 melee
+            // inside 2 tiles with room yields, whatever the quarry does
+            // 5 tiles out.
             assertTrue(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
                 "pinch on: hurt + 2 melee inside 2 tiles yields");
             atlantis.battle.kite.CombatTuning.install(
                 atlantis.battle.kite.CombatTuning.defaults().withDragoonPinchMeleeCount(99));
             assertFalse(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
                 "pinch off: 5 tiles out the margin holds, no stand (only 2 melee)");
+            // Same board, weapon cooling: the flankers at 1.4-1.5 are
+            // inside the wounded contact radius, so the cooling rule
+            // kites even with the pinch disabled - projected contact
+            // owns close flankers now, the pinch toggle is unobservable
+            // while cooling.
+            dragoon.cooldown = 20;
+            assertTrue(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+                "cooling with close flankers: kite, pinch or no pinch");
         }
         finally {
             atlantis.battle.kite.CombatTuning.install(previous);

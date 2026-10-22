@@ -2,6 +2,7 @@ package atlantis.battle.kite;
 
 import atlantis.battle.escape.PinchRoom;
 import atlantis.map.position.APosition;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.AUnit;
 
 /**
@@ -37,9 +38,17 @@ public final class DragoonKitePolicy {
     // Cooldown reason: the weapon is spent.
 
     private static KiteVerdict coolingVerdict(AUnit unit) {
-        // No pure cooldown rule yet - the projected-contact kite (kite
-        // while cooling inside melee reach, health plays no role) lands
-        // here, ahead of the health rules below.
+        // Projected-contact kite (owner): while the weapon cools and a
+        // melee enemy is close, stepping back costs no DPS - the shot is
+        // gone either way - and every tile kept is a swing avoided.
+        // Healthy guns hold a touch longer (smaller radius); wounded ones
+        // yield early, so the unit is hit as little as possible while it
+        // cannot shoot anyway.
+        double hitsLeft = (unit.hp() + unit.shields()) / CombatTuning.current().getKiteZealotPassDamage();
+        boolean healthy = hitsLeft > CombatTuning.current().getKiteWoundedHitsLeft();
+        double closeTiles = OurDragoonRange.range() - (healthy ? 2.0 : 1.4);
+        if (unit.cooldown() >= 9 && unit.meleeEnemiesNearCount(closeTiles) > 0) return KiteVerdict.KITE;
+
         return KiteVerdict.DEFER;
     }
 

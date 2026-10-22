@@ -62,10 +62,12 @@ public class ShotTwinTest extends AbstractTestWithWorld {
     public void attackOrderNamesTheShot() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
-        dragoon.cooldown = 15;
+        dragoon.cooldown = 5;
 
-        // Based on purpose: this pins SHOT attribution, not kiting -
-        // baseless duels step off while cooling (NEXT #169).
+        // Based on purpose: this pins SHOT attribution, not kiting.
+        // Weapon nearly ready at 2 tiles: no contact projected, the
+        // cooling rule stays silent and the margin holds, so the
+        // standing attack order fires and names the shot.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
