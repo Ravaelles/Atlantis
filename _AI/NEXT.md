@@ -1581,6 +1581,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 kite outranks holding and trading (owner: ClusterHold /
+ ClusterReengage dragoons stood while zealots chewed them): holding
+ breaks when a close enemy can hit the unit and the weapon cools
+ (cd >= 8) or it is wounded (< 80 hp + shields); the glued-trade
+ branch is gone, only an in-flight swing still trades. A re-arm
+ landing window was tried and withdrawn the same day: it starved
+ sim DPS (no order-cancellation model there) with no live proof,
+ so re-arm stays on the equality discipline plus the post-swing
+ settle gate. Pinned (needsKite, glued-trade removal), suite green.
  2026-10-26 headless ZealDrag_v_Zeal (Defeat 6/9, 40 s): the ghost
  readout works end to end - none (f0-93, marching on the anchor)
  then contact f124 to the end, closing 161 -> 6. Approach marches

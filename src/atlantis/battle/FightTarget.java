@@ -309,18 +309,15 @@ public final class FightTarget {
         // Dragoon fights instead of waiting to die (Wine
         // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
         // then trading at point blank).
-        // Glued with a ready weapon, a step is worse than useless:
-        // it cannot outrun the swing already in progress, and
-        // stepping every frame means zero shots until death (Wine
-        // 1Drag_v_1Zeal: 190 frames glued at dist 0, cd 0, 17 hits,
-        // no shot fired). Shoot instead - the ready shot is free
-        // damage and the only DPS that can end the corner. Same
-        // when the threat's swing is already in flight anywhere:
-        // a step cannot dodge damage that is locked in, but our
-        // ready shot still lands (symmetric animation discipline).
+        // Kiting outranks trading (owner 2026-10-26): a glued unit
+        // with a ready weapon used to stand and trade while being
+        // chewed apart. Safety of the single unit comes first - the
+        // margin rule above (which already scales with wounds) decides.
+        // Only the in-flight swing still trades: damage locked in
+        // cannot be dodged, so the free shot lands instead of a
+        // donated step.
         boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
-        boolean glued = unit.distTo(threat) < CombatTuning.current().getKiteGlueTiles() && unit.cooldown() == 0;
-        return unit.cooldown() == 0 && (glued || swingIncoming);
+        return unit.cooldown() == 0 && swingIncoming;
     }
 
     /** Out of range: glide to the max-range firing position with moves only. */
@@ -388,22 +385,6 @@ public final class FightTarget {
         // fires on its own the moment the weapon is ready (PurpleWave
         // Commander.attack: order on new/overdue target, else sleep).
         if (target.equals(unit.target())) return;
-        // Let the riding step land first (owner 2026-10-26): re-issuing
-        // attackUnit on the frame right after a move cancels the step
-        // before the engine executes it - the alternating move/attack
-        // spam that lands zero shots while bleeding (Wine 1Drag:
-        // 156 orders, cd stuck at 0). A step needs its command-latency
-        // window to take effect; after that the attack fires as usual.
-        // Engine and fakes agree here: a move order clears the target,
-        // so every post-step frame looks like a switch without this.
-        boolean riding;
-        try {
-            riding = DuelMemory.repositionedAgo(unit)
-                < atlantis.units.special.SleepUntilFrameGate.latencyFrames() + 1;
-        } catch (Exception ignored) {
-            riding = false;
-        }
-        if (riding) return;
         ShotTwin.fired(unit, target);
         unit.attackUnit(target);
         if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);

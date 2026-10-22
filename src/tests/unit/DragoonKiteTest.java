@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -237,11 +236,13 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void gluedReadyDragoonShootsInsteadOfStepping() {
-        // Glued at dist 0.3 with a ready weapon: a step cannot outrun
-        // the swing already in progress, and stepping every frame means
-        // zero shots until death (Wine 1Drag_v_1Zeal: 190 frames glued,
-        // 17 hits, no shot). Shoot - the ready shot is free damage.
+    public void gluedReadyDragoonStepsInsteadOfTrading() {
+        // Owner 2026-10-26, kiting outranks trading: glued at dist 0.3
+        // with a ready weapon, the old rule stood and traded while
+        // being chewed. Safety of the single unit comes first - step
+        // out (the margin already says so), shoot once clear. The old
+        // 1Drag reading (trade at point blank) stays valid one-on-one;
+        // against anything that outnumbers the line, standing is dying.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30.3, 20);
         dragoon.cooldown = 0;
@@ -251,11 +252,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
-                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
-                "glued + ready: trade, do not step in place: " + ordersOf(dragoon));
-            assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
-                "no futile step from glue with a ready weapon: " + ordersOf(dragoon));
+                "glued + ready: step out instead of trading in place: " + ordersOf(dragoon));
         });
     }
 
@@ -843,41 +841,6 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         finally {
             neutralInWorld = null;
         }
-    }
-
-    @Test
-    public void switchAttacksOnceThenHolds() {
-        // Owner 2026-10-26: a genuine target switch fires exactly one
-        // attack - then the standing order shoots on its own. Re-firing
-        // on a later frame just because a kite step cleared the engine
-        // target is the alternating spam that lands zero shots while
-        // bleeding: the presser keeps kite steps riding, the far switch
-        // fires once the first step lands and never again.
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit presser = fake(AUnitType.Zerg_Zergling, 31, 20);
-        presser.setEnemy();
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 38, 20);
-        zealot.setEnemy();
-        dragoon.cooldown = 0;
-
-        world(13, fakeOurs(dragoon), fakeEnemies(presser, zealot), () -> {
-            int now = atlantis.game.A.now();
-            if (now < 1) return;
-
-            presser.target = dragoon;
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
-
-            if (now != 12) return;
-
-            int attacks = 0;
-            for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
-                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacks++;
-            }
-            assertEquals(1, attacks,
-                "one switch, one attack - the riding step does not re-fire it: "
-                    + ordersOf(dragoon));
-        });
     }
 
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {

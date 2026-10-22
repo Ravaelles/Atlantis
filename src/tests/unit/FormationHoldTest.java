@@ -94,4 +94,45 @@ public class FormationHoldTest extends WorldStubForTests {
                 "2 tiles is contact: the phalanx becomes the fight");
         });
     }
+
+    @Test
+    public void chewedDragoonBreaksBeforeContact() {
+        // Owner 2026-10-26: kiting outranks holding - a closing enemy
+        // that can already hit us breaks the hold with a cooling weapon,
+        // before contact, instead of holding the slot while chewed.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit presser = fake(AUnitType.Protoss_Zealot, 33, 20);
+        presser.setEnemy();
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+        dragoon.cooldown = 15;
+
+        world(2, fakeOurs(dragoon), fakeEnemies(presser, far), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertTrue(FormationHold.needsKite(dragoon), "cooldown 15 with a chewer closing: kite");
+            assertFalse(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                "no holding the slot while chewed: break to the fight");
+        });
+    }
+
+    @Test
+    public void freshDragoonHoldsWhileChewerCloses() {
+        // Same geometry, fresh weapon and full health: the hold stands -
+        // the shot is imminent and nothing is lost yet.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit presser = fake(AUnitType.Protoss_Zealot, 33, 20);
+        presser.setEnemy();
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+        dragoon.cooldown = 0;
+
+        world(2, fakeOurs(dragoon), fakeEnemies(presser, far), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.needsKite(dragoon), "fresh and healthy: no preemption");
+            assertTrue(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                "fresh weapon, full health, no contact: hold the line");
+        });
+    }
 }
