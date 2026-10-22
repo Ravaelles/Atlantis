@@ -40,16 +40,18 @@ public class FinishedShootingTest extends WorldStubForTests {
     }
 
     @Test
-    public void firingFrameIsNotFinished() {
+    public void firingFrameIsFinished() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
 
         world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             if (A.now() != 1) return;
 
+            // The bullet entity exists, so the shot is launched - the
+            // firing frame commits, whatever the animation still shows.
             dragoon.setLastBullet(new FakeBullet(dragoon, zealot, true));
-            assertFalse(DuelMemory.finishedShooting(dragoon),
-                "age 0 is the firing frame itself, not the commit");
+            assertTrue(DuelMemory.finishedShooting(dragoon),
+                "age 0: projectile observed, damage committed");
         });
     }
 
