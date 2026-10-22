@@ -1546,6 +1546,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Pinned `ZealotWithdrawSimTest` (wounded vs 2 lings: displaces, move
  steps, still trades; mutation-proofed). Live proof rides the
  headless Wine ling maps (model-run).
+ 2026-10-22 first model-run headless game (rule §14 allowance):
+ ZealDrag_v_LingsUpg VICTORY 32/5 in 25 s, 56.2 SHOT/100f (win band),
+ KITE 132 stepped-aside / 0 stuck-no-step (timeout games read
+ 122/173 stuck). Consistent with the executor, not an isolation of
+ it - the sim pin stays the isolation proof; single games are noisy
+ by the §14 discipline.
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
  (owner 2026-10-21/22): on the new map the bot first does not move
  at all, then loses on zealot/dragoon miscoordination - zealots
