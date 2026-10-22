@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.order.ForcedDirectProductionO
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.actions.OrderIssuance;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.util.AConsole;
 import atlantis.units.special.SleepUntilFrameGate;
@@ -257,12 +258,7 @@ public interface AUnitOrders {
 
         // =========================================================
 
-        AUnit currentTarget = unit.target();
-//        boolean executeOrder = !unit.isMoving() || !target.equals(currentTarget);
-//        boolean executeOrder = (!target.equals(currentTarget) && unit.lastCommandIssuedAgo() >= 8)
-//        boolean executeOrder = !target.equals(currentTarget) || unit.isStopped();
-        boolean executeOrder = !target.equals(currentTarget) || unit.lastPositionChangedAgo() >= 10;
-//            || (unit.isStopped() && unit.lastPositionChangedAgo() >= 12);
+        boolean executeOrder = OrderIssuance.isNewMoveDestination(unit, target);
 
         if (executeOrder) {
             // BATTLE CUTOVER: sieged tanks no longer unsiege to move (deleted micro).
@@ -274,7 +270,7 @@ public interface AUnitOrders {
             }
 
             unit.setLastActionReceivedNow().setAction(unitAction);
-            if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? commandMinDelayWhenMoving(unit) : 1)) return true;
+            if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? OrderIssuance.commandMinDelayWhenMoving(unit) : 1)) return true;
             else unit.lastCommandIssuedNow(UnitCommandType.Move);
 
             if (target instanceof AUnit) {
@@ -315,10 +311,6 @@ public interface AUnitOrders {
         }
 
         return true;
-    }
-
-    static int commandMinDelayWhenMoving(AUnit unit) {
-        return unit.isRunning() ? 3 : 2;
     }
 
     /**
