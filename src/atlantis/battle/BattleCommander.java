@@ -111,6 +111,17 @@ public class BattleCommander extends Commander {
             if (tactic == FightOrFlight.Tactic.FIGHT) {
                 atlantis.battle.ArmyContact.noteFight(unit, target);
             }
+            // Formation hold (owner 2026-10-26, Stardust doctrine): while
+            // the enemy is melee-only and nobody is in contact, the line
+            // marches in formation instead of dissolving into a charge.
+            // No slot means no formation (duels fall through untouched).
+            if (FormationHold.shouldHold(unit, target, tactic)) {
+                HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor);
+                if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "ClusterHold")) {
+                    FightTarget.markRepositioned(unit);
+                    return;
+                }
+            }
             FightTarget.fight(unit, target, strategy);
             return;
         }

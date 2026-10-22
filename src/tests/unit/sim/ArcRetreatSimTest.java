@@ -53,9 +53,13 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
             woundedDragoon(32, 20, 120),
         };
         FakeUnit[] zealots = new FakeUnit[] {
-            enemyZealot(38, 19),
-            enemyZealot(38, 20),
-            enemyZealot(38, 21),
+            // In contact from tick 0 (inside dragoon fire range): the
+            // formation hold never engages, the run measures pure kite
+            // footwork - the arc's phase. The approach march is pinned
+            // separately (FormationHoldTest, ClusterRallyTest).
+            enemyZealot(32, 19),
+            enemyZealot(32, 21),
+            enemyZealot(34, 20),
         };
 
         Outcome out = new Outcome();
