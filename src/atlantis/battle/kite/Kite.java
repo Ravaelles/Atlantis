@@ -76,56 +76,14 @@ public final class Kite {
         if (!unit.isDragoon() && !ZealotWithdraw.should(unit, threat)) return false;
 
         if (unit.isDragoon()) {
-            boolean lowHp = unit.hp() + unit.shields() < CombatTuning.current().getDragoonLowHp();
-            // Pinch retreat (owner): two or more melee enemies inside 2
-            // tiles on a hurt Dragoon (hp + shields < 80) means the pocket
-            // is closing - yield ground instead of standing into it.
-            // Overrides the surrounded-stand below: standing trades only
-            // when escape already failed, never while steps still open.
-            // A step that finds nothing still falls through to the
-            // glue/corner trading below, so a fully pinched Dragoon
-            // shoots instead of idling.
-            if (unit.hp() + unit.shields() < CombatTuning.current().getDragoonPinchHp()
-                && unit.enemiesNear().melee().inRadius(CombatTuning.current().getDragoonPinchMeleeTiles(), unit).size()
-                    >= CombatTuning.current().getDragoonPinchMeleeCount()
-                && atlantis.battle.escape.PinchRoom.hasRoom(unit.position(), (x, y) -> {
-                    try {
-                        return atlantis.map.position.APosition.create(x, y).isWalkable();
-                    } catch (Exception | Error ignored) {
-                        return true;
-                    }
-                })) return true;
-            // Surrounded: three or more melee enemies on top of the Dragoon
-            // means escape is impossible - stand and shoot instead of
-            // donating the retreat (owner). Either the shot is almost
-            // ready or the nearest enemy is far enough to trade with.
-            // A chewer already on the guns voids even this: standing
-            // through contact is never trading (owner order: kiting has
-            // absolute precedence, measured 348 chewed sim frames).
-            if (!isBeingChewed(unit)
-                && unit.enemiesNear().melee().inRadius(3, unit).size() >= CombatTuning.current().getDragoonSurroundedMeleeCount()
-                && (unit.cooldown() <= CombatTuning.current().getDragoonSurroundedStandCooldown()
-                    || unit.distTo(threat) >= CombatTuning.current().getDragoonSurroundedStandDistTiles())) return false;
-            // Low-HP Dragoon holds fire unless the shot is safe: at least
-            // 3.2 tiles of room or an imminent weapon (owner, converging
-            // with Stardust: cooldown <= latency + 2 attacks instead of
-            // stepping). Below half health the threatened step would only
-            // delay the one shot that still matters. Chewed low-hp guns
-            // kite anyway: the imminent shot is not worth contact.
-            if (lowHp && !isBeingChewed(unit)
-                && unit.cooldown() <= CombatTuning.current().getDragoonLowHpFireCooldown()) return false;
-            // ...otherwise it yields ground early: holding fire means
-            // stepping, never standing through the cooldown. Robust to
-            // margin tuning - the margin gate alone already kites here at
-            // default constants, this keeps it true whatever they become.
-            // (Owner order: the former meat-screen stand above this line
-            // was withdrawn - screened dragoons kite by the same margin,
-            // health plays no role. Pinch and surrounded above still
-            // yield, except chewed, which always kites: a closing pocket
-            // is dying, not trading.)
-            if (lowHp
-                && unit.distTo(threat) < CombatTuning.current().getDragoonLowHpHoldTiles()
-                && unit.cooldown() > CombatTuning.current().getDragoonLowHpFireCooldown()) return true;
+            // Per-unit policy first; the margin envelope below is the
+            // default for every unit type (dragoon, withdrawing zealot,
+            // future Terran guns plug in the same way). Reasons live in
+            // DragoonKitePolicy, split by cooldown vs health - the ladder
+            // reads here, the how lives there (CONVENTIONS §23).
+            KiteVerdict verdict = DragoonKitePolicy.decide(unit, threat);
+            if (verdict == KiteVerdict.KITE) return true;
+            if (verdict == KiteVerdict.STAND) return false;
         }
         if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
 
