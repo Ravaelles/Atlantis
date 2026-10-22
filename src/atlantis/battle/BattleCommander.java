@@ -101,6 +101,7 @@ public class BattleCommander extends Commander {
     private static void observe(AUnit unit) {
         atlantis.battle.twins.UnitTelemetry.sample(unit);
         atlantis.battle.FrozenWatch.note(unit);
+        atlantis.battle.DuelMemory.noteBattleFrame(unit);
     }
 
     /** Retreat owns routing units before anything else looks at them. */

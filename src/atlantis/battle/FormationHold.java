@@ -76,7 +76,7 @@ public final class FormationHold {
         try {
             if (!unit.isCombatUnit()) return false;
             if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return false;
-            if (unit.isUnderAttack()) return false;
+            if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return false;
             if (unit.hasWeaponRangeToAttack(target, 0)) return false;
 
             AUnit nearest = nearestEnemyOf(unit);
@@ -91,9 +91,10 @@ public final class FormationHold {
     /**
      * Kite preemption (owner 2026-10-26): kiting outranks holding,
      * unconditionally. A close enemy that can hit this unit breaks
-     * the hold - waiting for damage (HP history misses shield damage
-     * entirely) or for contact let chewed dragoons hold their slots
-     * while being shredded. Safety of the single unit first; the
+     * the hold. Damage itself is caught by the battle-hook latch
+     * (DuelMemory.tookDamageSinceLastBattleFrame, NEXT #183), not by
+     * the wound history read here: the margin below only decides
+     * standoff shape. Safety of the single unit first; the
      * wound/cooldown nuances live inside the fight (margin scaling,
      * trade discipline), not in the hold gate.
      */

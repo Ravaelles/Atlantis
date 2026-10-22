@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.battle.BattleCommander;
 import atlantis.battle.FormationHold;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
@@ -168,6 +169,42 @@ public class FormationHoldTest extends WorldStubForTests {
 
             assertFalse(FormationHold.hasCloseMeleeEnemy(dragoon),
                 "3 tiles is pressure, not melee on top - other gates decide");
+        });
+    }
+
+    @Test
+    public void damageBreaksAnOtherwiseCalmHold() {
+        // NEXT #183: the battle-hook latch, not the manager-updated HP
+        // history, breaks the hold. Same board, same far enemy: the only
+        // difference between the frames is one wound.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit intact = fake(AUnitType.Protoss_Dragoon, 30, 22);
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 38, 20);
+        far.setEnemy();
+        dragoon.cooldown = 0;
+        intact.cooldown = 0;
+
+        world(4, fakeOurs(dragoon, intact), fakeEnemies(far), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                BattleCommander.act(intact, FightOrFlight.Tactic.FIGHT, null, intact);
+                assertTrue(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                    "no damage yet: hold the line");
+                assertTrue(FormationHold.shouldHold(intact, far, FightOrFlight.Tactic.FIGHT),
+                    "control holds too");
+            }
+            if (now == 2) {
+                dragoon.hp -= 60;
+                BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                assertFalse(FormationHold.shouldHold(dragoon, far, FightOrFlight.Tactic.FIGHT),
+                    "one wound breaks the hold even with the enemy 8 tiles out");
+            }
+            if (now == 3) {
+                BattleCommander.act(intact, FightOrFlight.Tactic.FIGHT, null, intact);
+                assertTrue(FormationHold.shouldHold(intact, far, FightOrFlight.Tactic.FIGHT),
+                    "unwounded twin keeps holding: the break was the damage, not the frame");
+            }
         });
     }
 }

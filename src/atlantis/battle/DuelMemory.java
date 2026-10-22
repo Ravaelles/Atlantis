@@ -34,6 +34,47 @@ public final class DuelMemory {
     private static final Map<Integer, Integer> lastAttackStartFrame = new HashMap<>();
     private static final Map<Integer, Integer> attackSettleFrames = new HashMap<>();
 
+    /**
+     * Battle-hook hp snapshot for the damage gate (NEXT #183).
+     * UnitStateManager appends hp() BEFORE BattleCommander runs each frame
+     * (and skips frames with an order in flight), so comparing against
+     * that history reads false for a steady holder by construction:
+     * the stored value already equals current hp. This snapshot runs
+     * inside the battle hook instead, after every decision: damage taken
+     * since the previous battle frame latches here, independent of
+     * manager cadence or order dedup.
+     */
+    private static final Map<Integer, Integer> lastBattleHp = new HashMap<>();
+    private static final Map<Integer, Boolean> battleDamage = new HashMap<>();
+
+    /**
+     * Snapshots current hp and latches whether it dropped since the
+     * previous battle frame. Called once per unit per frame from the
+     * battle hook, before any decision reads the latch below.
+     */
+    static void noteBattleFrame(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return;
+
+            int now = unit.hp();
+            Integer prev = lastBattleHp.get(unit.id());
+            battleDamage.put(unit.id(), prev != null && now < prev);
+            lastBattleHp.put(unit.id(), now);
+        } catch (Exception ignored) {
+        }
+    }
+
+    /** True when hp dropped between the last two battle-hook snapshots. */
+    static boolean tookDamageSinceLastBattleFrame(AUnit unit) {
+        if (unit == null) return false;
+
+        try {
+            return battleDamage.getOrDefault(unit.id(), false);
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     private DuelMemory() {
     }
 
@@ -48,6 +89,8 @@ public final class DuelMemory {
         attackAnimOpenFrame.clear();
         lastAttackStartFrame.clear();
         attackSettleFrames.clear();
+        lastBattleHp.clear();
+        battleDamage.clear();
     }
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
