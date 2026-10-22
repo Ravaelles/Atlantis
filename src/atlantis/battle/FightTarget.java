@@ -106,7 +106,7 @@ public final class FightTarget {
         if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
         if (reengage(unit, target, now, lastStep)) return;
 
-        rearmAttack(unit, target);
+        rearmAttack(unit, target, now, lastStep);
     }
 
     /** Mid-swing the unit holds: a move now would cancel the damage. */
@@ -316,6 +316,34 @@ public final class FightTarget {
      * flight: the ready shot is free damage, stepping can only donate
      * it. Answers whether the caller should skip the step, not issue.
      */
+    /**
+     * Swamped in contact: three or more melee enemies within 2 tiles.
+     * Same headcount as the surrounded stand, opposite conclusion: the
+     * stand assumed escape was impossible, but here a step is already
+     * riding - cancelling it for a shot donates the retreat while the
+     * pack closes in. A lone chewer or two still get shot (duels are won
+     * standing and shooting).
+     */
+    /**
+     * How many melee enemies in 2 tiles make standing and trading a lost
+     * DPS race: up to three the guns still win it (pinned: duels are won
+     * trading, a pressing pair dies to focus fire, withdrawing wounded
+     * survive shooting), four and up only donate. Calibrated against
+     * those pins, not a guess - move it only with a sim duel proving
+     * the new line still wins the races above.
+     */
+    private static final int SWAMPED_MELEE_COUNT = 4;
+
+    private static boolean isSwampedByMelee(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+
+            return unit.enemiesNear().melee().inRadius(2, unit).size() >= SWAMPED_MELEE_COUNT;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     private static boolean tradeShot(AUnit unit, AUnit threat) {
         // A failed step must never mean standing idle: a cornered
         // Dragoon fights instead of waiting to die (Wine
@@ -385,7 +413,7 @@ public final class FightTarget {
     }
 
     /** Re-arm the attack on a ready weapon only; a riding step is never cancelled. */
-    private static void rearmAttack(AUnit unit, AUnit target) {
+    private static void rearmAttack(AUnit unit, AUnit target, int now, Integer lastStep) {
         // Let the reposition ride (PurpleWave sleep after move):
         // a fresh attack order here would cancel the step or glide
         // issued a frame ago and pin the unit standing through the
@@ -401,6 +429,22 @@ public final class FightTarget {
         // a finished glide re-arms via the attack check below.
         if (unit.cooldown() > 0
             && DuelMemory.repositionedAgo(unit) < CombatTuning.current().getKiteRideFrames()) return;
+        // Never cancel a running kite step with a fresh attack order
+        // (owner: kiting has absolute precedence): retargeting onto a
+        // new threat re-issues attackUnit every frame, and each issue
+        // cancels the step the kite just ordered - the unit stands
+        // still while the twin logs stepped-aside every 10 frames
+        // (live Dragoon#96: 17 steps, zero displacement, 20 hits in).
+        // The step's own cadence clock guards this, not the glide
+        // clock above (kite steps never marked repositioned). When the
+        // step finds nothing the clock goes stale and the re-arm below
+        // fires again on its own - cornered units still trade.
+        // Narrowed to the losing trade: a lone chewer still gets shot
+        // (duels are won standing and shooting - the 1v1 pin proves
+        // it), only a swamping pack keeps the guns quiet while the
+        // step rides out. Same headcount as the surrounded stand.
+        if (lastStep != null && now - lastStep < CombatTuning.current().getKiteRideFrames()
+            && isSwampedByMelee(unit)) return;
         // Order discipline, not order spam: a new attack order issues
         // only when the engine holds a different target (first
         // acquisition, lost order while moving, target switch).

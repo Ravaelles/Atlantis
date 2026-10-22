@@ -1901,6 +1901,21 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  is pursuit contact while kiting (equal-speed enemy starting on top),
  not a stand: pre-fix #165 showed 0 kite rows and 0 displacement over
  ~300f. Doctrine holds live.
+ 2026-10-23 rearm must not cancel a riding step (owner: kite too short,
+ zealots re-attack, worst under 40 hp): a fresh attackUnit every frame
+ retargets and each issue cancels the step - live Dragoon#96 showed 17
+ stepped-aside rows with zero displacement and 20 hits in ~150f, while
+ firing full DPS every ~34f. New guard in rearmAttack: no fresh attack
+ order while a kite step rides (own cadence clock, not the glide
+ clock). Calibrated, not guessed: unconditional guard wins the chew
+ sim (196->14 frames) but breaks 4 DPS-race pins (duels won trading,
+ trio wiping pressers, withdrawing wounded surviving); the line is
+ drawn at 4+ melee in 2 tiles (SWAMPED_MELEE_COUNT: up to three the
+ guns still win it per those pins, four and up only donate). Sim
+ outcome: chewed 196->110, max-consecutive 23->20, min dragoon hp
+ 132->220, foes alive 4->5 (the DPS price, named). Pinned 3/3
+ KiteStepRideSimTest (swamped holds fire, lone chewer gets shot,
+ no-step re-arms).
  2026-10-23 meat-screen stand withdrawn (owner order, kiting regardless
  of health): screened dragoons kite by margin like everyone else -
  the screen doctrine made healthy dragoons skip kiting entirely until
