@@ -549,6 +549,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   at scale, read the CANCEL reason per the mint answer); Stargate*
   #134 refused at covered [105,2] then warped [123,26] 9:07 (guard
   correct, resite worked).
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): quiet game - 0 CANCELs, 0 ADOPTED (builder-rich, nothing waited), no overlap rows; resite/adopt seams unfired, not broken.
+
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
   REQUESTED then proximity-cancelled the same frame, ~20 constructions
@@ -587,6 +589,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   not the spiral - no local patch (would duplicate the guard in the
   dying path); the fix rides #145, this storm class is its acceptance
   test (goes quiet after cutover).
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49): no same-tile storms - 0 proximity CANCELs in 6.8 game-min; spiral and mint both quiet.
+
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -687,6 +691,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21 second Wine macro (7:53 Defeat, 1 base the whole game):
   ORDER_SAVING 0 - right shape (1 base), 227 s short of 700. The
   lottery continues, one axis at a time.
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
+
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -750,6 +756,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   retained TauCross macros show siteless CANCELs carrying cid+oid+
   reason (e.g. cid=102/oid=82 "Null position for Assimilator",
   tile "-") - the CANCEL reason reads as designed.
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): pipeline healthy - Pylon#1 0:39@8, 17 STARTED with 0 CANCELs, zero stuck constructions, no new #84 instance and no twin gaps this game.
+
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -765,6 +773,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   7:30 - stall-with-recovery, twin worked as designed, no code change
   (would be blind). The dual-builder same-tile stall is the
   alternating-handoff shape to watch for. G1 short flagged macro: clean.
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): transient stalls only - 13 MOVE_BUILD (max 133f) + 4 BUILD, all self-recovered, 17/17 warped; no alternating-handoff shape.
+
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
@@ -825,6 +835,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   keeps naming the layer when it recurs.
   2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
   + 17:19/18:18, all warped - lateness not reproduced again.
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
+
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
   0/0, scouts find nothing in 18 min). Plumbing verified correct;
@@ -1044,6 +1056,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-17; lever if still late is `IsReadyToProduceOrder` pull-forward
   amounts, currently +1 below 19 / +3 above - earlier pylons trade tech
   minerals for block time).
+ 2026-10-26 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1150,6 +1163,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
   across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven. 2026-10-21 Wine macro (20:09): earlier-reserve 92 + pylon-cap 41 + prepare-site-overlap 19 (first live fire of the young spiral guard: Stargate* refused at covered [105,2] 3x, warped [123,26] 9:07) + unstarted-pylon 8 - evidence (Stargate case now complete: 15 correct refusals, resite, warp - proof CLAIMED below). 2026-10-21 Wine macro: prepare-site-overlap PROOF on the Stargate case (15 correct refusals of covered [105,2], resited, warped [123,26] 9:07 + second [123,33] 9:17) - first per-gate proof from this game. 2026-10-21 second Wine macro (7:53 Defeat, quiet construction game: CANCEL 1, REQUESTED 10): min-supply 4, funding 2, core-priority 2, pylon-cap 1, unstarted-pylon 1, warping-link 1 (first live sighting: PhotonC #60 @ [19,19] 7:33@41, bank 254, duplicate-cannon-shaped) - previously-proven gates re-fire, no earlier-reserve storm this time. 2026-10-21 audit: all 11 gates have stub behavior pins (LiveConstructionGuardTest 6x, power-not-funded fires+passes in BuildRefusedTwinTest); the two never-fired-live gates are narrow by design, not broken - power-not-funded needs Pylon-less poverty no BO produces, live-construction needs an adopted-live re-request and cancelled rows are terminal (that's why the 463-storm never tripped it: terminal is not live). No more pins without games; live proof rides shapes that may never come - accept stub coverage for these two. Observatory [101,5]: 4 refusals correct (tile taken by warping Citadel 11:30), resited [118,30] 11:37, builder #126 killed by ling raid 12:28, warp froze with zero further twin rows (no orphan-drop twin for a builder-dead warp - twin gap filed in #150, not a guard failure).
+ 2026-10-26 Wine TauCross macro (VICTORY 6:49): previously-proven gates re-fire - min-supply 6, pylon-cap 6, earlier-reserve 3, unstarted-pylon 3, funding 2, core-priority 2; no new gate proven.
+
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
