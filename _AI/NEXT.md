@@ -1194,6 +1194,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   minerals for block time).
  2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
  2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
+ 2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - open whether the latter is expected on UMS or a writer gap.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1354,6 +1355,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
  2026-10-22 re-sweep: still zero (only the isWaiting() definition, one
  isWaiting-based radius reader, and single-state checks).
+ 2026-10-26 re-sweep: still zero re-spelled disjunctions in prod (the
+ only PREPARING equality left is the isWaiting() definition itself).
+ 2026-10-26 re-sweep: still zero (grep finds only the definition).
 
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
@@ -1607,6 +1611,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  0.5-1.9 all game. Bistable: the opening ~100f decides the attractor
  (escape vs glued), knobs only shift the odds. Next lever is opening
  discipline + per-cycle standstill, not longer steps.
+ 2026-10-26 the per-cycle standstill lever landed (finishedShooting
+ escape release, #152): V0 15.7 -> V1 12.0 -> V2 9.6-10.3 across
+ 17 duels, all VICTORY - the step-amplitude grid run after it (2.0 /
+ 2.5 / 3.0, no gradient) confirms the diagnosis from both sides.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
@@ -1857,6 +1865,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  losses; the freeze shapes are gone (zero FROZEN, all deaths mobile -
  see #182), what is open is winnability (early-brawl DPS), not
  coordination.
+ 2026-10-26 headless ZealDrag_v_Zeal on the current tree (Defeat 3/9 in
+ 37 s, 893f): ninth band game, same shape - coordination held first
+ (HOLD 9x: FormHold attacks in the journals, zealots broke to the
+ fight), veto broke the rest (VETO 30x). Zero FROZEN, zero standing
+ deaths (all 9 ClusterKite, incl. 2x ClusterUnstick live). Latch
+ fires in multi-foe too (released-finished 156 rows). KITE 218
+ (179 stepped / 26 frozen-reset / 13 stuck). Brawl lost on DPS
+ (3 kills), not on coordination or freezing.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
