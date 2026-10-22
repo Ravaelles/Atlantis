@@ -532,10 +532,10 @@ same hours are not spent twice.
   elegance.
 - Applies to tests and scripts as well: fixture setup that needs a
   paragraph of comments wants a named helper instead.
-- Blank line after every non-final `return` (enforced by
-  `scripts/checkstyle.sh`, auto-fixed with `--apply`): a return
-  followed by more code in the same block gets an empty line after
-  it; a return immediately before `}` does not. Guard-style early
-  returns (`if (...) return ...;`) count - they are the most common
-  shape of this rule.
+- Blank lines around returns (enforced by `scripts/checkstyle.sh`,
+  auto-fixed with `--apply`): consecutive guard returns stay glued
+  with no blanks between them; a blank line separates the last guard
+  (or any code) from the final `return` of the block; a return
+  immediately before `}` gets no blank after it. Guard-style early
+  returns (`if (...) return ...;`) count as guards, not as finals.
 

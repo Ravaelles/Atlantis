@@ -80,9 +80,7 @@ public final class AcquireTarget {
     private static AUnit keepableCurrentTarget(AUnit unit) {
         AUnit target = unit.target();
         if (target == null || !target.isAlive()) return null;
-
         if (!ASquadTargeting.isValidTarget(unit, target)) return null;
-
         if (!unit.hasWeaponRangeToAttack(target, 0)) return null;
 
         return target;
@@ -105,14 +103,13 @@ public final class AcquireTarget {
 
         private AUnit pickFrom(Selection enemies) {
             for (AUnit enemy : enemies.list()) consider(enemy);
+
             return best;
         }
 
         private void consider(AUnit enemy) {
             if (enemy == null || !enemy.isAlive()) return;
-
             if (!ASquadTargeting.isValidTarget(unit, enemy)) return;
-
             if (!unit.hasWeaponRangeToAttack(enemy, 0)) return;
 
             int hp = enemy.hp() + enemy.shields();
