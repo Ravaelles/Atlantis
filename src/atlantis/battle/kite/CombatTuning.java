@@ -294,204 +294,238 @@ public final class CombatTuning {
     public CombatTuning withKiteEnemyTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteEnemyTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteGlueTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteGlueTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteStepTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteStepTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMinStepGainTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMinStepGainTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteHuntedTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteHuntedTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteFacedTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteFacedTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMarginBaseTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMarginBaseTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMarginDyingTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMarginDyingTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMarginPerHitTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMarginPerHitTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteZealotPassDamage(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteZealotPassDamage = value;
+
         return copy;
     }
 
     public CombatTuning withKiteStandoffInsetTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteStandoffInsetTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteGlideDeadbandTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteGlideDeadbandTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMeleeCloserTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMeleeCloserTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteMeleeEdgeTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteMeleeEdgeTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteWoundedHitsLeft(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteWoundedHitsLeft = value;
+
         return copy;
     }
 
     public CombatTuning withKiteWoundedEdgeInsetTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteWoundedEdgeInsetTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteStickyChaseTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteStickyChaseTiles = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonLowHp(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonLowHp = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonLowHpHoldTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonLowHpHoldTiles = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonLowHpFireCooldown(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonLowHpFireCooldown = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonSurroundedMeleeCount(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonSurroundedMeleeCount = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonSurroundedStandCooldown(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonSurroundedStandCooldown = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonSurroundedStandDistTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonSurroundedStandDistTiles = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonPinchHp(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonPinchHp = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonPinchMeleeCount(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonPinchMeleeCount = value;
+
         return copy;
     }
 
     public CombatTuning withDragoonPinchMeleeTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonPinchMeleeTiles = value;
+
         return copy;
     }
 
     public CombatTuning withKiteRideFrames(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteRideFrames = value;
+
         return copy;
     }
 
     public CombatTuning withKiteRestepsEveryFrames(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.kiteRestepsEveryFrames = value;
+
         return copy;
     }
 
     public CombatTuning withBreachRetreatHp(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.breachRetreatHp = value;
+
         return copy;
     }
 
     public CombatTuning withBreachRetreatCooldown(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.breachRetreatCooldown = value;
+
         return copy;
     }
 
     public CombatTuning withBreachRallyTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.breachRallyTiles = value;
+
         return copy;
     }
 
     public CombatTuning withUmsNoRetreatFrames(int value) {
         CombatTuning copy = new CombatTuning(this);
         copy.umsNoRetreatFrames = value;
+
         return copy;
     }
 
     public CombatTuning withRegroupThreatTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.regroupThreatTiles = value;
+
         return copy;
     }
 
     public CombatTuning withRegroupRallyTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.regroupRallyTiles = value;
+
         return copy;
     }
 }

@@ -133,115 +133,138 @@ public final class BoardState {
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
+
             return this;
         }
 
         public Builder gas(int gas) {
             this.gas = gas;
+
             return this;
         }
 
         public Builder supply(int used, int total) {
             this.supplyUsed = used;
             this.supplyTotal = total;
+
             return this;
         }
 
         public Builder workers(int workerCount) {
             this.workerCount = workerCount;
+
             return this;
         }
 
         public Builder bases(int baseCount) {
             this.baseCount = baseCount;
+
             return this;
         }
 
         public Builder gateways(int gatewayCount) {
             this.gatewayCount = gatewayCount;
+
             return this;
         }
 
         public Builder gatewaysTraining(int gatewaysTraining) {
             this.gatewaysTraining = gatewaysTraining;
+
             return this;
         }
 
         public Builder army(int combatUnits) {
             this.combatUnits = combatUnits;
+
             return this;
         }
 
         public Builder core(boolean hasCyberneticsCore) {
             this.hasCyberneticsCore = hasCyberneticsCore;
+
             return this;
         }
 
         public Builder coreAwaitingSupply(boolean coreAwaitingSupply) {
             this.coreAwaitingSupply = coreAwaitingSupply;
+
             return this;
         }
 
         public Builder assimilator(boolean hasAssimilator) {
             this.hasAssimilator = hasAssimilator;
+
             return this;
         }
 
         public Builder forge(boolean hasForge) {
             this.hasForge = hasForge;
+
             return this;
         }
 
         public Builder cannons(int cannonCount) {
             this.cannonCount = cannonCount;
+
             return this;
         }
 
         public Builder observers(int observerCount) {
             this.observerCount = observerCount;
+
             return this;
         }
 
         public Builder hiddenUnits(boolean enemyHasHiddenUnits) {
             this.enemyHasHiddenUnits = enemyHasHiddenUnits;
+
             return this;
         }
 
         public Builder underAttack(boolean baseUnderAttack) {
             this.baseUnderAttack = baseUnderAttack;
+
             return this;
         }
 
         public Builder seconds(int secondsElapsed) {
             this.secondsElapsed = secondsElapsed;
+
             return this;
         }
 
         public Builder enemyRace(String enemyRace) {
             this.enemyRace = enemyRace;
+
             return this;
         }
 
         public Builder dragoons(int dragoonCount) {
             this.dragoonCount = dragoonCount;
+
             return this;
         }
 
         public Builder dragoonsUnfinished(int dragoonsUnfinished) {
             this.dragoonsUnfinished = dragoonsUnfinished;
+
             return this;
         }
         public Builder basesUnfinished(int basesUnfinished) {
             this.basesUnfinished = basesUnfinished;
+
             return this;
         }
         public Builder basesPlanned(int basesPlanned) {
             this.basesPlanned = basesPlanned;
+
             return this;
         }
 
         public Builder armyStrength(int armyStrength) {
             this.armyStrength = armyStrength;
+
             return this;
         }
 
@@ -250,11 +273,13 @@ public final class BoardState {
             this.enemyLurkers = lurkers;
             this.enemyMutalisks = mutalisks;
             this.enemyCarrierTech = carrierTech;
+
             return this;
         }
 
         public Builder sparta(boolean spartaMission) {
             this.spartaMission = spartaMission;
+
             return this;
         }
 
@@ -265,30 +290,35 @@ public final class BoardState {
          */
         public Builder wallPieces(int wallPiecesAtNatural) {
             this.wallPiecesAtNatural = wallPiecesAtNatural;
+
             return this;
         }
 
         /** Army strength without static defense: rush math, not siege math. */
         public Builder armyStrengthWithoutCB(int armyStrengthWithoutCB) {
             this.armyStrengthWithoutCB = armyStrengthWithoutCB;
+
             return this;
         }
 
         /** Enemy has ranged units (DT prediction: ranged mirrors need no Forge first). */
         public Builder enemyHasRanged(boolean enemyHasRanged) {
             this.enemyHasRanged = enemyHasRanged;
+
             return this;
         }
 
         /** Strategy reads the enemy going hidden units (DT prediction). */
         public Builder enemyGoingHidden(boolean enemyGoingHidden) {
             this.enemyGoingHidden = enemyGoingHidden;
+
             return this;
         }
 
         /** Gateways still warping (Forge timing waits for production first). */
         public Builder gatewaysUnfinished(int gatewaysUnfinished) {
             this.gatewaysUnfinished = gatewaysUnfinished;
+
             return this;
         }
 
@@ -301,6 +331,7 @@ public final class BoardState {
          */
         public Builder forgeExpand(boolean ourForgeExpand) {
             this.ourForgeExpand = ourForgeExpand;
+
             return this;
         }
 

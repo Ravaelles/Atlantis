@@ -127,6 +127,7 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
 
         int total = unit.type().totalTrainTime();
         int remaining = (int) Math.ceil(total * (100 - hpPercent) / 100.0);
+
         return Math.max(0, remaining);
     }
 }

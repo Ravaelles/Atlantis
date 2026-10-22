@@ -15,6 +15,7 @@ public class EnemyUnitBreachedBase {
         }
 
         _lastEnemy = enemy;
+
         return enemy;
     }
 

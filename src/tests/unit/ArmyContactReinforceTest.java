@@ -36,6 +36,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+
                 return;
             }
             if (now != 2) return;
@@ -63,6 +64,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+
                 return;
             }
             if (now != 290) return;
@@ -84,6 +86,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+
                 return;
             }
             if (now != 2) return;
@@ -108,6 +111,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+
                 return;
             }
             if (now != 2) return;

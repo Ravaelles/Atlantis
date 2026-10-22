@@ -39,10 +39,12 @@ public class RebaseToNewMineralPatches extends Manager {
         if (Env.isTesting()) return false;
 
         if (newBaseIsDefinedAndFree() && unit.isMoving() && unit.lastActionLessThanAgo(30 * 15)) return true;
+
         rebaseTo = defineNewBaseLocation();
 
         if (rebaseTo == null) {
             ErrorLog.printErrorOnce("Null newBase");
+
             return false;
         }
 
@@ -62,6 +64,7 @@ public class RebaseToNewMineralPatches extends Manager {
 
         if (baseLocation == null) {
             ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
+
             return null;
         }
 
@@ -77,6 +80,7 @@ public class RebaseToNewMineralPatches extends Manager {
         }
         else {
             issueLandOrder(baseLocation);
+
             return true;
         }
     }
@@ -84,6 +88,7 @@ public class RebaseToNewMineralPatches extends Manager {
     private boolean moveToRebase(ABaseLocation rebaseTo) {
         unit.setTooltipAndLog("MoveToRebase");
         unit.move(rebaseTo, Actions.SPECIAL, "FlyToRebase", true);
+
         return true;
     }
 
@@ -93,6 +98,7 @@ public class RebaseToNewMineralPatches extends Manager {
             unit.setTooltipAndLog("LandInNewHome");
             unit.land(rebaseExactLocation.toTilePosition());
             OurClosestBaseToEnemy.clearCache();
+
             return true;
         }
         return false;
@@ -103,6 +109,7 @@ public class RebaseToNewMineralPatches extends Manager {
             unit.setTooltipAndLog("LiftAndRebase");
             unit.lift();
             OurClosestBaseToEnemy.clearCache();
+
             return true;
         }
         return false;

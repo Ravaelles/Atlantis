@@ -33,6 +33,7 @@ public class TooCloseToBaseLocation {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 

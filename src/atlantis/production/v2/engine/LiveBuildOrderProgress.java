@@ -47,6 +47,7 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
                 + Select.ourUnfinished().ofType(type).count()
                 + ConstructionRequests.countNotStartedOfType(type)
                 + inTrainingQueues(type);
+
         return Math.max(0, count - startingCount(type));
     }
 
@@ -87,6 +88,7 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
 
         for (AUnit facility : Select.ourBuildings().list()) {
             if (facility.isResearching() && tech.equals(facility.whatIsResearching()))
+
                 return 1;
         }
         return 0;
@@ -96,6 +98,7 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
         int level = ATech.getUpgradeLevel(upgrade);
         for (AUnit facility : Select.ourBuildings().list()) {
             if (facility.isUpgrading() && upgrade.equals(facility.whatIsUpgrading()))
+
                 return level + 1;
         }
         return level;

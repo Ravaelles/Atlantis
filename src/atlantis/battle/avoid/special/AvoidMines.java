@@ -43,6 +43,7 @@ public class AvoidMines extends Manager {
             if (mine.isOur()) {
                 if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
                     unit.moveAwayFrom(mine.position(), 2, Actions.MOVE_AVOID, "Avoid mine!");
+
                     return true;
                 }
             }
@@ -52,12 +53,14 @@ public class AvoidMines extends Manager {
                 if (canShootAtMines) {
                     if (handleEnemyMineAsRangedUnit(mine)) {
                         unit.setTooltipTactical("ShootMine");
+
                         return true;
                     }
                 }
                 else {
                     if (handleEnemyMineAsMeleeUnit(mine)) {
                         unit.setTooltipTactical("AvoidMine");
+
                         return true;
                     }
                 }
@@ -92,6 +95,7 @@ public class AvoidMines extends Manager {
 
         unit.attackUnit(mine);
         unit.setTooltipTactical("SHOOT MINE");
+
         return true;
     }
 }

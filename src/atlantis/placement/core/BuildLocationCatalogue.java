@@ -127,6 +127,7 @@ public final class BuildLocationCatalogue {
         }
         if (scorer != null)
             Collections.sort(matching, scorer);
+
         return matching;
     }
 

@@ -66,6 +66,7 @@ public class ParamTweakerEvaluator {
                 "ShotsFired",
                 "Score"
         };
+
         return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
     }
 
@@ -77,6 +78,7 @@ public class ParamTweakerEvaluator {
         }
 
         String[] stringArray = list.toArray(new String[0]);
+
         return stringArray;
     }
 
@@ -105,6 +107,7 @@ public class ParamTweakerEvaluator {
     private static int[] totalsFromFile() {
         java.io.File events = new java.io.File(EventLog.OUTPUT_PATH);
         if (!events.exists()) return null;
+
         java.util.ArrayList<String> lines = AFile.readTextFileToList(EventLog.OUTPUT_PATH);
         int hits = 0;
         int shots = 0;

@@ -98,6 +98,7 @@ public class AMap {
 
         if (!atlantis.config.env.Env.isOpenBW()) {
             AConsole.errPrintln("Continuing: the classic backends have other map sources.");
+
             return;
         }
 

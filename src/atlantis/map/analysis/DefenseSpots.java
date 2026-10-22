@@ -112,9 +112,11 @@ public final class DefenseSpots {
             public int compare(Spot a, Spot b) {
                 if (a.coversChoke != b.coversChoke) return a.coversChoke ? -1 : 1;
                 if (a.coversAnchor != b.coversAnchor) return a.coversAnchor ? -1 : 1;
+
                 return Double.compare(a.distToChokePx, b.distToChokePx);
             }
         });
+
         return spots;
     }
 
@@ -137,8 +139,10 @@ public final class DefenseSpots {
         double dy = by - ay;
         double lenSq = dx * dx + dy * dy;
         if (lenSq == 0) return Math.hypot(p.getX() - ax, p.getY() - ay);
+
         double t = ((p.getX() - ax) * dx + (p.getY() - ay) * dy) / lenSq;
         t = Math.max(0, Math.min(1, t));
+
         return Math.hypot(p.getX() - (ax + t * dx), p.getY() - (ay + t * dy));
     }
 }

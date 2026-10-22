@@ -194,6 +194,7 @@ public class AvoidLurkers extends Manager {
 
         if (unit.load(bunker)) {
             unit.addLog("HideFromLurker");
+
             return true;
         }
 

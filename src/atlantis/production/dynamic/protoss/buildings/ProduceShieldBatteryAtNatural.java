@@ -15,6 +15,7 @@ public class ProduceShieldBatteryAtNatural {
 
         if (!A.everyNthGameFrame(69)) return false;
         if (Count.cannons() < 2) return false;
+
         int shieldBatteries = Count.withPlanned(type());
         if (!A.hasMinerals(170 * shieldBatteries)) return false;
         if (shieldBatteries >= Math.ceil(A.supplyTotal() / 70.0)) return false;

@@ -160,6 +160,7 @@ public class CommanderTreeWiringTest {
                 try {
                     Field field = type.getDeclaredField("commanderObjects");
                     field.setAccessible(true);
+
                     return (Commander[]) field.get(commander);
                 } catch (NoSuchFieldException e) {
                     type = type.getSuperclass();
@@ -180,6 +181,7 @@ public class CommanderTreeWiringTest {
 
                         T nested = find(child, type);
                         if (nested != null)
+
                                 return nested;
                 }
                 return null;

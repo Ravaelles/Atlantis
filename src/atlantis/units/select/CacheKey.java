@@ -69,6 +69,7 @@ public class CacheKey {
 //        if (object instanceof UpgradeType) return ((UpgradeType) object).name()
 //            + "(" + AGame.getPlayerUs().getUpgradeLevel((UpgradeType) object) + ")";
         if (object instanceof Class) return ((Class) object).getSimpleName();
+
         if (object instanceof Class[]) {
             return Arrays.stream((Class[]) object).map(Class::getSimpleName).reduce(
                 "",

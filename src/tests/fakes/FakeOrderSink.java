@@ -52,6 +52,7 @@ public class FakeOrderSink implements OrderSink {
 
     private boolean record(String operation, AUnit actor, String detail) {
         records.add(new Record(operation, actor.id(), detail));
+
         return resultToReturn;
     }
 

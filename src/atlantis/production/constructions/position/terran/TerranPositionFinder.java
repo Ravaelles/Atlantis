@@ -55,6 +55,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         HasPosition finalNearTo = nearTo != null ? nearTo : Select.mainOrAnyBuilding();
         AUnit finalBuilder = builder;
+
         return new ValidateParams(maxDistance, finalNearTo, finalBuilder);
     }
 
@@ -77,6 +78,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
         if (builder == null) {
             AbstractPositionFinder._STATUS = "NO BUILDER ASSIGNED";
+
             return null;
         }
 
@@ -117,6 +119,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                             }
 
                             AbstractPositionFinder._STATUS = "OK";
+
                             return constructionPosition;
                         }
 
@@ -145,6 +148,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                 && !CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(2, 0))
         ) {
             _STATUS = "MY_ADDON_COULDNT_BE_BUILT_HERE";
+
             return true;
         }
 
@@ -155,6 +159,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             if (otherBuilding.canHaveAddon()) {
                 if (!CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(-2, 0))) {
                     _STATUS = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
+
                     return true;
                 }
             }

@@ -36,6 +36,7 @@ public class ScoutHoldCourse extends Manager {
     @Override
     public boolean applies() {
         if (unit == null || !unit.isAlive()) return false;
+
         return shouldRide(
             unit.action() == Actions.MOVE_SCOUT || unit.action() == Actions.MOVE_EXPLORE,
             unit.isMoving(),
@@ -53,12 +54,14 @@ public class ScoutHoldCourse extends Manager {
         if (orderAgo <= SETTLE_FRAMES) return true;
         if (changedAgo > STUCK_FRAMES) return false;
         if (orderAgo > RIDE_MAX_FRAMES) return false;
+
         return true;
     }
 
     @Override
     protected Manager handle() {
         unit.setTooltipTactical("HoldCourse");
+
         return usedManager(this);
     }
 }

@@ -43,6 +43,7 @@ public class EscapeLongVectorTest extends WorldStubForTests {
     private static FakeUnit threatAt(int tx, int ty) {
         FakeUnit threat = fake(AUnitType.Zerg_Zergling, tx, ty);
         threat.setEnemy();
+
         return threat;
     }
 

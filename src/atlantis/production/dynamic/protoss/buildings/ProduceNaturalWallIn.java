@@ -98,11 +98,14 @@ public class ProduceNaturalWallIn {
      */
     private static boolean requestExact(WallPieces.Piece piece) {
         if (!piece.tile().isBuildableIncludeBuildings()) return false;
+
         ProductionOrder order = AddToQueue.withTopPriority(piece.type(), piece.tile());
         if (order == null) return false;
+
         order.setAroundPosition(piece.tile());
         order.markAsUsingExactPosition();
         order.setMinSupply(0);
+
         return NewConstructionRequest.requestConstructionOf(piece.type(), piece.tile(), order) != null;
     }
 }

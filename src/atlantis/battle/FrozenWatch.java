@@ -63,6 +63,7 @@ public final class FrozenWatch {
     /** Per-frame sample, next to the other per-unit twins in the battle hook. */
     public static void note(AUnit unit) {
         if (unit == null || !unit.isAlive() || unit.position() == null) return;
+
         try {
             APosition last = lastPos.get(unit.id());
             if (last != null) {
@@ -106,12 +107,14 @@ public final class FrozenWatch {
     /** Consecutive frozen notes; the error fires when this reaches 2. */
     public static int frozenStreak(AUnit unit) {
         if (unit == null) return 0;
+
         return frozenStreak.getOrDefault(unit.id(), 0);
     }
 
     /** Frame of the last frozen error for this unit, or null when never filed. */
     public static Integer frozenErrorFrame(AUnit unit) {
         if (unit == null) return null;
+
         return lastErrorFrame.get(unit.id());
     }
 
@@ -121,6 +124,7 @@ public final class FrozenWatch {
             if (stillFrames.getOrDefault(unit.id(), 0) < FROZEN_FRAMES) return false;
             if (!unit.isMoving() && !unit.isAttacking()) return false;
             if (unit.cooldown() > 0) return false;
+
             return !trading(unit);
         } catch (Exception ignored) {
             return false;
@@ -132,6 +136,7 @@ public final class FrozenWatch {
         try {
             AUnit target = unit.target();
             if (target == null || !target.isAlive() || target.position() == null) return false;
+
             return unit.hasWeaponRangeToAttack(target, 0);
         } catch (Exception ignored) {
             return false;
@@ -143,6 +148,7 @@ public final class FrozenWatch {
             int now = A.now();
             Integer last = lastLogFrame.get(unit.id());
             if (last != null && now - last < LOG_EVERY_FRAMES) return;
+
             lastLogFrame.put(unit.id(), now);
             atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.FROZEN)
                 .param("unit", unit.id())

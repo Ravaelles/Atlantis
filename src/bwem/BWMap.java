@@ -168,6 +168,7 @@ public abstract class BWMap {
                 onMineralDestroyed(mineral);
                 mineral.simulateCPPObjectDestructor(); /* IMPORTANT! These actions are performed in the "~Neutral" dtor in BWEM 1.4.1 C++. */
                 getNeutralData().getMinerals().remove(i);
+
                 return;
             }
         }
@@ -191,6 +192,7 @@ public abstract class BWMap {
                 building
                     .simulateCPPObjectDestructor(); /* IMPORTANT! These actions are performed in the "~Neutral" dtor in BWEM 1.4.1 C++. */
                 getNeutralData().getStaticBuildings().remove(i);
+
                 return;
             }
         }
@@ -236,6 +238,7 @@ public abstract class BWMap {
                 if (area != null) return area;
             }
         // ----------------------------------------------------------------------
+
         return null;
     }
 
@@ -300,6 +303,7 @@ public abstract class BWMap {
 
         // TODO: Are we supposed to return start or not?
         asserter.throwIllegalStateException("");
+
         return start;
     }
 
@@ -425,6 +429,7 @@ public abstract class BWMap {
                     }
                     else if (!tile.getAreaId().equals(id)) {
                         tile.setAreaId(UNINITIALIZED);
+
                         return;
                     }
                 }
@@ -481,6 +486,7 @@ public abstract class BWMap {
             }
 
             areaPairFlag.flip(cantor);
+
             return areaPairFlag.get(cantor) ? a : b;
         }
     }

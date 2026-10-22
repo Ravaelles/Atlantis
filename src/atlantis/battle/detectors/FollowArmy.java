@@ -30,6 +30,7 @@ public class FollowArmy extends Manager {
 
         if (followPoint.distTo(unit) > 0.5) {
             unit.move(followPoint, Actions.MOVE_FOLLOW, "FollowArmy", true);
+
             return usedManager(this);
         }
 

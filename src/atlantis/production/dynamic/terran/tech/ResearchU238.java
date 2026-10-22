@@ -32,8 +32,10 @@ public class ResearchU238 extends Commander {
 
         if (!Have.academy()) return false;
         if (Count.medics() <= 0) return false;
+
         if (ATech.isResearched(what())) {
             onResearched();
+
             return false;
         }
 

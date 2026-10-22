@@ -33,29 +33,36 @@ public final class ChokeStandoff {
     public static boolean applies(AUnit unit, HasPosition anchor) {
         if (unit == null) return false;
         if (Count.bases() == 0) return false;
+
         AChoke choke = BattleSetup.chokeNear(unit);
         if (choke == null || choke.center() == null) return false;
+
         int enemies = BattleSetup.enemiesNear(choke.center(), CONTEST_TILES);
         if (enemies == 0) return false;
+
         return !crushing(choke);
     }
 
     /** Pure core: with these headcounts around the choke, may the line push? */
     public static boolean mayAdvance(int oursNear, int enemiesNear) {
         if (enemiesNear <= 0) return true;
+
         return oursNear >= CRUSH_RATIO * enemiesNear;
     }
 
     public static boolean crushing(AChoke choke) {
         if (choke == null || choke.center() == null) return true;
+
         int enemies = BattleSetup.enemiesNear(choke.center(), CONTEST_TILES);
         int ours = BattleSetup.oursNear(choke.center(), CONTEST_TILES);
+
         return mayAdvance(ours, enemies);
     }
 
     /** Pure geometry: the hold point, standoff tiles off the center toward our side. */
     public static APosition holdPoint(APosition chokeCenter, HasPosition ourSide) {
         if (chokeCenter == null || ourSide == null) return null;
+
         return chokeCenter.translateTilesTowards(ourSide, STANDOFF_TILES);
     }
 
@@ -64,6 +71,7 @@ public final class ChokeStandoff {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
+
             APosition ours = holdPoint(choke.center(), unit);
             // High side first (NEXT #171): both lips are candidates and
             // the heights choose. Flat or unreadable ground keeps today.
@@ -83,6 +91,7 @@ public final class ChokeStandoff {
      */
     public static APosition chooseHold(APosition ours, APosition foeHold, int ourHeight, int foeHeight) {
         if (foeHold != null && HighGround.preferFoeSide(ourHeight, foeHeight)) return foeHold;
+
         return ours;
     }
 
@@ -97,6 +106,7 @@ public final class ChokeStandoff {
                 .combatUnits().nearestTo(choke.center());
             if (foe == null || foe.position() == null) return null;
             if (unit.distTo(foe) <= unit.distTo(choke.center())) return null;
+
             return holdPoint(choke.center(), foe.position());
         } catch (Exception ignored) {
             return null;

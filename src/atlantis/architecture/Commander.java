@@ -18,6 +18,7 @@ public class Commander extends BaseCommander {
 
     public boolean invokedCommander() {
         if (A.now() == lastFrameInvoked) return false;
+
         lastFrameInvoked = A.now();
 
         CodeProfiler.startMeasuring(this);

@@ -43,6 +43,7 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
         else if (supplyTotal <= 170) band = 16 + bonus;
         else if (supplyTotal <= 200) band = 22 + bonus;
         else band = -1;
+
         return band < 0 ? -1 : Math.min(6, band);
     }
 

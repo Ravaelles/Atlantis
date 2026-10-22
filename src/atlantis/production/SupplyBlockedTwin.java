@@ -42,6 +42,7 @@ public final class SupplyBlockedTwin {
             .log(AGame.now(), A.minSec());
         if (supplyFree > atlantis.production.v2.goals.DynamicGoals.SUPPLY_WORRY_LEVEL) return;
         if (supplyComing <= 0) return;
+
         for (AUnit unit : atlantis.units.select.BaseSelect.ourUnitsWithUnfinishedList()) {
             if (unit == null || !unit.is(provider)) continue;
             EventLog.key(LogKey.SUPPLY_BLOCKED)
@@ -82,6 +83,7 @@ public final class SupplyBlockedTwin {
         if (atlantis.util.We.protoss()) return AUnitType.Protoss_Pylon;
         if (atlantis.util.We.terran()) return AUnitType.Terran_Supply_Depot;
         if (atlantis.util.We.zerg()) return AUnitType.Zerg_Overlord;
+
         return null;
     }
 

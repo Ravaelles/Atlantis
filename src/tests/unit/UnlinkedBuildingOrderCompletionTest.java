@@ -57,6 +57,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Cybernetics_Core, 24, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -85,6 +86,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Gateway, 24, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -109,6 +111,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Assimilator, 24, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -138,6 +141,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -167,6 +171,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Gateway, 24, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 

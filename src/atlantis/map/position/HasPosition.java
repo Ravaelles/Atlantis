@@ -225,6 +225,7 @@ public interface HasPosition {
 
     default boolean hasPosition() {
         APosition position = position();
+
         return position != null && position.x() > 0 && position.x() < 32000;
     }
 
@@ -357,6 +358,7 @@ public interface HasPosition {
 
         int otherX = obj.x();
         int otherY = obj.y();
+
         return this.x() == otherX && this.y() == otherY;
     }
 
@@ -377,6 +379,7 @@ public interface HasPosition {
         else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) return true;
 
         if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
+
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }
 
@@ -389,6 +392,7 @@ public interface HasPosition {
         else if (px >= (32 * AMap.getMapWidthInTiles() - allowedPixelsAway)) return true;
 
         if (py <= allowedPixelsAway) return true;
+
         else return py >= (32 * AMap.getMapHeightInTiles() - allowedPixelsAway);
     }
 

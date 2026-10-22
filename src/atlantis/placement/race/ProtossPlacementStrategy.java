@@ -34,6 +34,7 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
         List<BuildBlock.Spec> specs = new ArrayList<>();
         specs.addAll(BlockTemplates.startBlocks()); // start blocks first: the anchor
         specs.addAll(BlockTemplates.normal());
+
         return specs;
     }
 
@@ -52,6 +53,7 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
     @Override
     public boolean requiresAvailability(String buildableTypeId) {
         AUnitType type = AUnitType.getByName(buildableTypeId);
+
         return type != null && type.needsPower();
     }
 

@@ -55,6 +55,7 @@ public class FlyingBuildingScoutManager extends Manager {
         HasPosition goTo = GoTo.orMain(Alpha.get().center());
 
         unit.move(goTo, Actions.MOVE_SAFETY, "UnderFire");
+
         return true;
     }
 
@@ -67,6 +68,7 @@ public class FlyingBuildingScoutManager extends Manager {
 //                antiAirEnemies.nearestTo(unit), 2, Actions.MOVE_SAFETY, "OopsAntiAir"
 //            );
             unit.move(GoTo.orMain(Alpha.get().center()), Actions.MOVE_SAFETY, "OopsAntiAir");
+
             return true;
         }
 
@@ -82,6 +84,7 @@ public class FlyingBuildingScoutManager extends Manager {
 
             if (distToFocusPoint > 0.5) {
                 unit.move(focusPoint, Actions.SPECIAL, "Fly baby!");
+
                 return true;
             }
         }
@@ -107,6 +110,7 @@ public class FlyingBuildingScoutManager extends Manager {
 
             if (moveTo != null) {
                 unit.move(friend, Actions.MOVE_SAFETY, "UnderFire");
+
                 return true;
             }
 //            }

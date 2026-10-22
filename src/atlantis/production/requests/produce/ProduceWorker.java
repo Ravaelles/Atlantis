@@ -66,6 +66,7 @@ public class ProduceWorker {
             if (!isSafeToProduceWorkerAt(base)) continue;
             if (isBaseMinedOut(base)) continue;
             if (base.isFree() && base.trainingQueue().isEmpty()) return base;
+
             if (queueable == null && AutoProduceWorkersCommander.canQueueWorkerAt(base)) {
                 queueable = base;
             }

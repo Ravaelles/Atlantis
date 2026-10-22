@@ -42,6 +42,7 @@ public class OnGameEnd {
         try {
             if (_executed) return;
             if (atlantis.Atlantis.game() == null) return;
+
             execute(false);
         } catch (Throwable ignored) {
         }
@@ -79,6 +80,7 @@ public class OnGameEnd {
             // been torn down. Setting it here makes the guard symmetric.
             _executed = true;
             Atlantis.getInstance().exitGame(won);
+
             return;
         }
 

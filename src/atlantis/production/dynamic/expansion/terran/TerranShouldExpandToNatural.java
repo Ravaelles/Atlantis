@@ -11,6 +11,7 @@ import atlantis.units.select.Have;
 public class TerranShouldExpandToNatural {
     public static boolean shouldExpandToNatural() {
         if (A.supplyUsed() <= 20) return false;
+
         if (Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) > 1) {
             return TerranShouldExpand.returnNo("HasInProgress");
         }

@@ -36,6 +36,7 @@ public final class EscapeScoring {
      */
     public static double cornerPenalty(double[] clearance) {
         if (clearance == null || clearance.length == 0) return 0;
+
         int blocked = 0;
         double best = 0;
         for (double c : clearance) {
@@ -44,6 +45,7 @@ public final class EscapeScoring {
         }
         double penalty = blocked * EscapeTuning.current().getCornerWeight();
         if (best < BLOCKED_RAY_TILES * 2) penalty += EscapeTuning.current().getPocketExtra();
+
         return penalty;
     }
 
@@ -57,6 +59,7 @@ public final class EscapeScoring {
         APosition dest, List<? extends HasPosition> enemies, double radiusTiles
     ) {
         if (dest == null || enemies == null || enemies.isEmpty() || radiusTiles <= 0) return 0;
+
         double pressure = 0;
         for (HasPosition enemy : enemies) {
             if (enemy == null) continue;
@@ -75,6 +78,7 @@ public final class EscapeScoring {
         APosition dest, List<? extends HasPosition> blockers, double radiusTiles
     ) {
         if (dest == null || blockers == null || blockers.isEmpty() || radiusTiles <= 0) return 0;
+
         double penalty = 0;
         for (HasPosition blocker : blockers) {
             if (blocker == null) continue;

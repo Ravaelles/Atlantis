@@ -74,6 +74,7 @@ public abstract class BaseManager {
         // Must be consistent with equals(), which deliberately compares classes only
         // (see AUnit.setManagerUsed). Using unit.id() broke the equals/hashCode
         // contract and would NPE when unit is null.
+
         return getClass().hashCode();
     }
 
@@ -81,6 +82,7 @@ public abstract class BaseManager {
     public String toString() {
         String name = getClass().getSimpleName();
         if (name.startsWith("Terran")) name = name.replace("Terran", "");
+
         return A.substring(name, 0, 30);
     }
 
@@ -99,6 +101,7 @@ public abstract class BaseManager {
 
     public boolean print(String message) {
         System.err.println(getClass().getSimpleName() + ": " + message);
+
         return true;
     }
 

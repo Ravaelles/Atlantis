@@ -87,6 +87,7 @@ public class ForceExitWhenOpeningProven extends Commander {
                         + " Dragoons=" + completedDragoons());
 
         Atlantis.getInstance().onEnd(true);
+
         return false;
     }
 

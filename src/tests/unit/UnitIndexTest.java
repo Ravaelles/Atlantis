@@ -25,6 +25,7 @@ public class UnitIndexTest {
         units.add(fake(AUnitType.Protoss_Probe));
         units.add(fake(AUnitType.Protoss_Zealot));
         units.add(fake(AUnitType.Protoss_Dragoon));
+
         return units;
     }
 

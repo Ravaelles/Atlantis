@@ -53,11 +53,13 @@ public class ProtossCriticalStuffInQueue {
      */
     private static boolean isImminent(AUnitType type) {
         if (CountInQueue.countNotStarted(type) == 0) return false;
+
         ProductionOrder order = Queue.get().notStarted().ofType(type).first();
         if (order == null) return false;
         // An explicitly top-priority request means "build now" regardless of
         // the minSupply bookkeeping (which inherits the queue tail).
         if (order.priority() != null && order.priority().isTop()) return true;
+
         return order.supplyRequirementFulfilled(0);
     }
 

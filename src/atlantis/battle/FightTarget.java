@@ -105,6 +105,7 @@ public final class FightTarget {
             && atlantis.battle.strategy.ZealotHoldFire.hold(unit)) return;
         if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
         if (reengage(unit, target, now, lastStep)) return;
+
         rearmAttack(unit, target);
     }
 
@@ -116,6 +117,7 @@ public final class FightTarget {
         // animating unit gets no new order at all this frame.
         if (unit.isAttackFrame() || unit.isStartingAttack()) {
             ShotTwin.holding(unit, target);
+
             return true;
         }
         return false;
@@ -131,6 +133,7 @@ public final class FightTarget {
      */
     public static boolean attackSettleHold(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
+
         try {
             if (unit.isAttackFrame() || unit.isStartingAttack()) {
                 if (!DuelMemory.attackAnimOpen(unit)) {
@@ -143,6 +146,7 @@ public final class FightTarget {
             }
             Integer start = DuelMemory.lastAttackStart(unit);
             if (start == null) return false;
+
             int latency;
             try {
                 latency = atlantis.units.special.SleepUntilFrameGate.latencyFrames();
@@ -169,6 +173,7 @@ public final class FightTarget {
             && unit.move(aside, Actions.MOVE_AVOID, Behavior.MAKE_WAY.tag())) {
             FormationTwin.madeWay(unit, makeWay.escaper, aside);
             DuelMemory.stepped(unit, now);
+
             return true;
         }
         return false;
@@ -178,6 +183,7 @@ public final class FightTarget {
     private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep, BattleStrategy strategy) {
         if (threat == null) return false;
         if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
+
         boolean marginKite = Kite.shouldKite(unit, threat);
         if (!marginKite && strategy == BattleStrategy.DUEL_KITE && DuelKite.shouldYield(unit, threat)
             && DuelKite.yieldNow(now, lastStep)) {
@@ -188,12 +194,14 @@ public final class FightTarget {
             if (yield != null && unit.move(yield, Actions.MOVE_AVOID, Behavior.DUEL_YIELD.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
+
                 return true;
             }
         }
         if (!marginKite) return false;
         if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
         if (tradeShot(unit, threat)) return false;
+
         if (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames()) {
             // Stardust desired distance: step exactly the gap to the
             // hold point (capped at one full step), never a blind
@@ -226,6 +234,7 @@ public final class FightTarget {
             if (dest != null && unit.move(dest, Actions.MOVE_AVOID, Behavior.KITE.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
+
                 return true;
             }
             KiteTwin.nowhereToStep(unit, threat);
@@ -248,6 +257,7 @@ public final class FightTarget {
             return dest;
         }
         if (!(blend > 0)) return dest;
+
         try {
             // Own squad first; Alpha roster as the fallback (units never
             // get a back-ref assigned - Alpha.gather fills the roster only,
@@ -261,6 +271,7 @@ public final class FightTarget {
             }
             if (center == null) return dest;
             if (unit.distTo(center) > atlantis.battle.escape.EscapeArc.SQUAD_RADIUS_TILES) return dest;
+
             return atlantis.battle.escape.EscapeArc.bend(unit.position(), dest, center, blend);
         } catch (Exception ignored) {
             return dest;
@@ -291,6 +302,7 @@ public final class FightTarget {
             KiteTwin.frozenReset(unit, threat);
             unit.stop(Behavior.UNSTICK.tag());
             DuelMemory.forgetMotion(unit);
+
             return true;
         }
         if (lastMovedAt == null || unit.distTo(lastMovedAt) >= 0.5) {
@@ -317,6 +329,7 @@ public final class FightTarget {
         // cannot be dodged, so the free shot lands instead of a
         // donated step.
         boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
+
         return unit.cooldown() == 0 && swingIncoming;
     }
 
@@ -355,6 +368,7 @@ public final class FightTarget {
                     && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
                     && unit.move(fireAt, Actions.MOVE_ENGAGE, Behavior.REENGAGE.tag())) {
                     DuelMemory.stepped(unit, now);
+
                     return true;
                 }
             }
@@ -394,6 +408,7 @@ public final class FightTarget {
         // fires on its own the moment the weapon is ready (PurpleWave
         // Commander.attack: order on new/overdue target, else sleep).
         if (target.equals(unit.target())) return;
+
         ShotTwin.fired(unit, target);
         unit.attackUnit(target);
         if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);

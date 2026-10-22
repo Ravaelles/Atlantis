@@ -40,6 +40,7 @@ public class ShieldBattery extends Manager {
                     String t = "Recharge";
                     shieldBattery.setTooltipTactical(t + ":" + friend.name());
                     friend.addLog(t);
+
                     return usedManager(this);
                 }
             }

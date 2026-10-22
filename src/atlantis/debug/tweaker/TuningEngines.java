@@ -24,6 +24,7 @@ public final class TuningEngines {
     /** The engine for a CLI name, or empty when nothing matches. */
     public static java.util.Optional<TuningEngine> fromName(String name) {
         if (name == null) return java.util.Optional.empty();
+
         for (TuningEngine engine : all()) {
             if (engine.name().equalsIgnoreCase(name.trim())) return java.util.Optional.of(engine);
         }
@@ -34,6 +35,7 @@ public final class TuningEngines {
     public static Map<String, String> batchScripts() {
         Map<String, String> scripts = new LinkedHashMap<>();
         for (TuningEngine engine : all()) scripts.put(engine.name(), engine.batchScript());
+
         return scripts;
     }
 }

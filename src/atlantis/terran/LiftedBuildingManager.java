@@ -27,6 +27,7 @@ public class LiftedBuildingManager extends Manager {
             if (enemy != null) {
                 unit.setTooltip("IntoSafety");
                 unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false);
+
                 return usedManager(this);
             }
         }

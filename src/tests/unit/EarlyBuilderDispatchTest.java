@@ -115,15 +115,18 @@ public class EarlyBuilderDispatchTest extends AbstractTestWithWorld {
         while (true) {
             int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
             if (key < 0) return -1;
+
             int end = log.indexOf('\n', key);
             if (end < 0) end = log.length();
             String row = log.substring(key, end);
             if (row.contains("\"type\":\"Pylon\"")) {
                 int at = row.indexOf("\"minerals\":");
                 if (at < 0) return -1;
+
                 int digits = at + "\"minerals\":".length();
                 int stop = digits;
                 while (stop < row.length() && Character.isDigit(row.charAt(stop))) stop++;
+
                 return Integer.parseInt(row.substring(digits, stop));
             }
             from = end;

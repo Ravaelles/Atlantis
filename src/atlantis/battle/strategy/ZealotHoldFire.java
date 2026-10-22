@@ -33,6 +33,7 @@ public final class ZealotHoldFire {
         if (unit == null || !unit.isZealot()) return false;
         if (!squadHasRanged(unit)) return false;
         if (isWounded(unit)) return false;
+
         return !rangedAllyFired(unit);
     }
 

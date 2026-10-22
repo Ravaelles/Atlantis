@@ -45,6 +45,7 @@ public class TurretsForNonMain extends TerranMissileTurret {
                 if (minerals != null) {
                     AddToQueue.withHighPriority(type(), base.translateTilesTowards(4, minerals))
                         .setMaximumDistance(maxDist);
+
                     return true;
                 }
             }

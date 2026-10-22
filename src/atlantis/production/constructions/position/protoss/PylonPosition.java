@@ -186,6 +186,7 @@ public class PylonPosition {
      */
     private static APosition fallback() {
         AUnit first = Select.ourBuildings().first();
+
         return first != null ? first.position() : null;
     }
 

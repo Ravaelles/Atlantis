@@ -221,6 +221,7 @@ public class CancelNotStartedBasesTest extends WorldStubForTests {
 
     private int pendingBases() {
         Queue.get().clearCache();
+
         return Queue.get().notFinished().ofType(Protoss_Nexus).size();
     }
 
@@ -253,6 +254,7 @@ public class CancelNotStartedBasesTest extends WorldStubForTests {
         FakeUnit[] all = new FakeUnit[base.length + extra.length];
         System.arraycopy(base, 0, all, 0, base.length);
         System.arraycopy(extra, 0, all, base.length, extra.length);
+
         return all;
     }
 

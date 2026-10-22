@@ -24,6 +24,7 @@ public class ProduceRoboticsSupportBay {
         if (againstZergHaveTemplarArchivesFirst()) return false;
 
         if (EnemyUnits.lurkers() > 0 && Count.observers() == 0) return false;
+
         if (Enemy.protoss() && (
             A.supplyUsed() <= 120 || Army.strength() <= 140 || Count.observers() <= 2
         )) return false;
@@ -37,6 +38,7 @@ public class ProduceRoboticsSupportBay {
 
         if (Have.notEvenPlanned(Protoss_Robotics_Facility)) {
             AddToQueue.withTopPriority(Protoss_Robotics_Facility);
+
             return produceSupportBay();
         }
 

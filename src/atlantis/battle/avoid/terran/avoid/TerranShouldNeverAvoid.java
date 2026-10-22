@@ -26,6 +26,7 @@ public class TerranShouldNeverAvoid extends HasUnit {
 
         if (enemyWeakAirUnitsNearby()) {
             unit.addLog("NeverAvoidMarine");
+
             return true;
         }
 

@@ -215,6 +215,7 @@ public class FakeUnit extends AUnit implements Serializable {
         // maxShields() a second time here inflated every shielded unit
         // (a Zealot answered 220 instead of 160, a Nexus 2250 instead of 1500)
         // and every combat evaluation built on it.
+
         return type().maxHp();
     }
 
@@ -260,12 +261,14 @@ public class FakeUnit extends AUnit implements Serializable {
         // the action is the only signal. Matches production, where the
         // GatherResources manager sets GATHER_MINERALS on issue.
         if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_MINERALS)) return true;
+
         return false;
     }
 
     @Override
     public boolean isGatheringGas() {
         if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_GAS)) return true;
+
         return false;
     }
 
@@ -367,6 +370,7 @@ public class FakeUnit extends AUnit implements Serializable {
         // AUnit.type() returns _lastType itself when it is already set - and it
         // broke the moment something asked during construction.
         _lastType = rawType;
+
         return _lastType;
     }
 
@@ -417,6 +421,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean useTech(TechType tech, AUnit target) {
         this.lastTechUsed = tech;
         this.target = (FakeUnit) target;
+
         return orderSink().useTechOn(this, tech, target);
     }
 
@@ -425,6 +430,7 @@ public class FakeUnit extends AUnit implements Serializable {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;
+
         return orderSink().holdPosition(this);
     }
 
@@ -473,6 +479,7 @@ public class FakeUnit extends AUnit implements Serializable {
         setLastActionReceivedNow();
         boolean issued = orderSink().move(this, target.position().p());
         if (issued) noteDecision(tooltip != null ? tooltip : unitAction.name());
+
         return issued;
     }
 
@@ -486,42 +493,50 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setEnemy() {
         this.enemy = true;
+
         return this;
     }
 
     public FakeUnit setNeutral() {
         this.neutral = true;
+
         return this;
     }
 
     public FakeUnit setDetected(boolean detected) {
         this.detected = detected;
+
         return this;
     }
 
     public FakeUnit setCompleted(boolean completed) {
         this.completed = completed;
+
         return this;
     }
 
     public FakeUnit setConstructing(boolean constructing) {
         this.constructing = constructing;
+
         return this;
     }
 
     public FakeUnit setTrainingQueue(List<AUnitType> queue) {
         this.stubTrainingQueue = queue == null ? null : new ArrayList<>(queue);
+
         return this;
     }
 
     @Override
     public List<AUnitType> trainingQueue() {
         if (stubTrainingQueue != null) return new ArrayList<>(stubTrainingQueue);
+
         return super.trainingQueue();
     }
 
     public FakeUnit setEnergy(int energy) {
         this.energy = energy;
+
         return this;
     }
 
@@ -534,21 +549,25 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setBurrowed(boolean burrowed) {
         this.burrowed = burrowed;
+
         return this;
     }
 
     public FakeUnit setCloaked(boolean cloaked) {
         this.cloaked = cloaked;
+
         return this;
     }
 
     public FakeUnit setEffCloaked(boolean effCloaked) {
         this.effCloaked = effCloaked;
+
         return this;
     }
 
     public FakeUnit setEffVisible(boolean effVisible) {
         this.effVisible = effVisible;
+
         return this;
     }
 
@@ -594,6 +613,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setLockedDown(boolean lockedDown) {
         this.lockedDown = lockedDown;
+
         return this;
     }
 
@@ -604,6 +624,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setStasised(boolean stasised) {
         this.stasised = stasised;
+
         return this;
     }
 
@@ -614,21 +635,25 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setAngle(double angle) {
         this.angle = angle;
+
         return this;
     }
 
     public FakeUnit injectCooldown() {
         this.cooldown = cooldownAbsolute() - 1 + ARandom.rand(0, 2);
+
         return this;
     }
 
     public FakeUnit setHp(int hp) {
         this.hp = hp;
+
         return this;
     }
 
     public FakeUnit setLastActionReceived(int atFrame) {
         this._lastActionReceived = atFrame;
+
         return this;
     }
 
@@ -639,6 +664,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setUnderDarkSwarm(boolean underDarkSwarm) {
         this.underDarkSwarm = underDarkSwarm;
+
         return this;
     }
 
@@ -649,6 +675,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setShields(int shields) {
         this.shields = shields;
+
         return this;
     }
 
@@ -661,11 +688,13 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setKillCount(int killCount) {
         this.killCount = killCount;
+
         return this;
     }
 
     public FakeUnit setFakeTarget(FakeUnit target) {
         this.target = target;
+
         return this;
     }
 }

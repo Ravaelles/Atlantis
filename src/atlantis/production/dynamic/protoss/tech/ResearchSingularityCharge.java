@@ -63,6 +63,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
             .param("minerals", A.minerals())
             .param("gas", A.gas())
             .log(A.now(), A.minSec());
+
         return result;
     }
 
@@ -71,6 +72,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
         if (ATech.isResearched(what())) {
             onResearched();
+
             return false;
         }
 
@@ -140,6 +142,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
             .param("minerals", A.minerals())
             .param("gas", A.gas())
             .log(A.now(), A.minSec());
+
         return super.handle();
     }
 

@@ -19,6 +19,7 @@ public class ProduceCorsairs {
 
         if (Enemy.zerg()) {
             if (againstZerg()) return produce();
+
             return false;
         }
 
@@ -84,6 +85,7 @@ public class ProduceCorsairs {
 
     private static boolean increaseProduced() {
         produced++;
+
         return true;
     }
 }

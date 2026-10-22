@@ -75,6 +75,7 @@ public interface RacePlacementStrategy {
      */
     default SupportRequest requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
         // Default: a race with no support channel has nothing to request.
+
         return null;
     }
 

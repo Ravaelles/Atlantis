@@ -116,8 +116,10 @@ public final class GhostAdvance {
      */
     public static boolean move(AUnit unit, FightOrFlight.Tactic tactic) {
         if (unit == null || !unit.isAlive()) return false;
+
         if (tactic != FightOrFlight.Tactic.FIGHT || scoutHeld()) {
             forget(unit);
+
             return false;
         }
 
@@ -131,10 +133,12 @@ public final class GhostAdvance {
             try {
                 if (unit.hasWeaponRangeToAttack(seen, 0)) {
                     forget(unit);
+
                     return false;
                 }
             } catch (Exception ignored) {
                 forget(unit);
+
                 return false;
             }
         }
@@ -142,6 +146,7 @@ public final class GhostAdvance {
         APosition ghost = ghostPointFor(unit);
         if (ghost == null) {
             forget(unit);
+
             return false;
         }
         double dist;
@@ -149,6 +154,7 @@ public final class GhostAdvance {
             dist = unit.distTo(ghost);
         } catch (Exception ignored) {
             forget(unit);
+
             return false;
         }
         if (dist < REACHED_TILES) return true;
@@ -159,6 +165,7 @@ public final class GhostAdvance {
         // reinforcement calls, not scouting).
         if (dist > LOST_TILES && !atlantis.game.A.isUms()) {
             forget(unit);
+
             return false;
         }
 
@@ -171,6 +178,7 @@ public final class GhostAdvance {
 
         if (grindingAWall(unit)) {
             forget(unit);
+
             return false;
         }
 
@@ -194,6 +202,7 @@ public final class GhostAdvance {
         if (dest != null && unit.move(dest, Actions.MOVE_ENGAGE, advanceTagFor(unit).tag())) {
             noteProgress(unit);
             atlantis.battle.FightTarget.markRepositioned(unit);
+
             return true;
         }
         return false;
@@ -280,10 +289,12 @@ public final class GhostAdvance {
      */
     private static APosition unexploredDestinationFor(AUnit unit) {
         if (unit == null || !atlantis.game.A.isUms()) return null;
+
         try {
             atlantis.map.region.ARegion region =
                 atlantis.map.region.Regions.getNearestUnexploredRegion(unit.position());
             if (region == null || region.center() == null) return null;
+
             return region.center();
         } catch (Exception ignored) {
             return null;
@@ -297,8 +308,10 @@ public final class GhostAdvance {
      */
     private static APosition freshContactFor(AUnit unit) {
         if (unit == null) return null;
+
         APosition last = atlantis.battle.FightTarget.lastContact(unit);
         if (last == null) return null;
+
         try {
             Integer frame = atlantis.battle.FightTarget.lastContactFrame(unit);
             if (frame == null) return null;
@@ -355,10 +368,12 @@ public final class GhostAdvance {
      */
     private static APosition sweepDestinationFor(AUnit unit) {
         if (unit == null || !atlantis.game.A.isUms()) return null;
+
         try {
             java.util.List<atlantis.map.region.ARegion> regions =
                 atlantis.map.region.Regions.regions();
             if (regions == null || regions.isEmpty()) return null;
+
             atlantis.map.region.ARegion best = null;
             double bestDist = Double.MAX_VALUE;
             for (atlantis.map.region.ARegion region : regions) {
@@ -396,10 +411,13 @@ public final class GhostAdvance {
     /** Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait. */
     public static boolean isVanguard(AUnit unit) {
         if (unit == null) return false;
+
         try {
             Selection ours = Select.ourCombatUnits();
             if (ours == null || ours.count() == 0) return true;
+
             AUnit scout = SquadScout.pickBait(ours);
+
             return scout != null && scout.id() == unit.id();
         } catch (Exception ignored) {
             return true;
@@ -415,11 +433,14 @@ public final class GhostAdvance {
     public static APosition ghostPointFor(AUnit unit) {
         APosition last = freshContactFor(unit);
         if (last != null) return last;
+
         try {
             Selection seen = EnemyUnits.discovered();
             if (seen == null) return null;
+
             Selection foes = seen.combatUnits();
             if (foes == null) return null;
+
             AUnit nearest = null;
             double best = Double.MAX_VALUE;
             for (AUnit foe : foes.list()) {
@@ -440,6 +461,7 @@ public final class GhostAdvance {
         // of standing (owner 2026-10-26, timeout anatomy) - the nearest
         // center beyond reach, so arriving rotates to the next one on
         // its own, with no per-unit memory to drift.
+
         return sweepDestinationFor(unit);
     }
 }

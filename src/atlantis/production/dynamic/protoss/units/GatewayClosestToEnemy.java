@@ -46,6 +46,7 @@ public class GatewayClosestToEnemy {
         // was already busy, and train() on a busy Gateway is what the engine
         // rejected with ArrayIndexOutOfBoundsException (the "OrderSink.train
         // failed" spam that blocked the owner's Cybernetics Core).
+
         return Select.ourOneNotTrainingUnits(Protoss_Gateway);
     }
 }

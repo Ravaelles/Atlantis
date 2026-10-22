@@ -37,6 +37,7 @@ public class PylonTooFarFromBaseEarly {
         // build here" by hundreds (NEXT #81). Same boolean as before.
         if (Select.mainOrAnyUnit().groundDist(position) > 22) {
             AbstractPositionFinder._STATUS = "Pylon too far from main, too early";
+
             return true;
         }
         return false;

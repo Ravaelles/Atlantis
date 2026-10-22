@@ -117,6 +117,7 @@ public class AddToQueue {
         if (tech.equals(TechType.Psionic_Storm)) productionOrder.setPriority(ProductionOrderPriority.TOP);
 
         Queue.get().addNew(0, productionOrder);
+
         return true;
     }
 
@@ -140,6 +141,7 @@ public class AddToQueue {
         ProductionOrder order = new ProductionOrder(upgrade, A.supplyUsed() - 2);
         order.setPriority(priority);
         Queue.get().addNew(0, order);
+
         return true;
     }
 
@@ -163,14 +165,17 @@ public class AddToQueue {
             AConsole.errPrintln(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
             if ("_NO_EXPAND_REASON_".equals(ShouldExpand.reason)) {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
+
                 return null;
             }
             // Owner: queue bases at most once per 5 seconds, and only when
             // the bank covers in-flight bases plus the next one (400 each
             // + 380). Twin symptom: two ADDED rows in the same minute.
             if (A.now() - lastNexusQueueFrame < NEXUS_QUEUE_COOLDOWN_FRAMES) return null;
+
             int unfinishedBases = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Nexus);
             if (!A.hasMinerals(unfinishedBases * 400 + 380)) return null;
+
             lastNexusQueueFrame = A.now();
         }
 
@@ -319,6 +324,7 @@ public class AddToQueue {
 
     protected static boolean addToQueue(AUnitType type) {
         withStandardPriority(type);
+
         return true;
     }
 
@@ -373,6 +379,7 @@ public class AddToQueue {
         for (AUnit buildingProducing : Select.ourFree(building).list()) {
             if (!buildingProducing.isTrainingAnyUnit() && A.canAffordWithReserved(type)) {
                 addToQueue(type);
+
                 return true;
             }
         }

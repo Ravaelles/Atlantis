@@ -57,12 +57,14 @@ public final class EngineNeighbourhoodSource implements NeighbourhoodRegistry.So
 
         if (nearest == null)
             nearest = Select.main();
+
         return nearest;
     }
 
     private static int dist(AUnit unit, int tx, int ty) {
         int dx = Math.abs(unit.tx() - tx);
         int dy = Math.abs(unit.ty() - ty);
+
         return Math.max(dx, dy);
     }
 }

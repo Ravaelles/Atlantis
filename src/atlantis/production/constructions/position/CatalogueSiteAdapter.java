@@ -75,6 +75,7 @@ public final class CatalogueSiteAdapter {
      */
     public static APosition siteFor(AUnit builder, AUnitType building, Construction construction) {
         if (!Env.placementCatalogue()) return null;
+
         return answerWithTwin(siteForInner(plannerForFrame(AGame.now()), builder, building, construction),
             building, "funnel");
     }
@@ -98,6 +99,7 @@ public final class CatalogueSiteAdapter {
      */
     public static APosition siteForSited(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         if (!Env.placementCatalogue()) return null;
+
         return siteForSited(plannerForFrame(AGame.now()), builder, building, nearTo, maxDistance);
     }
 
@@ -108,9 +110,11 @@ public final class CatalogueSiteAdapter {
         String scope = SiteScope.declineReason(building);
         if (scope != null) {
             SiteTwin.declined(building, scope, "sited");
+
             return null;
         }
         if (building == null) return null;
+
         planner.startPass();
         PlacementReservation reservation = propose(planner, builder, building, constraintForSited(nearTo), "sited");
         if (reservation == null) {
@@ -119,6 +123,7 @@ public final class CatalogueSiteAdapter {
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!withinRange(site, nearTo, maxDistance)) {
             SiteTwin.declined(building, "too-far", "sited");
+
             return null;
         }
         return answerWithTwin(site, building, "sited", reservation);
@@ -126,20 +131,24 @@ public final class CatalogueSiteAdapter {
 
     private static APosition siteForInner(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
         if (construction == null || building == null) return null;
+
         String scope = SiteScope.declineReason(building);
         if (scope != null) {
             SiteTwin.declined(building, scope, "funnel");
+
             return null;
         }
 
         ProductionOrder order = construction.productionOrder();
         if (order == null) {
             SiteTwin.declined(building, "no-order", "funnel");
+
             return null;
         }
 
         PlacementReservation reservation = propose(planner, builder, building, constraintFor(order, construction), "funnel");
         if (reservation == null) return null;
+
         return answerWithTwin(
             APosition.create(reservation.tileX(), reservation.tileY()), building, "funnel", reservation);
     }
@@ -150,6 +159,7 @@ public final class CatalogueSiteAdapter {
 
     private static APosition answerWithTwin(APosition site, AUnitType building, String via, PlacementReservation reservation) {
         SiteTwin.answered(building, site, via, reservation);
+
         return site;
     }
 
@@ -166,6 +176,7 @@ public final class CatalogueSiteAdapter {
         // its own A/B proof.
         if (builder == null || !builder.isAlive()) {
             SiteTwin.declined(building, "no-builder", via);
+
             return null;
         }
 
@@ -179,12 +190,14 @@ public final class CatalogueSiteAdapter {
         }
         if (reservation == null || !reservation.isSuccessful()) {
             SiteTwin.declined(building, "no-tile", via);
+
             return null;
         }
 
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
             SiteTwin.declined(building, "legacy-refused", via);
+
             return null;
         }
         // Power is not part of the physical check above, and the catalogue's
@@ -195,6 +208,7 @@ public final class CatalogueSiteAdapter {
         // like the legacy chain, which refuses unpowered tiles at search.
         if (building.needsPower() && !IsPoweredByAPylon.check(site, building)) {
             SiteTwin.declined(building, "unpowered", via);
+
             return null;
         }
         return reservation;
@@ -208,6 +222,7 @@ public final class CatalogueSiteAdapter {
      */
     public static boolean withinRange(APosition site, HasPosition nearTo, double maxDistance) {
         if (site == null || nearTo == null || maxDistance < 0) return true;
+
         return site.distTo(nearTo) <= maxDistance;
     }
 
@@ -220,11 +235,13 @@ public final class CatalogueSiteAdapter {
     public static TargetPlacement constraintFor(ProductionOrder order, Construction construction) {
         if (order.isUsingExactPosition() && order.aroundPosition() != null) {
             APosition exact = APosition.create(order.aroundPosition());
+
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
         }
         HasPosition near = construction.nearTo();
         if (near != null) {
             APosition centre = APosition.create(near);
+
             return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
         }
         return TargetPlacement.anywhere();
@@ -232,7 +249,9 @@ public final class CatalogueSiteAdapter {
 
     private static TargetPlacement constraintForSited(HasPosition nearTo) {
         if (nearTo == null) return TargetPlacement.anywhere();
+
         APosition centre = APosition.create(nearTo);
+
         return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
     }
 }

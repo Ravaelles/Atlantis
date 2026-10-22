@@ -171,6 +171,7 @@ public class AFocusPoint extends APosition implements ValidityCheck {
 
     public AFocusPoint forceAroundChoke(AChoke choke) {
         this.choke = choke;
+
         return this;
     }
 

@@ -335,6 +335,7 @@ public class AUnitType implements Comparable<Object> {
             if (!otherTypeName.startsWith("Hero") && otherTypeName.equals(unitName)) {
                 try {
                     AUnitType unitType = (AUnitType) AUnitType.class.getField(field.getName()).get(null);
+
                     return unitType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {
@@ -481,10 +482,12 @@ public class AUnitType implements Comparable<Object> {
 
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
+
             return ut.name().equals(other.ut.name());
         }
         else if (obj instanceof UnitType) {
             UnitType other = (UnitType) obj;
+
             return ut.name().equals(other.name());
         }
 
@@ -933,6 +936,7 @@ public class AUnitType implements Comparable<Object> {
             () -> {
                 if (!isABuilding()) return false;
                 if (canShootGround && isMilitaryBuildingAntiGround()) return true;
+
                 else return canShootAir && isMilitaryBuildingAntiAir();
             }
         );
@@ -1490,6 +1494,7 @@ public class AUnitType implements Comparable<Object> {
             -1,
             () -> {
                 AUnitType whatIsRequired = whatIsRequired();
+
                 return whatIsRequired == null || Count.ofType(whatIsRequired) > 0;
             }
         );

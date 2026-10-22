@@ -114,15 +114,18 @@ public class WineMapGameTypeTest {
                     .redirectErrorStream(true)
                     .start();
             p.waitFor();
+
             return p.exitValue();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+
             return -1;
         }
     }
 
     private static String read(Path path) throws IOException {
         assertTrue(Files.exists(path), "missing script: " + path.toAbsolutePath());
+
         return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

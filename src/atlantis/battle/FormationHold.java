@@ -46,6 +46,7 @@ public final class FormationHold {
     public static boolean hasCloseMeleeEnemy(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return false;
+
             for (AUnit foe : unit.enemiesNear().melee().list()) {
                 if (foe == null || !foe.isAlive()) continue;
                 if (unit.distTo(foe) <= CLOSE_MELEE_TILES) return true;
@@ -71,11 +72,13 @@ public final class FormationHold {
         if (unit == null || target == null || !unit.isAlive()) return false;
         if (hasCloseMeleeEnemy(unit)) return false;
         if (tactic != FightOrFlight.Tactic.FIGHT) return false;
+
         try {
             if (!unit.isCombatUnit()) return false;
             if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return false;
             if (unit.isUnderAttack()) return false;
             if (unit.hasWeaponRangeToAttack(target, 0)) return false;
+
             AUnit nearest = nearestEnemyOf(unit);
             if (nearest != null && unit.distTo(nearest) <= CONTACT_TILES) return false;
             if (needsKite(unit)) return false;
@@ -106,6 +109,7 @@ public final class FormationHold {
         try {
             atlantis.units.select.Selection enemies = unit.enemiesNear();
             if (enemies == null || enemies.isEmpty()) return null;
+
             return enemies.nearestTo(unit);
         } catch (Exception ignored) {
             return null;
@@ -122,11 +126,13 @@ public final class FormationHold {
         AUnit unit, AUnit target, FightOrFlight.Tactic tactic, AUnit leader, HasPosition anchor
     ) {
         if (!shouldHold(unit, target, tactic)) return false;
+
         HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
         if (slot == null || !unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
             return false;
         }
         FightTarget.markRepositioned(unit);
+
         return true;
     }
 }

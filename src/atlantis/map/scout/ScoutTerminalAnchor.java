@@ -48,6 +48,7 @@ public class ScoutTerminalAnchor extends Manager {
             EnemyMainBase.get()
         );
         if (target == null) target = nextRoamAnchor(enemyStartPositions(), !EnemyInfo.hasDiscoveredAnyBuilding());
+
         return target != null;
     }
 
@@ -68,6 +69,7 @@ public class ScoutTerminalAnchor extends Manager {
     static List<APosition> enemyStartPositions() {
         List<APosition> positions = new ArrayList<>();
         if (Select.main() == null) return positions;
+
         for (ABaseLocation base : BaseLocations.startingLocations(true)) {
             if (base != null && base.position() != null) positions.add(base.position());
         }
@@ -84,8 +86,10 @@ public class ScoutTerminalAnchor extends Manager {
     /** Test seam: the roam pick behind the idle fallback. */
     public static APosition nextRoamAnchor(List<APosition> enemyStarts, boolean enemyUndiscovered) {
         if (enemyStarts == null || enemyStarts.isEmpty()) return null;
+
         if (enemyUndiscovered) {
             int i = ScoutState.terminalRoamIndex++ % enemyStarts.size();
+
             return enemyStarts.get(i);
         }
         return enemyStarts.get(ARandom.rand(0, enemyStarts.size() - 1));

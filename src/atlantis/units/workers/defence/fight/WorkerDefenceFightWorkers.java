@@ -30,6 +30,7 @@ public class WorkerDefenceFightWorkers extends Manager {
         if (nearestFucker != null) {
             unit.setTooltipTactical("NastyFucker!");
             unit.attackUnit(nearestFucker);
+
             return true;
         }
 

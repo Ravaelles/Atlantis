@@ -42,6 +42,7 @@ public class Decision {
     public static Decision FALSE(String reason) {
         Decision decision = new Decision(false);
         decision.reason = reason;
+
         return decision;
     }
 
@@ -51,6 +52,7 @@ public class Decision {
     public static Decision TRUE(String reason) {
         Decision decision = new Decision(true);
         decision.reason = reason;
+
         return decision;
     }
 

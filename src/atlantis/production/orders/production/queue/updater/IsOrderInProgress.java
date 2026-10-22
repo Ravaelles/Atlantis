@@ -83,6 +83,7 @@ public class IsOrderInProgress {
 
     private static Orders otherUnitOrdersOfTheSameType(ProductionOrder order) {
         if (order.unitType() == null) return new Orders();
+
         Queue queue = Queue.get();
         if (queue == null) return new Orders();
 

@@ -55,6 +55,7 @@ public class MoveBetweenEnemyBaseAndEnemyNatural extends Manager {
         double dist = unit.distTo(enemyMain);
         if (dist < 4) {
             currentlyGoTo = CurrentlyGoTo.ENEMY_NATURAL;
+
             return false;
         }
 
@@ -69,6 +70,7 @@ public class MoveBetweenEnemyBaseAndEnemyNatural extends Manager {
         double dist = unit.distTo(enemyNatural);
         if (dist < 4) {
             currentlyGoTo = CurrentlyGoTo.ENEMY_MAIN;
+
             return false;
         }
 

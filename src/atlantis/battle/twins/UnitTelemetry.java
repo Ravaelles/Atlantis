@@ -42,9 +42,11 @@ public final class UnitTelemetry {
 
     public static void sample(AUnit unit) {
         if (unit == null || !unit.isAlive() || !unit.isCombatUnit()) return;
+
         int now = A.now();
         Integer last = lastSampleFrame.get(unit.id());
         if (last != null && now - last < TRACE_EVERY_FRAMES) return;
+
         lastSampleFrame.put(unit.id(), now);
 
         int hp = unit.hp();
@@ -97,6 +99,7 @@ public final class UnitTelemetry {
     public static List<String> trailFor(int unitId) {
         Deque<String> trail = trails.get(unitId);
         if (trail == null) return new ArrayList<>();
+
         return new ArrayList<>(trail);
     }
 
@@ -107,6 +110,7 @@ public final class UnitTelemetry {
 
     private static int distX10(AUnit unit, AUnit other) {
         if (other == null) return -1;
+
         try {
             return (int) (unit.distTo(other) * 10);
         } catch (Exception ignored) {
@@ -117,6 +121,7 @@ public final class UnitTelemetry {
     private static AUnit nearestFoe(AUnit unit) {
         try {
             Selection foes = Select.enemy().combatUnits();
+
             return foes == null ? null : foes.nearestTo(unit);
         } catch (Exception ignored) {
             return null;
@@ -126,6 +131,7 @@ public final class UnitTelemetry {
     private static AUnit nearestAllyOfType(AUnit unit, AUnitType type) {
         try {
             Selection allies = Select.ourCombatUnits().ofType(type).exclude(unit);
+
             return allies == null ? null : allies.nearestTo(unit);
         } catch (Exception ignored) {
             return null;
@@ -135,6 +141,7 @@ public final class UnitTelemetry {
     private static int currentTargetId(AUnit unit) {
         try {
             AUnit target = unit.target();
+
             return target == null ? -1 : target.id();
         } catch (Exception ignored) {
             return -1;
@@ -144,6 +151,7 @@ public final class UnitTelemetry {
     private static int foesNear(AUnit unit, double radiusTiles) {
         try {
             Selection foes = Select.enemy().combatUnits();
+
             return foes == null ? 0 : foes.inRadius(radiusTiles, unit).count();
         } catch (Exception ignored) {
             return 0;

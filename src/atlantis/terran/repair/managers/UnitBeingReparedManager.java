@@ -41,16 +41,19 @@ public class UnitBeingReparedManager extends Manager {
                 && (unit.woundPercent() >= 10 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.2).empty())
         ) {
             if (!unit.isAttacking()) unit.holdPosition(Actions.HOLD_POSITION, "WaitRepair");
+
             return usedManager(this);
         }
 
         if (distanceToRepairer > 1 && distanceToRepairer <= 5) {
             unit.move(repairer, Actions.MOVE_REPAIR, "2Repair");
+
             return usedManager(this);
         }
 
         if (!unit.isWounded()) {
             RepairAssignments.removeRepairer(repairer);
+
             return null;
         }
 
@@ -61,6 +64,7 @@ public class UnitBeingReparedManager extends Manager {
         ) {
             if (unit.isMoving() && unit.meleeEnemiesNearCount(2.5) == 0) {
                 unit.holdPosition(Actions.HOLD_POSITION, "UnderRepair");
+
                 return usedManager(this);
             }
 
@@ -72,6 +76,7 @@ public class UnitBeingReparedManager extends Manager {
             if (!unit.isRunning() && unit.isMoving()) {
 //                unit.setTooltip("HoldTheFuckDown");
                 unit.holdPosition(Actions.HOLD_POSITION, "HoldTheFuckDown");
+
                 return usedManager(this);
             }
         }
@@ -83,6 +88,7 @@ public class UnitBeingReparedManager extends Manager {
 
         if (unit.nearestEnemyDist() <= (unit.hp() <= 60 ? 2.8 : 1.9)) {
             unit.setTooltip("DontRepairEnemy");
+
             return null;
         }
 
@@ -119,6 +125,7 @@ public class UnitBeingReparedManager extends Manager {
         else {
             if (unit.runningManager().runFrom(main, 3, Actions.RUN_ENEMY, false)) {
                 unit.setTooltip("RunFromClose");
+
                 return true;
             }
         }

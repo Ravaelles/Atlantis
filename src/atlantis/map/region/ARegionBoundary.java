@@ -17,6 +17,7 @@ public class ARegionBoundary implements HasPosition {
 
     public static ARegionBoundary create(ARegion region, APosition position) {
         ARegionBoundary boundary = new ARegionBoundary(region, position);
+
         return boundary;
     }
 
@@ -41,6 +42,7 @@ public class ARegionBoundary implements HasPosition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HasPosition)) return false;
+
         return position.equals(((HasPosition) o).position());
     }
 

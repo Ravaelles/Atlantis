@@ -20,9 +20,11 @@ public final class ProtossNeedDynamicSupply implements NeedDynamicSupply {
         // covers the block, ordering another only stockpiles free supply.
         // At 40+ the pipeline pair stays - legacy in-flight logic decides.
         if (supplyUsed < 40 && unfinishedProviders > 0) return false;
+
         int free = supplyTotal - supplyUsed;
         if (supplyUsed <= 60) return free <= 6;
         if (supplyUsed <= 100) return free <= 10;
+
         return free <= 14;
     }
 }

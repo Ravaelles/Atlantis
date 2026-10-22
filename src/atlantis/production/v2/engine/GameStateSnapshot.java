@@ -105,6 +105,7 @@ public final class GameStateSnapshot {
                 gasWorkers * EconomyModel.GAS_PER_WORKER_FRAME);
 
         applyCommittedWork(timeline);
+
         return timeline;
     }
 
@@ -229,6 +230,7 @@ public final class GameStateSnapshot {
      */
     private int supplyProvidersComing() {
         AUnitType provider = supplyProviderType();
+
         return supplyProvidersComing(provider);
     }
 
@@ -256,6 +258,7 @@ public final class GameStateSnapshot {
      */
     public static int unstartedProvidersComing(AUnitType provider) {
         if (provider == null) return 0;
+
         return ConstructionRequests.countNotStartedOfType(provider);
     }
 
@@ -272,6 +275,7 @@ public final class GameStateSnapshot {
      */
     public static int unmaterializedInProgressComing(AUnitType provider) {
         if (provider == null) return 0;
+
         int total = 0;
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction == null || !provider.equals(construction.buildingType())) continue;

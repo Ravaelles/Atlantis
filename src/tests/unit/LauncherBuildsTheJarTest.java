@@ -178,6 +178,7 @@ public class LauncherBuildsTheJarTest {
 
     private static String read(Path path) throws IOException {
         assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
+
         return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

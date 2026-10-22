@@ -29,6 +29,7 @@ final class SelectionAccessors {
         if (selection.data.size() == 1) return selection.data.get(0);
 
         Random rand = new Random(seed);
+
         return selection.data.get(rand.nextInt(selection.data.size()));
     }
 

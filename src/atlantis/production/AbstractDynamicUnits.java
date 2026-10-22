@@ -17,6 +17,7 @@ public class AbstractDynamicUnits {
         if (Count.withPlanned(type) < haveN) {
 //            System.err.println(Count.withPlanned(type) + " A/E " + haveN);
             if (type.isABuilding()) return AddToQueue.toHave(type, haveN);
+
             else return trainIfPossible(type);
         }
 

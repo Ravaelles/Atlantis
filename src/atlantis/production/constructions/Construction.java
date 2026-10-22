@@ -172,6 +172,7 @@ public class Construction implements Comparable<Construction> {
     public int hashCode() {
         int hash = 7;
         hash = 67 * hash + this.ID;
+
         return hash;
     }
 
@@ -180,6 +181,7 @@ public class Construction implements Comparable<Construction> {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
+
         final Construction other = (Construction) obj;
 
         if (buildingType == null || positionToBuild == null) return false;
@@ -269,6 +271,7 @@ public class Construction implements Comparable<Construction> {
 
     public Construction setBuilder(AUnit builder) {
         this.builder = builder;
+
         return this;
     }
 
@@ -278,6 +281,7 @@ public class Construction implements Comparable<Construction> {
 
     public Construction setReservedBuilder(AUnit reservedBuilder) {
         this.reservedBuilder = reservedBuilder;
+
         return this;
     }
 
@@ -468,6 +472,7 @@ public class Construction implements Comparable<Construction> {
 
     public int progressPercent() {
         if (buildingUnit == null) return 0;
+
         return (int) buildingUnit.hpPercent();
     }
 

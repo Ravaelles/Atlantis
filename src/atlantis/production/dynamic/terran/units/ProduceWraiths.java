@@ -55,6 +55,7 @@ public class ProduceWraiths {
 
         if (AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime) != null) {
             totalQueued++;
+
             return true;
         }
 

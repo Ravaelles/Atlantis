@@ -288,6 +288,7 @@ public class BaseLocations {
         }
 
         // All conditions have been fulfilled.
+
         return true;
     }
 

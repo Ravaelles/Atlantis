@@ -28,6 +28,7 @@ public class ProtectorManager extends Manager {
         if (target == null || !target.isAlive()) {
             unit.setTooltipTactical("Null bunker");
             RepairAssignments.removeRepairer(unit);
+
             return false;
         }
 

@@ -23,6 +23,7 @@ public final class V2GoalSourceTwin {
 
     public static void emit(int frame, List<ProductionGoal> goals, String providerId) {
         if (goals == null || providerId == null) return;
+
         for (ProductionGoal goal : goals) {
             if (goal == null || goal.item() == null) continue;
             if (!providerId.equals(goal.item().id())) continue;

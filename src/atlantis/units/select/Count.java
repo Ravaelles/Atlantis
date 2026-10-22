@@ -24,6 +24,7 @@ public class Count {
 
     public static boolean clearCache() {
         cache.clear();
+
         return true;
     }
 

@@ -31,6 +31,7 @@ public class ShouldSecureProtossBase {
         // The number lives on the board (CannonGoal): same matrix, pinned in
         // stub tests, read here through a fresh snapshot. Per-base placement
         // below is untouched - the board names the total, never the site.
+
         return CannonGoal.wanted(GoalBoardAdvisor.snapshot());
     }
 

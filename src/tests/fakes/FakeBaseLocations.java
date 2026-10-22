@@ -35,6 +35,7 @@ public class FakeBaseLocations {
         baseLocations.add(new FakeBaseLocation(14, 13, false, 32.1)); // Natural
         baseLocations.add(new FakeBaseLocation(103, 37, false, 130.1));
         baseLocations.add(new FakeBaseLocation(51, 113, false, 131.8));
+
         return baseLocations;
     }
 }

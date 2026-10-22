@@ -101,6 +101,7 @@ public class ForceExitLocallyInOpenBW extends Commander {
                         + " supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
         Atlantis.getInstance().onEnd(false);
+
         return false;
     }
 }

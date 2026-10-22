@@ -49,6 +49,7 @@ public class ProtossHasEnoughSidesFreeFromOtherBuildings {
 
     private static boolean forbidden(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return false;
     }
 }

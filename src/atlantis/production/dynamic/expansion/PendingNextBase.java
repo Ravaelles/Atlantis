@@ -32,6 +32,7 @@ public class PendingNextBase {
 
         if (basePosition == null) {
             ErrorLog.printMaxOncePerMinute("ReinforceBaseWithCombatBuildings: futureBase.buildPosition() == null");
+
             return null;
         }
 

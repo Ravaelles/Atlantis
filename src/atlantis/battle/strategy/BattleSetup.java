@@ -24,16 +24,19 @@ public final class BattleSetup {
     public static int combatants() {
         int ours = Select.ourCombatUnits() == null ? 0 : Select.ourCombatUnits().count();
         int theirs = Select.enemyCombatUnits() == null ? 0 : Select.enemyCombatUnits().count();
+
         return ours + theirs;
     }
 
     /** The choke on this unit's way, or null when there is none (or no map data). */
     public static AChoke chokeNear(AUnit unit) {
         if (unit == null) return null;
+
         try {
             AChoke choke = unit.nearestChoke();
             if (choke == null || choke.center() == null) return null;
             if (unit.distTo(choke.center()) > ChokeStandoff.DETECT_TILES) return null;
+
             return choke;
         } catch (Exception ignored) {
             return null;

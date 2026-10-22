@@ -68,6 +68,7 @@ public class NewConstructionRequest {
         if (!Requirements.hasRequirements(building)) {
 //            System.err.println("------- NO REQUIREMENTS");
             handleRequirementMissingFor(building);
+
             return null;
         }
 
@@ -118,6 +119,7 @@ public class NewConstructionRequest {
         // Couldn't find place for building! That's bad, print descriptive explanation.
         if (positionToBuild == null) {
             invalidNullPositionSoQuit(building, order, newConstruction);
+
             return null;
         }
 
@@ -258,6 +260,7 @@ public class NewConstructionRequest {
     public static boolean shouldPullPylon(AUnitType building, String dominant, ProductionOrder order) {
         if (dominant == null || building == null || order == null) return false;
         if (!building.needsPower()) return false;
+
         return dominant.contains("power");
     }
 

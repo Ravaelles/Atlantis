@@ -214,6 +214,7 @@ public class UnitsArchive {
      */
     public static int ourLost(AUnitType type) {
         if (type == null) return 0;
+
         return ourLostTypes.getValueFor(type);
     }
 

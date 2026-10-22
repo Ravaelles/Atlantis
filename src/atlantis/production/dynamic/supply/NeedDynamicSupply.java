@@ -22,6 +22,7 @@ public interface NeedDynamicSupply {
     /** Dispatch by race; non-Protoss stays legacy (D8: Protoss-only). */
     static NeedDynamicSupply forCurrentRace() {
         if (atlantis.util.We.protoss()) return new ProtossNeedDynamicSupply();
+
         return new PermissiveNeedDynamicSupply();
     }
 

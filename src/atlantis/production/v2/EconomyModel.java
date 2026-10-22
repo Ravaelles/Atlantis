@@ -31,6 +31,7 @@ public final class EconomyModel {
      */
     public static double mineralRate(int workers, int bases) {
         int effective = Math.min(Math.max(0, workers), SATURATED_MINERAL_WORKERS_PER_BASE * Math.max(1, bases));
+
         return effective * MINERALS_PER_WORKER_FRAME;
     }
 }

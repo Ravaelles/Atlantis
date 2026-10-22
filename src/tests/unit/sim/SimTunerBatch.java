@@ -66,6 +66,7 @@ public final class SimTunerBatch {
         for (String arg : args) {
             if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("usage: SimTunerBatch MAP N OUTDIR [KEY=VALUE ...]");
+
                 return 0;
             }
             if (arg.startsWith("--env=") || arg.equals("--headless") || arg.equals("--hidden")) {
@@ -85,6 +86,7 @@ public final class SimTunerBatch {
         }
         if (map == null || games <= 0 || outdir == null) {
             System.err.println("usage: SimTunerBatch MAP N OUTDIR [KEY=VALUE ...]");
+
             return 2;
         }
 
@@ -93,11 +95,13 @@ public final class SimTunerBatch {
         if (!mapFile.equals(scenario.mapFile())) {
             System.err.println("sim tunes only the duel scenario (" + scenario.mapFile()
                 + "), got: " + map + " (use its file name, any directory is fine)");
+
             return 2;
         }
         if (!scenario.frozenParams().isEmpty()) {
             System.err.println("sim batch does not implement frozen params yet: "
                 + scenario.frozenParams());
+
             return 2;
         }
 
@@ -116,6 +120,7 @@ public final class SimTunerBatch {
                 vector = vectorForGame(bounds, overrides);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
+
                 return 2;
             }
             applyVector(vector);
@@ -144,6 +149,7 @@ public final class SimTunerBatch {
             TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
         System.out.println("[sim-batch] done: " + games + " games, manifest: "
             + out.resolve("manifest.txt"));
+
         return 0;
     }
 
@@ -225,12 +231,14 @@ public final class SimTunerBatch {
         int killed = win ? 1 : 0;
         int lost = dragoon.hp <= 0 ? 1 : 0;
         int hits = Math.max(0, startHp - (dragoon.hp + dragoon.shields));
+
         return new DuelResult(win, seconds, killed, lost, hits, world.shotsFired());
     }
 
     private static String tweakerHeader(Map<String, double[]> bounds) {
         StringBuilder header = new StringBuilder("Date;W/L;Seconds;Killed;Lost;HitsTaken;ShotsFired;Score");
         for (String name : bounds.keySet()) header.append(';').append(name);
+
         return header.toString();
     }
 
@@ -242,6 +250,7 @@ public final class SimTunerBatch {
             + ";" + result.seconds + ";" + result.killed + ";" + result.lost
             + ";" + result.hits + ";" + result.shots + ";" + result.score);
         for (String name : bounds.keySet()) row.append(';').append(vector.get(name));
+
         return row.toString();
     }
 }

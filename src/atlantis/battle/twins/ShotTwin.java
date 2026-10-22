@@ -28,6 +28,7 @@ public class ShotTwin {
         int now = A.now();
         Integer last = lastHoldByUnit.get(unit.id());
         if (last != null && now - last < 30) return;
+
         lastHoldByUnit.put(unit.id(), now);
         row(unit, target, "holding-shot");
     }

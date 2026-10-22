@@ -31,9 +31,12 @@ public final class ClusterBreach {
      */
     public static boolean breachForcesFight() {
         if (atlantis.information.enemy.EnemyUnitBreachedBase.someone()) return true;
+
         AUnit main = Select.main();
         if (main == null) return false;
+
         AUnit foe = main.enemiesNear().nearestTo(main);
+
         return foe != null && foe.distTo(main) <= 8;
     }
     /**
@@ -57,6 +60,7 @@ public final class ClusterBreach {
      */
     public static AUnit breachedBaseTarget(AUnit unit) {
         if (unit == null || !unit.isAlive()) return null;
+
         AUnit breached = atlantis.information.enemy.EnemyUnitBreachedBase.get();
         if (breached == null || !breached.isAlive()) return null;
 
@@ -75,6 +79,7 @@ public final class ClusterBreach {
             foe = main == null ? breached : enemies.nearestTo(main);
         }
         if (foe == null) return breached;
+
         return unit.hasWeaponToAttackThisUnit(foe) ? foe : null;
     }
     /**
@@ -89,13 +94,16 @@ public final class ClusterBreach {
     public static HasPosition breachRallyPoint() {
         AUnit main = Select.main();
         if (main == null || main.position() == null) return ClusterAnchor.defendAnchor();
+
         try {
             atlantis.map.choke.AChoke choke =
                 atlantis.map.choke.Chokes.mainChoke();
             if (choke == null || choke.center() == null) return ClusterAnchor.defendAnchor();
+
             APosition point = main.position()
                 .translateTilesTowards(CombatTuning.current().getBreachRallyTiles(), choke.center());
             if (point == null) return ClusterAnchor.defendAnchor();
+
             return point;
         }
         catch (RuntimeException ignored) {

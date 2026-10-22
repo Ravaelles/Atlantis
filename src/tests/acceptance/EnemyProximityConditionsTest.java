@@ -46,6 +46,7 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
     private static Construction pending(AUnitType type, int tx, int ty) {
         Construction construction = new Construction(type);
         construction.setPositionToBuild(APosition.create(tx, ty));
+
         return construction;
     }
 

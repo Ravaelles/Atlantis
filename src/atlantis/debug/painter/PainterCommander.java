@@ -6,6 +6,7 @@ public class PainterCommander extends Commander {
     @Override
     protected boolean handle() {
         AAdvancedPainter.paint();
+
         return false;
     }
 

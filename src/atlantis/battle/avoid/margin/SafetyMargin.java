@@ -130,6 +130,7 @@ public class SafetyMargin {
         }
 
         boolean applyExtraModifier = defender.isTank();
+
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
 

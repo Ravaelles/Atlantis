@@ -49,6 +49,7 @@ public class DecisionDispatcherTest {
     public void refusalPassesWithoutEffect() {
         DecisionDispatcher.register(decision -> {
             executed = true;
+
             return true;
         });
 

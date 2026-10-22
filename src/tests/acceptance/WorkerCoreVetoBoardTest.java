@@ -72,6 +72,7 @@ public class WorkerCoreVetoBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 11)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
 
             vetoPosture();
@@ -103,6 +104,7 @@ public class WorkerCoreVetoBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 12)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
 
             vetoPosture();

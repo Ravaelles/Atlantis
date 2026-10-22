@@ -54,6 +54,7 @@ public class ProduceStargate {
         if (!"Zerg".equals(board.enemyRace)) return null;
 
         if (board.dragoonCount <= 1) return false;
+
         if (board.armyStrength <= 115 && board.combatUnits <= 5 && board.cannonCount <= 1) {
             return false;
         }
@@ -61,6 +62,7 @@ public class ProduceStargate {
         if (board.supplyUsed <= 40) return false;
 
         if (board.supplyUsed >= 70) return true;
+
         if (board.supplyUsed >= 90 && board.armyStrength >= 95 && board.enemyLurkers <= 2) {
             return true;
         }

@@ -27,6 +27,7 @@ public class ATechRequests {
             AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {
                 building.research(tech);
+
                 return true;
             }
         }
@@ -39,6 +40,7 @@ public class ATechRequests {
             AUnit building = Select.ourBuildings().ofType(buildingType).free().first();
             if (building != null && !building.isBusy()) {
                 building.upgrade(upgrade);
+
                 return true;
             }
         }

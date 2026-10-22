@@ -43,6 +43,7 @@ public final class Regroup {
         APosition regroup = strategy.regroupPointFor(unit);
         if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag().tag())) {
             FightTarget.markRepositioned(unit);
+
             return;
         }
         // March in formation (owner 2026-10-26): the line takes slots
@@ -56,6 +57,7 @@ public final class Regroup {
             HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
             if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
                 FightTarget.markRepositioned(unit);
+
                 return;
             }
         }
@@ -74,6 +76,7 @@ public final class Regroup {
             APosition reinforce = ArmyContact.reinforcePointFor(unit);
             if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
                 FightTarget.markRepositioned(unit);
+
                 return;
             }
         }

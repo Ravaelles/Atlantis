@@ -29,6 +29,7 @@ public class SeparateFromRunningTanks extends Manager {
     @Override
     public Manager handle() {
         unit.runningManager().runFrom(target, 0.5, Actions.MOVE_SPACE, false);
+
         return usedManager(this);
     }
 }

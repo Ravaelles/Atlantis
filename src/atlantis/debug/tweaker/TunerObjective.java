@@ -78,6 +78,7 @@ public final class TunerObjective {
      */
     public static Row parseBatchLine(String line) {
         if (line == null) return null;
+
         String[] cols = line.split(",", -1);
         if (cols.length < 8) return null;
         if (cols[0].trim().equalsIgnoreCase("game")) return null;
@@ -108,6 +109,7 @@ public final class TunerObjective {
         if (a.win != b.win) return a.win ? -1 : 1;
         if (a.hitsTaken != b.hitsTaken) return Integer.compare(a.hitsTaken, b.hitsTaken);
         if (a.seconds != b.seconds) return Integer.compare(a.seconds, b.seconds);
+
         return a.game.compareTo(b.game);
     }
 
@@ -120,12 +122,14 @@ public final class TunerObjective {
                 return TunerObjective.compare(a, b);
             }
         });
+
         return ranked;
     }
 
     /** The single winner, or empty when there are no rows. */
     public static Optional<Row> best(List<Row> rows) {
         if (rows == null || rows.isEmpty()) return Optional.empty();
+
         return Optional.of(rank(rows).get(0));
     }
 }

@@ -76,7 +76,9 @@ public final class UnitProducible implements Producible {
     @Override
     public boolean requiresPlacement() {
         if (!type.isABuilding()) return false;
+
         AUnitType producer = type.whatBuildsIt();
+
         return producer != null && producer.isWorker();
     }
 
@@ -88,6 +90,7 @@ public final class UnitProducible implements Producible {
     @Override
     public boolean consumesProducer() {
         AUnitType producer = type.whatBuildsIt();
+
         return producer != null && producer.isLarva();
     }
 
@@ -103,6 +106,7 @@ public final class UnitProducible implements Producible {
 
     private static boolean containsId(List<Producible> list, String id) {
         for (Producible p : list) if (p.id().equals(id)) return true;
+
         return false;
     }
 

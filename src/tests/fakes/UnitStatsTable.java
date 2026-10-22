@@ -85,30 +85,35 @@ public class UnitStatsTable implements UnitStats.Source {
     @Override
     public int hitPoints(AUnitType type) {
         int[] numbers = NUMBERS.get(type.ut().name());
+
         return numbers == null ? -1 : numbers[0];
     }
 
     @Override
     public int shields(AUnitType type) {
         int[] numbers = NUMBERS.get(type.ut().name());
+
         return numbers == null ? -1 : numbers[1];
     }
 
     @Override
     public int weaponRange(WeaponType weapon) {
         int[] numbers = WEAPONS.get(weapon.name());
+
         return numbers == null ? -1 : numbers[0];
     }
 
     @Override
     public int weaponDamage(WeaponType weapon) {
         int[] numbers = WEAPONS.get(weapon.name());
+
         return numbers == null ? -1 : numbers[1];
     }
 
     @Override
     public int weaponDamageFactor(WeaponType weapon) {
         int[] numbers = WEAPONS.get(weapon.name());
+
         return numbers == null ? -1 : numbers[2];
     }
 

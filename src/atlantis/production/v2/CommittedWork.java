@@ -29,6 +29,7 @@ public final class CommittedWork {
         int frame = timeline.findEarliestAffordableFrame(noSupply, timeline.originFrame());
         if (frame >= 0)
             timeline.allocate(noSupply, frame);
+
         return frame;
     }
 

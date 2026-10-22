@@ -32,6 +32,7 @@ public class ProduceStarport {
 
     private static boolean noStarports() {
         int all = Count.withPlanned(Terran_Starport);
+
         return all == 0 || existingOnesAreBusyAndWeHaveResources();
     }
 

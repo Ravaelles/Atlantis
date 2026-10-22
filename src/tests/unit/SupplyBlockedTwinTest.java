@@ -39,6 +39,7 @@ public class SupplyBlockedTwinTest extends WorldStubForTests {
                 ConstructionRequests.constructions.clear();
                 EventLog.clearForTests();
                 ConstructionRequests.constructions.add(new Construction(AUnitType.Protoss_Pylon));
+
                 return;
             }
             if (atlantis.game.A.now() != 300) return;
@@ -68,6 +69,7 @@ public class SupplyBlockedTwinTest extends WorldStubForTests {
                 initSupply(30, 40);
                 ConstructionRequests.constructions.clear();
                 EventLog.clearForTests();
+
                 return;
             }
             if (atlantis.game.A.now() != 300) return;

@@ -44,6 +44,7 @@ public final class ArmyContact {
     public static void noteFight(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
         if (tactic != FightOrFlight.Tactic.FIGHT) return;
         if (unit == null || target == null || target.position() == null) return;
+
         lastFightAt = target.position();
         lastFightFrame = A.now();
     }
@@ -56,6 +57,7 @@ public final class ArmyContact {
     public static APosition reinforcePointFor(AUnit unit) {
         if (unit == null || !unit.isAlive() || lastFightAt == null) return null;
         if (A.now() - lastFightFrame > FRESH_FRAMES) return null;
+
         try {
             if (unit.distTo(lastFightAt) <= ARRIVED_TILES) return null;
         } catch (Exception ignored) {

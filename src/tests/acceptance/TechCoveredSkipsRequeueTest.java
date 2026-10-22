@@ -59,6 +59,7 @@ public class TechCoveredSkipsRequeueTest extends WorldStubForTests {
     private static FakeUnit warpingCore() {
         FakeUnit warping = fake(AUnitType.Protoss_Cybernetics_Core, 20, 20);
         warping.setCompleted(false);
+
         return warping;
     }
 

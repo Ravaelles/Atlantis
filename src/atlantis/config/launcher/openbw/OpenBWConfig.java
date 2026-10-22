@@ -162,32 +162,38 @@ public final class OpenBWConfig {
 
         public Builder harnessDir(String value) {
             this.harnessDir = value;
+
             return this;
         }
 
         public Builder gameDir(String value) {
             this.gameDir = value;
+
             return this;
         }
 
         public Builder serverScript(String value) {
             this.serverScript = value;
+
             return this;
         }
 
         public Builder map(String value) {
             this.map = value;
+
             return this;
         }
 
         public Builder races(String ours, String enemy) {
             this.ourRace = ours;
             this.enemyRace = enemy;
+
             return this;
         }
 
         public Builder logDir(String value) {
             this.logDir = value;
+
             return this;
         }
 
@@ -198,11 +204,13 @@ public final class OpenBWConfig {
                 );
             }
             this.gameTimeoutSeconds = value;
+
             return this;
         }
 
         public Builder hostWaitSeconds(int value) {
             this.hostWaitSeconds = value;
+
             return this;
         }
 

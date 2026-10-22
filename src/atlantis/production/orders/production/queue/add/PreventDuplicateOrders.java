@@ -31,6 +31,7 @@ public class PreventDuplicateOrders {
 
         if (OnlyOneAllowedOfType.onlyOneAllowed(type, position)) {
             QueueLastStatus.updateStatusFailed("OnlyOneAllowed", type.toString());
+
             return true;
         }
 
@@ -41,6 +42,7 @@ public class PreventDuplicateOrders {
 
         if (justRequestedThisType(type)) {
             QueueLastStatus.updateStatusFailed("JustRequested:" + lastRequestedAgo, type.toString());
+
             return true;
         }
 
@@ -50,21 +52,25 @@ public class PreventDuplicateOrders {
 
         if (tooManyRecently(type)) {
             QueueLastStatus.updateStatusFailed("TooManyRecently", type.toString());
+
             return true;
         }
 
         if (tooManyOrdersOfThisType(type, position)) {
             QueueLastStatus.updateStatusFailed("TooManySuchOrders", type.toString());
+
             return true;
         }
 
         if (tooManyOrdersInGeneral(type)) {
             QueueLastStatus.updateStatusFailed("tooManyOrders", type.toString());
+
             return true;
         }
 
         if (forProtossEnforceHavingAPylonFirst(type)) {
             QueueLastStatus.updateStatusFailed("EnforcePylonFirst", type.toString());
+
             return true;
         }
 
@@ -82,6 +88,7 @@ public class PreventDuplicateOrders {
         // below in live form (that one read free >= 13).
         if (A.supplyFree() > 12) {
             QueueLastStatus.updateStatusFailed("DontSpamPylons:" + A.supplyFree(), type.toString());
+
             return true;
         }
 
@@ -93,6 +100,7 @@ public class PreventDuplicateOrders {
 
             if (inQueue >= maxPylonsInQueue()) {
                 QueueLastStatus.updateStatusFailed("TooManyPylonsAtOnce:" + inQueue, type.toString());
+
                 return true;
             }
         }
@@ -183,6 +191,7 @@ public class PreventDuplicateOrders {
                 .param("type", type.name())
                 .param("reason", "EnforcePylonFirst")
                 .log(A.now(), A.minSec());
+
             return true;
         }
 
@@ -232,6 +241,7 @@ public class PreventDuplicateOrders {
             ErrorLog.printMaxOncePerMinute(
                 "Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot)
             );
+
             return true;
         }
 
@@ -245,6 +255,7 @@ public class PreventDuplicateOrders {
             ErrorLog.printMaxOncePerMinute(
                 "Exceeded PYLON allowed: " + CountInQueue.count(AUnitType.Protoss_Pylon)
             );
+
             return true;
         }
 
@@ -284,6 +295,7 @@ public class PreventDuplicateOrders {
 
         for (ProductionOrder order : Queue.get().nextOrders().ofType(type).list()) {
             if (order.isInProgress()) return true;
+
             order.setIgnore(true);
 
             if (order.construction() != null) {
@@ -302,6 +314,7 @@ public class PreventDuplicateOrders {
 
         for (ProductionOrder order : Queue.get().notFinished().ofType(upgrade).list()) {
             if (order.isInProgress()) return true;
+
             order.setIgnore(true);
 
             order.cancel(reason);
@@ -316,6 +329,7 @@ public class PreventDuplicateOrders {
 
         for (ProductionOrder order : Queue.get().notFinished().ofType(tech).list()) {
             if (order.isInProgress()) return true;
+
             order.setIgnore(true);
 
             order.cancel(reason);

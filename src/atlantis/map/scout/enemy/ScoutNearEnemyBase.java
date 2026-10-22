@@ -25,6 +25,7 @@ public class ScoutNearEnemyBase extends Manager {
         if (enemyMain == null) return false;
 
         position = enemyMain.position();
+
         return position != null;
     }
 

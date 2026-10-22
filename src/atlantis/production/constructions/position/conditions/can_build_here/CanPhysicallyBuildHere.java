@@ -20,10 +20,12 @@ public class CanPhysicallyBuildHere {
     public static boolean check(AUnit builder, AUnitType building, APosition position) {
         if (position == null) {
             AbstractPositionFinder._STATUS = "POSITION IS NULL";
+
             return false;
         }
         if (builder == null) {
             AbstractPositionFinder._STATUS = "BUILDER IS NULL";
+
             return false;
         }
 
@@ -46,6 +48,7 @@ public class CanPhysicallyBuildHere {
 
         if (!isCanBuildHere(builder, building, position)) {
             if (positionUnexploredAndNotVisibleLetsDoit(position, building)) return true;
+
             if (allowEarlyForgeAndGatewayDuringForgeExpand(building, position)) {
                 return true;
             }
@@ -59,6 +62,7 @@ public class CanPhysicallyBuildHere {
             // status after each step), and a value that only exists in a game is a
             // value nobody can pin.
             AbstractPositionFinder._STATUS = "Can't physically build here";
+
             return false;
         }
 
@@ -69,6 +73,7 @@ public class CanPhysicallyBuildHere {
         )) {
             if (Select.ourBuildingsWithUnfinished().countInRadius(3.5, position) > 0) {
                 AbstractPositionFinder._STATUS = "Can't build CoE or Observatory here";
+
                 return false;
             }
         }
@@ -85,6 +90,7 @@ public class CanPhysicallyBuildHere {
             if (pylon == null) return false;
 
             double distTo = pylon.distTo(position);
+
             return distTo >= 4 && distTo <= 7 && Select.ourBasesWithUnfinished().countInRadius(4.5, position) == 0;
         }
 

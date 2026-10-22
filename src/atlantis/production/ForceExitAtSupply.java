@@ -46,6 +46,7 @@ public class ForceExitAtSupply extends Commander {
                 + A.supplyUsed() + "/" + A.supplyTotal());
 
         Atlantis.getInstance().onEnd(true);
+
         return false;
     }
 }

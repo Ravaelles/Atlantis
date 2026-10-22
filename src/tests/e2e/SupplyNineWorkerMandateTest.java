@@ -80,6 +80,7 @@ public class SupplyNineWorkerMandateTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 22, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             ownerGameState(100);
 
@@ -110,6 +111,7 @@ public class SupplyNineWorkerMandateTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 22, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             ownerGameState(250);
 

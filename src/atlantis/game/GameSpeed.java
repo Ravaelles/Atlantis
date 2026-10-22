@@ -50,6 +50,7 @@ public class GameSpeed {
             Atlantis.game().setLocalSpeed(0);
             Atlantis.game().setFrameSkip(500);
             System.out.println("PARAM_TWEAKER: speed 0, frameskip 500 (unattended tuning)");
+
             return;
         }
 
@@ -64,6 +65,7 @@ public class GameSpeed {
             Atlantis.game().setFrameSkip(1000);
             AGame.changeDisableUI(true);
             System.out.println("WINE_SUPER_FAST_MODE: speed 0, frameskip 1000, GUI off - no slowdowns");
+
             return;
         }
 

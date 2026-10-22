@@ -94,6 +94,7 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
                 Queue.get().clearCache();
                 ConstructionRequests.constructions.clear();
                 Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 10));
+
                 return;
             }
 
@@ -237,6 +238,7 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
                     Queue.get().clearCache();
                     ConstructionRequests.constructions.clear();
                     Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 28));
+
                     return;
                 }
 

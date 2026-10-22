@@ -90,6 +90,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     private static boolean decision(boolean b, String reason) {
         ProtossDynamicUnitProductionCommander.reason = reason;
+
         return b;
     }
 
@@ -120,6 +121,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
         if (!freeToSpendResources()) {
             if (investInEarlyGoons()) ProduceDragoon.dragoon();
+
             return false;
         }
 

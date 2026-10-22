@@ -96,6 +96,7 @@ public class PositionHelper {
 
     public static int getPositionMedian(List<Integer> collection) {
         Collections.sort(collection);
+
         return collection.get(collection.size() / 2);
     }
 
@@ -119,21 +120,25 @@ public class PositionHelper {
     public static APosition getPositionMovedPercentTowards(HasPosition from, HasPosition movedToward, double percent) {
         if (from == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedPercentTowards: from is null");
+
             return null;
         }
         if (movedToward == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedPercentTowards: movedToward is null");
+
             return from.position();
         }
 
         int finalX = (int) ((100 - percent) * from.x() + percent * movedToward.x()) / 100;
         int finalY = (int) ((100 - percent) * from.y() + percent * movedToward.y()) / 100;
+
         return new APosition(finalX, finalY);
     }
 
     public static APosition getPositionMovedTilesTowards(HasPosition from, HasPosition to, double tiles) {
         if (to == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedTilesTowards: to is null");
+
             return from.position();
         }
 

@@ -44,6 +44,7 @@ public class FindPositionForBase {
 
         if (near == null) {
             System.err.println("Unknown natural position - it will break base position");
+
             return null;
         }
 

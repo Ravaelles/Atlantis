@@ -108,6 +108,7 @@ public class ProduceMedicsAndFirebats {
         }
 
         // Zerg
+
         return Math.max(4, Count.medics() / 4);
     }
 }

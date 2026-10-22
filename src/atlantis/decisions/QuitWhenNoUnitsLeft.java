@@ -32,6 +32,7 @@ public class QuitWhenNoUnitsLeft extends Commander {
         boolean noUnitsLeft = Select.our().isEmpty();
         if (!noUnitsLeft) {
             lastUnitDiedRealTime = 0;
+
             return false;
         }
 
@@ -53,11 +54,13 @@ public class QuitWhenNoUnitsLeft extends Commander {
 
         AGame.sendMessage("gg");
         Atlantis.getInstance().onEnd(false);
+
         return true;
     }
 
     private static boolean realSecondsElapsed() {
         long elapsedMs = System.currentTimeMillis() - lastUnitDiedRealTime;
+
         return elapsedMs >= GRACE_REAL_SECONDS * 1000L;
     }
 }

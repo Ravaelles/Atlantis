@@ -17,6 +17,7 @@ public class TerranSpecificBuildingsCommander extends Commander {
         // zealots while minerals piled up. DynamicBuildingsCommander lists this
         // commander as generic, so the race gate lives here, next to the
         // self-guarded gas commanders below it.
+
         return We.terran();
     }
 

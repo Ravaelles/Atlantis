@@ -53,6 +53,7 @@ public final class DuelKite {
         if (unit.enemyWeaponRangeAgainstThisUnit(threat) > 1) return false;
         if (unit.cooldown() <= SleepUntilFrameGate.latencyFrames() + 2) return false;
         if (threat.isMoving() && !unit.isOtherFacingThisUnit(threat)) return false;
+
         return unit.distTo(threat) < holdDistance(unit);
     }
 
@@ -64,11 +65,14 @@ public final class DuelKite {
     public static APosition yieldStep(AUnit unit, AUnit threat) {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
+
         double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
         if (stepLen <= 0) return null;
+
         int step = Math.max(1, (int) Math.round(stepLen));
         APosition dest = atlantis.battle.escape.EscapeScoredStep.pickScored(unit, threat, step);
         if (dest != null) return dest;
+
         return MoveAway.bestDestination(unit, threat, stepLen);
     }
 
@@ -79,11 +83,14 @@ public final class DuelKite {
     ) {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
+
         double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
         if (stepLen <= 0) return null;
+
         int step = Math.max(1, (int) Math.round(stepLen));
         APosition dest = EscapeDestination.pickEscape(unit, threat, step, walk, blockers, foes);
         if (dest != null) return dest;
+
         return MoveAway.bestDestination(unit, threat, stepLen);
     }
 

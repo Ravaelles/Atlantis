@@ -31,6 +31,7 @@ public abstract class Manager extends BaseManager {
         }
         catch (Exception e) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(e.getMessage());
+
             return null;
         }
     }
@@ -132,6 +133,7 @@ public abstract class Manager extends BaseManager {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "Failed to instantiate manager"
             );
+
             return false;
         }
 
@@ -211,6 +213,7 @@ public abstract class Manager extends BaseManager {
                         return submanager.anySubmanagerApplies();
                     }
                     //                System.err.println("Dragoon B = " + submanager);
+
                     return submanager;
                 }
             }

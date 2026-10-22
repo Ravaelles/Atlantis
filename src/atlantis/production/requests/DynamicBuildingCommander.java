@@ -26,6 +26,7 @@ public abstract class DynamicBuildingCommander {
 
     public boolean requestOne(HasPosition at) {
         AddToQueue.withStandardPriority(type(), at);
+
         return true;
     }
 
@@ -44,6 +45,7 @@ public abstract class DynamicBuildingCommander {
         if (We.terran()) return (new NewBunkerPositionFinder(null)).find();
         if (We.protoss()) return (new ProtossPhotonCannonAntiLand()).nextPosition();
         if (We.zerg()) return (new ZergSunkenColony()).nextPosition();
+
         return null;
     }
 

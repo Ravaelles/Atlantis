@@ -76,6 +76,7 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             // 23 is the occupancy-tick frame (everyNthGameFrame(23)).
             if (atlantis.game.A.now() != 23 || fired) return;
+
             fired = true;
             vetoPosture();
 
@@ -109,6 +110,7 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             mason
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 23 || fired) return;
+
             fired = true;
             vetoPosture();
 
@@ -156,6 +158,7 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 80, 118)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             vetoPosture();
 

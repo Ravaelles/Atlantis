@@ -97,6 +97,7 @@ public class MoveAway {
         java.util.List<HasPosition> aims = new java.util.ArrayList<>();
         aims.add(from);
         aims.addAll(lateralAims(unit, from));
+
         return aims;
     }
 
@@ -184,6 +185,7 @@ public class MoveAway {
         // the distTo below, so the order is the contract).
         if (newPosition == null) {
             ErrorLog.printErrorOnce("Cannot moveAwayFrom " + aim + " for " + unit.name());
+
             return null;
         }
 
@@ -194,6 +196,7 @@ public class MoveAway {
             // brawl (walls, clumps), not a defect - the KITE twin's
             // stuck-no-step row already names them per unit, so no log
             // line here (it fired once per game and taught nothing).
+
             return null;
         }
 

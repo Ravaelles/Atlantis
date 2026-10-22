@@ -22,10 +22,12 @@ public class ProcessHelper {
     public static void killStarcraftProcess() {
         if (Env.isWine()) {
             killWineGameProcesses();
+
             return;
         }
         if (Env.isOpenBW()) {
             killOpenBWProcesses();
+
             return;
         }
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
@@ -34,10 +36,12 @@ public class ProcessHelper {
     public static void killChaosLauncherProcess() {
         if (Env.isWine()) {
             killWineGameProcesses();
+
             return;
         }
         if (Env.isOpenBW()) {
             killOpenBWProcesses();
+
             return;
         }
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
@@ -191,11 +195,13 @@ public class ProcessHelper {
             @Override
             public void run() {
                 if (!Env.isWine()) return;
+
                 String title = WineWindowConfig.DESKTOP_NAME + " - Wine desktop";
 
                 for (int attempt = 0; attempt < 80; attempt++) {
                     if (wmctrlSeesWindow(title)) {
                         executeDetached(command);
+
                         return;
                     }
                     try {
@@ -231,9 +237,11 @@ public class ProcessHelper {
             Process process = new ProcessBuilder("wmctrl", "-x", "-l").redirectErrorStream(true).start();
             String output = readAll(process.getInputStream());
             process.waitFor();
+
             return output != null && output.contains(title);
         } catch (Exception e) {
             // wmctrl missing is not fatal - the WM places the window, as before.
+
             return false;
         }
     }
@@ -297,10 +305,12 @@ public class ProcessHelper {
                     .redirectErrorStream(true)
                     .start();
             p.waitFor();
+
             return p.exitValue() == 0;
         } catch (Exception e) {
             // No pgrep (non-Linux) or it failed: assume nothing is running, so
             // the caller falls back to the old cleanup behaviour.
+
             return false;
         }
     }

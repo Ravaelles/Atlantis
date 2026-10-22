@@ -53,6 +53,7 @@ public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
         // workers keeps the adopt-and-wait path (pinned separately).
         world(5, fakeOurs(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Pylon, 0));
             EventLog.clearForTests();
 

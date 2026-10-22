@@ -55,6 +55,7 @@ public final class TargetPlacement {
     /** Null/blank name means anywhere. */
     public static TargetPlacement namedArea(String name) {
         if (name == null || name.trim().isEmpty()) return ANYWHERE;
+
         return new TargetPlacement(Mode.NAMED_AREA, 0, 0, 0, 0, name.trim().toUpperCase());
     }
 

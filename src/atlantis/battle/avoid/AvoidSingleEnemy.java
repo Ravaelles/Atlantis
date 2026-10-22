@@ -24,11 +24,13 @@ public class AvoidSingleEnemy extends Manager {
 
         if (unit.isRanged() && enemy.hasBiggerWeaponRangeThan(unit)) {
             unit.addLog("EnemyHasLongerDick");
+
             return null;
         }
 
         if (ShouldNotAvoidSingleEnemyBunker.check(unit, enemy)) {
             unit.addLog("SafeOwningBunker");
+
             return null;
         }
 

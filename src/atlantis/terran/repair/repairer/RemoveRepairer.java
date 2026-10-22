@@ -39,6 +39,7 @@ public class RemoveRepairer extends Manager {
         if (target == null || !target.isAlive() || target.isHealthy()) {
             if (target == null || target.lastUnderAttackMoreThanAgo(30)) {
                 RepairAssignments.removeRepairer(unit);
+
                 return null;
             }
         }

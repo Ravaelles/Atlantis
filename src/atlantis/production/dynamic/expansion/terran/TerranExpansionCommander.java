@@ -30,6 +30,7 @@ public class TerranExpansionCommander extends Commander {
 
 //        System.err.println("ExpansionCommander.handle() @ " + A.now());
         prepareNewBase();
+
         return false;
     }
 

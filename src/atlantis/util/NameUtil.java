@@ -29,6 +29,7 @@ public class NameUtil {
             if (otherTypeName.contains(string)) {
                 try {
                     UpgradeType upgradeType = (UpgradeType) UpgradeType.class.getField(field.getName()).get(null);
+
                     return upgradeType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {
@@ -49,6 +50,7 @@ public class NameUtil {
             if (otherTechName.contains(name)) {
                 try {
                     TechType techType = (TechType) TechType.class.getField(field.getName()).get(null);
+
                     return techType;
                 } catch (Exception e) {
                     if (!disableErrorReporting) {

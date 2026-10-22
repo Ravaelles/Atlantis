@@ -74,6 +74,7 @@ public final class Kite {
         // Unwounded zealots keep trading - withdrawing whole would
         // string the line out for nothing.
         if (!unit.isDragoon() && !ZealotWithdraw.should(unit, threat)) return false;
+
         if (unit.isDragoon()) {
             boolean lowHp = unit.hp() + unit.shields() < CombatTuning.current().getDragoonLowHp();
             // Pinch retreat (owner): two or more melee enemies inside 2
@@ -122,6 +123,7 @@ public final class Kite {
         }
         if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
         if (unit.isDragoon() && hasMeatScreen(unit)) return false;
+
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
 
@@ -133,6 +135,7 @@ public final class Kite {
      */
     public static boolean hasMeatScreen(AUnit unit) {
         if (unit == null || !unit.isDragoon()) return false;
+
         try {
             return unit.hp() + unit.shields() >= 40 && unit.friendlyZealotsNearCount(8) > 0;
         } catch (Exception ignored) {
@@ -153,6 +156,7 @@ public final class Kite {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
         if (isHuntedBy(unit, threat)) margin -= CombatTuning.current().getKiteHuntedTiles();
         if (unit.isOtherFacingThisUnit(threat)) margin -= CombatTuning.current().getKiteFacedTiles();
+
         return margin;
     }
     /**
@@ -162,6 +166,7 @@ public final class Kite {
      */
     private static boolean isHuntedBy(AUnit unit, AUnit threat) {
         AUnit hunted = threat.orderTarget();
+
         return hunted != null && hunted.id() == unit.id();
     }
     /**

@@ -100,6 +100,7 @@ public class V2DispatchTwinTest {
         while (true) {
             int at = log.indexOf("\"key\":\"V2_DISPATCH\"", from);
             if (at < 0) return count;
+
             count++;
             from = at + 1;
         }

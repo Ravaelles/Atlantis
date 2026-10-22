@@ -57,13 +57,16 @@ public class PositionFulfillsAllConditions {
         // name the same cause.
         if (We.protoss() && building.needsPower() && !IsPoweredByAPylon.check(position, building)) {
             AbstractPositionFinder._STATUS = "Not powered by a Pylon";
+
             return failed();
         }
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
+
         if (OverlapsOurUnfinishedBuilding.check(position, building)) {
             AbstractPositionFinder._STATUS = "Overlaps our unfinished building";
+
             return failed();
         }
         // The proximity finish removes a site a standing same-type
@@ -75,6 +78,7 @@ public class PositionFulfillsAllConditions {
         // sibling (overlap, not nearness - touching edges stay legal).
         if (OverlapsOurStandingBuilding.check(position, building)) {
             AbstractPositionFinder._STATUS = "Overlaps our standing building";
+
             return failed();
         }
         if (EnemiesTooClose.check(builder, building, position)) return failed();
@@ -103,6 +107,7 @@ public class PositionFulfillsAllConditions {
             if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
 //            if (!TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
             if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return failed();
+
             if (building.isMissileTurret()) {
                 if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return failed();
             }
@@ -121,6 +126,7 @@ public class PositionFulfillsAllConditions {
         }
 
         // All conditions are fullfilled, return this position
+
         return success();
     }
 
@@ -169,11 +175,13 @@ public class PositionFulfillsAllConditions {
         if (position == null) {
             ErrorLog.printMaxOncePerMinute("PositionFulfillsAllConditions: position is null");
             AbstractPositionFinder._STATUS = "POSITION ARGUMENT IS NULL";
+
             return false;
         }
 
         if (position.isOutOfBounds()) {
             AbstractPositionFinder._STATUS = "Position out of bounds";
+
             return false;
         }
 

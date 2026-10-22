@@ -44,6 +44,7 @@ public class BuildPylonFirst {
 //        System.out.println("----- Requested PYLON CONSTRUCTION at " + order.aroundPosition() + " / " + position);
 
         lastError = null;
+
         return order;
     }
 

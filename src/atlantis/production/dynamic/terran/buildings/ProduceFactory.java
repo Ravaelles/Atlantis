@@ -43,6 +43,7 @@ public class ProduceFactory {
 
         if (freeFactories.size() <= 0 && A.canAfford(300, 200)) {
             produce();
+
             return true;
         }
 
@@ -92,6 +93,7 @@ public class ProduceFactory {
 
         if (inProgress == 0 && !Have.factory() && A.canAfford(230, 115)) {
             produce();
+
             return true;
         }
 
@@ -107,12 +109,14 @@ public class ProduceFactory {
 
                 if (inProgress == 0) {
                     produce();
+
                     return true;
                 }
                 else if (inProgress >= 1 && A.canAfford(
                     100 + 200 * inProgress, 100 + 100 * inProgress
                 )) {
                     produce();
+
                     return true;
                 }
             }

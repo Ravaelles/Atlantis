@@ -116,6 +116,7 @@ public class RequestBuildingNear {
                 .build());
 
         lastError = null;
+
         return order;
     }
 
@@ -164,6 +165,7 @@ public class RequestBuildingNear {
 
     private ProductionOrder error(String error) {
         lastError = error;
+
         return null;
     }
 

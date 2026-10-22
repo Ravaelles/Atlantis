@@ -11,6 +11,7 @@ public class ProtossSpecificBuildingsCommander extends Commander {
         // Mirror of TerranSpecificBuildingsCommander: DynamicBuildingsCommander
         // lists this commander as generic, so Protoss-only buildings must not
         // be evaluated in Terran/Zerg games.
+
         return We.protoss();
     }
 

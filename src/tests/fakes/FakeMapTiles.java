@@ -64,6 +64,7 @@ public class FakeMapTiles implements MapTiles.Source {
     public boolean hasPathBetween(HasPosition from, HasPosition to) {
         // Everything is one connected map, which is what let tests place two
         // bases 40 tiles apart before this question had a name.
+
         return true;
     }
 
@@ -78,12 +79,14 @@ public class FakeMapTiles implements MapTiles.Source {
         if (We.protoss() && building.needsPower()) {
             if (Select.ourOfType(AUnitType.Protoss_Pylon).countInRadius(5.98, at) == 0) {
                 AbstractPositionFinder._STATUS = "[Testing] No power";
+
                 return false;
             }
         }
 
         if (!isBuildable(at, true)) {
             AbstractPositionFinder._STATUS = "[Testing] Not buildable";
+
             return false;
         }
 
@@ -93,6 +96,7 @@ public class FakeMapTiles implements MapTiles.Source {
         }
 
         AbstractPositionFinder._STATUS = "[Testing] Can't physically build here";
+
         return false;
     }
 }

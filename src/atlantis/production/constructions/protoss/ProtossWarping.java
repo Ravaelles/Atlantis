@@ -67,6 +67,7 @@ public class ProtossWarping {
 
         if (construction == null) {
             System.err.println("CANNOT define construction for " + newBuilding);
+
             return;
         }
 

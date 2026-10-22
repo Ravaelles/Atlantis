@@ -111,6 +111,7 @@ public class ProduceZealot {
 
     private static boolean no(String reasonWhyNot) {
         ProduceZealot.reason = reasonWhyNot;
+
         return false;
     }
 
@@ -208,6 +209,7 @@ public class ProduceZealot {
 
     private static boolean increaseProduced() {
         producedCount++;
+
         return true;
     }
 
@@ -248,6 +250,7 @@ public class ProduceZealot {
 
         if (Enemy.terran()) return minZealotsVsTerran();
         if (Enemy.protoss()) return minZealotsVsProtoss();
+
         return minZealotsVsZerg();
     }
 

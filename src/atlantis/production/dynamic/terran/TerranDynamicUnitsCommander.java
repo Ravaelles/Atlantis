@@ -74,6 +74,7 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
         }
 
         (new TerranAbundance()).invokedCommander();
+
         return false;
     }
 

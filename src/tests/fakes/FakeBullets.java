@@ -32,6 +32,7 @@ public class FakeBullets {
             // A fake bullet has no engine object behind it, and it exists for as
             // long as the test keeps it in the set - which is what the old
             // `&& !Env.isTesting()` carve-out in Bullets meant.
+
             return true;
         }
     }

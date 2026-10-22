@@ -171,7 +171,9 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof JFAPUnit)) return false;
+
         JFAPUnit jfap = (JFAPUnit) o;
+
         return unit.equals(jfap.unit);
     }
 

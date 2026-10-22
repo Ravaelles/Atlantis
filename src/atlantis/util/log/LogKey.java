@@ -147,6 +147,7 @@ public enum LogKey {
     public LogLevel level() {
         if (CRITICAL.contains(this)) return LogLevel.CRITICAL;
         if (HIGH.contains(this)) return LogLevel.HIGH;
+
         return LogLevel.NORMAL;
     }
 }

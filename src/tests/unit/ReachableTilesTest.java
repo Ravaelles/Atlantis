@@ -55,6 +55,7 @@ public class ReachableTilesTest {
         ReachableTiles.useReachability(
                 (fromTx, fromTy, toTx, toTy) -> {
                     calls[0]++;
+
                     return true;
                 },
                 "test double");

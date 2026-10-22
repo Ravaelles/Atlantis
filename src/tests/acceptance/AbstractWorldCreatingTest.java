@@ -95,6 +95,7 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
             List<AUnit> alive = new ArrayList<>(living(our));
             alive.addAll(living(enemies));
             alive.addAll(living(neutral));
+
             return alive;
         });
 
@@ -170,6 +171,7 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
         FakeOnFrameEnd.onFrameEnd(this);
 
         framesNow++;
+
         return framesNow;
     }
 

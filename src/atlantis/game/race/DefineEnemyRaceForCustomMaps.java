@@ -11,6 +11,7 @@ public class DefineEnemyRaceForCustomMaps {
 
         if (firstEnemy == null) {
             if (!A.isUms()) System.err.println("COULDNT DETERMINE ENEMY RACE");
+
             return null;
         }
 

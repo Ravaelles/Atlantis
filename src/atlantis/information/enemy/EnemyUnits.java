@@ -103,6 +103,7 @@ public class EnemyUnits {
             111,
             () -> {
                 AUnit ourUnit = Select.mainOrAnyBuilding();
+
                 return discovered().buildings().groundNearestTo(ourUnit);
             }
         );
@@ -114,6 +115,7 @@ public class EnemyUnits {
             51,
             () -> {
                 AUnit ourUnit = Select.mainOrAnyBuilding();
+
                 return discovered().combatBuildingsAntiLand().groundNearestTo(ourUnit);
             }
         );

@@ -40,6 +40,7 @@ public class ForceEarlyGGOnlyLocally extends Commander {
         ErrorLog.printErrorOnce("ForceEarlyGGOnlyLocally at " + A.s + "s, strength: " + Army.strength());
 
         Atlantis.getInstance().onEnd(false);
+
         return false;
     }
 }

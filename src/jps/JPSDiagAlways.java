@@ -94,6 +94,7 @@ public class JPSDiagAlways<T extends Node> extends JPS<T> {
         }
 
         // jump diagonally towards our goal
+
         return jump(graph.getNode(neighbor.x + dx, neighbor.y + dy), neighbor, goals);
     }
 }

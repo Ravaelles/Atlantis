@@ -57,6 +57,7 @@ public class AvoidReavers extends Manager {
     protected Manager handle() {
         if (unit.distTo(reaver) <= 4 && unit.noCooldown() && unit.isCombatUnit()) {
             unit.setTooltip("DontAvoidReaverTooClose!", false);
+
             return null;
         }
 
@@ -72,6 +73,7 @@ public class AvoidReavers extends Manager {
         }
 
         unit.runningManager().runFromAndNotifyOthersToMove(reaver, "REAVER!");
+
         return usedManager(this);
     }
 

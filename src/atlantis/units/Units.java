@@ -56,6 +56,7 @@ public class Units {
         units.add(unitToAdd);
         unitIds.add(unitToAdd.id());
         extraValues.put(unitToAdd, null);
+
         return this;
     }
 
@@ -96,6 +97,7 @@ public class Units {
         units.remove(unitToRemove);
         unitIds.remove(unitToRemove.id());
         extraValues.remove(unitToRemove);
+
         return this;
     }
 
@@ -203,10 +205,12 @@ public class Units {
     public double valueFor(AUnit unit) {
         if (unit == null) {
             System.err.println("Invalid unit: NULL. Return -1 as fallback.");
+
             return -1;
         }
         if (!hasValueFor(unit)) {
             System.err.println("No unit value for " + unit.name() + ". Return -1 as fallback.");
+
             return -1;
         }
 
@@ -219,6 +223,7 @@ public class Units {
         assert has(unit);
 
         Double value = extraValues.get(unit);
+
         return value;
     }
 
@@ -262,6 +267,7 @@ public class Units {
      */
     public Units replaceUnitsWith(List<AUnit> newUnits) {
         this.units = (ArrayList<AUnit>) newUnits;
+
         return this;
     }
 
@@ -469,6 +475,7 @@ public class Units {
 
     public AUnit[] array() {
         AUnit[] array = new AUnit[units.size()];
+
         return units.toArray(array);
     }
 

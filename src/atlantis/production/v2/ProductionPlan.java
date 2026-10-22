@@ -34,6 +34,7 @@ public final class ProductionPlan {
     public ProductionItem firstOf(Producible producible) {
         for (ProductionItem item : items) {
             if (item.item().id().equals(producible.id()))
+
                 return item;
         }
         return null;

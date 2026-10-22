@@ -34,6 +34,7 @@ public final class HuntLastContact {
             if (last != null && unit.distTo(last) > 9) {
                 if (unit.move(last, Actions.MOVE_ENGAGE, Behavior.HUNT.tag())) {
                     FightTarget.markRepositioned(unit);
+
                     return true;
                 }
             }

@@ -49,6 +49,7 @@ public class NoPreparingWhileWarpingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 11)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             ConstructionRequests.constructions.clear();
             Queue.get().allOrders().list().clear();
@@ -79,6 +80,7 @@ public class NoPreparingWhileWarpingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 11)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             ConstructionRequests.constructions.clear();
             Queue.get().allOrders().list().clear();

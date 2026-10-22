@@ -72,6 +72,7 @@ public class Missions {
 
     public static Mission fromString(String name) {
         if (ATTACK.name().equalsIgnoreCase(name)) return ATTACK;
+
         return DEFEND;
     }
 }

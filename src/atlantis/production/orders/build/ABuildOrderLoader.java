@@ -55,6 +55,7 @@ public class ABuildOrderLoader {
         }
 
         ABuildOrderLoader loader = new ABuildOrderLoader();
+
         return loader.readBuildOrdersFromFile(strategy.race(), strategy.name(), filePath);
     }
 

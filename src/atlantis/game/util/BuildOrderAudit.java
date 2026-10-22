@@ -47,10 +47,13 @@ public final class BuildOrderAudit {
     public static void recordWarp(AUnit building, ProductionOrder order) {
         try {
             if (building == null || order == null || order.isDynamic()) return;
+
             AUnitType type = building.type();
             if (type == null || !type.isABuilding()) return;
+
             int expected = order.minSupply();
             if (expected <= 0) return;
+
             rows.add(new Row(type.name(), order.id(), expected, A.supplyUsed()));
         }
         catch (Exception ignored) {
@@ -82,6 +85,7 @@ public final class BuildOrderAudit {
             int total = rows.size();
             List<String> mismatches = mismatchLines();
             if (total == 0) return;
+
             AConsole.println("===== BUILD_ORDER audit: " + total + " BO buildings warped, "
                 + mismatches.size() + " off-plan =====");
             for (String line : mismatches) {

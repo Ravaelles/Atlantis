@@ -30,9 +30,11 @@ public final class ClusterRally {
      */
     public static HasPosition regroupRallyPoint(AUnit unit) {
         if (unit == null || !unit.isAlive()) return null;
+
         AUnit threat = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(unit, CombatTuning.current().getRegroupThreatTiles());
         if (threat == null) return null;
+
         return MoveAway.bestDestination(unit, threat, CombatTuning.current().getRegroupRallyTiles());
     }
 
@@ -71,12 +73,14 @@ public final class ClusterRally {
         if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
         if (leader == null || !leader.isAlive()) return null;
         if (tactic == FightOrFlight.Tactic.FLEE) return null;
+
         HasPosition pivot = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
         if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {
             pivot = expectedDirectionPoint(leader, anchor);
         }
         if (pivot == null) return null;
+
         return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
     }
 

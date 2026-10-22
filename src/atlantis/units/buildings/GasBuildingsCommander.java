@@ -23,6 +23,7 @@ public class GasBuildingsCommander extends Commander {
         if (AGame.notNthGameFrame(9)) return false;
 
         handleSubcommanders();
+
         return false;
     }
 }

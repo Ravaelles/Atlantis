@@ -37,6 +37,7 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
     @Override
     protected boolean handle() {
         requestNew();
+
         return false;
     }
 

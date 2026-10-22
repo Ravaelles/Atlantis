@@ -34,6 +34,7 @@ public class ClosestToEnemyBase {
 
     private static int distToEnemyInNumOfChokes(HasPosition from) {
         CPPath chokes = PathToEnemyBase.definePathToEnemy(from);
+
         return chokes != null ? chokes.size() : -1;
     }
 }

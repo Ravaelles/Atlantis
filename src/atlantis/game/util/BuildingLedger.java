@@ -72,6 +72,7 @@ public class BuildingLedger {
         if (frame < lastFrame) rows.clear();
         lastFrame = frame;
         if (rows.containsKey(unitId)) return;
+
         rows.put(unitId, new Row(kind, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
             reservedMinerals, reservedGas, expectedSupply, order, constructionId, orderId));
     }

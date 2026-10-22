@@ -73,6 +73,7 @@ public class AMath {
     public static double median(Collection<Double> list, boolean mathematicMedian) {
         if (list.isEmpty()) {
             AGui.displayMessage("List for computing a median is empty!");
+
             return -1;
         }
         if (list.size() == 1) {
@@ -128,6 +129,7 @@ public class AMath {
     public static boolean isInRange(int min, int value, int max) {
         if (value < min) return false;
         if (value > max) return false;
+
         return true;
     }
 
@@ -142,7 +144,9 @@ public class AMath {
     ) {
         if (paramValue <= minParamValue) return minValue;
         if (paramValue >= maxParamValue) return maxValue;
+
         double ratio = (paramValue - minParamValue) / (maxParamValue - minParamValue);
+
         return minValue + ratio * (maxValue - minValue);
     }
 }

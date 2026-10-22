@@ -31,6 +31,7 @@ public class AllowToProduceEarlyWithoutRequirements {
         AUnitType requiredType = type.requiredUnits().first();
         if (requiredType == null) {
             AConsole.printStackTrace("!No requirement for " + type);
+
             return false;
         }
 

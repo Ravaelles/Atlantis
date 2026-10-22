@@ -22,6 +22,7 @@ public class TerranCheeseDontAvoidEnemy extends Manager {
         int enemies = unit.enemiesNear().ranged().combatUnits().count();
 
         if (Enemy.protoss()) return 1 + (our / 5);
+
         if (Enemy.terran()) {
             return 1 + our - enemies;
         }

@@ -18,6 +18,7 @@ public class ProtossDontAvoid extends HasUnit {
 
         if (unit.effUndetected() && noEnemyDetectorsNearby()) {
             unit.addLog("CloakedNoAvoid");
+
             return true;
         }
 
@@ -26,6 +27,7 @@ public class ProtossDontAvoid extends HasUnit {
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return true;
         if (dontAvoidWhenCannonsNear(unit)) return true;
         if (ZealotDontAvoidEnemy.dontAvoid(unit)) return true;
+
         if (unit.isShuttle() && unit.hp() >= 42 && unit.isAction(Actions.LOAD)) {
 //        if (unit.isShuttle()) {
 //            unit.addLog("ShuttleLoadNoAvoid");
@@ -43,6 +45,7 @@ public class ProtossDontAvoid extends HasUnit {
 //        if (DontAvoidWhenCannonsNear.check(unit) && (unit.isMelee() || unit.cooldown() <= 7)) {
         if (unit.cooldown() <= 9 && DontAvoidWhenCannonsNear.check(unit)) {
             unit.addLog("SupportCannon");
+
             return true;
         }
 

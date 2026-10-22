@@ -21,6 +21,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
      */
     public boolean notifyNearUnits(HasPosition runFrom) {
         if (runFrom == null || !runFrom.hasPosition()) return false;
+
         if (We.protoss()) {
             if (unit.hp() <= 40 || unit.enemiesNear().buildings().notEmpty()) return true;
             if (unit.friendsNear().inRadius(1, unit).atMost(1)) return false;

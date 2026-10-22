@@ -93,11 +93,13 @@ public class Squad {
 
     public AUnit squadScout() {
         // BATTLE CUTOVER: scout assignment is deleted - no scout attached.
+
         return null;
     }
 
     public HasPosition center() {
         if (units.isEmpty()) return null;
+
         long x = 0, y = 0;
         int n = 0;
         for (AUnit unit : units) {
@@ -107,12 +109,14 @@ public class Squad {
             n++;
         }
         if (n == 0) return null;
+
         return atlantis.map.position.APosition.createFromPixels((int) (x / n), (int) (y / n));
     }
 
     public double radius() {
         HasPosition center = center();
         if (center == null) return 0;
+
         double max = 0;
         for (AUnit unit : units) {
             if (unit == null || !unit.hasPosition()) continue;
@@ -163,6 +167,7 @@ public class Squad {
 
     public AFocusPoint focusPoint() {
         Mission mission = mission();
+
         return mission != null ? mission.focusPoint() : null;
     }
 

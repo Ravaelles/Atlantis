@@ -68,6 +68,7 @@ public class UnworkedConstructionSurvivesNearbyBuildingTest extends AbstractTest
             builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ConstructionRequests.constructions.clear();
 
             Construction fresh = new Construction(AUnitType.Protoss_Gateway);
@@ -99,6 +100,7 @@ public class UnworkedConstructionSurvivesNearbyBuildingTest extends AbstractTest
             builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ConstructionRequests.constructions.clear();
 
             Construction worked = new Construction(AUnitType.Protoss_Gateway);

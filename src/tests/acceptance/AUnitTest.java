@@ -1002,6 +1002,7 @@ public class AUnitTest extends AbstractTestWithWorld {
 
     private static double angleDifference(double a, double b) {
         double difference = Math.abs(a - b);
+
         return Math.min(difference, 2 * Math.PI - difference);
     }
 }

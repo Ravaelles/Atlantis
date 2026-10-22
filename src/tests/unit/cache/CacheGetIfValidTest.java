@@ -29,10 +29,12 @@ public class CacheGetIfValidTest {
 
         FakeUnit first = cache.getIfValid("key", 100, () -> {
             computations.incrementAndGet();
+
             return marine;
         });
         FakeUnit second = cache.getIfValid("key", 100, () -> {
             computations.incrementAndGet();
+
             return marine;
         });
 

@@ -59,6 +59,7 @@ public final class TunerHallOfFame {
     /** Offers a played vector; only the top-N by objective survive. Returns true when kept. */
     public boolean offer(TunerObjective.Row row, Map<String, Double> vector) {
         if (row == null || vector == null || vector.isEmpty()) return false;
+
         entries.add(new Entry(row, vector));
         Collections.sort(entries, new Comparator<Entry>() {
             @Override
@@ -76,6 +77,7 @@ public final class TunerHallOfFame {
     /** The best vector ever offered, or empty when nothing was kept. */
     public Optional<Entry> champion() {
         if (entries.isEmpty()) return Optional.empty();
+
         return Optional.of(entries.get(0));
     }
 
@@ -124,6 +126,7 @@ public final class TunerHallOfFame {
     private static double clamp(double value, double min, double max) {
         if (value < min) return min;
         if (value > max) return max;
+
         return value;
     }
 
@@ -153,6 +156,7 @@ public final class TunerHallOfFame {
 
     public void load(String text) {
         if (text == null) return;
+
         for (String line : text.split("\n")) {
             Entry entry = parseLine(line);
             if (entry != null) offer(entry.row(), entry.vector());
@@ -165,6 +169,7 @@ public final class TunerHallOfFame {
 
     private static int parseCounter(String raw) {
         if (raw.equals("?")) return Integer.MAX_VALUE;
+
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
@@ -174,20 +179,25 @@ public final class TunerHallOfFame {
 
     private static Entry parseLine(String line) {
         if (line == null) return null;
+
         int split = line.indexOf('|');
         if (split < 0) return null;
+
         String[] head = line.substring(0, split).split(",", -1);
         if (head.length != 4) return null;
         if (!head[1].equals("W") && !head[1].equals("L")) return null;
+
         int seconds = parseCounter(head[2]);
         int hits = parseCounter(head[3]);
         if (seconds == Integer.MIN_VALUE || hits == Integer.MIN_VALUE) return null;
+
         LinkedHashMap<String, Double> vector = new LinkedHashMap<>();
         String tail = line.substring(split + 1);
         if (!tail.isEmpty()) {
             for (String pair : tail.split(";")) {
                 int eq = pair.indexOf('=');
                 if (eq < 0) return null;
+
                 try {
                     vector.put(pair.substring(0, eq), Double.parseDouble(pair.substring(eq + 1)));
                 } catch (NumberFormatException e) {
@@ -196,6 +206,7 @@ public final class TunerHallOfFame {
             }
         }
         if (vector.isEmpty()) return null;
+
         return new Entry(new TunerObjective.Row(head[0], head[1].equals("W"), hits, seconds), vector);
     }
 }

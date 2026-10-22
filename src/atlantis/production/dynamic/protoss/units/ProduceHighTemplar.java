@@ -13,6 +13,7 @@ public class ProduceHighTemplar {
         if (Have.no(requiredBuilding())) return false;
 
         int maxHT = haveThisManyHT();
+
         return buildToHave(type(), maxHT);
     }
 

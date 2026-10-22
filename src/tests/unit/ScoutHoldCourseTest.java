@@ -61,6 +61,7 @@ public class ScoutHoldCourseTest extends WorldStubForTests {
         world(2, fakeOurs(worker), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) {
                 worker.move(APosition.create(60, 20), Actions.MOVE_SCOUT, "Explore", true);
+
                 return;
             }
             assertTrue(new ScoutHoldCourse(worker).applies(),
@@ -86,6 +87,7 @@ public class ScoutHoldCourseTest extends WorldStubForTests {
             if (atlantis.game.A.now() == 1) {
                 worker.move(APosition.create(60, 20), Actions.MOVE_SCOUT, "Explore", true);
                 worker.setAction(Actions.MOVE_AVOID);
+
                 return;
             }
             assertFalse(new ScoutHoldCourse(worker).applies(),
@@ -101,9 +103,11 @@ public class ScoutHoldCourseTest extends WorldStubForTests {
             if (atlantis.game.A.now() == 1) {
                 worker.move(APosition.create(60, 20), Actions.MOVE_SCOUT, "Explore", true);
                 worker.targetPosition = null;
+
                 return;
             }
             if (atlantis.game.A.now() != ScoutHoldCourse.STUCK_FRAMES + 25) return;
+
             assertFalse(new ScoutHoldCourse(worker).applies(),
                 "pushing nowhere for 100+ frames re-picks instead of riding");
         });

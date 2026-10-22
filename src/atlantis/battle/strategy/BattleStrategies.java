@@ -20,6 +20,7 @@ public final class BattleStrategies {
         if (SquadScout.applies(unit, anchor)) return BattleStrategy.SCOUT_BAIT;
         if (ChokeStandoff.applies(unit, anchor)) return BattleStrategy.CHOKE_HOLD;
         if (DuelKite.applies(unit)) return BattleStrategy.DUEL_KITE;
+
         return BattleStrategy.OPEN_FIELD;
     }
 }

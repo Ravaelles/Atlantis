@@ -8,6 +8,7 @@ public class OnUnitCompleted {
     public static void update(Unit u) {
         if (u == null) {
             System.err.println("onUnitCompleted got null");
+
             return;
         }
 

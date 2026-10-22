@@ -70,10 +70,12 @@ public class ATech {
             () -> {
                 if (techOrUpgrade instanceof TechType) {
                     TechType tech = (TechType) techOrUpgrade;
+
                     return isResearchedTech(tech);
                 }
                 else if (techOrUpgrade instanceof UpgradeType) {
                     UpgradeType upgrade = (UpgradeType) techOrUpgrade;
+
                     return isResearchedUpgrade(upgrade, upgrade.maxRepeats());
                 }
                 else {
@@ -115,6 +117,7 @@ public class ATech {
     public static boolean isResearchedWithOrder(Object techOrUpgrade, ProductionOrder order) {
         if (techOrUpgrade instanceof TechType) {
             TechType tech = (TechType) techOrUpgrade;
+
             return isResearchedTech(tech);
         }
         else {
@@ -128,6 +131,7 @@ public class ATech {
             }
 
             UpgradeType upgrade = (UpgradeType) techOrUpgrade;
+
             return isResearchedUpgrade(upgrade, level);
         }
     }

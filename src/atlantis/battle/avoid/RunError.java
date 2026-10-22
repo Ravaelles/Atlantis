@@ -59,6 +59,7 @@ public class RunError extends Manager {
 
         unit.runningManager().stopRunning();
         unit.stop(null);
+
         return null;
     }
 }

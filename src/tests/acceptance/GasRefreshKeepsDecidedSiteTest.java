@@ -66,6 +66,7 @@ public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             // 23 is the occupancy-tick frame (everyNthGameFrame(23)).
             if (atlantis.game.A.now() != 23 || fired) return;
+
             fired = true;
             ConstructionRequests.constructions.clear();
             Queue.get().allOrders().list().clear();

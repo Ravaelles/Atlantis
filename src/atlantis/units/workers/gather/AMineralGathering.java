@@ -63,6 +63,7 @@ public class AMineralGathering {
                 return true;
             } else {
                 unit.move(mineralField, Actions.MOVE_REVEAL, "ToFoggedMineral");
+
                 return true;
             }
         }
@@ -123,6 +124,7 @@ public class AMineralGathering {
         if (mineral != null) return mineral;
 
         // Return fogged mineral as last resort
+
         return NeutralUnits.discovered().minerals().groundNearestTo(worker);
     }
 

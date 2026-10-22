@@ -24,6 +24,7 @@ public final class EscapeDestination {
         EscapeRays.Walkability walk, List<? extends HasPosition> blockers, List<? extends HasPosition> enemies
     ) {
         if (unit == null || threat == null || stepTiles <= 0 || walk == null) return null;
+
         boolean wide = unit.type() != null && unit.type().isLarge();
         int ux = unit.x() / 32;
         int uy = unit.y() / 32;
@@ -74,6 +75,7 @@ public final class EscapeDestination {
         EscapeRays.Walkability walk, List<? extends HasPosition> blockers, List<? extends HasPosition> enemies
     ) {
         if (unit == null || threat == null || stepTiles <= 0 || walk == null) return null;
+
         APosition shortPick = pick(unit, threat, stepTiles, walk, blockers, enemies);
         int away = EscapeRays.awayDirIndex(unit, threat);
         double[] clear = EscapeRays.clearance(unit.position(), LONG_STEP_TILES, walk);

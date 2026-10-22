@@ -141,6 +141,7 @@ public class WorkerDefenceRun extends Manager {
 
         if (unit.attackUnit(attacker)) {
             unit.setTooltip("HelpFriend");
+
             return true;
         }
 
@@ -193,6 +194,7 @@ public class WorkerDefenceRun extends Manager {
         if (candidate.hp() < HELPER_MIN_HP) return false;
         if (candidate.isConstructing()) return false;
         if (candidate.isBuilder()) return false;
+
         return true;
     }
 
@@ -324,6 +326,7 @@ public class WorkerDefenceRun extends Manager {
                 runFromEnemyToAnotherRegion(unit, reaver);
                 unit.setTooltip("OhFuckReaver!", true);
                 unit.addLog("OhFuckReaver!");
+
                 return true;
             }
 
@@ -333,12 +336,14 @@ public class WorkerDefenceRun extends Manager {
 //                    unit.gather(goTo, Actions.MOVE_AVOID, "RunToAnotherBase");
                     unit.gather(goTo);
                     unit.setTooltip("OhShitReaver");
+
                     return true;
                 }
 
                 HasPosition runTo = Select.all().inRadius(60, unit).mostDistantTo(unit);
                 if (runTo != null && runTo.isWalkable() && runTo.distTo(unit) >= 2) {
                     unit.move(runTo, Actions.MOVE_AVOID, "RunToHell");
+
                     return true;
                 }
             }

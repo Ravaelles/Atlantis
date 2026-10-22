@@ -116,11 +116,13 @@ public class ShouldNotTravelToConstructYet {
         if (affordableAt < 0) return true;
 
         int arrivalAt = now + (int) (distance / tilesPerFrame);
+
         return affordableAt > arrivalAt + FORECAST_ARRIVAL_SLACK_FRAMES;
     }
 
     private static double tilesPerFrame(AUnit builder) {
         if (builder == null) return -1;
+
         return builder.maxSpeed() / 32.0;
     }
 

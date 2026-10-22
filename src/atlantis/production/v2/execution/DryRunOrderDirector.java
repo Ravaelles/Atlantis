@@ -33,18 +33,21 @@ public final class DryRunOrderDirector implements OrderDirector {
     @Override
     public boolean trainFacility(String typeId, int producerId, Producible item) {
         orders.add("train " + item.id() + " at " + typeId + "#" + producerId);
+
         return false;
     }
 
     @Override
     public boolean buildAt(Producible building, PlacementReservation placement) {
         orders.add("build " + building.id() + " at tile(" + placement.tileX() + "," + placement.tileY() + ")");
+
         return false;
     }
 
     @Override
     public boolean researchOrUpgrade(String typeId, int producerId, Producible item) {
         orders.add("research " + item.id() + " at " + typeId + "#" + producerId);
+
         return false;
     }
 

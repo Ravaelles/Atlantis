@@ -126,6 +126,7 @@ public class CancelTooLongConstructions {
         old.cancel(type + " re-placed to a fresh site at " + fresh.buildPosition());
         ErrorLog.printMaxOncePerMinute(
             "REPLACED " + type.name() + " " + oldPosition + " -> " + fresh.buildPosition());
+
         return true;
     }
 
@@ -137,6 +138,7 @@ public class CancelTooLongConstructions {
      */
     public static boolean shouldReplace(APosition oldPosition, Construction fresh, AUnitType type) {
         if (fresh == null || fresh.buildPosition() == null) return false;
+
         return isDifferentSite(oldPosition, fresh.buildPosition(), type);
     }
 
@@ -148,7 +150,9 @@ public class CancelTooLongConstructions {
      */
     public static boolean isDifferentSite(APosition oldPosition, APosition freshPosition, AUnitType type) {
         if (oldPosition == null || freshPosition == null) return false;
+
         double minSeparation = Math.max(type.getTilesWidth(), type.getTilesHeights());
+
         return oldPosition.distTo(freshPosition) > minSeparation;
     }
 
@@ -259,6 +263,7 @@ public class CancelTooLongConstructions {
      */
     public static boolean techAlreadyCovered(AUnitType type) {
         if (!type.isProtossImportantTechBuilding()) return false;
+
         return Select.countOurOfTypeWithUnfinished(type) > 0;
     }
 
@@ -274,6 +279,7 @@ public class CancelTooLongConstructions {
                     + " notStartedInQueue=" + CountInQueue.countNotStarted(type)
                     + " triggerable=" + triggerable
                     + " maxAllowedAtOnce=" + maxAllowedAtOnce(type));
+
             return true;
         }
         return false;
@@ -287,6 +293,7 @@ public class CancelTooLongConstructions {
      */
     public static int countTriggerableNotStarted(AUnitType type) {
         if (Queue.get() == null) return 0;
+
         int total = 0;
         for (ProductionOrder order : Queue.get().notStarted().ofType(type).list()) {
             if (order.minSupply() <= atlantis.game.A.supplyUsed()) total++;
@@ -310,6 +317,7 @@ public class CancelTooLongConstructions {
         ProductionOrder rescue = new ProductionOrder(type, atlantis.game.A.supplyUsed());
         rescue.setPriority(atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH);
         atlantis.production.orders.production.queue.Queue.get().addNew(0, rescue);
+
         return rescue;
     }
 }

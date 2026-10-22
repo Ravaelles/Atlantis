@@ -42,6 +42,7 @@ public class DefineMainChoke {
 //        List<AChoke> mainChokes = region.chokes();
 
         naturalRegion = reachableRegions.get(0);
+
         return region.chokeBetween(naturalRegion);
     }
 

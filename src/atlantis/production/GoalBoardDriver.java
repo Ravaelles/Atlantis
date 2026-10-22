@@ -25,6 +25,7 @@ public final class GoalBoardDriver {
         }
         int priceMinerals = mineralPrice(top.id());
         int priceGas = gasPrice(top.id());
+
         return state.minerals < priceMinerals + 50 || state.gas < priceGas;
     }
 
@@ -39,11 +40,13 @@ public final class GoalBoardDriver {
         if ("core".equals(goalId)) return AUnitType.Protoss_Cybernetics_Core.mineralPrice();
         if ("assimilator".equals(goalId)) return AUnitType.Protoss_Assimilator.mineralPrice();
         if ("expansion".equals(goalId)) return AUnitType.Protoss_Nexus.mineralPrice();
+
         return 100;
     }
 
     static int gasPrice(String goalId) {
         if ("assimilator".equals(goalId)) return AUnitType.Protoss_Assimilator.gasPrice();
+
         return 0;
     }
 }

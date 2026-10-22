@@ -50,6 +50,7 @@ public class QueueLiveGateTest extends AbstractTestWithWorld {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Pylon, 0));
             int orders = Queue.get().allOrders().list().size();
 

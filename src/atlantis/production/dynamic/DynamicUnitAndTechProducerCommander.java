@@ -18,6 +18,7 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
         // dynamic buildings - no dynamic army or tech may jump the script's
         // rows. Workers and supply flow outside this commander.
         if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
+
         return true;
     }
 
@@ -55,6 +56,7 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
         if (We.terran()) return (new TerranDynamicUnitsCommander());
         if (We.protoss()) return (new ProtossDynamicUnitProductionCommander());
         if (We.zerg()) return (new ZergDynamicUnitsCommander());
+
         return null;
     }
 

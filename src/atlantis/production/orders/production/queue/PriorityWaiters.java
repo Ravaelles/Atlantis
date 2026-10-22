@@ -59,6 +59,7 @@ public class PriorityWaiters {
         int waitMinerals = mineralsAboveReady(ProductionOrderPriority.STANDARD);
         int waitGas = gasAboveReady(ProductionOrderPriority.STANDARD);
         if (waitMinerals == 0 && waitGas == 0) return false;
+
         return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
     }
 
@@ -72,6 +73,7 @@ public class PriorityWaiters {
 
     private static int totalAboveReady(ProductionOrderPriority level, boolean minerals) {
         if (Queue.get() == null) return 0;
+
         int total = 0;
         for (ProductionOrder order : Queue.get().notFinished().list()) {
             if (order.shouldIgnore()) continue;
@@ -102,6 +104,7 @@ public class PriorityWaiters {
         int waitMinerals = mineralsAbove(myLevel);
         int waitGas = gasAbove(myLevel);
         if (waitMinerals == 0 && waitGas == 0) return false;
+
         return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
     }
 
@@ -114,11 +117,13 @@ public class PriorityWaiters {
         int waitMinerals = totalAboveExcept(order, true);
         int waitGas = totalAboveExcept(order, false);
         if (waitMinerals == 0 && waitGas == 0) return false;
+
         return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
     }
 
     private static int totalAbove(ProductionOrderPriority level, boolean minerals) {
         if (Queue.get() == null) return 0;
+
         int total = 0;
         for (ProductionOrder order : Queue.get().notFinished().list()) {
             if (order.shouldIgnore()) continue;
@@ -131,6 +136,7 @@ public class PriorityWaiters {
 
     private static int totalAboveExcept(ProductionOrder except, boolean minerals) {
         if (Queue.get() == null) return 0;
+
         int total = 0;
         for (ProductionOrder order : Queue.get().notFinished().list()) {
             if (order == except) continue;
@@ -156,6 +162,7 @@ public class PriorityWaiters {
         // detection-necessity only.
         AUnitType type = order.unitType();
         if (type != null && (type.isPylon() || type.isSupplyDepot() || type.isOverlord())) return false;
+
         return true;
     }
 
@@ -172,6 +179,7 @@ public class PriorityWaiters {
         if (A.supplyTotal() < 17) return false;
         if (A.minerals() > 284) return false;
         if (A.supplyFree() < 2) return false;
+
         return true;
     }
 
@@ -183,6 +191,7 @@ public class PriorityWaiters {
     public static boolean pylonYieldsToCore() {
         if (!coreOutranksPylons()) return false;
         if (Queue.get() == null) return false;
+
         for (ProductionOrder order : Queue.get().notFinished()
             .ofType(AUnitType.Protoss_Cybernetics_Core).list()) {
             if (order.shouldIgnore()) continue;

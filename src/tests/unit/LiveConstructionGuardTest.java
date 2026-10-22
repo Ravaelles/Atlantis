@@ -52,6 +52,7 @@ public class LiveConstructionGuardTest extends WorldStubForTests {
         construction.setBuilder(builder);
         construction.setProductionOrder(order);
         ConstructionRequests.constructions.add(construction);
+
         return order;
     }
 

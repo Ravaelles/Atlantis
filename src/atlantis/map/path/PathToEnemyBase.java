@@ -50,6 +50,7 @@ public class PathToEnemyBase {
         }
 
         CPPath path = AMap.getMap().getPath(from.position().p(), enemy.position().p());
+
         return path;
     }
 

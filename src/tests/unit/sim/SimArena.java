@@ -26,11 +26,13 @@ public class SimArena {
     /** Adds an impassable block, in pixels. Returns this for chaining. */
     public SimArena block(int x, int y, int w, int h) {
         obstacles.add(new Rectangle(x, y, w, h));
+
         return this;
     }
 
     public boolean isWalkablePx(int x, int y) {
         if (x < 0 || y < 0 || x >= widthPx || y >= heightPx) return false;
+
         for (Rectangle obstacle : obstacles) {
             if (obstacle.contains(x, y)) return false;
         }

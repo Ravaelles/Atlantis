@@ -129,11 +129,13 @@ public class BuilderManager extends Manager {
      */
     public static boolean holdInProgressBuilder(boolean stopped, boolean warpingNearby) {
         if (!stopped) return true;
+
         return !warpingNearby;
     }
 
     private static boolean isAnyBuildingWarpingAtSite(Construction construction) {
         if (construction.buildPosition() == null) return false;
+
         return Select.ourUnfinished().ofType(construction.buildingType())
             .inRadius(2.5, construction.buildPosition()).notEmpty();
     }

@@ -34,6 +34,7 @@ public class ARandom {
 
     public static int randWithSeed(int min, int max, long seed) {
         A.random = new Random(seed);
+
         return min + A.random.nextInt(max - min + 1);
     }
 

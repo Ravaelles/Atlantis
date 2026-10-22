@@ -22,6 +22,7 @@ final class SiteScope {
         if (building == null) return null;
         if (building.isGasBuilding() || building.isBase()) return "dedicated-finder";
         if (!We.protoss()) return "non-protoss";
+
         return null;
     }
 }

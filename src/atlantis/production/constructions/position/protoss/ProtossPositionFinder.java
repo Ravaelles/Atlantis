@@ -98,6 +98,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         if (builder == null) {
             AbstractPositionFinder._STATUS = "NO BUILDER ASSIGNED";
+
             return null;
         }
 
@@ -210,6 +211,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             if (emergency != null) {
                 _STATUS = "Last resort (engine-buildable only)";
                 lastFound = emergency;
+
                 return emergency;
             }
         }
@@ -273,6 +275,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         relaxedBoundaryMargin = true;
         try {
             APosition found = findStandardPositionFor(builder, building, nearTo, maxDistance);
+
             return found != null;
         }
         finally {

@@ -13,6 +13,7 @@ public class OnlyOneAllowedOfType {
             if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
             if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
             if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
+
             if (type.equals(AUnitType.Protoss_Robotics_Facility)) {
                 return Count.withPlanned(type) > (A.supplyUsed() <= 130
                     ? 0

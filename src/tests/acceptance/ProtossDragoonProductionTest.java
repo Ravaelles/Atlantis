@@ -103,6 +103,7 @@ public class ProtossDragoonProductionTest extends WorldStubForTests {
     private FakeUnit busyGateway(double x) {
         FakeUnit gateway = fake(Protoss_Gateway, x);
         gateway.busy = gatewaysBusy;
+
         return gateway;
     }
 

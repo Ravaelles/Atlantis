@@ -29,6 +29,7 @@ public final class EscapeScoredStep {
      */
     public static APosition pickScored(AUnit unit, AUnit threat, int stepTiles) {
         if (unit == null || threat == null || stepTiles <= 0) return null;
+
         try {
             return EscapeDestination.pickEscape(unit, threat, stepTiles, walkability(), blockers(unit), foes(unit));
         } catch (Exception | Error ignored) {
@@ -62,6 +63,7 @@ public final class EscapeScoredStep {
         try {
             Selection enemies = unit.enemiesNear();
             if (enemies == null) return new ArrayList<>();
+
             return new ArrayList<>(enemies.combatUnits().list());
         } catch (Exception ignored) {
             return new ArrayList<>();

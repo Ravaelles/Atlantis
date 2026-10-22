@@ -16,6 +16,7 @@ public class EnemiesTooClose {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 }

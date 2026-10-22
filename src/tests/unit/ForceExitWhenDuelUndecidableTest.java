@@ -72,6 +72,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             dragoon().increaseHitCount();
             assertTrue(
                 new ForceExitWhenDuelUndecidable().applies(),
@@ -90,6 +91,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Zealot, 25, 20)
         ), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             dragoon().increaseHitCount();
             assertFalse(
                 new ForceExitWhenDuelUndecidable().applies(),
@@ -106,6 +108,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             assertFalse(
                 new ForceExitWhenDuelUndecidable().applies(),
                 "no hits taken is 'enemy not met yet', not an undecidable duel");
@@ -120,6 +123,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             FakeUnit dragoon = dragoon();
             dragoon.increaseHitCount();
             dragoon.setKillCount(2);
@@ -139,6 +143,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             dragoon().increaseHitCount();
             assertFalse(
                 new ForceExitWhenDuelUndecidable().applies(),
@@ -159,6 +164,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             dragoon().increaseHitCount();
             assertFalse(
                 new ForceExitWhenDuelUndecidable().applies(),
@@ -175,6 +181,7 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 20, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 24) return;
+
             dragoon().increaseHitCount();
             assertFalse(
                 new ForceExitWhenDuelUndecidable().applies(),

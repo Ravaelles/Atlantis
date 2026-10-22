@@ -35,6 +35,7 @@ public final class GoalBoard {
                 return Integer.compare(first.rank(), second.rank());
             }
         });
+
         return active;
     }
 

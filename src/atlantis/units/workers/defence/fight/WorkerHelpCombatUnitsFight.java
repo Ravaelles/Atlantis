@@ -36,6 +36,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
         if (unit.hp() <= 21) return f();
         if (unit.hp() <= minHp()) return f();
+
         AUnit base = unit.friendsNear().bases().nearestTo(unit);
         if (base == null) return f();
         if (unit.distTo(base) >= 9) return f();
@@ -128,12 +129,14 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // depend on combat micro). moveToSafety is the same action at unit level.
         if (unit.moveToSafety(atlantis.units.actions.Actions.MOVE_AVOID)) {
             usedManager(this);
+
             return false;
         }
 
         GatherResources manager = new GatherResources(unit);
         if (manager.forceHandle() != null) {
             usedManager(this);
+
             return false;
         }
 
@@ -180,6 +183,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
         if (processFightEnemyCombatUnits(unit)) {
             unit.setTooltip("HelpCombatUnits");
+
             return usedManager(this);
         }
 

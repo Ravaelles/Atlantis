@@ -130,6 +130,7 @@ public class PlacementPlannerTest {
      */
     private static CataloguePlacementPlanner blocklessPlanner(int w, int h) {
         TileAvailabilityGrid grid = new TileAvailabilityGrid(new Flat(w, h));
+
         return new CataloguePlacementPlanner(grid, null, null, false);
     }
 

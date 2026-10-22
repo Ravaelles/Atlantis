@@ -94,12 +94,14 @@ public final class OpenBWHost {
     public int host() {
         if (!hostingEnabled) {
             ErrorLog.printPlusToFile("OpenBW: hosting disabled (test seam); not starting a game");
+
             return -1;
         }
 
         String missing = config.missingRequirement();
         if (missing != null) {
             ErrorLog.printPlusToFile("OpenBW cannot start: " + missing);
+
             return -1;
         }
 
@@ -107,6 +109,7 @@ public final class OpenBWHost {
         File logDir = new File(config.logDir());
         if (!logDir.isDirectory() && !logDir.mkdirs()) {
             ErrorLog.printPlusToFile("OpenBW: cannot create log dir " + logDir.getAbsolutePath());
+
             return -1;
         }
 
@@ -150,6 +153,7 @@ public final class OpenBWHost {
             return runner.startDetached(command, new File(config.gameDir()), serverLog);
         } catch (IOException e) {
             ErrorLog.printPlusToFile("OpenBW: could not start the host: " + e);
+
             return null;
         }
     }
@@ -185,6 +189,7 @@ public final class OpenBWHost {
 
         int pid = (bytes[0] & 0xff) | ((bytes[1] & 0xff) << 8)
                 | ((bytes[2] & 0xff) << 16) | ((bytes[3] & 0xff) << 24);
+
         return pid;
     }
 
@@ -197,6 +202,7 @@ public final class OpenBWHost {
             int length = Math.min(count, all.length);
             byte[] slice = new byte[length];
             System.arraycopy(all, 0, slice, 0, length);
+
             return slice;
         } catch (IOException e) {
             return null;
@@ -228,6 +234,7 @@ public final class OpenBWHost {
         List<String> files = new ArrayList<>();
         addMatching(files, new File("/dev/shm"), "bwapi_shared_memory_");
         addMatching(files, new File("/tmp"), "bwapi_socket_");
+
         return files;
     }
 
@@ -249,6 +256,7 @@ public final class OpenBWHost {
             StringBuilder builder = new StringBuilder();
             for (int i = from; i < lines.size(); i++)
                 builder.append(lines.get(i)).append('\n');
+
             return builder.toString();
         } catch (IOException e) {
             return "(no server log)";
@@ -305,11 +313,13 @@ public final class OpenBWHost {
         public int run(List<String> command) {
             try {
                 Process process = new ProcessBuilder(command).start();
+
                 return process.waitFor();
             } catch (IOException e) {
                 return -1;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+
                 return -1;
             }
         }

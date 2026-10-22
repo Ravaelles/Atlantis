@@ -78,6 +78,7 @@ public class IsOrderCompleted {
         // so built rows leave the next-orders list (owner 2026-10-14).
         if (construction.builder() == null || !construction.builder().isAlive()) return false;
         // Living builder, any non-finished status: walking, issuing, warping.
+
         return true;
     }
 
@@ -100,6 +101,7 @@ public class IsOrderCompleted {
 
     private static int finishedOrdersOfType(AUnitType type) {
         if (Queue.get() == null) return 0;
+
         int total = 0;
         for (ProductionOrder finished : Queue.get().finishedOrders().list()) {
             if (type.equals(finished.unitType())) total++;
@@ -125,6 +127,7 @@ public class IsOrderCompleted {
 //        }
 
         // If we don't have this unit, add it to the current production queue.
+
         return existingUnits < expectedUnits;
     }
 

@@ -297,6 +297,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (u == null) return _lastType;
 
         _lastType = AUnitType.from(u.getType());
+
         return _lastType;
     }
 
@@ -390,7 +391,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AUnit)) return false;
+
         AUnit aUnit = (AUnit) o;
+
         return id() == aUnit.id();
     }
 
@@ -731,6 +734,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         setTooltip(tooltip);
         addLog(tooltip);
+
         return this;
     }
 
@@ -769,6 +773,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
         if (!isABuilding()) return false;
         if (canShootGround && _isMilitaryBuildingAntiGround) return true;
+
         else return canShootAir && _isMilitaryBuildingAntiAir;
     }
 
@@ -1070,6 +1075,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     public AUnit setLastActionReceivedNow() {
         this._lastActionReceived = AGame.now();
+
         return this;
     }
 
@@ -1173,6 +1179,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public Construction setConstruction(Construction construction) {
         this.construction = construction;
+
         return construction;
     }
 
@@ -1528,6 +1535,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         unitState().setLastTarget(orderTarget());
         unitState().setLastTargetType(unitState().getLastTarget() != null ? unitState().getLastTarget().type() : null);
+
         return unitState().getLastTarget();
     }
 
@@ -1557,6 +1565,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit orderTarget() {
         if (u == null) return null;
+
         return u.getOrderTarget() != null ? Worlds.units().getById(u.getOrderTarget()) : null;
     }
 
@@ -1642,6 +1651,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isLifted() {
         if (!We.terran()) return false;
         if (u == null) return false;
+
         return u.isLifted();
     }
 
@@ -1650,21 +1660,25 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     public boolean isLoaded() {
         if (u == null) return false;
+
         return u.isLoaded();
     }
 
     public boolean isUnderDisruptionWeb() {
         if (u == null) return false;
+
         return u.isUnderDisruptionWeb();
     }
 
     public boolean isUnderDarkSwarm() {
         if (u == null) return false;
+
         return u.isUnderDarkSwarm();
     }
 
     public boolean isUnderStorm() {
         if (u == null) return false;
+
         return u.isUnderStorm();
     }
 
@@ -1722,6 +1736,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         // Null-guarded like the neighboring accessors: a unit with no engine
         // handle (a test fake, a half-created unit) is training nothing -
         // and four acceptance tests died here on FakeUnits (NEXT #73).
+
         return u != null && u.isTraining();
     }
 
@@ -1735,6 +1750,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public UnitCommand getLastCommandRaw() {
         if (u == null) return null;
+
         return u.getLastCommand();
     }
 
@@ -1784,6 +1800,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         this.unitAction = unitAction;
 
         rememberSpecificUnitAction(unitAction);
+
         return this;
     }
 
@@ -1809,6 +1826,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private void rememberSpecificUnitAction(Action unitAction) {
         if (unitAction == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit action is null for " + this);
+
             return;
         }
 
@@ -1824,6 +1842,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null && !isWorker()) {
             ErrorLog.printErrorOnce("unitAction null for " + this);
+
             return true;
         }
 
@@ -1842,6 +1861,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean lastActionMoreThanAgo(int framesAgo, Action unitAction) {
         if (unitAction == null) {
             System.err.println("unitAction B null for " + this);
+
             return true;
         }
 
@@ -2283,6 +2303,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
         else if (squad.mission() == null) {
             AConsole.errPrintln("Empty squad mission for: " + squad);
+
             return Missions.DEFEND;
         }
 
@@ -2553,6 +2574,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         // is the one place OUR_SIDE_HEDGE is subtracted. Every threshold in
         // production compares against this reading, so "we are only as good as a 1.3
         // fight" is a doctrine in one line.
+
         return CombatEvalScale.hedgedForOurSide(ownCombatEvalRelative());
     }
 
@@ -3111,21 +3133,25 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         // BATTLE CUTOVER: the Sparta mission is deleted with the mission
         // arbitration - nothing is ever Sparta until BattleCommander owns
         // missions again (step 5).
+
         return false;
     }
 
     public boolean isMissionDefend() {
         if (mission() == null) return false;
+
         return mission().equals(Missions.DEFEND);
     }
 
     public boolean isMissionDefendOrSparta() {
         if (mission() == null) return false;
+
         return isMissionDefend() || isMissionSparta();
     }
 
     public boolean isMissionAttack() {
         if (mission() == null) return false;
+
         return mission().isMissionAttack();
     }
 
@@ -3404,16 +3430,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean isTarget(AUnitType type) {
         AUnit target = target();
+
         return target != null && target.is(type);
     }
 
     public boolean isTargetRanged() {
         AUnit target = target();
+
         return target != null && target.isRanged();
     }
 
     public boolean isTargetMelee() {
         AUnit target = target();
+
         return target != null && target.isMelee();
     }
 
@@ -3486,6 +3515,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     public void noteDecision(String tag) {
         if (tag == null || tag.isEmpty()) return;
+
         String signed = withIssuer(tag);
         if (commandHistory.lastMessageWas(signed)) {
             commandHistory.replaceLastWith(signed, A.now());
@@ -3521,6 +3551,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             int dollar = base.indexOf('$');
             if (dollar >= 0) base = base.substring(0, dollar);
             int dot = base.lastIndexOf('.');
+
             return dot < 0 ? base : base.substring(dot + 1);
         }
         return null;
@@ -3628,6 +3659,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean loadedIntoBunker() {
         if (!isLoaded()) return false;
+
         AUnit loadedInto = loadedInto();
 
         return loadedInto != null && loadedInto.isBunker();
@@ -3924,6 +3956,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AFocusPoint focusPoint() {
         if (mission() == null) return null;
+
         return mission().focusPoint();
     }
 
@@ -4105,6 +4138,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean nearestEnemyIs(AUnitType type) {
         AUnit nearestEnemy = nearestEnemy();
+
         return nearestEnemy != null && nearestEnemy.is(type);
     }
 
@@ -4276,6 +4310,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit forceLastTarget(AUnit target) {
         this.unitState().setLastTarget(target);
+
         return this;
     }
 

@@ -69,11 +69,14 @@ public class GameOrderDirector implements OrderDirector {
         // behind the queue head.
         if (producer.isTraining(unitType)) {
             markUsed(producer);
+
             return false;
         }
 
         if (!producer.trainForced(unitType)) return false;
+
         markUsed(producer);
+
         return true;
     }
 
@@ -95,6 +98,7 @@ public class GameOrderDirector implements OrderDirector {
         if (construction == null) return false;
 
         ConstructionRequests.addConstruction(construction);
+
         return true;
     }
 
@@ -113,10 +117,13 @@ public class GameOrderDirector implements OrderDirector {
             // used: nothing else may take its frame either.
             if (facility.isResearching()) {
                 markUsed(facility);
+
                 return false;
             }
             if (!facility.research(tech)) return false;
+
             markUsed(facility);
+
             return true;
         }
 
@@ -124,10 +131,13 @@ public class GameOrderDirector implements OrderDirector {
             UpgradeType upgrade = ((UpgradeProducible) item).upgrade();
             if (facility.isUpgrading()) {
                 markUsed(facility);
+
                 return false;
             }
             if (!facility.upgrade(upgrade)) return false;
+
             markUsed(facility);
+
             return true;
         }
 
@@ -175,6 +185,7 @@ public class GameOrderDirector implements OrderDirector {
         construction.setMaxDistance(12);
         construction.setProductionOrder(orderFor(buildingType));
         construction.assignOptimalBuilder();
+
         return construction;
     }
 
@@ -186,6 +197,7 @@ public class GameOrderDirector implements OrderDirector {
     private ProductionOrder orderFor(AUnitType type) {
         ProductionOrder order = new ProductionOrder(type, 0);
         order.markAsNotDynamic();
+
         return order;
     }
 
@@ -193,11 +205,13 @@ public class GameOrderDirector implements OrderDirector {
         AUnit base = Select.ourBases().first();
         HasPosition fallback = base != null ? base : Select.ourBuildings().first();
         if (fallback == null) ErrorLog.printMaxOncePerMinute("Production v2: no base for a build position");
+
         return fallback;
     }
 
     private AUnitType resolveUnitType(String id) {
         if (id == null || id.isEmpty()) return null;
+
         return AUnitType.getByName(id);
     }
 }

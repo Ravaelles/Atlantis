@@ -35,6 +35,7 @@ public class GetOptimalBuilder {
         // caller already owns that case (adopt-no-free-builder twin, fresh
         // request refusal with retry) - instead of burning a scout or
         // double-linking a builder that then starves one of its sites.
+
         return defineWorker(positionToBuild);
     }
 

@@ -26,6 +26,7 @@ public class BuildOrderRowParser {
         // Check for special commands that start with #
         if (isSpecialCommand(row)) {
             handleSpecialCommand(row, buildOrder);
+
             return null;
         }
 
@@ -199,12 +200,14 @@ public class BuildOrderRowParser {
             // Detect multi-line comment end
             if (row[0].contains("*/")) {
                 _isCommentMode = false;
+
                 return true;
             }
 
             // Detect multi-line comment start
             if (row[0].contains("/**")) {
                 _isCommentMode = true;
+
                 return true;
             }
 
@@ -216,6 +219,7 @@ public class BuildOrderRowParser {
             // Detect comments like "//"
             if (row[0].startsWith("//")) {
                 System.err.println("skip " + row[0]);
+
                 return true;
             }
         }

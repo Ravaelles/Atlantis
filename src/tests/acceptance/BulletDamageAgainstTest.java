@@ -60,6 +60,7 @@ public class BulletDamageAgainstTest extends AbstractTestWithWorld {
 
     private FakeBullet createBullet(FakeUnit attacker, FakeUnit target) {
         FakeBullet bullet = FakeBullet.fromPosition(attacker.position, attacker, target);
+
         return bullet;
     }
 

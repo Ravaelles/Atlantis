@@ -46,8 +46,10 @@ final class SiteTwin {
     private static void samplePerf(int frame) {
         int bucket = frame / 720;
         if (bucket == lastPerfSample) return;
+
         lastPerfSample = bucket;
         if (reserveCalls == 0) return;
+
         EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", "-")
             .param("result", "perf")
@@ -59,6 +61,7 @@ final class SiteTwin {
 
     static void answered(AUnitType building, APosition site, String via, PlacementReservation reservation) {
         if (site == null) return;
+
         EventLog.Builder row = EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", building.name())
             .param("result", "answered")

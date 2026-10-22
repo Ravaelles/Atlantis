@@ -397,6 +397,7 @@ public class GoalSourcesTest {
     private static ProductionGoal firstOf(List<ProductionGoal> goals, String typeId) {
         for (ProductionGoal goal : goals) {
             if (goal.item().id().equals(typeId))
+
                 return goal;
         }
         return null;

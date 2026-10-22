@@ -161,6 +161,7 @@ public final class ResourceTimeline {
 
         for (int f = frame; f < horizon; f++) {
             if (minerals[f] < cost.minerals() || gas[f] < cost.gas() || supplyAvailable[f] < cost.supply())
+
                 return false;
         }
         return true;

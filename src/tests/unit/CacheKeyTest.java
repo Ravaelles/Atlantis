@@ -85,6 +85,7 @@ public class CacheKeyTest {
         try {
             java.lang.reflect.Field field = AConsole.class.getDeclaredField("port");
             field.setAccessible(true);
+
             return (LogPort) field.get(null);
         }
         catch (ReflectiveOperationException e) {

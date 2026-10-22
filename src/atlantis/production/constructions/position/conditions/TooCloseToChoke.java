@@ -53,6 +53,7 @@ public class TooCloseToChoke {
             if (building.isForge()) return 2.5;
             else if (building.isGateway() && A.supplyUsed() >= 18) return 7;
             else if (building.isCannon()) return 4.7;
+
             else if (building.is(AUnitType.Protoss_Shield_Battery)) minDist = 6;
             else if (A.supplyTotal() <= 10 && building.isPylon()) minDist = 1.2;
             if (isPylonForNaturalChoke(building, position)) minDist = 1.5;
@@ -68,8 +69,10 @@ public class TooCloseToChoke {
 
     private static boolean isPylonForNaturalChoke(AUnitType building, HasPosition position) {
         if (!building.isPylon()) return false;
+
         Selection bases = Select.ourBases();
         if (bases.count() <= 1) return false;
+
         AUnit natural = bases.second();
         if (natural == null) return false;
 
@@ -86,6 +89,7 @@ public class TooCloseToChoke {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 

@@ -59,26 +59,31 @@ public final class OpenBWGameLauncher {
 
     public OpenBWGameLauncher map(String map) {
         config.map(map);
+
         return this;
     }
 
     public OpenBWGameLauncher race(String ours, String enemy) {
         config.races(ours, enemy);
+
         return this;
     }
 
     public OpenBWGameLauncher logDir(String dir) {
         config.logDir(dir);
+
         return this;
     }
 
     public OpenBWGameLauncher gameTimeoutSeconds(int seconds) {
         config.gameTimeoutSeconds(seconds);
+
         return this;
     }
 
     public OpenBWGameLauncher hostWaitSeconds(int seconds) {
         config.hostWaitSeconds(seconds);
+
         return this;
     }
 
@@ -107,6 +112,7 @@ public final class OpenBWGameLauncher {
         String missing = config.build().missingRequirement();
         if (missing != null) {
             ErrorLog.printPlusToFile("OpenBW cannot run here: " + missing);
+
             return false;
         }
         return true;

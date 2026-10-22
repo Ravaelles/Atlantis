@@ -9,6 +9,7 @@ public class OnUnitCreated {
     public static void onUnitCreated(Unit u) {
         if (u == null) {
             System.err.println("onUnitCreate got null");
+
             return;
         }
 

@@ -88,6 +88,7 @@ public class ProduceObserver {
         if (!Have.notEvenPlanned(Protoss_Forge)) {
             AddToQueue.withHighPriority(Protoss_Forge);
             AddToQueue.withHighPriority(Protoss_Photon_Cannon);
+
             return false;
         }
 

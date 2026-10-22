@@ -46,6 +46,7 @@ public class OtherConstructionTooClose {
 
                         if (building.isCannon()) {
                             if (otherConstr.buildingType().isCannon() && !otherConstr.notStarted()) return false;
+
                             if (otherConstr.buildingType().isGateway() && otherConstr.notStarted()) {
                                 return false;
                             }
@@ -70,6 +71,7 @@ public class OtherConstructionTooClose {
         }
 
         // No collisions detected
+
         return false;
     }
 
@@ -81,6 +83,7 @@ public class OtherConstructionTooClose {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 }

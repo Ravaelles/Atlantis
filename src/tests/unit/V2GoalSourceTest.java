@@ -131,6 +131,7 @@ public class V2GoalSourceTest {
         while (true) {
             int at = log.indexOf("\"key\":\"" + key + "\"", from);
             if (at < 0) return count;
+
             count++;
             from = at + 1;
         }

@@ -31,8 +31,10 @@ public final class RegionShape {
     public static RegionShape of(ARegion region) {
         try {
             if (region == null) return null;
+
             double[] box = region.boundingBoxTiles();
             if (box == null) return null;
+
             return new RegionShape(box[0], box[1], region.center());
         } catch (Exception ignored) {
             return null;

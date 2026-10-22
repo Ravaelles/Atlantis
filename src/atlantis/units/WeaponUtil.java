@@ -25,6 +25,7 @@ public class WeaponUtil {
                     // A Zealot swings two blades: 8 damage each, 16 per attack.
                     // That is the weapon's real damage, not a patch for missing
                     // data - the table has one blade, the attack has two.
+
                     return UnitStats.weaponDamageNormalized(weapon) * 2;
                 }
                 else {

@@ -37,6 +37,7 @@ public final class ProtossOpening {
         goals.add(new SustainedZealotFlowGoal());
         goals.add(new SustainedDragoonFlowGoal());
         goals.add(new ExpansionGoal());
+
         return goals;
     }
 }

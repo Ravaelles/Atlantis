@@ -16,6 +16,7 @@ public class ProduceZergUnit {
         for (AUnit larva : Select.ourOfType(AUnitType.Zerg_Larva).list()) {
             try {
                 larva.train(type, productionOrder);
+
                 return true;
             } catch (Exception e) {
 //                ErrorLog.printMaxOncePerMinute(
@@ -31,10 +32,12 @@ public class ProduceZergUnit {
     public static boolean produceZergBuilding(AUnitType type, ProductionOrder order) {
         if (type == null) {
             System.err.println("produceZergBuilding got type = null");
+
             return false;
         }
         else if (order.unitType() == null) {
             System.err.println("produceZergBuilding got order.unitType = null");
+
             return false;
         }
 

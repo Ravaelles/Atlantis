@@ -62,11 +62,13 @@ public class EventLog {
         }
         public Builder param(String name, String value) {
             params.put(name, value == null ? "-" : value);
+
             return this;
         }
 
         public Builder param(String name, int value) {
             params.put(name, value);
+
             return this;
         }
 
@@ -77,11 +79,13 @@ public class EventLog {
          */
         public Builder param(String name, Integer value) {
             params.put(name, value);
+
             return this;
         }
 
         public Builder param(String name, boolean value) {
             params.put(name, value);
+
             return this;
         }
 
@@ -128,6 +132,7 @@ public class EventLog {
 
     public static void flushTo(String path) {
         if (buffer.isEmpty()) return;
+
         if (!truncatedPaths.contains(path)) {
             AFile.removeFile(path);
             truncatedPaths.add(path);

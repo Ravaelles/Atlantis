@@ -9,6 +9,7 @@ import atlantis.util.Counter;
 public class TrimQueue {
     public static void trimIfTooBig(Queue queue) {
         if (queue == null) return;
+
         Orders orders = trimmableOrders(queue);
         if (orders.size() <= 12) return;
 

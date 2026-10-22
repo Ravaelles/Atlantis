@@ -26,12 +26,14 @@ public class ShouldMakeTerranBio {
 
         if (EnemyInfo.isDoingEarlyGamePush()) {
             reason = "EnemyInfo.isDoingEarlyGamePush";
+
             return true;
         }
 
         if (Strategy.get().goingBio()) {
             if (infantry <= 30) {
                 reason = "infantry <= 30";
+
                 return wantsToReturnTrue();
             }
 
@@ -44,6 +46,7 @@ public class ShouldMakeTerranBio {
         if (EnemyStrategy.get().isAirUnits() || airUnitsAntiGround > 0) {
             if (infantry <= (2 + airUnitsAntiGround * 3)) {
                 reason = "AntiAir";
+
                 return wantsToReturnTrue();
             }
         }
@@ -52,11 +55,13 @@ public class ShouldMakeTerranBio {
 
         if (FocusOnProducingUnits.haveAnyFocus() && !FocusOnProducingUnits.isFocusedOn(AUnitType.Terran_Marine)) {
             reason = "focusOnOtherUnits";
+
             return false;
         }
 
         if (!TerranDecisions.maxFocusOnTanks()) {
             reason = "maxFocusOnTanks";
+
             return false;
         }
 
@@ -68,6 +73,7 @@ public class ShouldMakeTerranBio {
 //        }
 
         reason = "Generic don't";
+
         return false;
     }
 

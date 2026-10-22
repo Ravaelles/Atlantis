@@ -90,6 +90,7 @@ public final class PylonPlacementScore {
     private static boolean contains(List<Tile> tiles, Tile tile) {
         for (Tile other : tiles) {
             if (other.x == tile.x && other.y == tile.y)
+
                 return true;
         }
         return false;

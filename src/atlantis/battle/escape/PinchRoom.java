@@ -19,6 +19,7 @@ public final class PinchRoom {
 
     public static boolean hasRoom(APosition pos, EscapeRays.Walkability walk) {
         if (pos == null || walk == null) return true;
+
         try {
             for (double clear : EscapeRays.clearance(pos, STANDOFF_TILES, walk)) {
                 if (clear >= STANDOFF_TILES) return true;

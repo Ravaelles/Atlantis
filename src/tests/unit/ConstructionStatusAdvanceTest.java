@@ -44,6 +44,7 @@ public class ConstructionStatusAdvanceTest extends WorldStubForTests {
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
         construction.setBuilder(builder);
         ConstructionRequests.constructions.add(construction);
+
         return construction;
     }
 

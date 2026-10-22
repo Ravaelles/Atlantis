@@ -52,6 +52,7 @@ public class StreetGridDoctrineTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 12, 12)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             AUnit builder = Select.ourWorkers().first();
             // tx 44 sits on the 11-grid (44 % 11 == 0), far from the base
             // so the isolation clause can engage.

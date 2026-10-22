@@ -29,6 +29,7 @@ public class ResearchStimpacks extends Commander {
 
         if (ATech.isResearched(what())) {
             onResearched();
+
             return false;
         }
 

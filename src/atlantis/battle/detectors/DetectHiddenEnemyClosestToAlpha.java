@@ -30,11 +30,13 @@ public class DetectHiddenEnemyClosestToAlpha extends Manager {
 
         if (dist >= 6.2) {
             unit.move(dangerousInvisibleEnemy, Actions.MOVE_REVEAL, "MoveToEnemy");
+
             return usedManager(this);
         }
 
         else {
             unit.moveAwayFrom(dangerousInvisibleEnemy, 0.5, Actions.MOVE_REVEAL, "MoveFromEnemy");
+
             return usedManager(this);
         }
     }

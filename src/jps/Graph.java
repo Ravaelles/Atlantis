@@ -216,6 +216,7 @@ public class Graph<T extends Node> {
         double F = Math.sqrt(2) - 1;
         double dx = Math.abs(a.x - b.x);
         double dy = Math.abs(a.y - b.y);
+
         return (dx < dy) ? F * dx + dy : F * dy + dx;
     };
     private static BiFunction<Node, Node, Double> chebyshev = (a, b) -> (double) Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));

@@ -64,6 +64,7 @@ public class RefreshConstructionPosition {
                     type,
                     construction.positionToBuildCenter()
                 );
+
                 return true;
             }
         }
@@ -270,6 +271,7 @@ public class RefreshConstructionPosition {
 
         if (buildPosition == null) {
             System.err.println("buildPosition IS NULL - refresh " + buildingType);
+
             return true;
         }
 

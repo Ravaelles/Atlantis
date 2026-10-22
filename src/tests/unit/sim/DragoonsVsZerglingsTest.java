@@ -343,6 +343,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 }
             }
             int lingsAlive = world.aliveEnemies();
+
             return new int[] { alive, hp, lingsAlive, world.shotsFired(), maxPinchPressure[0] };
         }
         finally {
@@ -852,6 +853,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     /** Static gun: trade with the nearest quarry inside cannon range, else hold. */
     static void scriptCannon(FakeUnit cannon, FakeUnit[] foes) {
         if (cannon.hp <= 0) return;
+
         FakeUnit nearest = null;
         double best = Double.MAX_VALUE;
         for (FakeUnit foe : foes) {
@@ -875,6 +877,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     /** Raid script: run at the gap, then trade with the nearest gun. */
     static void scriptWallRaid(FakeUnit ling, APosition gap, FakeUnit[] guns) {
         if (ling.hp <= 0) return;
+
         FakeUnit nearest = null;
         double best = Double.MAX_VALUE;
         for (FakeUnit gun : guns) {
@@ -1034,6 +1037,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
         if (foe.hp <= 0 || dragoon.hp <= 0) {
             foe.lastCommand = "Stop";
+
             return;
         }
         foe.setAngle(Math.atan2(
@@ -1135,6 +1139,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         dragoon.hp = hp;
         dragoon.shields = 0;
         dragoon.cooldown = 10;
+
         return dragoon;
     }
 
@@ -1226,6 +1231,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     private static void scriptHoldMouth(FakeUnit ling, FakeUnit[] dragoons) {
         if (ling.hp <= 0) {
             ling.lastCommand = "Stop";
+
             return;
         }
         FakeUnit nearest = null;
@@ -1252,6 +1258,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     private static double centroidX(FakeUnit[] dragoons) {
         double sum = 0;
         for (FakeUnit dragoon : dragoons) sum += dragoon.position.x();
+
         return sum / dragoons.length;
     }
 

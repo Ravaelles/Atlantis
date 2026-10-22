@@ -95,6 +95,7 @@ public final class WallPieces {
         double plug = chokeWidthTiles - 1;
         double have = kit.powerWidth() + kit.plugWidth();
         if (plug <= have) return 0;
+
         return (int) Math.ceil((plug - have) / kit.gunWidth());
     }
 }

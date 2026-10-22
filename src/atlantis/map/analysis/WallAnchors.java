@@ -63,6 +63,7 @@ public final class WallAnchors {
         if (len == 0) {
             APosition tile = APosition.create(endA.tx(), endA.ty());
             slots.add(tile);
+
             return new AnchorRow(slots, tile);
         }
 

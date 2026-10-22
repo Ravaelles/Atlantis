@@ -119,6 +119,7 @@ public class UpgradeCompletedBehindGateTest extends AbstractTestWithWorld {
         while (true) {
             int key = log.indexOf("\"key\":\"UPGRADE_COMPLETED\"", from);
             if (key < 0) return count;
+
             int end = log.indexOf('\n', key);
             if (end < 0) end = log.length();
             String row = log.substring(key, end);

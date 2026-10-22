@@ -11,10 +11,12 @@ public class IsUnitWithinChoke {
     public static boolean check(AChoke choke, AUnit unit) {
         if (choke == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null choke in IsUnitWithinChoke.check");
+
             return false;
         }
         if (unit == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null unit in IsUnitWithinChoke.check");
+
             return false;
         }
 

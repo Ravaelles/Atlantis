@@ -738,6 +738,7 @@ public class Selection extends BaseSelection {
     public Selection farFromAntiAirBuildings(double minDistToBuilding) {
         return cloneByRemovingIf((unit -> {
             AUnit nearestAntiAirBuilding = EnemyUnits.discovered().combatBuildingsAntiAir().nearestTo(unit);
+
             return nearestAntiAirBuilding != null && nearestAntiAirBuilding.distTo(unit) < minDistToBuilding;
         }), "farFromAntiAirBuildings:" + minDistToBuilding);
     }
@@ -1082,6 +1083,7 @@ public class Selection extends BaseSelection {
 
         }
         System.out.println();
+
         return this;
     }
 

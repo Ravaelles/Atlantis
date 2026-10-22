@@ -36,6 +36,7 @@ public class WorkerDoNotFight {
             }
 
             if (Count.workers() >= 15 && enemiesNear.atMost(2) && (unit.id() % 2 != 1 || unit.shieldWounded()))
+
                 return true;
         }
 
@@ -116,6 +117,7 @@ public class WorkerDoNotFight {
 
     private static double maxDistToBuilding() {
         if (Enemy.zerg()) return 4.4;
+
         return 5;
     }
 }

@@ -21,6 +21,7 @@ public class TooCloseToBunker {
             double distToBunker = bunker.distTo(position);
             if (distToBunker <= minDist) {
                 AbstractPositionFinder._STATUS = "Too close to bunker (" + distToBunker + ")";
+
                 return true;
             }
         }
@@ -30,6 +31,7 @@ public class TooCloseToBunker {
 
         if (ConstructionRequests.hasNotStartedNear(AUnitType.Terran_Bunker, position, 5)) {
             AbstractPositionFinder._STATUS = "Has close bunker nearby";
+
             return true;
         }
 

@@ -41,10 +41,12 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         if (!orders.contains(item)) {
             orders.add(index, item);
             QueueLastStatus.updateStatusOk(item.toString());
+
             return true;
         }
 
         QueueLastStatus.updateStatusFailed("AlreadyInQueue", item.toString());
+
         return false;
     }
 
@@ -52,10 +54,12 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         if (!orders.contains(item)) {
             orders.add(item);
             QueueLastStatus.updateStatusOk(item.toString());
+
             return true;
         }
 
         QueueLastStatus.updateStatusFailed("AlreadyInQueue", item.toString());
+
         return false;
     }
 
@@ -93,6 +97,7 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
             AConsole.println("    " + order);
         }
         AConsole.println("");
+
         return this;
     }
 

@@ -74,6 +74,7 @@ public class ABaseLocation implements HasPosition, Comparable<ABaseLocation> {
         if (!(o instanceof ABaseLocation)) return false;
 
         ABaseLocation location = (ABaseLocation) o;
+
         return position().equals(location.position());
     }
 

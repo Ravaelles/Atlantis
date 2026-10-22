@@ -56,6 +56,7 @@ public class AbsorbedBranchesBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Zealot, 60, 20)
         ), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             enemyRaceInWorld = Race.Protoss;
             Queue.get().allOrders().list().clear();
@@ -81,6 +82,7 @@ public class AbsorbedBranchesBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Carrier, 60, 20)
         ), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             enemyRaceInWorld = Race.Protoss;
             Queue.get().allOrders().list().clear();
@@ -115,6 +117,7 @@ public class AbsorbedBranchesBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
 
             currentMinerals = 300;

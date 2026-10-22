@@ -322,6 +322,7 @@ public class Atlantis implements BWEventListener {
             // logs and printed the summary; Main's hook only repeats that
             // work (or prints a misleading "Stopped" after a clean end).
             Runtime.getRuntime().halt(0);
+
             return;
         }
 
@@ -335,6 +336,7 @@ public class Atlantis implements BWEventListener {
 
             AConsole.println("Exit...");
             System.exit(0);
+
             return;
         }
 
@@ -348,6 +350,7 @@ public class Atlantis implements BWEventListener {
 
             AConsole.println("Exit...");
             System.exit(0);
+
             return;
         }
 

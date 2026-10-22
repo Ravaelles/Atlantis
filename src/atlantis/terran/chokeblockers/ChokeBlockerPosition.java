@@ -49,6 +49,7 @@ public class ChokeBlockerPosition {
         if (totalBlockers == 2) {
             int offset = 17;
             if (indexOf == 0) return offset;
+
             return 100 - offset;
         }
 
@@ -65,6 +66,7 @@ public class ChokeBlockerPosition {
         if (indexOf == 1) return offset;
         if (indexOf == 2) return 100 - offset;
         if (indexOf == 3) return 99;
+
         return 50;
     }
 }

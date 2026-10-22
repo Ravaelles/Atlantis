@@ -78,10 +78,12 @@ public class DynamicCommanderHelpers extends Commander {
 
         if (!type.hasRequiredUnit()) {
             buildToHaveOne(type.whatIsRequired());
+
             return false;
         }
 
         AddToQueue.withTopPriority(type);
+
         return true;
     }
 

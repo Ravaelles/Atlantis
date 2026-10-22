@@ -22,6 +22,7 @@ public class WorkerDefenceManager extends Manager {
         if (!unit.isWorker()) return false;
         if (unit.isBuilder() || unit.isConstructing()) return false;
         if (A.isUms() && !Have.main()) return false;
+
         return (!We.terran() || !unit.isRepairing())
             && !unit.isSpecialMission();
     }

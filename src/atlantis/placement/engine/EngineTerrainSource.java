@@ -61,6 +61,7 @@ public final class EngineTerrainSource implements TileAvailabilityGrid.TerrainSo
     private static boolean resourceAt(int tx, int ty) {
         for (AUnit resource : Select.mineralsAndGeysers().list()) {
             if (covers(resource, tx, ty))
+
                 return true;
         }
         return false;

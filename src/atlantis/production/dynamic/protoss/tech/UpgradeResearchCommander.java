@@ -40,6 +40,7 @@ public abstract class UpgradeResearchCommander extends Commander {
     public final boolean applies() {
         UpgradeCompletionTracker.note(
             what(), ATech.getUpgradeLevel(what()), A.now(), A.minSec());
+
         return appliesInner();
     }
 

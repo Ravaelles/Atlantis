@@ -44,6 +44,7 @@ public class GasWorkersPerBuilding {
         else if (gas >= 300) {
             if (A.seconds() <= 400) {
                 if (A.minerals() <= 400) return 1;
+
                 return 1;
             }
             else {

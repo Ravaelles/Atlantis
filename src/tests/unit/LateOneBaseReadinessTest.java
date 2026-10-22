@@ -74,6 +74,7 @@ public class LateOneBaseReadinessTest extends AbstractTestWithWorld {
     public void richLateOneBaseKeepsProducing() {
         world(5, oneBase(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             lateOneBase(600);
 
             assertTrue(
@@ -86,6 +87,7 @@ public class LateOneBaseReadinessTest extends AbstractTestWithWorld {
     public void poorLateOneBaseSavesForExpansion() {
         world(5, oneBase(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             lateOneBase(100);
 
             assertFalse(

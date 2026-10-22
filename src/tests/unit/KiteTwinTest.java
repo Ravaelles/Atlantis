@@ -48,6 +48,7 @@ public class KiteTwinTest extends WorldStubForTests {
         while (true) {
             int at = text.indexOf(needle, from);
             if (at < 0) return count;
+
             count++;
             from = at + needle.length();
         }
@@ -80,6 +81,7 @@ public class KiteTwinTest extends WorldStubForTests {
         world(400, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             int now = atlantis.game.A.now();
             if (now != 3 && now != 10 && now != 320) return;
+
             KiteTwin.steppedAside(dragoon, zealot);
         });
 

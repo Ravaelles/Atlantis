@@ -33,16 +33,20 @@ public final class StickyTarget {
 
     public static AUnit currentTarget(AUnit unit) {
         if (unit == null) return null;
+
         AUnit current = unit.target();
         if (current == null || !current.isAlive()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
         if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
+
         if (!current.isVisibleUnitOnMap()) {
             Integer seen = lastSeenVisible.get(current.id());
             if (seen == null || atlantis.game.A.now() - seen > UNSEEN_GRACE_FRAMES) return null;
+
             return current;
         }
         lastSeenVisible.put(current.id(), atlantis.game.A.now());
+
         return current;
     }
 }

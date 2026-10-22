@@ -36,6 +36,7 @@ public final class LiveExistingItems implements ExistingItems {
 
         if (item instanceof UpgradeProducible) {
             UpgradeProducible upgrade = (UpgradeProducible) item;
+
             return ATech.getUpgradeLevel(upgrade.upgrade()) >= upgrade.level() ? now : MISSING;
         }
         return MISSING;
@@ -48,6 +49,7 @@ public final class LiveExistingItems implements ExistingItems {
             if (best < 0 || frame < best)
                 best = frame;
             if (best == now)
+
                 return now;
         }
         if (best < 0 && type.isABuilding() && ConstructionRequests.countNotStartedOfType(type) > 0) {
@@ -59,6 +61,7 @@ public final class LiveExistingItems implements ExistingItems {
     @Override
     public int inFlightFrom(Producible item) {
         if (!(item instanceof UnitProducible)) return availableFrom(item);
+
         AUnitType type = ((UnitProducible) item).type();
         int best = MISSING;
         for (AUnit unit : Select.ourWithUnfinished().ofType(type).list()) {

@@ -78,6 +78,7 @@ public class ProtossUpgradesLevelGatingTest extends AbstractTestWithWorld {
 
         world(20, army(), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
             if (atlantis.game.A.now() != 17) return;
+
             FakeResearch.withUpgradeLevel(UpgradeType.Protoss_Ground_Weapons, 1);
 
             assertTrue(
@@ -98,6 +99,7 @@ public class ProtossUpgradesLevelGatingTest extends AbstractTestWithWorld {
 
         world(20, army(), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
             if (atlantis.game.A.now() != 17) return;
+
             FakeResearch.withUpgradeLevel(UpgradeType.Protoss_Ground_Weapons, 1);
 
             assertTrue(
@@ -121,6 +123,7 @@ public class ProtossUpgradesLevelGatingTest extends AbstractTestWithWorld {
 
         world(20, pythonWindowArmy(), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
             if (atlantis.game.A.now() != 17) return;
+
             EventLog.clearForTests();
 
             assertFalse(
@@ -142,6 +145,7 @@ public class ProtossUpgradesLevelGatingTest extends AbstractTestWithWorld {
 
         world(20, pythonWindowArmy(), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
             if (atlantis.game.A.now() != 17) return;
+
             FakeResearch.withUpgradeLevel(UpgradeType.Protoss_Ground_Weapons, 1);
             EventLog.clearForTests();
 

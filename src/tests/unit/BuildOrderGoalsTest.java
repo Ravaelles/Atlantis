@@ -43,6 +43,7 @@ public class BuildOrderGoalsTest {
 
         Progress with(Producible item, int count) {
             produced.put(item.id(), count);
+
             return this;
         }
 

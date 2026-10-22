@@ -139,6 +139,7 @@ public class UnitProductionPathTest {
         List<String> out = new ArrayList<>();
         for (Commander child : children(commander))
             out.add(child.getClass().getSimpleName());
+
         return out.toString();
     }
 
@@ -153,6 +154,7 @@ public class UnitProductionPathTest {
 
             T nested = find(child, type);
             if (nested != null)
+
                 return nested;
         }
         return null;
@@ -164,6 +166,7 @@ public class UnitProductionPathTest {
             try {
                 Field field = type.getDeclaredField("commanderObjects");
                 field.setAccessible(true);
+
                 return (Commander[]) field.get(commander);
             } catch (NoSuchFieldException e) {
                 type = type.getSuperclass();

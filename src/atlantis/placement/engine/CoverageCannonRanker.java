@@ -69,7 +69,9 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
 
     private boolean coversAnchor(BuildLocation location) {
         if (anchor == null) return false;
+
         APosition middle = centerOf(location);
+
         return Math.hypot(middle.getX() - anchor.getX(), middle.getY() - anchor.getY()) <= rangePx;
     }
 

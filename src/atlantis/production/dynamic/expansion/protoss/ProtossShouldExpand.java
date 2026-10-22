@@ -26,6 +26,7 @@ public class ProtossShouldExpand {
         // cancels not-started bases, and saving minerals is the opposite of that.
         if (A.minerals() < 300) {
             ShouldExpand.reason = "NotEnoughMinerals";
+
             return false;
         }
 
@@ -67,18 +68,21 @@ public class ProtossShouldExpand {
     private static boolean defendRush() {
         if (defendVsProtossRush()) return true;
         if (defendVsTerranRush()) return true;
+
         return defendVsZergRush();
     }
 
     private static boolean defendVsTerranRush() {
         if (!Enemy.terran()) return false;
         if (A.s >= 9 * 60) return false;
+
         return Army.strength() <= 115;
     }
 
     private static boolean defendVsProtossRush() {
         if (!Enemy.protoss()) return false;
         if (A.s >= 9 * 60) return false;
+
         return Army.strength() <= 115;
     }
 
@@ -99,6 +103,7 @@ public class ProtossShouldExpand {
 
     protected static boolean yes(String reason) {
         ShouldExpand.reason = reason;
+
         return true;
     }
 

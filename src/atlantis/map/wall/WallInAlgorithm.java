@@ -36,6 +36,7 @@ public class WallInAlgorithm {
         if (structures.isEmpty()) {
             // All structures placed
             checkWall(placedStructures, choke, sTile, eTile, enemySize);
+
             return;
         }
 
@@ -49,6 +50,7 @@ public class WallInAlgorithm {
 
         if (!isWall) {
             // Not a wall-in, generate a new structure location
+
             return;
         }
 
@@ -79,6 +81,7 @@ public class WallInAlgorithm {
         boolean isWall = isWallUsingFloodFill(placedStructures, choke, sTile, eTile);
         if (isWall) {
             structureSet.addAll(placedStructures);
+
             return true;
         }
 
@@ -129,6 +132,7 @@ public class WallInAlgorithm {
 
             if (current.equals(eTile)) {
                 // End tile reached, it's a valid wall
+
                 return true;
             }
 
@@ -146,11 +150,13 @@ public class WallInAlgorithm {
         }
 
         // If flood fill completes without reaching the end tile, it's not a valid wall
+
         return false;
     }
 
     private static boolean isValidTile(int tx, int ty, int mapWidth, int mapHeight) {
         // Check if the tile coordinates are within the boundaries of the map
+
         return tx >= 0 && tx < mapWidth && ty >= 0 && ty < mapHeight;
     }
 }

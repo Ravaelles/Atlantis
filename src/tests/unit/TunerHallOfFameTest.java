@@ -27,6 +27,7 @@ public class TunerHallOfFameTest {
         LinkedHashMap<String, Double> vector = new LinkedHashMap<>();
         vector.put("KiteStepTiles", kite);
         vector.put("DragoonPinchHp", pinch);
+
         return vector;
     }
 

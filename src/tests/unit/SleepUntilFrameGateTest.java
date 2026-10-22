@@ -44,6 +44,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit probeFake = fake(AUnitType.Protoss_Probe, 8.3);
         FakeUnit zealotFake = fake(AUnitType.Protoss_Zealot, 12);
+
         return new FakeUnit[]{ nexus, probeFake, zealotFake };
     }
 
@@ -56,6 +57,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit probeFake = fake(AUnitType.Protoss_Probe, 8.3);
         FakeUnit zealotFake = fake(AUnitType.Protoss_Zealot, 12);
+
         return new FakeUnit[]{ nexus, probeFake, zealotFake };
     }
 

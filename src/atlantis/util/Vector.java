@@ -55,17 +55,20 @@ public class Vector extends Vector2d {
 
     public Vector normalizeTo1() {
         normalize();
+
         return this;
     }
 
     public Vector normalizeTo(double vectorLength) {
         normalize();
         multiplyVector(vectorLength);
+
         return this;
     }
 
     public Vector multiplyVector(double factor) {
         this.scale(factor);
+
         return this;
     }
 

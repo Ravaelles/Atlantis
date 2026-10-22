@@ -19,6 +19,7 @@ public class CenterCamera {
 
     public static void on(HasPosition position, boolean paintCircle, Color color) {
         if (position == null) return;
+
         if (color == null) color = Color.Yellow;
 
         if (paintCircle) {

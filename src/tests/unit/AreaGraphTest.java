@@ -32,6 +32,7 @@ public class AreaGraphTest {
         List<AreaGraph.ChokeEdge> edges = new ArrayList<>();
         edges.add(new AreaGraph.ChokeEdge(1, 2, 64));
         edges.add(new AreaGraph.ChokeEdge(2, 3, 64));
+
         return AreaGraph.of(nodes, edges);
     }
 

@@ -384,44 +384,52 @@ public class A {
             toString.append(object).append(",");
         }
         toString.append("]");
+
         return toString.toString();
     }
 
     public static int whenEnemyProtossTerranZerg(int ifEnemyProtoss, int ifEnemyTerran, int ifEnemyZerg) {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return ifEnemyTerran;
+
         return ifEnemyZerg;
     }
 
     public static int whenEnemyProtoss(int ifEnemyProtoss, int otherwise) {
         if (Enemy.protoss()) return ifEnemyProtoss;
+
         return otherwise;
     }
 
     public static double whenEnemyProtoss(double ifEnemyProtoss, double otherwise) {
         if (Enemy.protoss()) return ifEnemyProtoss;
+
         return otherwise;
     }
 
     public static int whenEnemyZerg(int ifEnemyZerg, int otherwise) {
         if (Enemy.zerg()) return ifEnemyZerg;
+
         return otherwise;
     }
 
     public static double whenEnemyZerg(double ifEnemyZerg, double otherwise) {
         if (Enemy.zerg()) return ifEnemyZerg;
+
         return otherwise;
     }
 
     public static int whenEnemyProtossZerg(int ifEnemyProtoss, int ifEnemyZerg) {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return 0;
+
         return ifEnemyZerg;
     }
 
     public static double whenEnemyProtossTerranZerg(double ifEnemyProtoss, double ifEnemyTerran, double ifEnemyZerg) {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return ifEnemyTerran;
+
         return ifEnemyZerg;
     }
 

@@ -72,6 +72,7 @@ public final class BuildOrderGoals {
         }
 
         goals.replaceAll(goal -> goal.withSource("build-order"));
+
         return goals;
     }
 
@@ -81,7 +82,9 @@ public final class BuildOrderGoals {
      */
     static boolean supplyGateOpen(int minSupply, int supplyUsed) {
         if (minSupply <= 0) return true;
+
         int lookahead = supplyUsed >= 19 ? 3 : 1;
+
         return supplyUsed + lookahead >= minSupply;
     }
 
@@ -119,6 +122,7 @@ public final class BuildOrderGoals {
 
         if (line < 4) return ProductionGoal.PRIORITY_DEPOTS;
         if (line < 12) return ProductionGoal.PRIORITY_BASEDEFENSE;
+
         return ProductionGoal.PRIORITY_NORMAL;
     }
 

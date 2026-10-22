@@ -27,6 +27,7 @@ public class DynamicRepairsNearby extends Manager {
     private boolean check() {
         if (!A.hasMinerals(15)) {
             removeRepairer();
+
             return false;
         }
 
@@ -40,12 +41,14 @@ public class DynamicRepairsNearby extends Manager {
             RepairAssignments.addRepairer(unit, repairable);
             if (!unit.isRepairing()) {
                 unit.repair(repairable, "DynaRepair");
+
                 return true;
             }
 
             if (repairable.isABuilding() || repairable.looksIdle()) {
                 if (repairable.isScv()) {
                     repairable.repair(unit, "LoveBack");
+
                     return true;
                 }
 
@@ -60,6 +63,7 @@ public class DynamicRepairsNearby extends Manager {
         if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
             if (!canRemoveRepairer(repairable)) {
                 removeRepairer();
+
                 return false;
             }
         }

@@ -63,6 +63,7 @@ public class EarlyConstantWorkerFlowTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             waiterPosture(190);
 
             assertTrue(
@@ -82,6 +83,7 @@ public class EarlyConstantWorkerFlowTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             waiterPosture(140);
 
             assertFalse(

@@ -30,6 +30,7 @@ public class ResearchPsionicStorm extends Commander {
 
         if (ATech.isResearched(what())) {
             isResearched = true;
+
             return false;
         }
 

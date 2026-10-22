@@ -83,6 +83,7 @@ public class Chokes {
                 if (naturalRegion == null) {
                     System.err.println("Can't find region for natural base");
                     AGame.setUmsMode();
+
                     return null;
                 }
 
@@ -210,6 +211,7 @@ public class Chokes {
             () -> {
                 List<AChoke> chokes = new ArrayList<>();
                 chokes.add(fakeChoke);
+
                 return chokes;
             }
         );

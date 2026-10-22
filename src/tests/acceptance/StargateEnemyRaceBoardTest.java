@@ -43,6 +43,7 @@ public class StargateEnemyRaceBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 11)
         ), fakeEnemies(fake(AUnitType.Terran_Marine, 60, 20)), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             enemyRaceInWorld = Race.Terran;
 
@@ -61,6 +62,7 @@ public class StargateEnemyRaceBoardTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 11, 11)
         ), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             enemyRaceInWorld = Race.Zerg;
 

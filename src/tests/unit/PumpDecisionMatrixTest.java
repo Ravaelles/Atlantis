@@ -69,6 +69,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
             units.add(fake(AUnitType.Protoss_Probe, 21 + (i % 4), 21 + (i / 4)));
         }
         FakeUnit[] array = new FakeUnit[units.size()];
+
         return units.toArray(array);
     }
 
@@ -83,6 +84,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
 
         world(5, fakeOurs(ours), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || lastReason != null) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             for (ProductionOrder row : rows) {
@@ -104,6 +106,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
         ProductionOrder order = new ProductionOrder(type, minSupply);
         order.setPriority(ProductionOrderPriority.HIGH);
         order.setStatus(OrderStatus.READY_TO_PRODUCE);
+
         return order;
     }
 

@@ -53,6 +53,7 @@ public class AFile {
             PrintWriter out = new PrintWriter(new FileOutputStream(file, true));
             out.print(stringToWrite);
             out.close();
+
             return true;
         } catch (Exception e) {
             System.err.println("Error while appending to file\n" + "Path(\"" + filePath
@@ -174,16 +175,19 @@ public class AFile {
 
     public static boolean fileExists(String file) {
         File f = new File(file);
+
         return f.exists() && !f.isDirectory();
     }
 
     public static boolean directoryExists(String file) {
         File f = new File(file);
+
         return f.exists() && f.isDirectory();
     }
 
     public static boolean createDirectory(String file) {
         File f = new File(file);
+
         return f.mkdirs();
     }
 
@@ -206,9 +210,11 @@ public class AFile {
 
         try {
             long size = Files.size(file.toPath());
+
             return size > 0 ? size : fileContent(filename).length();
         } catch (IOException e) {
             System.err.println("Error getting file size: " + e.getMessage());
+
             return file.length();
         }
     }
@@ -232,6 +238,7 @@ public class AFile {
         // Copy file
         try {
             Files.copy(sourceFile.toPath(), targetFile.toPath());
+
             return true;
         } catch (IOException e) {
             System.err.println("Failed to copy file from " + source + " to " + target);

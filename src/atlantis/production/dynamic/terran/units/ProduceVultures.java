@@ -29,6 +29,7 @@ public class ProduceVultures {
                 Count.factories(),
                 Count.marines() <= 8 ? 2 : 1
             );
+
             return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, maxAtATime) != null;
         }
 

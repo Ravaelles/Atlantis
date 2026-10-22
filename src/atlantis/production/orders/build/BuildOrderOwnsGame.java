@@ -26,6 +26,7 @@ public class BuildOrderOwnsGame {
         // a harness, and the open path is what they assert (UnitProductionPathTest).
         if (atlantis.Atlantis.game() == null) return false;
         if (A.supplyUsed() >= OPENING_END_SUPPLY) return false;
+
         for (ProductionOrder row : Queue.get().notFinished()
             .supplyAtMost(A.supplyUsed() + 2).list()) {
             if (!row.isDynamic()) return true;

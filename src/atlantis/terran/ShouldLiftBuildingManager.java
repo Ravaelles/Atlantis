@@ -21,6 +21,7 @@ public class ShouldLiftBuildingManager extends Manager {
         ) {
             unit.lift();
             unit.setTooltip("LiftMeUp");
+
             return usedManager(this);
         }
 

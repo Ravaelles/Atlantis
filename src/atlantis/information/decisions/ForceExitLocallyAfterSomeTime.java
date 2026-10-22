@@ -25,6 +25,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
             AConsole.errPrintln(
                 "### realSecondsLimit = " + RealTime.gameLengthInRealSeconds() + "/" + realSecondsLimit
             );
+
             return true;
         }
 
@@ -32,6 +33,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
             AConsole.errPrintln(
                 "### inGameSecondsLimit = " + AGame.timeSeconds() + "/" + inGameSecondsLimit
             );
+
             return true;
         }
 
@@ -57,6 +59,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         );
 
         Atlantis.getInstance().onEnd(false);
+
         return false;
     }
 }

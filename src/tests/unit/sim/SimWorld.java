@@ -109,6 +109,7 @@ public class SimWorld {
         AbstractTestWithWorld.baseSelect.when(BaseSelect::allUnits).thenAnswer(invocation -> {
             List<AUnit> alive = new ArrayList<>(living(ours));
             alive.addAll(living(enemies));
+
             return alive;
         });
     }
@@ -116,6 +117,7 @@ public class SimWorld {
     private static List<AUnit> living(FakeUnit[] units) {
         List<AUnit> alive = new ArrayList<>();
         if (units == null) return alive;
+
         for (FakeUnit unit : units) {
             if (unit != null && unit.hp > 0) alive.add(unit);
         }
@@ -157,6 +159,7 @@ public class SimWorld {
         List<FakeUnit> all = new ArrayList<>();
         if (ours != null) for (FakeUnit unit : ours) all.add(unit);
         if (enemies != null) for (FakeUnit unit : enemies) all.add(unit);
+
         return all;
     }
 
@@ -195,6 +198,7 @@ public class SimWorld {
         }
         if ("AttackUnit".equals(order) && unit.target != null && unit.target.isAlive()) {
             if (unit.distTo(unit.target) <= reachTiles(unit, unit.target)) return null;
+
             return toward(unit, unit.target.position.x(), unit.target.position.y(), topSpeed(unit));
         }
         if ("AttackUnit".equals(order) && unit.targetPosition != null) {
@@ -208,6 +212,7 @@ public class SimWorld {
         double dy = ty - unit.position.y();
         double dist = Math.hypot(dx, dy);
         if (dist < 1.0) return new double[] { 0.0, 0.0 };
+
         return new double[] { dx / dist * speed, dy / dist * speed };
     }
 
@@ -222,6 +227,7 @@ public class SimWorld {
     private double[] limitTurn(double[] vel, double[] desired) {
         double speed = Math.hypot(vel[0], vel[1]);
         if (speed < 0.05) return desired;
+
         double cur = Math.toDegrees(Math.atan2(vel[1], vel[0]));
         double want = Math.toDegrees(Math.atan2(desired[1], desired[0]));
         double diff = want - cur;
@@ -230,6 +236,7 @@ public class SimWorld {
         double capped = Math.max(-MAX_TURN_DEG, Math.min(MAX_TURN_DEG, diff));
         double angle = Math.toRadians(cur + capped);
         double mag = Math.hypot(desired[0], desired[1]);
+
         return new double[] { Math.cos(angle) * mag, Math.sin(angle) * mag };
     }
 
@@ -245,6 +252,7 @@ public class SimWorld {
             pos[1] = ny;
             publish(unit, pos);
             stuckFrames.put(unit.id(), 0);
+
             return;
         }
         double sx = arena.clampXd(pos[0] + vel[0]);
@@ -252,6 +260,7 @@ public class SimWorld {
             pos[0] = sx;
             publish(unit, pos);
             stuckFrames.put(unit.id(), 0);
+
             return;
         }
         double sy = arena.clampYd(pos[1] + vel[1]);
@@ -259,6 +268,7 @@ public class SimWorld {
             pos[1] = sy;
             publish(unit, pos);
             stuckFrames.put(unit.id(), 0);
+
             return;
         }
         stuckFrames.put(unit.id(), stuckFrames.get(unit.id()) + 1);
@@ -376,6 +386,7 @@ public class SimWorld {
     public int maxStuckFrames(FakeUnit[] units) {
         int max = 0;
         for (FakeUnit unit : units) max = Math.max(max, stuckFrames(unit));
+
         return max;
     }
 }

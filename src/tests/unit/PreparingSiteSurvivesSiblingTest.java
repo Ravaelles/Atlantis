@@ -67,6 +67,7 @@ public class PreparingSiteSurvivesSiblingTest extends AbstractTestWithWorld {
             probe
         ), new FakeUnit[0], () -> {
             if (A.now() != 3 || fired) return;
+
             fired = true;
             ConstructionRequests.constructions.clear();
 

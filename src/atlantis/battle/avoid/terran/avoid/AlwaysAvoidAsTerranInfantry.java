@@ -9,6 +9,7 @@ public class AlwaysAvoidAsTerranInfantry {
 
     public static boolean asInfantry(AUnit unit) {
         if (!unit.isTerranInfantry()) return false;
+
         AlwaysAvoidAsTerranInfantry.unit = unit;
 
         if (alwaysVsProtoss(unit)) return true;

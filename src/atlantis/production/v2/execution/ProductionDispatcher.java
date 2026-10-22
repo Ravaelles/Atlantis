@@ -86,6 +86,7 @@ public final class ProductionDispatcher {
                 return Integer.compare(a.startFrame(), b.startFrame());
             }
         });
+
         return due;
     }
 

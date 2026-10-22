@@ -28,6 +28,7 @@ public class TooCloseToTerranBase {
                 || base.distTo(position) <= minDistToBase
         ) {
             AbstractPositionFinder._STATUS = "Too close to base";
+
             return true;
         }
 

@@ -59,6 +59,7 @@ public class ExpandSecondBaseWhenSafeTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Zealot, 34, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 

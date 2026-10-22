@@ -125,7 +125,9 @@ public class PlacementPassTest {
             int x = nextTile++;
             String tile = x + ":7";
             if (tilesTakenThisPass.contains(tile)) return PlacementReservation.failure();
+
             tilesTakenThisPass.add(tile);
+
             return PlacementReservation.success(x, 7, targetFrame);
         }
     }

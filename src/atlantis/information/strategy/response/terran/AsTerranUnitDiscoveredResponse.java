@@ -77,6 +77,7 @@ public class AsTerranUnitDiscoveredResponse {
                 && (ArmyStrength.ourArmyRelativeStrength() <= 130 || Count.medics() <= 1)
         ) {
             // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
+
             return true;
         }
 

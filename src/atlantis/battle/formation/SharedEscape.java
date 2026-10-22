@@ -66,6 +66,7 @@ public final class SharedEscape {
             cachedDx * rallyTiles, cachedDy * rallyTiles);
         if (dest == null) return null;
         if (unit.isGroundUnit() && !dest.isWalkable()) return null;
+
         return dest;
     }
 
@@ -83,6 +84,7 @@ public final class SharedEscape {
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len < 0.5) {
             cachedValid = false;
+
             return;
         }
         cachedDx = dx / len;

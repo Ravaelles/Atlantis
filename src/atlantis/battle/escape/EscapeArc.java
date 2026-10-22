@@ -36,14 +36,17 @@ public final class EscapeArc {
     ) {
         if (from == null || straightDest == null || squadCenter == null) return straightDest;
         if (!(blend > 0)) return straightDest;
+
         if (blend > 1) blend = 1;
         double ax = straightDest.x() - from.x();
         double ay = straightDest.y() - from.y();
         double len = Math.hypot(ax, ay);
         if (len <= 0) return straightDest;
+
         double sx = squadCenter.x() - from.x();
         double sy = squadCenter.y() - from.y();
         if (Math.hypot(sx, sy) <= 0) return straightDest;
+
         double angledAway = Math.atan2(ay, ax);
         double angledSquad = Math.atan2(sy, sx);
         double delta = angledSquad - angledAway;

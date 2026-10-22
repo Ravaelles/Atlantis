@@ -29,8 +29,10 @@ public class We {
 //                System.err.println("Unable to identify race");
 
                 if (Env.isTesting()) return Race.Terran;
+
                 else {
                     ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unable to identify race");
+
                     return null;
                 }
             }

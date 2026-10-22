@@ -56,6 +56,7 @@ public class ConstructionStatusChanger extends Commander {
         ) {
             construction.cancel(construction.buildingType() + " was destroyed");
             AConsole.errPrintln("Building destroyed - cancel construction");
+
             return;
         }
 
@@ -256,7 +257,9 @@ public class ConstructionStatusChanger extends Commander {
         if (construction.buildPosition() == null) return false;
         if (builder == null || builder.isDead() || builder.isConstructing()) return false;
         if (buildingFinishedAtSite(construction)) return false;
+
         construction.setStatus(ConstructionOrderStatus.STARTING);
+
         return true;
     }
 
@@ -281,6 +284,7 @@ public class ConstructionStatusChanger extends Commander {
 
         if (engineSaysStarted || buildingFinishedAtSite(construction)) {
             construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+
             return true;
         }
         return false;
@@ -332,9 +336,11 @@ public class ConstructionStatusChanger extends Commander {
     public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
         if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
         if (construction.buildPosition() == null) return false;
+
         AUnit warping = warpingNearSite(construction);
         if (warping != null) {
             twinFrozenWarp(construction, builder, warping);
+
             return false;
         }
         if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
@@ -350,6 +356,7 @@ public class ConstructionStatusChanger extends Commander {
 
             logDemote(construction, "builder gone");
             construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
             return true;
         }
 
@@ -359,6 +366,7 @@ public class ConstructionStatusChanger extends Commander {
 
         logDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
         return true;
     }
 
@@ -378,6 +386,7 @@ public class ConstructionStatusChanger extends Commander {
         if (construction.isFrozenWarpTwinned()) return;
         if (builder == null || !builder.isDead()) return;
         if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return;
+
         construction.markFrozenWarpTwinned();
         EventLog.key(LogKey.FROZEN_WARP)
             .param("cid", construction.id())
@@ -434,6 +443,7 @@ public class ConstructionStatusChanger extends Commander {
         // one cannot be built twice.
         if (finishedBuildingOnSameTiles(construction)) return true;
         if (unworkedAdoption(construction)) return false;
+
         return buildingFinishedAtSite(construction);
     }
 

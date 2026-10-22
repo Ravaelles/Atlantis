@@ -481,6 +481,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         // which made every build position fail with "Can't physically build here"
         // (measured 2026-10-08 on OpenBW, where the client attaches a few frames
         // into the game: the bot produced nothing for the whole run).
+
         return ourWithUnfinished().bases().first();
     }
 
@@ -489,6 +490,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         // fresh every frame (a dead main answered for a minute was the stale
         // direction, never the fresh one).
         List<AUnit> bases = ourBases().list();
+
         return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
     }
 
@@ -508,6 +510,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
     public static APosition mainOrAnyBuildingPosition() {
         AUnit building = mainOrAnyBuilding();
+
         return building != null ? building.position() : null;
     }
 
@@ -606,6 +609,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             !unit.isWorker() || (!unit.isGatheringGas() && !unit.isGatheringMinerals())
                 || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))
         );
+
         return selectedUnits;
     }
 
@@ -615,6 +619,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             !unit.isWorker() || !unit.isGatheringMinerals()
                 || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))
         );
+
         return selectedUnits;
     }
 

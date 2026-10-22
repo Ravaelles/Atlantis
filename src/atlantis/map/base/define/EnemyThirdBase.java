@@ -25,6 +25,7 @@ public class EnemyThirdBase {
                     ErrorLog.printErrorOnce(
                         "############## No enemy natural found, so no enemy third can be determined ##############"
                     );
+
                     return null;
                 }
 

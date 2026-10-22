@@ -29,6 +29,7 @@ public final class TunerFitness {
     /** Game seconds as minutes. Non-positive or unknown reads as infinite (unusable row). */
     public static double minutes(int seconds) {
         if (seconds <= 0 || seconds == Integer.MAX_VALUE) return Double.MAX_VALUE;
+
         return seconds / 60.0;
     }
 
@@ -39,8 +40,10 @@ public final class TunerFitness {
      */
     public static double fitness(int hitsTaken, int seconds) {
         if (hitsTaken < 0 || hitsTaken == Integer.MAX_VALUE) return Double.MAX_VALUE;
+
         double minutes = minutes(seconds);
         if (minutes == Double.MAX_VALUE) return Double.MAX_VALUE;
+
         return hitsTaken * minutes;
     }
 
@@ -51,8 +54,10 @@ public final class TunerFitness {
      */
     public static double fitness(TunerObjective.Row row) {
         if (row == null) return Double.MAX_VALUE;
+
         double base = fitness(row.hitsTaken(), row.seconds());
         if (base == Double.MAX_VALUE) return Double.MAX_VALUE;
+
         return row.win() ? base : base + LOSS_PENALTY;
     }
 
@@ -65,6 +70,7 @@ public final class TunerFitness {
     public static int compare(TunerObjective.Row a, TunerObjective.Row b) {
         int byFitness = Double.compare(fitness(a), fitness(b));
         if (byFitness != 0) return byFitness;
+
         return a.game().compareTo(b.game());
     }
 }

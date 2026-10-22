@@ -72,6 +72,7 @@ public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
             probe(21, 24, true)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
 
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
@@ -95,6 +96,7 @@ public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
             scout, worker
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
 
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
@@ -142,6 +144,7 @@ public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
     private static FakeUnit probe(int tx, int ty, boolean scout) {
         FakeUnit unit = fake(AUnitType.Protoss_Probe, tx, ty);
         unit.setScout(scout);
+
         return unit;
     }
 }

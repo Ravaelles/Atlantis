@@ -52,6 +52,7 @@ public class TooCloseToMainBase {
 
         else if (We.terran()) {
             if (building.isCombatBuilding()) return 0;
+
             return building.isSupplyDepot() ? 8 : 4;
         }
 
@@ -60,6 +61,7 @@ public class TooCloseToMainBase {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 }

@@ -25,13 +25,16 @@ public final class ChokeCollapse {
     public static boolean applies(AUnit unit, HasPosition anchor) {
         if (unit == null) return false;
         if (Count.bases() == 0) return false;
+
         AChoke choke = BattleSetup.chokeNear(unit);
         if (choke == null || choke.center() == null) return false;
         if (BattleSetup.combatants() < 3) return false;
         if (BattleSetup.enemiesNear(choke.center(), ChokeStandoff.CONTEST_TILES) == 0) return false;
         if (!ChokeStandoff.crushing(choke)) return false;
+
         Selection ours = Select.ourCombatUnits();
         if (ours == null || ours.count() < 3) return false;
+
         return SquadScout.pickBait(ours) != null;
     }
 
@@ -40,8 +43,10 @@ public final class ChokeCollapse {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
+
             AUnit foe = Select.enemy().combatUnits().nearestTo(choke.center());
             if (foe == null || foe.position() == null) return null;
+
             return SquadScout.baitPoint(choke.center(), foe.position());
         } catch (Exception ignored) {
             return null;

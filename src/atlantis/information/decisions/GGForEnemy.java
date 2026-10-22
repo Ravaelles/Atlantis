@@ -59,6 +59,7 @@ public class GGForEnemy extends Commander {
 //        AGame.exit("We won - force GG for enemy, our strength: " + Army.strength());
         ErrorLog.printErrorOnce("We won - force GG for enemy, our strength: " + Army.strength());
         Atlantis.getInstance().onEnd(true);
+
         return false;
     }
 }

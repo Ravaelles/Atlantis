@@ -26,6 +26,7 @@ public class ADetectorRequest {
         }
         else {
             // Zerg has Overlords, they should be handling this situation
+
             return;
         }
 
@@ -68,6 +69,7 @@ public class ADetectorRequest {
         int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.whatIsRequired());
         if (requiredParents == 0) {
             AddToQueue.withTopPriority(detectorBuilding.whatIsRequired());
+
             return;
         }
 

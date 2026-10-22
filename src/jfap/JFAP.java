@@ -26,6 +26,7 @@ public class JFAP extends AJFAP {
     @Override
     public void addIfCombatUnitPlayer1(JFAPUnit fu) {
         if (fu.unitType == AUnitType.Protoss_Interceptor) return;
+
         if (fu.groundDamage > 0 || fu.airDamage > 0 || fu.unitType == AUnitType.Terran_Medic) addUnitPlayer1(fu);
     }
 
@@ -77,6 +78,7 @@ public class JFAP extends AJFAP {
         MutablePair<Integer, Integer> res = new MutablePair<>(0, 0);
         for (final JFAPUnit u : player1) res.first += score(u);
         for (final JFAPUnit u : player2) res.second += score(u);
+
         return res;
     }
 
@@ -120,6 +122,7 @@ public class JFAP extends AJFAP {
         final int remainingShields = fu.shields - damage + (fu.shieldArmor << 8);
         if (remainingShields > 0) {
             fu.shields = remainingShields;
+
             return;
         }
         else if (fu.shields > 0) {
@@ -127,6 +130,7 @@ public class JFAP extends AJFAP {
             fu.shields = 0;
         }
         if (damage == 0) return;
+
         damage -= fu.armor << 8;
         if (damageType == DamageType.Concussive) {
             if (fu.unitSize == UnitSizeType.Large) damage = damage / 4;
@@ -158,6 +162,7 @@ public class JFAP extends AJFAP {
                 kite = true;
             if (!kite) {
                 didSomething = true;
+
                 return;
             }
         }
@@ -188,6 +193,7 @@ public class JFAP extends AJFAP {
                 fu.x -= (int) (dx * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
                 fu.y -= (int) (dy * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
                 didSomething = true;
+
                 return;
             }
         }
@@ -274,6 +280,7 @@ public class JFAP extends AJFAP {
                 unitDeath(closestEnemy, player);
             }
             didSomething = true;
+
             return true;
         }
         else if (closestEnemy != null && Math.sqrt(closestDist) > fu.speed) {
@@ -335,6 +342,7 @@ public class JFAP extends AJFAP {
         aux.unitType = ut;
         aux.attackCooldownRemaining = fu.attackCooldownRemaining;
         aux.elevation = fu.elevation;
+
         return aux;
     }
 }

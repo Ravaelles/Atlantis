@@ -68,6 +68,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
             }
         } else
             noDefenderNeeded();
+
         return false;
     }
 
@@ -83,6 +84,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
             ourDefender = null;
             assignOrReplaceDefender();
             if (ourDefender == null)
+
                 return null;
         }
 

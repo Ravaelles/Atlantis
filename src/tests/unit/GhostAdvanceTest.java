@@ -70,6 +70,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 c.position = APosition.createFromPixels(29 * 32, 35 * 32);
                 c.lastCommand = "Stop";
                 c.targetPosition = null;
+
                 return;
             }
             for (FakeUnit u : new FakeUnit[] { a, b, c }) {
@@ -86,6 +87,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                     "line holds its fight orders while the scout goes: " + b.commandHistory());
                 assertFalse(b.commandHistory().toString().contains("ClusterGhost"),
                     "line waits out the head start, not creeping yet: " + b.commandHistory());
+
                 return;
             }
             if (now != 120) return;
@@ -131,6 +133,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 // frame-1 order glides the unit otherwise, and the
                 // reached-hold would mask the cadence.
                 b.position = APosition.createFromPixels(28 * 32, 60 * 32);
+
                 return;
             }
             if (now < 2) return;
@@ -172,6 +175,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 c.position = APosition.createFromPixels(29 * 32, 35 * 32);
                 c.lastCommand = "Stop";
                 c.targetPosition = null;
+
                 return;
             }
 
@@ -188,6 +192,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                     "scout walks ahead ~3 tiles: " + scoutStep);
                 assertFalse(b.commandHistory().toString().contains("ClusterGhost"),
                     "line holds the head start first: " + b.commandHistory());
+
                 return;
             }
             if (now != 31) return;
@@ -214,6 +219,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             if (atlantis.game.A.now() == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                 zealot.position = APosition.createFromPixels(28 * 32, 45 * 32);
+
                 return;
             }
             if (atlantis.game.A.now() != 2) return;
@@ -244,6 +250,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             if (atlantis.game.A.now() == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                 zealot.position = APosition.createFromPixels(28 * 32, 45 * 32);
+
                 return;
             }
             if (atlantis.game.A.now() != 2) return;
@@ -273,6 +280,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 // tile (reached-hold would mask the release): keep it
                 // 11 tiles off so the march has somewhere to go.
                 dragoon.position = APosition.createFromPixels(28 * 32, 35 * 32);
+
                 return;
             }
             if (now != 30) return;
@@ -422,6 +430,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+
                 return;
             }
             if (now != 2) return;
@@ -451,11 +460,13 @@ public class GhostAdvanceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+
                 return;
             }
             if (now == 2) {
                 zealot.isVisibleUnitOnMap = false;
                 zealot.position = APosition.createFromPixels(70 * 32, 29 * 32);
+
                 return;
             }
             if (now != 300) return;
@@ -479,6 +490,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+
                 return;
             }
             if (now != 2) return;
@@ -585,6 +597,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             if (atlantis.game.A.now() == 1) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                 zealot.position = APosition.createFromPixels(34 * 32, 14 * 32);
+
                 return;
             }
             if (atlantis.game.A.now() != 2) return;

@@ -23,6 +23,7 @@ public class PauseAndCenter {
         if (counter >= 5) return;
 
         if (position == null) return;
+
         if (color == null) color = Color.Yellow;
 
         if (paintCircle) {

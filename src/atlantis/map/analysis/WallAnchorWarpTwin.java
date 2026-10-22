@@ -25,6 +25,7 @@ public final class WallAnchorWarpTwin {
     /** Nearest anchor slot in tiles, or -1 for no row / no tile. */
     public static double nearestSlotDist(List<APosition> slots, APosition tile) {
         if (slots == null || slots.isEmpty() || tile == null) return -1;
+
         double best = -1;
         for (APosition slot : slots) {
             if (slot == null) continue;

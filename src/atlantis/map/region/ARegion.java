@@ -89,6 +89,7 @@ public class ARegion implements HasPosition {
 
     public ARegionBoundary nearestBoundary(HasPosition nearestTo) {
         Positions<ARegionBoundary> boundaries = new Positions<>(boundaries());
+
         return boundaries.nearestTo(nearestTo);
     }
 
@@ -108,9 +109,11 @@ public class ARegion implements HasPosition {
     public double[] boundingBoxTiles() {
         try {
             if (area == null) return null;
+
             int w = area.getBottomRight().x - area.getTopLeft().x;
             int h = area.getBottomRight().y - area.getTopLeft().y;
             if (w <= 0 || h <= 0) return null;
+
             return new double[] { w, h };
         } catch (Exception ignored) {
             return null;

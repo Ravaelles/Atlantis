@@ -47,6 +47,7 @@ public class ProductionOrdersCommander extends Commander {
     protected boolean handle() {
         if (atlantis.config.env.Env.productionV2().isLive()) {
             v2Engine.updateFrame();
+
             return false;
         }
 

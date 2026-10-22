@@ -35,6 +35,7 @@ public class IssueRepairCommand extends Manager {
             target,
             "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")"
         );
+
         return usedManager(this);
     }
 }

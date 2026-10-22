@@ -148,6 +148,7 @@ public class MapTiles {
         // old port answered walkability from a frozen start-of-game grid, a dead
         // last resort that silently answered for nothing (see
         // _AI/POSITION-FINDER.md point 3).
+
         return ReachableTiles.between(from, to);
     }
 
@@ -171,6 +172,7 @@ public class MapTiles {
         // occupied=true for tiles the engine had just called buildable and empty
         // (buildable-including-buildings=true), so it turned every valid Pylon
         // position into a refusal. One source of truth per question.
+
         return tilesCoveredAreBuildable(building, at);
     }
 

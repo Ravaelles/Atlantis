@@ -49,6 +49,7 @@ public class UnstartedPylonBlocksSecondTest extends WorldStubForTests {
         construction.setStatus(status);
         construction.setProductionOrder(order);
         ConstructionRequests.constructions.add(construction);
+
         return order;
     }
 

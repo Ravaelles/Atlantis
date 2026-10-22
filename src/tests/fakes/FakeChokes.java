@@ -57,6 +57,7 @@ public class FakeChokes {
         chokes.add(new FakeChoke(APosition.create(67, 114), 2));
         chokes.add(new FakeChoke(APosition.create(29, 114), 6));
         chokes.add(new FakeChoke(APosition.create(119, 103), 5));
+
         return chokes;
     }
 }

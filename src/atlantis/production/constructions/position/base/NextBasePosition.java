@@ -29,6 +29,7 @@ public class NextBasePosition {
 
                 if (basePosition == null) {
                     if (!A.isUms()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null base position, exiting");
+
                     return null;
                 }
 

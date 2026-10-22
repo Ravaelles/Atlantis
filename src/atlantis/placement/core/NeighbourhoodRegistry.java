@@ -80,6 +80,7 @@ public final class NeighbourhoodRegistry {
 
         int dx = Math.abs(tx - neighbourhood.exitX());
         int dy = Math.abs(ty - neighbourhood.exitY());
+
         return Math.max(dx, dy);
     }
 }

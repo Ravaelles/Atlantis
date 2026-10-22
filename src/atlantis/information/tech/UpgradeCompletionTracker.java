@@ -33,6 +33,7 @@ public final class UpgradeCompletionTracker {
                 .param("upgrade", upgrade.name())
                 .param("level", level)
                 .log(frame, time);
+
             return true;
         }
         return false;

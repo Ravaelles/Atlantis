@@ -32,6 +32,7 @@ public class TrainQueuedDragoonImmediately extends AutomaticListener {
     @Override
     public void onEvent(Event event, Object... data) {
         if (data.length == 0 || !(data[0] instanceof ProductionOrder)) return;
+
         ProductionOrder order = (ProductionOrder) data[0];
         if (order.unitType() == null || !order.unitType().isDragoon()) return;
 

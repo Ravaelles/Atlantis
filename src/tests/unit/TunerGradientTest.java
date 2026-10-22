@@ -28,6 +28,7 @@ public class TunerGradientTest {
         Map<String, double[]> bounds = new LinkedHashMap<>();
         bounds.put("x", new double[] { 0.0, 10.0 });
         bounds.put("y", new double[] { 0.0, 10.0 });
+
         return bounds;
     }
 
@@ -35,6 +36,7 @@ public class TunerGradientTest {
         Map<String, Double> vector = new LinkedHashMap<>();
         vector.put("x", x);
         vector.put("y", y);
+
         return new TunerGradient.Sample(vector, fitness);
     }
 

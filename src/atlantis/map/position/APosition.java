@@ -238,6 +238,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
         if (somethingChanged) {
             APosition newPosition = new APosition(px, py);
+
             return newPosition.makeWalkable(8, 1, null);
         }
         else {
@@ -300,24 +301,28 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     @Override
     public Position subtract(Position position) {
         System.err.println("APosition - subtract - not used");
+
         return null;
     }
 
     @Override
     public Position add(Position position) {
         System.err.println("APosition - add - not used");
+
         return null;
     }
 
     @Override
     public Position divide(int i) {
         System.err.println("APosition - divide - not used");
+
         return null;
     }
 
     @Override
     public Position multiply(int i) {
         System.err.println("APosition - multiple - not used");
+
         return null;
     }
 
@@ -349,6 +354,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
         int otherX = ((HasPosition) obj).x();
         int otherY = ((HasPosition) obj).y();
+
         return this.x == otherX && this.y == otherY;
     }
 
@@ -371,6 +377,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         // engine-then-map fallback in MapTiles.hasPathBetween and left this method raw, so
         // the placement condition kept asking the broken question while its neighbour
         // asked the fixed one. One question, one implementation.
+
         return atlantis.map.ReachableTiles.between(this, position);
     }
 

@@ -76,12 +76,14 @@ public class SupplyCommander extends Commander {
 
         if (tooFewSupplyLeftAsForGateways()) {
             requestAdditionalSupply();
+
             return false;
         }
 
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
+
             return false;
         }
 
@@ -129,16 +131,19 @@ public class SupplyCommander extends Commander {
                 // CAPPED 2026-10-19 (owner order, free never above 12-14).
                 if (supplyFree <= 4 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
+
                     return noSuppliesBeingBuilt;
                 }
 
                 if (supplyFree <= 6 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
+
                     return noSuppliesBeingBuilt;
                 }
 
                 if (supplyFree <= 6 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
+
                     return noSuppliesBeingBuilt;
                 }
 
@@ -221,6 +226,7 @@ public class SupplyCommander extends Commander {
             ProduceZergUnit.produceZergUnit(
                 AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
             );
+
             return;
         }
 

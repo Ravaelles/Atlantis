@@ -65,6 +65,7 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
         construction.setPositionToBuild(APosition.create(x, y));
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
         ConstructionRequests.constructions.add(construction);
+
         return construction;
     }
 

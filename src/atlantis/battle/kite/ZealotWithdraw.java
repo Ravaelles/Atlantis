@@ -27,6 +27,7 @@ public final class ZealotWithdraw {
     public static boolean should(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || !unit.isZealot()) return false;
         if (unit.cooldown() < SPENT_COOLDOWN_FRAMES) return false;
+
         return unit.maxHp() + unit.maxShields() - unit.hp() - unit.shields() > UNWOUND_HP;
     }
 }

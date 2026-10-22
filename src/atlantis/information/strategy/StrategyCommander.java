@@ -35,6 +35,7 @@ public class StrategyCommander extends Commander {
 //        RaceStrategyResponseFactory.forOurRace().update();
 
         // CodeProfiler.endMeasuring(this);
+
         return false;
     }
 

@@ -114,6 +114,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      */
     public static void noteEngineIdOf(AUnit unit) {
         if (unit == null || unit.u() == null) return;
+
         noteEngineId(unit.id(), unit.u().getID());
     }
 

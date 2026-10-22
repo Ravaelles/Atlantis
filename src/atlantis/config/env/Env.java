@@ -271,6 +271,7 @@ public class Env {
             default:
                 // Wine game-window geometry, tweakable without recompiling.
                 atlantis.config.launcher.WineWindowConfig.applyEnvValue(key, value);
+
                 return false;
         }
     }
@@ -326,6 +327,7 @@ public class Env {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             ErrorLog.printErrorOnce("Error parsing ENV file. Value=" + value + " / " + e.getMessage() + "\n");
+
             return -1;
         }
     }

@@ -29,9 +29,11 @@ public final class FightTrace {
 
     public static void sample(AUnit unit, AUnit threat) {
         if (unit == null || !unit.isAlive() || !unit.isCombatUnit()) return;
+
         int now = A.now();
         Integer last = lastSampleFrame.get(unit.id());
         if (last != null && now - last < TRACE_EVERY_FRAMES) return;
+
         lastSampleFrame.put(unit.id(), now);
         EventLog.key(LogKey.UNIT_TRACE)
             .param("unit", unit.id())
@@ -53,6 +55,7 @@ public final class FightTrace {
         // and the digest script joins on the unit id - duplicates read as
         // thousands of deaths. Same id set as the per-cycle sampler uses.
         if (!reportedDeaths.add(unit.id())) return;
+
         AUnit nearest = nearestEnemy(unit);
         double dist = nearest == null ? -1 : unit.distTo(nearest) * 10;
         if (Double.isNaN(dist) || Double.isInfinite(dist) || dist < 0 || dist > 100000) {
@@ -88,6 +91,7 @@ public final class FightTrace {
             return null;
         }
         if (enemies == null) return null;
+
         AUnit best = null;
         double bestDist = Double.MAX_VALUE;
         for (AUnit enemy : enemies.list()) {

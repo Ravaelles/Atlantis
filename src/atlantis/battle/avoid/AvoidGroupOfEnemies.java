@@ -62,6 +62,7 @@ public class AvoidGroupOfEnemies extends Manager {
 
     private Manager processDontAvoid() {
         unit.runningManager().stopRunning();
+
         return null;
     }
 

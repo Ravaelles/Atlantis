@@ -25,6 +25,7 @@ public abstract class JPS<T extends Node> {
     public Future<Queue<T>> findPath(T start, T goal, boolean adjacentStop, boolean diagonalStop) {
         FutureTask<Queue<T>> future = new FutureTask<>(() -> findPathSync(start, goal, adjacentStop, diagonalStop));
         future.run();
+
         return future;
     }
 
@@ -43,6 +44,7 @@ public abstract class JPS<T extends Node> {
 
         Queue<T> open = new PriorityQueue<>((a, b) -> {
             // we want the nodes with the lowest projected F value to be checked first
+
             return Double.compare(fMap.getOrDefault(a, 0d), fMap.getOrDefault(b, 0d));
         });
         Set<T> closed = new HashSet<>();
@@ -80,6 +82,7 @@ public abstract class JPS<T extends Node> {
         }
 
         // failed to find a path
+
         return null;
     }
 

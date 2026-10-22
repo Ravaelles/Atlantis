@@ -41,6 +41,7 @@ public class ScoutApproachEnemyBase extends Manager {
     public Manager handle() {
         if (unit.distTo(position) <= 6) {
             unit.setTooltipTactical("WatchEnemyBase");
+
             return usedManager(this);
         }
 

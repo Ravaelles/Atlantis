@@ -91,6 +91,7 @@ public class BuildingTilesAreOccupied {
                 continue;
 
             if (overlaps(unit, position, buildingType))
+
                 return true;
         }
 
@@ -114,6 +115,7 @@ public class BuildingTilesAreOccupied {
                 continue;
 
             if (overlaps(unit, position, buildingType))
+
                 return true;
         }
 

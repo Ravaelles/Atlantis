@@ -32,6 +32,7 @@ public class ScoutFallbackEnemyBases extends Manager {
             EnemyThirdBase.position(),
             EnemyFourthBase.position()
         );
+
         return target != null;
     }
 

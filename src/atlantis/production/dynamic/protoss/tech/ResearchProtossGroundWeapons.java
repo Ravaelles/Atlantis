@@ -39,6 +39,7 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
             .param("gas", A.gas())
             .param("combat", Count.ourCombatUnits())
             .log(A.now(), A.minSec());
+
         return result;
     }
 
@@ -92,6 +93,7 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
     @Override
     protected boolean handle() {
         ResearchNow.research(what());
+
         return false;
     }
 

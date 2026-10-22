@@ -18,6 +18,7 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame() && !ArmyStrength.weAreMuchStronger() && !shouldIgnoreRushBecauseWeHaveGoons()) {
             Missions.forceGlobalMissionDefend("Rush defence");
+
             return true;
         }
 
@@ -30,6 +31,7 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
         if (!Enemy.protoss()) return false;
 
         int goons = Count.dragoonsWithUnfinished();
+
         return goons > 0 && goons >= 1.5 * EnemyUnits.dragoons();
     }
 

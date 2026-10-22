@@ -231,6 +231,7 @@ public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
         construction.setPositionToBuild(position);
         construction.setNearTo(APosition.create(24, 22));
         construction.setProductionOrder(new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, position, 0));
+
         return construction;
     }
 }

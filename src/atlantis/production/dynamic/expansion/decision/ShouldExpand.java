@@ -22,6 +22,7 @@ public class ShouldExpand {
         // cancel the base we are saving for.
         if (A.isUms() && !Have.base()) {
             reason = "UmsNoBase";
+
             return false;
         }
 
@@ -30,6 +31,7 @@ public class ShouldExpand {
         if (We.zerg()) return ZergShouldExpand.shouldExpand();
 
         reason = "UnknownRace";
+
         return false;
     }
 }

@@ -40,6 +40,7 @@ public final class ClusterTactic {
         // just feeds - stand the first 15 seconds and let the fight happen.
         if (ClusterBreach.breachForcesFight() || earlyUmsStandGround()) {
             fleeStartedAt = -1;
+
             return FightOrFlight.Tactic.FIGHT;
         }
 
@@ -49,6 +50,7 @@ public final class ClusterTactic {
         // still applies - this gates only the cluster tactic.
         if (holdsHomeGround()) {
             fleeStartedAt = -1;
+
             return FightOrFlight.Tactic.FIGHT;
         }
 
@@ -77,8 +79,10 @@ public final class ClusterTactic {
     public static boolean holdsHomeGround() {
         AUnit main = Select.main();
         if (main == null) return false;
+
         HasPosition center = Alpha.get().center();
         if (center == null) return false;
+
         return center.distTo(main) < 2;
     }
     /**

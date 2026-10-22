@@ -54,6 +54,7 @@ public class WarpedOrderIsNotResitedTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
 
             ProductionOrder row = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
@@ -79,6 +80,7 @@ public class WarpedOrderIsNotResitedTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
 
             ProductionOrder rowTwo = new ProductionOrder(AUnitType.Protoss_Gateway, 10);

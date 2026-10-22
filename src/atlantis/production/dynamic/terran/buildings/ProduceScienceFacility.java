@@ -37,6 +37,7 @@ public class ProduceScienceFacility {
 //                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI C = ");
                 if (AddToQueue.toHave(Terran_Control_Tower, 1, ProductionOrderPriority.TOP)) {
                     System.err.println("--------------- Enqueue CONTROL TOWER");
+
                     return true;
                 }
             }

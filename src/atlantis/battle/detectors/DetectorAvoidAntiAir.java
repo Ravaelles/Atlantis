@@ -93,6 +93,7 @@ public class DetectorAvoidAntiAir extends Manager {
     private boolean preventRunningFromScourgeIndefinitely() {
         if (!Enemy.zerg()) return false;
         if (unit.enemiesNear().ofType(AUnitType.Zerg_Scourge).empty()) return false;
+
         if (
             unit.enemiesNear().detectors().empty()
                 && unit.enemiesNear().groundUnits().combatUnits().empty()

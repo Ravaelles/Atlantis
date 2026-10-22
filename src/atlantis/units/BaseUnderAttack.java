@@ -50,10 +50,12 @@ public class BaseUnderAttack {
     public static boolean check() {
         if (forcedAnswer != null) return forcedAnswer;
         if (cachedFrame == A.now()) return cachedValue;
+
         AUnit base = Select.mainOrAnyBuilding();
         cachedValue = base != null
             && base.enemiesNear().combatUnits().inRadius(ATTACK_RADIUS, base).notEmpty();
         cachedFrame = A.now();
+
         return cachedValue;
     }
 

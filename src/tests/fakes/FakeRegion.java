@@ -43,6 +43,7 @@ public class FakeRegion extends ARegion {
 
         FakeRegion region = new FakeRegion(location);
         regions.put(location, region);
+
         return region;
     }
 
@@ -88,6 +89,7 @@ public class FakeRegion extends ARegion {
         if (!super.equals(o)) return false;
 
         FakeRegion that = (FakeRegion) o;
+
         return Objects.equals(location, that.location);
     }
 
@@ -95,6 +97,7 @@ public class FakeRegion extends ARegion {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + Objects.hashCode(location);
+
         return result;
     }
 }

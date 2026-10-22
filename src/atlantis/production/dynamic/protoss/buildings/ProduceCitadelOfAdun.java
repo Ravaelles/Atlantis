@@ -19,6 +19,7 @@ public class ProduceCitadelOfAdun {
 
         if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now() % 41 == 0 && Have.notEvenPlanned(type())) {
             AConsole.errPrintln("TEMP Citadel of Adun at " + A.s);
+
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }
 

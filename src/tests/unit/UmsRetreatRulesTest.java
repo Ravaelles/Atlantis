@@ -89,6 +89,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dragoon, 30, 20)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 399) return;
+
             assertFalse(
                 ClusterTactic.earlyUmsStandGround(),
                 "at 16.6 s the UMS leash comes off: " + atlantis.game.A.now());

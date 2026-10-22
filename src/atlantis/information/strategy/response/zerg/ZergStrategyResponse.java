@@ -22,6 +22,7 @@ public class ZergStrategyResponse extends RaceStrategyResponse {
         if (GamePhase.isEarlyGame()) {
             if (!ArmyStrength.weAreMuchStronger()) {
                 Missions.forceGlobalMissionDefend("Rush defence");
+
                 return true;
             }
         }

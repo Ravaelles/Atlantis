@@ -106,6 +106,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     public List<SupportRequest> drainSupportRequests() {
         List<SupportRequest> drained = new ArrayList<>(supportThisPass);
         supportThisPass.clear();
+
         return drained;
     }
 
@@ -306,6 +307,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     private static AUnit nearestBaseUnit() {
         AUnit base = Select.main();
+
         return base != null ? base : Select.ourBases().first();
     }
 
@@ -364,6 +366,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 SupportRequest support =
                     strategy.requestAvailabilitySupport(candidate.tileX(), candidate.tileY(), unitType.name());
                 if (support != null) supportThisPass.add(support);
+
                 return PlacementReservation.failure();
             }
 
@@ -430,6 +433,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // A Probe moves ~0.7 tiles/s at the default speed; 30 frames/s, so about
         // 43 frames per tile. Rounded up, with a 20-frame floor for "already there".
         int framesPerTile = 43;
+
         return Math.max(20, (int) Math.ceil(tiles * framesPerTile));
     }
 
@@ -438,6 +442,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
         NeighbourhoodRegistry.Neighbourhood area =
             neighbourhoods.forTile(candidate.tileX(), candidate.tileY());
+
         return NeighbourhoodRegistry.distanceToExit(area, candidate.tileX(), candidate.tileY());
     }
 
@@ -495,6 +500,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
         reservedThisPass.add(x + ":" + y);
         grid.markUsed(x, y, type.getTilesWidth(), type.getTilesHeights());
+
         return PlacementReservation.success(x, y, targetFrame);
     }
 
@@ -514,6 +520,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (unitType.isCannon()) {
             BuildLocationCatalogue.LocationScorer coverage = coverageRankerFor(unitType, centre);
             if (coverage != null) return coverage;
+
             return new ChokeAffinityRanker(neighbourhoods);
         }
 
@@ -528,6 +535,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private BuildLocationCatalogue.LocationScorer coverageRankerFor(AUnitType unitType, final APosition centre) {
         try {
             if (centre == null) return null;
+
             AChoke choke = Chokes.nearestChoke(centre);
             if (choke == null || choke.firstPoint() == null || choke.lastPoint() == null) return null;
 
@@ -540,6 +548,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         } catch (Exception e) {
             atlantis.util.log.ErrorLog.printMaxOncePerMinute(
                 "CoverageCannonRanker resolution failed, distance ranker keeps the tile: " + e);
+
             return null;
         }
     }
@@ -551,6 +560,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             public int compare(BuildLocation a, BuildLocation b) {
                 double da = squaredDistance(a, centre);
                 double db = squaredDistance(b, centre);
+
                 return Double.compare(da, db);
             }
         };
@@ -559,6 +569,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private static double squaredDistance(BuildLocation location, APosition centre) {
         double dx = location.tileX() - centre.tx();
         double dy = location.tileY() - centre.ty();
+
         return dx * dx + dy * dy;
     }
 
@@ -585,6 +596,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if ("NATURAL".equals(areaName)) {
             APosition natural = atlantis.map.base.BaseLocations.natural();
             if (natural != null)
+
                 return natural;
         }
         return baseCentre();
@@ -610,6 +622,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // In game, but nothing stands yet (first frame of a game): fall back to
         // the map centre, which the legacy finder's "near" argument does not
         // tolerate being null.
+
         return APosition.create(grid.width() / 2, grid.height() / 2);
     }
 

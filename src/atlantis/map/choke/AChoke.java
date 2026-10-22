@@ -87,7 +87,9 @@ public class AChoke implements HasPosition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AChoke)) return false;
+
         AChoke that = (AChoke) o;
+
         return x() == that.x() && y() == that.y();
     }
 

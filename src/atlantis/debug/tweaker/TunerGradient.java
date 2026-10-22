@@ -100,6 +100,7 @@ public final class TunerGradient {
     ) {
         LinkedHashMap<String, Double> next = new LinkedHashMap<>();
         if (champion == null) return next;
+
         for (Map.Entry<String, Double> entry : champion.entrySet()) {
             String param = entry.getKey();
             double value = entry.getValue();
@@ -130,6 +131,7 @@ public final class TunerGradient {
     ) {
         LinkedHashMap<String, Double> out = new LinkedHashMap<>();
         if (vector == null) return out;
+
         for (Map.Entry<String, Double> entry : vector.entrySet()) {
             String param = entry.getKey();
             double value = entry.getValue();
@@ -158,6 +160,7 @@ public final class TunerGradient {
         double step, double radius, Random random
     ) {
         if (champion == null || champion.isEmpty()) return new LinkedHashMap<String, Double>();
+
         Map<String, Double> afterDescent = champion;
         if (history != null && bounds != null) {
             java.util.Set<String> params = bounds.keySet();
@@ -203,6 +206,7 @@ public final class TunerGradient {
     private static double clamp(double value, double min, double max) {
         if (value < min) return min;
         if (value > max) return max;
+
         return value;
     }
 }

@@ -86,6 +86,7 @@ public class NewRepairsCommander extends Commander {
                 AAdvancedPainter.paintTextCentered(unit, shouldHaveThisManyRepairers + "", Color.Orange);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
                 ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
+
                 return shouldHaveThisManyRepairers;
             }
             else {
@@ -116,6 +117,7 @@ public class NewRepairsCommander extends Commander {
                 if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) return false;
 
                 RepairAssignments.addRepairer(worker, unitToRepair);
+
                 return true;
             }
         }

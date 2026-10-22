@@ -47,6 +47,7 @@ public class EnemyOnCloseIsland {
         if (enemyIsOnIsland(enemy) && BaseLocations.mainNaturalAndExistingBases().countInRadius(25, enemy) > 0) {
             enemyOnIsland = enemy;
             enemyOnIslandPosition = enemy.position();
+
             return true;
         }
 

@@ -37,6 +37,7 @@ public class ZergExpansionCommander extends Commander {
         AddToQueue.maxAtATime(AUnitType.Zerg_Hatchery, 3);
 
         _lastExpandedAt = A.now();
+
         return true;
     }
 

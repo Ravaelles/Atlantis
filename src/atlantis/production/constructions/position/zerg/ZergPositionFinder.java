@@ -25,6 +25,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         if (nearTo == null) {
             ErrorLog.printMaxOncePerMinute("@@@ NULL nearTo for findStandardPositionFor " + building);
+
             return null;
         }
 
@@ -73,6 +74,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {
             _STATUS = "No CREEP";
+
             return false;
         }
 
@@ -81,6 +83,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         if (!CanPhysicallyBuildHere.check(builder, building, position)) {
 
             _STATUS = "CAN'T PHYSICALLY BUILD";
+
             return false;
         }
 
@@ -89,17 +92,20 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         // If other buildings too close
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {
             _STATUS = "BUILDINGS TOO CLOSE";
+
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
         if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) {
             _STATUS = "TOO CLOSE TO MINERALS OR GEYSER";
+
             return false;
         }
 
         // All conditions are fullfilled, return this position
         _STATUS = "None";
+
         return true;
     }
 

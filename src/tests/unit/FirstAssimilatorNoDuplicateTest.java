@@ -54,6 +54,7 @@ public class FirstAssimilatorNoDuplicateTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 

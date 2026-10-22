@@ -34,6 +34,7 @@ public class ProduceReavers {
 
         if (!Missions.isGlobalMissionDefendOrSparta() && Count.shuttles() == 0 && Count.reavers() > 0) {
             AddToQueue.withHighPriority(Protoss_Shuttle);
+
             return false;
         }
 
@@ -68,6 +69,7 @@ public class ProduceReavers {
 
     private static boolean increaseProduced() {
         produced++;
+
         return true;
     }
 

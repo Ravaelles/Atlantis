@@ -55,6 +55,7 @@ public class IssueBuildOrder extends HasUnit {
 
             if (buildPosition == null) {
                 ErrorLog.printMaxOncePerMinute("Cancel constr of " + buildingType + " because position null");
+
                 return false;
             }
 
@@ -131,6 +132,7 @@ public class IssueBuildOrder extends HasUnit {
                         // `lastCommand` still reads the older order and IssueBuildOrder
                         // re-attempted the build every frame against its own refusal.
                         SleepUntilFrameGate.holdAfterOrder(unit);
+
                         return true;
                     }
 
@@ -188,6 +190,7 @@ public class IssueBuildOrder extends HasUnit {
                     // the >= 3 command-age gate above retries the build once settled.
                     if (unit.lastCommandName().equals("Move")) {
                         unit.stop("Clear stale Move before build");
+
                         return true;
                     }
 
@@ -215,6 +218,7 @@ public class IssueBuildOrder extends HasUnit {
         }
 
         unit.setTooltip("CantAfford" + buildingType.name() + "Yet");
+
         return true;
     }
 

@@ -35,9 +35,11 @@ public final class TunerProposer {
             public int compare(TunerHallOfFame.Entry a, TunerHallOfFame.Entry b) {
                 int byFitness = Double.compare(scenario.fitness(a.row()), scenario.fitness(b.row()));
                 if (byFitness != 0) return byFitness;
+
                 return a.row().game().compareTo(b.row().game());
             }
         });
+
         return ranked;
     }
 

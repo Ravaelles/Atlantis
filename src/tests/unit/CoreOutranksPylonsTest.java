@@ -101,6 +101,7 @@ public class CoreOutranksPylonsTest extends AbstractTestWithWorld {
     public void pylonSpendingWaitsForUnstartedCore() {
         world(5, fixture(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -142,6 +143,7 @@ public class CoreOutranksPylonsTest extends AbstractTestWithWorld {
             probeB
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ConstructionRequests.constructions.clear();
 
             Construction core = new Construction(AUnitType.Protoss_Cybernetics_Core);

@@ -27,6 +27,7 @@ public class EnemyTooCloseToUnstartedConstruction {
         }
 
         _STATUS = enemy.name() + "," + A.digit(groundDist);
+
         return true;
     }
 

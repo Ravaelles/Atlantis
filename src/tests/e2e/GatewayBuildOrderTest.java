@@ -106,6 +106,7 @@ public class GatewayBuildOrderTest extends AbstractTestWithWorld {
                 construction.setPositionToBuild(APosition.create(14, 10));
                 construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
                 ConstructionRequests.constructions.add(construction);
+
                 return;
             }
 

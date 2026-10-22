@@ -38,6 +38,7 @@ public class ARunningManager {
     public boolean runFromAndNotifyOthersToMove(HasPosition runFrom, String tooltip) {
         if (runFrom(runFrom, 1, Actions.RUN_ENEMY, true)) {
             unit.setTooltip(tooltip);
+
             return true;
         }
         return false;
@@ -107,6 +108,7 @@ public class ARunningManager {
         ) {
             double dist = unit.distTo(runTo);
             unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
+
             return true;
         }
 
@@ -125,6 +127,7 @@ public class ARunningManager {
 
         if (!unit.isMissionSparta() && unit.moveToMain(Actions.RUN_ENEMY)) {
             unit.setTooltip("CantRun-GoToMain");
+
             return true;
         }
 
@@ -181,6 +184,7 @@ public class ARunningManager {
     private boolean makeUnitRun(Action action) {
         if (unit == null) {
             ErrorLog.printMaxOncePerMinute("Unit is null in makeUnitRun");
+
             return false;
         }
 
@@ -188,6 +192,7 @@ public class ARunningManager {
             stopRunning();
             ErrorLog.printMaxOncePerMinute("RunTo should not be null!");
             unit.setTooltip("Fuck!", false);
+
             return true;
         }
 
@@ -222,6 +227,7 @@ public class ARunningManager {
     public boolean isRunning() {
         if (runTo == null || !unit.isMoving() || !unit().action().isRunning()) {
             runTo = null;
+
             return false;
         }
 
@@ -294,6 +300,7 @@ public class ARunningManager {
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
         unit.unitState().setLastRunningPositionChange(A.now());
+
         return runTo;
     }
 

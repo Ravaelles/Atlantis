@@ -188,6 +188,7 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         construction.setBuilder(probe);
         construction.setPositionToBuild(APosition.create(tx, ty));
         construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+
         return construction;
     }
 

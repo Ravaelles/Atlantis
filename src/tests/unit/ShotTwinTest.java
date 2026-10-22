@@ -126,6 +126,7 @@ public class ShotTwinTest extends AbstractTestWithWorld {
         while (true) {
             int at = text.indexOf(needle, from);
             if (at < 0) return count;
+
             count++;
             from = at + needle.length();
         }

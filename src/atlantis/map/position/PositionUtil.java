@@ -33,6 +33,7 @@ public class PositionUtil {
                     object2 + "\n" +
                     "distanceTo got null"
             );
+
             return 999;
         }
 
@@ -164,6 +165,7 @@ public class PositionUtil {
 //            throw new RuntimeException("Invalid class for argument `to`: " + object2);
 //            AConsole.printStackTrace("Invalid class for argument `to`: " + object2);
             System.err.println("Invalid class for argument `to`: " + object2);
+
             return 999;
         }
 
@@ -219,6 +221,7 @@ public class PositionUtil {
             // answer is Euclidean (the old code reached the same fallback
             // because the static hub game was null there).
             if (Atlantis.game() == null || AMap.bwem() == null) return PositionUtil.distanceTo(from, to);
+
             return GroundDistance.between(Atlantis.game(), AMap.bwem(), from, to) / 32.0;
         } catch (Exception e) {
 //            System.err.println("from = " + from);

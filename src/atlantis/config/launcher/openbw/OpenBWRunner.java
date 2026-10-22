@@ -47,6 +47,7 @@ public final class OpenBWRunner {
         int hostPid = host.host();
         if (hostPid < 0) {
             host.teardown();
+
             return OpenBWRunResult.hostDidNotStart(serverLogPath(), botLogPath());
         }
 
@@ -56,10 +57,12 @@ public final class OpenBWRunner {
             Atlantis.getInstance().run();
             // Atlantis.run() returns when the game ends (frame limit, timeout or
             // exit); the verdict below reads what actually happened from the log.
+
             return verdict();
         } catch (Throwable t) {
             // The client died: that is a result, not a crash of the test runner.
             ErrorLog.printPlusToFile("OpenBW: the bot session ended with " + t);
+
             return verdict();
         } finally {
             host.teardown();
@@ -99,6 +102,7 @@ public final class OpenBWRunner {
         int last = 0;
         while (matcher.find())
             last = Integer.parseInt(matcher.group(1));
+
         return last;
     }
 
@@ -112,6 +116,7 @@ public final class OpenBWRunner {
             StringBuilder builder = new StringBuilder();
             for (String line : lines)
                 builder.append(line).append('\n');
+
             return builder.toString();
         } catch (IOException e) {
             return null;

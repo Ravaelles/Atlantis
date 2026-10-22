@@ -26,6 +26,7 @@ public class DoRepairsNearby extends Manager {
 
     private boolean preventAwfulStacks() {
         int workersNear = unit.friendsNear().workers().inRadius(5, unit).count();
+
         return workersNear <= 4 || unit.id() % 3 == 0 || unit.id() % 5 == 0;
     }
 
@@ -38,6 +39,7 @@ public class DoRepairsNearby extends Manager {
 
     private boolean repairNearbyUnit() {
         unit.repair(target, "NearbyRepair");
+
         return false;
     }
 
@@ -47,6 +49,7 @@ public class DoRepairsNearby extends Manager {
         if (RepairAssignments.countRepairersForUnit(target) < 6) {
             unit.setTooltip(tooltip);
             RepairAssignments.addRepairer(unit, target);
+
             return true;
         }
 

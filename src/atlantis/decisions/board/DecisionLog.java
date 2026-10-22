@@ -37,6 +37,7 @@ public class DecisionLog {
     public static void record(ADecision decision) {
         if (decision == null) return;
         if (!wouldLog(decision)) return;
+
         if (decision.frame() < lastFrame) rows.clear();
         lastFrame = decision.frame();
         rows.add(toJson(decision));
@@ -57,6 +58,7 @@ public class DecisionLog {
 
     public static void flush() {
         if (rows.isEmpty()) return;
+
         try {
             if (!firstFlushDone) {
                 new java.io.File(OUTPUT_PATH).delete();

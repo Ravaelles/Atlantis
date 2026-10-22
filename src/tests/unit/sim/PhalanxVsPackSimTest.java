@@ -120,6 +120,7 @@ public class PhalanxVsPackSimTest extends AbstractTestWithUnits {
         d.hp = 180;
         d.shields = 80;
         d.cooldown = 0;
+
         return d;
     }
 
@@ -130,6 +131,7 @@ public class PhalanxVsPackSimTest extends AbstractTestWithUnits {
     private static FakeUnit me(double tx, double ty) {
         FakeUnit z = fake(AUnitType.Protoss_Zealot, tx, ty);
         z.setEnemy();
+
         return z;
     }
 

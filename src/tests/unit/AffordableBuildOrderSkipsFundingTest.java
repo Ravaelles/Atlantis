@@ -68,6 +68,7 @@ public class AffordableBuildOrderSkipsFundingTest extends AbstractTestWithWorld 
             builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 

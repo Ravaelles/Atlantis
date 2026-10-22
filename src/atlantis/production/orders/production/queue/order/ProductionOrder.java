@@ -142,6 +142,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public boolean equals(Object object) {
         if (object == null) return false;
         if (!(object instanceof ProductionOrder)) return false;
+
         ProductionOrder otherOrder = (ProductionOrder) object;
 
         if (otherOrder.id == id) return true;
@@ -421,11 +422,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public ProductionOrder setMaximumDistance(int maximumDistance) {
         this.maximumDistance = maximumDistance;
+
         return this;
     }
 
     public ProductionOrder setMinSupply(int minSupply) {
         this.minSupply = minSupply;
+
         return this;
     }
 
@@ -457,6 +460,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean releasedReservedResources() {
         orderReservations.releaseResourcesReserved();
+
         return true;
     }
 
@@ -535,6 +539,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int progressPercent() {
         if (construction == null) return 0;
+
         return construction.progressPercent();
     }
 

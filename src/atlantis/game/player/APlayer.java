@@ -40,7 +40,9 @@ public class APlayer implements Comparable<APlayer> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof APlayer)) return false;
+
         APlayer aPlayer = (APlayer) o;
+
         return aPlayer.id() == id();
     }
 

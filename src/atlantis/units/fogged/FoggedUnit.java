@@ -74,6 +74,7 @@ public class FoggedUnit extends AbstractFoggedUnit {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
+
         AUnit that = (AUnit) o;
 //        return _position.distToLessThan(that.position(), 0.05);
         return _id == that.id();

@@ -52,6 +52,7 @@ public abstract class BaseCommander {
         CommanderFactory[] merged = new CommanderFactory[raceSpecific.length + generic.length];
         System.arraycopy(raceSpecific, 0, merged, 0, raceSpecific.length);
         System.arraycopy(generic, 0, merged, raceSpecific.length, generic.length);
+
         return merged;
     }
 

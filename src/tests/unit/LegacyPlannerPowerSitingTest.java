@@ -66,6 +66,7 @@ public class LegacyPlannerPowerSitingTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 22, 24)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 16;
 
             LegacyPlacementPlanner planner = new LegacyPlacementPlanner();

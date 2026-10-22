@@ -25,6 +25,7 @@ public class WallPiecesTest {
     private static List<APosition> row(int x0, int y, int n) {
         List<APosition> slots = new ArrayList<>();
         for (int i = 0; i < n; i++) slots.add(APosition.create(x0 + i, y));
+
         return slots;
     }
 

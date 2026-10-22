@@ -53,6 +53,7 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
         construction.setPositionToBuild(site);
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
         construction.setBuilder(builder);
+
         return construction;
     }
 
@@ -66,6 +67,7 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
             builder
         ), new FakeUnit[0], () -> {
             if (A.now() != 3 || fired) return;
+
             fired = true;
 
             APosition site = APosition.create(94, 110);
@@ -88,6 +90,7 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
             builder
         ), new FakeUnit[0], () -> {
             if (A.now() != 3 || fired) return;
+
             fired = true;
 
             // (94,110) is ~2.2 from the standing Pylon: inside proximity
@@ -121,6 +124,7 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
             fake(AUnitType.Protoss_Probe, 90, 110)
         ), new FakeUnit[0], () -> {
             if (A.now() != 3 || fired) return;
+
             fired = true;
 
             // Measured (OpenBW): a fresh [119,18] Pylon construction next to
@@ -148,6 +152,7 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
             fake(AUnitType.Protoss_Probe, 90, 110)
         ), new FakeUnit[0], () -> {
             if (A.now() != 3 || fired) return;
+
             fired = true;
 
             // [118,17] shares the y=17 row with the warped [118,16]

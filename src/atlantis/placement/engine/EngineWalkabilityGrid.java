@@ -48,6 +48,7 @@ public final class EngineWalkabilityGrid implements WalkabilityGrid {
         // walk position keeps this comparable with every other tile-based query in the
         // placement path, which is the whole point of routing reachability through a
         // grid.
+
         return Atlantis.game().isWalkable(new bwapi.WalkPosition(tx * 4, ty * 4));
     }
 }

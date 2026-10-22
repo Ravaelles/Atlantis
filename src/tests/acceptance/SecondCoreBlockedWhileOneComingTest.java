@@ -49,6 +49,7 @@ public class SecondCoreBlockedWhileOneComingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3 || fired) return;
+
             fired = true;
             ConstructionRequests.constructions.clear();
             Queue.get().allOrders().list().clear();

@@ -48,6 +48,7 @@ public final class ChokeAffinityRanker implements BuildLocationCatalogue.Locatio
 
         int distance = NeighbourhoodRegistry.distanceToExit(area, location.tileX(), location.tileY());
         // No known choke: fall back to builder travel so a placement still happens.
+
         return distance == Integer.MAX_VALUE ? location.builderFrames() : distance;
     }
 }

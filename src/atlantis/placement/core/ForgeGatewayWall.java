@@ -174,6 +174,7 @@ public final class ForgeGatewayWall {
         // The same 6-tile radius the engine applies to a finished Pylon.
         int dx = Math.abs(pylon[0] - building[0]);
         int dy = Math.abs(pylon[1] - building[1]);
+
         return Math.max(dx, dy) <= 6;
     }
 

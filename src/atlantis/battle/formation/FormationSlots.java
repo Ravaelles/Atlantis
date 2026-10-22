@@ -59,6 +59,7 @@ public final class FormationSlots {
     public static APosition slotFor(AUnit unit, Selection cluster, HasPosition pivot) {
         if (unit == null || !unit.isAlive() || cluster == null || pivot == null) return null;
         if (!applies(cluster.count())) return null;
+
         if (cachedFrame != atlantis.game.A.now() || !cachedSlots.containsKey(unit)) {
             compute(cluster, pivot);
         }
@@ -89,10 +90,12 @@ public final class FormationSlots {
         AUnit leader = units.get(0);
         double radius = leader.distTo(pivot);
         if (radius < MIN_RADIUS_TILES) return;
+
         radius = Math.min(radius, MAX_RADIUS_TILES);
 
         APosition center = averageOf(units);
         if (center == null) return;
+
         center = nudgeTowardRegionCenter(center);
 
         double separation = Math.max(1.0, 20.0 / (10 + units.size()));
@@ -138,6 +141,7 @@ public final class FormationSlots {
 
     private static boolean valid(APosition slot, AUnit unit) {
         if (unit.isGroundUnit() && !slot.isWalkable()) return false;
+
         return true;
     }
 
@@ -145,6 +149,7 @@ public final class FormationSlots {
         try {
             ARegion region = center.region();
             if (region == null || region.center() == null) return center;
+
             return center.translatePercentTowards(33, region.center());
         }
         catch (RuntimeException ignored) {
@@ -160,6 +165,7 @@ public final class FormationSlots {
     private static APosition averageOf(List<AUnit> units) {
         try {
             if (units == null || units.isEmpty()) return null;
+
             long sx = 0;
             long sy = 0;
             for (AUnit u : units) {

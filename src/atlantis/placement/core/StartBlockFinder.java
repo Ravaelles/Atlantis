@@ -81,6 +81,7 @@ public final class StartBlockFinder {
         for (BuildBlock.Spec spec : startBlocks) {
             Anchor anchor = tryVariant(spec, baseX, baseY, searchRadius);
             if (anchor != null)
+
                 return anchor;
         }
         return null;
@@ -94,6 +95,7 @@ public final class StartBlockFinder {
         for (int[] origin : origins) {
             BuildBlock candidate = new BuildBlock(spec, origin[0], origin[1]);
             if (candidate.fits(grid))
+
                 return new Anchor(spec, origin[0], origin[1]);
         }
 

@@ -143,6 +143,7 @@ public class Queue2Test extends WorldStubForTests {
         FakeUnit building = fake(type, x);
         building.setProductionOrder(queue.allOrders().ofType(type).first());
         atlantis.game.listeners.OnOurNewUnitCompleted.ourNewUnitCompleted(building);
+
         return building;
     }
 

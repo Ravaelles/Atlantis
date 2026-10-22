@@ -20,6 +20,7 @@ public final class TunerPromotion {
     /** Wins among the replicates. */
     public static int wins(List<Row> replicates) {
         if (replicates == null) return 0;
+
         int wins = 0;
         for (Row row : replicates) {
             if (row != null && row.win()) wins++;
@@ -35,6 +36,7 @@ public final class TunerPromotion {
      */
     public static boolean isPromoted(List<Row> replicates, int winsRequired, int minGames) {
         if (replicates == null || replicates.size() < minGames) return false;
+
         return wins(replicates) >= winsRequired;
     }
 }

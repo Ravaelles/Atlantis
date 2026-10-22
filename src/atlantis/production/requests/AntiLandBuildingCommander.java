@@ -79,17 +79,20 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
                         System.err.println("Missing requirement: " + requirement + " for: " + buildType);
                     }
                     //                AConsole.printStackTrace("Missing requirement: " + requirement + " for: " + type());
+
                     return false;
                 }
 
                 // We're missing the requirement, so explicitly request it
                 else {
                     addRequirement(buildType);
+
                     return true;
                 }
             }
 
             AddToQueue.withTopPriority(buildType, at);
+
             return true;
         }
 
@@ -101,6 +104,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
             if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
                 Queue.get().notFinished().ofType(Protoss_Forge).cancelAll("Cancel other Forges");
                 AddToQueue.withTopPriority(Protoss_Forge);
+
                 return true;
             }
         }

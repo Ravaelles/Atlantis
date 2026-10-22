@@ -77,6 +77,7 @@ public class Log {
     public void replaceLastWith(String replaceWith, int createdAtFrames) {
         if (messages.isEmpty()) {
             addMessage(replaceWith, createdAtFrames);
+
             return;
         }
 

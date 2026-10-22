@@ -28,6 +28,7 @@ public class GameSummary {
      */
     public static void printOnShutdown() {
         if (printed) return;
+
         printed = true;
         try {
             // Twins buffer up to 720 frames between flushes; a kill without
@@ -38,6 +39,7 @@ public class GameSummary {
             // the frames that explain why it was capped.
             atlantis.util.log.EventLog.flush();
             if (Atlantis.game() == null) return;
+
             int totalS = AGame.timeSeconds();
             int resourceBalance = AGame.killsLossesResourceBalance();
             AConsole.println(

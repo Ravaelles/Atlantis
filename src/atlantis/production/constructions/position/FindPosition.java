@@ -90,6 +90,7 @@ public class FindPosition {
             }
 
             if (position != null) return position;
+
             return null;
         }
 
@@ -122,6 +123,7 @@ public class FindPosition {
         }
 
         APositionFinder.clearCache();
+
         return standardPosition;
     }
 
@@ -130,6 +132,7 @@ public class FindPosition {
         // is truly free the siting fails visibly and retries, instead of
         // burning a scout or double-linking a builder (the missing-Gateway
         // shape: a hijacked pick never builds and never names itself).
+
         return FreeWorkers.get().first();
     }
 
@@ -174,6 +177,7 @@ public class FindPosition {
                         && construction.productionOrder().getModifier().equals("MAIN_CHOKE")
                 ) {
                     ErrorLog.printMaxOncePerMinute("Fix for first MAIN_CHOKE bunker, place it in main.");
+
                     return (new NewBunkerPositionFinder(Select.main(), builder)).find();
                 }
             }

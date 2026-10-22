@@ -59,6 +59,7 @@ public final class BuildGates {
         public String check(AUnitType type, ProductionOrder order) {
             if (A.supplyUsed() < order.minSupply()
                 && !A.canAfford(type.mineralPrice() + 50, type.gasPrice())) return name();
+
             return null;
         }
     }
@@ -79,6 +80,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (ProduceBuilding.hasLiveConstruction(order)) return name();
+
             return null;
         }
     }
@@ -106,6 +108,7 @@ public final class BuildGates {
             if (!type.equals(AUnitType.Protoss_Cybernetics_Core)) return null;
             if (comingForAnotherOrder(order, type) >= 1) return name();
             if (olderReadyWaiterExists(order, type)) return name();
+
             return null;
         }
     }
@@ -123,6 +126,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (type.isPylon() && ProduceBuilding.tooManyPylonsInFlight()) return name();
+
             return null;
         }
     }
@@ -138,6 +142,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (type.isPylon() && A.supplyUsed() < 40 && A.supplyFree() > 8) return name();
+
             return null;
         }
     }
@@ -160,6 +165,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (type.isPylon() && ProduceBuilding.anotherUnstartedPylonExists(order)) return name();
+
             return null;
         }
     }
@@ -179,6 +185,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (ProduceBuilding.orderHasWarpingBuilding(order, type)) return name();
+
             return null;
         }
     }
@@ -203,6 +210,7 @@ public final class BuildGates {
                 && !A.canAfford(
                     type.mineralPrice() + ProduceBuilding.earlierUnfinishedMinerals(order),
                     type.gasPrice() + ProduceBuilding.earlierUnfinishedGas(order))) return name();
+
             return null;
         }
     }
@@ -231,6 +239,7 @@ public final class BuildGates {
                 type.mineralPrice() + ProduceBuilding.earlierUnfinishedMinerals(order),
                 type.gasPrice() + ProduceBuilding.earlierUnfinishedGas(order));
             if (!GoalBoardFeeder.adoptionAllowed(type) && !(queueOrdered && affordable)) return name();
+
             return null;
         }
     }
@@ -246,6 +255,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (type.isPylon() && PriorityWaiters.pylonYieldsToCore()) return name();
+
             return null;
         }
     }
@@ -263,6 +273,7 @@ public final class BuildGates {
 
         public String check(AUnitType type, ProductionOrder order) {
             if (ProduceBuilding.powerProviderNotFunded(type)) return name();
+
             return null;
         }
     }
@@ -295,6 +306,7 @@ public final class BuildGates {
             if (row.construction() != null) continue;
             if (order != null && row == order) continue;
             if (order == null) return true;
+
             if (row.id() < order.id()
                 && new BelowMinSupplyGate().check(type, row) == null) return true;
         }

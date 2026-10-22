@@ -17,6 +17,7 @@ public class BulletsOnMap {
         if (bullets.isEmpty()) return bullets;
 
         bullets.removeIf(bullet -> APosition.create(bullet.getPosition()).distToMoreThan(from, maxDist));
+
         return bullets;
     }
 

@@ -172,6 +172,7 @@ public class ProduceGateway {
                 + ",fr:" + Count.freeGateways()
                 + ",min:" + A.minerals() + ")"
         );
+
         return true;
     }
 

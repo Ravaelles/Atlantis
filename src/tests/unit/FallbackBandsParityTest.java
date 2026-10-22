@@ -86,8 +86,10 @@ public class FallbackBandsParityTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             band[0] = exposed.band();
         });
+
         return band[0];
     }
 

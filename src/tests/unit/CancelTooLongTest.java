@@ -102,6 +102,7 @@ public class CancelTooLongTest extends AbstractTestWithWorld {
                 construction.setPositionToBuild(APosition.create(14, 16));
                 construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
                 ConstructionRequests.constructions.add(construction);
+
                 return;
             }
 

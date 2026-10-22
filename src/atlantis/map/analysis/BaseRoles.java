@@ -110,6 +110,7 @@ public final class BaseRoles {
             }
         }
         if (best != null) return best;
+
         return nodes.get(0);
     }
 
@@ -134,6 +135,7 @@ public final class BaseRoles {
         if (!link.connected(main, node)) return Role.ISLAND;
         if (node == natural) return Role.NATURAL;
         if (node.gas == 0) return Role.MINERAL_ONLY;
+
         return Role.EXPANSION;
     }
 }

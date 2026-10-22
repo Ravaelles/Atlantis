@@ -54,6 +54,7 @@ public class PylonLastResortTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 44, 44)
         ), fakeEnemies(), () -> {
             if (fired) return;
+
             fired = true;
 
             currentSupplyUsed = 10;
@@ -87,6 +88,7 @@ public class PylonLastResortTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 10, 10)
         ), fakeEnemies(), () -> {
             if (fired) return;
+
             fired = true;
 
             currentSupplyUsed = 10;

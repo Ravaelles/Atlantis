@@ -103,6 +103,7 @@ public class WineRaceSettingTest {
                 .redirectErrorStream(true)
                 .start();
         readAll(p);
+
         return p.waitFor();
     }
 
@@ -112,6 +113,7 @@ public class WineRaceSettingTest {
                 .start();
         String out = new String(readAll(p), StandardCharsets.UTF_8).trim();
         p.waitFor();
+
         return out;
     }
 
@@ -127,6 +129,7 @@ public class WineRaceSettingTest {
 
     private static String read(Path path) throws IOException {
         assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
+
         return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

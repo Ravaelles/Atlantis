@@ -144,6 +144,7 @@ public class OptimalNumOfBunkerRepairers {
 
         int thisBunkerEnemies = bunker.enemiesNearInRadius(radius);
         int otherBunkerEnemies = otherBunker.enemiesNearInRadius(radius);
+
         return otherBunkerEnemies >= 2 && thisBunkerEnemies < otherBunkerEnemies;
     }
 

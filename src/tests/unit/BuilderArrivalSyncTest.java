@@ -124,6 +124,7 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
             if (now == 1) {
                 Queue.get().allOrders().list().clear();
                 Queue.get().clearCache();
+
                 return;
             }
 

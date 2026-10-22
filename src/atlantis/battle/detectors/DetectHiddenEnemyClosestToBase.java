@@ -30,6 +30,7 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
 
         if (dist >= 6.5) {
             unit.move(dangerousInvisibleEnemy, Actions.MOVE_REVEAL, "MoveToEnemy");
+
             return usedManager(this);
         }
 

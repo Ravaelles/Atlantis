@@ -134,6 +134,7 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
                 if (zealot.hp <= 0) out.zealotDeaths++;
             }
             out.shots = world.shotsFired();
+
             return out;
         }
         finally {
@@ -156,6 +157,7 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
             alive++;
         }
         if (alive < 2) return 0;
+
         sx /= alive;
         sy /= alive;
         double max = 0;
@@ -171,12 +173,14 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
         dragoon.hp = hp;
         dragoon.shields = 0;
         dragoon.cooldown = 10;
+
         return dragoon;
     }
 
     private static FakeUnit enemyZealot(double tx, double ty) {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, tx, ty);
         zealot.setEnemy();
+
         return zealot;
     }
 

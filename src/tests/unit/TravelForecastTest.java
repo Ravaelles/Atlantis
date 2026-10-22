@@ -78,6 +78,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         world(3, fixture(false), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) seedQueue(false);
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
             currentMinerals = 200;
 
@@ -92,6 +93,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         world(3, fixture(false), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) seedQueue(true);
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
             currentMinerals = 150;
 
@@ -109,6 +111,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         world(3, fixture(false), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) seedQueue(true);
             if (atlantis.game.A.now() != 2) return;
+
             currentMinerals = 150;
             Construction construction = linkedPylon();
 
@@ -129,6 +132,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         world(3, fixture(true), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) seedQueue(false);
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
             Construction construction = linkedPylon();
 
@@ -152,6 +156,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         world(3, fixture(false), fakeEnemies(), () -> {
             if (atlantis.game.A.now() == 1) seedQueue(false);
             if (atlantis.game.A.now() != 2) return;
+
             currentSupplyUsed = 20;
             currentMinerals = 0;
 
@@ -172,6 +177,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         ours[0] = fake(AUnitType.Protoss_Nexus, 20, 20);
         System.arraycopy(miners, 0, ours, 1, miners.length);
         ours[11] = builder;
+
         return fakeOurs(ours);
     }
 
@@ -196,6 +202,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
             atlantis.map.position.APosition.create(26, 24));
         construction.setBuilder(builder);
         ConstructionRequests.addConstruction(construction);
+
         return construction;
     }
 }

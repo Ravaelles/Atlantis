@@ -88,6 +88,7 @@ public class BaselessAttackExploresTest extends AbstractTestWithWorld {
                         org.mockito.ArgumentMatchers.any()))
                     .thenAnswer(inv -> {
                         askedFrom[0] = inv.getArgument(0);
+
                         return unexploredStart;
                     });
 

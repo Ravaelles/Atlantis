@@ -28,6 +28,7 @@ public class ZergDynamicTechResearch extends Commander {
                 !ATech.isResearched(UpgradeType.Muscular_Augments)
             ) {
                 AddToQueue.upgrade(UpgradeType.Muscular_Augments);
+
                 return false;
             }
 
@@ -44,10 +45,12 @@ public class ZergDynamicTechResearch extends Commander {
         if (zerglings >= 12 && A.hasGas(50)) {
             if (ATech.getUpgradeLevel(UpgradeType.Zerg_Melee_Attacks) <= (A.supplyUsed() / 55)) {
                 AddToQueue.upgrade(UpgradeType.Zerg_Melee_Attacks);
+
                 return false;
             }
             if (ATech.getUpgradeLevel(UpgradeType.Zerg_Carapace) <= (A.supplyUsed() / 64)) {
                 AddToQueue.upgrade(UpgradeType.Zerg_Carapace);
+
                 return false;
             }
         }

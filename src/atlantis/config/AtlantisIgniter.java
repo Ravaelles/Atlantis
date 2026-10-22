@@ -61,6 +61,7 @@ public class AtlantisIgniter {
             ErrorLog.printPlusToFile("Couldn't locate bwapi.ini file at: " + bwapiIniPath);
             ErrorLog.printPlusToFile("Go to bwapi-data/AI/ENV file and point it to your bwapi.ini");
             A.quit();
+
             return;
         }
 
@@ -204,6 +205,7 @@ public class AtlantisIgniter {
     public static void setBwapiDataPath(String bwapiIniPath) {
         if (bwapiIniPath == null) {
             AtlantisIgniter.bwapiDataPath = null;
+
             return;
         }
 

@@ -7,6 +7,7 @@ public class BulletsCommander extends Commander {
     @Override
     protected boolean handle() {
         Bullets.updateKnown();
+
         return false;
     }
 }

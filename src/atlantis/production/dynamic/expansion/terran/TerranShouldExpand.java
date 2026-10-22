@@ -45,11 +45,13 @@ public class TerranShouldExpand {
     protected static boolean returnYes(String reason) {
 //        ErrorLog.printMaxOncePerMinute("Expand: " + reason);
         ShouldExpand.reason = reason;
+
         return true;
     }
 
     public static boolean returnNo(String reason) {
         ShouldExpand.reason = reason;
+
         return false;
     }
 }

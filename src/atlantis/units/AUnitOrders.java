@@ -35,11 +35,13 @@ public interface AUnitOrders {
         if (target == null) {
 //            AConsole.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now() + ": Null attack unit target for " + unit.typeWithHash());
+
             return false;
         }
 
         if (target.u() == null) {
             move(target, Actions.MOVE_ENGAGE, null, false);
+
             return true;
         }
 
@@ -57,6 +59,7 @@ public interface AUnitOrders {
 
         if (!target.hasPosition()) {
             AConsole.errPrintln("Target (" + target + ") has no position " + unit.typeWithHash());
+
             return false;
         }
 
@@ -142,6 +145,7 @@ public interface AUnitOrders {
     default boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
         if (unit().orderSink().train(unit(), unitToTrain.ut())) {
             if (order != null) order.releasedReservedResources();
+
             return true;
         }
 
@@ -150,15 +154,18 @@ public interface AUnitOrders {
 
     default boolean morph(AUnitType into, ProductionOrder order) {
         unit().setAction(Actions.MORPH);
+
         return processMorph(into, order);
     }
 
     default boolean processMorph(AUnitType into, ProductionOrder order) {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Morph);
 
         if (unit().orderSink().morph(unit(), into.ut())) {
             if (order != null) order.releasedReservedResources();
+
             return true;
         }
 
@@ -168,6 +175,7 @@ public interface AUnitOrders {
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, Construction construction) {
         unit().setAction(Actions.BUILD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Build);
 
         boolean result = unit().orderSink().build(unit(), buildingType.ut(), buildTilePosition);
@@ -184,12 +192,14 @@ public interface AUnitOrders {
         }
 
         unit().setTooltipTactical("Construct " + buildingType.name() + resultString);
+
         return result;
     }
 
     default boolean buildAddon(AUnitType addon) {
         unit().setAction(Actions.BUILD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Build_Addon);
 
         return unit().orderSink().buildAddon(unit(), addon.ut());
@@ -198,18 +208,22 @@ public interface AUnitOrders {
     default boolean upgrade(UpgradeType upgrade) {
         unit().setAction(Actions.RESEARCH_OR_UPGRADE);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Upgrade);
 
         ATech.markAsBeingUpgraded(upgrade);
+
         return unit().orderSink().upgrade(unit(), upgrade);
     }
 
     default boolean research(TechType tech) {
         unit().setAction(Actions.RESEARCH_OR_UPGRADE);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Research);
 
         ATech.markAsBeingResearched(tech);
+
         return unit().orderSink().research(unit(), tech);
     }
 
@@ -238,10 +252,12 @@ public interface AUnitOrders {
 
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit.typeWithHash());
+
             return false;
         }
         if (target.position() == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null target.position() for " + unit.typeWithHash());
+
             return false;
         }
 
@@ -249,6 +265,7 @@ public interface AUnitOrders {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "Trying to move to unwalkable position for " + unit + " / a:" + unitAction + " / t:" + target
             );
+
             return false;
         }
 
@@ -271,6 +288,7 @@ public interface AUnitOrders {
 
             unit.setLastActionReceivedNow().setAction(unitAction);
             if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? OrderIssuance.commandMinDelayWhenMoving(unit) : 1)) return true;
+
             else unit.lastCommandIssuedNow(UnitCommandType.Move);
 
             if (target instanceof AUnit) {
@@ -288,6 +306,7 @@ public interface AUnitOrders {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                     "Null move target.position() for " + unit.typeWithHash() + " / " + target
                 );
+
                 return false;
             }
 
@@ -295,6 +314,7 @@ public interface AUnitOrders {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                     "Null move target.position().p() for " + unit.typeWithHash() + " / " + target
                 );
+
                 return false;
             }
 
@@ -302,11 +322,13 @@ public interface AUnitOrders {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                     "Null unit.u() for " + unit.typeWithHash() + " / " + target
                 );
+
                 return false;
             }
 
             boolean issued = unit().orderSink().move(unit(), target.position().p());
             if (issued) unit.noteDecision(tooltip != null ? tooltip : unitAction.name());
+
             return issued;
         }
 
@@ -326,6 +348,7 @@ public interface AUnitOrders {
     default boolean patrol(APosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
             .setAction(Actions.PATROL);
+
         return unit().orderSink().patrol(unit(), target.p());
     }
 
@@ -348,6 +371,7 @@ public interface AUnitOrders {
         if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
 
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Hold_Position);
 
         if (shouldPrint()) {
@@ -382,6 +406,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.STOP).setTooltip(tooltip);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Stop);
 
 //        if (unit().lastCommandIssuedAgo() <= 1) {
@@ -390,6 +415,7 @@ public interface AUnitOrders {
 //        }
         boolean stopped = unit().orderSink().stop(unit());
         if (stopped) unit().noteDecision(tooltip != null ? tooltip : "Stop");
+
         return stopped;
     }
 
@@ -407,6 +433,7 @@ public interface AUnitOrders {
             .setAction(Actions.MOVE_FOLLOW);
 
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Follow);
 
         return unit().orderSink().follow(unit(), target);
@@ -433,6 +460,7 @@ public interface AUnitOrders {
         }
 
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Gather);
 
         boolean issued = unit().orderSink().gather(unit(), target);
@@ -487,6 +515,7 @@ public interface AUnitOrders {
     default boolean repair(AUnit target, String tooltip) {
         if (target == null) {
             AConsole.errPrintln("Null repair target");
+
             return false;
         }
 
@@ -517,6 +546,7 @@ public interface AUnitOrders {
             }
             else {
                 if (unit().lastCommandIssuedAgo() <= 1) return true;
+
                 else unit().lastCommandIssuedNow(UnitCommandType.Repair);
 
                 unit().orderSink().repair(unit(), target);
@@ -540,6 +570,7 @@ public interface AUnitOrders {
     default boolean burrow() {
         unit().setAction(Actions.BURROW);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Burrow);
 
         return unit().orderSink().burrow(unit());
@@ -553,6 +584,7 @@ public interface AUnitOrders {
     default boolean unburrow() {
         unit().setAction(Actions.UNBURROW);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Unburrow);
 
         return unit().orderSink().unburrow(unit());
@@ -566,6 +598,7 @@ public interface AUnitOrders {
     default boolean cloak() {
         unit().setAction(Actions.CLOAK);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cloak);
 
         return unit().orderSink().cloak(unit());
@@ -579,6 +612,7 @@ public interface AUnitOrders {
     default boolean decloak() {
         unit().setAction(Actions.DECLOAK);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Decloak);
 
         return unit().orderSink().decloak(unit());
@@ -592,6 +626,7 @@ public interface AUnitOrders {
     default boolean siege() {
         unit().setAction(Actions.SIEGE);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Siege);
 
         return unit().orderSink().siege(unit());
@@ -605,6 +640,7 @@ public interface AUnitOrders {
     default boolean unsiege() {
         unit().setAction(Actions.UNSIEGE);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Unsiege);
 
         return unit().orderSink().unsiege(unit());
@@ -618,6 +654,7 @@ public interface AUnitOrders {
     default boolean lift() {
         unit().setAction(Actions.LIFT);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Lift);
 
         return unit().orderSink().lift(unit());
@@ -632,6 +669,7 @@ public interface AUnitOrders {
     default boolean land(TilePosition target) {
         unit().setAction(Actions.LAND);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Land);
 
         return unit().orderSink().land(unit(), target);
@@ -653,6 +691,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.LOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Load);
 
         return unit().orderSink().load(unit(), target);
@@ -672,6 +711,7 @@ public interface AUnitOrders {
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else {
             unit().lastCommandIssuedNow(UnitCommandType.Unload);
             target.lastCommandIssuedNow(UnitCommandType.Unload);
@@ -692,6 +732,7 @@ public interface AUnitOrders {
     default boolean unloadAll() {
         unit().setAction(Actions.UNLOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Unload_All);
 
         for (AUnit loaded : unit().loadedUnits()) {
@@ -714,6 +755,7 @@ public interface AUnitOrders {
     default boolean unloadAll(APosition target) {
         unit().setAction(Actions.UNLOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Unload_All);
 
         for (AUnit loaded : unit().loadedUnits()) {
@@ -752,6 +794,7 @@ public interface AUnitOrders {
     default boolean haltConstruction() {
         unit().setAction(null);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Halt_Construction);
 
         return unit().orderSink().haltConstruction(unit());
@@ -766,6 +809,7 @@ public interface AUnitOrders {
     default boolean cancelConstruction() {
         unit().setAction(Actions.CANCEL);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Construction);
 
 //        throw new RuntimeException("Cancel!");
@@ -783,6 +827,7 @@ public interface AUnitOrders {
     default boolean cancelAddon() {
         unit().setAction(null);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Addon);
 
         return unit().orderSink().cancelAddon(unit());
@@ -799,6 +844,7 @@ public interface AUnitOrders {
     default boolean cancelTrain() {
         unit().setAction(null);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
 
         return unit().orderSink().cancelTrain(unit());
@@ -807,6 +853,7 @@ public interface AUnitOrders {
     default boolean cancelTrain(int slot) {
         unit().setAction(null);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
 
         return unit().orderSink().cancelTrainSlot(unit(), slot);
@@ -819,6 +866,7 @@ public interface AUnitOrders {
      */
     default boolean cancelMorph() {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Morph);
 
         return unit().orderSink().cancelMorph(unit());
@@ -832,6 +880,7 @@ public interface AUnitOrders {
      */
     default boolean cancelResearch() {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Research);
 
         return unit().orderSink().cancelResearch(unit());
@@ -845,6 +894,7 @@ public interface AUnitOrders {
      */
     default boolean cancelUpgrade() {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Upgrade);
 
         return unit().orderSink().cancelUpgrade(unit());
@@ -873,6 +923,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.USING_TECH, tech, target);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Position);
 
         return unit().orderSink().useTechAt(unit(), tech, target.p());
@@ -885,6 +936,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.USING_TECH, tech, unit());
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech);
 
         return unit().orderSink().useTech(unit(), tech);
@@ -897,6 +949,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.USING_TECH, tech, target);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Unit);
 
         return unit().orderSink().useTechOn(unit(), tech, target);
@@ -909,6 +962,7 @@ public interface AUnitOrders {
 
         unit().setAction(Actions.RIGHT_CLICK);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
+
         else unit().lastCommandIssuedNow(UnitCommandType.Right_Click_Unit);
 
         return unit().orderSink().rightClick(unit(), target);

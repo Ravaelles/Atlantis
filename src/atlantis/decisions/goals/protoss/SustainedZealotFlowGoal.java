@@ -27,6 +27,7 @@ public final class SustainedZealotFlowGoal implements Goal {
         if (state.gatewayCount < 1) return false;
         if (state.gatewaysTraining > 0) return false;
         if (state.supplyFree() < 2) return false;
+
         return !dragoonPosture(state);
     }
 

@@ -37,6 +37,7 @@ public class ProtossAllowHereEarlyEvenWithoutRequirements {
         AConsole.println("Allow early Gateway - " + position.distToDigit(
             Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()
         ));
+
         return true;
     }
 

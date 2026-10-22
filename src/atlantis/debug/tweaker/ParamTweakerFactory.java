@@ -431,6 +431,7 @@ public class ParamTweakerFactory extends ParamTweaker {
         bounds.put("EscapeStaticRadiusTiles", new double[] { 2.0, 4.0 });
         bounds.put("EscapeEnemyRadiusTiles", new double[] { 15.0, 25.0 });
         bounds.put("EscapeArcBlend", new double[] { 0.0, 1.0 });
+
         return bounds;
     }
 
@@ -450,6 +451,7 @@ public class ParamTweakerFactory extends ParamTweaker {
         ints.add("DragoonPinchHp");
         ints.add("DragoonPinchMeleeCount");
         ints.add("DragoonSurroundedStandCooldown");
+
         return ints;
     }
 

@@ -29,18 +29,23 @@ public final class SquadScout {
         // No contact: baiting mid-fight splits the line that is already
         // trading. The bait goes out only while nobody shoots back.
         if (!unit.enemiesNear().isEmpty()) return false;
+
         AChoke choke = BattleSetup.chokeNear(unit);
         if (choke == null || choke.center() == null) return false;
         if (BattleSetup.enemiesNear(choke.center(), ChokeStandoff.CONTEST_TILES) == 0) return false;
+
         Selection ours = Select.ourCombatUnits();
         if (ours == null || ours.count() < 3) return false;
+
         AUnit bait = pickBait(ours);
+
         return bait != null && bait.id() == unit.id();
     }
 
     /** Deterministic pick: the lowest-id combat unit, so the whole line agrees. Pure. */
     public static AUnit pickBait(Selection ours) {
         if (ours == null) return null;
+
         AUnit bait = null;
         for (AUnit candidate : ours.list()) {
             if (candidate == null || !candidate.isAlive()) continue;
@@ -52,6 +57,7 @@ public final class SquadScout {
     /** Pure geometry: the bait stands in the funnel mouth, toward the enemy. */
     public static APosition baitPoint(APosition chokeCenter, HasPosition enemySide) {
         if (chokeCenter == null || enemySide == null) return null;
+
         return chokeCenter.translateTilesTowards(enemySide, 2);
     }
 
@@ -60,8 +66,10 @@ public final class SquadScout {
         try {
             atlantis.map.choke.AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
+
             AUnit foe = Select.enemy().combatUnits().nearestTo(choke.center());
             if (foe == null || foe.position() == null) return null;
+
             return baitPoint(choke.center(), foe.position());
         } catch (Exception ignored) {
             return null;

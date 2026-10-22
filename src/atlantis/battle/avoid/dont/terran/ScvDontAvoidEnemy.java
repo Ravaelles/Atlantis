@@ -26,6 +26,7 @@ public class ScvDontAvoidEnemy extends Manager {
         AUnit nearest = enemiesNear.nearestTo(unit);
         if (nearest != null && nearest.isDragoon() && !nearest.regionsMatch(unit)) {
             (new GatherResources(unit)).forceHandle();
+
             return usedManager(this);
         }
 

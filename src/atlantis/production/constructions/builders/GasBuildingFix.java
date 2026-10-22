@@ -28,6 +28,7 @@ public class GasBuildingFix extends HasUnit {
     public APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
         if (position == null) {
             AConsole.errPrintln("Gas building FIX got NULL");
+
             return null;
         }
 
@@ -69,6 +70,7 @@ public class GasBuildingFix extends HasUnit {
 
             if (geyser == null || geyser.tilePosition() == null) {
                 logFix(position, building, "no-geyser");
+
                 return null;
             }
 
@@ -79,6 +81,7 @@ public class GasBuildingFix extends HasUnit {
 
         if (CanPhysicallyBuildHere.check(unit, building, position)) {
             logFix(position, building, "ok");
+
             return position;
         }
 
@@ -94,6 +97,7 @@ public class GasBuildingFix extends HasUnit {
                         unit, building, position.translateByTiles(dx, dy))
                     ) {
                         logFix(position, building, "shifted");
+
                         return position.translateByTiles(dx, dy);
                     }
                 }
@@ -103,11 +107,13 @@ public class GasBuildingFix extends HasUnit {
         }
 
         logFix(position, building, "unshifted");
+
         return position;
     }
 
     private void logFix(APosition position, AUnitType building, String result) {
         if (!building.isGasBuilding()) return;
+
         AUnit geyserNear = Select.geysers().inRadius(6, position).nearestTo(position);
         EventLog.key(LogKey.GAS_FIX)
             .param("pos", position.toString())

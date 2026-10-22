@@ -60,6 +60,7 @@ public final class PullForwardGoals {
         addGasIfMineralRich(goals, timeline, state, race);
 
         goals.replaceAll(goal -> goal.withSource("pull-forward"));
+
         return goals;
     }
 

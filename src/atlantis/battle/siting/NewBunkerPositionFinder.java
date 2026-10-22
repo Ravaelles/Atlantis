@@ -38,6 +38,7 @@ public class NewBunkerPositionFinder {
     public APosition find() {
         if (isInputInvalid()) {
             ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: invalid / " + positionToSecure + " / " + builder);
+
             return null;
         }
 
@@ -61,6 +62,7 @@ public class NewBunkerPositionFinder {
                     "NewBunkerPositionFinder: position too far (" + distTo + ") / " +
                         "found:" + output + ", securing: " + this.positionToSecure
                 );
+
                 return null;
             }
 
@@ -69,6 +71,7 @@ public class NewBunkerPositionFinder {
                     && !this.positionToSecure.regionsMatch(output)
             ) {
                 ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: wrong region");
+
                 return null;
             }
         }

@@ -108,6 +108,7 @@ public class AConsole {
      */
     public static boolean printErrorAndReturnTrue(String text) {
         println(text);
+
         return true;
     }
 

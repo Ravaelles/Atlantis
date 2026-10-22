@@ -18,6 +18,7 @@ public class ForceProduceUnit {
         AUnitType building = type.whatBuildsIt();
         if (building == null) {
             ErrorLog.printMaxOncePerMinute("ForceProduceUnit: " + type + " has no parent building");
+
             return false;
         }
 

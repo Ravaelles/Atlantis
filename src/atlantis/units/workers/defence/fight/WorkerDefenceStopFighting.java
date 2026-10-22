@@ -26,6 +26,7 @@ public class WorkerDefenceStopFighting extends Manager {
                 if (unit.hp() >= 35) return false;
 
                 if (unit.hp() <= 18) return true;
+
                 if (
                     unit.hp() <= 34
                         && (A.supplyUsed() >= 40 || unit.hasCooldown() || unit.meleeEnemiesNearCount(3) >= 2)
@@ -55,6 +56,7 @@ public class WorkerDefenceStopFighting extends Manager {
             }
 
             unit.moveToNearestBase(Actions.MOVE_SAFETY, null);
+
             return null;
         }
 

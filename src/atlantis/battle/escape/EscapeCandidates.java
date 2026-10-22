@@ -26,6 +26,7 @@ public final class EscapeCandidates {
     ) {
         List<APosition> out = new ArrayList<>();
         if (from == null || walk == null) return out;
+
         for (int[] dir : EscapeRays.DIRS) {
             for (int radius : RADII_TILES) {
                 int tx = from.tx() + dir[0] * radius;

@@ -160,6 +160,7 @@ public final class ProductionScheduler {
         // at 557, then 746, then 974, and never built (measured 2026-10-08 on
         // OpenBW). One order per building is a property of the SCHEDULER, not a rule
         // every goal has to remember.
+
         return existingItems.inFlightFrom(item) >= 0 ? 0 : goal.count();
     }
 
@@ -179,6 +180,7 @@ public final class ProductionScheduler {
                 int ownReady = ensurePrerequisites(prerequisite, timeline.originFrame(), timeline, plan, path);
                 if (ownReady < 0) {
                     path.remove(item.id());
+
                     return -1;
                 }
                 ProductionItem planned = scheduleItem(prerequisite, ownReady, timeline, plan,
@@ -186,6 +188,7 @@ public final class ProductionScheduler {
                         new HashSet<Integer>(), false);
                 if (planned == null) {
                     path.remove(item.id());
+
                     return -1;
                 }
                 available = planned.completionFrame();
@@ -194,6 +197,7 @@ public final class ProductionScheduler {
         }
 
         path.remove(item.id());
+
         return readyFrame;
     }
 
@@ -202,6 +206,7 @@ public final class ProductionScheduler {
         int inGame = existingItems.availableFrom(item);
         Integer planned = plannedAvailable.get(item.id());
         if (inGame < 0) return planned == null ? -1 : planned;
+
         return planned == null ? inGame : Math.min(inGame, planned);
     }
 
@@ -235,6 +240,7 @@ public final class ProductionScheduler {
         if (item.requiresPlacement()) {
             reservation = placementPlanner.reservePlacement(item, placement, start);
             if (reservation == null || !reservation.isSuccessful()) return null;
+
             if (reservation.readyFrame() > start) {
                 start = timeline.findEarliestAffordableFrame(cost, reservation.readyFrame());
                 if (start < 0) return null;
@@ -247,6 +253,7 @@ public final class ProductionScheduler {
                 producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER);
         plan.add(scheduled);
         commit(item, scheduled, producer, timeline, usedProducers);
+
         return scheduled;
     }
 
@@ -299,6 +306,7 @@ public final class ProductionScheduler {
 
     private int freeFrom(ProducerFacility facility) {
         Integer busy = busyUntil.get(facility.id());
+
         return busy == null ? facility.availableFromFrame() : Math.max(busy, facility.availableFromFrame());
     }
 

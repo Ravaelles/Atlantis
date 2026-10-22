@@ -146,6 +146,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
             }
         }
         if (top == null) return AbstractPositionFinder._STATUS;
+
         return top;
     }
 
@@ -158,6 +159,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         AUnit builder = builderForThisPass();
         if (builder == null) {
             twinRefusal(unitType, "no-builder");
+
             return PlacementReservation.failure();
         }
 
@@ -193,6 +195,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         APosition position = APositionFinder.findStandardPosition(builder, unitType, near, 12);
         if (position == null) {
             twinRefusal(unitType, topRefusal());
+
             return PlacementReservation.failure();
         }
 
@@ -222,6 +225,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
 
         PlacementReservation reservation = PlacementReservation.success(position.tx(), position.ty(), targetFrame);
         lastPassReservations.add(reservation);
+
         return reservation;
     }
 
@@ -265,6 +269,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         }
 
         APosition best = PylonPowerSiting.best(validated, buildable, powered);
+
         return best != null ? best : first;
     }
 
@@ -337,6 +342,7 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
                 // asserts non-null), so "anywhere" means "around our base" -
                 // which is what the legacy pipeline does too.
                 AUnit base = Select.ourBases().first();
+
                 return base != null ? base : Select.ourBuildings().first();
         }
     }
@@ -353,7 +359,9 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         }
         AUnit main = Select.main();
         if (main != null) return main;
+
         AUnit base = Select.ourBases().first();
+
         return base != null ? base : Select.ourBuildings().first();
     }
 }

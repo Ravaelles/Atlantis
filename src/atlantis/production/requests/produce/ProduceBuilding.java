@@ -84,6 +84,7 @@ public class ProduceBuilding {
     public static boolean tooManyPylonsInFlight() {
         int inFlight = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon);
         if (atlantis.game.A.supplyUsed() < 40) return inFlight >= 1;
+
         return inFlight >= 2;
     }
 
@@ -95,11 +96,14 @@ public class ProduceBuilding {
      */
     public static boolean hasLiveConstruction(ProductionOrder order) {
         if (order == null) return false;
+
         Construction live = order.construction();
         if (live == null) return false;
+
         if (live.status() != ConstructionOrderStatus.NOT_STARTED
             && live.status() != ConstructionOrderStatus.STARTING
             && live.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
+
         return live.builder() != null && !live.builder().isDead();
     }
 
@@ -111,6 +115,7 @@ public class ProduceBuilding {
      */
     public static boolean orderHasWarpingBuilding(ProductionOrder order, AUnitType type) {
         if (order == null) return false;
+
         for (atlantis.units.AUnit unit : atlantis.units.select.Select.ourUnfinished()
             .ofType(type).list()) {
             if (order.equals(unit.productionOrder())) return true;
@@ -207,11 +212,13 @@ public class ProduceBuilding {
 
     private static boolean isAlreadyPaidFor(Construction construction) {
         AUnit building = construction.buildingUnit();
+
         return building != null && building.isAlive();
     }
 
     private static int earlierUnfinishedCost(ProductionOrder order, boolean minerals) {
         if (order == null) return 0;
+
         int sum = 0;
         for (Construction other : ConstructionRequests.notFinished()) {
             ProductionOrder otherOrder = other.productionOrder();
@@ -287,6 +294,7 @@ public class ProduceBuilding {
             validatePosition(order, type);
 
             _lastConstruction = NewConstructionRequest.requestConstructionOf(order);
+
             return _lastConstruction != null;
         }
     }
@@ -302,6 +310,7 @@ public class ProduceBuilding {
     static boolean powerProviderNotFunded(AUnitType type) {
         if (!We.protoss() || !type.needsPower()) return false;
         if (Count.ofType(AUnitType.Protoss_Pylon) > 0) return false;
+
         return !A.hasMinerals(
             AUnitType.Protoss_Pylon.mineralPrice() + type.mineralPrice());
     }
@@ -336,6 +345,7 @@ public class ProduceBuilding {
                     .param("supplyUsed", A.supplyUsed())
                     .param("minerals", A.minerals())
                     .log(A.now(), A.minSec());
+
                 return false;
             }
             APosition prev = prepared.buildPosition();
@@ -359,6 +369,7 @@ public class ProduceBuilding {
                 .param("supplyUsed", A.supplyUsed())
                 .param("minerals", A.minerals())
                 .log(A.now(), A.minSec());
+
             return false;
         }
 
@@ -381,11 +392,13 @@ public class ProduceBuilding {
                 .param("supplyUsed", A.supplyUsed())
                 .param("minerals", A.minerals())
                 .log(A.now(), A.minSec());
+
             return false;
         }
 
         prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);
         _lastConstruction = prepared;
+
         return noteStarted(prepared, prepared.builder(), prepared.buildPosition(), order);
     }
 
@@ -403,6 +416,7 @@ public class ProduceBuilding {
         Construction construction, AUnit builder, HasPosition tile, ProductionOrder order
     ) {
         if (construction == null || !startedCids.add(construction.id())) return false;
+
         EventLog.key(LogKey.BUILDING_STARTED)
             .param("type", construction.buildingType().name())
             .param("cid", construction.id())
@@ -415,6 +429,7 @@ public class ProduceBuilding {
             .param("supplyTotal", A.supplyTotal())
             .param("minerals", A.minerals())
             .log(A.now(), A.minSec());
+
         return true;
     }
 

@@ -65,6 +65,7 @@ public class AKeyboard implements NativeKeyListener {
             // the shortcuts are dead. Say so and keep going instead of dying.
             System.err.println("There was a problem registering the native hook.");
             System.err.println(ex.getMessage());
+
             return;
         }
 
@@ -112,6 +113,7 @@ public class AKeyboard implements NativeKeyListener {
         if (!isBotJvm()) {
             if (keyCode == 1) Exit.handle();       // Escape
             else KeyRelay.send(keyCode, keyLocation);
+
             return;
         }
 

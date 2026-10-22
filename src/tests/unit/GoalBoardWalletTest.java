@@ -26,6 +26,7 @@ public class GoalBoardWalletTest {
     private static List<String> ids(List<Goal> goals) {
         List<String> ids = new ArrayList<String>();
         for (Goal goal : goals) ids.add(goal.id());
+
         return ids;
     }
 

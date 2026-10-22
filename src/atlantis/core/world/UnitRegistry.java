@@ -36,6 +36,7 @@ public final class UnitRegistry {
     public AUnit createFrom(Unit u, boolean throwErrorOnNull) {
         if (u == null) {
             if (!throwErrorOnNull) return null;
+
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
@@ -49,6 +50,7 @@ public final class UnitRegistry {
 
         unit = new AUnit(u);
         entities.put(unit.id(), unit);
+
         return unit;
     }
 

@@ -37,6 +37,7 @@ public class TravelToConstruct extends HasUnit {
         if (buildPosition == null) {
             System.err.println("buildPosition is null (travelToConstruct " + type + ")");
             construction.cancel(type + " buildPosition is null");
+
             return false;
         }
 
@@ -192,6 +193,7 @@ public class TravelToConstruct extends HasUnit {
 
     private static boolean preventCantBuildHereForProtoss(AUnitType buildingType) {
         if (!We.protoss()) return false;
+
         return A.supplyTotal() <= 11 && buildingType.isGateway();
     }
 
@@ -235,6 +237,7 @@ public class TravelToConstruct extends HasUnit {
         // its own Gateway tile for 43s, `MOVE_BUILD` refreshed every 13th frame, no build ever
         // attempted. `true` now means "an order was issued this frame"; false lets the caller
         // try the build.
+
         return false;
     }
 }

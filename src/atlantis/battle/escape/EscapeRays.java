@@ -31,9 +31,11 @@ public final class EscapeRays {
      */
     public static int awayDirIndex(HasPosition from, HasPosition threat) {
         if (from == null || threat == null) return 0;
+
         double dx = from.x() - threat.x();
         double dy = from.y() - threat.y();
         if (dx == 0 && dy == 0) return 0;
+
         double len = Math.sqrt(dx * dx + dy * dy);
         double nx = dx / len;
         double ny = dy / len;
@@ -73,6 +75,7 @@ public final class EscapeRays {
     public static double[] clearance(APosition from, int maxTiles, Walkability walk) {
         double[] out = new double[DIRS.length];
         if (from == null || walk == null || maxTiles <= 0) return out;
+
         int fx = from.tx();
         int fy = from.ty();
         for (int d = 0; d < DIRS.length; d++) {

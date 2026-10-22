@@ -36,6 +36,7 @@ public class CappedList<T> extends AbstractCollection<T> {
             list.remove(this.size - 1);
         }
         list.add(0, e);
+
         return true;
     }
 //    @Override

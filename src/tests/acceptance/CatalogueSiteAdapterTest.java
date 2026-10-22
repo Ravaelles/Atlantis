@@ -122,6 +122,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         Construction construction = new Construction(type);
         if (order != null) construction.setProductionOrder(order);
         if (near != null) construction.setNearTo(near);
+
         return construction;
     }
 

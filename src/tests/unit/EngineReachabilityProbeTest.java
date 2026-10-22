@@ -73,6 +73,7 @@ public class EngineReachabilityProbeTest {
                 (tx, ty) -> {
                     asked[0] = tx;
                     asked[1] = ty;
+
                     return true;
                 },
                 TILE_X, TILE_Y);

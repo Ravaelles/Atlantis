@@ -44,6 +44,7 @@ public class KeyRelay {
         // Create under the CWD so the channel still works.
         File fallback = new File("out/wine/keys.txt");
         fallback.getParentFile().mkdirs();
+
         return fallback;
     }
 

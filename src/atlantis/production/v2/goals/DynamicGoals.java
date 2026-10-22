@@ -195,6 +195,7 @@ public final class DynamicGoals {
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
+
         return goals;
     }
 

@@ -77,23 +77,27 @@ public final class ExpansionGoal implements Goal {
         if (dontExpandAgainstMutas(state)) return "DontExpandAgainstMutas";
         if (defendRush(state)) return "DefendRush";
         if (tooManyInProgress(state)) return "HasInProgress";
+
         return null;
     }
 
     private static boolean dontExpandAgainstMutas(BoardState state) {
         if (!"Zerg".equals(state.enemyRace)) return false;
         if (state.enemyMutalisks == 0) return false;
+
         return state.minerals >= 800 || state.basesUnfinished * 3 >= state.cannonCount;
     }
 
     private static boolean defendRush(BoardState state) {
         if (state.minerals >= 384) return false;
         if (state.secondsElapsed >= 9 * 60) return false;
+
         return state.armyStrength <= 115;
     }
 
     private static boolean tooManyInProgress(BoardState state) {
         if (state.basesUnfinished == 0) return false;
+
         return (double) (state.minerals / (400 * state.basesUnfinished)) <= 1.15;
     }
 }

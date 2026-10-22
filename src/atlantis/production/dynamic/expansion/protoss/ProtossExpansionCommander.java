@@ -22,6 +22,7 @@ public class ProtossExpansionCommander extends Commander {
     protected boolean handle() {
 //        System.err.println("@ " + A.now() + " ProtossExpansionCommander ");
         ProtossExpandNow.requestNewBase();
+
         return false;
     }
 

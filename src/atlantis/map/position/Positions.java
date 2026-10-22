@@ -38,6 +38,7 @@ public class Positions<T extends HasPosition> implements Serializable {
     public static HasPosition nearestToFrom(HasPosition nearestTo, Collection<? extends HasPosition> positionsList) {
         Positions positions = new Positions();
         positions.addPositions(positionsList);
+
         return positions.nearestTo(nearestTo);
     }
 
@@ -52,16 +53,19 @@ public class Positions<T extends HasPosition> implements Serializable {
 
     public Positions<T> addPositions(Collection<? extends T> positionsToAdd) {
         positions.addAll(positionsToAdd);
+
         return this;
     }
 
     public Positions<T> removePositions(Collection<T> positionsToRemove) {
         positions.removeAll(positionsToRemove);
+
         return this;
     }
 
     public Positions<T> removePosition(T positionToRemove) {
         positions.remove(positionToRemove);
+
         return this;
     }
 
@@ -101,6 +105,7 @@ public class Positions<T extends HasPosition> implements Serializable {
      */
     public Positions<T> shuffle() {
         Collections.shuffle(positions);
+
         return this;
     }
 
@@ -242,6 +247,7 @@ public class Positions<T extends HasPosition> implements Serializable {
      */
     public Collection<T> list() {
         ArrayList<T> copy = new ArrayList<>(positions);
+
         return copy;
     }
 
@@ -250,6 +256,7 @@ public class Positions<T extends HasPosition> implements Serializable {
      */
     public ArrayList<T> arrayList() {
         ArrayList<T> copy = new ArrayList<>(positions);
+
         return copy;
     }
 

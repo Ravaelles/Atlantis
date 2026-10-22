@@ -58,6 +58,7 @@ public class DefineConstructionForNewUnit {
                 "!!! No unfinished construction for " + newBuilding
                     + " / pending: " + ConstructionRequests.countPendingOfType(newBuilding.type())
             );
+
             return null;
         }
 

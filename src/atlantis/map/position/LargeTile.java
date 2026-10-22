@@ -38,7 +38,9 @@ public class LargeTile implements Comparable<LargeTile> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof LargeTile)) return false;
+
         LargeTile largeTile = (LargeTile) o;
+
         return largeX == largeTile.largeX && largeY == largeTile.largeY;
     }
 

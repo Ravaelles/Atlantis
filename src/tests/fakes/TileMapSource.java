@@ -63,6 +63,7 @@ public class TileMapSource implements MapTiles.Source {
     /** Convenience: the fakes install themselves as the tile source. */
     public TileMapSource install() {
         MapTiles.useSource(this);
+
         return this;
     }
 
@@ -73,16 +74,19 @@ public class TileMapSource implements MapTiles.Source {
 
     public TileMapSource blockTile(int tx, int ty) {
         unwalkable.add(key(tx, ty));
+
         return this;
     }
 
     public TileMapSource unbuildableTile(int tx, int ty) {
         unbuildable.add(key(tx, ty));
+
         return this;
     }
 
     public TileMapSource unexploredTile(int tx, int ty) {
         unexplored.add(key(tx, ty));
+
         return this;
     }
 
@@ -98,11 +102,13 @@ public class TileMapSource implements MapTiles.Source {
 
     public TileMapSource defaultWalkable(boolean value) {
         this.defaultWalkable = value;
+
         return this;
     }
 
     public TileMapSource defaultBuildable(boolean value) {
         this.defaultBuildable = value;
+
         return this;
     }
 

@@ -14,6 +14,7 @@ public class ProduceAddon {
         for (AUnit building : Select.ourFree(parentBuilding).list()) {
             if (building != null && !building.hasAddon() && A.canAfford(addonType)) {
                 building.buildAddon(addonType);
+
                 return true;
             }
         }

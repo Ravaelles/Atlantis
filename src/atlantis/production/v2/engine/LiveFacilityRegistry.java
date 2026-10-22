@@ -50,6 +50,7 @@ public final class LiveFacilityRegistry implements ProducerFacilityRegistry {
             busy = Math.max(busy, unit.remainingResearchTime());
         if (unit.isUpgrading())
             busy = Math.max(busy, unit.remainingUpgradeTime());
+
         return Math.max(0, busy);
     }
 }

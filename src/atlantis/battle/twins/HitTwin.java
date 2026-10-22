@@ -25,6 +25,7 @@ public class HitTwin {
         int total = unit.hp() + unit.shields();
         Integer last = lastTotalByUnit.put(unit.id(), total);
         if (last == null || total >= last) return;
+
         EventLog.key(LogKey.HIT)
             .param("unit", unit.id())
             .param("lost", last - total)

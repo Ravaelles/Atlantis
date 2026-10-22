@@ -30,6 +30,7 @@ public class SpecificConstructionRequests {
 
         if (building.isAddon()) {
             TerranAddonBuilder.buildNewAddon(building, order);
+
             return true;
         }
 
@@ -43,21 +44,25 @@ public class SpecificConstructionRequests {
 
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony(order);
+
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Lair)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, order);
+
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Hive)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive, order);
+
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Greater_Spire)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire, order);
+
             return true;
         }
 

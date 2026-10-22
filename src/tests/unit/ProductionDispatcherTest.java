@@ -89,18 +89,21 @@ public class ProductionDispatcherTest {
         @Override
         public boolean trainFacility(String typeId, int producerId, Producible item) {
             commands.add("train:" + item.id() + "@" + typeId + "#" + producerId);
+
             return trainsSucceed;
         }
 
         @Override
         public boolean buildAt(Producible building, PlacementReservation placement) {
             commands.add("build:" + building.id() + "@" + placement.tileX() + "," + placement.tileY());
+
             return true;
         }
 
         @Override
         public boolean researchOrUpgrade(String typeId, int producerId, Producible item) {
             commands.add("research:" + item.id() + "@" + typeId + "#" + producerId);
+
             return true;
         }
     }
@@ -109,6 +112,7 @@ public class ProductionDispatcherTest {
         ProductionPlan plan = new ProductionPlan();
         for (ProductionItem item : items)
             plan.add(item);
+
         return plan;
     }
 

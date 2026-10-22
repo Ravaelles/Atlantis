@@ -94,6 +94,7 @@ public class ProductionSchedulerTest {
         FakeRegistry add(String typeId, int availableFromFrame) {
             byType.computeIfAbsent(typeId, k -> new ArrayList<>())
                     .add(new ProducerFacility(nextId++, typeId, availableFromFrame));
+
             return this;
         }
 
@@ -114,8 +115,10 @@ public class ProductionSchedulerTest {
         public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame) {
             reservations++;
             if (!succeeds) return PlacementReservation.failure();
+
             int tile = nextTile++;
             reservedTiles.add(building.id() + ":" + tile);
+
             return PlacementReservation.success(tile, 10, targetFrame + readyFrameDelta);
         }
     }
@@ -126,27 +129,32 @@ public class ProductionSchedulerTest {
 
         FakeExisting ready(Producible item) {
             available.put(item.id(), 0);
+
             return this;
         }
 
         FakeExisting availableAt(Producible item, int frame) {
             available.put(item.id(), frame);
+
             return this;
         }
 
         FakeExisting inFlightAt(Producible item, int frame) {
             inFlight.put(item.id(), frame);
+
             return this;
         }
 
         FakeExisting nothingInFlight(Producible item) {
             inFlight.put(item.id(), null);
+
             return this;
         }
 
         @Override
         public int availableFrom(Producible item) {
             Integer frame = available.get(item.id());
+
             return frame == null ? MISSING : frame;
         }
 
@@ -154,6 +162,7 @@ public class ProductionSchedulerTest {
         public int inFlightFrom(Producible item) {
             if (inFlight.containsKey(item.id())) {
                 Integer frame = inFlight.get(item.id());
+
                 return frame == null ? MISSING : frame;
             }
             return availableFrom(item);
@@ -182,6 +191,7 @@ public class ProductionSchedulerTest {
     private static int countOf(ProductionPlan plan, String id) {
         int total = 0;
         for (ProductionItem item : plan.items()) if (item.item().id().equals(id)) total++;
+
         return total;
     }
 
@@ -524,6 +534,7 @@ public class ProductionSchedulerTest {
             @Override
             public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int f) {
                 if (building.id().equals("Pylon")) return PlacementReservation.failure();
+
                 return super.reservePlacement(building, constraint, f);
             }
         };

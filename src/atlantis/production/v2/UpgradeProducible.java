@@ -80,6 +80,7 @@ public final class UpgradeProducible implements Producible {
             result.add(UnitProducible.of(required));
 
         if (level > 1) result.add(of(upgrade, level - 1));
+
         return result;
     }
 

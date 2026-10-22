@@ -69,6 +69,7 @@ public class ScoutCommander extends Commander {
         }
 
         // CodeProfiler.endMeasuring(this);
+
         return false;
     }
 

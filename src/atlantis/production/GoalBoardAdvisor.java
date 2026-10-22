@@ -143,6 +143,7 @@ public class GoalBoardAdvisor extends Commander {
     private static int wallPiecesAtNatural() {
         atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.natural();
         if (choke == null || choke.center() == null) return 99;
+
         atlantis.map.position.APosition center = choke.center();
         return Count.ourWithUnfinished(AUnitType.Protoss_Pylon, 12, center)
             + Count.ourWithUnfinished(AUnitType.Protoss_Gateway, 12, center)
@@ -183,6 +184,7 @@ public class GoalBoardAdvisor extends Commander {
             return false;
         }
         ProductionOrder order = Queue.get().notFinished().ofType(AUnitType.Protoss_Cybernetics_Core).first();
+
         return order != null && order.supplyRequirementFulfilled(0);
     }
 }

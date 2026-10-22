@@ -49,6 +49,7 @@ public class AtlantisRaceConfig {
         if (MY_RACE == null) {
             AConsole.errPrintln("AtlantisRaceConfig: race is unknown (bwapi.ini/defaultRace?),"
                 + " skipping the config validation instead of exiting the process.");
+
             return;
         }
 

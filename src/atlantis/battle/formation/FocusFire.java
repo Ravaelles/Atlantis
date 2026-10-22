@@ -32,6 +32,7 @@ public final class FocusFire {
      */
     public static AUnit sharedTarget(AUnit unit, double maxDist) {
         if (unit == null || !unit.isAlive()) return null;
+
         Selection enemies = unit.enemiesNear();
         if (enemies == null) return null;
 
@@ -62,6 +63,7 @@ public final class FocusFire {
     static int coveringGuns(AUnit enemy, double maxDist) {
         Selection ours = Select.ourCombatUnits();
         if (ours == null) return 0;
+
         int guns = 0;
         for (AUnit u : ours.list()) {
             if (u == null || !u.isAlive()) continue;

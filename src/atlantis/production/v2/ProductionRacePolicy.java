@@ -49,6 +49,7 @@ public interface ProductionRacePolicy {
         if ("Protoss".equalsIgnoreCase(race)) return ProtossProductionRacePolicy.INSTANCE;
         if ("Terran".equalsIgnoreCase(race)) return TerranProductionRacePolicy.INSTANCE;
         if ("Zerg".equalsIgnoreCase(race)) return ZergProductionRacePolicy.INSTANCE;
+
         throw new IllegalArgumentException("Unknown race for production policy: " + race);
     }
 
@@ -61,6 +62,7 @@ public interface ProductionRacePolicy {
         if (atlantis.util.We.protoss()) return ProtossProductionRacePolicy.INSTANCE;
         if (atlantis.util.We.terran()) return TerranProductionRacePolicy.INSTANCE;
         if (atlantis.util.We.zerg()) return ZergProductionRacePolicy.INSTANCE;
+
         throw new IllegalArgumentException("No production race policy for ambient race");
     }
 }

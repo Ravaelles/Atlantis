@@ -212,11 +212,13 @@ public class ProtossForbiddenByStreetGrid {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 
     private static boolean ignore(AUnitType building) {
         if (building.isBase() || building.isAssimilator()) return true;
+
         if (A.supplyTotal() <= 15) {
             if (building.isPylon()) return true;
             if (building.isForge()) return true;

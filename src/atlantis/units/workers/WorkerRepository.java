@@ -44,6 +44,7 @@ public class WorkerRepository {
     public static boolean isWorkerAssignedToBuilding(AUnit worker, AUnit building) {
         if (building.equals(worker.target()) || building.equals(worker.orderTarget())) return true;
         else if (building.equals(worker.buildUnit())) return true;
+
         else if (building.type().isGasBuilding()) {
             return worker.isGatheringGas() && worker.distTo(building) <= 10;
         }

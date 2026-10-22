@@ -62,6 +62,7 @@ public class SleepUntilFrameGate {
 
         if (A.now() >= until) {
             sleepUntil.remove(unit.id());
+
             return false;
         }
 
@@ -83,6 +84,7 @@ public class SleepUntilFrameGate {
             // very next frame re-issue the order against the stale state the gate exists
             // to avoid (measured: the refusal happens at lastCommandIssuedAgo=1-2). The
             // fallback is also the real minimum: BWAPI's fast command latency is never 0.
+
             return latency > 0 ? latency : 3;
         } catch (Throwable e) {
             return 3;

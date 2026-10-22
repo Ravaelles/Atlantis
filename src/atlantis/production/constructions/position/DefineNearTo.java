@@ -52,6 +52,7 @@ public class DefineNearTo {
         }
 
         if (nearTo == null && ARandom.chance(50)) nearTo = Select.ourBuildings().last();
+
         return nearTo;
     }
 }

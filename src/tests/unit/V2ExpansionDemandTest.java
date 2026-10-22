@@ -38,6 +38,7 @@ public class V2ExpansionDemandTest {
     private static boolean wantsNexus(DynamicGoals.GameSnapshot snapshot) {
         List<ProductionGoal> goals =
             DynamicGoals.contribute(snapshot, ProductionRacePolicy.forRace("Protoss"));
+
         return goals.stream().anyMatch(goal -> goal.item().id().equals(NEXUS));
     }
 

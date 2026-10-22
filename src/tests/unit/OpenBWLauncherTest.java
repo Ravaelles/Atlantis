@@ -110,6 +110,7 @@ public class OpenBWLauncherTest {
         public OpenBWHost.HostProcess startDetached(List<String> command, File workingDir, File outputLog) {
             started.add(command);
             outputLog.getParentFile().mkdirs();
+
             return new FakeHostProcess(4242L, hostProcessAlive);
         }
 
@@ -118,6 +119,7 @@ public class OpenBWLauncherTest {
             ran.add(command);
             // pgrep / kill -0: report "nothing found" so the wait loop relies on
             // the registry, which is what the test supplies.
+
             return 1;
         }
 
@@ -236,6 +238,7 @@ public class OpenBWLauncherTest {
             dir.delete();
             dir.mkdirs();
             dir.deleteOnExit();
+
             return dir;
         } catch (IOException e) {
             throw new IllegalStateException(e);

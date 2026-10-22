@@ -61,6 +61,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -87,6 +88,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -116,6 +118,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -146,6 +149,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -174,6 +178,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -218,6 +223,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -250,6 +256,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
@@ -287,6 +294,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 22, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -371,6 +379,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();

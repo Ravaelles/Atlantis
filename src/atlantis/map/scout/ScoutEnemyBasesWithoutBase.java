@@ -51,6 +51,7 @@ public class ScoutEnemyBasesWithoutBase extends Manager {
         if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
 
         target = nearestBaseless(enemyCore);
+
         return target != null;
     }
 

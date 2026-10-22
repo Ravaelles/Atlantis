@@ -33,6 +33,7 @@ public class ProtectItsTarget extends Manager {
             ) {
                 if (A.hasMinerals(1)) {
                     unit.repair(target, "Protect" + target.name());
+
                     return usedManager(this);
                 }
                 else {

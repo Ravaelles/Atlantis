@@ -183,11 +183,13 @@ final class SelectionSorting {
 
     static boolean nearestToDistLess(Selection selection, HasPosition position, double maxDist) {
         AUnit nearest = nearestTo(selection, position);
+
         return nearest != null && nearest.distTo(position) <= maxDist;
     }
 
     static boolean nearestToDistMore(Selection selection, HasPosition position, double maxDist) {
         AUnit nearest = nearestTo(selection, position);
+
         return nearest != null && nearest.distTo(position) >= maxDist;
     }
 

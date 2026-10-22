@@ -39,6 +39,7 @@ public class Requirements {
         }
 
         ErrorLog.printMaxOncePerMinute("Shouldn't reach order here: " + order);
+
         return false;
     }
 
@@ -82,6 +83,7 @@ public class Requirements {
 
     private static boolean hasRequiredTechForUnit(AUnitType type) {
         TechType techType = type.getRequiredTech();
+
         return techType == null || techType == TechType.None || ATech.isResearched(techType);
     }
 

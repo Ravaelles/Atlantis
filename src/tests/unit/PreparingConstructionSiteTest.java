@@ -61,6 +61,7 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -93,6 +94,7 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -132,6 +134,7 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             corpse
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -239,6 +242,7 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();
@@ -267,6 +271,7 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();

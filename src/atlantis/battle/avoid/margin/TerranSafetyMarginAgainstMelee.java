@@ -27,6 +27,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         if (medicInRange && defender.hp() >= 35) {
             if (defender.isHealthy() && defender.enemiesNearInRadius(3) <= 2) {
                 defender.setTooltipTactical("Healthy");
+
                 return enemyUnitsNearBonus(defender);
             }
 

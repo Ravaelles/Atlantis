@@ -38,6 +38,7 @@ public final class CoverWithdraw {
     public static boolean isWithdrawing(AUnit unit) {
         if (unit == null || !unit.isAlive() || !unit.isDragoon()) return false;
         if (unit.hp() + unit.shields() >= CombatTuning.current().getDragoonPinchHp()) return false;
+
         return unit.enemiesNear().melee().inRadius(
             CombatTuning.current().getDragoonPinchMeleeTiles(), unit).size() >= 1;
     }
@@ -51,8 +52,10 @@ public final class CoverWithdraw {
     public static Step makeWayStep(AUnit helper) {
         if (helper == null || !helper.isAlive()) return null;
         if (isWithdrawing(helper)) return null;
+
         Selection cluster = Select.ourCombatUnits();
         if (cluster == null || !FormationSlots.applies(cluster.count())) return null;
+
         for (AUnit ally : cluster.list()) {
             if (ally == null || ally.id() == helper.id() || !isWithdrawing(ally)) continue;
             AUnit threat = nearestMeleeThreat(ally);
@@ -88,10 +91,13 @@ public final class CoverWithdraw {
      */
     public static Cover coverTarget(AUnit healthy) {
         if (healthy == null || !healthy.isAlive()) return null;
+
         Selection cluster = Select.ourCombatUnits();
         if (cluster == null || !FormationSlots.applies(cluster.count())) return null;
+
         AUnit urgent = ASquadTargeting.nearestEngageableEnemy(healthy, 2.0);
         if (urgent != null) return null;
+
         for (AUnit ally : cluster.list()) {
             if (ally == null || ally.id() == healthy.id() || !isWithdrawing(ally)) continue;
             AUnit pursuer = nearestMeleeThreat(ally);
@@ -106,6 +112,7 @@ public final class CoverWithdraw {
             if (pursuer.isABuilding() && !pursuer.isCombatBuilding()) continue;
             if (pursuer.isDeadMan()) continue;
             if (healthy.distTo(pursuer) > healthy.groundWeaponRange()) continue;
+
             return new Cover(pursuer, ally);
         }
         return null;
@@ -127,6 +134,7 @@ public final class CoverWithdraw {
     private static AUnit nearestMeleeThreat(AUnit unit) {
         Selection melee = unit.enemiesNear().melee();
         if (melee == null) return null;
+
         AUnit nearest = null;
         double best = Double.MAX_VALUE;
         for (AUnit enemy : melee.list()) {
@@ -147,14 +155,17 @@ public final class CoverWithdraw {
         double dy = ey - threat.position().y();
         double len = Math.hypot(dx, dy);
         if (len < 1.0) return false;
+
         double ux = dx / len;
         double uy = dy / len;
         double rx = helper.position().x() - ex;
         double ry = helper.position().y() - ey;
         double along = rx * ux + ry * uy;
         if (along <= 0 || along >= RAY_PX) return false;
+
         double perp = Math.abs(rx * uy - ry * ux);
         if (perp >= HALF_WIDTH_PX) return false;
+
         return Math.hypot(rx, ry) < URGENT_PX;
     }
 
@@ -165,6 +176,7 @@ public final class CoverWithdraw {
         double dy = ey - threat.position().y();
         double len = Math.hypot(dx, dy);
         if (len < 1.0) return null;
+
         double ux = dx / len;
         double uy = dy / len;
         double hx = helper.position().x();
@@ -173,6 +185,7 @@ public final class CoverWithdraw {
         APosition second = stepOrNull(helper, hx + uy * SIDESTEP_PX, hy - ux * SIDESTEP_PX, threat);
         if (first == null) return second;
         if (second == null) return first;
+
         return distPx(first, threat) >= distPx(second, threat) ? first : second;
     }
 
@@ -183,12 +196,14 @@ public final class CoverWithdraw {
         if (dest == null) return null;
         if (helper.isGroundUnit() && !dest.isWalkable()) return null;
         if (distPx(dest, threat) < distPx(helper.position(), threat)) return null;
+
         return dest;
     }
 
     private static double distPx(APosition a, AUnit b) {
         double dx = a.x() - b.position().x();
         double dy = a.y() - b.position().y();
+
         return Math.hypot(dx, dy);
     }
 }

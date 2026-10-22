@@ -49,6 +49,7 @@ public final class TechProducible implements Producible {
     @Override
     public ResourceCost cost() {
         // Tech costs no supply: it is researched, not fielded.
+
         return ResourceCost.of(tech.mineralPrice(), tech.gasPrice(), 0);
     }
 

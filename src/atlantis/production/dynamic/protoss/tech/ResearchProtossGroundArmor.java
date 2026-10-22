@@ -42,6 +42,7 @@ public class ResearchProtossGroundArmor extends Commander {
             .param("gas", A.gas())
             .param("combat", Count.ourCombatUnits())
             .log(A.now(), A.minSec());
+
         return result;
     }
 
@@ -90,6 +91,7 @@ public class ResearchProtossGroundArmor extends Commander {
     @Override
     protected boolean handle() {
         ResearchNow.research(what());
+
         return false;
     }
 }

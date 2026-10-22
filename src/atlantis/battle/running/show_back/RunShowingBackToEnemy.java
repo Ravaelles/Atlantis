@@ -56,6 +56,7 @@ public class RunShowingBackToEnemy {
 
             if (IsReasonablePositionToRunTo.check(unit, runTo, runAwayFrom)) {
                 running.setRunTo(runTo);
+
                 return true;
             }
             else {

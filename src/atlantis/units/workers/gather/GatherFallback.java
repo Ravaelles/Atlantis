@@ -43,6 +43,7 @@ public class GatherFallback extends Manager {
         // mineral every frame (owner's report: "in every time unit we send workers to a
         // different mineral, so there is no mining at all"). Gather is idempotent only when
         // the target is stable; a random pick per frame is a permanent cancel/re-issue loop.
+
         return Select.minerals().nearestTo(base);
     }
 }

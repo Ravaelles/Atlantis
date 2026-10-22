@@ -47,6 +47,7 @@ public class FortificationCountsPreparingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 7, 47)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ConstructionRequests.constructions.clear();
 
             currentMinerals = 300;

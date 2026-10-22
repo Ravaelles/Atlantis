@@ -127,6 +127,7 @@ public final class AreaGraph {
             if (next == null) continue;
             for (int id : next) {
                 if (id == toId) return true;
+
                 if (seen.add(id)) open.add(id);
             }
         }
@@ -159,6 +160,7 @@ public final class AreaGraph {
                 return Double.compare(a.flightTiles(), b.flightTiles());
             }
         });
+
         return candidates;
     }
 }

@@ -41,6 +41,7 @@ public class WorkerTransferCommander extends Commander {
         }
 
         if (result) maxAtOnceBonus = 1;
+
         return result;
     }
 

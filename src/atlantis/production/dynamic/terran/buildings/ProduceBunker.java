@@ -18,6 +18,7 @@ public class ProduceBunker {
     public static boolean shouldBuild() {
         if (!We.terran()) {
             ErrorLog.printMaxOncePerMinute("shouldBuildNew (Bunker) called for non-terran");
+
             return false;
         }
 

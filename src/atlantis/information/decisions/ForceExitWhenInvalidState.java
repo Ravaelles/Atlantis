@@ -44,6 +44,7 @@ public class ForceExitWhenInvalidState extends Commander {
         AGame.sendMessage("ForceExitWhenInvalidState");
 
         Atlantis.getInstance().onEnd(false);
+
         return false;
     }
 }

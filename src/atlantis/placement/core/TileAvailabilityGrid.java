@@ -171,6 +171,7 @@ public final class TileAvailabilityGrid {
                     return false;
 
                 if (flags[index(x, y)] != 0)
+
                     return false;
             }
         }

@@ -81,6 +81,7 @@ final class SelectionViews {
     static Selection add(Selection selection, AUnit addUnit) {
         ArrayList<AUnit> list = new ArrayList<>();
         list.add(addUnit);
+
         return selection.cloneByAdding(list, null);
     }
 
@@ -95,6 +96,7 @@ final class SelectionViews {
     static Selection exclude(Selection selection, Collection unitsToExclude) {
         List<AUnit> newData = new ArrayList<>(selection.data);
         newData.removeAll(unitsToExclude);
+
         return new Selection(newData, null);
     }
 
@@ -104,6 +106,7 @@ final class SelectionViews {
 
     static Selection reverse(Selection selection) {
         Collections.reverse(selection.data);
+
         return selection;
     }
 

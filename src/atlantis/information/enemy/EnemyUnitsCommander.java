@@ -6,6 +6,7 @@ public class EnemyUnitsCommander extends Commander {
     @Override
     protected boolean handle() {
         EnemyUnitsUpdater.updateFoggedUnits();
+
         return false;
     }
 }

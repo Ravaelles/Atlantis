@@ -74,6 +74,7 @@ public final class TunerDriver {
         if (proposal.isEmpty()) {
             System.out.println("BEST=unknown (cold start, no rows yet)");
             System.out.println("no proposal: archive empty, batch randomizes");
+
             return;
         }
 
@@ -108,6 +109,7 @@ public final class TunerDriver {
     private static double number(String[] args, String name, double fallback) {
         String raw = flag(args, name);
         if (raw == null) return fallback;
+
         try {
             return Double.parseDouble(raw.trim());
         } catch (NumberFormatException e) {

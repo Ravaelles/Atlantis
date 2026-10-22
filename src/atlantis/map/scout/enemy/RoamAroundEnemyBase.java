@@ -192,12 +192,14 @@ public class RoamAroundEnemyBase extends Manager {
         } while (step <= 15);
 
         ScoutState.scoutingAroundBaseWasInterrupted = false;
+
         return ScoutState.unitingAroundBaseLastPolygonPoint = goTo;
     }
 
     private ARegionBoundary useNearestBoundaryPoint(ARegion region) {
         ARegionBoundary nearest = ScoutState.scoutingAroundBasePoints.nearestTo(unit.position());
         ScoutState.unitingAroundBaseNextPolygonIndex = ScoutState.scoutingAroundBasePoints.getLastIndexForScout();
+
         return nearest;
     }
 }

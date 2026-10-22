@@ -32,6 +32,7 @@ public final class LeaveBreachedBase {
             HasPosition rally = ClusterBreach.breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
                 unit.move(rally, Actions.RUN_ENEMY, Behavior.BREACH_RETREAT.tag());
+
                 return true;
             }
         }

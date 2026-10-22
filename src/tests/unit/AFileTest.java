@@ -80,6 +80,7 @@ public class AFileTest {
     private static Path write(Path dir, String name, String content) throws IOException {
         Path file = dir.resolve(name);
         Files.write(file, content.getBytes(StandardCharsets.UTF_8));
+
         return file;
     }
 }

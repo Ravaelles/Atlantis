@@ -27,6 +27,7 @@ public class ClusterMission {
      */
     public static Posture postureFor(int combatUnits, boolean breached) {
         if (breached) return Posture.DEFEND;
+
         return decide(combatUnits);
     }
 

@@ -152,6 +152,7 @@ public class TurretsForMain extends TerranMissileTurret {
 
             if (productionOrder != null) {
                 productionOrder.setMaximumDistance(12);
+
                 return true;
             }
         }

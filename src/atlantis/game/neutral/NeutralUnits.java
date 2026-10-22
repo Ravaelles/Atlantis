@@ -31,6 +31,7 @@ public class NeutralUnits {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "NeutralUnits.addFoggedUnit() called for non-neutral unit: " + neutralUnit
             );
+
             return;
         }
 

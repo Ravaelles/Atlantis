@@ -54,6 +54,7 @@ public class ProduceDragoon {
             A.hasMinerals(125) && A.hasGas(150) && (dragoons <= 17 || Missions.isGlobalMissionDefendOrSparta())
         ) return produceDragoon();
         if (A.hasMinerals(470) && A.hasGas(250)) return produceDragoon();
+
         if (
             dragoons <= 20 && !EnemyInfo.goesOrHasHiddenUnits() && !(new ResearchSingularityCharge()).applies()
         ) return produceDragoon();
@@ -152,6 +153,7 @@ public class ProduceDragoon {
 
     private static boolean no(String reasonWhyNot) {
         ProduceDragoon.reason = reasonWhyNot;
+
         return false;
     }
 

@@ -52,6 +52,7 @@ public class Decisions {
     public static int minZealotsAgainstEnemyRush() {
         if (Enemy.protoss()) return enemyStrategyIsRushOrCheese() ? 4 : 3;
         if (Enemy.terran()) return 1;
+
         return 1;
     }
 

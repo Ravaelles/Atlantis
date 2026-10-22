@@ -45,6 +45,7 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
             return availability;
 
         // 2. Distance score, lower is better.
+
         return Integer.compare(score(a), score(b));
     }
 
@@ -65,10 +66,12 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
         if (distance == Integer.MAX_VALUE) {
             // No known exit: fall back to travel only, so a base without a mapped
             // choke still gets usable placements instead of nothing.
+
             return travel;
         }
 
         boolean away = preferAwayFromExit || forTechBuilding;
+
         return away ? travel - distance : travel + distance;
     }
 
@@ -77,6 +80,7 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
             return Integer.MAX_VALUE;
 
         NeighbourhoodRegistry.Neighbourhood area = neighbourhoods.forTile(location.tileX(), location.tileY());
+
         return NeighbourhoodRegistry.distanceToExit(area, location.tileX(), location.tileY());
     }
 

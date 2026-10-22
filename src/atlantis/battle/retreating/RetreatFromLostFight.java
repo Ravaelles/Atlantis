@@ -59,12 +59,14 @@ public final class RetreatFromLostFight {
             HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
             if (point != null && unit.distTo(point) >= 0.2) {
                 unit.move(point, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+
                 return true;
             }
         }
         // Nowhere to run to (baseless map, null anchor): standing
         // still with DoNothing until death is never the answer -
         // fall through and fight in place instead (kite included).
+
         return false;
     }
 }

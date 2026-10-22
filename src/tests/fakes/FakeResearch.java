@@ -53,12 +53,14 @@ public class FakeResearch implements ATech.Source {
 
     public static FakeResearch withUpgradeLevel(UpgradeType upgrade, int level) {
         current.upgradeLevels.put(upgrade, level);
+
         return current;
     }
 
     public static FakeResearch withoutResearch() {
         current.researched.clear();
         current.upgradeLevels.clear();
+
         return current;
     }
 
@@ -72,6 +74,7 @@ public class FakeResearch implements ATech.Source {
     @Override
     public int upgradeLevel(UpgradeType upgrade) {
         Integer level = upgradeLevels.get(upgrade);
+
         return level != null ? level : 0;
     }
 }

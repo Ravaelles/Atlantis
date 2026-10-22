@@ -21,6 +21,7 @@ public class FakeBullet extends ABullet implements Comparable<FakeBullet> {
 //        bullet.target = target;
         bullet.id = firstFreeId++;
         bullet.position = position;
+
         return bullet;
     }
 

@@ -39,6 +39,7 @@ public class ProduceTemplarArchives {
             // return stood in for the queue result); keep both explicit.
             if (AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null) {
                 AConsole.println("@@@@@@@@@@ Make CITADEL for ARCHIVES at " + A.supplyUsed());
+
                 return true;
             }
             return false;
@@ -48,6 +49,7 @@ public class ProduceTemplarArchives {
         if (Have.notEvenPlanned(type())) {
             if (AddToQueue.withHighPriority(type()) != null) {
                 AConsole.println("@@@@@@@@@@ Make TEMPLAR ARCHIVES at " + A.supplyUsed());
+
                 return true;
             }
             return false;

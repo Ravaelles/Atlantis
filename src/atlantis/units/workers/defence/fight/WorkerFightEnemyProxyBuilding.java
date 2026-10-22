@@ -37,6 +37,7 @@ public class WorkerFightEnemyProxyBuilding extends Manager {
 
         unit.attackUnit(enemyBuilding);
         unit.setTooltipTactical("Cheesy!");
+
         return true;
     }
 

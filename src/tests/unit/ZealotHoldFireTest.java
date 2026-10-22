@@ -33,6 +33,7 @@ public class ZealotHoldFireTest extends WorldStubForTests {
     private static FakeUnit foe(AUnitType type, int tx, int ty) {
         FakeUnit enemy = fake(type, tx, ty);
         enemy.setEnemy();
+
         return enemy;
     }
 

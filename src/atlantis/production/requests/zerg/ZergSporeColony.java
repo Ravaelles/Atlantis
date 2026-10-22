@@ -35,6 +35,7 @@ public class ZergSporeColony extends AntiAirBuildingCommander {
         int wraiths = air.ofType(AUnitType.Terran_Wraith).count();
         int battlecruisers = air.ofType(AUnitType.Terran_Battlecruiser).count();
         int scouts = air.ofType(AUnitType.Protoss_Scout).count();
+
         return (int) Math.ceil((wraiths + battlecruisers + scouts) / 4);
     }
 

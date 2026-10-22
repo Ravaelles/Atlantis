@@ -56,6 +56,7 @@ public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
     public void gatewayHeldBelowNineReadyAtNineRegardlessOfBank() {
         world(5, fixture(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ProductionOrder order = queued(new ProductionOrder(AUnitType.Protoss_Gateway, 9));
 
             currentSupplyUsed = 8;
@@ -81,6 +82,7 @@ public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
     public void pylonReadyTwoEarlyWhenRich() {
         world(5, fixture(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ProductionOrder order = queued(new ProductionOrder(AUnitType.Protoss_Pylon, 13));
 
             currentSupplyUsed = 10;
@@ -100,6 +102,7 @@ public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
     public void coreReadyAtSixteenWhenRichNeverAtFifteen() {
         world(5, withGateway(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             ProductionOrder order = queued(new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 18));
 
             currentSupplyUsed = 15;
@@ -140,6 +143,7 @@ public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
         Queue.get().allOrders().list().clear();
         Queue.get().clearCache();
         Queue.get().addNew(0, order);
+
         return order;
     }
 }

@@ -50,12 +50,14 @@ public class ChokeBlockersAssignments {
 
     private int blockersNeeded() {
         int available = AMath.inRange(3, blockers.size() + Count.zealots(), (int) (choke.width() * 1.7));
+
         return workersNeeded() - available;
     }
 
     private int workersNeeded() {
         if (We.protoss()) {
             if (Enemy.zerg()) return Math.max(0, 2 - Count.zealots());
+
             return A.seconds() >= 60 ? 1 : 0;
         }
 

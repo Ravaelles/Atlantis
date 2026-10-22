@@ -67,6 +67,7 @@ public class DecisionJournalTest extends WorldStubForTests {
 
         world(2, fakeOurs(dragoon), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             dragoon.move(APosition.create(32, 20), Actions.MOVE_ENGAGE, "ClusterReengage", true);
             dragoon.move(APosition.create(33, 20), Actions.MOVE_ENGAGE, "ClusterReengage", true);
 

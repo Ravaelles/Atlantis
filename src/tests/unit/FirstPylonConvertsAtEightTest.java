@@ -59,6 +59,7 @@ public class FirstPylonConvertsAtEightTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 22, 21)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
             ConstructionRequests.constructions.clear();

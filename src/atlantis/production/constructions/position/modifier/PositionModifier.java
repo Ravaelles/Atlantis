@@ -82,6 +82,7 @@ public class PositionModifier {
 
             if (enemyNatural != null && enemyNaturalChoke != null) {
                 APosition at = enemyNaturalChoke.translateTilesTowards(4, enemyNatural);
+
                 return APositionFinder.findStandardPosition(builder, building, at, 10);
             }
             else if (enemyNaturalChoke != null) {
@@ -96,6 +97,7 @@ public class PositionModifier {
             AUnit enemyBase = EnemyUnits.enemyBase();
             if (enemyBase != null && enemyMainChoke != null) {
                 APosition at = enemyBase.translateTilesTowards(14, enemyMainChoke);
+
                 return APositionFinder.findStandardPosition(builder, building, at, 10);
             }
             else if (enemyMainChoke != null) {

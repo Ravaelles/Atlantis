@@ -47,6 +47,7 @@ public final class TunerBatchManifest {
     public static java.util.List<Game> parseGames(String manifest) {
         java.util.List<Game> games = new java.util.ArrayList<>();
         if (manifest == null) return games;
+
         for (String line : manifest.split("\n")) {
             if (line.isEmpty() || line.indexOf('|') < 0) continue;
             String[] cols = line.split("\\|", -1);
@@ -90,6 +91,7 @@ public final class TunerBatchManifest {
     /** The played map from the manifest header, or null when absent. */
     public static String parseMap(String manifest) {
         if (manifest == null) return null;
+
         for (String line : manifest.split("\n")) {
             if (line.startsWith("map=") && line.length() > 4) return line.substring(4).trim();
         }
@@ -107,6 +109,7 @@ public final class TunerBatchManifest {
             byte[] hash = MessageDigest.getInstance("MD5").digest(raw.toString().getBytes(StandardCharsets.UTF_8));
             StringBuilder hex = new StringBuilder();
             for (byte b : hash) hex.append(String.format("%02x", b & 0xff));
+
             return hex.toString();
         } catch (Exception e) {
             throw new IllegalStateException("MD5 unavailable", e);
@@ -142,6 +145,7 @@ public final class TunerBatchManifest {
     public static List<String> gameDirs(String manifest) {
         List<String> dirs = new ArrayList<>();
         if (manifest == null) return dirs;
+
         for (String line : manifest.split("\n")) {
             if (line.isEmpty() || line.indexOf('|') < 0) continue;
             dirs.add(line.substring(0, line.indexOf('|')));

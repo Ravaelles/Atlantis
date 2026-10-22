@@ -29,6 +29,7 @@ public class CloakingField extends Commander {
     @Override
     protected boolean handle() {
         AddToQueue.tech(Cloaking_Field);
+
         return false;
     }
 }

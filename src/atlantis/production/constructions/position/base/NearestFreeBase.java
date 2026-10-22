@@ -35,6 +35,7 @@ public class NearestFreeBase {
                     + "\nnearTo = " + nearTo
                     + "\nconstruction = " + construction
             );
+
             return null;
         }
 
@@ -45,6 +46,7 @@ public class NearestFreeBase {
         if (construction != null) construction.setMaxDistance(3);
 
         double maxDistance = construction != null && construction.maxDistance() >= 0 ? construction.maxDistance() : 3;
+
         return maxDistance;
     }
 

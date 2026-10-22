@@ -92,6 +92,7 @@ public class FirstPylonTimingTest extends AbstractTestWithWorld {
                 Queue.get().clearCache();
                 ConstructionRequests.constructions.clear();
                 Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Pylon, 8));
+
                 return;
             }
 

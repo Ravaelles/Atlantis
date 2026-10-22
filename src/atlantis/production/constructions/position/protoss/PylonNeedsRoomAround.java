@@ -31,6 +31,7 @@ public class PylonNeedsRoomAround {
             if (probe == null || !probe.isWalkable()) {
                 AbstractPositionFinder._STATUS = "Pylon needs room around (blocked at "
                     + corner[0] + "/" + corner[1] + ")";
+
                 return true;
             }
         }

@@ -64,6 +64,7 @@ public class PrepareConstructionSite {
             // the order stays a plain queued row; the orders path reports it
             // (Can't find place) and retries - same as today, no leak.
             order.setConstruction(null);
+
             return;
         }
 
@@ -83,6 +84,7 @@ public class PrepareConstructionSite {
                 .param("minerals", A.minerals())
                 .log(A.now(), A.minSec());
             order.setConstruction(null);
+
             return;
         }
 
@@ -199,12 +201,14 @@ public class PrepareConstructionSite {
      */
     private static void dropBuilderlessNotStarted(Construction construction) {
         if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return;
+
         AUnit builder = construction.builder();
         // Archive knows dead even when the wrapper still reports hp > 0
         // (measured Wine: builder #126 dead 12:28, STARTED twin still
         // named it 12:35, warp froze with zero rows). A corpse reads
         // alive here without the archive check and the site rots silently.
         if (builder != null && builder.isAlive() && !UnitsArchive.isDestroyed(builder.id())) return;
+
         ProductionOrder order = construction.productionOrder();
         if (order == null || order.isStatus(OrderStatus.FINISHED)) return;
 

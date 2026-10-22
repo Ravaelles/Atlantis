@@ -36,6 +36,7 @@ public final class HighGround {
      */
     public static boolean preferFoeSide(int ourHeight, int foeHeight) {
         if (ourHeight < 0 || foeHeight < 0) return false;
+
         return foeHeight > ourHeight;
     }
 
@@ -43,6 +44,7 @@ public final class HighGround {
     public static int groundHeightOf(APosition tile) {
         try {
             if (tile == null) return -1;
+
             return atlantis.game.A.game().getGroundHeight(tile.tx(), tile.ty());
         } catch (Exception | Error ignored) {
             return -1;

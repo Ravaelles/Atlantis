@@ -20,6 +20,7 @@ public class ProtossTooCloseToOtherBuildings {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
         return true;
     }
 }

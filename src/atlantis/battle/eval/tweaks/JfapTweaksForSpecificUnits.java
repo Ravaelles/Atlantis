@@ -33,6 +33,7 @@ public class JfapTweaksForSpecificUnits {
 
     public static double hydra(AUnit unit) {
         Selection friendlyHydras = unit.friendsNear().add(unit).ofType(AUnitType.Zerg_Hydralisk);
+
         return friendlyHydras.count() * HYDRA_SINGLE_UNIT_BONUS;
     }
 }

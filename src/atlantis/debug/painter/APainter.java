@@ -152,7 +152,9 @@ public class APainter {
 
     public static boolean paintLine(AUnit unit, AUnit end, Color color) {
         if (isDisabled() || unit == null || end == null) return false;
+
         bwapi.drawLineMap(unit.position().p(), end.position().p(), color);
+
         return true;
     }
 

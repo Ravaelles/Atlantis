@@ -67,6 +67,7 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
 
         world(30, AbstractTestWithWorld.units(nexus, probe), new FakeUnit[0], () -> {
             if (atlantis.game.A.now() != 10) return;
+
             currentSupplyUsed = 30;
             currentMinerals = 1000;
 
@@ -89,6 +90,7 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
 
         world(30, AbstractTestWithWorld.units(nexus, probe), new FakeUnit[0], () -> {
             if (atlantis.game.A.now() != 10) return;
+
             currentSupplyUsed = 10;
             currentMinerals = 10;
 
@@ -109,6 +111,7 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
 
         world(30, AbstractTestWithWorld.units(nexus, probe), new FakeUnit[0], () -> {
             if (atlantis.game.A.now() != 10) return;
+
             currentSupplyUsed = 30;
             currentMinerals = 1000;
 

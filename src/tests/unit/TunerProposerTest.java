@@ -30,6 +30,7 @@ public class TunerProposerTest {
         hall.offer(new TunerObjective.Row("game-1", true, 20, 60), vector(2.0));
         hall.offer(new TunerObjective.Row("game-2", true, 10, 60), vector(4.0));
         hall.offer(new TunerObjective.Row("game-3", false, 1, 10), vector(9.0));
+
         return hall;
     }
 
@@ -39,6 +40,7 @@ public class TunerProposerTest {
             vector.put(bound.getKey(), (bound.getValue()[0] + bound.getValue()[1]) / 2);
         }
         vector.put("KiteStepTiles", kiteStep);
+
         return vector;
     }
 

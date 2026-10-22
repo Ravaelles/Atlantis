@@ -82,6 +82,7 @@ public class AStrategy {
 
     public AStrategy setName(String name) {
         this.name = name;
+
         return this;
     }
 
@@ -100,6 +101,7 @@ public class AStrategy {
 
     public AStrategy setUnplayable() {
         this.playable = false;
+
         return this;
     }
 
@@ -109,6 +111,7 @@ public class AStrategy {
 
     public AStrategy setUrl(String url) {
         this.url = url;
+
         return this;
     }
 
@@ -122,6 +125,7 @@ public class AStrategy {
 
     public AStrategy setGoingRush() {
         this.goingRush = true;
+
         return this;
     }
 
@@ -131,6 +135,7 @@ public class AStrategy {
 
     public AStrategy setGoingCheese() {
         this.goingCheese = true;
+
         return this;
     }
 
@@ -140,6 +145,7 @@ public class AStrategy {
 
     public AStrategy setGoingExpansion() {
         this.goingExpansion = true;
+
         return this;
     }
 
@@ -149,6 +155,7 @@ public class AStrategy {
 
     public AStrategy setGoingTech() {
         this.goingTech = true;
+
         return this;
     }
 
@@ -158,6 +165,7 @@ public class AStrategy {
 
     public AStrategy setGoingHiddenUnits() {
         this.goingHiddenUnits = true;
+
         return this;
     }
 
@@ -173,6 +181,7 @@ public class AStrategy {
      */
     public AStrategy setGoingAirUnitsQuickly() {
         this.goingAirUnitsQuickly = true;
+
         return this;
     }
 
@@ -188,11 +197,13 @@ public class AStrategy {
      */
     public AStrategy setGoingAirUnitsLate() {
         this.goingAirUnitsLate = true;
+
         return this;
     }
 
     public AStrategy setGoingBio() {
         this.goingBio = true;
+
         return this;
     }
 
@@ -206,6 +217,7 @@ public class AStrategy {
 
     public AStrategy setTerran() {
         this.terran = true;
+
         return this;
     }
 
@@ -215,6 +227,7 @@ public class AStrategy {
 
     public AStrategy setProtoss() {
         this.protoss = true;
+
         return this;
     }
 
@@ -224,6 +237,7 @@ public class AStrategy {
 
     public AStrategy setZerg() {
         this.zerg = true;
+
         return this;
     }
 

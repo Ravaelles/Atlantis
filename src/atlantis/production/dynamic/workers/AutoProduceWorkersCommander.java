@@ -69,6 +69,7 @@ public class AutoProduceWorkersCommander extends Commander {
         }
 
         ProduceWorker.produceWorker();
+
         return false;
     }
 
@@ -194,9 +195,11 @@ public class AutoProduceWorkersCommander extends Commander {
      */
     private static boolean earlyConstantWorkerFlow() {
         if (A.supplyTotal() < 10 || A.supplyTotal() > 20) return false;
+
         int shortfall = 50
             + PriorityWaiters.mineralsAboveReady(ProductionOrderPriority.STANDARD)
             - A.minerals();
+
         return shortfall <= 24;
     }
 
@@ -209,6 +212,7 @@ public class AutoProduceWorkersCommander extends Commander {
     private static boolean supplyNineWorkerMandate() {
         if (A.supplyUsed() != 9) return false;
         if (Count.ofTypeWithUnfinished(Protoss_Pylon) == 0) return false;
+
         for (ProductionOrder order : Queue.get().notFinished().ofType(AUnitType.Protoss_Gateway).list()) {
             if (order.minSupply() <= 10) return true;
         }
@@ -315,6 +319,7 @@ public class AutoProduceWorkersCommander extends Commander {
     public static boolean canQueueWorkerAt(AUnit base) {
         if (base == null || !base.isAlive() || !base.isCompleted()) return false;
         if (base.isFree() && base.trainingQueue().isEmpty()) return true;
+
         return shouldQueueAnotherWorker(
             base.remainingTrainTime(), workerWaitersBehindCurrent(base) > 0);
     }
@@ -332,6 +337,7 @@ public class AutoProduceWorkersCommander extends Commander {
             if (unitType.equals(AtlantisRaceConfig.WORKER)) workers++;
         }
         if (base.remainingTrainTime() > 0) workers--;
+
         return Math.max(0, workers);
     }
 
@@ -341,6 +347,7 @@ public class AutoProduceWorkersCommander extends Commander {
      */
     public static boolean shouldQueueAnotherWorker(int remainingTrainFrames, boolean workerAlreadyQueued) {
         if (workerAlreadyQueued) return false;
+
         return remainingTrainFrames >= 0 && remainingTrainFrames <= NEXT_WORKER_WHEN_TRAINING_REMAINS;
     }
 
@@ -359,6 +366,7 @@ public class AutoProduceWorkersCommander extends Commander {
         if (A.supplyUsed() <= 150) return true;
 
         int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
+
         return workers < autoProduceMaxWorkers;
     }
 

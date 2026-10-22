@@ -48,6 +48,7 @@ public class IdleProtectorRepairs extends Manager {
 
         if (nearestWoundedUnit != null && A.hasMinerals(2)) {
             unit.repair(nearestWoundedUnit, "HelpTank:" + nearestWoundedUnit.name());
+
             return true;
         }
         return false;
@@ -61,6 +62,7 @@ public class IdleProtectorRepairs extends Manager {
 
         if (nearestWoundedUnit != null && A.hasMinerals(5)) {
             unit.repair(nearestWoundedUnit, "HelpGround:" + nearestWoundedUnit.name());
+
             return true;
         }
         return false;
@@ -73,6 +75,7 @@ public class IdleProtectorRepairs extends Manager {
 
         if (nearestWoundedUnit != null && A.hasMinerals(5)) {
             unit.repair(nearestWoundedUnit, "HelpAir:" + nearestWoundedUnit.name());
+
             return true;
         }
         return false;

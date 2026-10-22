@@ -154,6 +154,7 @@ public class BuilderStaysDispatchedWhenSupplyMetTest extends AbstractTestWithWor
             fake(AUnitType.Protoss_Probe, 33, 30)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             Construction construction = new Construction(AUnitType.Protoss_Pylon);
             picked[0] = construction.assignOptimalBuilder();
         });
@@ -175,10 +176,12 @@ public class BuilderStaysDispatchedWhenSupplyMetTest extends AbstractTestWithWor
         while (true) {
             int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
             if (key < 0) return false;
+
             int end = log.indexOf('\n', key);
             if (end < 0) end = log.length();
             String row = log.substring(key, end);
             if (row.contains("\"type\":\"Pylon\"") && row.contains("\"builder\":" + builderId)) return true;
+
             from = end;
         }
     }

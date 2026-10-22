@@ -47,6 +47,7 @@ public class ProduceFirstAssimilator {
             if (AddToQueue.withTopPriority(type()) != null) {
                 reason = "Queued";
                 AConsole.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
+
                 return true;
             }
             return blocked("QueueRejected");
@@ -58,6 +59,7 @@ public class ProduceFirstAssimilator {
 
     private static boolean blocked(String reason) {
         ProduceFirstAssimilator.reason = reason;
+
         return false;
     }
 

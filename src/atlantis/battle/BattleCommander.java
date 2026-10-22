@@ -88,6 +88,7 @@ public class BattleCommander extends Commander {
             if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;
 
             fight(unit, target, strategy);
+
             return;
         }
 

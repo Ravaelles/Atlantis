@@ -25,6 +25,7 @@ public class DecisionDispatcher {
     public static boolean askAndIssue(AQuestion question, BoardState state) {
         ADecision decision = question.ask(state);
         if (decision == null) return false;
+
         return issue(decision);
     }
 
@@ -36,6 +37,7 @@ public class DecisionDispatcher {
         // stay with the WORKER_GATE / ORDER_NOT_READY twins.
         boolean done = executor.execute(decision);
         if (done) DecisionLog.record(decision);
+
         return done;
     }
 }

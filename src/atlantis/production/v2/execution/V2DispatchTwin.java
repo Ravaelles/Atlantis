@@ -22,6 +22,7 @@ public final class V2DispatchTwin {
 
     public static void emit(int frame, List<DispatchResult> results) {
         if (results == null) return;
+
         for (DispatchResult result : results) {
             if (result == null || result.item() == null || result.item().item() == null) continue;
             EventLog.key(LogKey.V2_DISPATCH)

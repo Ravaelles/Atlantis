@@ -97,42 +97,49 @@ public final class EscapeTuning {
     public EscapeTuning withStaticWeight(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.staticWeight = value;
+
         return copy;
     }
 
     public EscapeTuning withCornerWeight(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.cornerWeight = value;
+
         return copy;
     }
 
     public EscapeTuning withPocketExtra(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.pocketExtra = value;
+
         return copy;
     }
 
     public EscapeTuning withEnemyWeight(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.enemyWeight = value;
+
         return copy;
     }
 
     public EscapeTuning withStaticRadiusTiles(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.staticRadiusTiles = value;
+
         return copy;
     }
 
     public EscapeTuning withEnemyRadiusTiles(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.enemyRadiusTiles = value;
+
         return copy;
     }
 
     public EscapeTuning withArcBlend(double value) {
         EscapeTuning copy = new EscapeTuning(this);
         copy.arcBlend = value;
+
         return copy;
     }
 }

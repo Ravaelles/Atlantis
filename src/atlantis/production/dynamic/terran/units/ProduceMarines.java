@@ -86,16 +86,19 @@ public class ProduceMarines {
         if (!TerranDecisions.shouldMakeTerranBio()) {
             if (TerranDynamicInfantry.DEBUG)
                 System.out.println("Marines - Dont - shouldNOTMakeTerranBio - " + ShouldMakeTerranBio.reason);
+
             return false;
         }
 
         if (TerranDynamicInfantry.needToSaveForFactory()) {
             if (TerranDynamicInfantry.DEBUG) System.out.println("Marines - Dont - saveForFactory");
+
             return false;
         }
 
         if (A.supplyUsed() >= 32 && !A.canAffordWithReserved(80, 0)) {
             if (TerranDynamicInfantry.DEBUG) System.out.println("Marines - Dont - cantNOTAffordWithReserved");
+
             return false;
         }
 

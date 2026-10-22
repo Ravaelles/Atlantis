@@ -247,6 +247,7 @@ public class RequestBuildingNearTest extends WorldStubForTests {
     private static void printOrder(ProductionOrder order, HasPosition nearTo) {
         if (order == null || order.construction() == null) {
             System.err.println("Order is null, can't print it.");
+
             return;
         }
 

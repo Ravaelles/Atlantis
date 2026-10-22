@@ -15,6 +15,7 @@ public class Options {
 
     public Options set(String key, Object value) {
         options.put(key, value);
+
         return this;
     }
 

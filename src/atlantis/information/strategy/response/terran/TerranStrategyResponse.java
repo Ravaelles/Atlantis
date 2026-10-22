@@ -37,11 +37,13 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
                 requestBunkerNearMain();
 
                 Missions.forceGlobalMissionDefend("Rush bunker defence");
+
                 return true;
             }
 
             if (strength <= 120 && AGame.killsLossesResourceBalance() < 500) {
                 Missions.forceGlobalMissionDefend("Rush defence");
+
                 return true;
             }
         }

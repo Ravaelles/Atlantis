@@ -11,6 +11,7 @@ public class FakeUnitHelper {
     public static FakeUnit[] merge(FakeUnit[] fakeUnits1, FakeUnit[] fakeUnits2) {
         ArrayList<FakeUnit> fakeUnitsList = new ArrayList<>(Arrays.asList(fakeUnits2));
         fakeUnitsList.addAll(Arrays.asList(fakeUnits1));
+
         return fakeUnitsList.toArray(new FakeUnit[]{});
     }
 }

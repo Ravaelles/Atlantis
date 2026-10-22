@@ -38,6 +38,7 @@ public class ProduceTurretForBunker {
 
         order.setAroundPosition(bestPosition);
         order.setMaximumDistance(5);
+
         return true;
     }
 

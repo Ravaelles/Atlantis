@@ -33,6 +33,7 @@ public class ProtectScvBusyConstructing extends Manager {
                 AUnit nearestPeskyEnemyunit = builder.enemiesNear().inRadius(3, builder).nearestTo(unit);
                 if (nearestPeskyEnemyunit != null) {
                     unit.setTooltipTactical("ProtectBuilder");
+
                     return unit.attackUnit(nearestPeskyEnemyunit);
                 }
             }

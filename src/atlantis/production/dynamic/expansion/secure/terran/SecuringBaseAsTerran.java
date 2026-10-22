@@ -45,6 +45,7 @@ public class SecuringBaseAsTerran {
         // @Fix
         if (bunkerPosition.regionsMatch(Select.main())) {
             ErrorLog.printMaxOncePerMinute("Trying SecuringBaseAsTerran main - ignore");
+
             return true;
         }
         return false;
@@ -82,6 +83,7 @@ public class SecuringBaseAsTerran {
 
         if (order == null) {
             ErrorLog.printMaxOncePerMinute("Empty ProductionOrder for secureWithBunker");
+
             return false;
         }
 

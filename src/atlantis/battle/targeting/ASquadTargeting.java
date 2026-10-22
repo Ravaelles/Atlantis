@@ -66,8 +66,10 @@ public class ASquadTargeting {
      */
     public static AUnit nearestEngageableEnemy(AUnit unit, double maxDist) {
         if (unit == null) return null;
+
         Selection enemies = unit.enemiesNear();
         if (enemies == null) return null;
+
         AUnit best = null;
         double bestDist = maxDist;
         for (AUnit enemy : enemies.list()) {

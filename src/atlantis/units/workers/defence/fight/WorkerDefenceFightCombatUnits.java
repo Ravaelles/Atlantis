@@ -138,6 +138,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
                 && outnumberedByNearbyRaiders(unit)
         ) {
             unit.setTooltipTactical("TooBadEval");
+
             return false;
         }
 
@@ -159,6 +160,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
         if (shouldSwarm(enemy)) {
             unit.setTooltipTactical("Swarm!");
+
             return unit.attackUnit(enemy);
         }
 
@@ -166,6 +168,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // swarming does not apply.
         if (enemy.enemiesNear().bases().countInRadius(12, enemy) > 0) {
             unit.setTooltipTactical("FurMotherland!");
+
             return unit.attackUnit(enemy);
         }
 
@@ -218,6 +221,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // Our workers, not the enemy's: friendsNear() answers from the asking
         // unit's side, so on an ENEMY it returns the enemy's own friends.
         int workersAround = Select.ourWorkers().inRadius(9, enemy).count();
+
         return workersAround >= 2;
     }
 

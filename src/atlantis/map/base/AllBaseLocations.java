@@ -43,6 +43,7 @@ public class AllBaseLocations {
         }
 
         assignRoles(locations);
+
         return locations;
     }
 

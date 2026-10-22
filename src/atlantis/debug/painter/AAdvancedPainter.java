@@ -115,6 +115,7 @@ public class AAdvancedPainter extends APainter {
 
         if (paintingMode == MODE_PARTIAL_PAINTING) {
             CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
+
             return;
         }
 

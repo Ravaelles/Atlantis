@@ -65,6 +65,7 @@ public class ProductionHealthWatcher extends Commander {
         checkOverstock();
         checkFlood();
         checkHoard();
+
         return false;
     }
 

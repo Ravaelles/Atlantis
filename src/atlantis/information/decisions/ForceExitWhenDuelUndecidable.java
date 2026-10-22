@@ -71,6 +71,7 @@ public class ForceExitWhenDuelUndecidable extends Commander {
         );
 
         Atlantis.getInstance().onEnd(false);
+
         return false;
     }
 }

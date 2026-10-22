@@ -20,6 +20,7 @@ public class DynamicBuildingsCommander extends Commander {
         // keep flowing - buildings don't consume supply, so gating them
         // cannot stall the script.
         if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
+
         return true;
     }
 
@@ -55,6 +56,7 @@ public class DynamicBuildingsCommander extends Commander {
         if (We.terran()) return (new TerranDynamicBuildingsCommander());
         if (We.protoss()) return (new ProtossDynamicBuildingsCommander());
         if (We.zerg()) return (new ZergDynamicBuildingsCommander());
+
         return null;
     }
 }

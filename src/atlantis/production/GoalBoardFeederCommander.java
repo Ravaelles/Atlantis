@@ -28,6 +28,7 @@ public class GoalBoardFeederCommander extends Commander {
             return false;
         }
         GoalBoardFeeder.update();
+
         return false;
     }
 }

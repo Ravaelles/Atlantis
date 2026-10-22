@@ -201,28 +201,33 @@ public final class ADecision {
 
         public Builder frame(int frame) {
             this.frame = frame;
+
             return this;
         }
 
         public Builder supply(int used, int total) {
             this.supplyUsed = used;
             this.supplyTotal = total;
+
             return this;
         }
 
         public Builder bank(int minerals, int gas) {
             this.minerals = minerals;
             this.gas = gas;
+
             return this;
         }
 
         public Builder payload(Object payload) {
             this.payload = payload;
+
             return this;
         }
 
         public Builder orderId(Integer orderId) {
             this.orderId = orderId;
+
             return this;
         }
 

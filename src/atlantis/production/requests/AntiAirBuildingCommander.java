@@ -61,6 +61,7 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
 
         if (at != null) {
             AddToQueue.withTopPriority(buildType, at);
+
             return true;
         }
 

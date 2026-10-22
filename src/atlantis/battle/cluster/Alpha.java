@@ -28,6 +28,7 @@ public class Alpha {
     public static void gather() {
         atlantis.units.select.Selection army = Select.ourCombatUnits();
         if (army == null) return;
+
         for (AUnit unit : army.list()) {
             if (unit != null && unit.isAlive() && unit.squad() == null) {
                 ALPHA.addUnit(unit);
@@ -45,7 +46,9 @@ public class Alpha {
 
     public static atlantis.map.position.HasPosition alphaCenter() {
         if (!ALPHA.isEmpty() && ALPHA.center() != null) return ALPHA.center();
+
         AUnit main = Select.mainOrAnyBuilding();
+
         return main;
     }
 }

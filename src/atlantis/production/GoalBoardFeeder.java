@@ -154,6 +154,7 @@ public final class GoalBoardFeeder {
         if ("supply-pylon".equals(goalId)) return AddToQueue.withTopPriority(type);
         if ("core".equals(goalId)) return AddToQueue.withHighPriority(type);
         if ("assimilator".equals(goalId)) return AddToQueue.withHighPriority(type);
+
         return AddToQueue.withStandardPriority(type);
     }
 
@@ -218,11 +219,13 @@ public final class GoalBoardFeeder {
         if (goal == null) return true;
         if (atlantis.game.A.now() - lastFundedFrame > 30) return true;
         if (!lastActiveIds.contains(goal)) return true;
+
         return lastFundedIds.contains(goal);
     }
 
     private static String goalFor(AUnitType type) {
         if (type == null) return null;
+
         for (java.util.Map.Entry<String, AUnitType> entry : GOAL_TYPES.entrySet()) {
             if (type.equals(entry.getValue())) return entry.getKey();
         }
@@ -238,6 +241,7 @@ public final class GoalBoardFeeder {
      */
     public static boolean wantedGoal(String id) {
         if (!boardFresh()) return true;
+
         return lastActiveIds.contains(id);
     }
 

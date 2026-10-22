@@ -26,6 +26,7 @@ public class CrucialRepairsNearbyCommander extends Commander {
 
     private boolean tooManyRepairers() {
         int totalRepairers = RepairAssignments.countTotalRepairers();
+
         return totalRepairers >= 8 || (totalRepairers >= 12 && totalRepairers >= Count.workers() / 3);
     }
 }

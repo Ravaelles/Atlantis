@@ -8,6 +8,7 @@ public class ClearCountCache {
     public static boolean clear() {
         Count.clearCache();
         Select.clearCache();
+
         return true;
     }
 }

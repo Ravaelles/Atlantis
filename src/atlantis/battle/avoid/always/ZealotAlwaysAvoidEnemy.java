@@ -17,6 +17,7 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isZealot()) return false;
+
         eval = unit.eval();
 
         if (Enemy.zerg()) return vsZerg();
@@ -63,6 +64,7 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
         if (unit.friendsNear().workers().inRadius(1.5, unit).atLeast(2)) return false;
 
         if (unit.hp() >= 35 && unit.friendsNear().workers().inRadius(3, unit).atLeast(1)) return false;
+
         if (unit.hp() <= 35 && unit.eval() <= 3) t("WoundedEarlyB");
 
         if (unit.hp() <= 32 || unit.eval() <= 0.9) {

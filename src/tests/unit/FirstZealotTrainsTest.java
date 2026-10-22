@@ -61,6 +61,7 @@ public class FirstZealotTrainsTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() == 0) tests.fakes.FakeUnitData.TRAIN.clear();
 
             if (atlantis.game.A.now() != 140) return;
+
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 

@@ -86,6 +86,7 @@ public class ProtossDefineNearTo {
             int bases = Count.bases();
             if (bases >= 3) return Select.ourBases().last();
             if (bases == 2) return Chokes.natural();
+
             return Chokes.mainChoke();
         }
 
