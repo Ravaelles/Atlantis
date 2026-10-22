@@ -1581,6 +1581,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 fogged snapshots, own copies only (owner: store our own
+ APosition, never invisible coordinates; drop the address when its
+ tile is seen empty): updateLastPosition skips invisible units, and
+ foggedUnitNoLongerWhereItWasBefore clears the address instead of
+ re-snapshotting from an invisible unit. The unit stays known, only
+ the address goes - the ghost chain falls through to unexplored
+ ground. Pinned FoggedPositionTest 2/2, both branches mutation-proofed.
  2026-10-26 kite outranks holding and trading (owner: ClusterHold /
  ClusterReengage dragoons stood while zealots chewed them): holding
  breaks when a close enemy can hit the unit and the weapon cools

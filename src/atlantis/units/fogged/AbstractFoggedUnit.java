@@ -111,6 +111,12 @@ public class AbstractFoggedUnit extends AUnit {
         if (unit.u() == null && !UnitOrigin.isSimulated(unit)) return;
 //        if (unit.x() <= 0 || unit.x() >= 32000) return;
 
+        // Own snapshot, only from sight (owner 2026-10-26): an invisible
+        // unit's engine coordinates are not a position - copying them
+        // over the last-seen tile plants ghosts the army marches at
+        // forever. When sight is lost the snapshot stays frozen instead.
+        if (!unit.isVisibleUnitOnMap()) return;
+
         // If the unit.u is defined, it means it's visible, so it has valid x,y
         _lastPosition = new APosition(unit.x(), unit.y());
         cacheInt.set("lastPositionUpdated", -1, A.now());
@@ -199,7 +205,14 @@ public class AbstractFoggedUnit extends AUnit {
     public void foggedUnitNoLongerWhereItWasBefore() {
 //        if (_lastType != null && _lastType.isABuilding()) return;
 
-        updateLastPosition(_lastAUnit);
+        // The tile is visible and empty: the address is dead, not moved
+        // (owner 2026-10-26). Do NOT re-snapshot from the live unit here -
+        // it is invisible by construction of the caller, so its engine
+        // coordinates are not a position. Clear the address instead: the
+        // unit stays known (id, type) but addressless, and the ghost
+        // chain skips it toward unexplored ground.
+        _lastPosition = null;
+        cacheInt.set("lastPositionUpdated", -1, A.now());
     }
 
     public int lastPositionUpdated() {
