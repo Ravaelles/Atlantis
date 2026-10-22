@@ -57,6 +57,7 @@ public final class FightTarget {
         if (target.isVisibleUnitOnMap() && target.position() != null) {
             DuelMemory.snapshotContact(unit, target.position());
         }
+
         // (moved to BattleCommander.act: kiting units never reach fight(),
         // so the army contact must be recorded at acquisition, not here)
         if (!target.isVisibleUnitOnMap()) {
@@ -73,7 +74,9 @@ public final class FightTarget {
                     .log(A.now(), A.minSec());
             }
         }
+
         if (holdSwing(unit, target)) return;
+
         // Post-swing settle (PurpleWave AttackDelay, owner 2026-10-26):
         // a move or target switch landing right after the attack
         // animation sticks the unit - the order must arrive no earlier
@@ -82,6 +85,7 @@ public final class FightTarget {
         // after it. Calibrates per unit from observed swings, so no
         // hand-written stop frames anywhere.
         if (attackSettleHold(unit)) return;
+
         // A Dragoon steps back only when the enemy is inside its
         // safety margin - otherwise it stands and lets the standing
         // attack order fire the instant the cooldown hits zero
@@ -90,19 +94,19 @@ public final class FightTarget {
         // is the nearest enemy inside the envelope, not necessarily
         // the focused target: focus fire must not pin a Dragoon that
         // is being shredded).
-        AUnit threat = ASquadTargeting
-            .nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
+        AUnit threat = ASquadTargeting.nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
         HitTwin.sample(unit, threat != null ? threat : target);
         FightTrace.sample(unit, threat != null ? threat : target);
+
         int now = A.now();
         Integer lastStep = DuelMemory.lastStepFrame(unit);
         if (makeWay(unit, now, lastStep)) return;
+
         // Zealot hold-fire discipline (NEXT #179): until a ranged weapon
         // fires inside the cluster, zealots hold instead of initiating -
         // the moment one is really hit, the formation breaks and it
         // attacks. Lone-zealot armies never hold (they would stare).
-        if (unit.isZealot()
-            && atlantis.battle.strategy.ZealotHoldFire.hold(unit)) return;
+        if (unit.isZealot() && atlantis.battle.strategy.ZealotHoldFire.hold(unit)) return;
         if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
         if (reengage(unit, target, now, lastStep)) return;
 

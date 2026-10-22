@@ -539,3 +539,12 @@ same hours are not spent twice.
   immediately before `}` gets no blank after it. Guard-style early
   returns (`if (...) return ...;`) count as guards, not as finals.
 
+## 25. Checkstyle is owner-run; the assistant never runs it (owner's ruling, 2026-10-22)
+
+- The assistant **never runs `scripts/checkstyle.sh`** - not before a
+  commit, not to "verify", not to count violations. The owner runs it.
+- Pre-commit verification by the assistant is the test suite
+  (`scripts/run-tests.sh`); checkstyle output is never part of the
+  assistant's turn. Do not report violation counts, do not attribute
+  them, do not auto-fix them.
+
