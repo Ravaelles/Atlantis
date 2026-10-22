@@ -438,7 +438,11 @@ public class FakeUnit extends AUnit implements Serializable {
 //        System.err.println("### End of ATTACK");
         targetPosition = target.position();
         boolean issued = orderSink().attackUnit(this, target);
-        if (issued) noteDecision("Attack:" + target.typeWithUnitId());
+        if (issued) {
+            String branch = tooltip();
+            noteDecision("Attack:" + target.typeWithUnitId()
+                + (branch == null || branch.isEmpty() ? "" : "/" + branch));
+        }
         return issued;
     }
 

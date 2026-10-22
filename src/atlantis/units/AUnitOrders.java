@@ -87,7 +87,14 @@ public interface AUnitOrders {
 
         boolean issued = unit().orderSink().attackUnit(unit(), target);
 
-        if (issued) unit.noteDecision("Attack:" + target.typeWithUnitId());
+        if (issued) {
+            // One row per issued order (owner 2026-10-26): target plus the
+            // branch that drove it, no "a:ATTACK_UNIT" infix - the attempt
+            // row used to double this line in every death log.
+            String branch = unit.tooltip();
+            unit.noteDecision("Attack:" + target.typeWithUnitId()
+                + (branch == null || branch.isEmpty() ? "" : "/" + branch));
+        }
 
         // Order-latency gate (owner recommendation 2026-10-12): never trust
         // isAttacking() in the first frames after the command - the engine registers the

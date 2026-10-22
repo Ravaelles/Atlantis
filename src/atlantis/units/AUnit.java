@@ -4115,6 +4115,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public void lastCommandIssuedNow(UnitCommandType command) {
         unitState().setLastCommandIssued(A.now());
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
+        // No journal row for the three partnered commands (owner 2026-10-26):
+        // their attempt row ("Attack_Unit/a:ATTACK_UNIT/...") duplicated the
+        // issue row ("Attack:Zealot#199/...") in every death log, doubling
+        // each frame. The issue sites journal once via noteDecision
+        // (attack carries target + branch, move/stop carry the tooltip) -
+        // this only stamps the cadence clock for them. Unpartnered commands
+        // (morph, build, research...) keep their row here: nobody else
+        // journals them.
+        if (command == UnitCommandType.Move
+            || command == UnitCommandType.Attack_Unit
+            || command == UnitCommandType.Stop) return;
 
         commandHistory.addMessage(
             withIssuer(command.name() + "/a:" + action().name() + "/" + tooltip), A.now()

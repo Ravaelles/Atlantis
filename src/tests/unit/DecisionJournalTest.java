@@ -117,6 +117,45 @@ public class DecisionJournalTest extends WorldStubForTests {
     }
 
     @Test
+    public void attackRowCarriesBranchWithoutAttemptInfix() {
+        // Owner 2026-10-26: one issued order means one row - target plus
+        // the branch that drove it, no "a:ATTACK_UNIT" attempt infix.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            dragoon.setTooltip("ClusterKite");
+            dragoon.attackUnit(zealot);
+
+            String journal = dragoon.commandHistory().toString();
+            assertTrue(journal.contains("Attack:" + zealot.typeWithUnitId() + "/ClusterKite"),
+                "target plus branch in one row: " + journal);
+            assertFalse(journal.contains("a:ATTACK_UNIT"),
+                "no attempt infix: " + journal);
+        });
+    }
+
+    @Test
+    public void partneredCommandsSkipTheAttemptRow() {
+        // The cadence clock still stamps, but Move/Attack_Unit/Stop leave
+        // no attempt row - their issue sites journal once via noteDecision.
+        // Unpartnered commands (morph, build...) keep the row here.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(), () -> {
+            dragoon.lastCommandIssuedNow(bwapi.UnitCommandType.Move);
+            dragoon.lastCommandIssuedNow(bwapi.UnitCommandType.Attack_Unit);
+            dragoon.lastCommandIssuedNow(bwapi.UnitCommandType.Stop);
+            assertTrue(dragoon.commandHistory().isEmpty(),
+                "partnered attempts journal nothing: " + dragoon.commandHistory());
+
+            dragoon.lastCommandIssuedNow(bwapi.UnitCommandType.Morph);
+            assertFalse(dragoon.commandHistory().isEmpty(),
+                "unpartnered commands keep their row: " + dragoon.commandHistory());
+        });
+    }
+
+    @Test
     public void armyActWritesDecisionsWithoutManagers() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
