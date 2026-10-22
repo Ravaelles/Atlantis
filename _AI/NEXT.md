@@ -1684,6 +1684,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  driver this game is not standing: one enemy zealot (#195) took 8
  of 9 kills unfocused while the army kited (94 stepped-aside + 14
  frozen-reset, movement healthy).
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 1/9 in 33 s): opening
+ sweep again at f0 (Regions fix holding), contact f124, brawl
+ lost by f562 (7 deaths around (65,40)), last dragoons run to
+ (50,48) and die f766/782. Zero unwalkable, zero FROZEN, all 9
+ deaths ClusterKite - the standing shapes stay fixed. Loss
+ driver, same as the 1/9 before: dragoons die in the first
+ contact minute (#162 f421 here, #186 f218 last time) and the
+ zealots get mopped after - DPS lost early, not formation
+ standing. Six-game Zeal band: one 12/5 win vs five losses;
+ the win needs the early brawl, not the march.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
