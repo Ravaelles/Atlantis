@@ -1488,29 +1488,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 death-log dedup (owner): one issued order means one journal
  row - the `lastCommandIssuedNow` attempt row doubled every issue row.
  Pinned `DecisionJournalTest` 9/9.
-- **#176** Death-log issuer attribution (owner 2026-10-21/22, HIGH priority):
- combat death logs show WHAT but never WHO. Live datum (1Drag Zealot#135):
- rows of `Attack_Unit/a:ATTACK_UNIT/null` with frame numbers, no hint
- which class drove the unit into it. Mechanism: `AUnit.commandHistory`
- (last 10) is written ONLY at the `AUnitOrders` funnel (attack :90,
- move :306, stop :393) plus `lastCommandIssuedNow`; rows carry
- op/action/tooltip, never the issuer. `managerLogs` stays empty for
- army deaths (static battle functions never record; `usedManager`
- is commented out). Direction: attribute each journal row to the
- deciding class. Preferred: explicit issuer threaded from call
- sites (precise, no magic); fallback if the fan-out is too wide:
- caller-class capture at the funnel (first atlantis.* frame above
- the funnel classes, bounded depth), cost measured first (orders
- are tens per frame; a shallow walk is microseconds). Rejected:
- stack printing at death (too late, the deciding frames are gone),
- per-order log spam (the journal already caps at 10 for that
- reason). Done when: a test dragoon driven through two different
- seams names a different deciding class per row; live: a 1Drag
- death log names the class behind every order row.
- 2026-10-22 code LANDED (pinned `DecisionJournalTest` 7/7: direct and
- funnel paths name the caller class; same-caller duplicates still
- collapse, different callers split - that IS the point). Live proof
- rides the next headless Wine duel game.
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
  so vs faster-attacking enemies (zerglings attack faster than
  zealots) they stand through the cooldown and bleed. Rule: after
