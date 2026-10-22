@@ -108,5 +108,6 @@ if [ "$rc" -eq 0 ]; then
   exit 0
 else
   say "violations found (exit $rc)"
+  say "note: checkstyle only reports - it never modifies files; re-run with the paths you touched (bare run covers the whole tree, including foreign files)"
   exit 1
 fi
