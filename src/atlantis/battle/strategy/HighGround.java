@@ -28,6 +28,17 @@ public final class HighGround {
         return (ourHeightTiles - enemyHeightTiles) * HEIGHT_WEIGHT - widthTiles * WIDTH_PENALTY;
     }
 
+    /**
+     * Which lip to hold: the foe side when both heights are known and
+     * theirs is higher, ours otherwise (unknown or flat keeps today).
+     * Pure seam: the live heights never reach a test, so the choice
+     * pins here while the reader stays guarded.
+     */
+    public static boolean preferFoeSide(int ourHeight, int foeHeight) {
+        if (ourHeight < 0 || foeHeight < 0) return false;
+        return foeHeight > ourHeight;
+    }
+
     /** Ground height at a tile, or -1 without a live map. Guarded. */
     public static int groundHeightOf(APosition tile) {
         try {

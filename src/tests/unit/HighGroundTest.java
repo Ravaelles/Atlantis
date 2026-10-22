@@ -50,4 +50,33 @@ public class HighGroundTest {
     public void nullTileGivesUnknown() {
         assertEquals(-1, HighGround.groundHeightOf(null));
     }
+
+    @Test
+    public void unknownGroundKeepsOurSide() {
+        assertTrue(!HighGround.preferFoeSide(-1, 2), "blind: hold ours, never guess");
+        assertTrue(!HighGround.preferFoeSide(2, -1), "blind: hold ours, never guess");
+        assertTrue(!HighGround.preferFoeSide(-1, -1), "blind: hold ours, never guess");
+    }
+
+    @Test
+    public void higherFoeSideWins() {
+        assertTrue(HighGround.preferFoeSide(0, 2), "the high lip shoots down");
+    }
+
+    @Test
+    public void tiesAndHigherOursKeepOurSide() {
+        assertTrue(!HighGround.preferFoeSide(2, 2), "flat: the 10-tile rule stands");
+        assertTrue(!HighGround.preferFoeSide(2, 0), "already high: stay");
+    }
+
+    @Test
+    public void chooseHoldTakesFarLipOnlyWhenKnownHigher() {
+        atlantis.map.position.APosition ours = atlantis.map.position.APosition.create(20, 20);
+        atlantis.map.position.APosition foeHold = atlantis.map.position.APosition.create(30, 20);
+
+        assertEquals(foeHold, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, 0, 2));
+        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, 2, 2));
+        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, -1, 2));
+        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, null, 0, 2));
+    }
 }

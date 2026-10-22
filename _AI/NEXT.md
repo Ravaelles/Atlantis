@@ -1365,6 +1365,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10-tile rule on flat). Proof: pure unit tests on synthetic choke
   geometry (high side outscores low; stepped-wide beats narrow-flat),
   then a live game where the line demonstrably holds the high side.
+ 2026-10-26 wiring LANDED (high side preferred via HighGround.preferFoeSide + ChokeStandoff.chooseHold + foe-side candidate, #170-guarded: never march through the enemy to reach it). Pins: preferFoeSide 4/4 + chooseHold (mutation-proofed); the holdPointFor wiring itself is live-only by construction (test heights always read unknown, so the fallback path is behavior-identical in-JVM) - the TauCross macro never engaged it (Hydralisks are ranged, hold correctly silent). Live proof still rides a melee-choke game.
 - **#172** Region-aware escape destinations (owner 2026-10-20, PurpleWave
   match review: losing won games to corner traps, Dragoons most of all).
   Small units slip through, large ones (Dragoon) die on a failed escape -

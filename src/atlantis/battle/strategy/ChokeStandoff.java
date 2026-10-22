@@ -64,7 +64,40 @@ public final class ChokeStandoff {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
-            return holdPoint(choke.center(), unit);
+            APosition ours = holdPoint(choke.center(), unit);
+            // High side first (NEXT #171): both lips are candidates and
+            // the heights choose. Flat or unreadable ground keeps today.
+            APosition foeHold = foeSideHold(choke, unit);
+            return chooseHold(ours, foeHold,
+                HighGround.groundHeightOf(ours),
+                foeHold == null ? -1 : HighGround.groundHeightOf(foeHold));
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * The lip to hold, answered on numbers alone so it pins without a
+     * map: the far lip when known higher, ours otherwise. Public as a
+     * seam - live heights never reach a test.
+     */
+    public static APosition chooseHold(APosition ours, APosition foeHold, int ourHeight, int foeHeight) {
+        if (foeHold != null && HighGround.preferFoeSide(ourHeight, foeHeight)) return foeHold;
+        return ours;
+    }
+
+    /**
+     * Hold point on the far lip, or null when holding there would march
+     * through the enemy (#170 constrains #171: height never justifies a
+     * suicide run through them) or when no enemy orients the far side.
+     */
+    private static APosition foeSideHold(AChoke choke, AUnit unit) {
+        try {
+            AUnit foe = atlantis.units.select.Select.enemy()
+                .combatUnits().nearestTo(choke.center());
+            if (foe == null || foe.position() == null) return null;
+            if (unit.distTo(foe) <= unit.distTo(choke.center())) return null;
+            return holdPoint(choke.center(), foe.position());
         } catch (Exception ignored) {
             return null;
         }
