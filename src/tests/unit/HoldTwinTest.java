@@ -1,0 +1,106 @@
+package tests.unit;
+
+import atlantis.battle.FormationHold;
+import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.twins.HoldTwin;
+import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
+import tests.fakes.FakeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemies;
+import static tests.unit.AbstractTestWithUnits.fakeOurs;
+
+/**
+ * HOLD twin (NEXT #182): every hold decision names its verdict - hold,
+ * or which gate broke it (veto/contact/damage/kite/unstuck/no-slot/
+ * move-failed) - with the nearest enemy distance beside it, so the
+ * next "stood into chews" report is decidable from logs instead of
+ * forensics. Throttled: verdict changes always row; a steady verdict
+ * only heartbeats.
+ */
+@Tag("combat")
+public class HoldTwinTest extends WorldStubForTests {
+
+    @BeforeEach
+    public void cleanLogBefore() {
+        EventLog.clearForTests();
+        HoldTwin.clearForTests();
+    }
+
+    @AfterEach
+    public void cleanLogAfter() {
+        EventLog.clearForTests();
+        HoldTwin.clearForTests();
+    }
+
+    @Test
+    public void holdVerdictRowsNameTheGate() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        foe.setEnemy();
+
+        world(3, fakeOurs(dragoon), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.VETO);
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"key\":\"HOLD\""), "got: " + rows);
+            assertTrue(rows.contains("\"verdict\":\"VETO\""), "got: " + rows);
+        });
+    }
+
+    @Test
+    public void steadyVerdictDoesNotFlood() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        foe.setEnemy();
+
+        // 200 frames of the same verdict: only the opening row plus
+        // heartbeats may land, never one row per frame.
+        world(200, fakeOurs(dragoon), fakeEnemies(foe), () -> {
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.HOLD);
+        });
+
+        String rows = EventLog.toJsonLines();
+        int count = 0;
+        int from = 0;
+        String needle = "\"key\":\"HOLD\"";
+        while (true) {
+            int at = rows.indexOf(needle, from);
+            if (at < 0) break;
+            count++;
+            from = at + needle.length();
+        }
+        assertTrue(count >= 1 && count <= 3, "throttled, not flooding: " + count);
+    }
+
+    @Test
+    public void verdictFlipAlwaysRows() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        foe.setEnemy();
+
+        world(3, fakeOurs(dragoon), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.HOLD);
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.DAMAGE);
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.HOLD);
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"verdict\":\"HOLD\""), "got: " + rows);
+            assertTrue(rows.contains("\"verdict\":\"DAMAGE\""), "got: " + rows);
+        });
+    }
+}

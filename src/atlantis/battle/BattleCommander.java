@@ -151,6 +151,7 @@ public class BattleCommander extends Commander {
         atlantis.battle.formation.FormationSlots.clearForTests();
         atlantis.battle.formation.SharedEscape.clearForTests();
         atlantis.battle.twins.FightTrace.clearForTests();
+        atlantis.battle.twins.HoldTwin.clearForTests();
         atlantis.battle.twins.UnitTelemetry.clearForTests();
         atlantis.battle.FrozenWatch.clearForTests();
         atlantis.battle.ArmyContact.clearForTests();

@@ -2,6 +2,9 @@ package atlantis.battle;
 
 import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.twins.HoldTwin;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -31,13 +34,24 @@ public final class FormationHold {
     public static final double CONTACT_TILES = 2.5;
 
     /**
+     * A holder that marched within this distance of its slot counts as
+     * arrived: standing your ground on the slot is the job, not a freeze.
+     * Only a holder stuck FAR from its slot while not displacing trips
+     * the unstick below.
+     */
+    public static final double WEDGE_ARRIVED_TILES = 1.0;
+
+    /** Frames without displacement before a far-from-slot holder is declared wedged. */
+    public static final int WEDGE_STILL_FRAMES = 48;
+
+    /**
      * Hard veto (owner 2026-10-26): melee on top of the unit, no
      * discussion. Literally never hold formation with a melee enemy
-     * within 2 tiles - no slot is worth standing into chews. Raw
+     * within 3 tiles - no slot is worth standing into chews. Raw
      * distance on listed melee enemies only: no weapon, range,
      * visibility or cooldown plumbing that can fail open.
      */
-    public static final double CLOSE_MELEE_TILES = 2.0;
+    public static final double CLOSE_MELEE_TILES = 3.0;
 
     /**
      * True when a listed melee enemy stands within {@link #CLOSE_MELEE_TILES}
@@ -60,6 +74,31 @@ public final class FormationHold {
     }
 
     /**
+     * Why the hold was kept or broken - one value per decision, logged
+     * by the HOLD twin instead of guessed from logs after the fact.
+     */
+    public enum HoldVerdict {
+        /** March at the formation slot. */
+        HOLD,
+        /** Melee enemy within {@link #CLOSE_MELEE_TILES} - never stand into chews. */
+        VETO,
+        /** Any enemy within {@link #CONTACT_TILES} - the phalanx becomes the fight. */
+        CONTACT,
+        /** Hp dropped since the last battle frame (battle-hook latch, NEXT #183). */
+        DAMAGE,
+        /** A close enemy can hit this unit - kite outranks holding, unconditionally. */
+        KITE,
+        /** Anything else that declines the hold (tactic, ranged enemy, ...). */
+        OTHER,
+        /** Hold decided, but no formation slot exists (duels fall through). */
+        NO_SLOT,
+        /** Hold decided, but the move order was refused. */
+        MOVE_FAILED,
+        /** Hold decided, but the unit never displaces: STOP once, fresh queue next frame. */
+        UNSTICK
+    }
+
+    /**
      * Hold the line instead of engaging this target: true while the
      * enemy is melee-only, the tactic is FIGHT, and none of the contact
      * breaks fired (2.5-tile proximity, damage taken, own ranged able
@@ -69,23 +108,28 @@ public final class FormationHold {
      * holding its slot - safety of the single unit first.
      */
     public static boolean shouldHold(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
-        if (unit == null || target == null || !unit.isAlive()) return false;
-        if (hasCloseMeleeEnemy(unit)) return false;
-        if (tactic != FightOrFlight.Tactic.FIGHT) return false;
+        return decide(unit, target, tactic) == HoldVerdict.HOLD;
+    }
+
+    /** The ordered gate chain behind {@link #shouldHold}, naming the deciding gate. */
+    static HoldVerdict decide(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
+        if (unit == null || target == null || !unit.isAlive()) return HoldVerdict.OTHER;
+        if (hasCloseMeleeEnemy(unit)) return HoldVerdict.VETO;
+        if (tactic != FightOrFlight.Tactic.FIGHT) return HoldVerdict.OTHER;
 
         try {
-            if (!unit.isCombatUnit()) return false;
-            if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return false;
-            if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return false;
-            if (unit.hasWeaponRangeToAttack(target, 0)) return false;
+            if (!unit.isCombatUnit()) return HoldVerdict.OTHER;
+            if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return HoldVerdict.OTHER;
+            if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return HoldVerdict.DAMAGE;
+            if (unit.hasWeaponRangeToAttack(target, 0)) return HoldVerdict.OTHER;
 
             AUnit nearest = nearestEnemyOf(unit);
-            if (nearest != null && unit.distTo(nearest) <= CONTACT_TILES) return false;
-            if (needsKite(unit)) return false;
+            if (nearest != null && unit.distTo(nearest) <= CONTACT_TILES) return HoldVerdict.CONTACT;
+            if (needsKite(unit)) return HoldVerdict.KITE;
         } catch (Exception ignored) {
-            return false;
+            return HoldVerdict.OTHER;
         }
-        return true;
+        return HoldVerdict.HOLD;
     }
 
     /**
@@ -126,14 +170,71 @@ public final class FormationHold {
     public static boolean holdIfCalm(
         AUnit unit, AUnit target, FightOrFlight.Tactic tactic, AUnit leader, HasPosition anchor
     ) {
-        if (!shouldHold(unit, target, tactic)) return false;
+        HoldVerdict verdict = decide(unit, target, tactic);
+        if (verdict != HoldVerdict.HOLD) {
+            HoldTwin.note(unit, target, tactic, verdict);
+
+            return false;
+        }
 
         HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-        if (slot == null || !unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
+        if (slot == null) {
+            HoldTwin.note(unit, target, tactic, HoldVerdict.NO_SLOT);
+
+            return false;
+        }
+        if (unstickHolderIfWedged(unit, slot, target, tactic)) {
+            HoldTwin.note(unit, target, tactic, HoldVerdict.UNSTICK);
+
+            return true;
+        }
+        if (!unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
+            HoldTwin.note(unit, target, tactic, HoldVerdict.MOVE_FAILED);
+
             return false;
         }
         FightTarget.markRepositioned(unit);
+        HoldTwin.note(unit, target, tactic, HoldVerdict.HOLD);
 
         return true;
+    }
+
+    /**
+     * A holder that marches at a slot it never reaches is not holding -
+     * it is wedged, same as the kiting shape in FightTarget except the
+     * kite loop never runs so its unstick can never trip. Same cadence
+     * discipline: STOP once, fresh queue next frame; forget motion so the
+     * watch restarts instead of firing every frame. Arrived holders
+     * (within a tile of the slot) are left alone: standing your ground
+     * on the slot is the job, not a freeze. Returns true when it acted.
+     */
+    private static boolean unstickHolderIfWedged(
+        AUnit unit, HasPosition slot, AUnit target, FightOrFlight.Tactic tactic
+    ) {
+        try {
+            if (unit == null || unit.position() == null || slot == null) return false;
+
+            int now = A.now();
+            Integer lastMoved = DuelMemory.lastMovedFrame(unit);
+            APosition lastPos = DuelMemory.lastMovedPos(unit);
+            if (lastMoved == null || lastPos == null || unit.distTo(lastPos) >= 0.5) {
+                DuelMemory.noteMoved(unit, now, unit.position());
+
+                return false;
+            }
+            if (now - lastMoved < WEDGE_STILL_FRAMES) return false;
+
+            if (unit.distTo(slot) <= WEDGE_ARRIVED_TILES) {
+                DuelMemory.noteMoved(unit, now, unit.position());
+
+                return false;
+            }
+            unit.stop(Behavior.UNSTICK.tag());
+            DuelMemory.forgetMotion(unit);
+
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }

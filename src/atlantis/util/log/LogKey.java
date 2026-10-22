@@ -86,6 +86,8 @@ public enum LogKey {
     CATALOGUE_SITE,
     /** A kiting step or a kite with nowhere to go (dist x10, cooldown, result). */
     KITE,
+    /** A hold decision: march, or which gate broke it (unit, target, tactic, verdict). */
+    HOLD,
     /** A healthy unit stepping out of a withdrawing ally's escape ray (helper, escaper, dest). */
     MAKE_WAY,
     /** Covering the pursuer of a withdrawing ally instead of the nearest (helper, pursuer, escaper). */
