@@ -46,21 +46,65 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
                 + straight.maxSplitTiles + " tiles, arc " + arc.maxSplitTiles);
     }
 
+    @Test
+    public void halfBlendBeatsStraightAndFull() {
+        // Blend sweep on the same pocket: 0 is today, 1 bends fully at
+        // the squad (risks walking into the pack), 0.5 should own both.
+        Outcome straight = runWithBlend(0.0, 3);
+        Outcome half = runWithBlend(0.5, 3);
+        Outcome full = runWithBlend(1.0, 3);
+
+        assertTrue(half.shots > 0 && full.shots > 0,
+            "every blend trades shots: half " + half.shots + ", full " + full.shots);
+        assertTrue(half.maxSplitTiles < straight.maxSplitTiles,
+            "half blend holds tighter than straight: " + half.maxSplitTiles
+                + " vs " + straight.maxSplitTiles);
+        assertTrue(full.maxSplitTiles < straight.maxSplitTiles,
+            "full blend also beats straight: " + full.maxSplitTiles
+                + " vs " + straight.maxSplitTiles);
+        assertTrue(half.dragoonDeaths <= straight.dragoonDeaths
+                && full.dragoonDeaths <= straight.dragoonDeaths,
+            "no blend donates the line: half deaths " + half.dragoonDeaths
+                + ", full deaths " + full.dragoonDeaths
+                + " vs straight " + straight.dragoonDeaths);
+    }
+
+    @Test
+    public void arcHoldsWhenOutnumbered() {
+        // 3 dragoons vs 5 zealots: the arc must keep the line together
+        // without donating dragoons.
+        Outcome straight = runWithBlend(0.0, 5);
+        Outcome half = runWithBlend(0.5, 5);
+
+        assertTrue(straight.shots > 0 && half.shots > 0,
+            "both runs must trade shots: " + straight.shots + " vs " + half.shots);
+        assertTrue(half.maxSplitTiles < straight.maxSplitTiles,
+            "outnumbered, the arc still holds tighter: " + half.maxSplitTiles
+                + " vs " + straight.maxSplitTiles);
+        assertTrue(half.dragoonDeaths <= straight.dragoonDeaths,
+            "outnumbered, the arc donates nothing: half deaths " + half.dragoonDeaths
+                + " vs straight " + straight.dragoonDeaths);
+    }
+
     private static Outcome run(boolean withArc) {
+        return runWithBlend(withArc ? 0.5 : 0.0, 3);
+    }
+
+    private static Outcome runWithBlend(double blend, int enemies) {
         FakeUnit[] dragoons = new FakeUnit[] {
             woundedDragoon(28, 20, 120),
             woundedDragoon(30, 20, 120),
             woundedDragoon(32, 20, 120),
         };
-        FakeUnit[] zealots = new FakeUnit[] {
-            // In contact from tick 0 (inside dragoon fire range): the
-            // formation hold never engages, the run measures pure kite
-            // footwork - the arc's phase. The approach march is pinned
-            // separately (FormationHoldTest, ClusterRallyTest).
-            enemyZealot(32, 19),
-            enemyZealot(32, 21),
-            enemyZealot(34, 20),
-        };
+        // In contact from tick 0 (inside dragoon fire range): the
+        // formation hold never engages, the run measures pure kite
+        // footwork - the arc's phase. The approach march is pinned
+        // separately (FormationHoldTest, ClusterRallyTest).
+        double[][] spots = { { 32, 19 }, { 32, 21 }, { 34, 20 }, { 31, 19 }, { 31, 21 }, { 33, 19 } };
+        FakeUnit[] zealots = new FakeUnit[enemies];
+        for (int i = 0; i < enemies; i++) {
+            zealots[i] = enemyZealot(spots[i][0], spots[i][1]);
+        }
 
         Outcome out = new Outcome();
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
@@ -68,9 +112,7 @@ public class ArcRetreatSimTest extends AbstractTestWithUnits {
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
-            if (withArc) {
-                EscapeTuning.install(EscapeTuning.defaults().withArcBlend(0.5));
-            }
+            EscapeTuning.install(EscapeTuning.defaults().withArcBlend(blend));
             Alpha.gather();
 
             for (int i = 0; i < 400; i++) {

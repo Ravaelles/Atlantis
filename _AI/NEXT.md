@@ -1465,7 +1465,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  zealots, 400 ticks each: peak split 4.21 -> 3.10 tiles, deaths equal
  (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
  (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
- Live proof + tuner registration ride the next headless Wine game.
+ 2026-10-26 efficacy matrix + registration: blend sweep {0, 0.5, 1.0}
+ on 3v3 (split 18.17 -> 1.99 / 1.98, kills 1 -> 2 / 2, shots 18 ->
+ 42 / 50, zero dragoon donations) and 3v5 (split 10.68 -> 1.99,
+ kills 2 -> 3, shots 33 -> 38, zero donations) - the arc collapses
+ the scatter ~9x/~5x and doubles the guns on both geometries.
+ Full bend marginally tightest on 3v3, so no basis to crown 0.5:
+ default stays 0, `EscapeArcBlend` registered 0..1 (bounds +
+ by-name apply + 3 count tests 32->33) and the tuner picks the
+ value. Pinned (`halfBlendBeatsStraightAndFull`,
+ `arcHoldsWhenOutnumbered`, mutation-proofed). Live value proof
+ still rides a Wine game (tuner or forced-blend duel).
  2026-10-26 death-log dedup (owner): one issued order means one journal
  row - the `lastCommandIssuedNow` attempt row doubled every issue row.
  Pinned `DecisionJournalTest` 9/9.
@@ -1684,6 +1694,20 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  new ClusterTwin.sample (34 rows, ghost none->contact). Result in
  the known variance band (wins 12/5 vs losses 4/9, 6/9, 5/9,
  10/9); what the game proves is no new pathology, not the score.
+ 2026-10-26 owner's ZealDrag_v_Zeal game (ended 0:24, truncated logs):
+ Dragoon#165 died kiting while its reengage glide ordered into the
+ unwalkable [43,53] every frame - move() refuses unwalkable ground
+ and the wait below pinned the unit standing while Zealot#199 chewed
+ it. Plus the standing-into-chews report: owner's hard rule is now
+ code - melee within 2 tiles vetoes formation everywhere
+ (`FormationHold.hasCloseMeleeEnemy`, raw distance, no plumbing;
+ enforced in shouldHold/holdIfCalm AND the Regroup advance, which
+ had no contact gate at all), and an unwalkable fireAt is nulled so
+ the frame chases with an attack instead of waiting into the wall.
+ Pinned (veto pair + Regroup advance + wall chase, all
+ mutation-proofed). Honest gap: the user's game ended at 0:24 with
+ no EVENTS, so the full standing shape stays underdetermined -
+ live proof of both fixes rides the next Wine game.
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,

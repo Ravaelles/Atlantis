@@ -40,7 +40,7 @@ public class TuningScenarioTest {
     public void boundsMatchFactoryRegistration() {
         Map<String, double[]> bounds = scenario.paramBounds();
 
-        assertEquals(32, bounds.size(), "one entry per registered param, no more no less");
+        assertEquals(33, bounds.size(), "one entry per registered param, no more no less");
         assertBounds(bounds, "KiteStepTiles", 1.5, 3.0);
         assertBounds(bounds, "DragoonLowHp", 30, 60);
         assertBounds(bounds, "DragoonPinchMeleeTiles", 1.5, 2.5);

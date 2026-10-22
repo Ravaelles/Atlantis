@@ -188,6 +188,17 @@ public class ParamTweakerFactory extends ParamTweaker {
                 () -> EscapeTuning.current().getEnemyRadiusTiles(),
                 () -> { applyOrRandomize("EscapeEnemyRadiusTiles", 150, 250, 10.0, v -> EscapeTuning.install(EscapeTuning.current().withEnemyRadiusTiles(v))); return null; }
         ));
+        // Arc-retreat blend (NEXT #175): sim matrix proves the arc holds
+        // the line together (3v3 split 18.2 -> 2.0, kills 1 -> 2; 3v5
+        // split 10.7 -> 2.0, kills 2 -> 3; zero dragoon donations either
+        // way), so the tuner may explore it. Default stays 0 (straight)
+        // until a live game picks the value - registration alone changes
+        // no game.
+        tweaker.addParam(new Param(
+                "EscapeArcBlend",
+                () -> EscapeTuning.current().getArcBlend(),
+                () -> { applyOrRandomize("EscapeArcBlend", 0, 100, 100.0, v -> EscapeTuning.install(EscapeTuning.current().withArcBlend(v))); return null; }
+        ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,
@@ -368,6 +379,10 @@ public class ParamTweakerFactory extends ParamTweaker {
                 EscapeTuning.install(EscapeTuning.current().withEnemyRadiusTiles(gameUnitsValue));
                 return;
 
+            case "EscapeArcBlend":
+                EscapeTuning.install(EscapeTuning.current().withArcBlend(gameUnitsValue));
+                return;
+
             default:
                 throw new IllegalArgumentException("unregistered tuner param: " + name);
         }
@@ -415,6 +430,7 @@ public class ParamTweakerFactory extends ParamTweaker {
         bounds.put("EscapeEnemyWeight", new double[] { 2.0, 8.0 });
         bounds.put("EscapeStaticRadiusTiles", new double[] { 2.0, 4.0 });
         bounds.put("EscapeEnemyRadiusTiles", new double[] { 15.0, 25.0 });
+        bounds.put("EscapeArcBlend", new double[] { 0.0, 1.0 });
         return bounds;
     }
 

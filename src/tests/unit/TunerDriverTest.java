@@ -44,7 +44,7 @@ public class TunerDriverTest {
         // proposal rides at champion values - still a full fragment.
         assertTrue(Files.exists(out), "single row still proposes around the champion");
         List<String> lines = Files.readAllLines(out, StandardCharsets.UTF_8);
-        assertEquals(32, lines.size(), "full vector even from one row");
+        assertEquals(33, lines.size(), "full vector even from one row");
         assertTrue(lines.contains("KiteStepTiles=2.5"), "champion value rides through");
     }
 
