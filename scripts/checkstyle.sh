@@ -147,24 +147,28 @@ if [ "$APPLY" -eq 0 ]; then
 fi
 
 # --- Apply: fix exactly the reported return-blank-line violations ------------
-# Checkstyle cannot fix anything itself, so --apply is our own fixer: for
-# every finding of the two return-blank-line rules it inserts the missing
-# blank line. Inserting blank lines is semantics-preserving by construction,
-# and each site is re-validated (a real 'return' keyword outside strings and
-# comments) before the file is touched. Nothing else is ever modified.
+# Checkstyle cannot fix anything itself, so --apply is our own fixer: each
+# finding maps to one blank-line insertion ("followed by" inserts after the
+# reported line, "preceded by" inserts before the next one, which holds the
+# actual return). Insertions are collected in a set, so one site flagged
+# twice still yields a single blank line. Inserting blank lines is
+# semantics-preserving by construction, and each site is re-validated before
+# the file is touched (a real 'return' keyword outside strings/comments;
+# the surrounding lines still match the rule's shape, so stale findings can
+# never misfire). Nothing else is ever modified.
 say "applying return-blank-line fixes..."
 python3 - "$LOG" <<'PYEOF'
 import re
 import sys
 
 log_path = sys.argv[1]
-finding = re.compile(r'^\[ERROR\] (.+?\.java):(\d+):.*Return must be followed by a blank line')
+finding = re.compile(r'^\[ERROR\] (.+?\.java):(\d+):.*Return must be (followed by|preceded by) a blank line')
 sites = {}
 with open(log_path, encoding='utf-8', errors='replace') as f:
     for line in f:
         m = finding.search(line)
         if m:
-            sites.setdefault(m.group(1), set()).add(int(m.group(2)))
+            sites.setdefault(m.group(1), []).append((int(m.group(2)), m.group(3)))
 
 if not sites:
     print('  [apply] no return-blank-line findings - nothing to do')
@@ -273,10 +277,34 @@ for path in sorted(sites):
     spans = code_spans(body)
     rows = body.split('\n')
     changed = 0
-    for lineno in sorted(sites[path], reverse=True):
+    # Insertion points as 0-based list indices, in a set: a "followed by"
+    # finding on line N inserts AFTER it (index N), a "preceded by" finding
+    # inserts BEFORE it (index N-1). One site flagged twice still yields
+    # one blank line - e.g. a guard return feeding straight into the final
+    # return gets exactly one blank between them, never two.
+    inserts = set()
+    for lineno, direction in sites[path]:
         if lineno < 1 or lineno > len(rows):
             print('  [apply] SKIP {0}:{1}: line out of range'.format(path, lineno))
             skipped += 1
+            continue
+        if direction == 'preceded by':
+            # Reported on the setup line; the return sits on the NEXT line,
+            # the closing brace on the one after. Insert before the return.
+            ret = lineno + 1
+            if ret > len(rows) or rows[lineno - 1].strip() == '':
+                print('  [apply] SKIP {0}:{1}: setup line not code'.format(path, lineno))
+                skipped += 1
+                continue
+            if not has_real_return(body, spans, ret):
+                print('  [apply] SKIP {0}:{1}: no real return on next line'.format(path, lineno + 1))
+                skipped += 1
+                continue
+            if ret + 1 > len(rows) or not rows[ret].lstrip().startswith('}'):
+                print('  [apply] SKIP {0}:{1}: next line is not a closing brace'.format(path, lineno + 1))
+                skipped += 1
+                continue
+            inserts.add(lineno)
             continue
         if not has_real_return(body, spans, lineno):
             print('  [apply] SKIP {0}:{1}: no real return outside strings/comments'.format(path, lineno))
@@ -284,7 +312,9 @@ for path in sorted(sites):
             continue
         if lineno < len(rows) and rows[lineno].strip() == '':
             continue  # already blank below (idempotent)
-        rows.insert(lineno, '')
+        inserts.add(lineno)
+    for idx in sorted(inserts, reverse=True):
+        rows.insert(idx, '')
         changed += 1
     if changed:
         out = ('\r\n' if crlf else '\n').join(rows)

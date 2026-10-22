@@ -68,10 +68,22 @@
     Same exemptions as the rule above (brace, blank, comment-only next
     line - separating live returns from comments is the same noise class
     as blank-before-brace, measured 2026-10-21 with 67 blanks dropped);
-    single-line methods and trailing '}' lines stay untouched by construction. -->
+    single-line methods and trailing '}' lines stay untouched by construction.
+    PLUS (owner 2026-10-22): consecutive guard returns stay glued - no blank
+    between 'if (a) return x;' and a following guard 'if (b) ... return'. -->
   <module name="RegexpMultiline">
-    <property name="format" value="^[ \t]*(?:else[ \t]+)?if\b.*\breturn\b[^;\n]*;[ \t]*\n(?![ \t]*(?:\r?\n|\}|//|/\*|\*))"/>
+    <property name="format" value="^[ \t]*(?:else[ \t]+)?if\b.*\breturn\b[^;\n]*;[ \t]*\n(?![ \t]*(?:\r?\n|\}|//|/\*|\*|(?:else[ \t]+)?if\b[^\n]*\breturn\b[^;\n]*;))"/>
     <property name="message" value="Return must be followed by a blank line (guard style)."/>
+  </module>
+  <!-- Blank line BEFORE a final return (owner 2026-10-22): a return that
+    ends its block reads as the punchline, set apart from the setup above
+    it ('AUnit target = ...; ...blank... return target;'). Fires only when
+    the previous line is real code (not a brace, blank, comment, 'else'
+    or label-like 'case x:'/'default:' line) and the next line closes the
+    block. Fixes itself the same way, inserting before the return line. -->
+  <module name="RegexpMultiline">
+    <property name="format" value="^[ \t]*(?![}/\*]|else\b)[^\n]*[^\s{:}][ \t]*\n[ \t]*return\b[^;\n]*;[ \t]*\n[ \t]*\}"/>
+    <property name="message" value="Return must be preceded by a blank line (final return)."/>
   </module>
   <module name="TreeWalker">
     <module name="UnusedImports"/>
