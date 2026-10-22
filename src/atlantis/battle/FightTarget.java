@@ -17,9 +17,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * One engaged frame: swing discipline, corridor, kite, re-engage, re-arm.
  * Extracted from BattleCommander with its per-unit frame maps, so the
@@ -31,37 +28,23 @@ public final class FightTarget {
     private FightTarget() {
     }
 
-    private static final Map<Integer, Integer> lastStepFrame = new HashMap<>();
-    private static final Map<Integer, Integer> lastMovedFrame = new HashMap<>();
-    private static final Map<Integer, APosition> lastMovedPos = new HashMap<>();
-    private static final Map<Integer, Integer> lastRepositionFrame = new HashMap<>();
-    private static final Map<Integer, APosition> lastContactPos = new HashMap<>();
-    private static final Map<Integer, Integer> lastContactFrame = new HashMap<>();
-    private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
-
-    /** Another step rode on this unit this frame - the re-arm must not cancel it. */
+    /** Memory lives in {@link DuelMemory}; the four methods below only forward it. */
     public static void markRepositioned(AUnit unit) {
-        lastRepositionFrame.put(unit.id(), A.now());
+        DuelMemory.markRepositioned(unit);
     }
 
     /** Last engaged point while visible, or null when this unit never fought. */
     public static APosition lastContact(AUnit unit) {
-        return lastContactPos.get(unit.id());
+        return DuelMemory.lastContact(unit);
     }
 
     /** Frame of the last visible contact snapshot, or null when never fought. */
     public static Integer lastContactFrame(AUnit unit) {
-        return lastContactFrame.get(unit.id());
+        return DuelMemory.lastContactFrame(unit);
     }
 
     public static void clearForTests() {
-        lastStepFrame.clear();
-        lastMovedFrame.clear();
-        lastMovedPos.clear();
-        lastRepositionFrame.clear();
-        lastContactPos.clear();
-        lastContactFrame.clear();
-        lastGhostFrame.clear();
+        DuelMemory.clear();
     }
 
     public static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
@@ -72,8 +55,7 @@ public final class FightTarget {
         // Only visible contacts refresh it: an invisible "fight" must not
         // drag the last-known point onto a ghost.
         if (target.isVisibleUnitOnMap() && target.position() != null) {
-            lastContactPos.put(unit.id(), target.position());
-            lastContactFrame.put(unit.id(), A.now());
+            DuelMemory.snapshotContact(unit, target.position());
         }
         // (moved to BattleCommander.act: kiting units never reach fight(),
         // so the army contact must be recorded at acquisition, not here)
@@ -81,9 +63,9 @@ public final class FightTarget {
             // Fighting an invisible target: the order cannot land (measured
             // 1Drag_v_1Zeal: 9 min of shot-fired with zero damage while
             // both duelists lived). Name it instead of silently spinning.
-            Integer lastGhost = lastGhostFrame.get(unit.id());
+            Integer lastGhost = DuelMemory.lastGhostFrame(unit);
             if (lastGhost == null || A.now() - lastGhost >= 150) {
-                lastGhostFrame.put(unit.id(), A.now());
+                DuelMemory.noteGhost(unit);
                 atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.GHOST_TARGET)
                     .param("unit", unit.id())
                     .param("target", target.id())
@@ -105,7 +87,7 @@ public final class FightTarget {
         HitTwin.sample(unit, threat != null ? threat : target);
         FightTrace.sample(unit, threat != null ? threat : target);
         int now = A.now();
-        Integer lastStep = lastStepFrame.get(unit.id());
+        Integer lastStep = DuelMemory.lastStepFrame(unit);
         if (makeWay(unit, now, lastStep)) return;
         // Zealot hold-fire discipline (NEXT #179): until a ranged weapon
         // fires inside the cluster, zealots hold instead of initiating -
@@ -144,8 +126,7 @@ public final class FightTarget {
             && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
             && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
             FormationTwin.madeWay(unit, makeWay.escaper, aside);
-            lastStepFrame.put(unit.id(), now);
-            lastRepositionFrame.put(unit.id(), now);
+            DuelMemory.stepped(unit, now);
             return true;
         }
         return false;
@@ -164,8 +145,7 @@ public final class FightTarget {
             APosition yield = DuelKite.yieldStep(unit, threat);
             if (yield != null && unit.move(yield, Actions.MOVE_AVOID, "ClusterDuelYield")) {
                 KiteTwin.steppedAside(unit, threat);
-                lastStepFrame.put(unit.id(), now);
-                lastRepositionFrame.put(unit.id(), now);
+                DuelMemory.stepped(unit, now);
                 return true;
             }
         }
@@ -203,8 +183,7 @@ public final class FightTarget {
             if (dest != null) dest = bendTowardSquad(unit, dest);
             if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
                 KiteTwin.steppedAside(unit, threat);
-                lastStepFrame.put(unit.id(), now);
-                lastRepositionFrame.put(unit.id(), now);
+                DuelMemory.stepped(unit, now);
                 return true;
             }
             KiteTwin.nowhereToStep(unit, threat);
@@ -261,22 +240,19 @@ public final class FightTarget {
         // fresh) with no motion for 48 frames - a unit that
         // simply stood still answers false on the movement check
         // after it walks.
-        Integer lastMoved = lastMovedFrame.get(unit.id());
-        APosition lastMovedAt = lastMovedPos.get(unit.id());
+        Integer lastMoved = DuelMemory.lastMovedFrame(unit);
+        APosition lastMovedAt = DuelMemory.lastMovedPos(unit);
         boolean trying = lastStep != null && now - lastStep < 48;
         boolean motionless = lastMoved != null && lastMovedAt != null
             && now - lastMoved >= 48 && unit.distTo(lastMovedAt) < 0.5;
         if (trying && motionless) {
             KiteTwin.frozenReset(unit, threat);
             unit.stop("ClusterUnstick");
-            lastStepFrame.remove(unit.id());
-            lastMovedFrame.remove(unit.id());
-            lastMovedPos.remove(unit.id());
+            DuelMemory.forgetMotion(unit);
             return true;
         }
         if (lastMovedAt == null || unit.distTo(lastMovedAt) >= 0.5) {
-            lastMovedFrame.put(unit.id(), now);
-            lastMovedPos.put(unit.id(), unit.position());
+            DuelMemory.noteMoved(unit, now, unit.position());
         }
         return false;
     }
@@ -330,8 +306,7 @@ public final class FightTarget {
                 if (fireAt != null
                     && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
                     && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
-                    lastStepFrame.put(unit.id(), now);
-                    lastRepositionFrame.put(unit.id(), now);
+                    DuelMemory.stepped(unit, now);
                     return true;
                 }
             }
@@ -363,7 +338,7 @@ public final class FightTarget {
         // The kite branch above still preempts for new threats, and
         // a finished glide re-arms via the attack check below.
         if (unit.cooldown() > 0
-            && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < CombatTuning.current().getKiteRideFrames()) return;
+            && DuelMemory.repositionedAgo(unit) < CombatTuning.current().getKiteRideFrames()) return;
         // Order discipline, not order spam: a new attack order issues
         // only when the engine holds a different target (first
         // acquisition, lost order while moving, target switch).
