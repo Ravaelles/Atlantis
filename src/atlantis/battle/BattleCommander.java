@@ -98,6 +98,7 @@ public class BattleCommander extends Commander {
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         atlantis.battle.twins.UnitTelemetry.sample(unit);
+        atlantis.battle.FrozenWatch.note(unit);
         if (RetreatFromLostFight.retreat(unit, tactic, anchor, leader)) return;
         if (LeaveBreachedBase.leave(unit)) return;
 
@@ -207,6 +208,7 @@ public class BattleCommander extends Commander {
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
         atlantis.battle.twins.UnitTelemetry.clearForTests();
+        atlantis.battle.FrozenWatch.clearForTests();
         atlantis.battle.ArmyContact.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();

@@ -191,6 +191,16 @@ public class AAdvancedPainter extends APainter {
             }
 
             // =========================================================
+            // === Paint frozen units (owner 2026-10-26): an order riding
+            // === with no displacement is a stuck engine order, not a
+            // === decision - four unfilled purple rings, hard to miss.
+            // =========================================================
+
+            if (atlantis.battle.FrozenWatch.isFrozen(unit)) {
+                APainter.paintCircle(unit, new int[] { 10, 12, 14, 16 }, Color.Purple);
+            }
+
+            // =========================================================
             // === Paint life bars bars over wounded units
             // =========================================================
 

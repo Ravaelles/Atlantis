@@ -1573,6 +1573,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  attacked, break formation and attack. Test vehicle is the map
  itself (ZealDrag_v_Zeal.scm): first prove the march (no
  standstill, #177), then the coordination (win, not just move).
+ 2026-10-26 formation hold (owner, Stardust doctrine): engaging no
+ longer dissolves the line - with a melee-only enemy and nobody in
+ contact (2.5 tiles, damage taken, own ranged able to fire), units
+ march at formation slots instead of charging one by one. FLEE and
+ ranged enemies keep the old behavior; duels fall through (slots
+ need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
+ re-geometrized to an in-contact start (the hold owns the approach
+ now). Live proof rides the next headless Wine game.
+ 2026-10-26 frozen-unit detection (owner: a dragoon held a move
+ mission standing still until Hold Position was pressed by hand):
+ `FrozenWatch` notes per-frame displacement in the battle hook and
+ the painter draws four unfilled purple rings (10/12/14/16) on units
+ still 40+ frames with a move/attack order riding and no cooldown;
+ trading blows and cooldowns are excluded. A throttled FROZEN twin
+ row names the unit for headless logs. Pinned `FrozenWatchTest`
+ 5/5, mutation-proofed; the painter hook issues no orders.
  2026-10-22: VICTORY 12/5 in 43 s with hold+withdraw+long-vector
  +reinforce (first zealot death pushed to f243, dragoon 186 zero
  hits all game, no idle half; telemetry+pins hold).

@@ -100,6 +100,8 @@ public enum LogKey {
     UNIT_TELEMETRY,
     /** Our unit died (type, frame, dist x10 to nearest enemy at death). */
     UNIT_DIED,
+    /** A unit ordered to move/attack stopped displacing (unit, still frames, order). */
+    FROZEN,
     /** Engaging a target that is not visible (unit, target, dist x10): the order cannot land. */
     GHOST_TARGET,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
