@@ -1299,7 +1299,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
     defaults OFF and no Wine env sets DRY_RUN, so collectGoals never
     runs. Authorship evidence since 10-20 rides DRY_RUN games only;
     routine macros (V2-off) cannot re-verify it. Next: one DRY_RUN
-    macro to re-confirm dual authorship on the current tree.
+    macro to re-confirm dual authorship on the current tree - DONE
+    2026-10-26 (002228, see datum above); repeat on behavior changes
+    to the scheduler, not on a schedule.
   - **#145** Site-finding chain (`NewConstructionRequest` + `FindPosition`/
     `DefineExactPositionForNewConstruction`, the "ConstructionFinder") →
     catalogue-only sited demand through the adapter funnel
