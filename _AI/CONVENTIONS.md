@@ -483,4 +483,30 @@ same hours are not spent twice.
   bottom as the battle story (observe, retreat if beaten, leave a
   breached base, acquire, hold, fight, hunt, regroup). Any branch that
   needs a comment explaining *what* it is gets a named method instead.
+- Table-of-contents test (owner 2026-10-26, perfectionist pass): a
+  non-programmer reads `handle()` and `act()` and can retell the battle
+  story without opening a single implementation. If a line needs a
+  programmer to parse, it lives in the wrong class.
+- Zero machinery in commander bodies: no engine order types
+  (`Actions`), no journal plumbing (`.tag()`), no logging or twin
+  assembly (`EventLog`), no `try/catch`, no frame counting, no
+  null-plumbing chains, no conditional on another class's concept
+  (the gate lives with the concept - `ArmyContact` owns the FIGHT-only
+  rule, `FormationHold` owns the hold). Control flow stays only where
+  it reads as a sentence ("with a target, fight; without one,
+  regroup").
+- Private methods are one call deep: pure delegation to the named
+  class. A private method with a branch or a second call is a class
+  waiting to be born - extract it (`holdFormationIfCalm` became
+  `FormationHold.holdIfCalm`, `regroup` became `Regroup.march`,
+  twin assembly became `ClusterTwin.sample`).
+- Framework overrides keep framework names: `handle`,
+  `subcommanders` are the `Commander` contract, not our vocabulary.
+  The exemption ends at the signature - their bodies obey the rules
+  above like every other commander method.
+- Technical words (`telemetry`, `twin`, `cadence`, `throttle`,
+  `reset`) never appear as commander logic; they appear only as
+  collaborator internals behind intent-named methods (`observe`,
+  `sample`, `reset`). The commander names the intent, the
+  collaborator owns the machinery.
 

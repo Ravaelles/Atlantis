@@ -1,0 +1,84 @@
+package atlantis.battle;
+
+import atlantis.battle.cluster.ClusterRally;
+import atlantis.battle.cluster.FightOrFlight;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.battle.strategy.BattleStrategy;
+import atlantis.battle.strategy.GhostAdvance;
+import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
+
+/**
+ * The march without a target: nothing to fight, so the unit falls back
+ * through its options in order - the approach's regroup point, the
+ * formation advance, the ghost creep, the freshest fight, the gather.
+ *
+ * <p>The approach owns its regroup point (collapse joins the bait at
+ * the funnel mouth, bait pulls, the line holds the standoff), then the
+ * ghost advance creeps after a remembered contact instead of standing
+ * (the hunt owns the far baseless case; inside it the gather rule used
+ * to march the unit back home every frame), answered on the enum so no
+ * call site switches on it. Without a strategy point or a ghost the
+ * formation fallback owns the unit: take a formation slot when the
+ * cluster forms up (3+ combat units, known pivot), else bunch on the
+ * leader so the cluster advances (or retreats) as one instead of a
+ * line (owner 2026-10-19: march and retreat both strung out). The
+ * leader sets the pace; stragglers catch up instead of everyone racing
+ * the anchor.</p>
+ */
+public final class Regroup {
+
+    private Regroup() {
+    }
+
+    /**
+     * March this unit while it has no target, through the fallbacks in
+     * order. When nothing owns it the unit simply stands.
+     */
+    public static void march(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
+    ) {
+        APosition regroup = strategy.regroupPointFor(unit);
+        if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag().tag())) {
+            FightTarget.markRepositioned(unit);
+            return;
+        }
+        // March in formation (owner 2026-10-26): the line takes slots
+        // facing the expected enemy before anyone creeps - the vanguard
+        // still detaches fast, everyone else advances as a line, never
+        // as a blob chasing the scout. No slot (duels, truly blind on
+        // FLEE) falls through to the creep below.
+        if (!GhostAdvance.isVanguard(unit)) {
+            HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+            if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
+        if (GhostAdvance.move(unit, tactic)) {
+            return;
+        }
+        // Split-cluster reinforcement (NEXT #181): one part fights
+        // while another holds formation slots with no target - the
+        // idle part marches at the freshest fight instead of waiting.
+        // Only on FIGHT (retreats own the unit above), only on UMS
+        // (melee keeps its anchor/formation discipline: a scouting
+        // skirmish must not drag the home army across the map), and
+        // only when nothing else owned it yet (ghost first, static
+        // slots after).
+        if (tactic == FightOrFlight.Tactic.FIGHT && A.isUms()) {
+            APosition reinforce = ArmyContact.reinforcePointFor(unit);
+            if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
+        HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+        if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
+        if (point != null && unit.move(point, Actions.MOVE_ENGAGE, Behavior.GATHER.tag())) {
+            FightTarget.markRepositioned(unit);
+        }
+    }
+}

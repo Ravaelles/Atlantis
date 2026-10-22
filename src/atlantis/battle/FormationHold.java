@@ -1,7 +1,10 @@
 package atlantis.battle;
 
+import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 /**
  * Formation hold (owner 2026-10-26, Stardust doctrine): engaging must not
@@ -81,5 +84,23 @@ public final class FormationHold {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    /**
+     * Hold the line while calm (owner 2026-10-26, Stardust doctrine):
+     * while the enemy is melee-only and nobody is in contact, the line
+     * marches in formation instead of dissolving into a charge.
+     * No slot means no formation (duels fall through untouched).
+     */
+    public static boolean holdIfCalm(
+        AUnit unit, AUnit target, FightOrFlight.Tactic tactic, AUnit leader, HasPosition anchor
+    ) {
+        if (!shouldHold(unit, target, tactic)) return false;
+        HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+        if (slot == null || !unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
+            return false;
+        }
+        FightTarget.markRepositioned(unit);
+        return true;
     }
 }

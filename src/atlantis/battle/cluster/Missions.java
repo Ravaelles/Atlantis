@@ -28,6 +28,19 @@ public class Missions {
         historyCount++;
     }
 
+    /**
+     * The missions follow the posture: attack posture attacks, anything
+     * else defends. The cluster owns the value; this only translates it.
+     */
+    public static void followPosture(ClusterMission.Posture posture) {
+        if (posture == ClusterMission.Posture.ATTACK) {
+            forceGlobalMissionAttack("cluster-attack");
+        }
+        else {
+            forceGlobalMissionDefend("cluster-defend");
+        }
+    }
+
     public static boolean isGlobalMissionAttack() {
         return globalMission().equals(ATTACK);
     }

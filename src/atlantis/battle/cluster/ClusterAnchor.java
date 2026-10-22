@@ -14,6 +14,11 @@ import atlantis.units.select.Select;
  */
 public class ClusterAnchor {
 
+    /** The anchor for this posture: the enemy base to attack, home to defend. */
+    public static HasPosition anchorFor(ClusterMission.Posture posture) {
+        return posture == ClusterMission.Posture.ATTACK ? attackAnchor() : defendAnchor();
+    }
+
     public static HasPosition defendAnchor() {
         return Select.mainOrAnyBuilding();
     }

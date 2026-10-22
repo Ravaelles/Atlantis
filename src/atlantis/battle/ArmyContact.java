@@ -1,5 +1,6 @@
 package atlantis.battle;
 
+import atlantis.battle.cluster.FightOrFlight;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -34,8 +35,14 @@ public final class ArmyContact {
         lastFightFrame = -1000000;
     }
 
-    /** Every engaged unit reports through the fight funnel. */
-    public static void noteFight(AUnit unit, AUnit target) {
+    /**
+     * Every engaged unit reports through the fight funnel. FIGHT only:
+     * recorded at acquisition, not in fight(), because kiting units
+     * never reach fight() yet still engage the enemy - and a routing
+     * unit must not pull the army into it (NEXT #181).
+     */
+    public static void noteFight(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
+        if (tactic != FightOrFlight.Tactic.FIGHT) return;
         if (unit == null || target == null || target.position() == null) return;
         lastFightAt = target.position();
         lastFightFrame = A.now();
