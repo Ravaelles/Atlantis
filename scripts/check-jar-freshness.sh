@@ -40,8 +40,8 @@ CURRENT="$(
   find src -name "*.java" \
     | grep -v "src/tests/unit/ATargetingTest.java" \
     | sort \
-    | while read -r f; do printf '%s ' "$f"; md5sum "$f" | cut -d' ' -f1; done \
-    | md5sum | cut -d' ' -f1
+    | tr '\n' '\0' \
+    | xargs -r -0 md5sum | md5sum | cut -d' ' -f1
 )"
 
 if [ "$TAGGED" != "$CURRENT" ]; then
