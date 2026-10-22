@@ -1478,8 +1478,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  default stays 0, `EscapeArcBlend` registered 0..1 (bounds +
  by-name apply + 3 count tests 32->33) and the tuner picks the
  value. Pinned (`halfBlendBeatsStraightAndFull`,
- `arcHoldsWhenOutnumbered`, mutation-proofed). Live value proof
- still rides a Wine game (tuner or forced-blend duel).
+ `arcHoldsWhenOutnumbered`, mutation-proofed).
+ 2026-10-26 forced-blend duel (1Drag, all 33 params pinned from a
+ per-game env, `EscapeArcBlend=0.5 (ENV)` in the log): WIN in 22 s,
+ 1/0, 12 hits, 14 shots - inside the baseline band (10/10 wins,
+ 20-23 s, 6-16 hits), so no regression and no miracle either.
+ Wiring proven end to end (33/33 values from env, zero random);
+ the value decision stays with the tuner - one game is noise.
  2026-10-26 death-log dedup (owner): one issued order means one journal
  row - the `lastCommandIssuedNow` attempt row doubled every issue row.
  Pinned `DecisionJournalTest` 9/9.
