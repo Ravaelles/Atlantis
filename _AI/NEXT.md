@@ -1581,6 +1581,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
  re-geometrized to an in-contact start (the hold owns the approach
  now). Live proof rides the next headless Wine game.
+ 2026-10-26 headless ZealDrag_v_Zeal (Defeat 6/9, 40 s): the ghost
+ readout works end to end - none (f0-93, marching on the anchor)
+ then contact f124 to the end, closing 161 -> 6. Approach marches
+ from frame 0 (no standstill; scout release holds). 2 ClusterForm
+ attack rows: slotted units do fight from the arc. All 9 deaths
+ ClusterKite, zero ClusterHold - the hold never false-triggered.
+ Zero FROZEN rows all game (deployment gate holds back the opening
+ storm). Loss shape: brawl lost after contact, FLEE from f372 with
+ a stationary center (69,34)->(67,34) while dying - retreat that
+ goes nowhere (visible-pivot slots face the pursuer on FLEE,
+ pre-existing, not this slice). Single-game variance stays high
+ (12/5 win vs 4/9 and 6/9 losses vs 8/3 timeout on one build).
  2026-10-26 shoot-now targeting (owner: dragoons walked past
  in-range targets to chase a squadmate's kill 10 tiles out, taking
  5-6 hits): `AcquireTarget` returns the weakest valid in-range
