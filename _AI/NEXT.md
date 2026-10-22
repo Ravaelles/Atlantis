@@ -243,6 +243,10 @@ The index of which document answers which question is `_AI/README.md`.
  53/52/1) - tally 31 rescue, 0 routine, still no candidate.
  Tooling: multi-file sweep deduped by realpath (the `latest`
  symlink double-counted one run before).
+ 2026-10-23 re-sweep over 94 unique retained logs: 7 BOARD_FED rows,
+ all rescue, 0 routine - cumulative tally holds at 31 rescue / 0
+ routine, still no candidate (the 4 newest runs are UMS duels, no
+ construction twins).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -1086,6 +1090,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Re-checked 2026-10-23 (64 unique logs, latest symlink deduped): zero
  deadlock shape; single transient frame-3 BO-load CyberneticsC (300 @
  sup 10, the known load shape, not a stall).
+ Re-checked 2026-10-23 (94 unique logs): still zero - same single
+ known transient, no deadlock shape.
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
