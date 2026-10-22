@@ -1489,6 +1489,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  fires only when a wall eats the ray; open ground keeps the short step
  bit-identical). Engagement proof still needs a walled pocket map, not
  more open duels.
+ 2026-10-23 kite-distance grid, 1Drag_v_1Zeal, all-33-pinned baseline +
+ 3 one-knob arms (K=3 each, headless Wine): A defaults 18/15/19 (mean
+ 17.3), B step 3.0 (was 2.0) 12/18/13 (14.3), C margin-base 2.0 (was
+ 1.0) 15/14/9 (12.7), D both 14/6/16 (12.0, best single 6). Directional
+ win (foe>1.5 tiles share: 33% -> 50% -> 58% -> 72%), far from the 0-2
+ target. Binding truth: dragoon topSpeed 5.0 vs zealot 4.0 px/f - the
+ dragoon CAN open distance, so the residual contact is standstill per
+ shot cycle (windup + settle + rearm latency while the chaser closes),
+ not a speed cap. D-game2 anatomy: 4 of 6 hits land before f130
+ (approach + first contacts), 2 on one f277 re-close; longest holds
+ at 2-4 tiles (shots at dist 35-40) with zero hits. Next: push the
+ margin out (E: margin 2.5 + step 3.0) instead of more blind grid.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
