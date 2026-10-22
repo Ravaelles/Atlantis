@@ -1741,8 +1741,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  damageBreaksAnOtherwiseCalmHold (far enemy, one wound breaks, unwounded
  twin keeps holding) in FormationHold 11/11; suite 1279/1279. Live proof
  pending (hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal).
- Open: the #179 zealot gate + Terran/repair/interrupt consumers still read
- isUnderAttack() - audit-then-migrate one by one, no batch.
+ Correction 2026-10-22: the #179 zealot gate never read this signal
+ (ZealotHoldFire.isWounded compares hp+shields against MAX, immune to the
+ freshness bug) - no migration needed there. Real consumers of the
+ history-backed flags are the manager's own lastUnderAttack/hitCount,
+ read only on Terran lift/scout/repair, ChokeBlocker and Defend-interrupt
+ tracks: audit-then-migrate those one by one, no batch.
 
 - **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
  Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them. Two compounding causes read off the call chain: (a) `focusInRangeTarget` stickiness (AcquireTarget.java:66-70) returns the current target without scanning when it is valid and in range - the chewer is never considered; (b) `ASquadTargeting.isValidTarget` bans `hp<=15`, ALL zerglings and ALL workers from EVER being targeted - an 8hp chewer is literally unselectable, so the kite/focus chain shoots past it. The user's one-shot rule is the exact inverse of the current ban.
