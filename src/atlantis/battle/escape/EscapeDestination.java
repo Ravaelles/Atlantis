@@ -1,5 +1,6 @@
 package atlantis.battle.escape;
 
+import atlantis.battle.kite.KiteTwin;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -82,7 +83,14 @@ public final class EscapeDestination {
         }
         if (LONG_STEP_TILES != stepTiles) {
             APosition longPick = pick(unit, threat, LONG_STEP_TILES, walk, blockers, enemies);
-            if (longPick != null) return longPick;
+            if (longPick != null) {
+                try {
+                    KiteTwin.longEscape(unit, threat);
+                } catch (Exception | Error ignored) {
+                    // Diagnostics never break the decision.
+                }
+                return longPick;
+            }
         }
         return shortPick;
     }

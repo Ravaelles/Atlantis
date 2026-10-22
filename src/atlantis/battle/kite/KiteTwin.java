@@ -32,6 +32,16 @@ public class KiteTwin {
         row(dragoon, threat, "frozen-reset");
     }
 
+    /**
+     * The long deflect fired (NEXT #173): the straight ray was eaten by
+     * a wall and the escape bent at full length instead of shuffling
+     * short into the pocket. Unthrottled like every other step - rarity
+     * is the throttle, and games must prove the branch engages at all.
+     */
+    public static void longEscape(AUnit dragoon, AUnit threat) {
+        row(dragoon, threat, "long-deflect");
+    }
+
     private static void row(AUnit dragoon, AUnit threat, String result) {
         EventLog.key(LogKey.KITE)
             .param("unit", dragoon.id())

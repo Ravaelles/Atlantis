@@ -13,10 +13,13 @@ import tests.fakes.FakeUnit;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemies;
+import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Long-vector escape (NEXT #173, owner doctrine): walk straight out as
@@ -73,6 +76,44 @@ public class EscapeLongVectorTest extends WorldStubForTests {
         assertEquals(5, rayLen(dest, dragoon),
             "full-length sidestep, not a short shuffle: " + dest);
         assertTrue(dest.tx() < 32, "no destination inside the wall: " + dest);
+    }
+
+    @Test
+    public void deflectRowsItsTwin() {
+        FakeUnit dragoon = dragoonAt(30, 20);
+        FakeUnit threat = threatAt(27, 20);
+        EscapeRays.Walkability wall = (x, y) -> x < 32;
+
+        world(3, fakeOurs(dragoon), fakeEnemies(threat), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            atlantis.util.log.EventLog.clearForTests();
+            APosition dest = EscapeDestination.pickEscape(dragoon, threat, 2,
+                wall, Collections.emptyList(), Collections.singletonList(threat));
+
+            assertNotNull(dest);
+            String rows = atlantis.util.log.EventLog.toJsonLines();
+            assertTrue(rows.contains("\"result\":\"long-deflect\""),
+                "the long branch must name itself in the log: " + rows);
+        });
+    }
+
+    @Test
+    public void openGroundRowsNoDeflect() {
+        FakeUnit dragoon = dragoonAt(30, 20);
+        FakeUnit threat = threatAt(25, 20);
+
+        world(3, fakeOurs(dragoon), fakeEnemies(threat), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            atlantis.util.log.EventLog.clearForTests();
+            APosition dest = EscapeDestination.pickEscape(dragoon, threat, 2,
+                (x, y) -> true, Collections.emptyList(), Collections.emptyList());
+
+            assertNotNull(dest);
+            assertFalse(atlantis.util.log.EventLog.toJsonLines().contains("long-deflect"),
+                "short steps stay silent");
+        });
     }
 
     @Test

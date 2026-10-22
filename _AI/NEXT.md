@@ -220,7 +220,9 @@ The index of which document answers which question is `_AI/README.md`.
    11 retained TauCross macros: 21 rescue, 0 routine - still no
    candidate, now mechanically instead of by hand. 2026-10-21 re-sweep
    with the 2 newest flagged runs in (13 macros): 24 rescue, 0 routine -
-   still no candidate.
+   still no candidate. 2026-10-26 re-sweep (retained archive holds only
+   today's macro: 2 BOARD_FED, both rescue - pumps present 8 and 14):
+   26 rescue, 0 routine - still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -1042,6 +1044,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   >= 250, lowest sup 10 (frame-3 BO-load CyberneticsC, bank 250,
   transient like the earlier sup-10 row) then sup 13+ in flowing games -
   the stuck-at-low-supply shape absent everywhere.
+ 2026-10-26 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
+
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
@@ -1430,7 +1434,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  `pick()` (walkability is prefix-closed - verified no-fire; the
  differential lives in the validation clamps and gain floors, not
  in the scoring). Proof: unit pins + Wine duel (fewer hits than
- the 15-hit datum, no standstill frames).
+ the 15-hit datum, no standstill frames). 2026-10-26 3-duel mini-batch on the current tree (all VICTORY 20-22 s): 16/16/14 hits taken, mean 15.3 vs the 15-hit datum - NOT proven (noise band), standstill clean (113 stepped-aside, 1 frozen-reset, 11 stuck-no-step across the batch). Honest gap: no twin marks the long deflect firing, so the batch cannot say whether the branch even engaged - observability first, then measurement. 2026-10-26 observability LANDED: the long branch rows `long-deflect` via KiteTwin (unthrottled, rarity is the throttle; diagnostics wrapped so they never break the decision), pinned by twin-presence + twin-absence tests, mutation-proofed. Re-run the duel batch to read engagement off the rows.
+
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
  future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
  one zealot or two lings weakens the army; straight-line fleeing splits
