@@ -117,7 +117,7 @@ public class BattleCommander extends Commander {
             // marches in formation instead of dissolving into a charge.
             // No slot means no formation (duels fall through untouched).
             if (FormationHold.shouldHold(unit, target, tactic)) {
-                HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor);
+                HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
                 if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "ClusterHold")) {
                     FightTarget.markRepositioned(unit);
                     return;
@@ -134,12 +134,29 @@ public class BattleCommander extends Commander {
     private static void traceCluster(
         ClusterMission.Posture posture, FightOrFlight.Tactic tactic, HasPosition anchor
     ) {
+        // Cluster center readout (owner 2026-10-26): the file carries
+        // the army's mean position and the nearest enemy's distance to
+        // it - the forward-movement measure per-unit traces cannot
+        // give. Cadence stays the handle's own every-31-frames.
+        HasPosition center = Alpha.get().center();
+        int foeDist = -1;
+        try {
+            if (center != null) {
+                AUnit nearest = atlantis.units.select.Select.enemy()
+                    .combatUnits().nearestTo(center);
+                if (nearest != null) foeDist = (int) (center.distTo(nearest) * 10);
+            }
+        } catch (Exception ignored) {
+        }
         EventLog.key(LogKey.CLUSTER)
             .param("cluster", Alpha.get().size())
             .param("posture", posture.name())
             .param("tactic", tactic.name())
             .param("breached", ClusterBreach.breachForcesFight())
             .param("anchor", anchor == null ? "-" : anchor.toString())
+            .param("cx", center == null ? -1 : center.tx())
+            .param("cy", center == null ? -1 : center.ty())
+            .param("foe", foeDist)
             .log(A.now(), A.minSec());
     }
 
@@ -164,6 +181,18 @@ public class BattleCommander extends Commander {
             FightTarget.markRepositioned(unit);
             return;
         }
+        // March in formation (owner 2026-10-26): the line takes slots
+        // facing the expected enemy before anyone creeps - the vanguard
+        // still detaches fast, everyone else advances as a line, never
+        // as a blob chasing the scout. No slot (duels, truly blind on
+        // FLEE) falls through to the creep below.
+        if (!GhostAdvance.isVanguard(unit)) {
+            HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+            if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, "ClusterForm")) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
         if (GhostAdvance.move(unit, tactic)) {
             return;
         }
@@ -182,7 +211,7 @@ public class BattleCommander extends Commander {
                 return;
             }
         }
-        HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor);
+        HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
         if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
             FightTarget.markRepositioned(unit);

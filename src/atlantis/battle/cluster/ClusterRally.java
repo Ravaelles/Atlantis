@@ -2,6 +2,7 @@ package atlantis.battle.cluster;
 
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.move.MoveAway;
@@ -54,18 +55,24 @@ public final class ClusterRally {
      * contact, no walkable slot) - the caller bunches on the leader.
      *
      * <p>No visible pivot does not mean no direction (owner 2026-10-26):
-     * a blind crescent still faces where the enemy is expected - the
-     * last-seen enemy center on UMS, the main choke at the home base on
-     * melee - instead of collapsing into a clump facing nowhere. Truly
-     * blind (explored map, no memory, away from home) keeps the old
-     * null: bunching is the honest fallback there.</p>
+     * on FIGHT the blind crescent still faces where the enemy is
+     * expected - the last-seen enemy center on UMS, the main choke at
+     * the home base on melee, the mission anchor past that - instead
+     * of collapsing into a clump facing nowhere. On FLEE only a
+     * visible pivot forms up (retreats never march at memories);
+     * truly blind on FIGHT still bunches, honestly standing instead
+     * of guessing.</p>
      */
-    public static HasPosition formationSlotFor(AUnit unit, AUnit leader, HasPosition anchor) {
+    public static HasPosition formationSlotFor(
+        AUnit unit, AUnit leader, HasPosition anchor, FightOrFlight.Tactic tactic
+    ) {
         if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
         if (leader == null || !leader.isAlive()) return null;
         HasPosition pivot = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
-        if (pivot == null) pivot = expectedDirectionPoint(leader);
+        if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {
+            pivot = expectedDirectionPoint(leader, anchor);
+        }
         if (pivot == null) return null;
         return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
     }
@@ -74,21 +81,22 @@ public final class ClusterRally {
      * Where the enemy is expected when nobody sees it: the whole ghost
      * chain (fresh contact, then fogged memory, then unexplored ground)
      * on UMS; the main choke when the cluster holds the home base on
-     * melee. Null-safe by construction - the choke library and the
-     * ghost chain both answer null outside their world.
+     * melee; the mission anchor past that (the march direction itself).
+     * Null-safe by construction - the choke library and the ghost chain
+     * both answer null outside their world.
      */
-    private static HasPosition expectedDirectionPoint(AUnit leader) {
+    private static HasPosition expectedDirectionPoint(AUnit leader, HasPosition anchor) {
         try {
             if (atlantis.game.A.isUms()) {
-                return atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
+                APosition ghost = atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
+                if (ghost != null) return ghost;
             }
-            if (atlantis.battle.cluster.ClusterTactic.holdsHomeGround()) {
+            else if (atlantis.battle.cluster.ClusterTactic.holdsHomeGround()) {
                 atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.mainChoke();
-                if (choke == null || choke.center() == null) return null;
-                return choke.center();
+                if (choke != null && choke.center() != null) return choke.center();
             }
         } catch (Exception ignored) {
         }
-        return null;
+        return anchor;
     }
 }

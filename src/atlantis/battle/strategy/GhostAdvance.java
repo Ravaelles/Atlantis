@@ -55,7 +55,17 @@ public final class GhostAdvance {
 
     /** The scout walks ahead; the line creeps behind it. */
     public static final double SCOUT_STEP_TILES = 3.0;
-    public static final double LINE_STEP_TILES = 1.5;
+
+    /**
+     * The line advances half a tile, then stands 3 frames (owner
+     * 2026-10-26): the march moves in formation instead of rushing -
+     * Spartans in a line, not a parking lot that dissolves into a
+     * charge. The vanguard keeps full steps; only the line is slow.
+     */
+    public static final double LINE_STEP_TILES = 0.5;
+
+    /** Still frames between line steps: step, stand, step. */
+    public static final int LINE_PAUSE_FRAMES = 3;
 
     /** The line holds this long to let the scout go first, then follows. */
     public static final int HEAD_START_FRAMES = 24;
@@ -110,11 +120,22 @@ public final class GhostAdvance {
             return false;
         }
 
-        // A visible target belongs to the fight branch above the caller -
-        // never shadow it with a creep order.
-        if (atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9) != null) {
-            forget(unit);
-            return false;
+        // A visible target in weapon range belongs to the fight branch
+        // above the caller - never shadow it with a creep order. A
+        // visible target OUT of range does not: when acquisition
+        // refuses it (imminent shot, formation hold), the creep is the
+        // approach march that closes the distance instead of idling.
+        AUnit seen = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        if (seen != null) {
+            try {
+                if (unit.hasWeaponRangeToAttack(seen, 0)) {
+                    forget(unit);
+                    return false;
+                }
+            } catch (Exception ignored) {
+                forget(unit);
+                return false;
+            }
         }
 
         APosition ghost = ghostPointFor(unit);
@@ -150,6 +171,16 @@ public final class GhostAdvance {
         if (grindingAWall(unit)) {
             forget(unit);
             return false;
+        }
+
+        // The line steps, then stands: a step every LINE_PAUSE_FRAMES,
+        // riding in between. Without the pause the line re-issues every
+        // frame and rushes the ghost in a blob.
+        if (!isVanguard(unit)) {
+            Integer lastCreep = lastCreepFrame.get(unit.id());
+            if (lastCreep != null && atlantis.game.A.now() - lastCreep < LINE_PAUSE_FRAMES) {
+                return true;
+            }
         }
 
         double step = isVanguard(unit) ? SCOUT_STEP_TILES : LINE_STEP_TILES;
@@ -201,9 +232,17 @@ public final class GhostAdvance {
         if (tactic != FightOrFlight.Tactic.FIGHT) return null;
         if (scoutHeld()) return null;
 
-        // A visible target belongs to the fight branch above the caller -
-        // never shadow it with a creep order.
-        if (atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9) != null) return null;
+        // A visible target in weapon range belongs to the fight branch
+        // above the caller - never shadow it with a creep order. Out of
+        // range, the creep is the approach march (same rule as move()).
+        AUnit seenForPoint = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        if (seenForPoint != null) {
+            try {
+                if (unit.hasWeaponRangeToAttack(seenForPoint, 0)) return null;
+            } catch (Exception ignored) {
+                return null;
+            }
+        }
 
         APosition ghost = ghostPointFor(unit);
         if (ghost == null) return null;

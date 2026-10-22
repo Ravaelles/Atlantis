@@ -108,6 +108,50 @@ public class GhostAdvanceTest extends WorldStubForTests {
     }
 
     @Test
+    public void lineStepsEveryThirdFrame() {
+        // Owner 2026-10-26: the line steps 0.5 tiles, then stands 3
+        // frames - the march moves in formation instead of rushing.
+        // Far ghost (36 tiles, unreachable inside the test), driven
+        // every frame: after the 24-frame head start the line issues
+        // exactly one step every 3 frames (48, 51, ... 66), riding in
+        // between. The sink is cleared at 47 so the contact frame never
+        // leaks in.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 28, 24);
+
+        world(70, fakeOurs(a, b), fakeEnemies(zealot), () -> {
+            int now = atlantis.game.A.now();
+            if (now == 1) {
+                BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, b);
+                zealot.position = APosition.createFromPixels(50 * 32, 29 * 32);
+                // Off the contact tile and far from the ghost: the
+                // frame-1 order glides the unit otherwise, and the
+                // reached-hold would mask the cadence.
+                b.position = APosition.createFromPixels(28 * 32, 60 * 32);
+                return;
+            }
+            if (now < 2) return;
+
+            GhostAdvance.move(b, FightOrFlight.Tactic.FIGHT);
+            if (now == 47) {
+                ((tests.fakes.FakeOrderSink) b.orderSink()).orders().clear();
+            }
+            if (now == 58 || now == 66) {
+                int steps = 0;
+                for (tests.fakes.FakeOrderSink.Record record
+                    : ((tests.fakes.FakeOrderSink) b.orderSink()).orders()) {
+                    if (record.actorId == b.id() && record.operation.equals("move")) steps++;
+                }
+                assertEquals(now == 58 ? 4 : 7, steps,
+                    "marching: one step every 3 frames, riding in between (f" + now + ")");
+            }
+        });
+    }
+
+    @Test
     public void exactlyOneScoutWalksAheadWhileTheLineCreeps() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 29);
