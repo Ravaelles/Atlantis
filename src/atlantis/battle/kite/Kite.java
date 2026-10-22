@@ -31,6 +31,7 @@ public final class Kite {
      */
     public static double desiredKiteDistance(AUnit unit, AUnit threat) {
         double myRange = unit.groundWeaponRange();
+
         // Cooling dragoon holds firing distance (owner 2026-10-26): with
         // 15+ cooldown frames left there is time to brake and be weapon-
         // ready, so hold range - 0.4 - still in range, still safe - and
@@ -39,19 +40,23 @@ public final class Kite {
         if (unit.isDragoon() && unit.cooldown() >= 15) {
             return Math.max(0.0, myRange - 0.4);
         }
+
         double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
         double dist = unit.distTo(threat);
         double tilesPerFrame = unit.maxSpeed() / 32.0;
         double cooldownDistance = Math.max(0.0, unit.cooldown() - attackLatencyFrames() - 2) * tilesPerFrame;
         double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
+
         if (targetRange <= myRange - CombatTuning.current().getKiteMeleeEdgeTiles()) {
             double hitsLeft = (unit.hp() + unit.shields()) / CombatTuning.current().getKiteZealotPassDamage();
             double closer = hitsLeft <= CombatTuning.current().getKiteWoundedHitsLeft()
                 ? CombatTuning.current().getKiteWoundedEdgeInsetTiles() : CombatTuning.current().getKiteMeleeCloserTiles();
             desired -= closer;
         }
+
         return Math.max(0.0, desired);
     }
+
     /**
      * A Dragoon steps back only while the closest threat sits inside its
      * safety margin (PurpleWave BeDragoonVsSlowlot, engine numbers from
@@ -67,6 +72,7 @@ public final class Kite {
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null) return false;
+
         // Zealots trade contact, except wounded on a spent weapon: with
         // 7+ frames of cooldown left a step back costs no DPS, and a
         // wounded zealot saves HP against faster attackers instead of
@@ -85,6 +91,7 @@ public final class Kite {
             if (verdict == KiteVerdict.KITE) return true;
             if (verdict == KiteVerdict.STAND) return false;
         }
+
         if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
 
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
@@ -95,8 +102,7 @@ public final class Kite {
      * 40+ hp on the dragoon. The screen tanks, so the dragoon stands and
      * shoots on ready instead of yielding ground for the margin. Public
      * as a seam: the discipline pins without running the frame.
-     */
-    /**
+     *
      * A melee enemy this close is already hitting the guns: no stand
      * discipline applies. Same edge the sim measures contact with.
      */
