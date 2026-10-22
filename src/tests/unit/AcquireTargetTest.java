@@ -83,6 +83,50 @@ public class AcquireTargetTest extends WorldStubForTests {
     }
 
     @Test
+    public void nearlyDeadIsFinishedFirst() {
+        // Owner report: dragoons shot the healthiest chewer while nearly
+        // dead ones were unselectable (old hp<=15 ban). Finishing is
+        // always right: one shot removes a gun from the board, and the
+        // weakest-in-range focus already names exactly this target.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit dying = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dying.setEnemy();
+        dying.hp = 8;
+        FakeUnit healthy = fake(AUnitType.Protoss_Zealot, 31, 20);
+        healthy.setEnemy();
+        healthy.hp = 100;
+        dragoon.cooldown = 20;
+
+        world(2, fakeOurs(dragoon), fakeEnemies(dying, healthy), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertEquals(dying, AcquireTarget.acquire(dragoon),
+                "the 8hp chewer is finished first, not ignored for the healthy one");
+        });
+    }
+
+    @Test
+    public void woundedTargetStaysKeepable() {
+        // Keepable must not drop a target just because it got wounded:
+        // dropping it mid-finish is churn that costs the shot (the old
+        // ban un-kept anything at or under 15 hp mid-trade).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit current = fake(AUnitType.Protoss_Zealot, 33, 20);
+        current.setEnemy();
+        current.hp = 100;
+        dragoon.cooldown = 20;
+
+        world(2, fakeOurs(dragoon), fakeEnemies(current), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            dragoon.attackUnit(current);
+            current.hp = 8;
+            assertEquals(current, AcquireTarget.acquire(dragoon),
+                "wounded to 8 hp in range: the committed target holds, no churn");
+        });
+    }
+
+    @Test
     public void coolingWeaponStillCloses() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit far = fake(AUnitType.Protoss_Zealot, 36, 20);

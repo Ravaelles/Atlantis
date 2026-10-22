@@ -61,7 +61,6 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
         int[] kiteTrueWhileChewed = new int[] { 0 };
         int[] kiteFalseWhileChewed = new int[] { 0 };
         int[] standSurrounded = new int[] { 0 };
-        int[] standMeat = new int[] { 0 };
         int[] standLowHp = new int[] { 0 };
         int[] standMargin = new int[] { 0 };
         int ticks = 700;
@@ -122,7 +121,7 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                             else {
                                 kiteFalseWhileChewed[0]++;
                                 classifyStand(d, threat, standSurrounded,
-                                    standMeat, standLowHp, standMargin);
+                                    standLowHp, standMargin);
                             }
                         } catch (Exception e) {
                             kiteFalseWhileChewed[0]++;
@@ -154,7 +153,6 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                 + " kiteTrueWhileChewed=" + kiteTrueWhileChewed[0]
                 + " kiteFalseWhileChewed=" + kiteFalseWhileChewed[0]
                 + " stand[surrounded=" + standSurrounded[0]
-                + " meat=" + standMeat[0]
                 + " lowHp=" + standLowHp[0]
                 + " margin=" + standMargin[0] + "] | " + per);
             System.err.println("REPRO HOLD/KITE timeline: " + holdKiteTimeline(dragoons));
@@ -179,18 +177,13 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
      * fire discipline, or the plain margin gate.
      */
     private static void classifyStand(atlantis.units.AUnit d,
-        atlantis.units.AUnit threat, int[] surrounded, int[] meat,
+        atlantis.units.AUnit threat, int[] surrounded,
         int[] lowHp, int[] margin) {
         try {
             if (d.hp() + d.shields() < 45
                 && d.cooldown() <= atlantis.battle.kite.CombatTuning.current()
                     .getDragoonLowHpFireCooldown()) {
                 lowHp[0]++;
-
-                return;
-            }
-            if (atlantis.battle.kite.Kite.hasMeatScreen(d)) {
-                meat[0]++;
 
                 return;
             }

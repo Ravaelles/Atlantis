@@ -45,11 +45,6 @@ public final class DuelKite {
     public static boolean shouldYield(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || !unit.isDragoon()) return false;
         if (!BattleSetup.isDuel()) return false;
-        // Meat screen holds in duels too (owner 2026-10-26): with friendly
-        // zealots screening, the dragoon stands and shoots on ready
-        // instead of yielding ground - same discipline as the margin
-        // kite, which the duel branch would otherwise bypass.
-        if (atlantis.battle.kite.Kite.hasMeatScreen(unit)) return false;
         if (unit.enemyWeaponRangeAgainstThisUnit(threat) > 1) return false;
         if (unit.cooldown() <= SleepUntilFrameGate.latencyFrames() + 2) return false;
         if (threat.isMoving() && !unit.isOtherFacingThisUnit(threat)) return false;

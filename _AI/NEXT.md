@@ -1860,6 +1860,22 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  is pursuit contact while kiting (equal-speed enemy starting on top),
  not a stand: pre-fix #165 showed 0 kite rows and 0 displacement over
  ~300f. Doctrine holds live.
+ 2026-10-23 meat-screen stand withdrawn (owner order, kiting regardless
+ of health): screened dragoons kite by margin like everyone else -
+ the screen doctrine made healthy dragoons skip kiting entirely until
+ contact (live: chewed while full-hp, sim 333/333 on screen). Removed
+ Kite.hasMeatScreen + its 3 uses (shouldKite, lowHp-yield, DuelKite
+ yield); DoctrineTest pins renamed to the new discipline. Sim repro
+ after: chewed 196 -> 74 frames, max-consecutive 23 -> 10 (< 1 s),
+ min dragoon hp 132 -> 220, doctrine counter stays 0.
+ 2026-10-23 nearly-dead are finished first (owner live report, agreed
+ #184 rule (2) taken early as a one-line bugfix, not the ladder): the
+ old hp<=15 ban in isValidTarget made sub-15hp enemies unselectable,
+ so dragoons shot the healthiest chewer and keepable dropped wounded
+ targets mid-finish (churn). Ban deleted; dead units were and are
+ filtered by isAlive in every caller. Pinned: nearlyDeadIsFinishedFirst
+ + woundedTargetStaysKeepable. Ling/worker bans untouched (await the
+ #184 audit), ladder itself still sequenced post-cut.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.

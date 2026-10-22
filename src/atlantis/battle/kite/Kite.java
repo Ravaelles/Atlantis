@@ -118,17 +118,16 @@ public final class Kite {
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
             // default constants, this keeps it true whatever they become.
-            // Meat-screen discipline (owner 2026-10-26) stands above it:
-            // with friendly zealots screening inside 8 tiles and 40+ hp
-            // the dragoon holds and shoots on ready instead of yielding -
-            // the screen tanks, the guns speak. Pinch and surrounded
-            // above still yield: a closing pocket is dying, not trading.
-            if (!hasMeatScreen(unit) && lowHp
+            // (Owner order: the former meat-screen stand above this line
+            // was withdrawn - screened dragoons kite by the same margin,
+            // health plays no role. Pinch and surrounded above still
+            // yield, except chewed, which always kites: a closing pocket
+            // is dying, not trading.)
+            if (lowHp
                 && unit.distTo(threat) < CombatTuning.current().getDragoonLowHpHoldTiles()
                 && unit.cooldown() > CombatTuning.current().getDragoonLowHpFireCooldown()) return true;
         }
         if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
-        if (unit.isDragoon() && hasMeatScreen(unit)) return false;
 
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
@@ -140,28 +139,10 @@ public final class Kite {
      * as a seam: the discipline pins without running the frame.
      */
     /**
-     * A melee enemy this close is already hitting the guns: the screen
-     * is not screening. Same edge the sim measures contact with.
+     * A melee enemy this close is already hitting the guns: no stand
+     * discipline applies. Same edge the sim measures contact with.
      */
     static final double CHEWING_TILES = 0.5;
-
-    public static boolean hasMeatScreen(AUnit unit) {
-        if (unit == null || !unit.isDragoon()) return false;
-
-        try {
-            if (unit.hp() + unit.shields() < 40) return false;
-            // A screen that lets a chewer through screens nothing: with a
-            // melee enemy already on the guns the stand-and-shoot
-            // discipline becomes stand-and-bleed (measured: 333/333 chewed
-            // sim frames stood on the screen, one dragoon 260 -> 60 hp
-            // while the pack watched; live game 185100 the same shape).
-            if (isBeingChewed(unit)) return false;
-
-            return unit.friendlyZealotsNearCount(8) > 0;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
 
     /** True when a listed melee enemy is already in hitting range. Public as a seam. */
     public static boolean isBeingChewed(AUnit unit) {

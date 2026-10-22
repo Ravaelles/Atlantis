@@ -149,11 +149,11 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void meatScreenHoldsFireInsteadOfYielding() {
-        // Owner 2026-10-26: with friendly zealots screening inside 8
-        // tiles and 40+ hp, the dragoon stands and shoots on ready
-        // instead of yielding - the screen tanks, the guns speak.
-        // Below 40 hp the old yield answers (dying trades nothing).
+    public void screenedDragoonStillKitesByMargin() {
+        // Owner order (meat-screen stand withdrawn): friendly zealots
+        // screening inside 8 tiles no longer hold the guns - a healthy
+        // dragoon kites by the same margin as everyone else, health
+        // plays no role. Below 40 hp the old yield answers as before.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit screen = fake(AUnitType.Protoss_Zealot, 31, 21);
         FakeUnit toward = fake(AUnitType.Protoss_Zealot, 32, 20);
@@ -164,26 +164,23 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon, screen),
             fakeEnemies(toward), () -> {
-                assertTrue(Kite.hasMeatScreen(dragoon), "screen in 8, hp 52: screened");
-                assertFalse(Kite.shouldKite(dragoon, toward),
-                    "screened dragoon holds and shoots instead of yielding");
+                assertTrue(Kite.shouldKite(dragoon, toward),
+                    "screened but healthy: the margin kites anyway");
 
                 dragoon.hp = 20;
                 dragoon.shields = 0;
-                assertFalse(Kite.hasMeatScreen(dragoon), "hp 20: no screen discipline");
                 assertTrue(Kite.shouldKite(dragoon, toward),
                     "below 40 hp the old yield answers - dying trades nothing");
             });
     }
 
     @Test
-    public void chewedDragoonVoidsTheScreen() {
-        // A screen that lets a chewer through screens nothing (game
-        // 185100, sim 333/333): with a melee enemy already on the guns
-        // the stand-and-shoot discipline becomes stand-and-bleed, so the
-        // screen voids and the margin answers instead. The approach
-        // screen (chewer outside hitting range) still holds - pinned
-        // next door by meatScreenHoldsFireInsteadOfYielding.
+    public void chewedDragoonKites() {
+        // Contact voids every stand (game 185100, sim 333/333 before the
+        // doctrine): with a melee enemy already on the guns the dragoon
+        // kites by margin, regardless of health or company. The approach
+        // (chewer outside hitting range) still holds or kites by the
+        // regular gates - pinned next door.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit screen = fake(AUnitType.Protoss_Zealot, 31, 21);
         FakeUnit chewer = fake(AUnitType.Protoss_Zealot, 30.5, 20);
@@ -194,9 +191,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon, screen),
             fakeEnemies(chewer), () -> {
                 assertTrue(Kite.isBeingChewed(dragoon), "0.5 tiles: already hitting");
-                assertFalse(Kite.hasMeatScreen(dragoon), "chewed guns have no screen");
                 assertTrue(Kite.shouldKite(dragoon, chewer),
-                    "the margin answers once the screen voids");
+                    "chewed dragoon kites, screen or no screen");
             });
     }
 

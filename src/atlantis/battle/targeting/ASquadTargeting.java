@@ -47,7 +47,12 @@ public class ASquadTargeting {
         if (enemy.isABuilding() && !enemy.isCombatBuilding()) return false;
         if (enemy.isZergling()) return false;
         if (enemy.isWorker()) return false;
-        if (enemy.hp() <= 15) return false;
+        // No hp floor: a nearly dead enemy is the BEST target, not an
+        // invalid one (owner: dragoons kept shooting the healthiest
+        // chewer while 8hp ones were unselectable - finishing is rule
+        // (2) of the agreed #184 ladder, inverse of the old hp<=15 ban).
+        // Dead units never reach here: every caller filters isAlive
+        // before validity (focus scan, keepable, shared, squad-last).
         if (enemy.isDeadMan()) return false;
         if (preventForZealots(unit, enemy)) return false;
         if (!unit.hasWeaponToAttackThisUnit(enemy)) return false;
