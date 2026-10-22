@@ -246,10 +246,10 @@ end at frame 0, unsupported trigger conditions log errors).
 ## Hand-run recipe (owner's path)
 
 A model-run command cannot own both sides (its background processes die when the
-command returns), so two terminals. **The owner runs this path, not a model:**
-with two terminals the assistant cannot enforce the 120-second cap, and CONVENTIONS
-§14 keeps Wine/StarCraft off limits for models anyway. The bounded, one-command
-model path is `scripts/run-openbw-e2e.sh` above.
+command returns), so two terminals. **The model path is the single-command
+front door** (`scripts/atlantis.sh`, headless + background, CONVENTIONS §14),
+not this two-terminal manual setup. The bounded, one-command
+model path for the other backend is `scripts/run-openbw-e2e.sh` above.
 
 Terminal A, first and left running:
 

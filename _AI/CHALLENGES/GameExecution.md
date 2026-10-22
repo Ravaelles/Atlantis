@@ -11,7 +11,7 @@ exist in this workspace and mixing them is the whole story below.
 | bot dir | `bots/AtlantisP/AI` | `bots/AtlantisOpenBW/AI` |
 | `ENV` | `GAME_LAUNCHER=WINE` | `GAME_LAUNCHER=OPENBW` |
 | engine | real StarCraft 1.16.1 under Wine + ChaosLauncher | headless `BWAPILauncher` (OpenBW) |
-| who runs it | owner-run, plus model runs with the owner's explicit per-case go-ahead (2026-10-19: Wine games for debugging + proving fixes) | models may run it |
+| who runs it | models and owner, headless + background (allowance 2026-10-22) | models may run it |
 
 ## 1. "OpenBW" runs kept opening a real StarCraft game (three times)
 
@@ -25,8 +25,8 @@ exist in this workspace and mixing them is the whole story below.
   `GAME_LAUNCHER=OPENBW`. `scripts/run-openbw-e2e.sh` creates and uses
   `bots/AtlantisOpenBW/AI` for exactly this reason, and refuses to run if
   `StarCraft.exe` or `Chaoslauncher` is already up.
-- **Rule:** CONVENTIONS §14 - never launch StarCraft/ChaosLauncher/Wine;
-  OpenBW is the engine for E2E work.
+- **Rule:** CONVENTIONS §14 - Wine runs headless + background via
+  `scripts/atlantis.sh`, one at a time; OpenBW is the CI-style E2E engine.
 
 ## 2. `pkill -f <pattern>` kills the shell that runs it
 
@@ -90,7 +90,7 @@ exist in this workspace and mixing them is the whole story below.
   hand). To exercise a shell function, copy it into a throwaway snippet,
   never source the runner.
 
-## 8. Model-run Wine checklist (owner go-ahead required, 2026-10-19)
+## 8. Model-run Wine checklist (headless + background, 2026-10-19; allowance 2026-10-22)
 
 - Always pass an explicit melee map (`"(3)TauCross.scx"`): the script
   default is a UMS micro scenario (`1a2a3a Micro 2.scx`) that builds

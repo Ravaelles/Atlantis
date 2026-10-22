@@ -23,8 +23,8 @@
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 30 /tmp/opencode/tune1
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 5 /tmp/opencode/tune2 KITE_STEP_TILES=2.5 KITE_MARGIN_BASE_TILES=1.0
 #
-# Owner-run only (CONVENTIONS §14); models run it with the per-case
-# go-ahead. One game at a time - never parallelize Wine games.
+# Headless-background runs allowed, model or owner (CONVENTIONS §14).
+# One game at a time - never parallelize Wine games.
 
 set -u
 

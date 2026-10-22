@@ -20,8 +20,9 @@
 # next fragment; BEST=<fitness> on its stdout drives the schedule
 # (halve step and radius when the best stops improving).
 #
-# Owner-run only (CONVENTIONS §14); one game at a time, never
-# parallelize Wine games. Overnight N-game sweeps stay owner-called
+# Headless-background runs allowed, model or owner (CONVENTIONS §14);
+# one game at a time, never parallelize Wine games. Long N-game
+# sweeps run in background and stay off the shared box's prime time
 # (#168b); this loop is the machinery, proven here on short rounds.
 set -u
 

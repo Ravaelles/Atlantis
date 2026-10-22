@@ -20,9 +20,8 @@
 # rebuild, teardown). Exists so a Wine launch is one obvious command
 # with an explicit env file, mirroring scripts/run-openbw-ums.sh
 # (map + debug). This script NEVER writes to any ENV file (owner:
-# per-run flags must not leak into watched games). Owner-run only
-# (CONVENTIONS §14); models run it only with the owner's per-case
-# go-ahead.
+# per-run flags must not leak into watched games). Headless-background runs allowed, model or owner
+# (CONVENTIONS §14).
 #
 # After the game it reports the honest throughput (game frames per
 # wall second from GameSummary): speed 0 only goes as fast as the

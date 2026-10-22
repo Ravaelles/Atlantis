@@ -284,23 +284,36 @@ disguised as a different problem:
   the step. `run-tests.sh` already lives under its own 40 s budget; this rule
   bites builds, game runs, downloads, and anything not obviously seconds.
 
-## 14. Never start StarCraft (owner's ruling, 2026-10-07)
+## 14. Game runs: headless background Wine is allowed (owner's ruling, 2026-10-07 ban; headless-background allowance 2026-10-22)
 
-- **Do not launch StarCraft, ChaosLauncher, or Wine (directly or via
-  `scripts/run-wine-*.sh`) unless the owner asks for exactly that.** The owner
-  runs real games himself.
-- **The engine for E2E work is OpenBW** (headless, no Wine/window/license);
-  the Wine path is the owner's verification vehicle, not for model runs.
-- **The two setups are separate directories and must stay separate:**
-  - **Wine**: `scripts/run-wine-*.sh` → `$HOME/.scbw/bots/AtlantisP/AI/`
-    (Wine/ChaosLauncher backend) → real StarCraft 1.16.1 + ChaosLauncher.
-  - **OpenBW**: `scripts/run-openbw-e2e.sh` → `/sc-ai/BOTS/AtlantisOpenBW/AI/`
-    (`GAME_LAUNCHER=OPENBW`) → headless `BWAPILauncher`; the bot attaches as a
-    BWAPI client.
-- **Never start the OpenBW bot from the Wine bot directory.** Its backend
-  starts StarCraft itself: a past "OpenBW" run from there silently opened a
-  real game (measured 2026-10-07, three times). The OpenBW script's own bot
-  directory exists for exactly this reason.
+- The 2026-10-07 ban existed for one reason: a visible StarCraft stole
+  the owner's active window. Headless Xvfb runs never do, so **the model
+  may run Wine games freely - headless and in background** - through the
+  `scripts/atlantis.sh` front door (Wine defaults to headless + fast env;
+  the runner's flock serializes games). Wine is currently faster and more
+  stable than OpenBW, so it is the default vehicle. OpenBW rules (§15,
+  §17) are unchanged.
+- Hard constraints, still in force:
+  - **Headless only, never `--visible`.** One watched game undoes the
+    reason this allowance exists.
+  - **Background only, one game at a time.** Foreground commands stay
+    under the §13 120 s cap; games run minutes, so they go in background
+    while the turn continues with other work. The runner's flock is the
+    mutex - never a second game beside it.
+  - **The two setups are separate directories and must stay separate:**
+    - **Wine**: `scripts/run-wine-*.sh` → `$HOME/.scbw/bots/AtlantisP/AI/`
+      (Wine/ChaosLauncher backend) → real StarCraft 1.16.1 + ChaosLauncher.
+    - **OpenBW**: `scripts/run-openbw-e2e.sh` → `/sc-ai/BOTS/AtlantisOpenBW/AI/`
+      (`GAME_LAUNCHER=OPENBW`) → headless `BWAPILauncher`; the bot attaches as a
+      BWAPI client.
+  - **Never start the OpenBW bot from the Wine bot directory.** Its backend
+    starts StarCraft itself: a past "OpenBW" run from there silently opened a
+    real game (measured 2026-10-07, three times). The OpenBW script's own bot
+    directory exists for exactly this reason.
+- Evidence discipline, measured: single Wine games are noisy (LingsUpg read
+  2 fast VICTORY against 4 wall-timeout Defeats on identical code) - one
+  result never decides. Small batches, timeouts are inconclusive (§17), and
+  a running game never blocks other verifiable work.
 
 ## 15. Game runs and client attachment: hard rules (owner's ruling, 2026-10-07)
 

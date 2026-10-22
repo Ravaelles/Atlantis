@@ -254,7 +254,7 @@ The index of which document answers which question is `_AI/README.md`.
 3. **Pylon closure:** Wine re-run with the current jar (convertible
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
-   Owner-run; autonomous work above does not wait on it.
+   Model-run headless Wine now (allowance 2026-10-22); no longer blocked.
    OpenBW control (not the proof itself): first Pylon warps in every
    retained run, 0:24-0:26 on adhoc tiers, 0:50-0:53 on short/long
    (BO expects supply 8) - the order-to-warp pipeline is healthy;
@@ -1026,14 +1026,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   >= 250, lowest sup 10 (frame-3 BO-load CyberneticsC, bank 250,
   transient like the earlier sup-10 row) then sup 13+ in flowing games -
   the stuck-at-low-supply shape absent everywhere.
-- **#96** Wine verification batch, owner-run: painter warping labels
+- **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
   Jar 12.1 MB already carries it all.
   2026-10-20: file-outputs half verified on a real Wine game
   (WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected,
-  non-empty); painter labels stay a visual owner check. Batch itself
-  still owner-run.
+  non-empty); painter labels stay a visual owner check (eyes only -
+  the batch itself runs headless, model or owner).
   Open tuning question for the batch: Pylon prepared at 15 warps ~2:24,
   past the 17/17 block - adoption+travel+warp (~25 s) outruns the 15→17
   window (~25 s), so any churn lands past the block (churn itself fixed
@@ -1223,8 +1223,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   TunerBatchManifest.render's line format (map, jar md5, per game: dir,
   verdict, hits, seconds, param digest + full vector; invalid games stay
   in batch.log), proven by a 1-game batch (WIN, manifest validated:
-  structure, digest recomputation, batch.csv agreement). The overnight
-  N-game sweep stays owner-called. Step 6 (gradient loop) LANDED
+  structure, digest recomputation, batch.csv agreement). N-game sweeps run headless in background, model or owner (allowance
+  2026-10-22); one game at a time, small batches first (single games
+  are noisy). Step 6 (gradient loop) LANDED
   2026-10-21: TunerFitness TIMES_HIT x GAME_minutes (lower wins; a LOSS
   carries +1M so one scalar orders everything and losses still tune
   toward dying slower), abstract TuningScenario + concrete
@@ -1464,7 +1465,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  zealots, 400 ticks each: peak split 4.21 -> 3.10 tiles, deaths equal
  (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
  (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
- Live proof + tuner registration ride the owner-run game.
+ Live proof + tuner registration ride the next headless Wine game.
 - **#176** Death-log issuer attribution (owner 2026-10-21/22, HIGH priority):
  combat death logs show WHAT but never WHO. Live datum (1Drag Zealot#135):
  rows of `Attack_Unit/a:ATTACK_UNIT/null` with frame numbers, no hint
@@ -1487,7 +1488,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-22 code LANDED (pinned `DecisionJournalTest` 7/7: direct and
  funnel paths name the caller class; same-caller duplicates still
  collapse, different callers split - that IS the point). Live proof
- rides the next owner-run duel game.
+ rides the next headless Wine duel game.
 - **#177** Blind-enemy advance (owner 2026-10-21/22, HIGH priority):
  ZealDrag_v_LingsUpg: the enemy splits, ours stand still with
  ClusterMove + ClusterGhost tags - no visible enemies, only fogged
@@ -1513,7 +1514,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Proof: ZealDrag_v_LingsUpg live (army displaces toward the split
  enemy instead of standing), then ZealDrag_v_Zeal.
  2026-10-22 code slices (all stub-pinned + mutation-proofed, fast
- suite green; live proof of each rides the owner-run UMS games):
+ suite green; live proof of each rides the next headless Wine UMS games):
  far march (UMS ignores the 12-tile give-up, melee keeps it),
  unexplored-region fallback (contact, then fogged memory, then
  nearest unexplored region; melee keeps the old null), per-second
@@ -1534,7 +1535,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  footwork, zealot-flavored: the step must not break the line on
  open ground, only save HP that would otherwise be donated.
  Prove in sim first (zealot vs lings: HP saved per cooldown),
- then live on the ling maps.
+ then live on the ling maps (headless Wine, model-run).
  2026-10-22 sim slice: the withdraw intent never reached the ground -
  `ZealotWithdraw.should` gated into `shouldKite`, but the step math
  below is ranged-hold (desired minus dist <= 0 for melee-vs-melee),
@@ -1544,7 +1545,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  unchanged, direction still MoveAway; dragoon math bit-identical).
  Pinned `ZealotWithdrawSimTest` (wounded vs 2 lings: displaces, move
  steps, still trades; mutation-proofed). Live proof rides the
- owner-run ling maps.
+ headless Wine ling maps (model-run).
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
  (owner 2026-10-21/22): on the new map the bot first does not move
  at all, then loses on zealot/dragoon miscoordination - zealots

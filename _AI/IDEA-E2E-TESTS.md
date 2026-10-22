@@ -298,4 +298,6 @@ scbw tier's tables live in `_AI/e2e/` and are governed by its own README.
 - No patching `PositionFinder` further: it is scheduled for deletion and rewrite
   (`_AI/CHALLENGES/PositionFinder.md`). Adding to it makes the rewrite bigger and the
   diagnosis muddier.
-- No model-run Wine/StarCraft: OpenBW is the E2E engine (CONVENTIONS §14).
+- Model-run Wine games go headless + background through
+  `scripts/atlantis.sh` (CONVENTIONS §14); OpenBW stays the CI-style
+  E2E engine.

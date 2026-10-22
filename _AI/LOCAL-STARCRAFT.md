@@ -9,8 +9,9 @@ here is Wine-only knowledge that exists nowhere else.
 ## The Wine desktop (real StarCraft), measured 2026-10-06
 
 This is the `GAME_LAUNCHER=WINE` backend, the Linux twin of the Windows F5
-workflow. It is separate from headless OpenBW. **Owner-run** (CONVENTIONS
-§14); the model never starts it.
+workflow. It is separate from headless OpenBW. **Headless-background
+runs, model or owner** (CONVENTIONS §14); never `--visible` on a shared
+desktop - a watched game steals the active window.
 
 **How to run (the whole thing, one command):**
 
@@ -65,12 +66,14 @@ the game played on, the logs were collected by hand). Contained window
 via `WINE_VIRTUAL_DESKTOP=WxH` (opt-in until injection through it is
 proven).
 
-**Who may run Wine games (standing rule, owner 2026-10-18):**
-CONVENTIONS §14 still gates this - no Wine/StarCraft launch unless the
-owner asks for exactly that. Standing clarification: Wine games are
-worth running for now, but kept to the minimum - only when a hunt or a
-fix proof needs the real engine/opponent (OpenBW spawns none, NEXT
-#94), or on the owner's explicit "you may run Wine now". Procedure and
+**Who may run Wine games (standing rule, owner 2026-10-18, headless-background
+allowance 2026-10-22):** CONVENTIONS §14 governs this - headless + background
+through `scripts/atlantis.sh`, one game at a time, never `--visible`.
+Standing clarification: Wine games are worth running, and the model runs
+them itself now - but kept to the minimum that answers the question:
+only when a hunt or a fix proof needs the real engine/opponent (OpenBW
+spawns none, NEXT #94). Single games are noisy, so small batches, never
+one result as a verdict. Procedure and
 post-run checks: `_AI/CHALLENGES/GameExecution.md` §8.
 
 **Exit at supply 50 is the default because the opening is where the
