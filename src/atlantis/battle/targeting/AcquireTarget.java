@@ -66,8 +66,10 @@ public final class AcquireTarget {
         try {
             AUnit current = keepableCurrentTarget(unit);
             if (current != null) return current;
+
             Selection enemies = unit.enemiesNear();
             if (enemies == null) return null;
+
             return new WeakestInRange(unit).pickFrom(enemies);
         } catch (Exception ignored) {
             return null;
@@ -78,8 +80,11 @@ public final class AcquireTarget {
     private static AUnit keepableCurrentTarget(AUnit unit) {
         AUnit target = unit.target();
         if (target == null || !target.isAlive()) return null;
+
         if (!ASquadTargeting.isValidTarget(unit, target)) return null;
+
         if (!unit.hasWeaponRangeToAttack(target, 0)) return null;
+
         return target;
     }
 
@@ -105,8 +110,11 @@ public final class AcquireTarget {
 
         private void consider(AUnit enemy) {
             if (enemy == null || !enemy.isAlive()) return;
+
             if (!ASquadTargeting.isValidTarget(unit, enemy)) return;
+
             if (!unit.hasWeaponRangeToAttack(enemy, 0)) return;
+
             int hp = enemy.hp() + enemy.shields();
             double dist = unit.distTo(enemy);
             if (hp < bestHp || (hp == bestHp && dist < bestDist)) take(enemy, hp, dist);
