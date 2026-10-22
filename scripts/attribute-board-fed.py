@@ -26,6 +26,7 @@ Pump proxies (documented approximations, same as the hand verdicts):
 """
 import json
 import re
+import os
 import sys
 
 BUILDING_FEDS = {
@@ -65,8 +66,13 @@ def main():
     if not args:
         print(__doc__)
         return 2
+    seen = set()
     all_fed = []
     for path in args:
+        real = os.path.realpath(path)
+        if real in seen:
+            continue
+        seen.add(real)
         rows = load(path)
         fed = [r for r in rows if r.get("key") == "BOARD_FED"]
         for r in fed:
