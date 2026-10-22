@@ -1916,6 +1916,19 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  132->220, foes alive 4->5 (the DPS price, named). Pinned 3/3
  KiteStepRideSimTest (swamped holds fire, lone chewer gets shot,
  no-step re-arms).
+ 2026-10-23 live after-proof, game 210942 on the post-fix jar
+ (Defeat 8/1 in 202s, 8 kills vs 3/9 before): worst dragoon chew 5
+ telemetry rows (~120f, hp 132->69, survived), 37 KITE rows with
+ displacement, death journal all-ClusterKite/Unstick with zero
+ FormHold, GHOST verdict fired live on two dragoons. Only one zealot
+ lost all game. Pre-fix #165 stood 300f with 0 kite rows to death;
+ post-fix dragoons kite from before first damage. Doctrine holds live.
+ Side observation, no code this turn: the ghost creep ordered 12
+ moves into unwalkable tiles (one wall area, 4 distinct tiles, all
+ refused safely by the move door with a full stack trace each in
+ WINE_DEBUG). The orders never land, but the creep stalls there
+ instead of sliding along the wall; candidate follow-up: walkability
+ check before ordering in GhostAdvance.move, pending a repro pin.
  2026-10-23 meat-screen stand withdrawn (owner order, kiting regardless
  of health): screened dragoons kite by margin like everyone else -
  the screen doctrine made healthy dragoons skip kiting entirely until
