@@ -258,6 +258,10 @@ The index of which document answers which question is `_AI/README.md`.
  exit at 51): BOARD_FED 2x (sustained-zealot f4950 pumps 8,
  sustained-dragoon f7860 pumps 9) - both rescue; tally 38 rescue,
  0 routine, still no candidate.
+ 2026-10-23 Wine TauCross DRY_RUN macro 002228 (VICTORY 9/1, 432 s,
+ V2 planning alongside, legacy playing): BOARD_FED 2x
+ (sustained-zealot f5550 pumps 9, sustained-dragoon f7680 pumps 8) -
+ both rescue; tally 42 rescue, 0 routine, still no candidate.
  Tooling: multi-file sweep deduped by realpath (the `latest`
  symlink double-counted one run before).
  2026-10-23 re-sweep over 97 unique retained logs: 9 BOARD_FED rows,
@@ -273,6 +277,9 @@ The index of which document answers which question is `_AI/README.md`.
  batches, no construction twins there).
  2026-10-23 re-sweep over 140 unique retained logs: 14 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 38 rescue / 0
+ routine, still no candidate.
+ 2026-10-26 re-sweep over 141 unique retained logs: 16 BOARD_FED rows,
+ all rescue, 0 routine - cumulative tally holds at 42 rescue / 0
  routine, still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
@@ -616,7 +623,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 2026-10-23 macro 225319 (419 s): 0 ADOPTED; 1 CANCEL (Gateway refresh-cancel f2668 with buildable:true - builder #6 stood ON the site [14,51] PlayerGuard, footprint self-blocked; re-request warped f2691); Nexus#2 STARTED f8098 [16,14], warped (final Nexus=2).
 2026-10-23 macro 231335 (370 s): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED_IN_PROGRESS console x2 (first live sighting, BUILDER_LOG-gated, untwinned - Gateway [18,47] and Pylon [13,58], both recovered: 12 STARTED, final Pylon=6/Gateway=4); Gateway [14,51] self-block resited to [16,52] with NO cancel row (refresh path without CANCEL twin - the 225319 class, third occurrence of the tile).
 2026-10-23 macro 235430 (380 s): 0 ADOPTED; 0 CANCELs; 0 DEMOTE rows (twin live from this game on, nothing fired - pipeline healthy); Pylon [118,19] refresh at 3:45 with no cancel (third resite-without-cancel shape); Nexus#2 queued 5:43 READY but unwarped at the supply-cap exit (final Nexus=1, the 224120 shape).
+2026-10-26 DRY_RUN macro 002228 (VICTORY 9/1, 432 s, V2 planning alongside): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin fired 2x live (FIRST live rows: CyberneticsC [13,54] f4571 stoodStill 90f, Gateway [17,47] f9079 stoodStill 90f - both recovered, re-armed and warped, no stuck freeze); Pylon#1 f947; Nexus#2 STARTED f8764 but unwarped at the supply-cap exit (final Nexus=1).
 2026-10-26 macro 001819 (380 s): 0 ADOPTED; 1 CANCEL (Pylon refresh-cancel f5244 buildable:true, re-requested tile [113,8] warped f5371 ~135f later - cancel-and-replace live); 15 STARTED, Nexus=1 all game (Nexus#2 never queued); Pylon#1 f958. V2_GOAL_SOURCE twin silent all game - root-caused, not a twin bug: PRODUCTION_V2 defaults OFF and no Wine env sets DRY_RUN, so the engine never plans (twin wired and pinned, engine simply off - see #144 datum).
+2026-10-26 DRY_RUN macro 002228 (VICTORY 9/1, 432 s, V2 planning alongside): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin fired 2x live (FIRST live rows: CyberneticsC [13,54] f4571 stoodStill 90f, Gateway [17,47] f9079 stoodStill 90f - both recovered, re-armed and warped, no stuck freeze); Pylon#1 f947; Nexus#2 STARTED f8764 but unwarped at the supply-cap exit (final Nexus=1).
 
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
@@ -806,6 +815,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 225319 (419 s VICTORY, supply-cap exit at 51, Nexus#2 warped 5:3x): multi-base again - not the lottery shape.
  2026-10-23 macro 231335 (370 s VICTORY, supply-cap exit at 50, Nexus=1 all game): right shape (1 base), 330 s short of 700 s - lottery continues.
  2026-10-23 macro 235430 (380 s VICTORY, supply-cap exit at 51, Nexus=1 all game): right shape (1 base), 320 s short of 700 s - lottery continues.
+ 2026-10-26 DRY_RUN macro 002228 (432 s VICTORY, supply-cap exit at 51, Nexus#2 STARTED f8764 but unwarped at the cap): multi-base trajectory - not the 1-base 700 s+ lottery shape.
  2026-10-26 macro 001819 (380 s VICTORY, supply-cap exit at 51, Nexus=1 all game, no Nexus queue at all): right shape (1 base), 320 s short of 700 s - lottery continues.
 
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
@@ -877,6 +887,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 225319 (VICTORY 3/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 STARTED f952 (~0:40, BO At 8), 14 STARTED, 1 CANCEL (Gateway refresh-cancel, re-request warped); BUILD_BREAKDOWN x2, both self-recovered (Gateway [14,51] f2040: builder #6 PlayerGuard ON the site, dist 1.3, canBuild=true all - footprint self-block, then cancel+warp; Pylon [13,58] f4380: worker #139 on ReturnMinerals, dist 10.8, warped anyway) - not new instances. STUCK_WORKER 230x across 27 workers at ~30f cadence - the cyclic diagnostic, not stalls.
  2026-10-23 macro 231335 (VICTORY 1/1, BUILDER_LOG=1): pipeline healthy - Pylon#1 f952, 12 STARTED, 0 CANCELs; BREAKDOWN x2 self-recovered (Gateway [14,51] f2040: same builder-on-site PlayerGuard shape, third occurrence, deterministic opening tile; Pylon [24,44] f3300/3330: worker gathering at dist 20.3, unexplored canBuild=false, resited [15,45] warped f4138). STUCK_WORKER 218x across 24 workers at ~30f cadence - cyclic, not stalls.
  2026-10-23 macro 235430 (VICTORY 1/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f957, 13 STARTED, 0 CANCELs, 0 BREAKDOWNs (quietest opening yet - no builder-on-site stall this game); Nexus#2 queued 5:43 READY but unwarped at the cap (final Nexus=1). STUCK_WORKER 222x across 25 workers at ~30f cadence - cyclic, not stalls.
+ 2026-10-26 DRY_RUN macro 002228 (VICTORY 9/1, BUILDER_LOG=1, V2 planning): pipeline healthy - Pylon#1 f947, 16 STARTED, 0 CANCELs, BREAKDOWN x2 Pylon (f3390/f8100, travelling builders, self-recovered); the 2 demotes were CyberneticsC + Gateway (see #150 twin datum). Nexus#2 STARTED f8764 unwarped at the cap (final Nexus=1). STUCK_WORKER 230x across 23 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 001819 (VICTORY 1/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f958, 15 STARTED, 1 CANCEL (Pylon refresh [117,12]->[113,8], both warped), 0 BREAKDOWNs; Nexus never queued (final Nexus=1). STUCK_WORKER 220x across 24 workers at ~30f cadence - cyclic, not stalls.
 
 - **#74** Wine builder variance remainder (requeue/distances/debounce
@@ -901,6 +912,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 225319: same schema (0 MOVE_BUILD rows); BUILD_BREAKDOWN x2 both self-recovered (all 14 STARTED warped), no alternating-handoff evidence either way.
  2026-10-23 macro 231335: same schema (0 MOVE_BUILD rows); breakdowns self-recovered, all 12 STARTED warped, no alternating-handoff evidence either way.
  2026-10-23 macro 235430: same schema (0 MOVE_BUILD rows); zero breakdowns, all 13 STARTED warped, no alternating-handoff evidence either way.
+ 2026-10-26 DRY_RUN macro 002228: same schema (0 MOVE_BUILD rows); zero alternating-handoff evidence either way (2 Pylon breakdowns with travelling builders, both self-recovered without demote).
  2026-10-26 macro 001819: same schema (0 MOVE_BUILD rows); zero breakdowns, all 15 STARTED warped, no alternating-handoff evidence either way.
 
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
@@ -970,6 +982,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 2026-10-23 macro 225319: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #11 sup 31 vs At 27, all warped) - lateness not reproduced.
 2026-10-23 macro 231335: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #11 sup 32 vs At 27, all warped) - lateness not reproduced.
 2026-10-23 macro 235430: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #11 sup 29 vs At 27, all warped) - lateness not reproduced.
+2026-10-26 DRY_RUN macro 002228: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, all warped) - lateness not reproduced.
 2026-10-26 macro 001819: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #11 sup 29 vs At 27, all warped) - lateness not reproduced.
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
@@ -1189,6 +1202,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Re-checked 2026-10-23 (97 unique logs, incl. 225319): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-23 (110 unique logs, incl. 231335): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-23 (116 unique logs, incl. 235430): still zero - same single known transient, no deadlock shape.
+ Re-checked 2026-10-26 (141 unique logs, incl. 001819 + 002228): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (140 unique logs, incl. 001819): still zero - same single known transient, no deadlock shape.
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
@@ -1269,6 +1283,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
     (V2 Wine game: Pylon goals build-order 1633 + dynamic 1102 rows) -
     the pumps are NOT silent, the feeder does NOT cover routinely;
     no candidate, same as step 1.
+    2026-10-26 DRY_RUN macro 002228 re-proof LANDED: V2_GOAL_SOURCE
+    2676 rows, Pylon goals dynamic 1715 + build-order 961 - dual
+    authorship confirmed live again on the current tree; pumps still
+    not silent (BOARD_FED rescues with pumps present) - still no
+    candidate, same as step 1. The twin answers WO-144's question
+    live: both lists fire Pylon goals, the source column tells
+    which when a duplicate pair lands.
+    No duplicate Pylon pair landed this game (2 Pylon requests, 0
+    proximity cancels), so the storm-class adjudication itself still
+    waits for a storm game - authorship firing is proven, attribution
+    of a pair is not.
     2026-10-26: V2_GOAL_SOURCE twin silent in all 140 retained logs -
     root-caused, not a twin bug (wired + pinned): PRODUCTION_V2
     defaults OFF and no Wine env sets DRY_RUN, so collectGoals never
@@ -1328,6 +1353,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 macro 231335 (12 warps): re-fire only - min-supply 6x, earlier-reserve 4x, funding 1x, core-priority 1x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
  2026-10-23 macro 235430 (13 warps): re-fire only - min-supply 4x, core-priority 2x, funding 2x, earlier-reserve 1x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
  2026-10-26 macro 001819 (15 warps): re-fire only - min-supply 4x, funding 2x, earlier-reserve 1x, core-priority 1x, pylon-cap 1x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
+ 2026-10-26 DRY_RUN macro 002228 (16 warps): re-fire only - unstarted-pylon 4x, min-supply 4x, earlier-reserve 6x (Pylon/Gateway/CyberneticsC/Nexus singles), pylon-cap 2x, funding 1x, core-priority 1x; zero live fires unchanged (same four stub-pinned).
  2026-10-23 macro 225319 (14 warps): re-fire only - core-priority 4x, min-supply 5x, funding 3x, earlier-reserve 5x, pylon-cap 2x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
 
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
