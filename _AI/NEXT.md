@@ -378,7 +378,7 @@ re-measure before quoting, never copy old counts here.
   without it would mislabel healthy builderless warps).
   Siteless-mint CANCELs read off the CANCEL reason (no REQUESTED
   row by construction - mint links before siting).
-  WO-150b written (`_AI/work-orders/WO-150b-builder-dead-warp-twin.md`): twin + progress-signal contract for the builder-dead warp gap, awaiting execution - no code until its sim pins exist.
+  WO-150b written (`_AI/work-orders/WO-150b-builder-dead-warp-twin.md`): twin + progress-signal contract for the builder-dead warp gap, slice 1 landed (trail + note + hpStatic pin-tested); live freeze proof still open.
 
   → full chain: _AI/WINE-MACRO-DATUMS.md §3
 
@@ -525,41 +525,18 @@ re-measure before quoting, never copy old counts here.
   No misfire observed; the rule stays. 2026-10-21 TauCross macro: zero
   room-around refusals, zero PYLON_FIND_FAILED, 9 Pylons warped - second
   no-harm datum, still no firing shape.
-- **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
-  38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
-  + 400 bank at log end). Worker stall, placement refusal, null
-  builder and cancels all ruled out from flag-off logs. Needs a
-  `BUILDER_LOG=1` Wine game (builder? site? no attempt?). First datum
-  2026-10-19 (TauCross, BUILDER_LOG=1): Pylon#1 reserved worker #5 at
-  pick 0:13, STARTED 0:46, warped [16,46] 0:58 - pipeline healthy on
-  this game; the two named instances were other games. Second datum
-  2026-10-21 (TauCross vs Zerg, BUILDER_LOG=1, 9.7 game-min Defeat):
-  55 reservation/assignment lines flow; BUILD_BREAKDOWN on Gateway
-  [123,26] (worker frozen 74f at dist 17.2, probe #197 in footprint,
-  canBuild=false all variants) then self-recovered, walked in, and
-  the Gateway WARPED 8:06 (ledger) - stall-with-recovery, second
-  instance of the 10-19 [3,47] class, NOT a third #84 stall (builder
-  moved and delivered). Correction trail: EVENTS carries no STARTED
-  row for cid=96 (STARTED-twin gap on the builder path - warp proven
-  by ledger, twin silent), and cid=98/oid=67 CANCELs "Null position"
-  at 8:07 with zero REQUESTED rows anywhere (terminal without
-  origin - request-twin gap on some re-request door; next: read the
-  removal/mint paths for the untwinned exit, no blind patch).
-  2026-10-21 Wine macro: Pylon#1 warped 0:48@8 (BO expects supply
-  8) - pipeline healthy, no new #84 instance.
-  2026-10-21 twin gap closed in code (stub-pinned
-  `WarpStartedTwinTest` 2/2, suite + checkstyle green): one STARTED
-  row per construction via `ProduceBuilding.noteStarted` - adopt names
-  the site as before, the warp observer names the warp tile when
-  adoption never rowed it (the cid=96 class). Live proof rides the
-  next legacy-minted warp game.
-  2026-10-21 mint-answer verified, no twin added per the decision:
-  retained TauCross macros show siteless CANCELs carrying cid+oid+
-  reason (e.g. cid=102/oid=82 "Null position for Assimilator",
-  tile "-") - the CANCEL reason reads as designed.
- 2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): pipeline healthy - Pylon#1 0:39@8, 17 STARTED with 0 CANCELs, zero stuck constructions, no new #84 instance and no twin gaps this game.
-2026-10-26 macro 091041 (VICTORY 1/0, 367s game, zero own deaths): 0 ADOPTED; 1 CANCEL (Pylon [97,114] f4324 resited [98,115] warped - cancel-and-replace, 17f gap); 0 DEMOTEs; 0 BREAKDOWNs; deaths 0, kills 1 per verdict (unattributed in archive); Pylon#1 f964 [92,113] (bottom spawn); Nexus never queued (final Nexus=1).
-  → full chain: _AI/WINE-MACRO-DATUMS.md §5
+- **#84** Wine Pylon ordered but unbuilt (worker stall, placement refusal,
+  null builder and cancels all ruled out from flag-off logs): needs a
+  `BUILDER_LOG=1` Wine game (builder? site? no attempt?). Opened
+  instances resolved as stall-with-recovery (builder moved and
+  delivered), NOT new #84 stalls. Twin work landed: `WarpStartedTwinTest`
+  2/2 (one STARTED row per construction - the cid=96 builder-path gap
+  closed); siteless CANCELs carry cid+oid+reason (read the reason, no
+  twin added per decision). Open: the STARTED-twin gap on the
+  re-request door (cid=98/oid=67 "Null position" with zero REQUESTED
+  rows); live proof of the warp-observer naming rides the next
+  legacy-minted warp game. Pipelines healthy on all flagged games since.
+  -> full chain: _AI/WINE-MACRO-DATUMS.md section 5
 
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
@@ -619,31 +596,16 @@ re-measure before quoting, never copy old counts here.
   Protoss-only, so the leak is unobservable until Terran play exists.
   The adhoc tier also has no Terran expectations (Protoss gates fail
   it trivially). Needs a game showing it. No blind fix.
-- **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
+- **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 -> re-queued
   4:39 sup35, accepted 4:40+ six times same tile; first Gateway accepted
-  1:09). OpenBW control (`20261015_141835`) warps both Gateways on time
-  (1:14 sup9, 1:37 sup10). Instrumented, not patched: `BUILDINGS.json`
-  ledger (warp time + supply vs order expectation, both runner paths).
-  Needs a Wine game with the ledger - the late/missing Gateway row names
-  the layer. First datum 2026-10-19 (TauCross): Gateways #2/#3 on time
-  (1:24@10, 1:51@12); instead a triple dynamic ordering at 49 (#60/#64/
-  #61 within 162 frames) - same duplicate class as supply, not lateness.
-  Re-verified 2026-10-19: #2/#3 on time 1:27-1:28/1:49-2:00 in all
-  three fresh OpenBW runs, dynamic Gateways on schedule - OpenBW
-  control clean, Wine proof still owner-side. 2026-10-21 Wine macro
-  datum (TauCross, ledger): Gateways 1:27/1:53/4:11/6:01 + dynamic
-  7:51 [105,16] and 8:06 [123,26], all warped - lateness pattern
-  not reproduced. No blind patch.
-  2026-10-21: 5th-8th clean runs in a row (1:25-1:28 / 1:47-1:56,
-  all warps) vs 3 late runs in the archive (2:37, 3:10/3:52,
-  2:53/3:03) - intermittent, still no blind patch; the ledger
-  keeps naming the layer when it recurs.
-  2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
-  + 17:19/18:18, all warped - lateness not reproduced again.
- 2026-10-22 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
-  B52 breaks the Cyber part while gateways hold +1: Cyber warped sup14 vs At22 (-8, lowest on record, prior min 17); P8 sup21 on plan (rare, 1 prior in chain); P11 +4. Gateway lateness still not reproduced.
-2026-10-26 macro 091041: systematic +1 lag (Gateways #2/#3 sup 11/13, Pylon #5 sup 17 vs At 15 (+1), Pylon #8 sup 22 vs At 21 (+1), Pylon #11 sup 29 vs At 27 (+2); CyberneticsC sup 22 vs At 22 ON PLAN, warped clean; Assimilator sup 23 vs At 23 ON PLAN, warped clean; console audit 4 off-plan (GW#2, GW#3, P5, P11) - matches the ledger; +2 flags while +1 passes (audit tolerance confirmed again) - lateness not reproduced.
-  → full chain: _AI/WINE-MACRO-DATUMS.md §7
+  1:09). OpenBW control warps both on time - OpenBW side clean, Wine
+  proof still owner-side. Instrumented, not patched: `BUILDINGS.json`
+  ledger (warp time + supply vs order expectation); the late/missing
+  Gateway row names the layer when it recurs. Verdict across 8+ clean
+  runs vs 3 late runs in the archive: intermittent, still no blind
+  patch. Standing shape is systematic +1 supply lag on #2/#3 (not
+  lateness - warps land on time, audit tolerance confirmed).
+  -> full chain: _AI/WINE-MACRO-DATUMS.md section 7
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran - plumbing
@@ -1275,7 +1237,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Gating seam per behavior (the NN plug point, mirrors ProductionV2Mode OFF/DRY_RUN/LIVE incl. typo-safe default OFF): each gate answers from the hand rule OR from the NN score behind a flag - per-behavior flags like V2's per-gate flips, so rollout is gradual, plus a global kill-switch. Fallback is mandatory, not optional: NN uncertain or output missing → hand rule decides, so the net is never a single point of failure in a live game. DRY_RUN mode is the trust builder: the net logs what it WOULD pick next to what deterministic picked, per frame - disagreement rows plus outcomes become the evidence base, no blindness, no faith required. Deterministic mode stays available permanently (owner requirement): same binary, flag-selected, doubles as the A/B baseline that proves the net (frozen sim scenarios, NN vs deterministic, efficacy bar before any live takeover).
  Migration is slices, never big-bang (production cut stays the priority): extract current branches (retreat, leave-breached, hold, kite/glide/re-arm pieces, regroup...) into Behavior classes one by one, order kept 1:1 at first (zero behavior change, suite green each slice), only then does the order become data. BattleCommander.act() iterates the chain - pure delegation, CONVENTIONS §23 intact. Guard design lives in `_AI/redesign/05_BEHAVIOR_GUARDS.md` (spec only until the production cut lands): sequential levels, disjoint guards, continuity by narrowing.
  Non-goals: C++ rewrite (revisit only on the falsification trigger); end-to-end pixel policies; tuner scalar loop untouched (it keeps tuning globals); #184 coordination review stays separate (action space, not gating).
- Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Twin side: CLUSTER rows carry leader dest (dtx/dty) since 2026-10-23 and nearest-foe tile (fx/fy) since 2026-10-24 - the #188b blocking-geometry proof is finally measurable live. First game on the extended twin (B132): fx/fy present on 154/154 rows - but the only FLEE was foe-unknown, so still no blocker geometry to reconstruct. Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Update 2026-10-24: gaps (1) and (2) closed in test scope - ZombiePolicies (chase-nearest, stand-and-trade, focus-weakest, kite-back, holdStill; deterministic, pinned) + ZombieSimLoopTest (library drives the real loop) + BattleFeatures snapshot (7-column CSV rows, pinned). Remaining: (3) no NN lib (unchanged) + feature export is test-side only (production gating needs the seam). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
+ Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Twin side: CLUSTER rows carry leader dest (dtx/dty) since 2026-10-23 and nearest-foe tile (fx/fy) since 2026-10-24 - the #188b blocking-geometry proof is finally measurable live. First game on the extended twin (B132): fx/fy present on 154/154 rows - but the only FLEE was foe-unknown, so still no blocker geometry to reconstruct. Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Update 2026-10-24: gaps (1) and (2) closed in test scope - ZombiePolicies (chase-nearest, stand-and-trade, focus-weakest, kite-back, holdStill; deterministic, pinned) + ZombieSimLoopTest (library drives the real loop) + BattleFeatures snapshot (7-column CSV rows, pinned). Remaining: (3) no NN lib (unchanged) + feature export is test-side only (production gating needs the seam). Update 2026-10-26: FakePositionFinder now spirals for real (was identity - the blind spot that forced GhostAdvance to re-implement sliding), and EpisodeManifest renders per-tick CSV rows for offline analysis. No behavior change anywhere (walkable-everywhere stubs answer identically). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
 
 - **#186** ProtossAttackHoldToShoot: real firing range vs nominal weapon range (owner 2026-10-26, from the owner's old code under the same name).
  The nominal dragoon range (4.0 tiles) is NOT the range at which a shot actually lands while both sides move. From the moment we start stopping (braking distance at current speed) through windup to the damage frame, a chasing enemy keeps closing - by the time the shot can fire it is drastically closer than nominal range suggests. This is why holding further out showed nothing (E-hold65: 17/14/15, back at baseline): the hold point was never the binding constraint, the stop-to-shoot window is.
