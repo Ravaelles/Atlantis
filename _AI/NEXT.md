@@ -157,11 +157,11 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 242 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 284 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels, all 0 fed) / 226 rows,
+   (cumulative: 243 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 286 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels, all 0 fed) / 227 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B132 zero-waste + 31st twin + FLEE homeward, 1 fed;
+   never in tally); B134 first 700s+ Wine game (horizon 90 worked) + siteless storm x222 + stranded Pylon, 1 fed;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, production holds ZERO -
@@ -492,39 +492,11 @@ re-measure before quoting, never copy old counts here.
   lottery continues, one axis at a time.
  2026-10-22 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
  2026-10-26 macro 091041 (367s VICTORY 1/0, 1 base, Nexus never queued, Nexus=1, no Forge): right shape, still far too short of the 700 s+ lottery.
+  Vehicle finding 2026-10-24 (code-read, decisive): Wine macros cannot win this lottery as configured - `ForceExitAtSupply` (horizon 50 in ENV-WINE-FAST) ends every macro game at supply ~51 (340-502s observed), and nothing else ever ends them (foe unknown all game, 0/0 most games). The 944s game was OpenBW (their gates own the end). One long macro now running with a per-run env (horizon 90, shared ENV untouched) - first attempt at the shape, not at the verdict. - DONE 2026-10-26: B134 ran 1209s to the 20:00 map/engine cap (horizon 90 worked, game ended at exactly f28800 with base intact), multi-base so not the lottery shape; still no 1-base 700s+ game anywhere (best remains the 944s OpenBW run).
   → full chain: _AI/WINE-MACRO-DATUMS.md §4
 
-- **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
-  refusals, grid-modulo + doctrine kills (a mislabel fix already
-  landed, zero behaviour). Needs the corner-stall game to decide
-  doctrine vs leash-relax (owner call, same class as the zero-supply
-  yield). Game happened (`WINE_LOG`, corner [119,10], 46 fails,
-  Pylons still landed, supply unblocked to 33): ranked refusals are
-  physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 -
-  leash never bound (doctrine wins on evidence, 99.5% tile rules).
-  Suspects: 11x7 street grid (~30%, aesthetics not engine law, escapes
-  only at free 0 / free<=5-banked-isolated - the 25/25 pain sat at
-  free 6-7 just outside); physical footprint (~70%, mostly true
-  negatives). Instruments: refusal-breakdown accessor +
-  `PylonSearchBreakdownTest` (attribution plumbing) +
-  `StreetGridDoctrineTest` (grid + both hatches + free-6 shut). The
-  doctrine change itself stays owner call. Total failure since removed by a
-  last-resort ladder (strict, relaxed margins, first engine-buildable tile
-  in ring order): doctrine untouched, `PYLON_FIND_FAILED` prints only when
-  all passes fail (`PylonLastResortTest` 2/2, RED then GREEN).
-  Implemented 2026-10-20 (`PylonNeedsRoomAround`: with SupplyFree>=2
-  the four +-4 diagonal tiles must be walkable; poor supply bypasses;
-  wired right after TooCloseToOtherPylons, pinned 4/4) - proof
-  2026-10-21 on 7th_rav (Wine, hidden, fresh jar with the rule +
-  anchor fix + pinch in it): 6/6 Pylons warped, first 0:50, zero
-  supply blocks, zero room-around refusals fired, opening healthy
-  (Gateway 1:20, Core 2:23, Dragoon 3:26). The map never offered a
-  true corner-stall shape (mid-base tiles [112,29]/[108,25]/[118,34]),
-  so this is a no-harm proof, not a firing proof - the firing path
-  still rests on the 4/4 stub pin until a real corner shape appears.
-  No misfire observed; the rule stays. 2026-10-21 TauCross macro: zero
-  room-around refusals, zero PYLON_FIND_FAILED, 9 Pylons warped - second
-  no-harm datum, still no firing shape.
+- **#81** Corner-stall Pylon search (top-right base [119,10]): needs the corner-stall game to decide doctrine vs leash-relax (owner call). Game happened (corner [119,10], 46 fails, Pylons still landed, supply unblocked): ranked refusals are physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 - leash never bound (doctrine wins on evidence, 99.5% tile rules). Instruments landed (refusal-breakdown accessor + `PylonSearchBreakdownTest` + `StreetGridDoctrineTest`); total failure removed by a last-resort ladder (doctrine untouched, `PYLON_FIND_FAILED` only when all passes fail, pinned 2/2). `PylonNeedsRoomAround` in place (pinned 4/4): two no-harm proofs, zero misfires, zero firing shapes yet - the firing path still rests on the stub pin until a real corner shape appears.
+
 - **#84** Wine Pylon ordered but unbuilt (worker stall, placement refusal,
   null builder and cancels all ruled out from flag-off logs): needs a
   `BUILDER_LOG=1` Wine game (builder? site? no attempt?). Opened
@@ -558,37 +530,17 @@ re-measure before quoting, never copy old counts here.
   → full chain: _AI/WINE-MACRO-DATUMS.md §6
 
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
-  gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
+  gates (~2x above L2/L3 engine costs) read coherent (Forge -> weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
-  side of D5. Untouched. `TECH_CHECK` twin live (`170009`: 430 rows);
-  the refusing gate named in the open: weapons wants 700 bank or 3
-  bases (peak 517 here, 671 in `165345` - just under). 2026-10-18: the
-  Python window (Forge 3:58, bank 784, TECH_CHECK false at 772/306)
-  is refused one gate earlier - `combat-10` (8 combat units; the bank
-  clause never evaluates). Named live from now on: the TECH_CHECK twin
-  carries `refusedBy` (Weapons + Armor, pinned in
-  `ProtossUpgradesLevelGatingTest` 4/4). Tuning, still owner side of D5.
-  Chain check 2026-10-17: both clean games never reach the Forge trigger at all
-  (supplyUsed peaks 42/33 < `buildAt` minimum 46), so research never
-  starts for coherent reasons, not a stuck gate. `213248`: Forge built
-  8:29 but post-Forge bank maxed at 641 < 700 (2 bases) - still
-  correctly silent; pending a post-Forge 700-bank or 3rd-base window.
-  743 s run hit
-  bank 900-1300 from 10:58 and research STARTED at 11:16
-  (beingRes through 11:39) but the wall clock ended the game before
-  completion - still needs a longer window after research starts,
-  not just a 700-bank moment. `200123` (944 s, bank peak 8883, NO
-  Forge): TECH_CHECK 602 rows all false, UPGRADE_COMPLETED none -
-  without a Forge the gate is correctly silent at any bank.
-  2026-10-19 (`185237`): refusedBy names the gates live (no-forge 204,
-  bank-700-or-3rd 93, weapons-l1 108) - the twin works, tuning stays
-  owner-side (D5).
-  2026-10-21 Wine macro (20:09, Forge 6:52): Singularity completed
-  7:30, Legs 13:37, Weapons L1 14:33, L2 17:43 (UPGRADE_COMPLETED twin
-  4x, 4 bases by 15:54) - the post-Forge window EXISTS and completes
-  through L2; L3 still never reached, still pending its richer window.
-  2026-10-21 second Wine macro (7:53 Defeat): Singularity completed
-  7:30 anyway - the window opens even in a lost short game.
+  side of D5. Untouched. `TECH_CHECK` twin carries `refusedBy`
+  (Weapons + Armor, pinned). Gates verified coherent live: research
+  correctly silent without Forge at any bank, without 700-bank/3rd
+  base, without 8 combat units; the post-Forge window EXISTS and
+  completes through L2 (Singularity 7:30, Legs 13:37, L1 14:33, L2
+  17:43 in one macro). Open: a post-Forge L3 window (richer still),
+  and a longer window after research starts (one 743 s run STARTED
+  at 11:16 but the wall clock ended the game first).
+
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). 2026-10-18 datum (`143800`, Terran vs Zerg, 212
   game-s): the bot plays Terran with the Protoss build order (`Zealot
@@ -659,59 +611,20 @@ re-measure before quoting, never copy old counts here.
 - **#95** Reserved-250 ghost, unresolved watch (2026-10-17): a deadlocked
   game showed global reserved=250 at supply 4 with bank 74 and nothing
   READY - no author found (READY/IN_PROGRESS paths audited, equality is
-  value-based, feeder silent). Healthy games since show a clean
-  trajectory (0 early, single-row earmarks late). Absent again in the
-  743 s OpenBW game and the 2026-10-17 Wine game (the 250s there are
-  per-row earmarks in flowing rich games: Dragoon row at 70/107 bank
-  1256, Gateway ORDER_NOT_READY at 27/25 - live demand, not deadlock).
-  If it reappears, the `reserved` column plus DECISIONS.log name it;
-  until then no blind fix. Re-checked 2026-10-17 across all 12 retained
-  runs: 5 per-row earmarks >= 250, all at supply 30+ in flowing games
-  (lowest: Pylon 300 at sup 30/33 bank 10 mid-game) - the supply-4 /
-  bank-74 deadlock shape absent again. Re-checked 2026-10-18: earmarks
-  >= 250 in 13 runs, all at supply 22+ in flowing games (lowest: 300 at
-  sup 22) - the deadlock shape absent again. Re-checked 2026-10-19
-  across 25 retained EVENTS.jsonl (24 files + the live game log):
-  earmarks >= 250 in 3 runs only, all at supply 20+ with BUILDING_STARTED
-  flowing (ums-core min sup 20, ums2 min sup 20, live log one frame-3
-  BO-load row at sup 10/bank 250) - the supply<=10/bank<150 deadlock
-  shape absent everywhere. Standing caveat: the ORDER_NOT_READY twin
-  only fires above price-32 bank, so a sub-floor deadlock would leave
-  no twin rows at all - the sweep instruments the visible band only.
-  Re-checked 2026-10-20 across 12 retained logs (earmarks >= 250 in
-  3 runs, all frame 4500+ mid/late game, banks 144-658 - the
-  supply-4/bank-74 deadlock shape absent again). Re-checked 2026-10-21
-  TauCross macro: lowest-supply reserved>=250 at sup 20 (Pylon,
-  supply-blocked with bank 302, game flowed to 11:15) - the supply-4
-  deadlock shape absent again. Re-checked 2026-10-21 across 99 archived
-  Wine + 46 UMS logs (ORDER_NOT_READY twin supplyUsed): 1136 rows
-  >= 250, lowest sup 10 (frame-3 BO-load CyberneticsC, bank 250,
-  transient like the earlier sup-10 row) then sup 13+ in flowing games -
-  the stuck-at-low-supply shape absent everywhere.
- 2026-10-22 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
- Re-checked 2026-10-26 (180 unique logs, incl. 091041): still only the four artifact instances - same test-boot shape, no deadlock shape.
- Re-checked 2026-10-26 (214 unique logs): 4 reserved>=250 rows at supply<=10, all frame-3 BO-load CyberneticsC at sup 10 (test-boot transient, same family as the sup-10 artifact) - the supply-4/bank-74 deadlock shape absent everywhere.
-  → full chain: _AI/WINE-MACRO-DATUMS.md §8
+  value-based, feeder silent). Healthy games show a clean trajectory
+  (0 early, single-row earmarks late). If it reappears, the `reserved`
+  column plus DECISIONS.log name it; until then no blind fix. Standing
+  caveat: the ORDER_NOT_READY twin only fires above price-32 bank, so a
+  sub-floor deadlock would leave no twin rows - the sweep instruments
+  the visible band only. Re-sweeps (12 -> 266 logs): per-row earmarks
+  >= 250 always at supply 13+ in flowing games, except frame-3
+  BO-load transients at sup 10 (test-boot family, four artifact
+  instances total) - the supply-4/bank-74 deadlock shape absent in
+  every sweep, latest 2026-10-24 across 286 unique logs (4 frame-3 boot transients, no deadlock shape).
+  -> full chain: _AI/WINE-MACRO-DATUMS.md section 8
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
-  (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
-  E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
-  Jar 12.1 MB already carries it all.
-  2026-10-20: file-outputs half verified on a real Wine game
-  (WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected,
-  non-empty); painter labels stay a visual owner check (eyes only -
-  the batch itself runs headless, model or owner).
-  Open tuning question for the batch: Pylon prepared at 15 warps ~2:24,
-  past the 17/17 block - adoption+travel+warp (~25 s) outruns the 15→17
-  window (~25 s), so any churn lands past the block (churn itself fixed
-  2026-10-17; lever if still late is `IsReadyToProduceOrder` pull-forward
-  amounts, currently +1 below 19 / +3 above - earlier pylons trade tech
-  minerals for block time).
- 2026-10-22 Wine TauCross macro: file-outputs half now complete - WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected non-empty; only the painter labels stay owner-visual (eyes only).
- 2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
- 2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). CherryVis trace proven on Wine 2026-10-23 (B53 110209 game: CVIS/ with all 4 artifacts archived, GENERATE_CHERRYVIS_REPLAY=true default in ENV-WINE-FAST; viewer opening still owner-side). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - answered the same day: by design, not a gap (DecisionLog.flush() no-ops on empty rows; record() fires only from production paths, duels produce nothing).
- 2026-10-26 attribution rule (learned the hard way): a live console belongs to an archived game only if Pylon#1 tile + maxframe + STARTED rows match - similar-looking macros blur together in memory. Never quote console details (verdict, kills, BO audit) into a game datum without the archive cross-check.
- 2026-10-26 replay naming closed (owner: replays lacked opponent + engine): engine template stays the proven %MAP% + strftime (any extra placeholder silently saves NOTHING on the macro path - B64 ENEMYNAMES, B65/B66 BOTRACE/ENEMYRACES, B69 static PvsZ all zero-rep; duel path unaffected, saved PvsTZ once), the script bakes MAP_PvsZ_wine_DATE at archive time from its known races (first live proof B72: engine rep + rich copy, both 71KB). Replay *saving* itself is flaky on the macro path (old template 7/9 incl. B70/B71 no-rep; needs engine-side look, owner territory) - the rename rides every save but cannot conjure one; teardown grace guard (20s wait-for-rep) in place: B72+B74 both saved promptly (no wait triggered), so the guard is cheap insurance with no live proof it ever fires - keep until it does or a season passes without a slow save.
+  (owner-visual, eyes only), file-outputs triple (WINE_LOG/_DEBUG/_DECISIONS + BUILDINGS.json, re-verified across macros incl. triple + CVIS artifacts; UMS duels collect EVENTS.jsonl + WINE_LOG only - by design, not a gap), Missions unenaction sanity (MISSION twin, change-only, pinned `MissionTwinTest`; painter labels + a missions game stay owner-side), replay naming (engine template stays proven %MAP% + strftime; script bakes MAP_PvsZ_wine_DATE at archive - replay *saving* itself stays flaky on the macro path, engine-side, teardown grace guard kept as cheap insurance). Attribution rule (learned the hard way): a live console belongs to an archived game only if Pylon#1 tile + maxframe + STARTED rows match - never quote console details into a datum without the cross-check. Open tuning question: Pylon prepared at 15 warps ~2:24, past the 17/17 block (adoption+travel+warp ~25 s outruns the 15->17 window) - lever if still late is `IsReadyToProduceOrder` pull-forward amounts.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1097,44 +1010,20 @@ re-measure before quoting, never copy old counts here.
   bound stands with the reason.
 
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
- so vs faster-attacking enemies (zerglings attack faster than
- zealots) they stand through the cooldown and bleed. Rule: after
- the zealot attacks with cooldown remaining, withdraw a step when
- (a) wounded, (b) locally outnumbered (more enemies than allies
- around), or (c) the foe attacks faster - skip entirely while
- ~unhurt (~10 damage is no wound). Mirror of the dragoon DuelKite
- footwork, zealot-flavored: the step must not break the line on
- open ground, only save HP that would otherwise be donated.
- Prove in sim first (zealot vs lings: HP saved per cooldown),
- then live on the ling maps (headless Wine, model-run).
- 2026-10-22 sim slice: the withdraw intent never reached the ground -
- `ZealotWithdraw.should` gated into `shouldKite`, but the step math
- below is ranged-hold (desired minus dist <= 0 for melee-vs-melee),
- so every withdrawing zealot read stuck-no-step (sim: 130/130, zero
- moves) and stood through the cooldown anyway. The margin branch now
- takes a full footwork step for withdrawing zealots (cadence gate
- unchanged, direction still MoveAway; dragoon math bit-identical).
- Pinned `ZealotWithdrawSimTest` (wounded vs 2 lings: displaces, move
- steps, still trades; mutation-proofed). Live proof rides the
- headless Wine ling maps (model-run).
- 2026-10-22 first model-run headless game (rule §14 allowance):
- ZealDrag_v_LingsUpg VICTORY 32/5 in 25 s, 56.2 SHOT/100f (win band),
- KITE 132 stepped-aside / 0 stuck-no-step (timeout games read
- 122/173 stuck). Consistent with the executor, not an isolation of
- it - the sim pin stays the isolation proof; single games are noisy
- by the §14 discipline.
- 2026-10-23 second model-run headless game, pre-fix jar (VICTORY 32/3
- in 33 s, 794f): both dragoon deaths kiting, not standing (#113 HOLD
- f0 -> OTHER f24 -> VETO f59, then KITE from f103 to death f144;
- #130 Unstick/MakeWay/Kite rows throughout; 0 FROZEN) - deaths in
- motion even before the chew-voids fix; the fix targets the stand,
- not the outcome.
- 2026-10-23 model-run headless game on the current tree (VICTORY 32/7
- in 37 s, 893f): all 7 deaths ClusterKite, zero standing - zealots
- withdraw instead of donating contact. KITE 290 rows (272
- stepped-aside / 13 frozen-reset / 5 stuck-no-step): the sim-predicted
- pathology (130/130 stuck, zero moves) is gone live. Consistent with
- the executor; single-game noise per §14.
+  so vs faster-attacking enemies they stand through the cooldown and
+  bleed. Rule: after attacking with cooldown remaining, withdraw a
+  step when (a) wounded, (b) locally outnumbered, or (c) the foe
+  attacks faster - skip while ~unhurt (~10 damage is no wound).
+  Mirror of the dragoon DuelKite footwork, zealot-flavored: save HP
+  that would otherwise be donated, never break the line on open
+  ground. Landed sim-first (margin branch takes a full footwork step
+  for withdrawing zealots; pinned `ZealotWithdrawSimTest`,
+  mutation-proofed) and live on headless ling maps: the
+  sim-predicted pathology (130/130 stuck, zero moves) is gone live
+  (272 stepped-aside / 13 frozen-reset / 5 stuck-no-step, zero
+  standing deaths - zealots withdraw instead of donating contact).
+  Single-game noise per §14; the sim pin is the isolation proof.
+
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
   (owner 2026-10-21/22). Doctrine: zealots hold formation until a
   ranged weapon fires or a zealot is attacked; formation hold owns
@@ -1191,36 +1080,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   never needed banking (holder/kite unstick trip on stillness, row it).
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
- Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
- Direction: damage detection must not depend on manager-updated history. Snapshot previous-frame hp in the battle hook (BattleCommander.observe, own map, cleared in clearForTests) and answer `tookDamageSinceLastBattleFrame` from it; rewire the hold + zealot gates to the battle-side signal; audit-then-migrate the Terran/repair/interrupt consumers one by one (no batch). Alternative considered and rejected: moving UnitStateManager after battle - pipeline-global, touches everything, same class of coupling that created this.
- Prove: unit tests (damage between observes flips the bit; identical hp does not) + sim (holder breaks on first damage frame) + live: hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal. Non-goal: changing what counts as damage (shields already count).
- 2026-10-22 LANDED: battle-hook hp snapshot (DuelMemory.noteBattleFrame
- in observe, latch tookDamageSinceLastBattleFrame, cleared in
- clearForTests) rewired into shouldHold; pinned by
- damageBreaksAnOtherwiseCalmHold (far enemy, one wound breaks, unwounded
- twin keeps holding) in FormationHold 11/11; suite 1279/1279. Live proof
- pending (hold breaks within ~5 frames of first damage on ZealDrag_v_Zeal).
- 2026-10-22 live read, 2 ZealDrag_v_Zeal games: DAMAGE verdict 0 rows
- both games - expected, not a latch failure: VETO (melee inside 3) and
- the guns-in-range gate shadow it by design on every board the games
- produced (holds exist only at foe 8.7-9.0 while marching, then VETO or
- guns own the unit). The latch stays a backstop for boards the games
- never produced; the sim pin carries the mechanism proof.
- Correction 2026-10-22: the #179 zealot gate never read this signal
- (ZealotHoldFire.isWounded compares hp+shields against MAX, immune to the
- freshness bug) - no migration needed there. Real consumers of the
- history-backed flags are the manager's own lastUnderAttack/hitCount,
- read only on Terran lift/scout/repair, ChokeBlocker and Defend-interrupt
- tracks: audit-then-migrate those one by one, no batch.
- 2026-10-23 audit outcome: PreventAttacksInMissionDefend (the one live
- Protoss consumer, defend-mission units are battle-observed) MIGRATED
- to DuelMemory.damagedLessThanAgo(45), pinned 2/2. The rest stay on
- history, each for a stated reason, no blind migration: Terran
- lift/scout/repair (7 sites) + ChokeBlocker (incl. the lone
- underAttackLessThanAgo selector caller) are Terran-only tracks on
- units the battle hook never observes - the latch would never fire
- for them, migration would silently neuter them; and D8 is
- Protoss-only, so all of it is dormant anyway.
+  Pipeline order: UnitStateManager (step 2) appends fresh `hp()` every frame it runs, so a holder that stopped re-issuing reads `hp() < last` as false by construction - the damage gate can only fire on gate-skipped frames. (Side correction on record: `hp()` = hitPoints+shields; shields were never blind, freshness was.)
+  Direction: battle-hook hp snapshot (`DuelMemory.noteBattleFrame` in observe, latch `tookDamageSinceLastBattleFrame`) instead of manager history; rewire hold + zealot gates; audit-then-migrate Terran/repair/interrupt consumers one by one, no batch (moving UnitStateManager after battle rejected: pipeline-global, same coupling class). Prove: unit tests + sim (holder breaks on first damage) + live (~5 frames on ZealDrag_v_Zeal).
+  Landed, pinned (`damageBreaksAnOtherwiseCalmHold`, FormationHold 11/11): latch is a backstop - VETO and the guns-in-range gate shadow it on every live board so far (DAMAGE verdict 0 rows as designed, not a latch failure); the sim pin carries the proof. Audit outcome: #179 zealot gate never read this signal (compares against MAX) - no migration there; `PreventAttacksInMissionDefend` (the one live Protoss consumer) MIGRATED to `DuelMemory.damagedLessThanAgo(45)`, pinned 2/2. The rest stay on history for stated reasons (Terran-only tracks the battle hook never observes; D8 Protoss-only keeps them dormant anyway).
 
 - **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
   Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them - focusInRange stickiness never scans the chewer, and isValidTarget bans sub-15hp/zerglings/workers outright. The user's one-shot rule is the exact inverse of the ban.
