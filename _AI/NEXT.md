@@ -157,11 +157,11 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 238 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 278 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 6 1Drag duels, all 0 fed) / 222 rows,
+   (cumulative: 241 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 279 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 6 1Drag duels, all 0 fed) / 225 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B130 standoff proven live + cutoff absent + 86th demote gap, 1 fed;
+   never in tally); B131 refresh+proximity storms + twin shortest 2f + 87th/88th demotes, 3 feds;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, production holds ZERO -
@@ -1314,61 +1314,8 @@ re-measure before quoting, never copy old counts here.
  coordination items close - diagnostics, not a permanent feed.
 
 - **#181** Split-cluster reinforcement (owner 2026-10-22, HIGH priority):
- ZealDrag_v_Zeal live: the cluster splits in two - one group is being
- shredded by many zealots while the other half waits and does not
- fight. Unknown yet whether two clusters or one split cluster, but
- they start as one - detect the shape. Direction: (a) detect: per
- frame, if one part of the army takes damage while another part has
- no orders/no target for N seconds, that is the split - log it
- loudly (extends #180 telemetry); (b) if two clusters: merge toward
- the fighting one (the idle cluster's anchor becomes the fight);
- (c) if one cluster: forbid waiting - units without a target join
- the fight instead of holding formation slots. Suspects before
- measuring: engageable range caps (nearestEngageableEnemy 9),
- squad assignment splitting the army, anchor/formation fallback
- holding the far half. Prove on ZealDrag_v_Zeal: no idle half
- while the other half dies (per-part damage + orders in the log).
- 2026-10-22 code LANDED (UMS-only reinforce to the freshest army
- contact, 240-frame freshness brake, pinned 5/5 incl. a negative
- melee control, mutation-proofed; verified from retained logs):
- ZealDrag_v_Zeal VICTORY 12/5 in 43 s, no idle half; LingsUpg is
- high-variance - 2 VICTORY (32/3, 32/4, both under 40 s) against 4
- wall-timeout Defeats (202 s cap, 16/1, 25/3, 29/4, 30/5) in which
- the army marches but never finishes. The timeout shape (5-9
- SHOT/100f vs 47-55 in wins, foe=-1 late) is the open end, not the
- reinforce.
- 2026-10-22 the open end moved: with region centers repaired
- (degenerate-box fallback) the ghost chain reaches sweep, and
- ZealDrag_v_LingsUpg is a VICTORY 31/8 in 31 s - ghost=sweep from
- frame 0, no foe=-1 tail, no parking. The timeout shape was the
- dead Regions path, not the reinforce.
- 2026-10-23 vanguard/ghost recall fixed (owner report: after killing
- half the enemy the army parks while the rest hides, one unit pings
- HOLD/UNSTICK on a ghost instead of hunting - game 200532, dragoon#214
- f1399-1956 HOLD/UNSTICK x5 on fogged contacts 8 tiles out, army in
- DEFEND): FormationHold declines ghost contacts unless the unit is
- really threatened (enemiesThatCanAttackMe(3.2) > 0, owner rule, raw
- distance like the veto) - new GHOST verdict, hunt owns a safe unit,
- the cluster owns a threatened one. Threatened ghost still falls
- back; visible far enemies still hold the arc (both pinned);
- threatened-by-melee still vetoes first. Pinned 16/16 FormationHold.
- Note: the looping unit was NOT the vanguard (lowest-id alive was
- #106) - the gate keys on ghost+unthreatened, no scout special-case.
- 2026-10-23 nobody waits while the cluster fights (owner: ranged
- advance to range, melee join - holding slots during someone else's
- brawl is over): Regroup.march reinforces an ONGOING fight (new
- ArmyContact.isOngoingFight, 72f, not the 240f freshness) ahead of
- formation slots and the ghost creep, UMS+FIGHT only (melee keeps
- anchor discipline). Pinned: ongoing window 1f/99f, reinforce beats
- slots with 3 ours, idle army keeps slots without a fight; suite
- 1293/1293. Live shape it targets (game 200532): half the army parks
- while the rest fights; the idle half held slots with no target
- instead of joining.
- 2026-10-26 headless ZealDrag_v_Zeal (Defeat 3/9): no idle half - all
- 9 units took 219-301 damage each, everybody engaged until death
- (per-part damage from the log, the item's own detector). Weak
- positive for the reinforce (one game, lost brawl); the 200532
- park-while-fighting shape did not recur.
+  ZealDrag_v_Zeal live: one half shredded while the other waits - detect the shape (per-part damage + no-order windows, logged loudly), merge toward the fight or forbid waiting. Suspects: engageable caps, squad assignment, anchor/formation fallback.
+  Landed, all pinned: UMS-only reinforce to freshest contact (240f brake); ghost-recall fix (FormationHold declines ghost contacts unless really threatened - new GHOST verdict); ongoing-fight reinforce ahead of slots (ArmyContact.isOngoingFight 72f, UMS+FIGHT only). Timeouts were the dead Regions path, not the reinforce (regions repaired, ghost=sweep from frame 0). Weak live positive (Defeat 3/9: no idle half, all engaged). Open: a repeat of the park-while-fighting shape with the reinforce firing on it.
 
 Priority note (owner 2026-10-22): the three items below slot BELOW
 the production ratchet (#45, #144-147 per-gate deletions) - small
@@ -1428,115 +1375,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Protoss-only, so all of it is dormant anyway.
 
 - **#184** Targeting: ladder refactor of ATargeting (ordered rules, coordination dropped) (owner 2026-10-22):
- Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them. Two compounding causes read off the call chain: (a) `focusInRangeTarget` stickiness (AcquireTarget.java:66-70) returns the current target without scanning when it is valid and in range - the chewer is never considered; (b) `ASquadTargeting.isValidTarget` bans `hp<=15`, ALL zerglings and ALL workers from EVER being targeted - an 8hp chewer is literally unselectable, so the kite/focus chain shoots past it. The user's one-shot rule is the exact inverse of the current ban.
- Agreed refactor shape (owner 2026-10-22): full audit first - ~1150 live lines across 13 files, measured file by file (the earlier "mostly commented out" estimate was wrong and is withdrawn - the ladder is real knowledge). Sequencing (owner): the ladder is NOT next - it lands only AFTER the production v1 cut (#45, #144-147); until then this item is analyzed-and-pinned, not implemented. 2026-10-24 ladder SKELETON landed early (owner overrule for the Steamhammer loss: chewer + keep-current + weakest-in-range extracted as behavior classes, order lives once in TargetLadder with order-sensitivity pins - the rest still calls existing implementations in place). Rules stay hand-written; learning the gates stays sequenced post-cut. The skeleton IS the #185 action space from today.
- Keep the ladder, review the coordination with care (owner: "do wyrzucenia" means think hard whether removal makes sense and where, not a deletion order): squad-last-target, leader-picked target and current-target stickiness are removal CANDIDATES, never pre-decided. Verified facts for that review: the old coordination code has zero callers (nothing in src/ references atlantis.combat.targeting.*) and does not ship (build packages atlantis//main//jfap//bweb//jbweb//jps, src-old compiles as a canary only) - but the CONCEPTS live on in current code (StickyTarget.currentTarget, FocusFire.sharedTarget, ASquadTargeting.useSquadTargetIfPossible, all called from AcquireTarget), so any removal touches live behavior and each rule goes only with a sim proof of no regression (if sim shows churn or focus loss, the rule stays bounded instead of deleted). Concretely, as an ordered RULE LIST in atlantis.battle.targeting (new TargetLadder, pure static functions, no new package): (0) wounded→closest when hurt (ShouldTargetClosestEnemy - the chewed-hits-back rule); (1) melee-proximity no-target gate (old line 13: melee within 2.5 → null, run instead - dovetails with #182: a unit that must not shoot must be owned by movement that frame); (2) one-shot killable in range, non-swarm (exact inverse of the hp<=15 ban; lings keep SpreadFire - pack focus on swarm wastes DPS, verified old wisdom, not a contradiction); (3) mostWoundedOrNearest in range (dragoon-priority vs Protoss per GoonGoonz; zealot radius escalation 1→2 per ImpZealot_A/B); (4) C5a chase (nearest within 9, attackable+2); (5) fallback nearest engageable (existing, untouched).
- Dropped for now, with reasons: the three coordination prefs above; Terran-specific (tanks, firebats, wraiths, vessels, SCV-repair); air incl. observers/carriers (no air on duel maps); transports; buildings/bases/creep/pylons (macro-map logic, not duels); disabled code (TargetingWhenDefendingAroundFocus returns false); Hydra-in-range special (covered by rule 3 unless sim says otherwise).
- Performance (owner ask): ladder short-circuits top-down (cheapest/highest-hit rules first: chewer check and no-target gate are O(nearby) before any radius scan); no per-frame garbage beyond the current chain (reuse Selection views, no intermediate lists per rule); per-rule debug tag into the journal (extends #176 attribution, so live logs show which rule fired). Readability (owner ask): one ordered list, each rule a named pure function with its sim pin; old code stays untouched in src-old as the archive (no file moves dragging dead branches and deleted-package imports).
- Audit first, in this order: why the `hp<=15`, `isZergling`, `isWorker` bans exist (overkill? morph states? engine quirks?) - each ban gets a named reason or gets deleted; same for `preventForZealots` interplay with #179. Tests: sim pins (8hp chewer gets focused; far-target stickiness breaks when chewed; no churn: switches bounded per frame); suite green; live proof on ZealDrag_v_Zeal + LingsUpg (kill attribution per target class already exists via #176).
- Non-goals: building targeting, air, transports, Terran-specific branches (D8 covers all non-Protoss-enemy scope; Zerg-relevant rules stay - LingsUpg is a proof vehicle). Coordination prefs are review candidates (see above), not pre-decided removals. Relation to #185: the ladder built here is the learner's future action space; hand-written gate conditions are what the learner will replace.
- 2026-10-22 live observation for the audit (NOT implementation - the
- ladder stays sequenced post-cut): 2 ZealDrag_v_Zeal games show the
- churn the ladder must bound - attack orders re-issued onto switching
- targets (SHOT dist 34->19->30->20->6->13 at a standing unit,
- telemetry tgt flips, `shot-fired` on cooldown 26/16 and 3 fires in 4
- frames = order spam, not projectiles) while holdSwing/settle starve
- the kite branch for ~160-280f (zero KITE, full hp, VETO correctly
- broken). The "no churn: switches bounded per frame" test requirement
- above is exactly this shape; no new code until the cut lands.
- 2026-10-23 fight-mirror gate LANDED (owner: FormHold never outranks
- kiting): decide() asks Kite.shouldKite with the fight's own threat
- (nearestEngageableEnemy inside the kite envelope) before the raw
- canAttackMe(3) backstop - same membership source, same predicate, no
- second opinion. Pinned 13/13 FormationHold (margin band declines at
- hp 48 / ling 3.12 while raw stays blind; full-hp control still holds).
- Live read on the user's Dragoon#165 (game 185100, f298 HOLD at foe 4.5
- then death f429): the f265/f298 holds were legitimate approach
- (fight agreed - its margin was satisfied too), the kill came under
- fight ownership (VETO since f305, meat-screen stand, no shots, kite
- only at f400) - not a hold-into-chews, so this gate does not rewrite
- that death; it closes the band class. Meat-screen stand itself is a
- separate owner call.
- 2026-10-23 chewed voids every stand (owner order, absolute kite
- precedence): Kite.hasMeatScreen returns false while a melee enemy is
- in hitting range (new CHEWING_TILES 0.5 seam + isBeingChewed), and
- the same chew voids the surrounded stand and the low-hp imminent-shot
- hold. Repro StarEngine scenario (4 dragoons + 3 zealots vs 8 zealots,
- ~10 tiles): 348 chewed frames / 348 max-consecutive before, 196 / 23
- after, doctrine counter kiteFalseWhileChewed 333 -> 0 (pinned in-test).
- Cost, measured honestly: arc 3v5 contact-start donates 1 dragoon where
- the stand donated 0 (straight arm holds 0 while kiting too - the donor
- is the arc bend toward the squad, i.e. into the surround, not kiting
- itself). Arc deaths bound relaxed to +1 with the reason; the split
- bound (the test's main claim) untouched; contact-aware bend filed as
- #175 follow-up, no code.
- 2026-10-23 live after-proof, ZealDrag_v_Zeal game 194747 on the
- post-fix jar (Defeat 8/5 in 202s, 8 kills vs 3/9 before): Dragoon#96
- HOLD f93 (foe 8.9) -> OTHER f134 -> VETO f140, never held again;
- first KITE f162 stepped-aside BEFORE first damage f168; 17 KITE rows
- with displacement throughout, death f315 with an all-ClusterKite/
- Unstick journal, zero FormHold. Worst chew 7 telemetry rows (~168f)
- is pursuit contact while kiting (equal-speed enemy starting on top),
- not a stand: pre-fix #165 showed 0 kite rows and 0 displacement over
- ~300f. Doctrine holds live.
- 2026-10-23 rearm must not cancel a riding step (owner: kite too short,
- zealots re-attack, worst under 40 hp): a fresh attackUnit every frame
- retargets and each issue cancels the step - live Dragoon#96 showed 17
- stepped-aside rows with zero displacement and 20 hits in ~150f, while
- firing full DPS every ~34f. New guard in rearmAttack: no fresh attack
- order while a kite step rides (own cadence clock, not the glide
- clock). Calibrated, not guessed: unconditional guard wins the chew
- sim (196->14 frames) but breaks 4 DPS-race pins (duels won trading,
- trio wiping pressers, withdrawing wounded surviving); the line is
- drawn at 4+ melee in 2 tiles (SWAMPED_MELEE_COUNT: up to three the
- guns still win it per those pins, four and up only donate). Sim
- outcome: chewed 196->110, max-consecutive 23->20, min dragoon hp
- 132->220, foes alive 4->5 (the DPS price, named). Pinned 3/3
- KiteStepRideSimTest (swamped holds fire, lone chewer gets shot,
- no-step re-arms).
- 2026-10-23 live after-proof, game 210942 on the post-fix jar
- (Defeat 8/1 in 202s, 8 kills vs 3/9 before): worst dragoon chew 5
- telemetry rows (~120f, hp 132->69, survived), 37 KITE rows with
- displacement, death journal all-ClusterKite/Unstick with zero
- FormHold, GHOST verdict fired live on two dragoons. Only one zealot
- lost all game. Pre-fix #165 stood 300f with 0 kite rows to death;
- post-fix dragoons kite from before first damage. Doctrine holds live.
- Side observation, no code this turn: the ghost creep ordered 12
- moves into unwalkable tiles (one wall area, 4 distinct tiles, all
- refused safely by the move door with a full stack trace each in
- WINE_DEBUG). The orders never land, but the creep stalls there
- instead of sliding along the wall; candidate follow-up: walkability
- check before ordering in GhostAdvance.move, pending a repro pin.
- 2026-10-23 meat-screen stand withdrawn (owner order, kiting regardless
- of health): screened dragoons kite by margin like everyone else -
- the screen doctrine made healthy dragoons skip kiting entirely until
- contact (live: chewed while full-hp, sim 333/333 on screen). Removed
- Kite.hasMeatScreen + its 3 uses (shouldKite, lowHp-yield, DuelKite
- yield); DoctrineTest pins renamed to the new discipline. Sim repro
- after: chewed 196 -> 74 frames, max-consecutive 23 -> 10 (< 1 s),
- min dragoon hp 132 -> 220, doctrine counter stays 0.
- 2026-10-23 nearly-dead are finished first (owner live report, agreed
- #184 rule (2) taken early as a one-line bugfix, not the ladder): the
- old hp<=15 ban in isValidTarget made sub-15hp enemies unselectable,
- so dragoons shot the healthiest chewer and keepable dropped wounded
- targets mid-finish (churn). Ban deleted; dead units were and are
- filtered by isAlive in every caller. Pinned: nearlyDeadIsFinishedFirst
- + woundedTargetStaysKeepable. Ling/worker bans audited 2026-10-26
- (no code, ladder still sequenced post-cut): both gate only the focus
- paths (focusInRange/keepable/shared/squad via isValidTarget) - never
- nearest-engageable or the breach path (both skip validity, verified
- in code), so swarm is still engaged, just never focused. Reason:
- anti-overkill pack discipline (SpreadFire wisdom), not a targeting
- gap. Open sim question (not a deletion): whether keepable should
- finish sub-35hp swarm. preventForZealots (no focus on in-contact
- ranged) is complementary to #179 (which gates WHETHER zealots break),
- not contradictory; contact itself is owned by the #182 3-tile veto.
- Which fallback lands ling kills ANSWERED 2026-10-23 (code read, no
- behavior change): nearestEngageableEnemy + breachedBaseTarget +
- coverTarget all skip isValidTarget (verified: zero validity refs in
- all three), so swarm dies on the engage paths (march-stop, breach,
- cover); the focus paths (in-range/keepable/shared/squad) ban
- ling/worker by design. Twin work (not code) would name the split.
+  Complaint, mechanism verified (no guessing): dragoons keep a far target while a low-HP zealot chews them - focusInRange stickiness never scans the chewer, and isValidTarget bans sub-15hp/zerglings/workers outright. The user's one-shot rule is the exact inverse of the ban.
+  Agreed shape: full audit first (~1150 live lines, 13 files - the "mostly commented out" estimate was wrong and is withdrawn). Sequencing: the ladder lands only AFTER the production v1 cut (#45, #144-147). 2026-10-24 ladder SKELETON landed early (owner overrule for the Steamhammer loss: chewer + keep-current + weakest-in-range extracted as behavior classes, order lives once in TargetLadder with order-sensitivity pins - the rest still calls existing implementations in place). Rules stay hand-written; learning the gates stays sequenced post-cut. The skeleton IS the #185 action space from today.
+  Coordination review (owner: "do wyrzucenia" = think hard, not a deletion order): squad-last-target, leader-picked target and current-target stickiness are removal CANDIDATES, never pre-decided (old coordination code has zero callers and does not ship, but the concepts live on in StickyTarget/FocusFire/ASquadTargeting - each removal needs a sim no-regression proof). Rule list: (0) wounded->closest when hurt; (1) melee-proximity no-target gate; (2) one-shot killable in range, non-swarm; (3) mostWoundedOrNearest; (4) C5a chase; (5) fallback nearest engageable. Dropped: coordination prefs, Terran/air/transports/buildings/disabled code/Hydra special (reasons on record). Non-goals: buildings/air/transports/Terran (D8; LingsUpg stays the proof vehicle).
+  Landed slices (all pinned, suite green): fight-mirror gate (fight's own threat into shouldKite); chewed-voids-every-stand doctrine (348->74 chewed frames sim, 9-game live band: coordination holds, brawl lost on DPS not freezing); rearm never cancels a riding step (swamped-4+ line calibrated: guns win to three, four donate); meat-screen withdrawn; nearly-dead finished first (hp<=15 ban deleted); ling/worker bans audited (focus-only, anti-overkill by design - engage paths skip validity); fallback-lands-lings ANSWERED (engage paths, code-read). Open sim question: should keepable finish sub-35hp swarm. Ghost-creep follow-up (unrelated, no code): 12 moves into unwalkable tiles, creep stalls instead of sliding - walkability check in GhostAdvance.move pending a repro pin.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.
@@ -1547,7 +1389,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Gating seam per behavior (the NN plug point, mirrors ProductionV2Mode OFF/DRY_RUN/LIVE incl. typo-safe default OFF): each gate answers from the hand rule OR from the NN score behind a flag - per-behavior flags like V2's per-gate flips, so rollout is gradual, plus a global kill-switch. Fallback is mandatory, not optional: NN uncertain or output missing → hand rule decides, so the net is never a single point of failure in a live game. DRY_RUN mode is the trust builder: the net logs what it WOULD pick next to what deterministic picked, per frame - disagreement rows plus outcomes become the evidence base, no blindness, no faith required. Deterministic mode stays available permanently (owner requirement): same binary, flag-selected, doubles as the A/B baseline that proves the net (frozen sim scenarios, NN vs deterministic, efficacy bar before any live takeover).
  Migration is slices, never big-bang (production cut stays the priority): extract current branches (retreat, leave-breached, hold, kite/glide/re-arm pieces, regroup...) into Behavior classes one by one, order kept 1:1 at first (zero behavior change, suite green each slice), only then does the order become data. BattleCommander.act() iterates the chain - pure delegation, CONVENTIONS §23 intact. Guard design lives in `_AI/redesign/05_BEHAVIOR_GUARDS.md` (spec only until the production cut lands): sequential levels, disjoint guards, continuity by narrowing.
  Non-goals: C++ rewrite (revisit only on the falsification trigger); end-to-end pixel policies; tuner scalar loop untouched (it keeps tuning globals); #184 coordination review stays separate (action space, not gating).
- Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
+ Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Update 2026-10-24: gaps (1) and (2) closed in test scope - ZombiePolicies (chase-nearest, stand-and-trade, focus-weakest, kite-back, holdStill; deterministic, pinned) + ZombieSimLoopTest (library drives the real loop) + BattleFeatures snapshot (7-column CSV rows, pinned). Remaining: (3) no NN lib (unchanged) + feature export is test-side only (production gating needs the seam). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
 
 - **#186** ProtossAttackHoldToShoot: real firing range vs nominal weapon range (owner 2026-10-26, from the owner's old code under the same name).
  The nominal dragoon range (4.0 tiles) is NOT the range at which a shot actually lands while both sides move. From the moment we start stopping (braking distance at current speed) through windup to the damage frame, a chasing enemy keeps closing - by the time the shot can fire it is drastically closer than nominal range suggests. This is why holding further out showed nothing (E-hold65: 17/14/15, back at baseline): the hold point was never the binding constraint, the stop-to-shoot window is.
@@ -1589,7 +1431,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   reclassifying it would fight #180 (thin/delete on owner call) and the
   #95 watch, so it stays MED by design. #189 console work closed;
   `[TEMP]` lines die per session.
-- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
+- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Steamhammer FFA loss (real opponent, 61 deaths audited): ZERO march-through deaths - every death either fought (attack orders + in-range targets to the end, e.g. #177/#178/#199 kiting while chewing) or retreated-caught-at-rally (e.g. #239 marched with foe 50+ away, died to the pursuer at the standoff); the chewer rule fires live (in-range ling/hydra attacks in all zealot death logs, tgt- only in the final frames); dtx/dty live on 413/413 CLUSTER rows (FLEE dests split standoff (98,96) vs mission anchor, no donation into the enemy observed - centers recede or hold). Blocking-geometry fight-through itself still unproven (enemy positions still absent - the dtx half exists now, the foe-position half does not). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest). Proof vehicle since 2026-10-24: CLUSTER twin carries the leader dest (dtx/dty) - the next retreat names its rally, so standoff-vs-base-vs-anchor is decidable per frame; enemy positions in the twin stay the missing half for blocker geometry. A real-opponent game (Steamhammer vehicle) is the live vehicle for all three. Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
 
 ## Current game state (updated 2026-10-21)
 
