@@ -1,550 +1,285 @@
 # Project Conventions
 
-This document is normative for all current and future work in this repository,
-including work done by AI assistants. It is written in English, as required
-by the language rule below. Section numbers are stable: never renumber, never
-reuse a deleted number - other documents cite them as "CONVENTIONS §N".
+Normative for all current and future work, including AI assistants.
+English-only (see §1). Section numbers are stable: never renumber,
+never reuse a deleted number - other documents cite "CONVENTIONS §N".
+(There is no §4; the number stays retired.)
 
 ## 1. Language rule
 
-- Code, documentation, tools, scripts, commit messages, and comments are
-  English-only. No localized strings in identifiers, log messages, error
-  strings, or user-facing output.
-- Chat answers, explanations, and questions use the language of the user's
-  message: a Polish message gets a Polish answer, an English one an English
-  answer.
+- Code, documentation, tools, scripts, commit messages, comments:
+  English-only. No localized strings in identifiers, logs, or errors.
+- Chat answers use the language of the user's message: Polish message
+  → Polish answer, English → English.
 
 ## 2. Architecture
 
-- Clean architecture is a hard requirement, not a nice-to-have. All changes
-  follow SOLID, in particular the **Single Responsibility Principle**: every
-  unit (class, function, module, test binary) has exactly one reason to change.
-- Applied here: backend selection behind a Strategy interface
-  (`GameLauncher` / `GameLauncherFactory`), never scattered `if`-branches.
-- Do not modify unrelated parts of the codebase; refactoring is allowed only
-  within the scope of what the current task touches.
-- Verify behavior by execution whenever reasonable: build, run the relevant
-  binary, and check outputs before declaring work done.
+- Clean architecture is mandatory. All changes follow SOLID, above all
+  **Single Responsibility**: one reason to change per unit.
+- Backend selection behind a Strategy interface
+  (`GameLauncher` / `GameLauncherFactory`), never scattered `if`s.
+- Touch only what the task needs; refactoring stays inside that scope.
+- Verify by execution: build, run the binary, check outputs.
 
-## 3. AI assistant role: substantive, skeptical, not agreeable
+## 3. AI assistant role: substantive, not agreeable
 
-- The assistant is a **substantive technical advisor**, not an order-taker and
-  not a cheerleader. Its job is the quality of the design, not the satisfaction
-  of the person asking. Agreement is not the default.
-- When the user proposes something wrong, weak, over-engineered, or a poor fit,
-  the assistant **must say so directly and explain why**: the concrete
-  consequence, the alternative, and the trade-off. "I think this is a bad idea"
-  is not acceptable on its own.
-- Distinguish **evidence** (verified in code or by execution) from
-  **opinion / inference**, labelled as such. Never silently comply with an
-  instruction judged harmful, and push back on trading long-term
-  maintainability for short-term convenience.
-- If the user overrules a well-argued objection after hearing it, the assistant
-  implements the decision without re-litigating it.
+- The assistant is a technical advisor, not an order-taker. Say so
+  directly when a proposal is wrong or weak: consequence, alternative,
+  trade-off. Bare "bad idea" is not enough.
+- Mark **evidence** (verified in code or by execution) vs **opinion**.
+  Never silently comply with a harmful instruction; never trade
+  long-term maintainability for short-term convenience.
+- If the user overrules an argued objection, implement without
+  re-litigating.
 
-## 3a. Long research is progress; never manufacture a result (owner's ruling, 2026-10-10)
+## 3a. Never manufacture a result (owner's ruling, 2026-10-10)
 
-Written after a session in which the assistant produced code, tests, and
-documentation on top of tool outputs it had never seen - eighteen commits had
-to be withdrawn. The cause was the assumption that every turn must deliver a
-finding. "Continue" means keep working, not keep reporting.
-
-- Reading a file, tracing a call chain, testing a hypothesis, or disproving
-  one are all progress. A turn ending in "still checking X; no result yet" is
-  complete and correct. A stretch without a deliverable is fine while knowledge
-  deepens; never fill it with plausible-sounding content.
-- **Never write, quote, or summarise a tool output that was not received.**
-  Do not "recall" outputs, fill in values, or describe what a file "would"
-  say. This rule is not negotiable.
-- **Thinking aloud is wanted; only the closing state is a claim** (owner's
-  ruling, 2026-10-11). Hypotheses, confirmatory checks, and withdrawn readings
-  may appear mid-message, but the turn must close on the verified state, marking
-  what is measured and what is still open - wrong readings labelled as
-  superseded, not left standing next to the conclusion.
-- **Never guess where a check is cheap.** "I think" / "probably" may open an
-  investigation, never close one: if a command, grep, `javap`, or one run
-  would settle a cause, a number, or a behaviour, run it first. A wrong belief
-  costs every step built on it.
-- State hypotheses with their evidence ("I suspect X because of Y"); "X is the
-  cause" requires an observed result. Anything that would cost days if wrong
-  needs proof *before* entering a document, commit message, or status file.
-- **Falsify before confirming.** Engine bugs, library defects, "the tool is
-  lying" are strong claims needing strong evidence - they divert the whole
-  investigation.
-- Withdrawing is cheap and expected: name what is withdrawn, revert it (a
-  revert commit, not history rewrite), leave the item open. Early admission
-  costs a message; late admission costs a session and the owner's trust.
-- **Knowledge is the deliverable; a wrong decision is cheap, a wrong belief
-  is not** (owner's ruling, 2026-10-10). "I do not know yet, and here is how I
-  will find out" beats a confident answer. Never trade a measurement for an
-  explanation, and never let "we need to decide" rush a one-command check.
-- The recognisable failure: a placement refusal "explained" as a small vision
-  disc around the Nexus - invented from an API signature, never checked. One
-  `grep` killed it (`checkExplored=false` by default; 1149 invisible tiles
-  answered buildable). **A mechanism read off an API signature is a hypothesis,
-  not knowledge.**
+- Reading, tracing, testing a hypothesis, disproving one - all progress.
+  A turn ending in "still checking X" is complete. Never fill a quiet
+  stretch with plausible-sounding content.
+- **Never write, quote, or summarise a tool output that was not
+  received.** No recalled outputs, no filled-in values.
+- Hypotheses may appear mid-message; the turn closes on the verified
+  state, wrong readings labelled superseded.
+- **Never guess where a check is cheap**: one command/grep/run settles
+  it - run it first. State hypotheses with evidence; "X is the cause"
+  needs an observed result.
+- **Falsify before confirming.** "Engine bug" / "tool lies" claims need
+  strong evidence - they divert the whole investigation.
+- Withdrawing is cheap: name it, revert (revert commit, no rewrites),
+  leave the item open.
 
 ## 5. Architecture direction (agreed, normative)
 
-- Target: a **modular monolith with a hexagonal core**. Details in
-  `DOCS/ARCHITECTURE-CONTEXT-MAP.md`; open items in `_AI/NEXT.md`.
-- **Dependencies point inward only**: `adapters → application → contexts →
-  core`. The core never depends on contexts or adapters; contexts use only the
-  **Published API** of other contexts.
-- **Six bounded contexts**: `Economy`, `Production`, `Combat`,
-  `Intelligence`, `Map`, `Scouting`, plus `core`, `application`, `adapters`,
-  `bootstrap`. Every class belongs to exactly one.
-- **Units move to a read model + stateless systems**: `UnitSnapshot`,
-  `UnitState`, `World`. No new `public` mutable unit state fields, no new
-  static caches, no new `A.*` (God utility) usage in production code.
-- **Boundaries are enforced mechanically** by
-  `src/tests/architecture/ArchitectureBoundaryTest.java`. Never grow the frozen
-  baseline in `_AI/architecture/archunit-store/`; fix the dependency instead.
-- **In the fast inner loop the architecture scope is ADVISORY** (owner's ruling,
-  2026-10-11): it reports a boundary failure as `ARCHITECTURE WARNING` with a
-  zero exit code, after the normal scope's exit code is preserved. The rule
-  still fires and names the dependency; it just no longer stops the build.
-  **The authoritative gate is `scripts/run-architecture-tests.sh`** (strict).
-  Fix the dependency, never grow the store.
-- **VSA is not the system architecture** (only per-unit behavior packs).
-  **DDD is strategic only** (bounded contexts + ubiquitous language), not
-  tactical (no aggregates/repositories).
-- Large changes proceed incrementally per `_AI/NEXT.md` and keep the bot
-  playable. Every change is also checked against `DOCS/SOLID-CHECKLIST.md`.
+- Target: **modular monolith with a hexagonal core**
+  (`DOCS/ARCHITECTURE-CONTEXT-MAP.md`); open items in `_AI/NEXT.md`.
+- **Dependencies point inward**: `adapters → application → contexts →
+  core`. Six bounded contexts: `Economy`, `Production`, `Combat`,
+  `Intelligence`, `Map`, `Scouting`, plus `core`, `application`,
+  `adapters`, `bootstrap`. One class, one context.
+- Units move to a read model + stateless systems (`UnitSnapshot`,
+  `UnitState`, `World`). No new `public` mutable unit state, no new
+  static caches, no new `A.*` (God utility) in production code.
+- Boundaries enforced by `ArchitectureBoundaryTest`. Never grow the
+  frozen baseline in `_AI/architecture/archunit-store/`; fix the
+  dependency instead. In the fast loop the scope is advisory
+  (`ARCHITECTURE WARNING`, exit 0, owner's ruling 2026-10-11); the
+  authoritative gate is `scripts/run-architecture-tests.sh` (strict).
+- **VSA is per-unit behavior packs, not the system architecture.
+  DDD is strategic only** (contexts + ubiquitous language), no
+  aggregates/repositories.
+- Large changes proceed incrementally per `_AI/NEXT.md`, bot playable,
+  each checked against `DOCS/SOLID-CHECKLIST.md`.
 
-## 6. Commit after every completed work cycle (mandatory, owner's ruling 2026-10-21: batch sensibly)
+## 6. Commit after every completed work cycle (owner's ruling 2026-10-21)
 
-- After each **completed cycle of work**, commit before starting the next one.
-- One **coherent unit of work** per commit, not one file or one
-  micro-step: batch small commits with a sensible continuity into one
-  bigger commit (including doc-only updates that describe the work -
-  no doc-only commit chains). Pedantic cleanliness is not the goal
-  (solo project); the message is: it must explain, to a future self,
-  **what was done and why** - that documentary value is the whole
-  point of committing. Never mix genuinely unrelated work.
-- The ArchUnit baseline in `_AI/architecture/archunit-store/` is versioned on
-  purpose (see its `README.md`): not a build artifact, never `.gitignore` it.
+- One **coherent unit of work** per commit; batch small doc updates with
+  the work they describe. Message says **what and why** (documentary
+  value is the point). Never mix unrelated work. Never rewrite history.
+- The ArchUnit store is versioned on purpose, never `.gitignore`d.
 - Never `git push` unless the user explicitly asks.
 
 ## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
 
-- `_AI/NEXT.md` is the single source of truth for open work; `_AI/NOTES.md`
-  keeps operational learnings.
-- Every item has a **stable number**, never reused or renumbered, so old
-  commits and answers stay interpretable.
-- A finished item's line is **deleted** (no "done" section - git history is the
-  archive); the commit says `Closes #<n>` with the evidence (test result,
-  game-run id, ArchUnit output - required, not optional). New items append
-  with the next free number.
-- Items close only when **verified by execution** (build, test, game run) -
-  never on "it compiles".
+- Single source of truth for open work; `_AI/NOTES.md` for learnings.
+- Stable numbers, never reused/renumbered. Finished item's line is
+  **deleted** (git history is the archive); commit says `Closes #<n>`
+  with evidence (test result, game-run id, ArchUnit output).
+- New items append with the next free number. Items close only when
+  **verified by execution**, never on "it compiles".
 
 ## 8. Workspace boundary (mandatory)
 
-- All work stays inside **`/sc-ai`**. **`/sc-ai` is the name to use** - in
-  commands, scripts, docs, and commits - because it is stable; it is a symlink
-  and its target is the user's home directory.
-- **Three reference projects may be read AND edited** (owner's ruling,
-  2026-10-10): **`/sc-ai/Stardust`**, **`/sc-ai/StardustDevEnvironment`**,
-  **`/sc-ai/PurpleWave`**. They are separate git repos symlinked into the home
-  directory, so `readlink -f` lands outside `/sc-ai` - that does not make them
-  off limits. Always address them by `/sc-ai/...`, never by resolved target.
-  Editing them is normal work (harness, region code, reference bots); their own
-  commit rules still apply - one logical change per commit, never `git push`.
-- **`/ravaelles` is off limits, and so is asking for it.** Never search, read,
-  list, or edit anything rooted there - not even read-only, not even "to find
-  helpful data". A `grep -r` rooted there crawls private files, and whatever it
-  finds is not evidence the project agreed to produce. **Never ask the user for
-  access to `/ravaelles`** to locate a file, log, replay, or game. If something
-  needed is not reachable from `/sc-ai` or `~/.scbw`, ask *where it is*. A tool
-  call needing a broader root is a mistake in the task, not a permission request.
-- The only paths outside the workspace that may be used:
-  - `/tmp/opencode`, the tooling scratch dir, for throwaway artifacts of the
-    current task. Nothing produced there belongs to the repo; survivors go into
-    `Atlantis/` and are committed.
-  - **`~/.scbw/games/`**, **read-only**, game result directories only - so the
-    scbw E2E tier (`_AI/IDEA-E2E-TESTS.md`) can parse verdicts:
-    `GAME_*/result.json`, `GAME_*/*.log`, adjacent replays. Nothing else under
-    `~/.scbw` (`bots/`, `maps/`, `bwapi-data/`, `docker/`) is opened or
-    enumerated to "find something useful".
-  - **`~/.scbw/bots/AtlantisP` and `~/.scbw/bots/AtlantisT`**, the two bot
-    folders - `scbw run` resolves opponents only from its own bots directory.
-    Each holds only `bot.json`, `BWAPI.dll`, an `AI/` (`Atlantis.jar`,
-    `build_orders`, machine-local `ENV`) and empty `read/` + `write/`. These
-    are **real files, not symlinks** (scbw bind-mounts read-only; links
-    escaping it dangle), and **hard links count as links**: both jars once
-    shared one inode, something swapped it for a foreign Maven jar (no
-    `Main-Class`), and every game failed with `no main manifest attribute`
-    with nothing in the log pointing at the swap. Always rebuild straight
-    into those `AI/` folders (`build-bot-jar.sh <that path>`). Opponent bots
-    scbw downloads itself are its cache - never manage them from here.
-- A helper tool (package, virtualenv) is a means, not a deliverable: do not add
-  it to the repo or depend on it, unless adding it *is* the task.
+- Work inside **`/sc-ai`** (stable symlink name - always use it, never
+  the resolved target). **`/ravaelles` is off limits**, even read-only;
+  never ask for access to it. If something is unreachable, ask *where
+  it is*.
+- **`/sc-ai/Stardust`, `/sc-ai/StardustDevEnvironment`,
+  `/sc-ai/PurpleWave`** may be read AND edited (owner's ruling,
+  2026-10-10); their own commit rules apply, never `git push`.
+- Scratch: `/tmp/opencode` (throwaway; survivors go into `Atlantis/`).
+- **`~/.scbw/games/` read-only** (scbw E2E verdicts only). **`~/.scbw/bots/AtlantisP`
+  and `AtlantisT`** hold real files (scbw bind-mounts read-only; hard
+  links count as links - a swapped jar once failed every game with `no
+  main manifest attribute`). Always rebuild straight into those `AI/`
+  folders (`build-bot-jar.sh <that path>`).
+- Helper tooling (venvs, packages) is a means, never a deliverable.
 
 ## 9. StarCraft facts: source hierarchy (mandatory)
 
-Game numbers (HP, shields, ranges, damage, cooldowns, behaviour) come from this
-list, in order - never from memory, human or model, and never from decompiling
-game archives.
+Game numbers come from this list, in order - never memory, never
+decompiled archives:
+1. Vendored `lib/jbwapi-2.2.0.jar` (production truth; probe it
+   directly - `tests/fakes/UnitStatsTable` javadoc has the procedure).
+2. `bwapi/bwapi` unit/weapon `TEST_METHOD`s (not the `.dox` docs).
+3. `JavaBWAPI/JBWAPI` for Java mappings, not numbers.
+- Dynamics (how the game *plays*): `OpenBW/openbw` - trust for
+  dynamics, verify against real games, never cite for unit data.
+- Every hand-maintained game-data table ships with a **guard test**
+  (`UnitStatsTableTest`); unguarded hand tables prove nothing. Guard
+  pins beat commit-message claims on mismatch.
 
-1. **The vendored BWAPI binding, `lib/jbwapi-2.2.0.jar`** - production truth,
-  not a test double. Jar beats memory until a higher source says otherwise.
-  Probe it directly:
-  ```
-  CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
-  javac -cp "$CP" -d /tmp/opencode/probe Probe.java && java -cp "/tmp/opencode/probe:$CP" Probe
-  ```
-  printing `maxHitPoints/maxShields/isFlyer/groundWeapon/airWeapon` per
-  `UnitType` and `maxRange/damageAmount/damageFactor/damageType` per
-  `WeaponType` (full procedure: `tests/fakes/UnitStatsTable` javadoc).
-  History: the local fork `lib/JBWAPI-Rav.jar` was removed 2026-10-10 for
-  stock 2.2.0 (`UnitType.class` byte-identical, class major 52, bot played on
-  OpenBW); `bwapi.Pair.first/second` went private, so the code uses getters.
-2. **[bwapi/bwapi](https://github.com/bwapi/bwapi)** - verified per-type values
-  in `BWAPILIBTest/unitTypesTest.cpp` and `weaponsTest.cpp` (18k lines; read
-  the type's `TEST_METHOD`, not the file). The `.dox` docs are secondary.
-3. **[JavaBWAPI/JBWAPI](https://github.com/JavaBWAPI/JBWAPI)** - how types map
-  to Java, not the numbers themselves.
-- **Simulation dynamics** (how the game *plays*) come from
-  **[OpenBW/openbw](https://github.com/OpenBW/openbw)**: a reimplementation -
-  trust for dynamics, verify against real games occasionally, never cite for
-  unit data.
-- **Not sources:** hand-transcribed numbers are hypotheses - they enter a test
-  or table only with an independent source above, else the entry stays visibly
-  missing (`UnitStatsTable`: `-1` fallback + guard test). Decompiling
-  `STARDAT.MPQ`/`BROODAT.MPQ` is not a plan (encrypted tables, PKWARE-implode,
-  no local tooling - a resource sink).
-- **Every hand-maintained game-data table ships with a guard test**
-  (`UnitStatsTableTest`: engine pins, entry ban, name + installation checks).
-  A green suite against an unguarded hand table proves nothing.
-- Quantitative game-data claims in commit messages must match the guard pins;
-  on mismatch the claim is wrong, not the pins.
+## 10. Tests: TDD for key features, not trivia (normative)
 
-## 10. Tests: TDD for key features, not for trivia (normative, added 2026-10-06)
-
-- **Key features are done only when a test proves them.** A fix for "X did not
-  work", or a feature deciding game behaviour, gets its pinning test **with**
-  the fix - never "some day".
-- **Trivial code gets no test on purpose** (getters, log lines, plumbing,
-  constants, one-liner delegation). If a case cannot plausibly regress in a
-  way that matters, skip it and say so in the commit message.
-- **The mega-test is the goal for behaviour-wide coverage**: one OpenBW game
-  exercising economy, production, combat, map analysis, and base/choke data at
-  once is worth dozens of unit tests - it proves the whole stack on real
-  engine physics (`_AI/IDEA-E2E-TESTS.md`). Work towards it; do not replace it
-  with scattered unit tests where the real question is "does the whole bot play".
-- The bar: every **"X was broken and I fixed it"** commit names its test
-  (`Test: <ClassName>`); a fix without one stays open unless trivial.
-- Budget: `scripts/run-tests.sh` must stay well under 40 s (§12); the OpenBW
-  mega-test joins the fast tier only if it fits, else it is owner-only too.
+- Key features ship with a pinning test, **in the same fix** - "X was
+  broken and I fixed it" names its test (`Test: <ClassName>`).
+- Trivial code gets no test (getters, logs, plumbing, one-liners); say
+  so in the commit message.
+- The **mega-test** (one OpenBW game over economy/production/combat/map)
+  is the behaviour-coverage goal - worth dozens of unit tests.
+- Budget: `scripts/run-tests.sh` stays well under 40 s (§12).
 
 ## 11. Challenge log: `_AI/CHALLENGES/` (added 2026-10-06)
 
-- A problem costing more than one research cycle gets its key insight in the
-  matching `_AI/CHALLENGES/<topic>.md`: one or two lines per insight - the
-  fact, the measurement, the fix. No narrative. No matching file: create one
-  named after the system, not the bug.
-- `_AI/LOCAL-STARCRAFT.md` stays authoritative for full recipes,
-  `_AI/NOTES.md` for repo-internal learnings; CHALLENGES is the cross-system
-  quick reference.
+- A problem costing 2+ research cycles gets 1-2 lines: fact,
+  measurement, fix. No narrative. File named after the system, not bug.
 
-### 11a. READ FIRST: the game/process challenges (owner's ruling, 2026-10-07)
-**Before touching anything that starts a game, attaches a client, or packs the
-bot jar, read these.** Every failure in them cost a full cycle, several
-disguised as a different problem:
-- **`OpenBW.md`** - client attach to the headless engine (junixsocket vs Java
-  9+, native packaging, host registry/`game_list` lifetime).
-- **`GameExecution.md`** - Wine vs OpenBW mixups (wrong-bot-dir launches,
-  self-killing `pkill -f`, git-ignored `ENV` edits).
-- **`BuildAndLogging.md`** - build/IDE/logging traps (wrong jar played,
-  separate-process stdout, Java 9+ API in tests, race double-source).
+## 11a. READ FIRST before touching games/clients/packaging (owner's ruling, 2026-10-07)
+
+- `OpenBW.md` (client attach), `GameExecution.md` (Wine vs OpenBW
+  mixups), `BuildAndLogging.md` (wrong jar, stdout, races). Every past
+  failure here disguised itself as a different problem.
 
 ## 12. Test runtime budget (owner's ruling, 2026-10-06)
 
-- `scripts/run-tests.sh` is the model-facing inner loop (well under 40 s):
-  `tests.unit` + `tests.architecture` (~11 s with compile). It **refuses**
-  the slow scopes - `tests.e2e` (64 s), `tests.acceptance` (12 s), the bare
-  `tests` root - with exit 2 pointing at `scripts/run-full-tests.sh`.
-- Slow scopes are **owner-only** (`run-full-tests.sh`, per-scope timings);
-  `--allow-slow` overrides for a one-off debug run.
-- Measured budget, re-measure before widening any scope: compile ~8 s, unit
-  2 s, architecture 1 s, acceptance 12 s, e2e 64 s.
+- `scripts/run-tests.sh` = fast inner loop (unit minus `full-tier`,
+  advisory architecture, cheap e2e smokes). It **refuses** slow scopes
+  (`tests.e2e`, `tests.acceptance`, bare `tests root`) with exit 2.
+- Slow scopes are **owner-only** (`scripts/run-full-tests.sh`).
 
 ## 13. Command timeout: 120 seconds, everywhere (owner's ruling, 2026-10-09)
 
-- **Every command, script, and test run carries a hard 120-second timeout. No
-  exceptions without the owner's explicit permission for that specific
-  run.** Past 120 s a step is hung, misconfigured, or misshapen - stop it and
-  shrink the work (background + poll, shorter horizon, narrower scope, or ask).
-- Prefix anything that can block with `timeout 120`. To widen a timeout for a
-  legitimate step, **ask first, naming the command and reason** - never
-  silently pass `timeout 360`. Waiting 10-90 minutes has repeatedly produced
-  nothing; a time-out signals "different shape", not "higher limit".
-- A killed command's result must not be claimed: report the timeout, change
-  the step. `run-tests.sh` already lives under its own 40 s budget; this rule
-  bites builds, game runs, downloads, and anything not obviously seconds.
+- Every command carries a hard 120 s timeout. Past it: stop, shrink the
+  work (background + poll, narrower scope), never silently raise.
+  Widening needs the owner's explicit permission for that run.
+- A killed command's result must not be claimed.
 
-## 14. Game runs: headless background Wine is allowed (owner's ruling, 2026-10-07 ban; headless-background allowance 2026-10-22)
+## 14. Game runs: headless background Wine via `scripts/atlantis.sh` (allowance 2026-10-22)
 
-- The 2026-10-07 ban existed for one reason: a visible StarCraft stole
-  the owner's active window. Headless Xvfb runs never do, so **the model
-  may run Wine games freely - headless and in background** - through the
-  `scripts/atlantis.sh` front door (Wine defaults to headless + fast env;
-  the runner's flock serializes games). Wine is currently faster and more
-  stable than OpenBW, so it is the default vehicle. OpenBW rules (§15,
-  §17) are unchanged.
-- Hard constraints, still in force:
-  - **Headless only, never `--visible`.** One watched game undoes the
-    reason this allowance exists.
-  - **Background only, one game at a time.** Foreground commands stay
-    under the §13 120 s cap; games run minutes, so they go in background
-    while the turn continues with other work. The runner's flock is the
-    mutex - never a second game beside it.
-  - **The two setups are separate directories and must stay separate:**
-    - **Wine**: `scripts/run-wine-*.sh` → `$HOME/.scbw/bots/AtlantisP/AI/`
-      (Wine/ChaosLauncher backend) → real StarCraft 1.16.1 + ChaosLauncher.
-    - **OpenBW**: `scripts/run-openbw-e2e.sh` → `/sc-ai/BOTS/AtlantisOpenBW/AI/`
-      (`GAME_LAUNCHER=OPENBW`) → headless `BWAPILauncher`; the bot attaches as a
-      BWAPI client.
-  - **Never start the OpenBW bot from the Wine bot directory.** Its backend
-    starts StarCraft itself: a past "OpenBW" run from there silently opened a
-    real game (measured 2026-10-07, three times). The OpenBW script's own bot
-    directory exists for exactly this reason.
-- Evidence discipline, measured: single Wine games are noisy (LingsUpg read
-  2 fast VICTORY against 4 wall-timeout Defeats on identical code) - one
-  result never decides. Small batches, timeouts are inconclusive (§17), and
-  a running game never blocks other verifiable work.
+- Headless only, background only, one game at a time (flock mutex).
+  Wine is the default vehicle (faster, more stable than OpenBW).
+- Wine and OpenBW setups stay separate; never start the OpenBW bot
+  from the Wine directory (it silently opens a real game).
+- Single Wine games are noisy - one result never decides. Small
+  batches; timeouts are inconclusive (§17). A running game never
+  blocks other verifiable work.
 
 ## 15. Game runs and client attachment: hard rules (owner's ruling, 2026-10-07)
 
-Distilled from the OpenBW investigation (`_AI/CHALLENGES/OpenBW.md`) so the
-same hours are not spent twice.
+- One command owns the whole lifecycle (host, client, teardown);
+  `scripts/run-openbw-e2e.sh` is the only entry point.
+- Never trust a PID you did not just observe; `BWAPILauncher` forks.
+- Clear stale state before hosting (`pkill -9 -x BWAPILauncher`, shm +
+  socket files); a dead host's PID is indistinguishable from a live one.
+- **`pkill -x`, never `pkill -f`** (matches the calling shell → suicide).
+- Split layers before debugging attach failures (bare-classpath socket
+  probe vs packed jar). A jar that cannot attach is a build failure.
 
-- **One command owns the whole lifecycle.** Host, client, wait, and teardown
-  run **in a single command** - a host started in one call dies with its
-  process group when the call ends, leaving the client chasing a dead PID.
-  `scripts/run-openbw-e2e.sh` is the only supported entry point.
-- **Never trust a PID you did not just observe.** `BWAPILauncher` forks;
-  compare `pgrep -x BWAPILauncher` against `/dev/shm/bwapi_shared_memory_game_list`
-  before concluding anything.
-- **Clear stale state before hosting, never after**
-  (`pkill -9 -x BWAPILauncher`, then `rm -f /dev/shm/bwapi_shared_memory_*
-  /tmp/bwapi_socket_*`): a dead host's PID in `game_list` is indistinguishable
-  from a live one ("No server proc ID").
-- **`pkill -x`, never `pkill -f`** - a `-f` pattern matches the calling shell's
-  own command line, so the shell SIGKILLs itself, reading as a hang.
-- **Split the layers before changing anything** when a client will not attach:
-  a 20-line socket program against a bare classpath vs the packed jar is what
-  located a five-part packaging bug the client log blamed on the socket.
-- **A jar that cannot attach is a build failure**: a silent mispackage
-  surfacing as "the bot never joins" is worse than a red build.
+## 16. Java version: always 1.8 (owner's ruling; restated 2026-10-08)
 
-## 16. Java version: always Java 1.8 (owner's ruling; restated 2026-10-08)
+- Everywhere: game jar, IDE SDK, every `javac`, every tool JDK. No
+  upgrade plan - do not propose one.
+- Every compile passes `--release 8` (class major 52). Guard:
+  `tests.architecture.Java8BytecodeTest`. One forgotten flag = dead
+  keyboard / never-attaching bot, not a compile error.
 
-- **Always Java 1.8. Everywhere** - game jar, IDE project/module SDK, run
-  configuration JRE, every `javac` in `scripts/`, every JDK a tool is told to
-  use. **No upgrade plan; do not propose one**, and do not "temporarily" use a
-  newer JDK.
-- **Every compile of this tree passes `--release 8`** (class major 52
-  regardless of machine default) - including `build-bot-jar.sh`,
-  `run-tests.sh`, `run-full-tests.sh`, `run-architecture-tests.sh`, which all
-  write `out/production/Atlantis`, the directory the IDE launches `main.Main`
-  from. One forgotten flag writes Java 17 classes a Java 8 runtime loads -
-  and the failure is not a compile error but a dead keyboard or a bot that
-  never attaches (`UnsupportedClassVersionError ... 61.0 ... up to 52.0`,
-  measured 2026-10-08; `atlantis.Atlantis` had already failed the same way
-  once - never a third time).
-- **The guard is `tests.architecture.Java8BytecodeTest`** (fast suite): any
-  loaded class not at major 52 fails the build in seconds, not in a game run.
-- **Runtimes:** the Wine bot is Temurin `1.8.0_504`; the IDE project SDK is
-  `corretto-1.8` (`languageLevel="JDK_1_8"`, machine-local `.idea/`, so check
-  the project SDK first on a version error); bare `java -jar` uses the machine
-  default, which is **not** necessarily 8 - a Wine-vs-native difference may be
-  a JVM difference, not a bot bug.
-- **Vendored libraries are checked against 8 *and* the newer JVM in play**
-  before changing (detail: `_AI/CHALLENGES/OpenBW.md` packaging rules). Keep
-  the `lib/` override and the build assertions: one jar attaches on both.
+## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09; 150 s since 2026-10-15)
 
-## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09; raised to
-150 s by the owner 2026-10-15 so capped runs reach further before the kill)
+- `TIMEOUT_SECONDS=150` wall-clock + self-ending game at 20 game
+  minutes (`INGAME_TIME=60*20`); whichever hits first ends the run.
+  Wrap the runner in outer `timeout 150`. Timed-out = **inconclusive**.
+- Run only through `scripts/run-openbw-e2e.sh`.
 
-- **`TIMEOUT_SECONDS=150`** wall-clock plus a self-ending game at **20 game
-  minutes** (`INGAME_TIME=60*20`, `FORCE_END_GAME_AFTER_INGAME_SECONDS`) -
-  whichever hits first ends the run; the bot exits itself so the host
-  outlives the client. (General command budget in §13 stays 120 s; this
-  section alone was widened, on purpose, for simulation wall time.)
-- Wrap the runner in an outer `timeout 150` (setup included; build the jar as
-  its own command first). A timed-out run is **inconclusive**, never a verdict.
-- The script refuses a widened `TIMEOUT_SECONDS`; `Env` re-caps
-  `FORCE_END_GAME_AFTER_REAL_SECONDS` at 150. Run only through
-  `scripts/run-openbw-e2e.sh` (§15); §14 still applies.
+## 18. Unit-behaviour debugging: manager history first (owner's ruling, 2026-10-09)
 
-## 18. Unit-behaviour debugging: inspect manager history first (owner's ruling, 2026-10-09)
-
-- When diagnosing what a unit did, **inspect `unit.managerLogs()` before
-  inferring from current state or editing manager order** - it usually names
-  the manager that took control or starved a later one.
-- Read the specific unit and frame window only; no history dumps, no per-frame
-  logging unless the focused history is insufficient. Preserve the output in
-  the evidence when it establishes the cause.
-- A manager in the history ran; a missing later one may mean an earlier
-  manager handled the unit first. Verify against the chain and the return
-  contract (`Commander` vs `Manager`) before reordering.
+- Inspect `unit.managerLogs()` before inferring from state or
+  reordering managers. Read the focused frame window only.
 
 ## 19. Work rhythm: small steps, one-sentence next step (owner's ruling, 2026-10-12)
 
-- **Name the next action in one sentence, do it, report the outcome in one
-  sentence, name the next action again.** Long silent stretches are not
-  acceptable even with a correct final analysis; the owner must see the work's
-  direction while it happens.
-- Thinking aloud (§3a) counts only in these increments: a long unbroken
-  reasoning block does not satisfy this rule.
+- Name the next action in one sentence, do it, report in one sentence,
+  name the next. Long silent stretches are not acceptable.
 
 ## 20. Unfinished work is a commit or a NEXT item, never a prose file (owner's ruling, 2026-10-14)
 
-- `_AI/STATUS.md` grew to ~1500 lines duplicating `_AI/NEXT.md` and was
-  deleted; the `_AI/__IN-PROGRESS.md` proposal was rejected the same day for
-  the same reason. Do not create a replacement ("current work", "session
-  status", "in progress") under any name.
-- Work that spans sessions must be either **committed** (even partial - on a
-  branch, with a message saying what is missing) or a **`NEXT.md` item**
-  (stable number, with the next measurement named). If it is neither, it was
-  not started.
-- A prose file rots because nobody owns its cleanup; a commit is timestamped
-  evidence and a NEXT item has a number a commit can close. That is the whole
-  difference.
+- No "status" / "in progress" prose files under any name (precedents:
+  `STATUS.md`, `__IN-PROGRESS.md` - deleted). They rot; nobody owns
+  cleanup. A commit is timestamped evidence, a NEXT item has a number
+  a commit can close. Neither → not started.
 
-## 21. Domain knowledge lives in domain packages, never in generic machinery (owner's ruling, 2026-10-15)
+## 21. Domain knowledge in domain packages, never machinery (owner's ruling, 2026-10-15)
 
-- Game meaning (what to want, when, in what order, at what price) lives in
-  domain packages (`atlantis.decisions.board.goals`, race strategies) and
-  never in generic algorithm packages (`atlantis.decisions.board`: ranking,
-  snapshots, interfaces). Tuning strategy is a domain diff; changing the
-  algorithm never names a game concept.
-- Dependency direction is one-way, inward to generic: domain imports the
-  machinery, the machinery imports nothing project-specific. A generic
-  package importing a domain type is a boundary violation, same class as
-  CONVENTIONS §5.
-- Measurable check: `grep -rn '^import atlantis' <generic-package>` must
-  show only `java.*` (plus its own package). The day it shows a domain
-  import, split or revert before committing.
-- Sibling, not child (owner's ruling, 2026-10-15): domain vocabularies
-  grow without bound (Protoss opening today, Terran/Zerg/midgame
-  tomorrow) while the machinery stays fixed - so they are sibling
-  packages (`decisions.goals.protoss` next to `decisions.board`), never
-  a child of the mechanism. A child package reads as "owned by", and
-  the mechanism owns nothing; the contract between them (Goal,
-  BoardState) is the shared kernel, everything else splits.
-- No new `Decision` usages (owner's ruling, 2026-10-15): new decision
-  logic goes through the goal board, not through `TRUE/FALSE/INDIFFERENT`
-  chains. Not because the trio is evil - the singletons are defused -
-  but because every new usage feeds the system being strangled (51 files,
-  49 in prod, measured 2026-10-15, tracked to zero before the class dies). `toBoolean` still
-  asserts off in production, so old call sites keep their
-  `notIndifferent()` discipline until absorbed.
-- New rule, not retroactive cleanup: existing violations elsewhere are
-  tracked by ArchUnit (§5), not rewritten to satisfy this section.
+- Game meaning (what/when/in what order/at what price) lives in domain
+  packages (`decisions.goals.protoss`, race strategies), never in
+  generic algorithm packages (`decisions.board`). A tuning change is a
+  domain diff. Check: `grep -rn '^import atlantis' <generic-package>`
+  shows only `java.*` - a domain import there is a boundary violation.
+- Vocabularies are siblings of the machinery, never children
+  (`goals.protoss` next to `board`, never under it).
+- No new `Decision` usages: new decision logic goes through the goal
+  board (49 files tracked to zero before the type dies).
 
 ## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
 
-- Every unit test carries a JUnit `@Tag` area (`production`,
-  `combat`, `placement`, `map`, `infra` - by subject, not fixtures)
-  plus `@Tag("full-tier")` when it belongs to the full tier only.
-  New tests default to the fast loop; moving one out needs the
-  slow-and-settled justification written down (area settled AND the
-  test alone costs ~0.3 s or more).
-- `scripts/run-tests.sh` runs the fast subset (unit minus
-  `full-tier`, advisory architecture, cheap e2e smokes); the full
-  tier (`scripts/run-full-tests.sh`) runs everything, and runs at
-  the end of every finished feature, not per edit. Detail and the
-  area map live in `DOCS/TESTING.md`.
+- Every unit test carries a `@Tag` area (`production`, `combat`,
+  `placement`, `map`, `infra`) plus `@Tag("full-tier")` when full-tier
+  only. New tests default to the fast loop; widening needs the settled
+  + slow justification written down. Detail: `DOCS/TESTING.md`.
 
 ## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-22)
 
-- Commander classes (`BattleCommander` and its kin) **only delegate**:
-  one public entry per frame (`act`), one private step per domain move
-  (`retreatIfBeaten`, `leaveIfBreached`, `holdFormationIfCalm`, `fight`,
-  `huntLastContact`, `regroup`). The how lives in the step's own class,
-  never in the commander. A commander that computes is a manager in
-  disguise - split it.
-- Names use the **ubiquitous language of StarCraft** (DDD strategic
-  sense, §5): retreat, formation, kite, reengage, reinforce, hunt,
-  regroup, breach, standoff. Never machinery words: `order`, `process`,
-  `handle-unit`, `trace`, `strategy-tag`, `manager`, `aspect`. A generic
-  name is a design smell, not brevity - rename on sight.
-- The per-unit vocabulary has one home: **`atlantis.battle.Behavior`**.
-  `Behavior` is the *reason* (why the unit moves: `KITE`,
-  `HOLD_FORMATION`, `GHOST_CREEP`); `Actions`/`Action` is the *order*
-  (what the engine is told: move, attack, hold). Call sites read as
-  `unit.move(dest, Actions.MOVE_ENGAGE, Behavior.KITE.tag())` - "move
-  because we kite". The `tag()` strings are frozen journal spellings
-  (death logs and tooling read them); only the enum names evolve.
-- Private steps stay one verb deep: the commander's `act` reads top to
-  bottom as the battle story (observe, retreat if beaten, leave a
-  breached base, acquire, hold, fight, hunt, regroup). Any branch that
-  needs a comment explaining *what* it is gets a named method instead.
-- Table-of-contents test (owner 2026-10-22, perfectionist pass): a
-  non-programmer reads `handle()` and `act()` and can retell the battle
-  story without opening a single implementation. If a line needs a
-  programmer to parse, it lives in the wrong class.
-- Zero machinery in commander bodies: no engine order types
-  (`Actions`), no journal plumbing (`.tag()`), no logging or twin
-  assembly (`EventLog`), no `try/catch`, no frame counting, no
-  null-plumbing chains, no conditional on another class's concept
-  (the gate lives with the concept - `ArmyContact` owns the FIGHT-only
-  rule, `FormationHold` owns the hold). Control flow stays only where
-  it reads as a sentence ("with a target, fight; without one,
-  regroup").
-- Private methods are one call deep: pure delegation to the named
-  class. A private method with a branch or a second call is a class
-  waiting to be born - extract it (`holdFormationIfCalm` became
-  `FormationHold.holdIfCalm`, `regroup` became `Regroup.march`,
-  twin assembly became `ClusterTwin.sample`).
-- Framework overrides keep framework names: `handle`,
-  `subcommanders` are the `Commander` contract, not our vocabulary.
-  The exemption ends at the signature - their bodies obey the rules
-  above like every other commander method.
-- Technical words (`telemetry`, `twin`, `cadence`, `throttle`,
-  `reset`) never appear as commander logic; they appear only as
-  collaborator internals behind intent-named methods (`observe`,
-  `sample`, `reset`). The commander names the intent, the
-  collaborator owns the machinery.
+- Commanders **delegate**: one public entry (`act`), one private step
+  per domain move. The how lives in the step's own class. A commander
+  that computes is a manager in disguise - split it.
+- Names use StarCraft's ubiquitous language (retreat, formation, kite,
+  regroup, breach). Never machinery words (`order`, `process`,
+  `manager`, `strategy-tag`). Framework overrides keep framework names
+  (`handle`, `subcommanders`) - bodies obey the rules anyway.
+- Per-unit vocabulary lives only in `atlantis.battle.Behavior`
+  (`KITE`, `HOLD_FORMATION`, ...); `Actions` is the order (move/attack),
+  `Behavior` the reason. Tag strings are frozen journal spellings.
+- Table-of-contents test: a non-programmer retells the battle story
+  from `handle()` + `act()` without opening an implementation.
+- Zero machinery in commander bodies: no engine order types, no
+  journal plumbing, no logging/twin assembly, no frame counting, no
+  cross-concept conditionals (the gate lives with the concept).
 
-## 24. Readability by extraction: named things over clever code (owner's ruling, 2026-10-22)
+## 24. Readability by extraction (owner's ruling, 2026-10-22)
 
-- Every method reads as sentences, one level of abstraction at a
-  time. A compound condition, an inline best-tracking loop, or a
-  multi-step computation inside a larger method is extracted - never
-  left inline with a comment explaining it. If a reviewer must
-  simulate the code in their head to understand a line, the code
-  owes them a name.
-- Prefer, in this order: a named local variable (names the value),
-  a named private method (names the step), a dedicated class (names
-  the concept and owns its state). The `focusInRangeTarget` split is
-  the reference shape: `keepableCurrentTarget` (the gate) plus
-  `WeakestInRange` (the scan with its mutable best-tracking)
-  instead of interleaved null-checks and `bestHp`/`bestDist` locals.
-- An extraction never changes behavior: the pinning tests stay green
-  untouched. A readability refactor that alters behavior is a behavior
-  change wearing a disguise - split the commits.
-- The "one more line" rule: an extra line that names something is
-  always cheaper than a dense line that computes it. Density is not
-  elegance.
-- Applies to tests and scripts as well: fixture setup that needs a
-  paragraph of comments wants a named helper instead.
-- Blank lines around returns (enforced by `scripts/checkstyle.sh`,
-  auto-fixed with `--apply`): consecutive guard returns stay glued
-  with no blanks between them; a blank line separates the last guard
-  (or any code) from the final `return` of the block; a return
-  immediately before `}` gets no blank after it. Guard-style early
-  returns (`if (...) return ...;`) count as guards, not as finals.
+- One level of abstraction per method. Compound conditions, inline
+  best-tracking loops, multi-step computations get extracted - never
+  left inline with an explaining comment. Density is not elegance:
+  prefer a named local, then a named method, then a dedicated class.
+- Extractions never change behavior: pinning tests stay green
+  untouched. Applies to tests and scripts too.
+- Blank lines around returns (enforced by owner-run checkstyle,
+  auto-fix `--apply`): glued guard returns stay glued; a blank line
+  separates the last guard (or any code) from the final `return`.
 
 ## 25. Checkstyle is owner-run; the assistant never runs it (owner's ruling, 2026-10-22)
 
-- The assistant **never runs `scripts/checkstyle.sh`** - not before a
-  commit, not to "verify", not to count violations. The owner runs it.
-- Pre-commit verification by the assistant is the test suite
-  (`scripts/run-tests.sh`); checkstyle output is never part of the
-  assistant's turn. Do not report violation counts, do not attribute
-  them, do not auto-fix them.
+- The assistant **never runs `scripts/checkstyle.sh`** - not to verify,
+  not to count, not to auto-fix. Pre-commit verification is the test
+  suite; checkstyle output is never part of the assistant's turn.
 
+## 26. The backlog is not a database (owner's ruling, 2026-10-23)
+
+- A commit must move the work forward: code, a test, a measured game
+  run with archived evidence, or a new verified conclusion with its
+  evidence. `_AI/NEXT.md` describes what the commit did; it is never
+  the commit's whole content.
+- Forbidden: a diff touching only `_AI/NEXT.md` (or only docs) that
+  adds no new information - restating the same verdict for the Nth
+  game, reformatting, re-shuffling chains, fixing typos in old datum
+  lines.
+- No raw statistics or test results in `_AI/NEXT.md`. Per-game datum
+  rows, frame numbers, supply tables, sweep counts, repeated verdicts
+  live in `_AI/WINE-MACRO-DATUMS.md` (one line per game per chain) -
+  or nowhere, if no decision depends on them. NEXT.md carries the
+  conclusion or the single deciding number (best result on a map,
+  current tally, open question). A repeat-verdict game adds its datum
+  row to the log and nothing else - no commit until commit-worthy work
+  exists.
+- Backlog maintenance never justifies a commit alone: it rides inside
+  the next work commit, or happens on the owner's explicit order
+  (message says so). History is not rewritten: old commits stay.
