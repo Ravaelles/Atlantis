@@ -157,9 +157,9 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 103 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 186 retained logs /
-   80 rows; B56 1-base, 5th zero-fed macro, 19-cancel C14 storm on one tile).
+   (cumulative: 115 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 195 retained logs /
+   94 rows; B61 early-rush hold + 39th demote; tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -2059,7 +2059,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
 
 
 - **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands).
-- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight.
+- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched).
 
 ## Current game state (updated 2026-10-21)
 
