@@ -199,6 +199,13 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return false;
         }
+        // Never order into a wall (owner side observation, Steamhammer
+        // game: 12 moves into unwalkable tiles, each refused safely by
+        // the move door with a full stack trace, while the creep
+        // stalled on the wall instead of sliding along it). Slide to
+        // the nearest walkable tile first; a null slide declines the
+        // frame instead of spamming the door.
+        dest = slideOffWall(dest);
         if (dest != null && unit.move(dest, Actions.MOVE_ENGAGE, advanceTagFor(unit).tag())) {
             noteProgress(unit);
             atlantis.battle.FightTarget.markRepositioned(unit);
@@ -209,6 +216,35 @@ public final class GhostAdvance {
     }
 
     /** A creep that makes no progress is a wall grind: hand the unit back. */
+    /**
+     * Public as a seam: the creep pins the slide without running frames.
+     * Slides along the wall with a local spiral over walkability only -
+     * deliberately not via makeWalkable (a second registry the stub
+     * answers with identity, and a region-aware spiral is overkill for
+     * a step dest).
+     */
+    public static APosition slideOffWall(APosition dest) {
+        if (dest == null) return null;
+
+        try {
+            if (dest.isWalkable()) return dest;
+
+            for (int r = 1; r <= 3; r++) {
+                for (int dx = -r; dx <= r; dx++) {
+                    for (int dy = -r; dy <= r; dy++) {
+                        if (Math.max(Math.abs(dx), Math.abs(dy)) != r) continue;
+                        APosition p = dest.translateByTiles(dx, dy);
+                        if (p != null && p.isWalkable()) return p;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
+
     private static boolean grindingAWall(AUnit unit) {
         int now = atlantis.game.A.now();
         Integer lastFrame = lastCreepFrame.get(unit.id());
