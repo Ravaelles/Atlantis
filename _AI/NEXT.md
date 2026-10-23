@@ -157,11 +157,11 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 243 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 286 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels, all 0 fed) / 227 rows,
+   (cumulative: 245 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 288 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels + Wine duel 014201, all 0 fed) / 229 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B134 first 700s+ Wine game (horizon 90 worked) + siteless storm x222 + stranded Pylon, 1 fed;
+   never in tally); B135 VICTORY 1/0 (supply-50 exit) + 91st/92nd/93rd demotes all recovered in place + [119,12] re-mint storm x62, 2 fed;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, production holds ZERO -
@@ -469,7 +469,7 @@ re-measure before quoting, never copy old counts here.
   ORDER_SAVING 0 - right shape (1 base), 227 s short of 700. The
   lottery continues, one axis at a time.
  2026-10-22 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
- 2026-10-26 macro 091041 (367s VICTORY 1/0, 1 base, Nexus never queued, Nexus=1, no Forge): right shape, still far too short of the 700 s+ lottery.
+ 2026-10-26 macro 091041 (367s VICTORY 1/0, 1 base, Nexus never queued, Nexus=1, no Forge): right shape, still far too short of the 700 s+ lottery. 2026-10-24 macro 013247 (383s VICTORY 1/0, 1 base, Nexus=1, Forge warped): right shape, still far too short of the 700 s+ lottery.
   Vehicle finding 2026-10-24 (code-read, decisive): Wine macros cannot win this lottery as configured - `ForceExitAtSupply` (horizon 50 in ENV-WINE-FAST) ends every macro game at supply ~51 (340-502s observed), and nothing else ever ends them (foe unknown all game, 0/0 most games). The 944s game was OpenBW (their gates own the end). One long macro now running with a per-run env (horizon 90, shared ENV untouched) - first attempt at the shape, not at the verdict. - DONE 2026-10-24: B134 ran 1209s to exactly f28800 = 20:00 game time, which is the bot's own `inGameSecondsLimit` default, not a map cap (base intact, army wiped, DEFEAT on exit); multi-base in any case, so still not the lottery shape. A real attempt needs horizon 90 AND the ingame cap raised/disabled AND a 1-base game - still no 1-base 700s+ game anywhere (best remains the 944s OpenBW run).
   → full chain: _AI/WINE-MACRO-DATUMS.md §4
 
@@ -598,7 +598,7 @@ re-measure before quoting, never copy old counts here.
   >= 250 always at supply 13+ in flowing games, except frame-3
   BO-load transients at sup 10 (test-boot family, four artifact
   instances total) - the supply-4/bank-74 deadlock shape absent in
-  every sweep, latest 2026-10-24 across 286 unique logs (4 frame-3 boot transients, no deadlock shape).
+  every sweep, latest 2026-10-24 across 288 unique logs (4 frame-3 boot transients, no deadlock shape).
   -> full chain: _AI/WINE-MACRO-DATUMS.md section 8
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
@@ -700,12 +700,12 @@ re-measure before quoting, never copy old counts here.
     cap is max(30, order radius) (absurd-only, never ring-edge) and
     the guard names itself (`SITE_TOO_FAR` HIGH row with site/dist/cap)
     so the next "reason: OK" is attributable in console alone.
-    Pins: `BuildSiteDistanceTest` cap + ring-edge survival (5/5).
+    Pins: `BuildSiteDistanceTest` cap + ring-edge survival (5/5). B134 measured negative with the guard live: 223 siteless CANCELs, 0 SITE_TOO_FAR - this storm class is pure finder failure at maxDistance 36, outside the guard's ring-edge scope; the catalogue cutover remains the fix.
   - **#146** `APositionFinder` legacy path → deleted after the catalogue
     default + parity (D1 pointer; ~25 files still route through it).
     Exit: zero `Can't find place` across retained runs, legacy path gone.
     2026-10-20: 33 PLACEMENT_FAILED in one Wine macro game - nowhere
-    near zero, no deletion.
+    near zero, no deletion. B134: 0 PLACEMENT_FAILED rows but 223 siteless CANCELs - the failure surfaces as CANCEL, not PLACEMENT_FAILED; the deletion gate needs both counters.
   - **#147** `Queue/**` + order types → stateless demand/schedule
     (01_PRODUCTION.md scheduler + dispatcher; single policy already
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
