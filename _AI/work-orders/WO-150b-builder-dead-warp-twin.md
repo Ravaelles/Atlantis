@@ -59,3 +59,15 @@ signal, so the next one is decidable from logs instead of forensics.
 - One logical change per commit (CONVENTIONS section 6); twin and
   signal may land together (same unit: the builder-dead warp
   lifecycle) or split - never with unrelated work.
+
+## Negative sweep 2026-10-24 (all 287 retained Wine logs)
+
+- FROZEN_WARP rows: 0 everywhere. DEMOTE_STALLED reasons: all
+  `stoodStillFor=*` (90f standard + 127-741f long-standstill
+  variants); zero `builder gone` demotes anywhere.
+- Reading: the builder-dead warp freeze the WO targets has not
+  recurred once in 287 games on the same vehicle as the original
+  Observatory case. The signal + twin stay (harmless, already
+  shipped, fail-open by construction); the demote gate stays parked
+  behind a live freeze, and that live freeze is now known-rare, not
+  just unseen. Do not build urgency on top of this WO.
