@@ -2150,6 +2150,22 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  flavor depends on trap tightness, displacement separation (~15x) holds
  in both. Vehicle: arena-backed MapTiles.Source for the run, restored in
  finally (FakeMapTiles answers walkable-everywhere otherwise).
+ 2026-10-26 #182(4) decided: KEEP the DEPLOYED gate, no relaxation -
+ documented why instead of measured-away. (a) The gate guards a measured
+ live artifact, not a hypothesis: pre-gate, all 9 units flagged at f40
+ while still deploying (game-start actuation lag under frameskip - orders
+ ride, the engine has not moved anything yet). Any "fresh combat order"
+ distinguisher re-admits exactly that flood, because deployment orders
+ ARE combat orders; telling lag from wedged-from-start needs a game-clock
+ hack with its own live proof. (b) The sim cannot clear the relaxation:
+ sim movement actuates on frame 1, so a relaxed gate shows zero false
+ positives in-sim while the live flood stands - sim evidence here is
+ one-sided by construction. (c) The blind spot is diagnostic-only: the
+ remedy side never needed banking - holder unstick trips on 48f still +
+ >1 tile from slot (WEDGE_STILL_FRAMES/ARRIVED_TILES, no banked tiles),
+ kite unstick on step-riding + 48f motionless, and both row it (HOLD
+ UNSTICK verdict, KITE frozen-reset - fired live). A wedged-from-start
+ unit gets STOP + fresh queue without ever rowing FROZEN. No code change.
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
