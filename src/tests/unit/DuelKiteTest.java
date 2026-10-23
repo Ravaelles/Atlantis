@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.battle.kite.CombatTuning;
 import atlantis.battle.strategy.BattleStrategies;
 import atlantis.battle.strategy.BattleStrategy;
 import atlantis.battle.strategy.ChokeStandoff;
@@ -24,9 +25,9 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Duel kiting (NEXT #169): while the weapon cools, a Dragoon steps off
- * every non-fleeing melee threat to range minus 0.4 - unless the shot is
- * imminent or the hold already stands. Baseless duels only; based play
- * keeps the margin rule untouched.
+ * every non-fleeing melee threat to range minus the standoff knob
+ * (NEXT #186) - unless the shot is imminent or the hold already
+ * stands. Baseless duels only; based play keeps the margin rule untouched.
  */
 @Tag("combat")
 public class DuelKiteTest extends WorldStubForTests {
@@ -46,8 +47,9 @@ public class DuelKiteTest extends WorldStubForTests {
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             assertTrue(DuelKite.shouldYield(dragoon, zealot),
-                "cooling weapon + melee inside 3.6 + facing us: yield ground, the shot cannot fire now anyway");
-            assertEquals(3.6, DuelKite.holdDistance(dragoon), 0.01, "hold is range minus the 0.4 step");
+                "cooling weapon + melee inside the knob hold + facing us: yield ground, the shot cannot fire now anyway");
+            assertEquals(dragoon.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles(),
+                DuelKite.holdDistance(dragoon), 0.01, "hold is range minus the standoff knob");
         });
     }
 
@@ -110,7 +112,7 @@ public class DuelKiteTest extends WorldStubForTests {
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             assertFalse(DuelKite.shouldYield(dragoon, zealot),
-                "at 4 tiles the 3.6 hold already stands - nothing to yield");
+                "at 4 tiles the knob hold already stands - nothing to yield");
         });
     }
 
@@ -244,7 +246,7 @@ public class DuelKiteTest extends WorldStubForTests {
         // visible in the logs, or a zero long-deflect count could mean
         // a starved path instead of open maps. Board: healthy dragoon,
         // cooldown 6 (cooling rule silent, margin holds at 2.5), zealot
-        // inside the 3.6 standoff - the yield step issues and rows
+        // inside the knob standoff - the yield step issues and rows
         // duel-yield next to stepped-aside.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32.5, 20);
@@ -282,5 +284,22 @@ public class DuelKiteTest extends WorldStubForTests {
 
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    @Test
+    public void holdDistanceRidesTheStandoffKnob() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(), () -> {
+            CombatTuning before = CombatTuning.current();
+            CombatTuning.install(before.withKiteStandoffInsetTiles(0.15));
+            try {
+                assertEquals(dragoon.groundWeaponRange() - 0.15, DuelKite.holdDistance(dragoon), 0.001,
+                    "the standoff is tunable (NEXT #186), not a hard-coded 0.4");
+            }
+            finally {
+                CombatTuning.install(before);
+            }
+        });
     }
 }

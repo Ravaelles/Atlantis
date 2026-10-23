@@ -2,6 +2,7 @@ package tests.unit.sim;
 
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
@@ -1004,6 +1005,60 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         finally {
             world.close();
         }
+    }
+
+    // =========================================================
+    // T-duel-knobs: the same duel at three standoff insets (NEXT #186).
+    // Every arm must keep the win; the taken numbers are identical
+    // across arms (40/40/40 - this sim does not discriminate the knob,
+    // consistent with #152: amplitude is not the binding constraint).
+    // The 0.15-vs-0.2-vs-0.4 choice therefore rides the live Wine proof,
+    // not this sim; the wiring (pinned in DuelKiteTest) is what makes
+    // the knob live-tunable at all. This test locks in win-preservation
+    // across the plausible range, not the choice itself.
+    // =========================================================
+
+    @Test
+    public void standoffInsetVariantsAllWinDuel() {
+        int[] taken = new int[3];
+        double[] insets = new double[]{0.4, 0.2, 0.15};
+
+        for (int arm = 0; arm < insets.length; arm++) {
+            FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 6, 6);
+            FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 13, 6);
+            zealot.setEnemy();
+
+            CombatTuning before = CombatTuning.current();
+            CombatTuning.install(before.withKiteStandoffInsetTiles(insets[arm]));
+            SimArena arena = new SimArena(20 * TILE, 12 * TILE);
+            SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{zealot}, arena);
+            try {
+                BattleCommander.clearForTests();
+                atlantis.util.log.EventLog.clearForTests();
+
+                for (int i = 0; i < 600; i++) {
+                    world.tick(() -> {
+                        if (dragoon.hp > 0) {
+                            BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                        }
+                        scriptChaser(zealot, dragoon);
+                    });
+                    if (zealot.hp <= 0) break;
+                }
+                assertTrue(zealot.hp <= 0, "arm inset=" + insets[arm] + ": the dragoon keeps the win");
+                taken[arm] = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
+            }
+            finally {
+                world.close();
+                CombatTuning.install(before);
+            }
+        }
+        BattleCommander.reset();
+
+        System.out.println("DUEL-INSETS taken={0.4:" + taken[0] + ", 0.2:" + taken[1]
+            + ", 0.15:" + taken[2] + "}");
+        assertTrue(taken[1] <= taken[0] && taken[2] <= taken[0],
+            "no knob value in range holds worse than the legacy 0.4: " + taken[0] + " -> " + taken[1]);
     }
 
     // =========================================================

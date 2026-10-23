@@ -27,9 +27,6 @@ public final class DuelKite {
     /** Duel scale: baseless fights at or below this headcount kite, bigger ones hold the line. */
     public static final int MAX_DUEL_COMBATANTS = 4;
 
-    /** Hold this far from melee: just outside their reach, inside ours. */
-    public static final double STANDOFF_BELOW_RANGE_TILES = 0.4;
-
     private DuelKite() {
     }
 
@@ -53,7 +50,7 @@ public final class DuelKite {
     }
 
     public static double holdDistance(AUnit unit) {
-        return unit.groundWeaponRange() - STANDOFF_BELOW_RANGE_TILES;
+        return unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
     }
 
     /** Step toward the hold point: escape-scored first, MoveAway when nothing scores. */
