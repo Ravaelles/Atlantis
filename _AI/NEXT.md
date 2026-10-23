@@ -378,49 +378,27 @@ re-measure before quoting, never copy old counts here.
   without it would mislabel healthy builderless warps).
   Siteless-mint CANCELs read off the CANCEL reason (no REQUESTED
   row by construction - mint links before siting).
-  WO-150b written (`_AI/work-orders/WO-150b-builder-dead-warp-twin.md`): twin + progress-signal contract for the builder-dead warp gap, slice 1 landed (trail + note + hpStatic pin-tested); live freeze proof still open.
+  WO-150b written (`_AI/work-orders/WO-150b-builder-dead-warp-twin.md`): twin + progress-signal contract for the builder-dead warp gap, slice 1 landed (trail + note + hpStatic pin-tested); live freeze proof still open. Distinct shape 2026-10-24 (B134, builder-ALIVE stall, not WO-150b): Pylon oid40/cid60 STARTED f7761 [15,48], IN_PROGRESS to game end (f28200, ~20k frames) with zero warp/cancel/demote rows and ~68 blocker-construction twin rows; builder #117 never died (no death row, still attached) so neither the builder-gone demote nor the FROZEN twin (dead-builder-gated by construction) could fire; no warping entity ever near the site (ledger clean, blocker-unit rows name only the healthy Pylon #150 at [16,46], completed f6600). Mechanism (code-read, `ConstructionStatusChanger.demoteStalledInProgress`): the stoodStill branch needs the builder still within 3.5 tiles doing nothing - a builder that walked away to a far job shields the entry forever, and no age cap covers IN_PROGRESS-without-entity for a live builder (the 90f cap lives only in the builder-gone branch). Fix direction, not implemented: age-cap IN_PROGRESS-without-building regardless of builder state (sim-pin first); WO-150b stays parked (different shape - the HP signal is correctly silent here, nothing to sample).
 
   → full chain: _AI/WINE-MACRO-DATUMS.md §3
 
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
-  (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
-  REQUESTED then proximity-cancelled the same frame, ~20 constructions
-  on tile [105,110], several STARTED with a builder then killed the
-  same frame because standing Gateway [103,112] grazes the footprint
-  2x1 tiles). Second instance, fully attributed (Wine, decidable now
-  that BUILD rows carry oid+context): oid 72 "At 30 Gateway*" 39 BUILD
-  rows + oid 78 "At 37 Gateway*" 35 rows, every one a fresh cid on
-  [116,19] cancelled same-frame against standing Gateway [114,18];
-  both eventually warped elsewhere ([116,23] 5:07, [123,26] 5:38).
-  Landed 2026-10-18: spiral checklist refuses standing-covered sites
-  (mirror of the finish overlap half, stub-pinned 5/5); PREPARING
-  adopts still walk into cover (Pylon #11: 2 adopts on [119,12]) and
-  the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
-  two doors stay open. 2026-10-19: the prepare-side unlink is twinned
-  (`prepare-site-overlap`, stub-pinned `PrepareOverlapTwinTest` - FE
-  run `112337` burned 40 construction ids for 1 flushed PREPARING;
-  the missing rows fit the 720-frame flush buffer lost on the kill
-  as well as silent unlinks, so the twin (not the datum) decides
-  the next occurrence. No merge of the two overlap checks: read
-  2026-10-19, they cover disjoint worlds by construction (spiral
-  reads live units - warping buildings whose reservation is gone;
-  pick-time reads reservations - PREPARING with no unit yet),
-  sharing only the footprint math. Adopt side re-sites since the
-  resite seam (same [119,12] case cited in code), proof pending
-  like the rest. Proof: a covered-tile game where the loop is gone
-  (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
-  2026-10-20: two short Wine games too quiet for new instances
-  (supply-50 exits, no construction twins past the opening) -
-  still awaiting the covered-tile game.
-  2026-10-21 Wine macro IS the game, at unprecedented scale: 463
-  proximity-finish CANCELs in 4.1 game-min (9:45-13:50), THREE Pylon
-  oids (152: 227, 212: 163, 151: 73) re-minting tile [119,12]
-  against the STANDING Pylon covering it. Mint path traced: the legacy
-  ConstructionFinder chain (`DefineExactPositionForNewConstruction`),
-  not the spiral - no local patch (would duplicate the guard in the
-  dying path); the fix rides #145, this storm class is its acceptance
-  test (goes quiet after cutover).
- 2026-10-22 Wine TauCross macro (VICTORY 6:49): no same-tile storms - 0 proximity CANCELs in 6.8 game-min; spiral and mint both quiet.
+  (Wine TauCross: oid=118 "At 32 Gateway*" 255 chain rows, ~20
+  constructions on tile [105,110] cancelled same-frame against the
+  standing Gateway grazing the footprint; second instance fully
+  attributed: oid 72/78, 39/35 BUILD rows, fresh cid each time, both
+  eventually warped elsewhere). Landed 2026-10-18: spiral checklist
+  refuses standing-covered sites (stub-pinned 5/5); the twin
+  (`prepare-site-overlap`) decides the next occurrence (silent unlinks
+  vs flush-buffer loss indistinguishable otherwise). No merge of the
+  two overlap checks (disjoint worlds by construction: live units vs
+  reservations). Adopt side re-sites since the resite seam. Proof
+  shape: a covered-tile game where the loop is gone. 2026-10-21 Wine
+  macro IS the game, at unprecedented scale: 463 proximity-finish
+  CANCELs in 4.1 game-min (three Pylon oids re-minting [119,12]
+  against the STANDING Pylon). Mint path traced: the legacy
+  ConstructionFinder chain, not the spiral - no local patch; the
+  fix rides #145, this storm class is its acceptance test.
 
 - **#152** Dragoon kiting (Wine 1Drag_v_1Zeal, owner 2026-10-19).
   Landed (pins in-test, all mutation-proofed): HIT/SHOT twins +
@@ -439,7 +417,7 @@ re-measure before quoting, never copy old counts here.
   (production first); (b) macro-game kite proof needs a Wine macro
   with real enemies; (c) tuner efficacy needs K-of-N replicates.
   Twins landed alongside: DEMOTE_STALLED (cid/type/tile/reason),
-  V2_GOAL_SOURCE (provider-goal authorship for WO-144).
+  V2_GOAL_SOURCE (provider-goal authorship for WO-144). Duel 2026-10-24 (014201, default jar, full stack): VICTORY 0:20, 15 shot-fired / 11 HIT taken, KITE 34 stepped-aside + 2 duel-yield + 1 frozen-reset + 8 stuck-no-step, foe-visible CLUSTER throughout (fx/fy live), zero FLEE rows - win kept, technique looks like the V2 band, not a new regime.
 
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
@@ -468,7 +446,7 @@ re-measure before quoting, never copy old counts here.
   #149 runs show NONE of those lines: when the host dies the client
   says so, so their silent ends are not a host crash of this shape -
   the game ended while both sides looked alive, and only C++ host
-  debugging can say why.
+  debugging can say why. 2026-10-24: two more named ends (Wine 1Drag duel GAME_END won:true + VICTORY banner; scbw Steamhammer game winner line) - silent shape absent again.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -1058,7 +1036,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Slice 3b LANDED 2026-10-26 (WINDUP lookup fix + re-baselining): `WINDUP.getOrDefault` read `type().name()` ("Dragoon") against "Protoss_Dragoon" keys, so every type ran windup 6 and the map entries were dead - now reads `fullName()`. Fallout triaged: the windup pin now asserts the intended 8, and one scenario (`woundedDragoonsWithdrawAndSurvive`) needed recalibration to its documented intent (4 lings lethal under correct physics - dragoons shoot slower, lings chew faster; hp band untouched for pinch-line semantics, one presser fewer). No production code touched - sim harness only. Suite 1354/1354. The duel sims never noticed (taken bounds held throughout).
  Slice 4 LANDED 2026-10-26 (stop-point race, pure function + 6 pins, no wiring yet): `ProtossAttackHoldToShoot.shouldHoldEarly` answers the race given R* (nominal minus enemy cover during our windup/latency plus our braking glide, computed by a later slice): hold iff the weapon is ready on enemy arrival (`reachIn >= readyIn`); runners never hold; inside-R* holds only in the fire-now sliver. Key insight pinned: the caller invokes it under `distTo < hold`, so with R* below the hold the rule can actually fire (with R* at nominal it would be dead). Suite 1349/1349. Slice 5 LANDED 2026-10-26 (R* estimator + wiring + sim verdict): `effectiveRange` = foe edge-to-edge reach + chaser cover during windup - braking glide (new `bodyRadiusPx` engine seam; tile truncation rounded melee bodies to zero); `DuelKite.shouldYield` stands when the race favors waiting (2f hold margin = the imminent-shot gate's own slop). Sim verdict: T-duel taken unchanged 40/40/40, win preserved every arm - the sim cannot discriminate the wiring either; the owner's gate-edge pins (cd 6 yields, imminent 5 holds) all still pass. Suite 1354/1354. Remainder: live 1Drag proof (same bar: win + hits toward 0-2).
  Live proof LANDED 2026-10-26 (Wine 1Drag batch n=3, PARAM_TWEAKER=0, full stack: latch + window + hold-early wiring): 3/3 VICTORY, hits 13/8/8 (mean 9.7) vs V0 16/16/15 (15.7) and V2 9.6-10.3 - win kept, hits in the V2 band, no regression and no clear wiring-attributable gain at n=3 (same discrimination limit as the sim; a same-jar wiring-off A/B was not run). All hits while kiting except one boxed stand (pocket, not the race). The bar holds as win-preservation + V2-band hits; 0-2 remains open territory.
- Overnight replication 2026-10-23 (n=6, same jar: full stack): 6/6 VICTORY, hits 8/7/8/12/6/14 (mean 9.2) - win kept, V2 band holds at n=9 combined; still no wiring-attributable gain (discrimination limit stands). Replication 2026-10-24 (n=4, same jar): 4/4 VICTORY, hits 11/12/12/14 (mean 12.25) - combined n=13 at mean ~10.5, V2 band holds; A/B wiring-off still not run.
+ Overnight replication 2026-10-23 (n=6, same jar: full stack): 6/6 VICTORY, hits 8/7/8/12/6/14 (mean 9.2) - win kept, V2 band holds at n=9 combined; still no wiring-attributable gain (discrimination limit stands). Replication 2026-10-24 (n=4, same jar): 4/4 VICTORY, hits 11/12/12/14 (mean 12.25) - combined n=13 at mean ~10.5, V2 band holds; A/B wiring-off still not run. Duel 014201: VICTORY, 11 hits taken - n=14, band holds; A/B wiring-off still not run.
 
 
 - **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands). Update 2026-10-26: clock-cutoff slice LANDED (sim-pinned): `ScoutNearEnemyBase` no longer declines past 340 s - the ancient gate evicted unchased scouts into far-expo wander; leaving is the chase machinery's call only (5/5 `ScoutCirclesEnemyMainTest`, suite 1335/1335). Live proof still pending. Steamhammer FFA (real opponent): only separation micro fired (ScoutSeparateFromCloseEnemies 5x, HoldCourse 3x) - no enemy-main watch rows anywhere, and combat-unit-only telemetry carries no scout trail, so the watch is unproven and unwitnessed there too. B134: no SCOUT twin rows at all in 97k rows; early ling rush killed 3 probes at f4330-f4402, likely including the scout before any main-watch.
@@ -1074,7 +1052,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   dataset and stays MED by design (reclassifying fights #180 and the
   #95 watch). #189 console work closed; `[TEMP]` lines die per session.
 
-- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Steamhammer FFA loss (real opponent, 61 deaths audited): ZERO march-through deaths - every death either fought (attack orders + in-range targets to the end, e.g. #177/#178/#199 kiting while chewing) or retreated-caught-at-rally (e.g. #239 marched with foe 50+ away, died to the pursuer at the standoff); the chewer rule fires live (in-range ling/hydra attacks in all zealot death logs, tgt- only in the final frames); dtx/dty live on 413/413 CLUSTER rows (FLEE dests split standoff (98,96) vs mission anchor, no donation into the enemy observed - centers recede or hold). Blocking-geometry fight-through itself still unproven live. (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest). Proof vehicle complete since 2026-10-24 (leader dest dtx/dty + nearest-foe tile fx/fy, verified on every CLUSTER row of B132/B133/B134) - the next FLEE with a visible foe is decidable per frame, no new code needed; Steamhammer + B134 show the other half still missing (all FLEEs foe-unknown); sim proof done instead (BlockingForceSimTest). A real-opponent game (Steamhammer vehicle) is the live vehicle for all three. Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
+- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Steamhammer FFA loss (real opponent, 61 deaths audited): ZERO march-through deaths - every death either fought (attack orders + in-range targets to the end, e.g. #177/#178/#199 kiting while chewing) or retreated-caught-at-rally (e.g. #239 marched with foe 50+ away, died to the pursuer at the standoff); the chewer rule fires live (in-range ling/hydra attacks in all zealot death logs, tgt- only in the final frames); dtx/dty live on 413/413 CLUSTER rows (FLEE dests split standoff (98,96) vs mission anchor, no donation into the enemy observed - centers recede or hold). Blocking-geometry fight-through itself still unproven live. (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest). Proof vehicle complete since 2026-10-24 (leader dest dtx/dty + nearest-foe tile fx/fy, verified on every CLUSTER row of B132/B133/B134) - the next FLEE with a visible foe is decidable per frame, no new code needed; Steamhammer + B134 show the other half still missing (all FLEEs foe-unknown); sim proof done instead (BlockingForceSimTest). Wine 1Drag duel 014201: foe-visible CLUSTER (fx/fy live, real foe) but zero FLEE rows - vehicle works, shape still not produced. Second Steamhammer game 2026-10-24: winner Steamhammer (loss, engine-side only, no twins - vehicle health only). A real-opponent game (Steamhammer vehicle) is the live vehicle for all three. Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
 
 ## Current game state (updated 2026-10-21)
 
