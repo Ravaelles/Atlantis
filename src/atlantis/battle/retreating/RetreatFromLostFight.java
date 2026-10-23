@@ -7,7 +7,6 @@ import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.CombatTuning;
-import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -77,12 +76,16 @@ public final class RetreatFromLostFight {
     }
 
     /**
-     * A chase is a visible armed enemy inside the regroup threat envelope
-     * (owner 2026-10-23): without one there is nothing to scatter from -
-     * the retreat walks home in formation instead (ClusterOrganizedRetreat).
+     * A chase is a visible armed enemy that can hit this unit inside its
+     * range + 3 tiles (owner 2026-10-23, NEXT #187 - the same band as the
+     * scout rule). Without one there is nothing to scatter from - the
+     * retreat walks home in formation instead (ClusterOrganizedRetreat).
+     * NOTE: enemy-centric on purpose - our ability to hit back is
+     * irrelevant; a Guardian outranging us still chases us.
      */
+    private static final double CHASE_MARGIN_TILES = 3;
+
     private static boolean isChased(AUnit unit) {
-        return ASquadTargeting.nearestEngageableEnemy(
-            unit, CombatTuning.current().getRegroupThreatTiles()) != null;
+        return unit.enemiesNear().havingWeapon().canAttack(unit, CHASE_MARGIN_TILES).notEmpty();
     }
 }
