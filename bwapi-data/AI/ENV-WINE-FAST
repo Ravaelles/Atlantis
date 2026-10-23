@@ -31,3 +31,9 @@ MODIFY_BWAPI_INI=true
 FORCE_END_AT_SUPPLY=50
 
 WINE_SUPER_FAST_MODE=1
+
+# CherryVis trace default-on for unattended runs (owner 2026-10-23):
+# non-UMS games write bwapi-data/write/cherryvis_dir.rep.cvis, collected
+# and archived per run by run-wine-full.sh. The viewer opens the archived
+# CVIS dir (same 4-file layout as the OpenBW runner).
+GENERATE_CHERRYVIS_REPLAY=true
