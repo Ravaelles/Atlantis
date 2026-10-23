@@ -6,7 +6,7 @@
 Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff. It has quite clean and re-usable code (at least it has high priority on my list). 
 
 # What it can do
-- all three races can be supported, but it mainly focuses on Terran
+- focuses on Protoss race, but is written with the idea of working for any race
 - enables to you to run your bot in *one* click from your IDE (IntelliJ IDEA recommend), just "Run" your project and it will auto run Chaoslauncher and Starcraft
 - auto-modifies bwapi.ini so you don't need to do it yourself! Can change your race, enemy race, map played and game type from AConfig class
 - includes tests and mini-maps to test on

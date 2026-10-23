@@ -1,5 +1,7 @@
 # `_AI/` — index
 
+Note for AI models: please read _AI/CONVENTIONS.md file first.
+
 Where the working knowledge of this project lives. If you are picking the work up
 cold, read this file first; it says which document answers which question and
 which of them are current.
