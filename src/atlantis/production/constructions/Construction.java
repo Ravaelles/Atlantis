@@ -39,6 +39,16 @@ public class Construction implements Comparable<Construction> {
      * rest of the game; the row is a witness, not a heartbeat.
      */
     private boolean frozenWarpTwinned;
+    /**
+     * Warping-building HP trail, newest last: (frame, hp) pairs for the
+     * progress signal (NEXT #150 WO-150b). Instance state, not a cache:
+     * each construction owns its own trail, pruned to the observation
+     * horizon on every note.
+     */
+    private final java.util.ArrayDeque<int[]> warpHpTrail = new java.util.ArrayDeque<>();
+
+    /** Trail pruning horizon: comfortably beyond any static window. */
+    public static final int WARP_HP_TRAIL_FRAMES = 1200;
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
@@ -372,6 +382,45 @@ public class Construction implements Comparable<Construction> {
 
     public void markFrozenWarpTwinned() {
         frozenWarpTwinned = true;
+    }
+
+    /**
+     * Note one warping-building HP sample (NEXT #150 WO-150b). Called
+     * once per frame while a warping entity stands on the site; the
+     * trail never grows past the horizon (oldest samples drop).
+     */
+    public void noteWarpHp(int frame, int hp) {
+        warpHpTrail.addLast(new int[] { frame, hp });
+        while (warpHpTrail.size() > 1
+            && frame - warpHpTrail.peekFirst()[0] > WARP_HP_TRAIL_FRAMES) {
+            warpHpTrail.pollFirst();
+        }
+    }
+
+    /**
+     * True when the warping building's HP did not move inside the
+     * window ending now: a frozen entity, not a progressing warp.
+     * Fail-open: fewer than two samples in the window, or any error,
+     * reads as NOT frozen - an unproven freeze must never demote.
+     */
+    public boolean isWarpHpStatic(int windowFrames, int nowFrame) {
+        try {
+            if (warpHpTrail.size() < 2) return false;
+            int lo = Integer.MAX_VALUE;
+            int hi = Integer.MIN_VALUE;
+            int seen = 0;
+            for (int[] s : warpHpTrail) {
+                if (nowFrame - s[0] > windowFrames) continue;
+                seen++;
+                if (s[1] < lo) lo = s[1];
+                if (s[1] > hi) hi = s[1];
+            }
+            if (seen < 2) return false;
+
+            return hi == lo;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     public void setLastBuildAttemptNow() {

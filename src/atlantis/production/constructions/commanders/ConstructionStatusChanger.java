@@ -323,6 +323,15 @@ public class ConstructionStatusChanger extends Commander {
     private static final int FROZEN_WARP_OBSERVED_FRAMES = 2400;
 
     /**
+     * HP-observation window for the frozen-warp progress signal (NEXT
+     * #150 WO-150b): a warping building whose HP does not move inside
+     * this window is stalled, not progressing. Reporting granularity
+     * only - no demote reads it (the WO forbids deciding on the twin;
+     * the signal first proves itself in live twins).
+     */
+    private static final int FROZEN_WARP_STATIC_FRAMES = 240;
+
+    /**
      * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
      *
      * <p>Public as a seam so the rule is assertable without running a game
@@ -340,6 +349,7 @@ public class ConstructionStatusChanger extends Commander {
 
         AUnit warping = warpingNearSite(construction);
         if (warping != null) {
+            construction.noteWarpHp(A.now(), warping.hp());
             twinFrozenWarp(construction, builder, warping);
 
             return false;
@@ -391,6 +401,12 @@ public class ConstructionStatusChanger extends Commander {
         if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return;
 
         construction.markFrozenWarpTwinned();
+        boolean hpStatic;
+        try {
+            hpStatic = construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now());
+        } catch (Exception | Error ignored) {
+            hpStatic = false;
+        }
         EventLog.key(LogKey.FROZEN_WARP)
             .param("cid", construction.id())
             .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
@@ -398,6 +414,7 @@ public class ConstructionStatusChanger extends Commander {
             .param("builder", "#" + builder.id())
             .param("startedAgo", construction.startedAgo())
             .param("warpingHp", warping.hp())
+            .param("hpStatic", hpStatic)
             .log(A.now(), A.minSec());
     }
 
