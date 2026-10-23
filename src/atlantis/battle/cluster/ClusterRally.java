@@ -40,10 +40,15 @@ public final class ClusterRally {
 
     /**
      * Where this unit moves when there is no enemy to engage: the leader
-     * when straggling behind it, else the mission anchor. Public as a seam:
-     * the bunching rule pins in a stub state without running the frame.
+     * when straggling behind it, else the mission anchor. On FLEE the
+     * leader is never the answer (owner 2026-10-23): rallying stragglers
+     * onto a forward-kiting leader marches them back into the fight,
+     * possibly through the blocking force - everyone shares the home rally.
+     * Public as a seam: the bunching rule pins in a stub state without
+     * running the frame.
      */
-    public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor) {
+    public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor, FightOrFlight.Tactic tactic) {
+        if (tactic == FightOrFlight.Tactic.FLEE) return anchor;
         if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
             return leader;
         }

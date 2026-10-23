@@ -42,6 +42,12 @@ public enum Behavior {
     GATHER("ClusterMove"),
     /** Run from a lost fight toward the retreat anchor. */
     FLEE("ClusterFlee"),
+    /**
+     * Walk home in formation when the fight is lost but nothing chases
+     * (owner 2026-10-23): no visible pursuer means no panic scatter -
+     * the same home rally as FLEE, shared by the whole cluster.
+     */
+    ORGANIZED_RETREAT("ClusterOrganizedRetreat"),
     /** Collapse into the funnel mouth onto the bait. */
     COLLAPSE("ClusterCollapse"),
     /** Leave a breached base instead of defending it. */

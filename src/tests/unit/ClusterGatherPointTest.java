@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.ClusterRally;
+import atlantis.battle.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -52,7 +53,7 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(leader,
-                ClusterRally.gatherPointFor(straggler, leader, anchor),
+                ClusterRally.gatherPointFor(straggler, leader, anchor, FightOrFlight.Tactic.FIGHT),
                 "10 tiles behind: turn back to the leader, not the anchor");
         });
     }
@@ -70,10 +71,10 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(anchor,
-                ClusterRally.gatherPointFor(leader, leader, anchor),
+                ClusterRally.gatherPointFor(leader, leader, anchor, FightOrFlight.Tactic.FIGHT),
                 "the leader sets the pace to the anchor");
             assertSame(anchor,
-                ClusterRally.gatherPointFor(close, leader, anchor),
+                ClusterRally.gatherPointFor(close, leader, anchor, FightOrFlight.Tactic.FIGHT),
                 "inside 2 tiles: keep marching, no jitter");
         });
     }
@@ -90,8 +91,26 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(anchor,
-                ClusterRally.gatherPointFor(lone, null, anchor),
+                ClusterRally.gatherPointFor(lone, null, anchor, FightOrFlight.Tactic.FIGHT),
                 "no leader: the anchor is the only answer");
+        });
+    }
+
+    @Test
+    public void fleeSendsEveryoneHomeNeverToTheLeader() {
+        FakeUnit leader = fake(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit straggler = fake(AUnitType.Protoss_Zealot, 40, 20);
+        APosition anchor = APosition.create(90, 20);
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            leader, straggler
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            assertSame(anchor,
+                ClusterRally.gatherPointFor(straggler, leader, anchor, FightOrFlight.Tactic.FLEE),
+                "owner 2026-10-23: rallying stragglers onto a forward-kiting leader marches them back into the fight");
         });
     }
 }

@@ -54,6 +54,16 @@ public final class ClusterTactic {
             return FightOrFlight.Tactic.FIGHT;
         }
 
+        // Stardust rule (owner 2026-10-23): never run through a blocking
+        // army. If armed enemies sit between the cluster and home, the
+        // cluster fights through instead - the latch does not apply,
+        // dying beats oscillating.
+        if (eval < FightOrFlight.FIGHT_EVAL && BlockingArmy.blocksWayHome()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
         FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
         if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
             fleeStartedAt = A.now();

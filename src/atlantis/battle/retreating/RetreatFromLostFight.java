@@ -7,6 +7,7 @@ import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -56,9 +57,14 @@ public final class RetreatFromLostFight {
                     CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
                 if (home == null) home = ClusterRally.regroupRallyPoint(unit);
             }
-            HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
+            HasPosition point = ClusterRally.gatherPointFor(unit, leader, home, tactic);
             if (point != null && unit.distTo(point) >= 0.2) {
-                unit.move(point, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+                if (isChased(unit)) {
+                    unit.move(point, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+                }
+                else {
+                    unit.move(point, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
+                }
 
                 return true;
             }
@@ -68,5 +74,15 @@ public final class RetreatFromLostFight {
         // fall through and fight in place instead (kite included).
 
         return false;
+    }
+
+    /**
+     * A chase is a visible armed enemy inside the regroup threat envelope
+     * (owner 2026-10-23): without one there is nothing to scatter from -
+     * the retreat walks home in formation instead (ClusterOrganizedRetreat).
+     */
+    private static boolean isChased(AUnit unit) {
+        return ASquadTargeting.nearestEngageableEnemy(
+            unit, CombatTuning.current().getRegroupThreatTiles()) != null;
     }
 }
