@@ -157,9 +157,9 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 95 rescue / 0 routine; 180 retained logs / 71 rows;
-   B51 fourth zero-fed macro; next: B52 092241 + foreign 091345 audit —
-   new rows go to the log, NEXT.md keeps tails only, per §26).
+   (cumulative: 97 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 182 retained logs /
+   74 rows; B52 second sub-500s 2-base with earliest Cyber sup14).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -831,6 +831,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21 Wine macro: Gateways 1:26@11/1:51@13 + 4:05/6:30/7:20
   + 17:19/18:18, all warped - lateness not reproduced again.
  2026-10-22 Wine TauCross macro (VICTORY 6:49): Gateways #2/#3 on time 1:26/1:51 (BO audit flags +1 supply on #2/#3/#5 - one-supply lag, all warped); lateness not reproduced.
+  B52 breaks the Cyber part while gateways hold +1: Cyber warped sup14 vs At22 (-8, lowest on record, prior min 17); P8 sup21 on plan (rare, 1 prior in chain); P11 +4. Gateway lateness still not reproduced.
 2026-10-26 macro 091041: systematic +1 lag (Gateways #2/#3 sup 11/13, Pylon #5 sup 17 vs At 15 (+1), Pylon #8 sup 22 vs At 21 (+1), Pylon #11 sup 29 vs At 27 (+2); CyberneticsC sup 22 vs At 22 ON PLAN, warped clean; Assimilator sup 23 vs At 23 ON PLAN, warped clean; console audit 4 off-plan (GW#2, GW#3, P5, P11) - matches the ledger; +2 flags while +1 passes (audit tolerance confirmed again) - lateness not reproduced.
   → full chain: _AI/WINE-MACRO-DATUMS.md §7
 
