@@ -843,6 +843,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Paths, cheapest last: owner-authored UMS map with a computer-slot
   enemy (no editor on machine); C++ host slot debugging (shared
   platform, owner call); Wine games with real opponents (works today).
+  2026-10-23: sim zombie (`tests.e2e.ZombieAttacksNearestUnit`, FakeUnit-only)
+  is not engine proof - Wine vehicle stands for fighting proof.
   2026-10-18: Protoss enemy also spawns nothing (`143846` PvP, 361
   game-s, `enemy: ` empty, 0/0 - 7th enemyless game across 3 enemy
   races). Race-independent; host-side only.
@@ -1065,7 +1067,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
-  owner-supplied, tier stays owner-run. Probed 2026-10-19 with
+  owner-supplied, tier stays owner-run. Sim zombie covers reproducible
+  defense in-process only, never engine proof. Probed 2026-10-19 with
   `USE_MAP_SETTINGS` in the runner: `ZealDrag_v_Lings` runs the full
   1209 s but hands us a melee start (Nexus+probes, no army) and spawns
   no enemy (0/0) - no fight to assert; `8Drag_v_8Drag` ends at frame 0
@@ -1075,14 +1078,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   writer path, `--cvis` plumbing); what remains is the owner opening a
   real trace in the viewer (plus the `[BW<->CP Matching]` console line
   if `???` persists).
-- **#77** Acceptance tier: 6 stale pins, all judgment calls (3 combat-
-  eval numbers vs ADR 0006, ZealotSelfDefense open question, 2 Terran
-  harness pins vs hardcoded race) - owner's call. Re-measured 2026-10-19:
-  unit 743/743, acceptance 748/0, scenarios 9/9 green; the only reds
-  anywhere are the 2 known pre-existing ArchUnit edges. The 6 pins no
-  longer exist as red tests (cutover deletions absorbed them); what
-  remains is the judgment part (ADR numbers, open question, Terran
-  harness), still owner-side.
 - **#78 / #79** Replay desync is verified upstream (OpenBW #27, 2019,
   second Linux confirmation 2021, open/unassigned). Live log is truth,
   replays are position-viewing only. Engine surgery out of scope;
@@ -2061,6 +2056,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Assumptions to pin individually before use (each gets a sim pin + live proof, none hard-coded from memory): braking distance per type at full speed; windup frames to damage frame; live order latency (SleepUntilFrameGate.latencyFrames); enemy top speeds from the binding (measured 2026-10-26: Dragoon 5.0 vs Zealot 4.0 px/f - re-verify, never trust the remembered numbers); facing/commitment read reliability (isOtherFacingThisUnit 1.1 rad window vs noise); fog effect on orderTarget reads.
  Acceptance: sim-first (1v1 duel sim A/B: hold-early vs hold-at-nominal; must keep the win while cutting hits toward 0-2; mutation-proofed), then live Wine 1Drag proof (same bar). Non-goal: changing what counts as a hit (shields already count); C++ changes (OpenBW engine untouched).
  Relation: #184 (standoff distance is a targeting/kiting threshold candidate, not pre-decided); #185 (this is exactly one of the hand-written gates the learner will replace - features: our speed, relative speed, angle, cooldown, distance, orderTarget commitment).
+
+- **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands).
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;

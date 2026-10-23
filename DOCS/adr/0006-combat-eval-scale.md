@@ -1,8 +1,11 @@
 # ADR 0006 — Combat evaluation scale (PROPOSED, not accepted)
 
-- **Status:** Proposed. This ADR frames the decision `_AI/BUGS.md` B-1 asks
-  for; it does not take it. Accepting needs a scenario sweep over the real
-  evaluator plus game runs.
+- **Status:** Accepted 2026-10-23 (owner delegated the call to the model).
+  The WO-B1 sweep below is the frozen evidence; floor landed
+  (`CombatEvalScale.FLOOR` = 0.01); guard audit closed (NEXT #41);
+  re-normalisation rejected (churn that fixes none of B-2/B-18/9874).
+  Remaining: thresholds stay as tuned (no re-derivation without an
+  oracle); the B-18 horizon is sim work, not scale work.
 - **Context:** `AUnit.eval()` returns `enemyScore / (ourScore + 0.001)` from a
   ~60-frame JFAP simulation - an unbounded ratio over cost-like negative scores,
   where a side's score is what it lost, so a **higher** number means our side is
