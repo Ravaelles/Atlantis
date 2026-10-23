@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +167,7 @@ public class CancelNotStartedBases {
     }
 
     private static void cancel(ProductionOrder order, String reason) {
-        AConsole.errPrintln(
+        AConsole.errPrintln(LogLevel.HIGH, 
             A.now() + " Cancelling pending base "
             + order + ", Reason: " + reason
         );

@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 public class OverdueConstructions {
     public static void handleIfOverdue(Construction construction) {
@@ -43,7 +44,7 @@ public class OverdueConstructions {
     }
 
     private static void whenDoesNotRequirePower(Construction construction, AUnitType building) {
-        AConsole.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
+        AConsole.errPrintln(LogLevel.HIGH, building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
         AUnitType type = construction.buildingType();
         APosition oldPosition = construction.buildPosition();

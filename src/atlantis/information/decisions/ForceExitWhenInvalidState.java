@@ -6,6 +6,7 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 public class ForceExitWhenInvalidState extends Commander {
     /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */
@@ -31,15 +32,15 @@ public class ForceExitWhenInvalidState extends Commander {
     }
 
     protected boolean handle() {
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####### ForceExitWhenInvalidState ##################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####### ForceExitWhenInvalidState ##################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitWhenInvalidState");
 

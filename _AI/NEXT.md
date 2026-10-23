@@ -2073,9 +2073,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   central slice): every console line now carries `[LOW]/[MED]/[HIGH]/[CRIT]`
   (untagged call sites read `[MED]`), event rows always carry short `"lvl"`,
   `[TEMP]` marks removable lines, `query-events.py --group KEY` prints the
-  `KEY:{frame:{params}}` shape (CONVENTIONS §27). What remains is gradual
-  adoption, never a batch: key friction paths get explicit HIGH (churn
-  loops, refusals), routine flow gets LOW, `[TEMP]` lines die per session.
+  `KEY:{frame:{params}}` shape (CONVENTIONS §27). Slice 1 LANDED: error
+  channel HIGH by construction (`ErrorLog.print`, debug stays LOW),
+  OpenBW FATAL is CRITICAL, init/map warnings HIGH, force-exit banner
+  HIGH, all six cancel paths HIGH (matches the CONSTRUCTION_CANCEL=HIGH
+  policy). Suite 1334/1334. What remains is LOW for routine flow, never
+  a batch; `[TEMP]` lines die per session.
 - **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
 
 ## Current game state (updated 2026-10-21)

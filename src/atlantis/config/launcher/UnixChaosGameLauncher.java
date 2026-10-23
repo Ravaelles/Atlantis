@@ -5,6 +5,7 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import main.Main;
 
 import java.io.File;
@@ -156,18 +157,18 @@ public class UnixChaosGameLauncher implements GameLauncher {
             String fileName = candidate.substring(candidate.lastIndexOf('/') + 1);
             String foundUnder = findMapFolder(new File(mapsRoot), fileName);
 
-            AConsole.errPrintln("");
-            AConsole.errPrintln("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            AConsole.errPrintln("[Atlantis] WARNING: map not found at the exact path:");
-            AConsole.errPrintln("[Atlantis]   " + candidate);
+            AConsole.errPrintln(LogLevel.HIGH, "");
+            AConsole.errPrintln(LogLevel.HIGH, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            AConsole.errPrintln(LogLevel.HIGH, "[Atlantis] WARNING: map not found at the exact path:");
+            AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   " + candidate);
             if (foundUnder != null) {
-                AConsole.errPrintln("[Atlantis]   a file of that name exists under: " + foundUnder);
-                AConsole.errPrintln("[Atlantis]   pass --map=<that path relative to maps/> instead.");
+                AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   a file of that name exists under: " + foundUnder);
+                AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   pass --map=<that path relative to maps/> instead.");
             } else {
-                AConsole.errPrintln("[Atlantis]   no file of that name in: " + mapsRoot);
+                AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   no file of that name in: " + mapsRoot);
             }
-            AConsole.errPrintln("[Atlantis]   the game will NOT start; the bot would sit in the menu.");
-            AConsole.errPrintln("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   the game will NOT start; the bot would sit in the menu.");
+            AConsole.errPrintln(LogLevel.HIGH, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         }
     }
 

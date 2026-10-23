@@ -21,6 +21,7 @@ import atlantis.units.select.Count;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
@@ -352,7 +353,7 @@ public class NewConstructionRequest {
             if (A.s >= 70 && A.supplyTotal() >= 11) {
                 cancelled = true;
                 order.cancel("Null position for " + building);
-                AConsole.errPrintln(A.minSec() + ": Cancelled order: " + order);
+                AConsole.errPrintln(LogLevel.HIGH, A.minSec() + ": Cancelled order: " + order);
             }
         }
         return cancelled;

@@ -7,6 +7,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class RemoveExcessiveOrders {
         if (constructions.size() > max) {
             for (int i = constructions.size() - 1; i >= 0; i--) {
                 constructions.get(i).productionOrder().cancel("Too many " + type + " at once (" + constructions.size() + ">" + max + ")");
-                AConsole.errPrintln(A.minSec() + " - CANCEL EXCESSIVE BUILDING " + type);
+                AConsole.errPrintln(LogLevel.HIGH, A.minSec() + " - CANCEL EXCESSIVE BUILDING " + type);
             }
             return true;
         }

@@ -14,6 +14,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
@@ -59,7 +60,7 @@ public class RefreshConstructionPosition {
             ) {
                 construction.cancel(type + " Can't build here");
 
-                AConsole.errPrintln("Can't build here " + type + ", so cancel + re-request");
+                AConsole.errPrintln(LogLevel.HIGH, "Can't build here " + type + ", so cancel + re-request");
                 AddToQueue.withTopPriority(
                     type,
                     construction.positionToBuildCenter()

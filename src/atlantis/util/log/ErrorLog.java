@@ -17,7 +17,7 @@ public class ErrorLog {
     private static Map<String, Integer> errorTimestamps = new TreeMap<>();
 
     public static void debug(String message) {
-        AConsole.errPrintln(message);
+        AConsole.errPrintln(LogLevel.LOW, message);
     }
 
     public static void printErrorOnce(String message) {
@@ -48,7 +48,7 @@ public class ErrorLog {
     }
 
     private static void print(String message) {
-        AConsole.errPrintln(message);
+        AConsole.errPrintln(LogLevel.HIGH, message);
 
         errorTimestamps.put(message, GameClock.seconds());
     }

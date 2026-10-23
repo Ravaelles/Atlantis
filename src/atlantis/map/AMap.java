@@ -10,6 +10,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.cache.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
@@ -182,7 +183,7 @@ public class AMap {
         );
 
         if (atlantis.config.env.Env.isOpenBW()) {
-            AConsole.errPrintln("FATAL on OpenBW: exiting " + FAIL_EXIT_CODE_BWEM_EMPTY
+            AConsole.errPrintln(LogLevel.CRITICAL, "FATAL on OpenBW: exiting " + FAIL_EXIT_CODE_BWEM_EMPTY
                 + " so the run is reported as failed rather than as a played game"
                 + " that builds nothing. See _AI/CHALLENGES/OpenBW.md.");
             System.exit(FAIL_EXIT_CODE_BWEM_EMPTY);

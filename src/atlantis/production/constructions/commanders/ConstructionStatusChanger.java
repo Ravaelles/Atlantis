@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.EventLog;
@@ -55,7 +56,7 @@ public class ConstructionStatusChanger extends Commander {
                 && !building.isAlive()
         ) {
             construction.cancel(construction.buildingType() + " was destroyed");
-            AConsole.errPrintln("Building destroyed - cancel construction");
+            AConsole.errPrintln(LogLevel.HIGH, "Building destroyed - cancel construction");
 
             return;
         }
