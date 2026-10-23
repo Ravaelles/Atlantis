@@ -124,6 +124,14 @@ public class FindPosition {
 
         APositionFinder.clearCache();
 
+        // Final guard (owner 2026-10-26, NEXT #145): a site further than
+        // 30 ground tiles from the search base is not built - the legacy
+        // chain mints absurd tiles that cancel same-frame, the catalogue
+        // will refuse them by construction after cutover.
+        if (standardPosition != null && BuildSiteDistance.isTooFar(standardPosition, nearTo)) {
+            return null;
+        }
+
         return standardPosition;
     }
 
