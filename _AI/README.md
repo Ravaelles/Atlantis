@@ -33,6 +33,9 @@ AI assistant.
   renumbered; a closed item's line is **deleted** and the commit says
   `Closes #<n>` with the evidence (CONVENTIONS §7). It is meant to be **scannable**:
   long post-mortems of resolved defects live in `CASE-STUDIES.md`, not here.
+- **`WINE-MACRO-DATUMS.md`** - per-game Wine-macro datum chains extracted
+  from `NEXT.md` (CONVENTIONS §26): one record per game per chain, newest
+  tails stay in `NEXT.md` as the live verdict.
 - **`DECISIONS.md`** - choices only the owner can make, one per entry. Approve
   by saying so; the entry is then executed and deleted.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
