@@ -2123,6 +2123,20 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  discipline (re-issue only on target change + step-ride guards) holds;
  the #182 spam shape needs multi-foe target churn to manifest, which
  duels cannot produce - still #184's switch bound to own.
+ 2026-10-23 sim isolation LANDED (PocketVsOpenFieldKiteTest 2/2): same
+ logic (BattleCommander.act), same threat, only geometry differs - open
+ field kites (34 stepped-aside, 0 stuck, displaces 15.2 tiles), walled
+ pocket stands and trades (157 stuck-no-step vs 23 validated steps under
+ contact, displaces 1.0 tile, 11 shots fired, takes hits). Pocket-vs-logic
+ decided for the trap shape: geometry alone explains the stand-and-trade,
+ logic issues steps in both. Mechanism note: a THICK back wall reproduces
+ the stuck signature (aims land inside the mass, spiral shift finds only
+ the unit's own corridor cells, short-distance gate kills them); a thin
+ wall instead validates aims beyond it (reachable-looking, sim-blocked
+ around the corner - stepped-aside rows, zero net displacement). Row
+ flavor depends on trap tightness, displacement separation (~15x) holds
+ in both. Vehicle: arena-backed MapTiles.Source for the run, restored in
+ finally (FakeMapTiles answers walkable-everywhere otherwise).
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
