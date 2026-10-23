@@ -124,12 +124,23 @@ public class FindPosition {
 
         APositionFinder.clearCache();
 
-        // Final guard (owner 2026-10-26, NEXT #145): a site further than
-        // 30 ground tiles from the search base is not built - the legacy
-        // chain mints absurd tiles that cancel same-frame, the catalogue
-        // will refuse them by construction after cutover.
-        if (standardPosition != null && BuildSiteDistance.isTooFar(standardPosition, nearTo)) {
-            return null;
+        // Final guard (owner 2026-10-23, NEXT #145, corrected 2026-10-24):
+        // a site beyond the search contract is not built. The cap is the
+        // wider of the user cap and the order radius, so the guard never
+        // eats the spiral's own ring edge - and it names itself, so the
+        // next "Can't find place (reason: OK)" is attributable in the
+        // console alone instead of needing the twin.
+        if (standardPosition != null) {
+            double cap = BuildSiteDistance.capFor(maxDistance);
+            if (BuildSiteDistance.isTooFar(standardPosition, nearTo, cap)) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "[LVL=HIGH] SITE_TOO_FAR " + building + " at " + standardPosition
+                        + " is " + ((int) standardPosition.groundDist(nearTo))
+                        + " ground tiles from " + nearTo + " (cap " + ((int) cap) + ") - not built"
+                );
+
+                return null;
+            }
         }
 
         return standardPosition;

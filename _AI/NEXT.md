@@ -836,6 +836,17 @@ re-measure before quoting, never copy old counts here.
     duplicate the guard in the dying path); after cutover this storm
     class goes quiet (0 same-tile storms) because the catalogue refuses
     standing-covered sites.
+    2026-10-24 live Gateway storm (user report, real game: 4 dynamic
+    Gateway "Null position" cancels in ~1 min, all "Can't find place
+    (reason: OK)", maxDistance 36, near null): prime suspect was the
+    literal-30 site guard shipped 2026-10-23 - a hard 30 fights the
+    spiral's own radius-36 contract, and in a crowded base the only
+    free tiles sit at ring edge 30-36 ("OK" = a tile passed, then the
+    guard nulled it - the exact signature). Corrected the same day:
+    cap is max(30, order radius) (absurd-only, never ring-edge) and
+    the guard names itself (`SITE_TOO_FAR` HIGH row with site/dist/cap)
+    so the next "reason: OK" is attributable in console alone.
+    Pins: `BuildSiteDistanceTest` cap + ring-edge survival (5/5).
   - **#146** `APositionFinder` legacy path → deleted after the catalogue
     default + parity (D1 pointer; ~25 files still route through it).
     Exit: zero `Can't find place` across retained runs, legacy path gone.
