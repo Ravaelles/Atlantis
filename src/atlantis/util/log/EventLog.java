@@ -147,10 +147,8 @@ public class EventLog {
         for (Row row : buffer) {
             out.append("{\"frame\":").append(row.frame)
                 .append(",\"time\":\"").append(escape(row.time)).append("\"")
-                .append(",\"key\":\"").append(row.key.name()).append("\"");
-            if (row.level != LogLevel.NORMAL) {
-                out.append(",\"lvl\":\"").append(row.level.name()).append("\"");
-            }
+                .append(",\"key\":\"").append(row.key.name()).append("\"")
+                .append(",\"lvl\":\"").append(row.level.code()).append("\"");
             for (Map.Entry<String, Object> param : row.params.entrySet()) {
                 out.append(",\"").append(escape(param.getKey())).append("\":");
                 Object value = param.getValue();

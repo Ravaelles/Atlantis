@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.LogPort;
 import atlantis.util.log.SystemLogPort;
 
@@ -117,11 +118,34 @@ public class AConsole {
     }
 
     public static void println(Object string) {
-        port.println(string);
+        println(LogLevel.MEDIUM, string);
+    }
+
+    /**
+     * Priority-tagged line: every console line carries {@code [LOW] /
+     * [MED] / [HIGH] / [CRIT]} (CONVENTIONS §27) so long Wine logs stay
+     * greppable. Untagged call sites read as the default below, never
+     * as untagged output.
+     */
+    public static void println(LogLevel level, Object string) {
+        port.println(level.tag() + " " + string);
+    }
+
+    /**
+     * Temporary debugging line. Grep {@code TEMP} to find every site and
+     * remove it before the debugging session ends - temporary entries
+     * never graduate to a level, they get deleted or classified.
+     */
+    public static void temp(Object string) {
+        port.println("[TEMP] " + string);
     }
 
     public static void errPrintln(Object string) {
-        port.printError(string);
+        errPrintln(LogLevel.MEDIUM, string);
+    }
+
+    public static void errPrintln(LogLevel level, Object string) {
+        port.printError(level.tag() + " " + string);
     }
 
     public static void print(Object string) {

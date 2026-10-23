@@ -100,7 +100,7 @@ fi
 if [ "${EXPECT_NO_CRITICAL:-0}" = "1" ]; then
   EVENTS_FILE="$(dirname "$BOT_LOG")/EVENTS.jsonl"
   if [ -f "$EVENTS_FILE" ] \
-    && grep -q '"lvl":"CRITICAL"' "$EVENTS_FILE" 2>/dev/null; then
+    && grep -qE '"lvl":"CRIT(ICAL)?"' "$EVENTS_FILE" 2>/dev/null; then
     REASONS+=("CRITICAL event row in $(basename "$EVENTS_FILE")")
     FAILED=1
   fi

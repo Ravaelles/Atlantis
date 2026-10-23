@@ -283,3 +283,25 @@ decompiled archives:
 - Backlog maintenance never justifies a commit alone: it rides inside
   the next work commit, or happens on the owner's explicit order
   (message says so). History is not rewritten: old commits stay.
+
+## 27. Log priority tags (owner's ruling, 2026-10-26)
+
+- Every console line carries a priority tag: `[LOW]` (routine flow),
+  `[MED]` (unclassified chatter, the default), `[HIGH]` (friction worth
+  filtering), `[CRIT]` (game-breaking). The tag is composed centrally
+  in `AConsole` (`println(LogLevel, ...)`), so an untagged call site
+  reads `[MED]` - it never reads untagged. Severity lives in one place:
+  `LogLevel` (order LOW < MEDIUM < HIGH < CRITICAL) + `LogKey.level()`
+  (which families are HIGH/CRITICAL), pinned by `LogLevelTest` +
+  `LogKeySeverityTest`.
+- Temporary debugging lines use `[TEMP]` (`AConsole.temp`), never a
+  level. Grep `TEMP` to find every site; a temporary entry is deleted
+  or classified before the session ends, it never graduates silently.
+- Event rows carry the same priority as a short `"lvl"` code
+  (`LOW`/`MED`/`HIGH`/`CRIT`, always rendered). Per-frame grouping by
+  key is a read-time operation, not a write-time one: the twin already
+  stores key + frame, `scripts/query-events.py --group KEY` prints
+  `KEY:{frame:{params}}`. No per-frame keyed buffering in console code.
+- E2E gates fail on CRITICAL only (`assert-openbw-scenario.sh`,
+  `EXPECT_NO_CRITICAL`); old `CRITICAL` spellings in retained logs
+  keep matching (the gate accepts both).

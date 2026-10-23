@@ -6,8 +6,8 @@ Keys are LogKey families; parameters carry the variance.
 
 Usage:
   scripts/query-events.py [--file PATH] [--key KEY ...] [--since F] [--until F]
-                          [--count] [--cols a,b,c] [--min-level HIGH|CRITICAL]
-                          [--where k=v ...]
+                          [--count] [--cols a,b,c] [--min-level LOW|MED|HIGH|CRIT]
+                          [--where k=v ...] [--group KEY ...]
 
 Defaults to the newest E2E_LOGS/*/EVENTS.jsonl. --count prints rows per key.
 --where filters on exact param equality (repeatable): the construction
@@ -47,7 +47,11 @@ def main():
     arg.add_argument('--cols', default=None)
     arg.add_argument('--count', action='store_true')
     arg.add_argument('--min-level', default=None,
-                     help='only rows at or above this severity (rows without lvl count as NORMAL)')
+                     help='only rows at or above this severity (LOW|MED|HIGH|CRIT, '
+                          'old LONG names still accepted; rows without lvl count as MED)')
+    arg.add_argument('--group', action='append', default=[],
+                     help='group rows by frame per key: prints KEY:{frame:{params}} '
+                          '(repeatable, e.g. --group BUILD_REFUSED)')
     arg.add_argument('--where', action='append', default=[],
                      help='exact param filter k=v, repeatable (e.g. --where cid=12)')
     ns = arg.parse_args()
@@ -65,10 +69,11 @@ def main():
                 continue
 
     if ns.min_level:
-        order = {'NORMAL': 0, 'HIGH': 1, 'CRITICAL': 2}
+        order = {'LOW': 0, 'NORMAL': 1, 'MED': 1, 'MEDIUM': 1,
+                 'HIGH': 2, 'CRITICAL': 3, 'CRIT': 3}
         threshold = order.get(ns.min_level.upper(), 0)
         rows = [r for r in rows
-                if order.get(str(r.get('lvl', 'NORMAL')).upper(), 0) >= threshold]
+                if order.get(str(r.get('lvl', 'MED')).upper(), 0) >= threshold]
     if ns.key:
         wanted = set(ns.key)
         rows = [r for r in rows if r.get('key') in wanted]
@@ -83,6 +88,16 @@ def main():
             continue
         key, _, want = cond.partition('=')
         rows = [r for r in rows if str(r.get(key.strip(), '')) == want.strip()]
+
+    if ns.group:
+        grouped = {}
+        for row in rows:
+            if row.get('key') not in ns.group:
+                continue
+            params = {k: v for k, v in row.items() if k not in ('key', 'frame')}
+            grouped.setdefault(str(row.get('key')), {})[row.get('frame')] = params
+        print(json.dumps(grouped, sort_keys=True))
+        return
 
     if ns.count:
         totals = {}

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Severity policy, centralized in {@link LogKey}: E2E gates fail on
  * CRITICAL, `--min-level HIGH` filters friction, everything else is
- * NORMAL chatter. Pinned so a new key lands in a set deliberately,
+ * MEDIUM chatter. Pinned so a new key lands in a set deliberately,
  * not by falling through the default.
  */
 @Tag("infra")
@@ -39,24 +39,24 @@ public class LogKeySeverityTest {
 
     @Test
     public void theRestIsChatter() {
-        assertEquals(LogLevel.NORMAL, LogKey.BOARD.level());
-        assertEquals(LogLevel.NORMAL, LogKey.GAME_END.level());
-        assertEquals(LogLevel.NORMAL, LogKey.ADOPTED_CONSTRUCTION.level());
-        assertEquals(LogLevel.NORMAL, LogKey.WORKER_GATE.level());
-        assertEquals(LogLevel.NORMAL, LogKey.GAS_FIX.level());
-        assertEquals(LogLevel.NORMAL, LogKey.POSITION_REFRESH.level());
-        assertEquals(LogLevel.NORMAL, LogKey.CONSTRUCTION_PREPARING.level());
-        assertEquals(LogLevel.NORMAL, LogKey.SINGULARITY_APPLIES.level());
-        assertEquals(LogLevel.NORMAL, LogKey.DRAGOON_TRAIN.level());
-        assertEquals(LogLevel.NORMAL, LogKey.TRAIN_ATTEMPT.level());
-        assertEquals(LogLevel.NORMAL, LogKey.CLUSTER.level());
-        assertEquals(LogLevel.NORMAL, LogKey.CATALOGUE_SITE.level());
-        assertEquals(LogLevel.NORMAL, LogKey.KITE.level());
-        assertEquals(LogLevel.NORMAL, LogKey.HOLD.level());
-        assertEquals(LogLevel.NORMAL, LogKey.MISSION.level());
-        assertEquals(LogLevel.NORMAL, LogKey.HIT.level());
-        assertEquals(LogLevel.NORMAL, LogKey.SHOT.level());
-        assertEquals(LogLevel.NORMAL, LogKey.SUPPLY_BLOCKED.level());
-        assertEquals(LogLevel.NORMAL, LogKey.QUEUE_BASE.level());
-        assertEquals(LogLevel.NORMAL, LogKey.BOARD_FED.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.BOARD.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.GAME_END.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.ADOPTED_CONSTRUCTION.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.WORKER_GATE.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.GAS_FIX.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.POSITION_REFRESH.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.CONSTRUCTION_PREPARING.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.SINGULARITY_APPLIES.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.DRAGOON_TRAIN.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.TRAIN_ATTEMPT.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.CLUSTER.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.CATALOGUE_SITE.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.KITE.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.HOLD.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.MISSION.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.HIT.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.SHOT.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.SUPPLY_BLOCKED.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.QUEUE_BASE.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.BOARD_FED.level());
     }}

@@ -46,9 +46,9 @@ public class EventLogTest {
             .log(60, "0:02");
 
         assertEquals(
-            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\","
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\","
                 + "\"reason\":\"CantAfford\",\"workers\":5,\"minerals\":32}\n"
-                + "{\"frame\":60,\"time\":\"0:02\",\"key\":\"BOARD\","
+                + "{\"frame\":60,\"time\":\"0:02\",\"key\":\"BOARD\",\"lvl\":\"MED\","
                 + "\"top\":\"workers\",\"idle\":false}\n",
             EventLog.toJsonLines()
         );
@@ -64,7 +64,7 @@ public class EventLogTest {
 
         String content = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
         assertEquals(
-            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"reason\":\"NoSupply\"}\n",
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n",
             content
         );
         assertEquals("", EventLog.toJsonLines());
@@ -89,7 +89,7 @@ public class EventLogTest {
 
         String afterFirst = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
         assertEquals(
-            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"reason\":\"NoSupply\"}\n",
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n",
             afterFirst);
 
         EventLog.key(LogKey.BOARD).param("top", "workers").log(60, "0:02");
@@ -97,9 +97,19 @@ public class EventLogTest {
 
         String afterSecond = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
         assertTrue(afterSecond.startsWith(
-            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"reason\":\"NoSupply\"}\n"));
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n"));
         assertTrue(afterSecond.contains("\"key\":\"BOARD\""));
         assertFalse(afterSecond.contains("STALE ROW"));
+    }
+
+    @Test
+    public void highRowCarriesItsShortCode() {
+        EventLog.key(LogKey.BUILD_REFUSED).param("guard", "funding").log(30, "0:01");
+
+        assertEquals(
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"BUILD_REFUSED\",\"lvl\":\"HIGH\",\"guard\":\"funding\"}\n",
+            EventLog.toJsonLines()
+        );
     }
 
     @Test
@@ -108,7 +118,7 @@ public class EventLogTest {
         EventLog.key(LogKey.WORKER_GATE).param("reason", "CantAfford").log(5, "0:00");
 
         assertEquals(
-            "{\"frame\":5,\"time\":\"0:00\",\"key\":\"WORKER_GATE\",\"reason\":\"CantAfford\"}\n",
+            "{\"frame\":5,\"time\":\"0:00\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"CantAfford\"}\n",
             EventLog.toJsonLines()
         );
     }

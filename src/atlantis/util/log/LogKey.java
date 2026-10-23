@@ -146,7 +146,7 @@ public enum LogKey {
     );
 
     /**
-     * Severity policy, centralized: most families are NORMAL chatter,
+     * Severity policy, centralized: most families are MEDIUM chatter,
      * HIGH is friction worth filtering (churn loops, refusals, cancels),
      * CRITICAL is game-breaking (a wanted building got nothing, a builder
      * stuck past the standstill threshold). New keys pick explicitly by
@@ -157,6 +157,6 @@ public enum LogKey {
         if (CRITICAL.contains(this)) return LogLevel.CRITICAL;
         if (HIGH.contains(this)) return LogLevel.HIGH;
 
-        return LogLevel.NORMAL;
+        return LogLevel.MEDIUM;
     }
 }

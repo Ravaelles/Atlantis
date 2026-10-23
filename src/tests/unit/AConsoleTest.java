@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.LogPort;
 import atlantis.util.log.SystemLogPort;
 import org.junit.jupiter.api.AfterEach;
@@ -55,8 +56,29 @@ public class AConsoleTest {
         AConsole.print("no newline");
         AConsole.println();
 
-        assertEquals(Arrays.asList("hello", "no newline", ""), recording.out);
-        assertEquals(Arrays.asList("bad"), recording.errors);
+        assertEquals(Arrays.asList("[MED] hello", "no newline", ""), recording.out);
+        assertEquals(Arrays.asList("[MED] bad"), recording.errors);
+    }
+
+    @Test
+    public void explicitLevelOverridesTheDefault() {
+        AConsole.println(LogLevel.HIGH, "churn");
+        AConsole.println(LogLevel.CRITICAL, "stuck");
+        AConsole.println(LogLevel.LOW, "flow");
+        AConsole.errPrintln(LogLevel.CRITICAL, "dead");
+
+        assertEquals(
+            Arrays.asList("[HIGH] churn", "[CRIT] stuck", "[LOW] flow"),
+            recording.out
+        );
+        assertEquals(Arrays.asList("[CRIT] dead"), recording.errors);
+    }
+
+    @Test
+    public void tempMarksRemovableDebuggingLines() {
+        AConsole.temp("probe xyz");
+
+        assertEquals(Arrays.asList("[TEMP] probe xyz"), recording.out);
     }
 
     @Test
@@ -71,14 +93,14 @@ public class AConsoleTest {
     public void varargsPrintJoinsWithCommas() {
         AConsole.print("a", "b", "c");
 
-        assertEquals(Arrays.asList("a", ", ", "b, ", "c"), recording.out);
+        assertEquals(Arrays.asList("a", ", ", "b, ", "[MED] c"), recording.out);
     }
 
     @Test
     public void printListFormatsThroughThePort() {
         AConsole.printList(Arrays.asList("x", "y"));
 
-        assertEquals(Arrays.asList("List (2)", "- x", "- y"), recording.out);
+        assertEquals(Arrays.asList("[MED] List (2)", "[MED] - x", "[MED] - y"), recording.out);
     }
 
     @Test

@@ -50,7 +50,7 @@ public class SupplyBlockedTwinTest extends WorldStubForTests {
                 GameStateSnapshot.supplyProvidersComing(provider));
 
             String log = EventLog.toJsonLines();
-            assertTrue(log.contains("\"key\":\"SUPPLY_BLOCKED\",\"type\":\"Pylon\",\"result\":\"sample\""),
+            assertTrue(log.contains("\"key\":\"SUPPLY_BLOCKED\",\"lvl\":\"MED\",\"type\":\"Pylon\",\"result\":\"sample\""),
                 "sample names the provider: " + log);
             assertTrue(log.contains("\"free\":4") && log.contains("\"coming\":1"),
                 "sample carries the block state: " + log);
