@@ -1018,6 +1018,17 @@ public class AUnitType implements Comparable<Object> {
         return ut.dimensionLeft();
     }
 
+    /**
+     * Max body half-extent in pixels, engine-measured (dimension bounds).
+     * Edge-to-edge reach math (NEXT #186) needs true body size: tile
+     * truncation rounds melee bodies to zero.
+     */
+    public int bodyRadiusPx() {
+        return Math.max(
+            Math.max(dimensionLeftPixels(), dimensionRightPixels()),
+            Math.max(dimensionUpPixels(), dimensionDownPixels()));
+    }
+
     public int dimensionLeftTiles() {
         return ut.dimensionLeft() / 32;
     }

@@ -27,6 +27,15 @@ public final class DuelKite {
     /** Duel scale: baseless fights at or below this headcount kite, bigger ones hold the line. */
     public static final int MAX_DUEL_COMBATANTS = 4;
 
+    /** Live-measured dragoon windup (DuelMemory: damage lands ~cd 22 on a 30f cooldown). The sim runs 6 (dead WINDUP keys, #186 slice 3). */
+    private static final int WINDUP_FRAMES = 8;
+
+    /** Measured full-speed braking glide (#186 slice 3 pins: 6.0px over 7 ticks). Conservative below full speed. */
+    private static final double BRAKING_PX = 6.0;
+
+    /** Hold margin for order-issue slop: the same 2f cover as the imminent-shot gate above (measured re-issue refusal at 1-2f). */
+    private static final int HOLD_MARGIN_FRAMES = 2;
+
     private DuelKite() {
     }
 
@@ -46,7 +55,27 @@ public final class DuelKite {
         if (unit.cooldown() <= SleepUntilFrameGate.latencyFrames() + 2) return false;
         if (threat.isMoving() && !unit.isOtherFacingThisUnit(threat)) return false;
 
-        return unit.distTo(threat) < holdDistance(unit);
+        if (unit.distTo(threat) >= holdDistance(unit)) return false;
+
+        // Hold-early (#186): a committed chaser faces us, so closing runs
+        // at its top speed head-on; at an angle the true closing is lower
+        // and this assumption only ever yields earlier (conservative).
+        // Foe reach is edge-to-edge pixels (tile truncation rounds melee
+        // bodies to zero, which would hold into trades).
+        double closingPx = threat.maxSpeed();
+        double effectiveRangePx = ProtossAttackHoldToShoot.effectiveRange(
+            unit.enemyWeaponRangeAgainstThisUnit(threat) * 32 + unit.type().bodyRadiusPx(),
+            closingPx,
+            WINDUP_FRAMES,
+            BRAKING_PX);
+
+        return !ProtossAttackHoldToShoot.shouldHoldEarly(
+            unit.distTo(threat) * 32,
+            effectiveRangePx,
+            unit.cooldown(),
+            SleepUntilFrameGate.latencyFrames(),
+            closingPx,
+            HOLD_MARGIN_FRAMES);
     }
 
     public static double holdDistance(AUnit unit) {
