@@ -910,76 +910,32 @@ re-measure before quoting, never copy old counts here.
   away from measured data).
 
 - **#173** Owner escape doctrine: long-vector-first (owner 2026-10-21,
- 1Drag_v_1Zeal edge-freeze; live Wine datum 2026-10-22: the dragoon
- flees short and takes 15 hits). Mechanism verified in code: short
- steps die in validation, not in scoring - `MoveAway.bestDestination`
- vetoes clamped micro-steps (half-distance gain floor) and
- `IsReasonablePositionToRunTo` gates (walkable(2), ground-distance,
- minerals), so every direction returns null at a wall and the caller
- fights in place; the scored pick never rejects, it returns the
- least-bad short step (shuffle into the pocket). Staged: (a) NOW:
- detector-first long escape - away-ray clearance <5 tiles means the
- straight-5 is blocked, so deflect at full length (the 8-dir long
- pick yields the sidestep emergently); open ground keeps the tactical
- short step bit-identical, boxed pockets behave as today. The kite
- footwork (yield-to-hold) stays short - lengthening applies to the
- failed escape, never to the standoff. (b) NEXT: explicit
- angle-stepping if the long pick still traps; the `EscapeCandidates`
- 4/8/12 rings (no prod callers today) belong to this step. (c) LATER:
- precomputed peninsula/cul-de-sac map (cornerPenalty is local-only,
- ~6-tile horizon). (d) LATER: hard-map tuning vs multiple chasers
- (sim batch + TunerObjective already exist; enemyPressure already
- counts ALL in radius). Deliberately NOT primary: shorten-and-retry
- (shortening is what re-traps) and a long leg inside pure
- `pick()` (walkability is prefix-closed - verified no-fire; the
- differential lives in the validation clamps and gain floors, not
- in the scoring). Proof: unit pins + Wine duel (fewer hits than
- the 15-hit datum, no standstill frames). 2026-10-22 3-duel mini-batch on the current tree (all VICTORY 20-22 s): 16/16/14 hits taken, mean 15.3 vs the 15-hit datum - NOT proven (noise band), standstill clean (113 stepped-aside, 1 frozen-reset, 11 stuck-no-step across the batch). Honest gap: no twin marks the long deflect firing, so the batch cannot say whether the branch even engaged - observability first, then measurement. 2026-10-22 observability LANDED: the long branch rows `long-deflect` via KiteTwin (unthrottled, rarity is the throttle; diagnostics wrapped so they never break the decision), pinned by twin-presence + twin-absence tests, mutation-proofed. Re-run the duel batch to read engagement off the rows.
- 2026-10-22 re-run, 5 duels on the #182/#183 tree (all VICTORY 20-23 s,
- 497-563f, hits 14/17/16/14/12): zero `long-deflect` rows in 254 KITE
- rows (182 stepped-aside, 69 stuck-no-step, 3 frozen-reset) - the branch
- never engaged on open ground, which is the designed shape (deflect
- fires only when a wall eats the ray; open ground keeps the short step
- bit-identical). Engagement proof still needs a walled pocket map, not
- more open duels.
- 2026-10-26 yield-path visibility LANDED (KiteTwin.yielded rows
- `duel-yield` next to stepped-aside, pin fires on the act-level yield
- board): 2-duel batch on the current tree reads 2+3 duel-yield rows -
- the pickEscape path IS alive, just rare (the cooling kite preempts
- the margin first on most cycles). So the long-deflect zero is
- explained, not vacuous: the branch gets ~2-3 chances per game and
- the maps are open (zoo batch: 14/8/4 VICTORY, still zero deflects
- despite 23% no-step in game 1 - where the away-ray is eaten, no
- 5-tile pick exists either, so silence is correct). Main kite path
- deliberately still on MoveAway (rollout order: DuelKite yield
- first, ARunningManager second). Remaining proof unchanged: a truly
- walled pocket map, not more open duels.
- 2026-10-23 kite-distance grid, 1Drag_v_1Zeal, all-33-pinned baseline +
- 3 one-knob arms (K=3 each, headless Wine): A defaults 18/15/19 (mean
- 17.3), B step 3.0 (was 2.0) 12/18/13 (14.3), C margin-base 2.0 (was
- 1.0) 15/14/9 (12.7), D both 14/6/16 (12.0, best single 6). Directional
- win (foe>1.5 tiles share: 33% -> 50% -> 58% -> 72%), far from the 0-2
- target. Binding truth: dragoon topSpeed 5.0 vs zealot 4.0 px/f - the
- dragoon CAN open distance, so the residual contact is standstill per
- shot cycle (windup + settle + rearm latency while the chaser closes),
- not a speed cap. D-game2 anatomy: 4 of 6 hits land before f130
- (approach + first contacts), 2 on one f277 re-close; longest holds
- at 2-4 tiles (shots at dist 35-40) with zero hits. Next: push the
- margin out (E: margin 2.5 + step 3.0) instead of more blind grid.
- 2026-10-23 round 2 (K=4): E (margin 2.5 + step 3.0) 12/18/14/15
- (mean 14.75) does NOT beat D; D-replicates 4/16/13/11 (D combined
- n=7: mean 11.4, best singles 6 and 4). Knob plateau confirmed:
- pushing margin 2.0->2.5 adds nothing (difference within noise,
- t~1.4). Same-config spread (4..16) dominates between-config gaps.
- D-rep game-1 vs game-2 anatomy: 4-hit game escapes to 2.7-4.4 tiles
- by f144 and holds it (0 further hits); 16-hit game oscillates
- 0.5-1.9 all game. Bistable: the opening ~100f decides the attractor
- (escape vs glued), knobs only shift the odds. Next lever is opening
- discipline + per-cycle standstill, not longer steps.
- 2026-10-26 the per-cycle standstill lever landed (finishedShooting
- escape release, #152): V0 15.7 -> V1 12.0 -> V2 9.6-10.3 across
- 17 duels, all VICTORY - the step-amplitude grid run after it (2.0 /
- 2.5 / 3.0, no gradient) confirms the diagnosis from both sides.
+  1Drag_v_1Zeal edge-freeze; live Wine datum: the dragoon flees short
+  and takes hits). Mechanism verified in code: short steps die in
+  validation, not in scoring - `MoveAway.bestDestination` vetoes
+  clamped micro-steps (half-distance gain floor) and
+  `IsReasonablePositionToRunTo` gates (walkable(2), ground-distance,
+  minerals), so every direction returns null at a wall and the caller
+  fights in place; the scored pick never rejects, it returns the
+  least-bad short step. Staged: (a) NOW detector-first long escape
+  (away-ray <5 tiles = straight-5 blocked, deflect at full length;
+  open ground bit-identical, kite footwork stays short); (b) NEXT
+  angle-stepping if the long pick still traps; (c) LATER precomputed
+  peninsula map (cornerPenalty is local-only); (d) LATER hard-map
+  tuning vs chasers. NOT primary: shorten-and-retry (shortening
+  re-traps) or a long leg inside pure pick() (walkability is
+  prefix-closed - verified no-fire). Verdict (duel batches + grids):
+  the per-cycle standstill lever (finishedShooting release, #152)
+  fixed it (V0 15.7 -> V1 12.0 -> V2 9.6-10.3, all VICTORY);
+  step amplitude has no gradient (2.0/2.5/3.0 grid flat), margin
+  2.0->2.5 adds nothing (plateau, t~1.4); residual contact is
+  standstill per shot cycle, not a speed cap (dragoon 5.0 vs zealot
+  4.0 px/f CAN open distance); bistable opening decides the
+  attractor, knobs only shift odds. Long-deflect branch verified
+  present but never engaged on open maps by design (fires only when
+  a wall eats the ray) - engagement proof needs a walled pocket
+  map, not more open duels. Main kite path deliberately still on
+  MoveAway (rollout: DuelKite yield first, ARunningManager second).
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
   future): a Dragoon costs ~two Zealots, so lone kiting weakens the
