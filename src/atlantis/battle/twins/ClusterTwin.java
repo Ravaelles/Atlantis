@@ -41,6 +41,8 @@ public final class ClusterTwin {
 
         HasPosition center = Alpha.get().center();
         int foeDist = -1;
+        int foeX = -1;
+        int foeY = -1;
         String ghostSource = "-";
         int ghostDist = -1;
         int ghostX = -1;
@@ -51,7 +53,16 @@ public final class ClusterTwin {
             if (center != null) {
                 AUnit nearest = Select.enemy()
                     .combatUnits().nearestTo(center);
-                if (nearest != null) foeDist = (int) (center.distTo(nearest) * 10);
+                if (nearest != null) {
+                    foeDist = (int) (center.distTo(nearest) * 10);
+                    try {
+                        if (nearest.position() != null) {
+                            foeX = nearest.position().tx();
+                            foeY = nearest.position().ty();
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
             }
             AUnit leader = Alpha.get().leader();
             if (leader != null && leader.isAlive()) {
@@ -82,6 +93,8 @@ public final class ClusterTwin {
             .param("cx", center == null ? -1 : center.tx())
             .param("cy", center == null ? -1 : center.ty())
             .param("foe", foeDist)
+            .param("fx", foeX)
+            .param("fy", foeY)
             .param("ghost", ghostSource)
             .param("gdist", ghostDist)
             .param("gx", ghostX)

@@ -16,6 +16,7 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
@@ -75,5 +76,43 @@ public class ClusterTwinDestTest extends WorldStubForTests {
         assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
         assertTrue(rows.contains("\"dtx\":-1") && rows.contains("\"dty\":-1"),
             "no orders reads -1, never a stale dest: " + rows);
+    }
+
+    @Test
+    public void nearestFoePositionRowsWithDistance() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 40, 30);
+        foe.setEnemy();
+
+        world(32, fakeOurs(nexus, dragoon), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() == 31) {
+                Alpha.gather();
+                ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, nexus.position());
+            }
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+        assertTrue(rows.contains("\"fx\":40") && rows.contains("\"fy\":30"),
+            "the nearest foe's tile rides next to its distance: " + rows);
+    }
+
+    @Test
+    public void noFoeRowsMinusOne() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+
+        world(32, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() == 31) {
+                Alpha.gather();
+                ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, nexus.position());
+            }
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+        assertTrue(rows.contains("\"fx\":-1") && rows.contains("\"fy\":-1"),
+            "no foe reads -1, never a stale position: " + rows);
     }
 }

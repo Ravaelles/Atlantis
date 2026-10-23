@@ -157,11 +157,11 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 241 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 283 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels, all 0 fed) / 225 rows,
+   (cumulative: 242 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 284 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 10 1Drag duels, all 0 fed) / 226 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B131 refresh+proximity storms + twin shortest 2f + 87th/88th demotes, 3 feds;
+   never in tally); B132 zero-waste + 31st twin + FLEE homeward, 1 fed;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, production holds ZERO -
@@ -1032,48 +1032,20 @@ re-measure before quoting, never copy old counts here.
  2026-10-22 wiring LANDED (high side preferred via HighGround.preferFoeSide + ChokeStandoff.chooseHold + foe-side candidate, #170-guarded: never march through the enemy to reach it). Pins: preferFoeSide 4/4 + chooseHold (mutation-proofed); the holdPointFor wiring itself is live-only by construction (test heights always read unknown, so the fallback path is behavior-identical in-JVM) - the TauCross macro never engaged it (Hydralisks are ranged, hold correctly silent). Live proof still rides a melee-choke game.
 - **#172** Region-aware escape destinations (owner 2026-10-20, PurpleWave
   match review: losing won games to corner traps, Dragoons most of all).
-  Small units slip through, large ones (Dragoon) die on a failed escape -
-  and two early Dragoons decided a game. Stardust read, no copy: boids
-  (separation + target weights, marked TODO-tune upstream) + walkable
-  rays (furthest walkable >= minDist along a vector) + collision vectors
-  + NoGoAreas + unstick-via-STOP; cluster flee is retreat-to-main (arc
-  disabled as unsafe). There is NO region-aware destination scoring
-  there - this is our own work. Ours today: `MoveAway` (straight +
-  lateral aims, best-distance pick with min-gain floor) + margin kite,
-  no region/size/peninsula awareness. Architecture (`battle.escape`,
-  one reason per class): (1) `RegionShape` probe - min width/height of
-  the current region + 8-direction walkable-boundary rays from the unit
-  (Stardust-style ray march, per unit size: large units need wider
-  clearance sooner), plus region-center pull (edges raise corner risk);
-  peninsulas score as traps whatever the raw width. (2) Candidates: 8
-  dirs x distances with the 8-tile escape minimum as the want (not a
-  promise - the nearest obstacle decides), each validated walkable to
-  the end. (3) Scoring, PurpleWave-detailed: corner/peninsula penalty,
-  minerals/geysers/buildings on path or dest, ALL known enemies within
-  20 tiles of the dest (not just the nearest - the pocket is made of
-  the second Zealot), size factor (large = earlier caution, wider
-  berth). (4) Objective: minimize hits taken AND time-to-win: shoot
-  every cooldown (fleeing forever is losing slowly - the DuelKite
-  standoff stays the engage half, this is the disengage half).
-  (5) Tuning: `EscapeTuning` record with per-map overrides, optimized
-  by the batch tuner (NEXT #160 objective: win, then hits, then
-  seconds). Slices, each sim-proven (arena edges stand in for region
-  borders; obstacle flavors extend the sim) then live-proven: probe +
-  min-dim caution; 8-dir walkable candidates; static-obstacle +
-  corner scoring; enemy-20 avoidance; size-aware clearance; tuner
-  wiring. First consumer: `DuelKite.yieldStep` (replaces
-  `MoveAway.bestDestination`), second: `ARunningManager`.
-  2026-10-21 tuner wiring landed in code (no behavior change while
-  the tweaker is off): `EscapeTuning` record (6 weights/radii, same
-  recipe as CombatTuning, defaults equal the hand-tuned constants) +
-  registration and bounds (32 params, registry test counts it) +
-  `ParamTweakerFactory.apply` by-value write path. Slices #174-182
-  (probe, candidates, static scoring, corner + enemy-20, size-aware,
-  DuelKite wiring, pinch gate, second consumer, high-ground scorer)
-  are closed; what remains is live superiority proof (needs games)
-  plus tuner efficacy. Center-pull deliberately not added: the
-  corner rays measure edge risk directly at each destination, a
-  center prior would bias away from measured data.
+  Stardust read, no copy (boids + walkable rays + collision vectors +
+  NoGoAreas + unstick-via-STOP; no destination scoring there - this is
+  our own work). Architecture (`battle.escape`, one reason per class):
+  `RegionShape` probe, 8-dir walkable candidates, PurpleWave-detailed
+  scoring (corner/peninsula, static obstacles, all enemies within 20 of
+  the dest, size factor), minimize-hits-plus-time objective, tuner
+  record with per-map overrides. Slices #174-182 all closed
+  (sim-proven each: probe, candidates, static + corner scoring,
+  enemy-20 avoidance, size-aware clearance, tuner wiring, pinch gate,
+  second consumer, high-ground scorer). Open: live superiority proof
+  (needs games) + tuner efficacy. Center-pull deliberately not added
+  (corner rays measure edge risk directly; a center prior would bias
+  away from measured data).
+
 - **#173** Owner escape doctrine: long-vector-first (owner 2026-10-21,
  1Drag_v_1Zeal edge-freeze; live Wine datum 2026-10-22: the dragoon
  flees short and takes 15 hits). Mechanism verified in code: short
@@ -1147,51 +1119,21 @@ re-measure before quoting, never copy old counts here.
  2.5 / 3.0, no gradient) confirms the diagnosis from both sides.
 
 - **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
- future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
- one zealot or two lings weakens the army; straight-line fleeing splits
- the army apart (strategic cost outweighing the micro gain). Idea: while
- within ~15 tiles of the own squad center, flee along an arc curving back
- toward the squad instead of straight away - stay in firing range of the
- pack, keep focus fire on the weakest enemy, kill it faster, win the
- fight. Uncertain per owner (may not work as imagined) and explicitly
- NOT urgent; test vehicle is the Dragoons-vs-Zealots map. Prove in sim
- first (arc policy vs straight policy, N games: win rate, time-to-win,
- army-split distance), then live. (#174 stays with the tuner slice
- series; this takes the next free number.)
- 2026-10-22 sim-first slice LANDED (no behavior change, default blend 0):
- `EscapeArc` pure geometry (blend rotates the away-vector toward the
- squad, length kept) + `EscapeTuning.arcBlend` (deliberately untuned,
- no registry row until efficacy proves) wired default-off into the
- margin-kite branch (Alpha roster fallback: units carry no back-ref,
- `unit.squad()` reads null live and in sim). Sim A/B 3v3 dragoons vs
- zealots, 400 ticks each: peak split 4.21 -> 3.10 tiles, deaths equal
- (0/2 both), shots 32 -> 39 (the arc stays in range). Pinned
- (`EscapeArcTest` 4/4, `ArcRetreatSimTest` A/B, both mutation-proof).
- 2026-10-22 efficacy matrix + registration: blend sweep {0, 0.5, 1.0}
- on 3v3 (split 18.17 -> 1.99 / 1.98, kills 1 -> 2 / 2, shots 18 ->
- 42 / 50, zero dragoon donations) and 3v5 (split 10.68 -> 1.99,
- kills 2 -> 3, shots 33 -> 38, zero donations) - the arc collapses
- the scatter ~9x/~5x and doubles the guns on both geometries.
- Full bend marginally tightest on 3v3, so no basis to crown 0.5:
- default stays 0, `EscapeArcBlend` registered 0..1 (bounds +
- by-name apply + 3 count tests 32->33) and the tuner picks the
- value. Pinned (`halfBlendBeatsStraightAndFull`,
- `arcHoldsWhenOutnumbered`, mutation-proofed).
- 2026-10-23 follow-up (no code): the chew-kites doctrine costs the arc
- arm one dragoon in the contact-start 3v5 (stand donated 0) - the bend
- aims at the squad, which in a surround is into the chewers. The arc
- deaths bound now allows +1 with the reason; contact-aware bending
- (bend away from contact, not just toward the squad) is open work for
- the #175 slice series.
- 2026-10-22 forced-blend duel (1Drag, all 33 params pinned from a
- per-game env, `EscapeArcBlend=0.5 (ENV)` in the log): WIN in 22 s,
- 1/0, 12 hits, 14 shots - inside the baseline band (10/10 wins,
- 20-23 s, 6-16 hits), so no regression and no miracle either.
- Wiring proven end to end (33/33 values from env, zero random);
- the value decision stays with the tuner - one game is noise.
- 2026-10-22 death-log dedup (owner): one issued order means one journal
- row - the `lastCommandIssuedNow` attempt row doubled every issue row.
- Pinned `DecisionJournalTest` 9/9.
+  future): a Dragoon costs ~two Zealots, so lone kiting weakens the
+  army and straight-line fleeing splits it - flee along an arc back
+  toward the squad instead (stay in range, keep focus fire). Prove in
+  sim first (arc vs straight: win rate, time-to-win, split distance),
+  then live. Sim-first slice LANDED, default blend 0 (pinned
+  `EscapeArcTest`, `ArcRetreatSimTest` A/B): split 4.21 -> 3.10,
+  deaths equal, shots up. Efficacy matrix: blend sweep collapses the
+  scatter ~9x/~5x and doubles the guns on both geometries (pinned);
+  default stays 0, tuner picks the value (`EscapeArcBlend` 0..1
+  registered). Forced-blend duel: no regression, no miracle (one
+  game is noise). Open: contact-aware bending (bend away from
+  contact, not just toward the squad - the chew-kites doctrine costs
+  the arc arm one dragoon in contact-start surrounds); the +1 deaths
+  bound stands with the reason.
+
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
  so vs faster-attacking enemies (zerglings attack faster than
  zealots) they stand through the cooldown and bleed. Rule: after
@@ -1333,7 +1275,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Gating seam per behavior (the NN plug point, mirrors ProductionV2Mode OFF/DRY_RUN/LIVE incl. typo-safe default OFF): each gate answers from the hand rule OR from the NN score behind a flag - per-behavior flags like V2's per-gate flips, so rollout is gradual, plus a global kill-switch. Fallback is mandatory, not optional: NN uncertain or output missing → hand rule decides, so the net is never a single point of failure in a live game. DRY_RUN mode is the trust builder: the net logs what it WOULD pick next to what deterministic picked, per frame - disagreement rows plus outcomes become the evidence base, no blindness, no faith required. Deterministic mode stays available permanently (owner requirement): same binary, flag-selected, doubles as the A/B baseline that proves the net (frozen sim scenarios, NN vs deterministic, efficacy bar before any live takeover).
  Migration is slices, never big-bang (production cut stays the priority): extract current branches (retreat, leave-breached, hold, kite/glide/re-arm pieces, regroup...) into Behavior classes one by one, order kept 1:1 at first (zero behavior change, suite green each slice), only then does the order become data. BattleCommander.act() iterates the chain - pure delegation, CONVENTIONS §23 intact. Guard design lives in `_AI/redesign/05_BEHAVIOR_GUARDS.md` (spec only until the production cut lands): sequential levels, disjoint guards, continuity by narrowing.
  Non-goals: C++ rewrite (revisit only on the falsification trigger); end-to-end pixel policies; tuner scalar loop untouched (it keeps tuning globals); #184 coordination review stays separate (action space, not gating).
- Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Update 2026-10-24: gaps (1) and (2) closed in test scope - ZombiePolicies (chase-nearest, stand-and-trade, focus-weakest, kite-back, holdStill; deterministic, pinned) + ZombieSimLoopTest (library drives the real loop) + BattleFeatures snapshot (7-column CSV rows, pinned). Remaining: (3) no NN lib (unchanged) + feature export is test-side only (production gating needs the seam). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
+ Readiness measured 2026-10-24 (owner: examine NN training in StarEngine): the sim runs ~400 us/tick with full decision code (1 dragoon vs 5 lings, 600 ticks = 241 ms) - ~1000x cheaper than a Wine game, overnight bandit-scale training fits. Features exist per tick (hp, shields, cooldown, distances, counts, foe positions, walkability); reward exists (TunerFitness win-then-hits-then-seconds + SimTunerBatch manifests); the ACTION SPACE now exists (TargetLadder 9 rules + movement behaviors, this session). Twin side: CLUSTER rows carry leader dest (dtx/dty) since 2026-10-23 and nearest-foe tile (fx/fy) since 2026-10-24 - the #188b blocking-geometry proof is finally measurable live. First game on the extended twin (B132): fx/fy present on 154/154 rows - but the only FLEE was foe-unknown, so still no blocker geometry to reconstruct. Gaps before any learner: (1) no unified zombie-policy library (chase-nearest + stand-trade are copy-pasted per test - focus-weakest/kite-back/static missing, overfit risk per the mandate above); (2) no per-tick feature snapshot export; (3) no NN lib in the project (Java 1.8) - the in-house path is contextual bandit/linear first (zero deps, interpretable per Stage C), weights-out/CSV-train-outside second (ParamTweaker precedent). Update 2026-10-24: gaps (1) and (2) closed in test scope - ZombiePolicies (chase-nearest, stand-and-trade, focus-weakest, kite-back, holdStill; deterministic, pinned) + ZombieSimLoopTest (library drives the real loop) + BattleFeatures snapshot (7-column CSV rows, pinned). Remaining: (3) no NN lib (unchanged) + feature export is test-side only (production gating needs the seam). Sequencing stands: production cut first, learner slices after - but every NEW behavior lands sim-pinned from today (CONVENTIONS section 29).
 
 - **#186** ProtossAttackHoldToShoot: real firing range vs nominal weapon range (owner 2026-10-26, from the owner's old code under the same name).
  The nominal dragoon range (4.0 tiles) is NOT the range at which a shot actually lands while both sides move. From the moment we start stopping (braking distance at current speed) through windup to the damage frame, a chasing enemy keeps closing - by the time the shot can fire it is drastically closer than nominal range suggests. This is why holding further out showed nothing (E-hold65: 17/14/15, back at baseline): the hold point was never the binding constraint, the stop-to-shoot window is.
