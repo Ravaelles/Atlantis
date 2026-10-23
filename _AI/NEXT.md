@@ -158,9 +158,9 @@ The index of which document answers which question is `_AI/README.md`.
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
    (cumulative: 181 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 234 retained logs /
+   rescue row counts in re-sweep rows, never in tally; 235 retained logs /
    164 rows, incl. foreign 141623 (concurrent unattributed run, 3 rescue
-   rows, never in tally); B95 Pylon storm resited + twin 16th, 3 feds;
+   rows, never in tally); B96 Nexus#2 completed (2nd) + stuck-order, 0 feds;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
