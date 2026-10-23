@@ -208,6 +208,39 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
     }
 
     /**
+     * Owner 2026-10-26 (tested loss): a hurt scout whose way home runs
+     * through an armed enemy must NOT march moveToMain into it - it steps
+     * into the open field instead and walks home once the way is clear.
+     * The chaser rides 8 tiles ahead on the scout-to-main line, so the
+     * existing homeward test (chaser aside, way clear) still retreats.
+     */
+    @Test
+    public void hurtScoutWithBlockedWayHomeStepsIntoTheField() {
+        FakeUnit[] ours = oursWithScoutAt(113, 12);
+        ours[1].setHp(12);
+        FakeUnit foeNexus = fake(AUnitType.Protoss_Nexus, FOE_X, FOE_Y).setEnemy();
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 0, 0).setEnemy();
+
+        runScoutChain(150, ours, new FakeUnit[]{foeNexus, zealot}, () -> {
+            atlantis.map.position.APosition s = ours[1].position();
+            double dx = HOME_X - s.x() / 32.0, dy = HOME_Y - s.y() / 32.0;
+            double len = Math.hypot(dx, dy);
+            zealot.position = s.translateByPixels((int) (dx / len * 8 * 32), (int) (dy / len * 8 * 32));
+        });
+
+        String logs = ours[1].managerLogs().toString();
+        assertTrue(!logs.contains("ScoutHurtHome"),
+            "no march home through the blocker: " + logs);
+        assertTrue(logs.contains("ScoutHurtField") || logs.contains("ScoutSeparate"),
+            "blocked hurt scout micros locally instead: " + logs);
+        double startHome = Math.hypot(113 - HOME_X, 12 - HOME_Y);
+        for (double[] d : moveDests(ours[1])) {
+            assertTrue(Math.hypot(d[0] - HOME_X, d[1] - HOME_Y) > startHome - 8,
+                "no 8-tile homeward march through the enemy: " + d[0] + "," + d[1]);
+        }
+    }
+
+    /**
      * NEXT #187 remainder: the enemy-main watch used to end at 340 s
      * ({@code ScoutNearEnemyBase} declined past {@code A.s >= 340}) whether
      * anything chased the scout or not - the exact reported shape (leaves

@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Selection;
+import atlantis.units.select.Select;
 
 public class ScoutSeparateFromCloseEnemies extends Manager {
     private HasPosition center;
@@ -42,10 +43,30 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     public Manager handle() {
 //        if (unit.moveAwayFrom(center, 14, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
-        // Hurt and chased (owner 2026-10-23, NEXT #187): home first, micro
+        // Hurt and chased (owner 2026-10-26, NEXT #187): home first, micro
         // second. A dodge alone keeps a slow scout next to a faster pursuer;
         // the home order sticks while the scout can still walk it.
-        if (isHurt() && unit.moveToMain(Actions.RUN_ENEMY)) return usedManager(this, "ScoutHurtHome");
+        // Never straight home THROUGH the enemy (owner 2026-10-26, tested
+        // loss): a chaser sitting on the scout-to-main line turns moveToMain
+        // into a donation march - the scout steps into the open field
+        // instead and only walks home once the way is clear.
+        if (isHurt()) {
+            if (!enemyBlocksWayHome()) {
+                if (unit.moveToMain(Actions.RUN_ENEMY)) return usedManager(this, "ScoutHurtHome");
+            }
+            else {
+                AUnit blocker = nearestEnemy();
+                if (blocker != null) {
+                    atlantis.map.position.APosition step =
+                        atlantis.battle.escape.EscapeScoredStep.pickScored(unit, blocker, 8);
+                    if (step != null) {
+                        if (unit.move(step, Actions.RUN_ENEMY, "ScoutHurtField")) {
+                            return usedManager(this, "ScoutHurtField");
+                        }
+                    }
+                }
+            }
+        }
 
         Manager manager = (new DoAvoidEnemies(unit, null)).handle();
         if (manager != null) return usedManager(this, "ScoutSeparateS");
@@ -104,5 +125,46 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     private boolean isHurt() {
         int killed = ScoutCommander.killedScouts();
         return unit.hp() < (killed == 0 ? 34 : (killed == 1 ? 37 : 40));
+    }
+
+    /**
+     * An armed enemy sitting on the scout-to-main line (owner 2026-10-26):
+     * inside a 4-tile corridor around the segment with its projection
+     * between the ends. Walking home through it donates the scout -
+     * the hurt branch steps into the field instead.
+     */
+    private boolean enemyBlocksWayHome() {
+        HasPosition home = Select.mainOrAnyBuilding();
+        if (home == null || home.position() == null || unit.position() == null) return false;
+
+        for (AUnit foe : unit.enemiesNear().havingWeapon().list()) {
+            if (foe == null || !foe.isAlive() || foe.position() == null) continue;
+            if (isOnSegment(foe.position(), unit.position(), home.position(), 4)) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isOnSegment(
+        atlantis.map.position.APosition point,
+        atlantis.map.position.APosition from,
+        atlantis.map.position.APosition to,
+        double corridorTiles
+    ) {
+        double fx = from.getX(), fy = from.getY();
+        double tx = to.getX(), ty = to.getY();
+        double px = point.getX(), py = point.getY();
+
+        double dx = tx - fx, dy = ty - fy;
+        double lenSq = dx * dx + dy * dy;
+        if (lenSq < 1) return false;
+
+        double t = ((px - fx) * dx + (py - fy) * dy) / lenSq;
+        if (t < 0.05 || t > 0.95) return false;
+
+        double cx = fx + t * dx, cy = fy + t * dy;
+        double distPx = Math.hypot(px - cx, py - cy);
+
+        return distPx <= corridorTiles * 32;
     }
 }
