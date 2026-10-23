@@ -8,6 +8,7 @@ import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.escape.EscapeScoredStep;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.battle.targeting.MeleeChewerTarget;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -44,6 +45,17 @@ public final class RetreatFromLostFight {
         // (PurpleWave AttackDelay) - the fight path below holds it the
         // same way.
         if (!noFleeOnBaselessUms && !unit.isAttackFrame() && !unit.isStartingAttack()) {
+            // Grabbed with a ready shot (owner, Steamhammer loss): a
+            // melee unit holding an enemy in weapon range with cooldown
+            // <= 5 never marches - the shot lands now, the march donates
+            // it. Falls through to fight instead.
+            if (unit.isMelee() && unit.cooldown() <= MeleeChewerTarget.READY_COOLDOWN_FRAMES) {
+                AUnit grabber = CutoffRetreat.nearestEnemyCombatUnit(unit);
+                if (grabber != null && grabber.isAlive() && unit.hasWeaponRangeToAttack(grabber, 1)) {
+                    return false;
+                }
+            }
+
             // Cut off from the army with enemies on it, a unit never
             // marches to the far rally through the pack (owner
             // 2026-10-26, tested loss vs Protoss): if it can hit back it

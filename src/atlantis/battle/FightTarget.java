@@ -2,11 +2,14 @@ package atlantis.battle;
 
 import atlantis.battle.formation.CoverWithdraw;
 import atlantis.battle.formation.FormationTwin;
+import atlantis.battle.escape.EscapeDestination;
+import atlantis.battle.escape.EscapeScoredStep;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.battle.kite.Kite;
 import atlantis.battle.kite.KiteTwin;
 import atlantis.battle.strategy.BattleStrategy;
 import atlantis.battle.strategy.DuelKite;
+import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.battle.twins.FightTrace;
 import atlantis.battle.twins.HitTwin;
@@ -183,6 +186,7 @@ public final class FightTarget {
         APosition aside = null;
         CoverWithdraw.Step makeWay = CoverWithdraw.makeWayStep(unit);
         if (makeWay != null) aside = makeWay.dest;
+        if (aside != null && violatesBuildingClearance(aside, unit)) aside = null;
         if (aside != null
             && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
             && unit.move(aside, Actions.MOVE_AVOID, Behavior.MAKE_WAY.tag())) {
@@ -240,13 +244,16 @@ public final class FightTarget {
                 stepLen = CombatTuning.current().getKiteStepTiles();
             }
             else {
-                stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
-                    Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+                stepLen = kiteStepLength(unit, threat);
             }
             APosition dest = stepLen > 0
-                ? MoveAway.bestDestination(unit, threat, stepLen)
+                ? MoveAway.bestDestination(unit, threat, stepLen, true)
                 : null;
             if (dest != null) dest = bendTowardSquad(unit, dest);
+            // Never kite into a building (owner, Steamhammer loss: two
+            // Dragoons died shooting nothing, glued on a Gateway). A
+            // vetoed step is not a step - fall through and trade.
+            if (dest != null && violatesBuildingClearance(dest, unit)) dest = null;
             if (dest != null && unit.move(dest, Actions.MOVE_AVOID, Behavior.KITE.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
@@ -256,6 +263,48 @@ public final class FightTarget {
             KiteTwin.nowhereToStep(unit, threat);
         }
         return false;
+    }
+
+    /**
+     * Kite step length (owner, Steamhammer loss): swamped Dragoons break
+     * contact first, margin second. Three or more melee inside 2.5
+     * tiles means the pack closes faster than capped steps open - take
+     * the full gap (up to the long 5) instead of donating the DPS race
+     * one capped step at a time. Open ground keeps the measured 2.0 cap
+     * (#152 grid). Public as a seam: the numbers pin without running
+     * frames.
+     */
+    public static double kiteStepLength(AUnit unit, AUnit threat) {
+        double gap = 0;
+        try {
+            gap = Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat));
+        } catch (Exception | Error ignored) {
+            return 0;
+        }
+        if (atlantis.battle.strategy.DuelKite.isSwamped(unit)) {
+            return Math.min(MoveAway.LONG_STEP_TILES, gap);
+        }
+
+        return Math.min(CombatTuning.current().getKiteStepTiles(), gap);
+    }
+
+    /**
+     * Owner rule (Steamhammer loss): a kite step never ends within 1.5
+     * tiles of a building's edge. Reads the same blocker world the
+     * scored funnel uses; null-safe by construction (no blockers, no
+     * veto - the step stands).
+     */
+    private static boolean violatesBuildingClearance(APosition dest, AUnit unit) {
+        if (dest == null || unit == null) return false;
+
+        try {
+            java.util.List<atlantis.map.position.HasPosition> blockers =
+                new java.util.ArrayList<>(EscapeScoredStep.blockers(unit));
+
+            return EscapeDestination.violatesBuildingClearance(dest, blockers);
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**
@@ -404,8 +453,13 @@ public final class FightTarget {
                 // refuses, the wait below pins the unit standing). An
                 // unwalkable glide is no glide at all: null it so the
                 // frame falls through to the attack order below, which
-                // the engine chases around obstacles on its own.
+                // the engine chases around obstacles on its own. Same
+                // for a glide hugging a building (owner, Steamhammer
+                // loss): the attack order routes around it.
                 if (fireAt != null && unit.isGroundUnit() && !fireAt.isWalkable()) {
+                    fireAt = null;
+                }
+                if (fireAt != null && violatesBuildingClearance(fireAt, unit)) {
                     fireAt = null;
                 }
                 if (fireAt != null

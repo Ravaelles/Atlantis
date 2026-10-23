@@ -87,14 +87,14 @@ public final class DuelKite {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
 
-        double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
+        double stepLen = stepLength(unit, gap);
         if (stepLen <= 0) return null;
 
         int step = Math.max(1, (int) Math.round(stepLen));
         APosition dest = atlantis.battle.escape.EscapeScoredStep.pickScored(unit, threat, step);
         if (dest != null) return dest;
 
-        return MoveAway.bestDestination(unit, threat, stepLen);
+        return fallbackStep(unit, threat, stepLen);
     }
 
     /** Same decision with caller-supplied context: the unit-testable seam. */
@@ -105,14 +105,60 @@ public final class DuelKite {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
 
-        double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
+        double stepLen = stepLength(unit, gap);
         if (stepLen <= 0) return null;
 
         int step = Math.max(1, (int) Math.round(stepLen));
         APosition dest = EscapeDestination.pickEscape(unit, threat, step, walk, blockers, foes);
         if (dest != null) return dest;
 
-        return MoveAway.bestDestination(unit, threat, stepLen);
+        APosition fallback = MoveAway.bestDestination(unit, threat, stepLen, true);
+        if (fallback != null && EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
+            return null;
+        }
+
+        return fallback;
+    }
+
+    /**
+     * Step length (owner, Steamhammer loss): swamped Dragoons break
+     * contact first, margin second. Three or more melee inside 2.5
+     * tiles means the pack closes faster than 2-tile steps open -
+     * take the full gap (up to the long 5) instead of donating the
+     * DPS race one capped step at a time. Open ground keeps the
+     * measured 2.0 cap (#152 grid: longer steps buy nothing there).
+     */
+    private static double stepLength(AUnit unit, double gap) {
+        if (isSwamped(unit)) return Math.min(MoveAway.LONG_STEP_TILES, gap);
+
+        return Math.min(CombatTuning.current().getKiteStepTiles(), gap);
+    }
+
+    /** Swamped: 3+ melee enemies inside 2.5 tiles of this Dragoon. */
+    public static boolean isSwamped(AUnit unit) {
+        if (unit == null || !unit.isDragoon()) return false;
+
+        try {
+            return atlantis.units.AUnitNearCounts.meleeEnemiesNearCount(unit, 2.5) >= 3;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    private static APosition fallbackStep(AUnit unit, AUnit threat, double stepLen) {
+        java.util.List<HasPosition> blockers;
+        try {
+            blockers = new java.util.ArrayList<>(atlantis.battle.escape.EscapeScoredStep.blockers(unit));
+        } catch (Exception | Error ignored) {
+            blockers = new java.util.ArrayList<>();
+        }
+
+        APosition fallback = MoveAway.bestDestination(unit, threat, stepLen, true);
+        if (fallback != null && EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
+            return null;
+        }
+
+        return fallback;
     }
 
 

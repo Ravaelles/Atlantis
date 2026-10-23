@@ -44,7 +44,7 @@ public final class CutoffRetreat {
         return threat;
     }
 
-    private static AUnit nearestEnemyCombatUnit(AUnit unit) {
+    static AUnit nearestEnemyCombatUnit(AUnit unit) {
         try {
             return Select.enemy().combatUnits().nearestTo(unit);
         }

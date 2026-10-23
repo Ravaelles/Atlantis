@@ -47,7 +47,7 @@ public final class EscapeScoredStep {
         };
     }
 
-    static List<HasPosition> blockers(AUnit unit) {
+    public static List<HasPosition> blockers(AUnit unit) {
         List<HasPosition> blockers = new ArrayList<>();
         try {
             Selection minerals = Select.mineralsAndGeysers();

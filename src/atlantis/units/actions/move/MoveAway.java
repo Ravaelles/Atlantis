@@ -5,8 +5,10 @@ import atlantis.battle.kite.CombatTuning;
 import atlantis.battle.running.IsReasonablePositionToRunTo;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
+import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class MoveAway {
@@ -68,18 +70,34 @@ public class MoveAway {
     public static APosition bestDestination(AUnit unit, HasPosition from, double moveDistance) {
         if (from == null || moveDistance < 0.01) return null;
 
-        APosition dest = bestAt(unit, from, moveDistance);
+        return bestDestination(unit, from, moveDistance, false);
+    }
+
+    /**
+     * Owner rule (Steamhammer loss: two Dragoons glued on a Gateway):
+     * escape steps never end within 1.5 tiles of a building's edge.
+     * Kite callers pass true; regroup and other marches keep the old
+     * contract (their rallies sit next to buildings by design).
+     */
+    public static APosition bestDestination(AUnit unit, HasPosition from, double moveDistance, boolean avoidBuildings) {
+        APosition dest = bestAt(unit, from, moveDistance, avoidBuildings);
         if (dest == null && moveDistance < LONG_STEP_TILES && moveDistance >= 1.0) {
-            dest = bestAt(unit, from, LONG_STEP_TILES);
+            dest = bestAt(unit, from, LONG_STEP_TILES, avoidBuildings);
         }
         return dest;
     }
 
     private static APosition bestAt(AUnit unit, HasPosition from, double moveDistance) {
+        return bestAt(unit, from, moveDistance, false);
+    }
+
+    private static APosition bestAt(AUnit unit, HasPosition from, double moveDistance, boolean avoidBuildings) {
         java.util.List<APosition> valid = new java.util.ArrayList<>();
         for (HasPosition aim : allAims(unit, from)) {
             APosition dest = destinationFor(unit, aim, moveDistance, from);
-            if (dest != null) valid.add(dest);
+            if (dest == null) continue;
+            if (avoidBuildings && violatesBuildingClearance(dest, unit, moveDistance)) continue;
+            valid.add(dest);
         }
         valid.sort((a, b) -> Double.compare(b.distTo(from), a.distTo(from)));
 
@@ -93,8 +111,26 @@ public class MoveAway {
         return null;
     }
 
-    private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {
-        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
+    /**
+     * Owner rule (Steamhammer loss): escape dests keep 1.5 tiles off
+     * building edges. Same shared check as the scored funnel, over our
+     * buildings near the unit.
+     */
+    private static boolean violatesBuildingClearance(APosition dest, AUnit unit, double moveDistance) {
+        if (dest == null || unit == null) return false;
+
+        try {
+            java.util.List<HasPosition> blockers = new java.util.ArrayList<>(
+                Select.ourBuildings().inRadius(moveDistance + 6, unit).list());
+            if (blockers.isEmpty()) return false;
+
+            return PositionUtil.violatesBuildingClearance(dest, blockers);
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
         aims.add(from);
         aims.addAll(lateralAims(unit, from));
 

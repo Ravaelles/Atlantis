@@ -316,3 +316,23 @@ decompiled archives:
   committed alone. They accumulate in the working tree and ride the
   next code commit - a commit exists only when production or test code
   moves. This extends §26 (no doc-only commits) to all `_AI/` edits.
+
+## 29. StarEngine sim-first is the main way of writing combat (owner's ruling, 2026-10-24)
+
+- Combat behaviors are specified, reproduced and pinned in the in-JVM
+  sim (`tests/unit/sim/`: SimArena + SimWorld + `BattleCommander.act`
+  with real engine data) BEFORE any game runs. A bug report becomes a
+  failing sim scenario first (zombie opponents: chase-nearest,
+  stand-and-trade, plus one more policy per scenario so gates never
+  overfit one script); the fix lands with the sim green; games then
+  confirm, never discover.
+- Real-bot games are sporadic verification only
+  (e.g. `/sc-ai/BOTS/Steamhammer.sh`), one at a time, never the inner
+  loop: a Wine game costs minutes (plus a minute to launch), a sim
+  episode ~250 ms. Batch tuning rides SimTunerBatch + CSV manifests.
+- Learner sequencing (NEXT #185): the TargetLadder is the action
+  space; hand-written gates are replaced one rule at a time behind
+  the same seam (hand rule OR net score + DRY_RUN + kill-switch),
+  deterministic mode stays forever as the A/B baseline. No
+  end-to-end pixel policies; no training on a sim with unclosed
+  dynamics gaps (Stage A bar first).

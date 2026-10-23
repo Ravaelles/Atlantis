@@ -204,6 +204,58 @@ public class PositionUtil {
     // =========================================================
 
     /**
+     * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
+     * glued on a Gateway): an escape step never ends within this of a
+     * building's edge. Maneuver room is survival - a step that hugs a
+     * wall slides, re-issues and never fires.
+     */
+    public static final double BUILDING_CLEARANCE_TILES = 1.5;
+
+    /**
+     * True when this destination would glue the unit onto a building:
+     * within clearance of any building blocker's edge. Minerals and
+     * geysers are walk-around cover with only the soft scoring penalty
+     * (BWAPI flags mineral fields as buildings, and units do slip
+     * between minerals - a hard veto there would wall off every
+     * mineral line). Edge-aware: the blocker position is the footprint
+     * center, so the footprint half-extent rides along (a Gateway
+     * rejects wider than a Pylon). Null-safe: no dest, no blockers,
+     * or an unreadable blocker never vetoes - the caller owns those
+     * exits.
+     */
+    public static boolean violatesBuildingClearance(
+        HasPosition dest, java.util.List<? extends HasPosition> blockers
+    ) {
+        if (dest == null || blockers == null || blockers.isEmpty()) return false;
+
+        for (HasPosition blocker : blockers) {
+            if (blocker == null) continue;
+            double halfExtent = 0;
+            try {
+                if (!(blocker instanceof AUnit)) continue;
+                AUnit building = (AUnit) blocker;
+                if (!building.isABuilding()
+                    || building.type().isMineralField()
+                    || building.type().isGeyser()) {
+                    continue;
+                }
+                halfExtent = building.type().bodyRadiusPx() / 32.0;
+            } catch (Exception | Error ignored) {
+                continue;
+            }
+            double edgeDist;
+            try {
+                edgeDist = dest.distTo(blocker) - halfExtent;
+            } catch (Exception | Error ignored) {
+                continue;
+            }
+            if (edgeDist < BUILDING_CLEARANCE_TILES) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
     public static double groundDistanceTo(HasPosition from, HasPosition to) {

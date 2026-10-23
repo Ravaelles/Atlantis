@@ -3,6 +3,7 @@ package atlantis.battle.escape;
 import atlantis.battle.kite.KiteTwin;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.PositionUtil;
 import atlantis.units.AUnit;
 
 import java.util.List;
@@ -17,6 +18,25 @@ import java.util.List;
 public final class EscapeDestination {
 
     private EscapeDestination() {
+    }
+
+    /**
+     * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
+     * glued on a Gateway): an escape step never ends within this of a
+     * building's edge. Maneuver room is survival - a step that hugs a
+     * wall slides, re-issues and never fires. Canonical home is
+     * {@link PositionUtil}, shared with the MoveAway funnel.
+     */
+    public static final double BUILDING_CLEARANCE_TILES = PositionUtil.BUILDING_CLEARANCE_TILES;
+
+    /**
+     * True when this destination would glue the unit onto a building.
+     * Delegates to the shared {@link PositionUtil} check.
+     */
+    public static boolean violatesBuildingClearance(
+        APosition dest, java.util.List<? extends HasPosition> blockers
+    ) {
+        return PositionUtil.violatesBuildingClearance(dest, blockers);
     }
 
     public static APosition pick(
@@ -37,6 +57,7 @@ public final class EscapeDestination {
             if (tx < 0 || ty < 0 || !walk.isWalkable(tx, ty)) continue;
             if (!corridorClear(ux, uy, dir, stepTiles, wide, walk)) continue;
             APosition dest = APosition.create(tx, ty);
+            if (violatesBuildingClearance(dest, blockers)) continue;
             double score = EscapeScoring.staticPenalty(
                     dest, blockers, EscapeTuning.current().getStaticRadiusTiles())
                 + EscapeScoring.cornerPenalty(EscapeRays.clearance(dest, 6, walk))
