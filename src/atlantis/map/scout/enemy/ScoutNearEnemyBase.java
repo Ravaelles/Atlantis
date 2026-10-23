@@ -32,8 +32,13 @@ public class ScoutNearEnemyBase extends Manager {
     @Override
     protected ManagerFactory[] managers() {
         return new ManagerFactory[]{
-            MoveBetweenEnemyBaseAndEnemyNatural::new,
+            // Roam first: a found main is circled (owner 2026-10-23, NEXT
+            // #187 - the main<->natural ping-pong below used to starve the
+            // roam forever, so the scout never actually watched the base).
+            // The natural leg stays as the fallback when there is nothing
+            // to circle around.
             RoamAroundEnemyBase::new,
+            MoveBetweenEnemyBaseAndEnemyNatural::new,
         };
     }
 }

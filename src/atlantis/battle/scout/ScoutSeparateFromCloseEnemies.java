@@ -26,8 +26,13 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     }
 
 
+    /**
+     * Chase band (owner 2026-10-23, NEXT #187): an enemy chases us while it
+     * can hit us from (its range + 3 tiles). Beyond that the scout holds
+     * its circle around the enemy main instead of donating the intel.
+     */
     private double safetyMargin() {
-        return 6
+        return 3
             + (Enemy.zerg() ? 2 : 0)
             + (unit.lastUnderAttackLessThanAgo(30 * 15) ? 2.5 : 0)
             + unit.woundPercent() / 10.0;
@@ -36,6 +41,11 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     @Override
     public Manager handle() {
 //        if (unit.moveAwayFrom(center, 14, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
+
+        // Hurt and chased (owner 2026-10-23, NEXT #187): home first, micro
+        // second. A dodge alone keeps a slow scout next to a faster pursuer;
+        // the home order sticks while the scout can still walk it.
+        if (isHurt() && unit.moveToMain(Actions.RUN_ENEMY)) return usedManager(this, "ScoutHurtHome");
 
         Manager manager = (new DoAvoidEnemies(unit, null)).handle();
         if (manager != null) return usedManager(this, "ScoutSeparateS");
@@ -84,5 +94,15 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         }
 
         return enemies.nearestTo(unit);
+    }
+
+    /**
+     * Hurt uses the same killed-scaled ladder as {@link #nearestEnemy}:
+     * with no scouts lost yet, anything below 34 hp (of 40) retreats
+     * home instead of microing locally.
+     */
+    private boolean isHurt() {
+        int killed = ScoutCommander.killedScouts();
+        return unit.hp() < (killed == 0 ? 34 : (killed == 1 ? 37 : 40));
     }
 }
