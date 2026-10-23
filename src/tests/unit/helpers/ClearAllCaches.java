@@ -17,6 +17,8 @@ import tests.fakes.FakeUnit;
 import atlantis.battle.cluster.Missions;
 import atlantis.core.world.Worlds;
 
+import atlantis.battle.cluster.Alpha;
+
 public class ClearAllCaches {
     /**
      * Drops every cached *query* result, but leaves unit state alone.
@@ -48,6 +50,7 @@ public class ClearAllCaches {
         Worlds.reset();
 
         Missions.reset();
+        Alpha.get().clear();
         atlantis.battle.ArmyContact.clearForTests();
         UnitsArchive.reset();
         AbstractFoggedUnit.clearCache();

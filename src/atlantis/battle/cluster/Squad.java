@@ -63,6 +63,16 @@ public class Squad {
         units.remove(unit);
     }
 
+    /**
+     * Test seam: drop the whole roster. The harness calls it between
+     * tests - a roster surviving into the next test carries units whose
+     * positions the cleanup already nulled, which reads as phantom
+     * enemies/allies with no position (measured NPE in selections).
+     */
+    public void clear() {
+        units.clear();
+    }
+
     public AUnit leader() {
         return units.isEmpty() ? null : units.get(0);
     }
