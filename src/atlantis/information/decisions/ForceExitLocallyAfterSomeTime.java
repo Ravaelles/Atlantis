@@ -7,6 +7,7 @@ import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.ErrorLog;
 
 public class ForceExitLocallyAfterSomeTime extends Commander {
@@ -22,7 +23,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         if (A.now() % 300 != 0) return false;
 
         if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) {
-            AConsole.errPrintln(
+            AConsole.errPrintln(LogLevel.HIGH, 
                 "### realSecondsLimit = " + RealTime.gameLengthInRealSeconds() + "/" + realSecondsLimit
             );
 
@@ -30,7 +31,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         }
 
         if (inGameSecondsLimit > 0 && AGame.timeSeconds() >= inGameSecondsLimit) {
-            AConsole.errPrintln(
+            AConsole.errPrintln(LogLevel.HIGH, 
                 "### inGameSecondsLimit = " + AGame.timeSeconds() + "/" + inGameSecondsLimit
             );
 
@@ -41,15 +42,15 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
     }
 
     protected boolean handle() {
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####### ForceExitLocallyAfterSomeTime ##############");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####### ForceExitLocallyAfterSomeTime ##############");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterSomeTime");
         ErrorLog.printErrorOnce(

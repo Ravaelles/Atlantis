@@ -8,6 +8,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.ErrorLog;
 
 /**
@@ -59,9 +60,9 @@ public class ForceExitWhenDuelUndecidable extends Commander {
     }
 
     protected boolean handle() {
-        AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####### ForceExitWhenDuelUndecidable ###############");
-        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
+        AConsole.errPrintln(LogLevel.HIGH, "####### ForceExitWhenDuelUndecidable ###############");
+        AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitWhenDuelUndecidable");
         ErrorLog.printErrorOnce(

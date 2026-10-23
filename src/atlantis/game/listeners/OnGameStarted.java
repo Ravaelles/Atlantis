@@ -27,6 +27,7 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import bwapi.Race;
 import main.Main;
 import atlantis.util.log.ErrorLog;
@@ -200,10 +201,10 @@ public class OnGameStarted {
                 AGame.exit();
             }
         } catch (Exception e) {
-            AConsole.errPrintln("Could not load build order "
+            AConsole.errPrintln(LogLevel.HIGH, "Could not load build order "
                 + (CurrentBuildOrder.get() != null ? "`" + CurrentBuildOrder.get().getName() + "`" : "(none set)")
                 + " for strategy `" + Strategy.current() + "`: " + e);
-            AConsole.errPrintln("Build orders are resolved against BWAPI_DATA_PATH"
+            AConsole.errPrintln(LogLevel.HIGH, "Build orders are resolved against BWAPI_DATA_PATH"
                 + " (ENV) and the working directory. Set BWAPI_DATA_PATH to the directory that"
                 + " holds AI/build_orders/ and Protoss|Terran|Zerg subdirectories.");
 
@@ -238,20 +239,20 @@ public class OnGameStarted {
 
                         String inGameName = inGame.toString();
                         if (!requested.equalsIgnoreCase(inGameName)) {
-                            AConsole.errPrintln("");
-                            AConsole.errPrintln("#######################################################");
-                            AConsole.errPrintln("RACE MISMATCH: the game started us as " + inGameName
+                            AConsole.errPrintln(LogLevel.HIGH, "");
+                            AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
+                            AConsole.errPrintln(LogLevel.HIGH, "RACE MISMATCH: the game started us as " + inGameName
                                     + " but Main.ourRace() asks for " + requested + ".");
-                            AConsole.errPrintln("Every race-specific branch follows the GAME's race, so "
+                            AConsole.errPrintln(LogLevel.HIGH, "Every race-specific branch follows the GAME's race, so "
                                     + requested + " code will not run at all");
-                            AConsole.errPrintln("(no units will be produced). Fix bwapi.ini's race= to match"
+                            AConsole.errPrintln(LogLevel.HIGH, "(no units will be produced). Fix bwapi.ini's race= to match"
                                     + " - the launcher scripts now do this automatically.");
-                            AConsole.errPrintln("#######################################################");
-                            AConsole.errPrintln("");
+                            AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
+                            AConsole.errPrintln(LogLevel.HIGH, "");
                         }
                     } catch (Exception e) {
                         // A diagnostic must never break the game.
-                        AConsole.errPrintln("Could not compare the requested race with the game's: " + e);
+                        AConsole.errPrintln(LogLevel.HIGH, "Could not compare the requested race with the game's: " + e);
                     }
                 }
             }
