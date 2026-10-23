@@ -378,6 +378,7 @@ re-measure before quoting, never copy old counts here.
   without it would mislabel healthy builderless warps).
   Siteless-mint CANCELs read off the CANCEL reason (no REQUESTED
   row by construction - mint links before siting).
+  WO-150b written (`_AI/work-orders/WO-150b-builder-dead-warp-twin.md`): twin + progress-signal contract for the builder-dead warp gap, awaiting execution - no code until its sim pins exist.
 
   → full chain: _AI/WINE-MACRO-DATUMS.md §3
 
@@ -935,79 +936,22 @@ re-measure before quoting, never copy old counts here.
 
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
-  Steps, in order, each a game-proven slice: (1) write the objective
-  down in code - win first, then hits-taken asc, then seconds asc,
-  with a per-map par row, instead of eyeballing batch.csv;
-  (2) elitist hall of fame: keep top-N param vectors across
-  batches, mutate around them with a shrinking radius instead of
-  uniform random in fixed bounds; (3) statistical bar: a vector
-  must win K-of-N replicates before promotion (duels are noisy -
-  measured 97 vs 163 first-blood frames on identical code);
-  (4) freeze-then-expand: hold proven params fixed while exploring
-  the rest, so one bad dimension never sinks good ones;
-  (5) archive every batch (params + digest + verdict) for later
-  meta-analysis. Runs overnight/weekend on owner call (box-exclusive),
-  never in the fast loop. Micro-only for now (#152); macro needs
-  its own objective later, out of scope until micro converges.
-  2026-10-21: step 1 LANDED (`TunerObjective` + `TunerObjectiveTest`
-  7/7: win, then hits asc, then seconds asc, `?` sorts last,
-  batch.csv parser, deterministic tie-break; pure tooling, game
-  loop untouched, suite 998/998 + arch unchanged). 2026-10-21:
-  step 2 LANDED (`TunerHallOfFame` + `TunerHallOfFameTest` 5/5:
-  bounded top-N store ranked by the objective, radius mutation
-  clamped to per-param bounds, `?`-safe file round-trip, garbage
-  lines skipped; wiring into the batch init rides the intensive
-  session with its own batch proof, never blind). 2026-10-21:
-  step 3 LANDED (`TunerPromotion` + `TunerPromotionTest` 4/4:
-  K-of-N replicate bar, short records never promote; suite
-  1007/1007 + arch unchanged). 2026-10-21: step 4 LANDED
-  (`mutateAroundUnfrozen` + test 6/6 in `TunerHallOfFameTest`:
-  frozen params ride at champion values, rest explore inside
-  bounds; suite 1008/1008 + arch unchanged). Step 5 (archive)
-  LANDED 2026-10-21: run-wine-batch.sh writes OUTDIR/manifest.txt in
-  TunerBatchManifest.render's line format (map, jar md5, per game: dir,
-  verdict, hits, seconds, param digest + full vector; invalid games stay
-  in batch.log), proven by a 1-game batch (WIN, manifest validated:
-  structure, digest recomputation, batch.csv agreement). N-game sweeps run headless in background, model or owner (allowance
-  2026-10-22); one game at a time, small batches first (single games
-  are noisy). Step 6 (gradient loop) LANDED
-  2026-10-21: TunerFitness TIMES_HIT x GAME_minutes (lower wins; a LOSS
-  carries +1M so one scalar orders everything and losses still tune
-  toward dying slower), abstract TuningScenario + concrete
-  DuelHitsMinutesScenario (map, 3 replicates, all 26 params with a
-  bounds registry as the single source of truth), TunerGradient
-  (least-squares slopes vote the sign, span-fraction descent,
-  frozen-respecting jitter, integral rendering for int params),
-  TunerProposer + TunerDriver (hof + manifest in, env fragment out,
-  BEST/STEP/RADIUS out, map-mismatch warning) and run-wine-tune.sh
-  (batch, propose, halve step/radius when the best stops improving).
-  Proved live: 2 rounds x 2 duels, best fitness 4.33 -> 2.67
-  (13 -> 8 hits taken). 30-game run 2026-10-21 (10 rounds x 3, all wins):
-  best 2.93 (8 hits / 22 s, round 8); round means 15-19 hits, spikes to 24 -
-  duel noise dominates the gradient at K=3, so efficacy is unproven
-  (K-of-N + more rounds needed); the loop machinery itself ran clean.
-  Lesson: awk follows LC_NUMERIC - the halve-on-plateau schedule silently
-  emitted commas (step=0,0250), which the driver rejected back to defaults.
-  All schedule math now runs under LC_ALL=C. Engines are addressable (TuningEngine +
-  wine/openbw/sim descriptors, --engine flag); only wine tunes today,
-  the others fail loudly with their reason (no tweaker rows on
-  OpenBW, no sim batch runner yet). Step 6 (gradient loop) LANDED
-  2026-10-21: scalar fitness TIMES_HIT x GAME_minutes (lower wins,
-  WIN always outranks LOSS), abstract TuningScenario + concrete
-  DuelHitsMinutesScenario (map, replicates, full 26-param bounds as
-  the single source of truth), TunerGradient (least-squares slopes,
-  span-fraction descent, frozen-respecting jitter), TunerProposer +
-  TunerDriver (halloffame + manifest in, KEY=VALUE fragment out) and
-  the run-wine-tune.sh outer loop (batch, propose, halve step/radius
-  when the best stops improving). Proven live: 2 rounds x 2 duels,
-  best fitness 4.33 -> 2.67 (13 -> 8 hits), ints render integral so
-  the factory never silently randomizes.
-  2026-10-21 sim batch runner LANDED (NEXT #160-sim): `SimTunerBatch`
-  in-JVM duels with the wine-batch contract (tweaker.csv + batch.csv
-  + manifest.txt), `scripts/run-sim-batch.sh` wrapper, by-value
-  `apply()` for all 32 params, SimEngine wired (`--engine=sim` works),
-  batch->parse->driver loop proven in-test (SimTunerBatchTest 6/6)
-  plus a live 1-game run (WIN, digest + override honored).
+  All six steps LANDED and pinned: (1) objective in code (win, then
+  hits asc, then seconds asc - `TunerObjective` 7/7); (2) elitist
+  hall of fame with radius mutation (`TunerHallOfFame` 5/5);
+  (3) K-of-N promotion bar (`TunerPromotion` 4/4); (4)
+  freeze-then-expand (`mutateAroundUnfrozen`, 6/6); (5) batch
+  archives (`manifest.txt`, 1-game proven); (6) gradient loop
+  (`TunerFitness` TIMES_HIT x minutes, scenarios, least-squares
+  slopes, proposer/driver, run-wine-tune.sh) plus the in-JVM sim
+  batch runner (`SimTunerBatch` 6/6, `--engine=sim` works).
+  Verdict: the machinery runs clean end to end, but efficacy is
+  unproven - duel noise dominates the gradient at K=3 (97 vs 163
+  first-blood frames identical code; 30-game run best 2.93, round
+  means 15-19 with spikes to 24). Open: K-of-N replicates + more
+  rounds before any promotion counts. Lesson kept: all schedule
+  math under LC_ALL=C (awk emitted comma decimals otherwise).
+
 - **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
   logic/changes, other model gets independent file-scoped tasks).
   Single source of truth: `/sc-ai/OpenBW/openbw` clean fork

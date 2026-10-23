@@ -218,10 +218,9 @@ public final class GhostAdvance {
     /** A creep that makes no progress is a wall grind: hand the unit back. */
     /**
      * Public as a seam: the creep pins the slide without running frames.
-     * Slides along the wall with a local spiral over walkability only -
-     * deliberately not via makeWalkable (a second registry the stub
-     * answers with identity, and a region-aware spiral is overkill for
-     * a step dest).
+     * Delegates to the shared spiral (fixed for tests 2026-10-24: the
+     * stub used to answer identity, blinding every sim that needed a
+     * slide): walkable dests pass through, wall dests slide out.
      */
     public static APosition slideOffWall(APosition dest) {
         if (dest == null) return null;
@@ -229,17 +228,7 @@ public final class GhostAdvance {
         try {
             if (dest.isWalkable()) return dest;
 
-            for (int r = 1; r <= 3; r++) {
-                for (int dx = -r; dx <= r; dx++) {
-                    for (int dy = -r; dy <= r; dy++) {
-                        if (Math.max(Math.abs(dx), Math.abs(dy)) != r) continue;
-                        APosition p = dest.translateByTiles(dx, dy);
-                        if (p != null && p.isWalkable()) return p;
-                    }
-                }
-            }
-
-            return null;
+            return dest.makeWalkable(3, 1, null);
         } catch (Exception | Error ignored) {
             return null;
         }
