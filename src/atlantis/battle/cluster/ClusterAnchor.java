@@ -1,5 +1,6 @@
 package atlantis.battle.cluster;
 
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.HasPosition;
@@ -19,7 +20,20 @@ public class ClusterAnchor {
         return posture == ClusterMission.Posture.ATTACK ? attackAnchor() : defendAnchor();
     }
 
+    /**
+     * Where the cluster belongs on defend, by enemy race (owner
+     * 2026-10-26, from a tested loss vs Protoss): vs Zerg the line hugs
+     * the main for worker support; vs Protoss it forms up 8 tiles from
+     * the main choke so a lost fight has room to retreat instead of
+     * wiping against the buildings. Terran keeps the old hug-the-main
+     * stand - no tested direction there yet, deliberately unchanged.
+     */
     public static HasPosition defendAnchor() {
+        if (Enemy.protoss()) {
+            HasPosition focus = ProtossDefendFocusPoint.focusPoint();
+            if (focus != null) return focus;
+        }
+
         return Select.mainOrAnyBuilding();
     }
 

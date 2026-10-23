@@ -155,6 +155,7 @@ public class BattleCommander extends Commander {
         atlantis.battle.twins.UnitTelemetry.clearForTests();
         atlantis.battle.FrozenWatch.clearForTests();
         atlantis.battle.ArmyContact.clearForTests();
+        atlantis.battle.cluster.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
     }

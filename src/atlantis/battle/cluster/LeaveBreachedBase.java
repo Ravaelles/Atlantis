@@ -20,9 +20,14 @@ public final class LeaveBreachedBase {
         // The only retreat allowed on a breached base (owner): a unit this
         // close to death with no shot ready may leave - everything else
         // fights. Per-unit, never the cluster: tactic() above already
-        // committed the cluster to FIGHT, this is the individual hatch.
+        // committed the cluster to FIGHT, this is the individual hatch
+        // for units caught far out. Close to home it must NOT fire
+        // (owner 2026-10-26, tested loss vs Protoss): fleeing next to the
+        // base just shuffles the unit among our own buildings instead of
+        // retreating - close units keep fighting.
         // Mid-swing it waits one frame like every other move here: cancelling
         // the shot to flee is the same bug as cancelling it to kite.
+        if (unit.groundDistToMain() < CombatTuning.current().getBreachLeaveMinDistTiles()) return false;
         if (
             ClusterBreach.breachForcesFight()
                 && !unit.isAttackFrame() && !unit.isStartingAttack()
@@ -30,7 +35,7 @@ public final class LeaveBreachedBase {
                 && unit.cooldown() >= CombatTuning.current().getBreachRetreatCooldown()
         ) {
             HasPosition rally = ClusterBreach.breachRallyPoint();
-            if (rally != null && unit.distTo(rally) >= 0.2) {
+            if (rally != null && unit.groundDist(rally) >= 15) {
                 unit.move(rally, Actions.RUN_ENEMY, Behavior.BREACH_RETREAT.tag());
 
                 return true;

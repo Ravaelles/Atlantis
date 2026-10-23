@@ -5,6 +5,8 @@ import atlantis.battle.cluster.ClusterTactic;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.retreating.RetreatFromLostFight;
 import atlantis.config.env.Env;
+import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -15,6 +17,9 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -103,5 +108,99 @@ public class RetreatSplitChainTest extends WorldStubForTests {
                     "losing with a clear way home keeps the retreat");
             }
         });
+    }
+
+    @Test
+    public void cutOffDragoonFightsInsteadOfMarchingThrough() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 70, 30);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 72, 30);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 74, 30);
+        FakeUnit lone = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 31, 30);
+
+        world(3, fakeOurs(nexus, a, b, c, lone), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            Env.setLocalForTest(true);
+            try {
+                clearAlpha();
+                Alpha.gather();
+                assertEquals(4, Alpha.get().size(), "test setup: the lone dragoon joined the cluster");
+
+                boolean acted = RetreatFromLostFight.retreat(
+                    lone, FightOrFlight.Tactic.FLEE, nexus.position(), null);
+
+                assertFalse(acted,
+                    "grabbed and cut off: falls through to fight instead of marching through the pack");
+                assertNull(lone.targetPosition(),
+                    "no march order issued while deciding to fight");
+            }
+            finally {
+                clearAlpha();
+            }
+        });
+    }
+
+    @Test
+    public void cutOffDragoonFleesAwayInsteadOfHome() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 70, 30);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 72, 30);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 74, 30);
+        FakeUnit lone = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 38, 30);
+
+        world(3, fakeOurs(nexus, a, b, c, lone), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            Env.setLocalForTest(true);
+            try {
+                clearAlpha();
+                Alpha.gather();
+
+                boolean acted = RetreatFromLostFight.retreat(
+                    lone, FightOrFlight.Tactic.FLEE, nexus.position(), null);
+
+                assertTrue(acted, "cut off dragoon with an approaching enemy still retreats");
+                HasPosition dest = lone.targetPosition();
+                assertNotNull(dest, "a local escape step is issued");
+                assertTrue(dest.distTo(foe) > lone.distTo(foe),
+                    "away from the pursuer, not toward home through it: foe at " + dest.distTo(foe));
+            }
+            finally {
+                clearAlpha();
+            }
+        });
+    }
+
+    @Test
+    public void dragoonWithTheArmyKeepsCoordinatedRetreat() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 60, 30);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 62, 30);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 64, 30);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 61, 31);
+
+        world(3, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            Env.setLocalForTest(true);
+            try {
+                clearAlpha();
+                Alpha.gather();
+
+                boolean acted = RetreatFromLostFight.retreat(
+                    a, FightOrFlight.Tactic.FLEE, nexus.position(), null);
+
+                assertTrue(acted, "with the army the coordinated retreat still marches home");
+                assertEquals(Actions.RUN_ENEMY, a.action(),
+                    "chased with the pack: still the FLEE action, not a solo stand");
+            }
+            finally {
+                clearAlpha();
+            }
+        });
+    }
+
+    private static void clearAlpha() {
+        for (AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);
     }
 }

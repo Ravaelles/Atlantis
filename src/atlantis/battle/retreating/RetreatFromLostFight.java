@@ -5,9 +5,11 @@ import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.escape.EscapeScoredStep;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -42,9 +44,41 @@ public final class RetreatFromLostFight {
         // (PurpleWave AttackDelay) - the fight path below holds it the
         // same way.
         if (!noFleeOnBaselessUms && !unit.isAttackFrame() && !unit.isStartingAttack()) {
+            // Cut off from the army with enemies on it, a unit never
+            // marches to the far rally through the pack (owner
+            // 2026-10-26, tested loss vs Protoss): if it can hit back it
+            // fights instead, otherwise it steps away locally - donating
+            // the march home is how reinforcements die without firing.
+            AUnit threat = CutoffRetreat.threatIfCutOff(unit);
+            if (threat != null) {
+                if (unit.hasWeaponRangeToAttack(threat, 1)) return false;
+
+                APosition step = EscapeScoredStep.pickScored(unit, threat, 8);
+                if (step != null) {
+                    if (isChased(unit)) {
+                        unit.move(step, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+                    }
+                    else {
+                        unit.move(step, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
             HasPosition home;
             if (Select.main() != null) {
                 home = ClusterBreach.breachRallyPoint();
+                // A bigger army never retreats into the base (owner
+                // 2026-10-26, from a tested loss vs Protoss): it piles
+                // onto the mineral line and blocks itself - it forms up
+                // at the choke standoff instead.
+                if (Alpha.get().size() > CombatTuning.current().getRetreatFormationMinArmy()) {
+                    HasPosition standoff = ClusterRally.chokeStandoffPoint();
+                    if (standoff != null) home = standoff;
+                }
             }
             else {
                 // Formation Phase A: one shared escape direction per

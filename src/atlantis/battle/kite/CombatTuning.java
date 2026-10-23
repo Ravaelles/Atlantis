@@ -54,10 +54,30 @@ public final class CombatTuning {
     private int breachRetreatHp = 40;
     private int breachRetreatCooldown = 5;
     private double breachRallyTiles = 3;
+    /**
+     * LeaveBreachedBase only fires this far from the main (tiles). Owner
+     * 2026-10-24, from a lost game vs Protoss: units fleeing next to the
+     * base just shuffle among buildings instead of retreating - the hatch
+     * is for units caught far out, close ones keep fighting.
+     */
+    private double breachLeaveMinDistTiles = 15;
+    /**
+     * Choke standoff: the defensive formation point stands this far from
+     * the main choke center toward the main (tiles). Owner 2026-10-24,
+     * from a lost game vs Protoss: holding at the base leaves no room to
+     * retreat, and a 4+ army retreating into the base blocks itself.
+     */
+    private double chokeStandoffTiles = 8;
+    /**
+     * Armies bigger than this never retreat to the base (tiles count as
+     * combat units). Owner 2026-10-24: a 5+ army running home piles onto
+     * the mineral line and blocks itself - it forms up at the choke
+     * standoff instead.
+     */
+    private int retreatFormationMinArmy = 4;
     private int umsNoRetreatFrames = 15 * 24;
     private double regroupThreatTiles = 15.0;
     private double regroupRallyTiles = 6.0;
-
     private CombatTuning() {
     }
 
@@ -110,6 +130,9 @@ public final class CombatTuning {
         breachRetreatHp = other.breachRetreatHp;
         breachRetreatCooldown = other.breachRetreatCooldown;
         breachRallyTiles = other.breachRallyTiles;
+        breachLeaveMinDistTiles = other.breachLeaveMinDistTiles;
+        chokeStandoffTiles = other.chokeStandoffTiles;
+        retreatFormationMinArmy = other.retreatFormationMinArmy;
         umsNoRetreatFrames = other.umsNoRetreatFrames;
         regroupThreatTiles = other.regroupThreatTiles;
         regroupRallyTiles = other.regroupRallyTiles;
@@ -274,6 +297,18 @@ public final class CombatTuning {
     /** Rally stands this far from the main toward the main choke (tiles). */
     public double getBreachRallyTiles() {
         return breachRallyTiles;
+    }
+
+    public double getBreachLeaveMinDistTiles() {
+        return breachLeaveMinDistTiles;
+    }
+
+    public double getChokeStandoffTiles() {
+        return chokeStandoffTiles;
+    }
+
+    public int getRetreatFormationMinArmy() {
+        return retreatFormationMinArmy;
     }
 
     /** UMS opening stand-ground window: no retreat for the first 15 seconds (frames). */
@@ -504,6 +539,27 @@ public final class CombatTuning {
     public CombatTuning withBreachRallyTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.breachRallyTiles = value;
+
+        return copy;
+    }
+
+    public CombatTuning withBreachLeaveMinDistTiles(double value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.breachLeaveMinDistTiles = value;
+
+        return copy;
+    }
+
+    public CombatTuning withChokeStandoffTiles(double value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.chokeStandoffTiles = value;
+
+        return copy;
+    }
+
+    public CombatTuning withRetreatFormationMinArmy(int value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.retreatFormationMinArmy = value;
 
         return copy;
     }

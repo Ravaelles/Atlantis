@@ -2,10 +2,13 @@ package atlantis.battle.cluster;
 
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.move.MoveAway;
+import atlantis.units.select.Select;
 
 /**
  * Where the cluster and its units move when they are not fighting
@@ -36,6 +39,36 @@ public final class ClusterRally {
         if (threat == null) return null;
 
         return MoveAway.bestDestination(unit, threat, CombatTuning.current().getRegroupRallyTiles());
+    }
+
+    /**
+     * Where a bigger-than-squad army forms up instead of running home
+     * (owner 2026-10-26, from a lost game vs Protoss): 8 tiles from the
+     * main choke center toward the main. Retreating a 5+ army into the
+     * base piles it onto the mineral line with no room to re-engage -
+     * the choke standoff keeps the line facing out with room behind it.
+     * Null-safe: no main, no choke, or an unhostable point falls back
+     * to the caller (which keeps its own base rally). Public as a seam:
+     * the point pins in a stub state without a game.
+     */
+    public static HasPosition chokeStandoffPoint() {
+        AUnit main = Select.main();
+        if (main == null || main.position() == null) return null;
+
+        try {
+            AChoke choke = Chokes.mainChoke();
+            if (choke == null || choke.center() == null) return null;
+
+            APosition point = choke.center().translateTilesTowards(
+                CombatTuning.current().getChokeStandoffTiles(), main.position());
+            if (point == null) return null;
+            if (!point.isWalkable()) point = point.makeWalkable(6, 3, null);
+
+            return point;
+        }
+        catch (RuntimeException ignored) {
+            return null;
+        }
     }
 
     /**

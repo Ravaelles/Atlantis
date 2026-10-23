@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.cluster.LeaveBreachedBase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -24,8 +25,10 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Owner: with raiders in the base the cluster ALWAYS fights - even two
  * enemy workers the evaluator reads as a won fight must not pull a
  * FLEE. The only retreat allowed on a breach is per-unit: hp &lt;= 40
- * with cooldown &gt;= 5 walks to the choke-side rally, everything else
- * engages.
+ * with cooldown &gt;= 5 AND far from home walks to the choke-side
+ * rally, everything else engages. Close to home the hatch stays shut
+ * (owner 2026-10-26, tested loss vs Protoss): fleeing next to the base
+ * just shuffles the unit among our own buildings.
  */
 @Tag("combat")
 public class BreachMeansFightTest extends AbstractTestWithWorld {
@@ -71,7 +74,7 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
 
     @Test
     public void criticalZealotRetreatsToRally() {
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 70, 70);
         zealot.setHp(30);
         zealot.cooldown = 5;
 
@@ -87,11 +90,33 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
 
             assertTrue(
                 hasOrder(ordersOf(zealot), zealot.id(), "move"),
-                "hp 30 on cooldown: the hatch lets this one leave: "
+                "hp 30 on cooldown, caught far from home: the hatch lets this one leave: "
                     + ordersOf(zealot));
             assertFalse(
                 hasOrder(ordersOf(zealot), zealot.id(), "attackUnit"),
                 "no last stand on cooldown with 30 hp: " + ordersOf(zealot));
+        });
+    }
+
+    @Test
+    public void closeZealotHoldsTheLine() {
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
+        zealot.setHp(30);
+        zealot.cooldown = 5;
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            zealot
+        ), fakeEnemies(
+            fake(AUnitType.Protoss_Probe, 25, 21),
+            fake(AUnitType.Protoss_Probe, 26, 22)
+        ), () -> {
+            assertFalse(
+                LeaveBreachedBase.leave(zealot),
+                "this close to home the hatch stays shut even on critical hp");
+            assertFalse(
+                hasOrder(ordersOf(zealot), zealot.id(), "move"),
+                "no shuffling among our own buildings: " + ordersOf(zealot));
         });
     }
 
