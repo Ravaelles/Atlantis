@@ -525,11 +525,11 @@ fi
 # Replay name carries opponent + engine (owner: bare MAP_DATE.rep names are
 # unattributable). Same template as run-wine-game.sh; this script owns the
 # live ini on the headless path, so it enforces the line every run instead
-# of inheriting whatever a watched run left behind. Placeholders expand in
-# BWAPI GameEvents.cpp onGameEnd: %ENEMYNAMES% is "Comp" vs the built-in
-# AI, %ENEMYRACES% its race letter.
+# of inheriting whatever a watched run left behind. Placeholders mirror the
+# dist default (proven on real BWAPI 4.4.0 - %ENEMYNAMES% saved NOTHING live
+# on B64, race letters only).
 REPLAYS_DIR="${REPLAYS_DIR:-/sc-ai/REPLAYS}"
-REPLAY_TEMPLATE="%MAP%_vs_%ENEMYNAMES%-%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep"
+REPLAY_TEMPLATE="%MAP%_%BOTRACE%vs%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep"
 if grep -qE "^save_replay *=" "$INI"; then
   sed -i -E "s|^save_replay *=.*|save_replay=$REPLAYS_DIR/$REPLAY_TEMPLATE|" "$INI"
 else
