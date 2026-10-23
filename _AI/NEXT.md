@@ -157,11 +157,11 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 235 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 268 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal, 0 fed rows) / 219 rows,
+   (cumulative: 237 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 271 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 games, all 0 fed) / 221 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B128 siteless storm x12 + record pumps 124, 1 fed;
+   never in tally); B129 zero-waste + double-on-plan GW#2/#3 + 86th demote, 2 feds;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
@@ -2051,7 +2051,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  finish sub-35hp swarm. preventForZealots (no focus on in-contact
  ranged) is complementary to #179 (which gates WHETHER zealots break),
  not contradictory; contact itself is owned by the #182 3-tile veto.
- Which fallback lands ling kills is untwinned - open measurement.
+ Which fallback lands ling kills ANSWERED 2026-10-23 (code read, no
+ behavior change): nearestEngageableEnemy + breachedBaseTarget +
+ coverTarget all skip isValidTarget (verified: zero validity refs in
+ all three), so swarm dies on the engage paths (march-stop, breach,
+ cover); the focus paths (in-range/keepable/shared/squad) ban
+ ling/worker by design. Twin work (not code) would name the split.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.
