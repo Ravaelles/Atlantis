@@ -522,6 +522,22 @@ else
   say "  Setting race to $CLIENT_RACE (from the client's Main.ourRace())"
 fi
 
+# Replay name carries opponent + engine (owner: bare MAP_DATE.rep names are
+# unattributable). Same template as run-wine-game.sh; this script owns the
+# live ini on the headless path, so it enforces the line every run instead
+# of inheriting whatever a watched run left behind. Placeholders expand in
+# BWAPI GameEvents.cpp onGameEnd: %ENEMYNAMES% is "Comp" vs the built-in
+# AI, %ENEMYRACES% its race letter.
+REPLAYS_DIR="${REPLAYS_DIR:-/sc-ai/REPLAYS}"
+REPLAY_TEMPLATE="%MAP%_vs_%ENEMYNAMES%-%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep"
+if grep -qE "^save_replay *=" "$INI"; then
+  sed -i -E "s|^save_replay *=.*|save_replay=$REPLAYS_DIR/$REPLAY_TEMPLATE|" "$INI"
+else
+  sed -i -E "s|^(enemy_race *=.*)$|\1\nsave_replay=$REPLAYS_DIR/$REPLAY_TEMPLATE|" "$INI"
+fi
+say "  Replay template: $REPLAYS_DIR/$REPLAY_TEMPLATE"
+PRE_REP="$(ls -t "$REPLAYS_DIR"/*.rep 2>/dev/null | head -1 || true)"
+
 
 # Mute the game (owner 2026-10-19): unattended runs need no sound, and a
 # missing audio device must not become a hang. Disabling the backends is
@@ -660,6 +676,14 @@ fi
   if [ -d "$LOG_DIR/CVIS" ]; then
     cp -rf "$LOG_DIR/CVIS" "$RUN_DIR/CVIS" 2>/dev/null || true
     say "cherryvis trace archived: $RUN_DIR/CVIS"
+  fi
+  # The replay carries opponent + engine in its name (see template above);
+  # archive this game's file next to its logs. The newest-first comparison
+  # attributes correctly: a game that saved nothing leaves POST==PRE.
+  POST_REP="$(ls -t "$REPLAYS_DIR"/*.rep 2>/dev/null | head -1 || true)"
+  if [ -n "${POST_REP:-}" ] && [ "$POST_REP" != "${PRE_REP:-}" ]; then
+    cp -f "$POST_REP" "$RUN_DIR/" 2>/dev/null \
+      && say "replay archived: $RUN_DIR/$(basename "$POST_REP")" || true
   fi
   ln -sfn "$RUN_DIR" "$WINE_RUNS_DIR/latest"
   say "run archived: $RUN_DIR"

@@ -163,7 +163,11 @@ game_type = $GAME_TYPE
 race = $RACE
 enemy_count = 1
 enemy_race = $ENEMY_RACE
-save_replay = $REPLAYS_DIR/%MAP%_\$Y\$m\$d_\$H\$M\$S.rep
+; Replay name carries opponent + engine (owner: bare MAP_DATE.rep names are
+; unattributable). Placeholders expand in BWAPI GameEvents.cpp onGameEnd:
+; %ENEMYNAMES% is "Comp" vs the built-in AI, %ENEMYRACES% its race letter,
+; so a macro reads e.g. Tau_Cross_1.1_vs_Comp-Z_wine_20261023_110208.rep.
+save_replay = $REPLAYS_DIR/%MAP%_vs_%ENEMYNAMES%-%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep
 
 [config]
 ; Wine-specific knob, documented in the 4.4.0 template: shared_memory = ON
