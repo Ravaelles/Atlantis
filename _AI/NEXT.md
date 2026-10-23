@@ -299,9 +299,6 @@ The index of which document answers which question is `_AI/README.md`.
  2026-10-26 re-sweep over 144 unique retained logs: 21 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 45 rescue / 0
  routine, still no candidate.
- 2026-10-26 re-sweep over 144 unique retained logs: 21 BOARD_FED rows,
- all rescue, 0 routine - cumulative tally holds at 45 rescue / 0
- routine, still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
