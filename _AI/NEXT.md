@@ -157,10 +157,10 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 166 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 226 retained logs /
-   148 rows, incl. foreign 141623 (concurrent unattributed run, 3 rescue
-   rows, never in tally); B87 7th terminal-Cyber + twinless, 1 fed;
+   (cumulative: 167 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 227 retained logs /
+   150 rows, incl. foreign 141623 (concurrent unattributed run, 3 rescue
+   rows, never in tally); B88 Forge demand-cancel + twinless x3, 2 feds;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
