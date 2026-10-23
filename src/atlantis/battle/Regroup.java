@@ -80,7 +80,7 @@ public final class Regroup {
             return;
         }
         HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-        if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
+        if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor, tactic);
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, Behavior.GATHER.tag())) {
             FightTarget.markRepositioned(unit);
         }
