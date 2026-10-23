@@ -82,7 +82,7 @@ public class ChokeBlockersAssignments {
 
     private void addNewBlocker(AUnit unit) {
         if (unit.isRanged()) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to add ranged unit as blocker: " + unit);
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("ranged-blocker", "Trying to add ranged unit as blocker: " + unit);
         }
 
         blockers.add(unit);

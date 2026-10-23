@@ -34,7 +34,7 @@ public interface AUnitOrders {
         AUnit unit = unit();
         if (target == null) {
 //            AConsole.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now() + ": Null attack unit target for " + unit.typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-attack-target", "@" + A.now() + ": Null attack unit target for " + unit.typeWithHash());
 
             return false;
         }
@@ -52,7 +52,7 @@ public interface AUnitOrders {
                 AConsole.errPrintln(target.position());
                 AConsole.errPrintln(target.isPositionVisible());
                 AConsole.errPrintln(target.hp());
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("not-detected-target", "Not detected target for " + unit);
             }
             return false;
         }
@@ -251,18 +251,18 @@ public interface AUnitOrders {
         AUnit unit = unit();
 
         if (target == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit.typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-position", "Null move position for " + unit.typeWithHash());
 
             return false;
         }
         if (target.position() == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null target.position() for " + unit.typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-target-position", "Null target.position() for " + unit.typeWithHash());
 
             return false;
         }
 
         if (unit.isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unwalkable-move", 
                 "Trying to move to unwalkable position for " + unit + " / a:" + unitAction + " / t:" + target
             );
 
@@ -282,7 +282,7 @@ public interface AUnitOrders {
 
             if (unit.isGroundUnit() && !target.isWalkable()) {
                 if (!(target instanceof FoggedUnit) || !((FoggedUnit) target).isAir()) {
-                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unwalkable target " + target);
+                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unwalkable-target", "Unwalkable target " + target);
                 }
             }
 
@@ -303,7 +303,7 @@ public interface AUnitOrders {
             }
 
             if (target.position() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target", 
                     "Null move target.position() for " + unit.typeWithHash() + " / " + target
                 );
 
@@ -311,7 +311,7 @@ public interface AUnitOrders {
             }
 
             if (target.position().p() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target-p", 
                     "Null move target.position().p() for " + unit.typeWithHash() + " / " + target
                 );
 
@@ -319,7 +319,7 @@ public interface AUnitOrders {
             }
 
             if (u() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-unit-u", 
                     "Null unit.u() for " + unit.typeWithHash() + " / " + target
                 );
 

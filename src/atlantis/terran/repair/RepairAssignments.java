@@ -86,7 +86,7 @@ public class RepairAssignments {
 
     public static void addProtector(AUnit protector, AUnit unit) {
         if (protector.isBuilder()) {
-            ErrorLog.printMaxOncePerMinute("Protector is builder: " + protector + ", dont assign!");
+            ErrorLog.printMaxOncePerMinute("protector-is-builder", "Protector is builder: " + protector + ", dont assign!");
 
             return;
         }

@@ -65,7 +65,7 @@ public class ForceExitWhenDuelUndecidable extends Commander {
         AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitWhenDuelUndecidable");
-        ErrorLog.printErrorOnce(
+        ErrorLog.printErrorOnce("force-exit-duel", 
             "Undecidable duel: no enemy units listed, but our combat units took "
                 + Select.ourCombatUnits().totalHits() + " hits in "
                 + RealTime.gameLengthInRealSeconds() + " real seconds - ending early"

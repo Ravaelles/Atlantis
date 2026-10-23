@@ -20,37 +20,58 @@ public class ErrorLog {
         AConsole.errPrintln(LogLevel.LOW, message);
     }
 
-    public static void printErrorOnce(String message) {
-        if (!theSameErrorHasBeenLogged(message)) {
-            print(message);
+    /**
+     * Throttled error reporting. The throttle keys on {@code key}, NEVER on
+     * the rendered message: any live value in the message (frame, unit id,
+     * minerals, coordinates) makes every row unique and silently disables
+     * the throttle (measured 2026-10-26: QUEUE_BASE twin rows every refresh
+     * despite printMaxOncePerMinute). Pass a stable slug; put the variance
+     * in the message. The unkeyed overloads keep the message as the key
+     * and are only correct for static text.
+     */
+    public static void printErrorOnce(String key, String message) {
+        if (!theSameErrorHasBeenLogged(key)) {
+            print(message, key);
         }
 
-        increaseErrorCount(message);
+        increaseErrorCount(key);
+    }
+
+    public static void printErrorOnce(String message) {
+        printErrorOnce(message, message);
+    }
+
+    public static void printMaxOncePerMinute(String key, String message) {
+        if (!theSameErrorWasLoggedLessThanMinuteAgo(key)) {
+            print(message, key);
+        }
+
+        increaseErrorCount(key);
     }
 
     public static void printMaxOncePerMinute(String message) {
-        if (!theSameErrorWasLoggedLessThanMinuteAgo(message)) {
-            print(message);
-        }
-
-        increaseErrorCount(message);
+        printMaxOncePerMinute(message, message);
     }
 
-    public static void printMaxOncePerMinutePlusPrintStackTrace(String message) {
-        if (!theSameErrorWasLoggedLessThanMinuteAgo(message)) {
-            print(message);
+    public static void printMaxOncePerMinutePlusPrintStackTrace(String key, String message) {
+        if (!theSameErrorWasLoggedLessThanMinuteAgo(key)) {
+            print(message, key);
             System.err.println("-------------------");
             AConsole.printStackTrace(message);
             System.err.println("-------------------");
         }
 
-        increaseErrorCount(message);
+        increaseErrorCount(key);
     }
 
-    private static void print(String message) {
+    public static void printMaxOncePerMinutePlusPrintStackTrace(String message) {
+        printMaxOncePerMinutePlusPrintStackTrace(message, message);
+    }
+
+    private static void print(String message, String key) {
         AConsole.errPrintln(LogLevel.HIGH, message);
 
-        errorTimestamps.put(message, GameClock.seconds());
+        errorTimestamps.put(key, GameClock.seconds());
     }
 
     private static boolean theSameErrorHasBeenLogged(String message) {

@@ -252,7 +252,7 @@ public final class BwapiOrderSink implements OrderSink {
         try {
             result = call.call();
         } catch (Exception e) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("ordersink-failed", 
                 "OrderSink." + operation + " failed for " + actor + ": " + e.getMessage()
             );
             result = false;

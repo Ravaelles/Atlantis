@@ -184,7 +184,7 @@ public class MoveAway {
         // clamps rather than returning null - but a null here would NPE
         // the distTo below, so the order is the contract).
         if (newPosition == null) {
-            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + aim + " for " + unit.name());
+            ErrorLog.printErrorOnce("cannot-move-away", "Cannot moveAwayFrom " + aim + " for " + unit.name());
 
             return null;
         }

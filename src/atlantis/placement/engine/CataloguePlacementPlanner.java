@@ -546,7 +546,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             return new CoverageCannonRanker(choke.firstPoint(), choke.lastPoint(), anchor, rangeTiles);
         } catch (Exception e) {
-            atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            atlantis.util.log.ErrorLog.printMaxOncePerMinute("coverage-cannon-ranker", 
                 "CoverageCannonRanker resolution failed, distance ranker keeps the tile: " + e);
 
             return null;

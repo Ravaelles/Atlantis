@@ -77,7 +77,7 @@ public class CacheKey {
             );
         }
 
-        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unknown-cachekey", 
             "Unknown object to CacheKey: " + object.getClass().getName()
                 + "\nReturning object.toString(), but this should get whitelisted."
         );

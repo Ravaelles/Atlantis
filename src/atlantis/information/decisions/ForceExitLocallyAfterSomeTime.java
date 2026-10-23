@@ -53,7 +53,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterSomeTime");
-        ErrorLog.printErrorOnce(
+        ErrorLog.printErrorOnce("force-exit-timeout", 
             "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
             + " real seconds, " + A.minSec() + " in-game time,"
             + " supply: " + A.supplyUsed() + "/" + A.supplyTotal()

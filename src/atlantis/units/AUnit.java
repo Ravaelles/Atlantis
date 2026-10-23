@@ -1825,7 +1825,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     private void rememberSpecificUnitAction(Action unitAction) {
         if (unitAction == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit action is null for " + this);
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unit-action-null", "Unit action is null for " + this);
 
             return;
         }
@@ -1841,7 +1841,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null && !isWorker()) {
-            ErrorLog.printErrorOnce("unitAction null for " + this);
+            ErrorLog.printErrorOnce("unitaction-null", "unitAction null for " + this);
 
             return true;
         }
@@ -2234,7 +2234,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             if (Env.isTesting()) return Count.ourCombatUnits();
 
             if (!isWorker()) {
-                ErrorLog.printMaxOncePerMinute("Squad null for " + nameWithId());
+                ErrorLog.printMaxOncePerMinute("squad-null", "Squad null for " + nameWithId());
             }
             return 0;
         }

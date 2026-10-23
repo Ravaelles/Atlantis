@@ -326,7 +326,7 @@ public class Env {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            ErrorLog.printErrorOnce("Error parsing ENV file. Value=" + value + " / " + e.getMessage() + "\n");
+            ErrorLog.printErrorOnce("env-parse-error", "Error parsing ENV file. Value=" + value + " / " + e.getMessage() + "\n");
 
             return -1;
         }

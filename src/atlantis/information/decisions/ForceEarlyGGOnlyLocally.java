@@ -37,7 +37,7 @@ public class ForceEarlyGGOnlyLocally extends Commander {
         AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("Local force early leave");
-        ErrorLog.printErrorOnce("ForceEarlyGGOnlyLocally at " + A.s + "s, strength: " + Army.strength());
+        ErrorLog.printErrorOnce("force-early-gg", "ForceEarlyGGOnlyLocally at " + A.s + "s, strength: " + Army.strength());
 
         Atlantis.getInstance().onEnd(false);
 
