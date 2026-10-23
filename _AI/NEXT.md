@@ -157,10 +157,9 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 127 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 201 retained logs /
-   106 rows (duel 133427 contributes 0); B65 44th demote + B66 rush held,
-   zero FLEE rows; tally corrected (B58 slip -3).
+   (cumulative: 136 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 207 retained logs /
+   115 rows; B72 FIGHT stand + Nexus demote, zero-FLEE games B66/B71; tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -1065,6 +1064,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
  2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). CherryVis trace proven on Wine 2026-10-23 (B53 110209 game: CVIS/ with all 4 artifacts archived, GENERATE_CHERRYVIS_REPLAY=true default in ENV-WINE-FAST; viewer opening still owner-side). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - answered the same day: by design, not a gap (DecisionLog.flush() no-ops on empty rows; record() fires only from production paths, duels produce nothing).
  2026-10-26 attribution rule (learned the hard way): a live console belongs to an archived game only if Pylon#1 tile + maxframe + STARTED rows match - similar-looking macros blur together in memory. Never quote console details (verdict, kills, BO audit) into a game datum without the archive cross-check.
+ 2026-10-26 replay naming closed (owner: replays lacked opponent + engine): engine template stays the proven %MAP% + strftime (any extra placeholder silently saves NOTHING on the macro path - B64 ENEMYNAMES, B65/B66 BOTRACE/ENEMYRACES, B69 static PvsZ all zero-rep; duel path unaffected, saved PvsTZ once), the script bakes MAP_PvsZ_wine_DATE at archive time from its known races (first live proof B72: engine rep + rich copy, both 71KB). Replay *saving* itself is flaky on the macro path (old template 7/9 incl. B70/B71 no-rep; needs engine-side look, owner territory) - the rename rides every save but cannot conjure one; teardown grace guard (20s wait-for-rep) in place, unproven either way.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -2037,8 +2037,17 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  so dragoons shot the healthiest chewer and keepable dropped wounded
  targets mid-finish (churn). Ban deleted; dead units were and are
  filtered by isAlive in every caller. Pinned: nearlyDeadIsFinishedFirst
- + woundedTargetStaysKeepable. Ling/worker bans untouched (await the
- #184 audit), ladder itself still sequenced post-cut.
+ + woundedTargetStaysKeepable. Ling/worker bans audited 2026-10-26
+ (no code, ladder still sequenced post-cut): both gate only the focus
+ paths (focusInRange/keepable/shared/squad via isValidTarget) - never
+ nearest-engageable or the breach path (both skip validity, verified
+ in code), so swarm is still engaged, just never focused. Reason:
+ anti-overkill pack discipline (SpreadFire wisdom), not a targeting
+ gap. Open sim question (not a deletion): whether keepable should
+ finish sub-35hp swarm. preventForZealots (no focus on in-contact
+ ranged) is complementary to #179 (which gates WHETHER zealots break),
+ not contradictory; contact itself is owned by the #182 3-tile veto.
+ Which fallback lands ling kills is untwinned - open measurement.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates (2.5 tiles etc. hand-set, each new Behavior multiplies hand-gating complexity). A policy over the fixed Behavior set, from features (distance, hp, shields, cooldown, counts, terrain), decides the behavior; thresholds stop being hand-written. No live snapshots (owner decision: synthetic scripted maps instead - scenario control plus mandatory enemy-policy variety so gates cannot overfit one script; deterministic fitness is traded away knowingly). Sequencing: AFTER the production v1 cut (#45, #144-147); design now, implementation later, other-model implementable with sim-pinned slices + review.
