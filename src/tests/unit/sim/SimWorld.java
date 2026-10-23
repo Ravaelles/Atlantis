@@ -132,6 +132,16 @@ public class SimWorld {
     }
 
     /** Advances one frame: decisions first, then movement, then combat. */
+    /**
+     * Precise (sub-pixel) position for tests: the published FakeUnit
+     * position snaps to whole pixels, so pixel reads freeze frames
+     * before the model actually stops. Braking pins read this.
+     */
+    double[] precisePosition(FakeUnit unit) {
+        double[] pos = precise.get(unit.id());
+        return new double[] { pos[0], pos[1] };
+    }
+
     public void tick(Runnable decisions) {
         frame++;
         A.setNow(frame, frame / 30);
