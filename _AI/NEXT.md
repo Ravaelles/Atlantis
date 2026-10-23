@@ -269,6 +269,9 @@ The index of which document answers which question is `_AI/README.md`.
  2026-10-26 Wine TauCross macro 003419 (ended f9150, 381s game, 1 own death): BOARD_FED 3x (sustained-zealot f5010 pumps 7,
  supply-pylon f6750 pumps 1, sustained-dragoon f7530 pumps 8) - all
  rescue; tally 44 rescue, 0 routine, still no candidate.
+ 2026-10-26 Wine TauCross macro 045503 (ended f8880, 370s game, zero own deaths): BOARD_FED 1x
+ sustained-dragoon f7470 (pumps present 10) - rescue; tally 45 rescue,
+ 0 routine, still no candidate.
  symlink double-counted one run before).
  2026-10-23 re-sweep over 97 unique retained logs: 9 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 33 rescue / 0
@@ -292,6 +295,9 @@ The index of which document answers which question is `_AI/README.md`.
  routine, still no candidate.
  2026-10-26 re-sweep over 143 unique retained logs: 20 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 44 rescue / 0
+ routine, still no candidate.
+ 2026-10-26 re-sweep over 144 unique retained logs: 21 BOARD_FED rows,
+ all rescue, 0 routine - cumulative tally holds at 45 rescue / 0
  routine, still no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
@@ -932,6 +938,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 DRY_RUN macro 002228: same schema (0 MOVE_BUILD rows); zero alternating-handoff evidence either way (2 Pylon breakdowns with travelling builders, both self-recovered without demote).
  2026-10-26 macro 001819: same schema (0 MOVE_BUILD rows); zero breakdowns, all 15 STARTED warped, no alternating-handoff evidence either way.
  2026-10-26 macro 003419: same schema (0 MOVE_BUILD rows); zero alternating-handoff evidence either way (Gateway breakdown, then demote+re-arm - the recovery path firing as designed).
+ 2026-10-26 macro 045503: same schema (0 MOVE_BUILD rows); no breakdowns at all, all 12 STARTED warped, zero alternating-handoff evidence either way.
  2026-10-26 macro 003012: same schema (0 MOVE_BUILD rows); zero alternating-handoff evidence either way (2 Pylon breakdowns, travelling builders, self-recovered without demote).
 
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
@@ -1004,6 +1011,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 2026-10-26 DRY_RUN macro 002228: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, all warped) - lateness not reproduced.
 2026-10-26 macro 001819: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #11 sup 29 vs At 27, all warped) - lateness not reproduced.
 2026-10-26 macro 003419: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, Pylon #8 sup 23 vs At 21, all warped) - lateness not reproduced.
+2026-10-26 macro 045503: Gateways #2/#3 ON PLAN for the first time (no +1 lag) - Pylon #5 sup 16 vs At 15, Pylon #8 sup 20 vs At 21; lateness not reproduced, and the systematic lag broke too (first deviation: top-spawn base [10,52] vs usual [92,113]/[113,15]).
 2026-10-26 macro 003012: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, all warped; only 3 BO mismatches, Pylon #8/#11 on plan for once) - lateness not reproduced.
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
@@ -1224,6 +1232,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Re-checked 2026-10-23 (110 unique logs, incl. 231335): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-23 (116 unique logs, incl. 235430): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (141 unique logs, incl. 001819 + 002228): still zero - same single known transient, no deadlock shape.
+ Re-checked 2026-10-26 (144 unique logs, incl. 045503): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (140 unique logs, incl. 001819): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (143 unique logs, incl. 003419): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (142 unique logs, incl. 003012): still zero - same single known transient, no deadlock shape.
@@ -1382,6 +1391,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 DRY_RUN macro 002228 (16 warps): re-fire only - unstarted-pylon 4x, min-supply 4x, earlier-reserve 6x (Pylon/Gateway/CyberneticsC/Nexus singles), pylon-cap 2x, funding 1x, core-priority 1x; zero live fires unchanged (same four stub-pinned).
  2026-10-23 macro 225319 (14 warps): re-fire only - core-priority 4x, min-supply 5x, funding 3x, earlier-reserve 5x, pylon-cap 2x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
  2026-10-26 macro 003419 (13 warps): re-fire only - min-supply 5x, core-priority 2x, earlier-reserve 2x, funding 2x, unstarted-pylon 1x; zero live fires unchanged (same four stub-pinned).
+ 2026-10-26 macro 045503 (12 warps): re-fire only - earlier-reserve 3x (all Gateway), unstarted-pylon 3x, min-supply 4x (Gateway x2/Pylon/CyberneticsC singles), core-priority 2x, funding 1x (Gateway); zero live fires unchanged (same four stub-pinned).
  2026-10-26 macro 003012 (18 warps): re-fire only - unstarted-pylon 6x, min-supply 4x, earlier-reserve 4x (Pylon/Gateway/Nexus/Forge singles), pylon-cap 2x, funding 2x, core-priority 1x; zero live fires unchanged (same four stub-pinned).
 
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
