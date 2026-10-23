@@ -157,9 +157,9 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 138 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 208 retained logs /
-   117 rows; B73 Forge warping at exit; tally corrected (B58 slip -3).
+   (cumulative: 139 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 209 retained logs /
+   118 rows; B74 retreat death under FLEE; tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -1064,7 +1064,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-23 file-outputs re-verified on macro 212818 (triple + BUILDINGS.json all non-empty). E2E_LOG is OpenBW-runner-side (run-openbw-e2e.sh), not a Wine artifact - narrowed out of this item. Missions unenaction sanity now instrumented: global mission transitions row a MISSION twin (from/to/reason, change-only - followPosture runs every frame), pinned MissionTwinTest; painter labels + a game exercising missions stay owner-side.
  2026-10-26 file-outputs re-verified on macro 235430 (triple + BUILDINGS.json all non-empty). CherryVis trace proven on Wine 2026-10-23 (B53 110209 game: CVIS/ with all 4 artifacts archived, GENERATE_CHERRYVIS_REPLAY=true default in ENV-WINE-FAST; viewer opening still owner-side). UMS duel runs collect EVENTS.jsonl + WINE_LOG but no BUILDINGS.json (baseless by design) and no DECISIONS.log - answered the same day: by design, not a gap (DecisionLog.flush() no-ops on empty rows; record() fires only from production paths, duels produce nothing).
  2026-10-26 attribution rule (learned the hard way): a live console belongs to an archived game only if Pylon#1 tile + maxframe + STARTED rows match - similar-looking macros blur together in memory. Never quote console details (verdict, kills, BO audit) into a game datum without the archive cross-check.
- 2026-10-26 replay naming closed (owner: replays lacked opponent + engine): engine template stays the proven %MAP% + strftime (any extra placeholder silently saves NOTHING on the macro path - B64 ENEMYNAMES, B65/B66 BOTRACE/ENEMYRACES, B69 static PvsZ all zero-rep; duel path unaffected, saved PvsTZ once), the script bakes MAP_PvsZ_wine_DATE at archive time from its known races (first live proof B72: engine rep + rich copy, both 71KB). Replay *saving* itself is flaky on the macro path (old template 7/9 incl. B70/B71 no-rep; needs engine-side look, owner territory) - the rename rides every save but cannot conjure one; teardown grace guard (20s wait-for-rep) in place, unproven either way.
+ 2026-10-26 replay naming closed (owner: replays lacked opponent + engine): engine template stays the proven %MAP% + strftime (any extra placeholder silently saves NOTHING on the macro path - B64 ENEMYNAMES, B65/B66 BOTRACE/ENEMYRACES, B69 static PvsZ all zero-rep; duel path unaffected, saved PvsTZ once), the script bakes MAP_PvsZ_wine_DATE at archive time from its known races (first live proof B72: engine rep + rich copy, both 71KB). Replay *saving* itself is flaky on the macro path (old template 7/9 incl. B70/B71 no-rep; needs engine-side look, owner territory) - the rename rides every save but cannot conjure one; teardown grace guard (20s wait-for-rep) in place: B72+B74 both saved promptly (no wait triggered), so the guard is cheap insurance with no live proof it ever fires - keep until it does or a season passes without a slow save.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
