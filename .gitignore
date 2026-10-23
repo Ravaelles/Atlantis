@@ -38,3 +38,9 @@ bots/AtlantisOpenBW/
 # machine-local bulk and never enter this repo - `_AI/` holds only the summary verdict
 # tables that reference them (_AI/e2e/README.md). Nothing to ignore here: the BOTS tree
 # is outside the repository entirely.
+# Macro datum chains are machine-local bulk (owner ruling 2026-10-23):
+# _AI/WINE-MACRO-DATUMS.md stays in the working tree only, never enters
+# git - per-game rows accumulate too fast to version. Committed history
+# stays in the git log; new datum rows ride the next code commit only
+# as NEXT.md conclusions, never as file versions.
+_AI/WINE-MACRO-DATUMS.md

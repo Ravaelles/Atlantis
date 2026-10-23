@@ -157,43 +157,24 @@ The index of which document answers which question is `_AI/README.md`.
    batch rewrites; board-invisible production (Forge, cannons) is
    capability, not duplication.
    Per-game tally (§1) + re-sweep history (§2) → _AI/WINE-MACRO-DATUMS.md
-   (cumulative: 237 rescue / 0 routine, our games only — foreign 091345's
-   rescue row counts in re-sweep rows, never in tally; 271 retained logs
-   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 games, all 0 fed) / 221 rows,
+   (cumulative: 238 rescue / 0 routine, our games only — foreign 091345's
+   rescue row counts in re-sweep rows, never in tally; 278 retained logs
+   (incl. foreign duel log 193800_1Drag_v_1Zeal + 2 Micro_2 + 6 1Drag duels, all 0 fed) / 222 rows,
    incl. foreign 141623 (concurrent unattributed run, 3 rescue rows,
-   never in tally); B129 zero-waste + double-on-plan GW#2/#3 + 86th demote, 2 feds;
+   never in tally); B130 standoff proven live + cutoff absent + 86th demote gap, 1 fed;
    tally corrected (B58 slip -3).
 2. **Decision absorption:** board takes over decision sites one by one
-   (7 files with the exact singular import, re-verified 2026-10-20:
-   DTDontAvoid's import was dead (only commented-out references) and is
-   deleted - the rest still 7 on the same excluded tracks, production
-   holds ZERO (re-verified 2026-10-22: same 7 files, all on excluded
-   battle/micro/interrupt/terran-info tracks) - was 47: 24 died with the combat cutover, 1 orphan
-   (TransitionToCorsairs) absorbed, 14 more with the targeting + battle
-   src-old sweeps; counting down, no new ones per §21); the class dies
-   at zero, not before. All 7 survivors sit on excluded tracks
-   (battle/micro, interrupt, terran-info) - production holds ZERO imports
-   (re-verified by grep 2026-10-20). Two tracks:
-   production sites route through board state (first slice: the worker
-   Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
-   board names the enemy race, Stargate Terran veto reads it,
-   `StargateEnemyRaceBoardTest` 2/2; slices 3-5 2026-10-17: Stargate
-   Protoss/Zerg branches + the Singularity trio read dragoons, army,
-   hydras/lurkers/mutas, carrier-tech and sparta off the board,
-   `AbsorbedBranchesBoardTest` 3/3 - production holds ZERO Decision imports - the type survives
-   only on battle/micro/A/interrupt/terran-info tracks (combat cluster,
-   stages E/H), combat-micro sites die with
-   the manager-tree migration (stages E/H), never through the board
-   (no per-unit micro on it). Fast-loop slices 2026-10-18, no game runs
-   per owner direction (demand matrices pin in stub states instead):
-   wall-in WHEN on the board (`WallInGoalTest` 5/5 + feeder seams,
-   emitter obeys funding fail-open); cannon COUNT matrix moved
-   (`CannonGoalTest` 7/7, legacy matrix deleted, ladder pins updated);
-   Forge timing moved (`ForgeGoalTest` 8/8, 4 new state fields).
-   REFUSED for now, recorded not dropped: robotics/observer demand
-   (nested pressure + rush-strategy semantics) and the gateway threshold
-   thicket (first-match chain) migrate only with a game proof each -
-   mirroring them blind risks real regressions no stub test can catch.
+   (7 files with the exact singular import, production holds ZERO -
+   re-verified by grep 2026-10-22; all 7 survivors on excluded
+   battle/micro/interrupt/terran-info tracks, dying with the
+   manager-tree migration, never through the board); the class dies
+   at zero, not before. Landed: worker Core-veto, enemy-race naming,
+   Stargate branch absorptions, wall-in/cannon/Forge demand matrices
+   (pins: `WorkerCoreVetoBoardTest`, `StargateEnemyRaceBoardTest`,
+   `AbsorbedBranchesBoardTest`, `WallInGoalTest`, `CannonGoalTest`,
+   `ForgeGoalTest`). REFUSED for now, recorded not dropped:
+   robotics/observer demand and the gateway threshold thicket migrate
+   only with a game proof each.
 3. **Pylon closure:** Wine re-run with the current jar (convertible
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
@@ -216,41 +197,10 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-19 (`rm -rf out` first): unit 894/894 green, 0
-skipped (was 763, then 783 - live-guard, demand-context,
-standing-cover, adopt, sited-door, forecast, rally and twin pins
-landed since; acceptance 17 reds byte-identical between the
-pre-session baseline worktree (6ae7ec1f) and the current tree -
-verified by worktree diff this session, zero regressions from it;
-counts rot, re-measure before quoting). 2026-10-20: unit 994/994
-(BuildGate registry + order test, EarlierReserve divergence pin,
-SelectionViews slices 7-8, AUnitHealth slice 1, CombatTuning move +
-holder tests, Core gate oldest-wins fix, FightTrace + table test,
-PylonNeedsRoomAround 4/4, BaselessAttackExplores 2/2; 2026-10-21:
-unit 991/991 (new tests minus the 16 OpenBWLauncherTest moved to
-the full tier by tag; acceptance still 17 reds byte-identical to
-the baseline every run - re-verified by worktree diff).
-2026-10-22: unit 1267/1267 (Behavior vocabulary + commander
-table-of-contents, Region center fallback, melee veto + glide
-guard, arc matrix + registry, 3 new pin files; acceptance unmeasured
-this turn - last measured 17 reds, byte-identical to baseline).
-2026-10-22 re-measure after the #182/#183 commits
-(`bash scripts/run-tests.sh`): unit 1279/1279 (FormationHold 11/11,
-HoldTwin 3/3, HolderUnstickSim 1/1 included); architecture advisory
-unchanged 9/11 (same 2 pre-existing edges, empty store diff); our
-files checkstyle-clean (the 100 whole-tree violations are pre-existing
-debt in foreign files, untouched).
-Architecture advisory
-9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
-rules fire, both pre-existing unfrozen edges, neither fixed here
-(both carry live behavior, Stage E/H territory, never grow the
-store): `architectureMustNotDependOnFeatures` via
-`Manager.invokeFromParent` → `SleepUntilFrameGate.mustSleep` (sleep
-gate, #67) and `coreMustNotDependOnOtherContexts` via
-`SpecialCommander.subcommanders` → `ForceExitWhenInvalidState`
-(added 2026-10-17). Store diff empty after both runs. Re-run
-`bash scripts/run-tests.sh` - counts written here rot. What is open is
-*quality* of the data behind it, not a red test.
+Unit 1365/1365 green (2026-10-23, `bash scripts/run-tests.sh`: scout
+hurt-field + pylon site-distance pins included); architecture advisory
+9/11 (same 2 pre-existing edges, empty store diff). History rots -
+re-measure before quoting, never copy old counts here.
 
 ## Goal board track (active)
 
@@ -409,97 +359,26 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
 - **#150** Opening Gateway statuses lie (owner report 2026-10-17, Wine
-  game 22:07, single base [112,10]): (a) Pylon PREPARING 0:14 with no
-  object shown, adopted 0:47 - correct but invisible (map markers skip
-  PREPARING; sidebar lists it); painted orange since 7c458cca, visual
-  proof pending owner; (b) GW#2 At-10 funding-blocked 1749-1830
-  (`BUILD_REFUSED ... funding` names it live - twin works on Wine),
-  requested 1831, IN_PROGRESS by ~1980 - slow on real-time clock, not
-  stuck; (c) GW#3 site [112,12] picked the frame GW#2 warped at
-  [112,10] (shared row) - same-frame race invisible to pick-time
-  guards, which see the warping unit only after it lists. LANDED:
-  `OverlapsOurUnfinishedBuilding` in the spiral (210732/214926);
-  adopt-time revalidation re-sites stale picks instead of adopting
-  them (live proof 220122 AND Wine 23:20: resite [94,111]->[86,110],
-  clean warp, no duplicate - the owner's exact case, fixed live);
-  `BUILD_REFUSED`
-  adopt-site-blocked/adopt-no-free-builder names the silent adopt
-  exits; CONSTRUCTION_CANCEL proximity twin names the covering
-  building (unmasks silent self-finish loops); advance seam pinned
-  (`ConstructionStatusAdvanceTest` 4/4); E2E opening-status gate
-  (`EXPECT_OPENING_STATUS=1`: Pylon/Gateway BUILDING_STARTED + ledger
-  warps; self-test RED/GREEN on fixtures; live proof LANDED 2026-10-18
-  (`104922` short, 19 s wall: Pylon STARTED 0:47@8, Gateway 1:20@10 +
-  resite 1:42@12, 18 ledger rows, SCENARIO PASSED with the gate
-  exported - the 30 s cap finally let one through).
-  Writer-level fix landed: EventLog/DecisionLog truncate on first
-  flush per JVM (pinned, incl. simulated restart), so no launcher
-  can accumulate games anymore - scripts keep their pre-run rm as
-  belt-and-braces. Wine logs were unusable for
-  all of this (7 MB EVENTS.jsonl spanning 6 games) - fixed by clearing
-  the write dir pre-game like OpenBW. Wrong-sibling adoption stub-pinned
-  2026-10-18 (overlap test: positional, then fallback candidates=1, then
-  CANNOT exit - `AdoptedConstructionTwinTest` 3/3, RED then GREEN); the
-  live overlap game is still unplayed. Chain twins carry cid/oid since
-  2026-10-19 (REQUESTED/PREPARING/STARTED/CANCEL/ledger/ADOPTED +
-  orphan-drop + query `--where cid=`), and the first live run with them
-  (`150006` short) caught a cross-order same-tile double-PREPARING:
-  dynamic Pylon cid=63 and BO Pylon cid=64, same tile [79,107] 3 frames
-  apart; 64 STARTED and warped, 63 left zero further rows through frame
-  7527 (orphan vs silent drop - the new drop twin decides on the next
-  run). 2026-10-20 answer from the retained TauCross macro: NEITHER
-  orphan NOR silent drop - the [123,26] Gateway WARPED 8:06 (ledger
-  over verdict), and the twin gaps are named instead: no STARTED row
-  for warping cid=96 (builder-path gap), and cid=98/oid=67 CANCELs
-  "Null position" with zero REQUESTED rows anywhere. Mechanism for
-  the second: `ProductionOrder.cancel` -> linked-construction cancel
-  -> CANCEL twin, while REQUESTED fires only post-addConstruction
-  with a site - a siteless linked construction terminates without
-  ever originating. Mint site ANSWERED 2026-10-21 (comment at the mint,
-  no patch): NewConstructionRequest links bidirectionally (setProductionOrder
-  -> setConstruction) BEFORE siting, while REQUESTED fires only
-  post-addConstruction with a tile - so read the CANCEL reason for these.
-  Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
-  should have refused the second pick; ANSWERED 2026-10-21 (no patch):
-  the guard's world is unfinished-buildings-only by pinned design, so
-  the standing Gateway [114,18] is skipped and proximity-finish cancels
-  the grazer same-frame (disjoint worlds, same as #151's no-merge).
-  FE scoping landed the same day
-  (wall-in only on Forge Expand; live `104922` on non-FE shows zero
-  wall-in BOARD/wall rows). Remainder: owner visual proof of orange
-  PREPARING (a). Live overlap game still unplayed; the resite seam
-  fires live (adopt-resited 1x in each of two long runs). 2026-10-21:
-  zero ADOPTED rows in 2 fresh macros (20:09 + 7:53) - consistent, not
-  broken: adoption needs a waiting PREPARING site and both games were
-  builder-rich (sites start immediately, nothing waits to adopt;
-  storms mint+cancel same-frame so nothing survives to adopt). No blind patch.
-  2026-10-21 Wine macro: twin gap named - warping Observatory
-  [118,30] (STARTED 12:35) whose builder #126 died to lings 12:28
-  leaves zero further rows (no cancel, no death, no warp): the
-  orphan-drop twin does not cover builder-dead warps. 2026-10-21
-  mechanism, no blind patch: demoteStalledInProgress checks
-  buildingNearSite FIRST, so a standing warp entity self-matches
-  and shields everything below (incl. the archive-aware dead
-  branch) - correct for a progressing Protoss warp, fatal for a
-  frozen one. The log cannot tell "frozen entity" from "completed
-  but unlogged" (no Observatory death twin, no ledger row either
-  way); the fix is progress-based demote (building HP static over
-  N frames), not presence-based, pinned in stub + proven on a
-  builder-death game - WO-sized, not a drive-by. 2026-10-21 liveness
-  resolution: isDead() already consults the archive, so the demote
-  path was archive-aware all along - the blind one was the retry
-  path (FIXED: dropBuilderlessNotStarted honors UnitsArchive,
-  RED->GREEN pinned, game proof pending on the next builder-death
-  shape). A blocked-demote twin without a progress signal would
-  mislabel healthy builderless warps, so no twin until the signal
-  exists; the signal design is the WO slice.
-  2026-10-21 Wine macro: 57 DISTINCT Gateway oids each CANCEL "Null
-  position" once (siteless mint death, no storm - the untwinned door
-  at scale, read the CANCEL reason per the mint answer); Stargate*
-  #134 refused at covered [105,2] then warped [123,26] 9:07 (guard
-  correct, resite worked).
- 2026-10-22 Wine TauCross macro (VICTORY 6:49, BUILDER_LOG=1): quiet game - 0 CANCELs, 0 ADOPTED (builder-rich, nothing waited), no overlap rows; resite/adopt seams unfired, not broken.
-2026-10-26 macro 061958 (VICTORY 1/0, 379s game, zero own deaths): 0 ADOPTED; 0 CANCELs; DEMOTE_STALLED twin 1x (Assimilator [7,39] f4700 stoodStill 90f, warped f4705 per ledger - thirteenth live demote, recovered; FIRST Assimilator demote, fifth stalled type after Pylon/Gateway/CyberneticsC/Forge); BREAKDOWN twin 1x Gateway [14,51] f2040 builder-on-site (fifth occurrence of the deterministic opening tile, self-recovered); all 13 STARTED warped (7 Pylon + 4 Gateway + CyberneticsC f4279 + Assimilator f4705); Pylon#1 f952 [10,52]; Nexus queued once (NOT_READY f8246) never started (final Nexus=1). No refresh-cancel this game, no zombie row, no core-single-instance block - the B22 lock stays gate+cancel-specific.
+  game 22:07, single base [112,10]): (a) Pylon PREPARING with no
+  object shown - correct but invisible, painted orange since
+  7c458cca, visual proof pending owner; (b) GW#2 At-10
+  funding-blocked names itself live via `BUILD_REFUSED`
+  (twin works on Wine); (c) GW#3 same-frame race vs warping GW#2 -
+  pick-time guards see the warping unit only after it lists.
+  Landed (pins: `OverlapsOurUnfinishedBuilding` spiral guard,
+  adopt-time resite revalidation, adopt-exit twins,
+  proximity-cover CANCEL twin, `ConstructionStatusAdvanceTest`,
+  opening-status E2E gate, chain twins with cid/oid, log truncation
+  per JVM, write-dir clearing pre-game, `WarpStartedTwinTest`,
+  archive-aware `dropBuilderlessNotStarted`). Remainder, in order:
+  owner visual proof of orange PREPARING (a); a live overlap game;
+  the builder-dead warp twin gap (orphan-drop twin covers only
+  not-started; progress-based demote is the WO-sized design, no
+  twin until the HP-static signal exists - a blocked-demote twin
+  without it would mislabel healthy builderless warps).
+  Siteless-mint CANCELs read off the CANCEL reason (no REQUESTED
+  row by construction - mint links before siting).
+
   → full chain: _AI/WINE-MACRO-DATUMS.md §3
 
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
@@ -542,98 +421,25 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   test (goes quiet after cutover).
  2026-10-22 Wine TauCross macro (VICTORY 6:49): no same-tile storms - 0 proximity CANCELs in 6.8 game-min; spiral and mint both quiet.
 
-- **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
-  owner 2026-10-19; now the overnight tuning duel). Landed since:
-  HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
-  (shot-fired vs holding-shot) + per-cycle fight-timeline + per-game
-  digest with invariant flags (HITS_TAKEN <= 2, shot cadence vs 30f);
-  margin rule with targeted+facing terms; no-reissue + ride discipline;
-  fromBest escape choice; glue-shoot; frozen-STOP reset; no-respam step
-  cadence (10f, Stardust latency+6); micro-step gain gate; Stardust
-  desired-distance hold (no fixed 2.0-tile shove past the firing point -
-  pinned, sensitivity-verified vs old behavior). Open: (a)
-  wall-aware steps (PurpleWave `MicroPathing.getThreatAwarePath`
-  direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs -
-  deferred for now, production first, owner 2026-10-19);
-  (b) macro-game kite proof (OpenBW spawns no enemies; needs a Wine
-  macro game, owner-run): 1v1 proof does not cover focus fire,
-  traffic, or the retreat latch (8v8 caveat, measured: human-slot
-  UMS maps like `8Drag_v_8Drag` spawn nobody on Wine either - 8 own
-  Dragoons idle, 0/0 - the same unfillable-slot class as #94; only
-  maps whose enemy actually spawns fight - so far only the 1v1 Zealot
-  does); (c) the overnight tuner
-  (`scripts/run-wine-batch.sh`, ParamTweaker randomizes 12 kite
-  coefficients in-JVM, CSV scoreboard: W/L, seconds, killed, lost,
-  hits, shots, values) decides the numbers - see `_AI/TOOLS.md`.
-  2026-10-20: all CSV hits/shots/score columns before this date are
-  remnant-corrupted (evaluator counted the post-720f-flush buffer, not
-  the game - measured 7 vs 33 filed SHOT rows; now flushes and counts
-  the file, batch copies the fixed-name row deterministically).
-  Mechanism re-verified the same day (two Wine 1v1 duels produce
-  countable flushed logs: 46/32 SHOT rows from file, VICTORY + own
-  14-hits counter in the log); full 10-game batch 2026-10-20:
-  10/10 WINS ~20 s each, hits 6-19 (avg 11.4), tuner randomizes per
-  game through the CombatTuning record (incl. the 3 new pinch
-  params); the overnight batch stays a standing vehicle for the
-  real sweep. 2026-10-21 replication, 10/10 WINS, 20-23 game-sec,
-  hits 6-16, shots 13-17 (same shape, tighter spread; per-game
-  EVENTS + tweaker.csv + SUMMARY archived under PARAM_TWEAKER_LOGS,
-  vehicle proven end to end). 2026-10-21 easy-map duels
-  (ZealDrag_v_Lings2_easy, 12 ours vs 26 lings verified by smoke,
-  3/5 W): losers fight to the end (FIGHT 127-156, FLEE 0-29),
-  winners mix FIGHT+FLEE - the evaluator never refuses the open
-  blob, and FLEE is banned baseless anyway (falls through to
-  fight), so unwinnable opens have no exit today. 2026-10-20 UMS
-  duel on the fixed anchor rule
-  (baseless ATTACK marches from the army center): WIN 1/0 in 499
-  frames, 34 stepped-aside vs 9 stuck, cadence 33 - the idle-dragoon
-  shape is gone.
-  2026-10-23 projected-contact kite LANDED in DragoonKitePolicy
-  (owner doctrine: kite while cooling inside melee reach, healthy 2.0
-  / wounded 2.6 tiles, never overriding an imminent shot; 4 pins
-  reshaped to the new doctrine). V0 validation batch (rule, no
-  latch, PARAM_TWEAKER=0): 3x VICTORY 1/0, hits 16/16/15 - the rule
-  alone does not move hits vs history (12-18).
-  2026-10-23 finishedShooting escape release LANDED (DuelMemory latch:
-  observed projectile aged 1-2 frames = damage committed; FightTarget
-  releases the swing hold + settle on it). V1 batch (rule+latch):
-  9/14/12 + confirm 13/12, all VICTORY 1/0 - mean 12.0 vs V0 15.7.
-  Mechanism proven live (SHOT released-finished 30 rows/game, 2 per
-  cycle at cd 20-24 - damage lands ~cd 22, cooldown ticks from order
-  issue, not from damage); KITE cd-histograms identical across V0/V1,
-  so the gain is 1-3f earlier first steps flipping zealot swings to
-  misses, not a different step pattern. n=3+2 vs 3 is suggestive,
-  not conclusive - bigger batch or the V2 push decides.
-  2026-10-23 V2 push (window [0,2], release on the firing frame -
-  bullets update before battle decisions, so age 0 is already
-  committed): 10/13/8, all VICTORY 1/0, mean 10.3. No break, no
-  freeze, kills intact - the floor is reached (no earlier release
-  exists: without a projectile there is nothing committed). Live
-  proof the wider window fires (released-finished 45 rows/game,
-  3 per cycle). Ladder totals: V0 15.7 -> V1 12.0 -> V2 10.3.
- 2026-10-23 V2 significance batch (6 games, same build): 13/10/6/8/10/8,
- all VICTORY 1/0 - combined V2 mean 9.6 over 9 games vs V0 15.7 over 3.
- The floor holds: no freeze, no DPS loss anywhere on the ladder.
- 2026-10-23 step-amplitude grid (owner question: escape steps stuck at
- 1.7-2.0 tiles): KiteStepTiles 2.0/2.5/3.0 x 3-4 games, PARAM_TWEAKER=0:
- S2.0 11/13/4/14 (mean 10.5), S2.5 10/10/18 (12.7), S3.0 11/12/10 (11.0),
- all VICTORY 1/0 - no gradient. Amplitude is NOT the binding constraint
- (consistent with the 24% no-step rate: longer steps need room the map
- does not have, and the S2.5 18-hit game showed 39% no-step). Latency
- was the constraint and the latch fixed it; the remainder is separation
- physics (~1px/f) + pocket geometry. No ParamTweaker random sweep needed
- for this knob - answered by grid, cheaper and interpretable.
-  Game 3 of V2 may have run with the #183 migration in-tree
-  (jar rebuild race) - proven behavior-neutral (the only caller
-  of the migrated consumer is dead code), batch stands.
-  2026-10-26 DEMOTE_STALLED twin LANDED (cid/type/tile/reason per
-  demote): the 231335 first live sighting had only a builderLog-gated
-  console line - the recovery half of the stall lifecycle is named now.
-  Related open question (WO-144): which goal re-fires V2 Pylon pairs
-  (BO row without coming-suppression vs pipeline overlap vs door hole)
-  - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
-  collectGoals, lists tag at creation, pinned V2GoalSourceTest 5/5):
-  the next live pair reads its authors off the source column.
+- **#152** Dragoon kiting (Wine 1Drag_v_1Zeal, owner 2026-10-19).
+  Landed (pins in-test, all mutation-proofed): HIT/SHOT twins +
+  per-cycle timeline + per-game digest; margin rule (targeted+facing);
+  no-reissue + ride discipline; fromBest escape; glue-shoot;
+  frozen-STOP reset; no-respam cadence; micro-step gain gate;
+  Stardust desired-distance hold; SHOT/HIT evaluator fixed to the
+  flushed file; TunerObjective/HallOfFame/Promotion/gradient/sim-batch
+  + 32-param registry (`ParamTweakerFactory` by-value apply).
+  Latency ladder (owner doctrine): V0 15.7 -> V1 finished-release 12.0
+  -> V2 fire-frame window 9.6-10.3 over 9 duels; overnight n=6 at 9.2
+  (combined n=15 in the V2 band, win kept every game).
+  Step-amplitude grid answered: 2.0/2.5/3.0 no gradient (physics +
+  pocket geometry bind, not amplitude). Open: 0-2 hits (via #186,
+  not more open-duel grid); (a) wall-aware steps deferred
+  (production first); (b) macro-game kite proof needs a Wine macro
+  with real enemies; (c) tuner efficacy needs K-of-N replicates.
+  Twins landed alongside: DEMOTE_STALLED (cid/type/tile/reason),
+  V2_GOAL_SOURCE (provider-goal authorship for WO-144).
+
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
@@ -839,146 +645,20 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   → full chain: _AI/WINE-MACRO-DATUMS.md §7
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
-  enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
-  0/0, scouts find nothing in 18 min). Plumbing verified correct;
-  failure is deeper (slot never reaches occupied/computer_game).
-  Blocks all fighting proof (cluster FIGHT/FLEE, kiting, rush twins).
-  Paths, cheapest last: owner-authored UMS map with a computer-slot
-  enemy (no editor on machine); C++ host slot debugging (shared
-  platform, owner call); Wine games with real opponents (works today).
-  2026-10-23: sim zombie (`tests.e2e.ZombieAttacksNearestUnit`, FakeUnit-only)
-  is not engine proof - Wine vehicle stands for fighting proof.
-  2026-10-18: Protoss enemy also spawns nothing (`143846` PvP, 361
-  game-s, `enemy: ` empty, 0/0 - 7th enemyless game across 3 enemy
-  races). Race-independent; host-side only.
-  2026-10-20: WITHDRAWN as a regression (see below) - what looked
-  like a hung host (server log cut mid-line, no HELLO, 1% CPU) was
-  an empty slot, not a stuck engine: the game runs, the bot attaches,
-  but 1Drag_v_1Zeal seats it in a unit-less EitherPreferHuman slot
-  (verified in AutoMenuManager.cpp: first EitherPreferHuman slot
-  wins; ENEMY_RACE overwrites the other Either slots). The
-  "mid-line cut" is stdio buffering on the kill, the 1% CPU is an
-  idle wait. The creation lines in old logs come only from
-  TestAIModule (TestModule.cpp:37), which the server path never
-  loads - so grepping server.log for spawns proves nothing either
-  way. A scenario-load check on that signal was added and removed
-  the same day (would false-FAIL every healthy game). Correct
-  vehicle: maps whose bot slot holds units (`M&M_v_ZealDrag`:
-  PASS 5/2 on the rebuilt engine) + the bot-side 0/0/0 verdict
-  for vacuous games. Engine C++ stays owner territory, but nothing
-  here needs it.
-  2026-10-20, second reading: the slot story is UNPROVEN either
-  way, not refuted. Mixed evidence: the 12:59 UMS log shows our
-  Dragoon=1 with zero buildings warped (preplaced unit, bot HAS a
-  slot), while the 2026-10-19 run on the same map had no units at
-  all - assignment varies in a way no log explains yet.
-  2026-10-21, third reading (other model, engine-side, tests pinned
-  in OpenBW): the 137-vs-14 gap is NOT a missing Zealot - declared
-  = visible + Special_Map_Revealer helpers (slot 1: 14 + 123 = 137;
-  the 123 never enter visible_units by design). The server slot line
-  now prints all three numbers, so nobody hunts "lost" units again.
-  What REMAINS open is the client stall past Connected (server
-  publishes deterministically) - next: DEBUG the OpenBWRunner attach
-  path for the blocking call. 2026-10-20 probe (`162410`, fresh jar,
-  1Drag_v_1Zeal): server PUBLISHED 1 live game, client printed
-  "Connected" (UMS_LOG line 16) and never "Connection successful";
-  a thread dump names the block: main in native socket read <-
-  `ClientConnectionPosix.waitForServerData:90`
-  (`while (read() != 2)`) <- `Client.connect:181` <- `reconnect:66`.
-  Killed at 20 s by BOT_KILL_SECONDS, 0/0/0. So the stall IS the
-  connect-time handshake read; the server's byte 2 never goes out
-  (their handshake probe: NO_BYTE_2 after 12 s on a live server,
-  negative controls pass) because `GameImpl::update()` - the only
-  path to `server.update()` -> `callOnFrame()` -> byte 2 - is dead
-  code in the OpenBW build (no StarCraft.exe hook; `BWData.cpp`
-  drives `next_frame()` directly). Our client-side dump is
-  consistent (blocked read, nothing to receive). 2026-10-20 their
-  pump landed (server log: `handshake sent from update()`):
-  HANDSHAKE CLOSED - 2/2 probes print `Connection successful`
-  (1v1 `170529`, M&M `170755`/`171136`, fresh jar both sides).
-  Binding NPE fixed with it (units array field-init + no-wipe
-  guard, JBWAPI-Atlantis `8cc9ef2`; early-init attempt withdrawn
-  same day - player table is empty pre-tick, AIOOBE measured).
-  New measured layer, engine-side: the match never ticks on UMS -
-  zero frame lines in server.log, no MatchStart, bot loop never
-  entered (no HELLO/BUILD ORDER, kill at 20 s with tail), although
-  slots hold real armies (M&M: 30 + 14 visible). Client cannot fix
-  a non-ticking match (players/forces publish on tick). Precise
-  ask: extend their handshake probe past BYTE_2_OK to frames +
-  MatchStart arrival; the pump must tick the match, not just the
-  handshake. 2026-10-20 melee E2E (`173536` long, fresh jar both
-  sides): same shape on MELEE - PUBLISHED, Connection successful,
-  zero frame lines, no MatchStart, players NPE pre-MatchStart
-  (units guard held, next layer confirmed), kill at 20 s. Melee
-  played 1209+ frames Oct 19 on this vehicle, so the tick died
-  with the pump change - regression pointer, not a new unknown.
-  2026-10-21: their pump ticks frames (313 delivered, 312 answered
-  on M&M; slots hold 30+14 visible). Remaining gap, precisely
-  bounded: no MatchStart, ever, and the player table is empty
-  (`getPlayerCount()==0` -> AIOOBE inside `init()`, measured twice).
-  Client side is now maximally robust and committed
-  (JBWAPI-Atlantis: units field-init, lazy init on first event
-  with retry + no-wipe guard; Atlantis: idempotent onStart +
-  first-frame bootstrap) - none of it can conjure a match start.
-  2026-10-21 CORRECTION and closure: with the ticking match,
-  MatchStart DOES arrive (HELLO printed), players DO publish, init
-  succeeds - run `183729` played to 3:00 game time with an 82k-row
-  fight (CLUSTER/FIGHT flowing, 17 hits taken, marines trading
-  and dying). The frame-2 Defeat was OURS, not the engine's:
-  `ForceExitWhenInvalidState` misfired on supply 0/0 + bank 10000
-  (absent supply data read as no army) - fixed the same day
-  (unpublished supply never trips; pinned
-  `ForceExitNeedsPublishedSupplyTest` 2/2; their
-  GameEvents.cpp:150 theory falsified by our own ForceExit
-  banner + GAME_END twin at frame 2). What the unblocked game
-  surfaced became NEXT #163, closed the same day (commit
-  `a598229c2`: SHOT counts acquisitions by design, UNIT_DIED latch
-  holds 3 rows for 3 marines). Cross-platform confirmation
-  2026-10-21: per-unit SHOT rate identical on Wine and OpenBW
-  (~0.5/frame - totals scale with duration x units, no twin bug),
-  UNIT_DIED fires for our deaths only (silent on Wine 1Drag with
-  10 kills and 0 own losses - by design, not a miss). Verdict
-  quality (W/L) still needs longer than the 30 s UMS cap.
-  Detail: `docs/openbw-run-regression.md` (theirs). What IS
-  settled: with a unit but no base the bot idled a whole game
-  (Forge FE head, no scouts, no engage, Defeat by map timer), and
-  that failure mode is now fixed regardless of slots (baseless
-  ATTACK marches from the army center; proved WIN 1/0 in 499
-  frames on Wine, 34 stepped-aside vs 9 stuck, cadence 33).
-  Default unknown-matchup BO flipped to Zealot into Goon the same
-  day (Forge FE armed an economy opener on a duel map).
-  2026-10-21 hosting fix (Atlantis scripts, no engine change):
-  `run-openbw-ums.sh` + `--smoke` pass ENEMY_COUNT=7 (was the auto-menu
-  default 1, which closed every EitherPreferComputer slot past the first
-  and deleted scenario armies on slots 2+: 8Drag spawned 8 of 16 Dragoons
-  and the match never started, bot hung at connect). One command now
-  plays all three duel maps: 1Drag PASS 0/0/10 (506f), 8Drag PASS 18
-  hits (307f), LingsUpg2 PASS 66 hits (195f, map self-healed from the
-  live tree into the stale harness snapshot). 8Drag/LingsUpg2 inflate
-  the bot KILLED counter (~7k/~31k - per-frame re-fire class, BUGS
-  B-42); TIMES_HIT stays sane, verdict unaffected. Also fixed: `--game`
-  mistook the bot's own 124 (inner 20 s cap) for the outer 180 s
-  timeout; the inner KILLED: line now disambiguates.
-  Who plays the enemy on each platform (OpenBW: nobody - engine default
-  AI only; Wine: the map's scripts): `_AI/CHALLENGES/UmsDuelOpponents.md`.
-  Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
-  2026-10-21 OpenBW speed + verdict slice (this model): the engine
-  ticks ~600 fps on current builds (12.7k frames inside the 20 s bot
-  cap - the 24 fps reading in the other model's research doc dates
-  from the pre-pump stall era; the hasSynced gating it verified in
-  code still holds, it is just no longer the bottleneck). Two fixes
-  on our side: (a) halt() instead of exit() in the OpenBW exit path
-  (the JVM lingered to SIGKILL, burning the cap + 5 s every game -
-  now 20 s/124 instead of 25 s/137); (b) WIN/LOSS/DRAW verdicts in
-  `build-openbw.sh --game` (a blanket PASS hid undecided games -
-  DRAW = completed with zero losses, investigate engagement not
-  defeat; fixture-pinned 8/8, live DRAW proven 0/0/6 on 1Drag);
-  plus a `TIMEOUT_SECONDS` env knob (15 s smoke plays 175 game-sec).
-  Stronger evidence on the 1Drag slot problem the same day: the
-  enemy zealot deals damage at 0.5 tiles (HIT rows) while `enemy: `
-  stays empty all game - spawned and hostile, but never visible to
-  the client. Engine-side (other model's territory), filed here as
-  the shape to name, not to fix blind.
+  enemyless games across TauCross/Python, Zerg/Terran - plumbing
+  verified correct, slot never reaches occupied/computer_game.
+  Blocks all fighting proof (cluster FIGHT/FLEE, kiting, rush twins);
+  the Wine vehicle stands for fighting proof (sim zombie
+  `tests.e2e.ZombieAttacksNearestUnit` is not engine proof).
+  Settled 2026-10-20/21 (full archaeology in git log +
+  `docs/openbw-run-regression.md`): handshake pump landed, MatchStart
+  arrives, `ForceExitWhenInvalidState` own-bug fixed
+  (`ForceExitNeedsPublishedSupplyTest` 2/2), hosting passes
+  ENEMY_COUNT=7, exit path halt()s, WIN/LOSS/DRAW verdicts pinned.
+  Open remainder, engine-side (other model's territory, not fixed
+  blind): on 1Drag the enemy zealot deals damage at 0.5 tiles (HIT
+  rows) while `enemy: ` stays empty - spawned and hostile, never
+  visible to the client.
 
 ## Needs owner or upstream (blocked here)
 
@@ -1597,177 +1277,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  pathology (130/130 stuck, zero moves) is gone live. Consistent with
  the executor; single-game noise per §14.
 - **#179** ZealDrag_v_Zeal coordination + zealot hold-fire discipline
- (owner 2026-10-21/22): on the new map the bot first does not move
- at all, then loses on zealot/dragoon miscoordination - zealots
- break formation and attack first. Discipline: until a ranged
- weapon fires inside the cluster (assuming the cluster has one),
- zealots do not attack on their own; the moment a zealot is
- attacked, break formation and attack. Test vehicle is the map
- itself (ZealDrag_v_Zeal.scm): first prove the march (no
- standstill, #177), then the coordination (win, not just move).
- 2026-10-22 formation hold (owner, Stardust doctrine): engaging no
- longer dissolves the line - with a melee-only enemy and nobody in
- contact (2.5 tiles, damage taken, own ranged able to fire), units
- march at formation slots instead of charging one by one. FLEE and
- ranged enemies keep the old behavior; duels fall through (slots
- need 3+ units). Pinned `FormationHoldTest` 5/5; `ArcRetreatSimTest`
- re-geometrized to an in-contact start (the hold owns the approach
- now). Live proof rides the next headless Wine game.
- 2026-10-22 kite outranks holding, unconditionally (owner: ClusterHold
- dragoons stood while chewed): FormationHold breaks on any close
- enemy that can hit the unit - the earlier wound/cooldown gate
- stayed silent through shields (HP history misses them) and past
- contact range. The glued-trade branch is gone too: only an
- in-flight swing still trades. `ClusterHold` renamed to `FormHold`
- (order tag, not a manager - managers live in the Commander tree).
- Live sim tripwire `PhalanxVsPackSimTest` (2+2 vs 5 zealots, 600
- ticks, in-JVM): no zealot inside melee reach, no dragoon under
- 150 hp, every dragoon issues attack orders. Null-position
- hardening along the way (roster outlives corpses in the sim):
- formation slots filter the dead, targeting skips addressless
- enemies. Suite green, both new pins mutation-proofed.
- 2026-10-22 fogged snapshots, own copies only (owner: store our own
- APosition, never invisible coordinates; drop the address when its
- tile is seen empty): updateLastPosition skips invisible units, and
- foggedUnitNoLongerWhereItWasBefore clears the address instead of
- re-snapshotting from an invisible unit. The unit stays known, only
- the address goes - the ghost chain falls through to unexplored
- ground. Pinned FoggedPositionTest 2/2, both branches mutation-proofed.
- 2026-10-22 kite outranks holding and trading (owner: ClusterHold /
- ClusterReengage dragoons stood while zealots chewed them): holding
- breaks when a close enemy can hit the unit and the weapon cools
- (cd >= 8) or it is wounded (< 80 hp + shields); the glued-trade
- branch is gone, only an in-flight swing still trades. A re-arm
- landing window was tried and withdrawn the same day: it starved
- sim DPS (no order-cancellation model there) with no live proof,
- so re-arm stays on the equality discipline plus the post-swing
- settle gate. Pinned (needsKite, glued-trade removal), suite green.
- 2026-10-22 headless ZealDrag_v_Zeal (Defeat 6/9, 40 s): the ghost
- readout works end to end - none (f0-93, marching on the anchor)
- then contact f124 to the end, closing 161 -> 6. Approach marches
- from frame 0 (no standstill; scout release holds). 2 ClusterForm
- attack rows: slotted units do fight from the arc. All 9 deaths
- ClusterKite, zero ClusterHold - the hold never false-triggered.
- Zero FROZEN rows all game (deployment gate holds back the opening
- storm). Loss shape: brawl lost after contact, FLEE from f372 with
- a stationary center (69,34)->(67,34) while dying - retreat that
- goes nowhere (visible-pivot slots face the pursuer on FLEE,
- pre-existing, not this slice). Single-game variance stays high
- (12/5 win vs 4/9 and 6/9 losses vs 8/3 timeout on one build).
- 2026-10-22 shoot-now targeting (owner: dragoons walked past
- in-range targets to chase a squadmate's kill 10 tiles out, taking
- 5-6 hits): `AcquireTarget` returns the weakest valid in-range
- target first (focus preserved inside range, no walk-past), squad/
- shared/nearest stay as fallbacks; re-arm fires once per switch
- and waits while a step rides (landing window = latency + 1) so
- the chase no longer cancels the step - alternating spam verified
- fixed in-test (`move, attackUnit, move, attackUnit` without the
- gate). Sight snapshots into the ghost march even when the fight
- declines. Pinned `AcquireTargetTest` 4/4 + re-arm pin (both
- mutation-proofed); full suite green.
- 2026-10-22 post-swing settle (owner hypothesis CONFIRMED in
- PurpleWave `AttackDelay.scala`: units stick when a move lands
- right after the attack animation - wait start + stopFrames + 2,
- +2 empirically eliminates sticking; second trigger: retargeting
- a chasing unit mid-swing). Our `holdSwing` covered only the
- animation itself; `attackSettleHold` owns the frames after it,
- calibrating per unit from observed swings (no hand stop frames).
- Pinned `AttackSettleTest` 2/2, mutation-proofed; sims unaffected
- (no attack frames there), live proof rides the next headless
- Wine game.
- 2026-10-22 headless ZealDrag_v_Zeal: Defeat 10/9 in 88 s, 0
- ClusterHold rows - correct, both armies collided into instant
- contact (hold only owns the 2.5-9 tile approach window). FROZEN
- fired 63x incl. a frame-40 whole-army storm while deploying:
- freezing now requires banked deployment first.
- 2026-10-22 frozen error row (owner): the second consecutive freeze
- files `minSec Dragoon#12 FROZEN <order> <ago>f ago, still <n>f` to
- the error log via `AConsole.errPrintln` - the block hunt starts
- from unit + last order + its age. Pinned (streak, error frame,
- reset), mutation-proofed.
- 2026-10-22 frozen-unit detection (owner: a dragoon held a move
- mission standing still until Hold Position was pressed by hand):
- `FrozenWatch` notes per-frame displacement in the battle hook and
- the painter draws four unfilled purple rings (10/12/14/16) on units
- still 40+ frames with a move/attack order riding and no cooldown;
- trading blows and cooldowns are excluded. A throttled FROZEN twin
- row names the unit for headless logs. Pinned `FrozenWatchTest`
- 5/5, mutation-proofed; the painter hook issues no orders.
- 2026-10-22: VICTORY 12/5 in 43 s with hold+withdraw+long-vector
- +reinforce (first zealot death pushed to f243, dragoon 186 zero
- hits all game, no idle half; telemetry+pins hold).
- 2026-10-22 headless ZealDrag_v_Zeal (Defeat 5/9 in 44 s, first game
- on the Behavior + commander-story commit): journal tags unchanged
- by the rename (all 9 death tooltips ClusterKite, zero FormHold -
- no stand-and-die holds; SHOT 385 + ATTACK 22, instant contact so
- the hold correctly never fired). March from frame 0 (cx 56->68,
- ghost none->contact, foe 161->10). FLEE from f372 displaces while
- dying (deaths drift (69,35)->(56,41), ~13 tiles - the old
- 550-frame static center is gone; FLEE issues no arcs). Zero
- FROZEN rows; one KITE frozen-reset (kite preemption breaks a
- stuck unit). Sweep unexercised live (contact visible throughout)
- - stays sim-proven only. Single-game noise per §14; loss shape is
- a lost even brawl + unwinnable run, not a formation freeze.
- 2026-10-22 headless ZealDrag_v_Zeal (Defeat 7/9 in 43 s, first game
- on the table-of-contents refactor): journal byte-identical by
- construction (same calls, same order, frozen tags) - all 9 deaths
- ClusterKite, zero FROZEN, SHOT 308 + ATTACK 18, KITE 88
- stepped-aside + 23 frozen-reset. CLUSTER twin flows through the
- new ClusterTwin.sample (34 rows, ghost none->contact). Result in
- the known variance band (wins 12/5 vs losses 4/9, 6/9, 5/9,
- 10/9); what the game proves is no new pathology, not the score.
- 2026-10-22 owner's ZealDrag_v_Zeal game (ended 0:24, truncated logs):
- Dragoon#165 died kiting while its reengage glide ordered into the
- unwalkable [43,53] every frame - move() refuses unwalkable ground
- and the wait below pinned the unit standing while Zealot#199 chewed
- it. Plus the standing-into-chews report: owner's hard rule is now
- code - melee within 2 tiles vetoes formation everywhere
- (`FormationHold.hasCloseMeleeEnemy`, raw distance, no plumbing;
- enforced in shouldHold/holdIfCalm AND the Regroup advance, which
- had no contact gate at all), and an unwalkable fireAt is nulled so
- the frame chases with an attack instead of waiting into the wall.
- Pinned (veto pair + Regroup advance + wall chase, all
- mutation-proofed). Honest gap: the user's game ended at 0:24 with
- no EVENTS, so the full standing shape stays underdetermined -
- live proof of both fixes rides the next Wine game.
- 2026-10-22 headless ZealDrag_v_Zeal (Defeat 1/9 in 41 s, first game
- on veto + glide guard): zero unwalkable errors in WINE_DEBUG (the
- [43,53] shape did not recur), zero FROZEN, all 9 deaths
- ClusterKite - no FormHold deaths. The single FormHold order (f383,
- dragoon#96 attacking from the hold) transitioned to kite and died
- kiting at f622: the hold no longer pins anyone. Razor edge noted:
- telemetry sampled nearest foe at 1.8 tiles one second after the
- f383 hold - within a second's movement of the 2.0 veto line, so
- not a proven miss, but the boundary is live-fire thin. Loss
- driver this game is not standing: one enemy zealot (#195) took 8
- of 9 kills unfocused while the army kited (94 stepped-aside + 14
- frozen-reset, movement healthy).
- 2026-10-22 headless ZealDrag_v_Zeal (Defeat 1/9 in 33 s): opening
- sweep again at f0 (Regions fix holding), contact f124, brawl
- lost by f562 (7 deaths around (65,40)), last dragoons run to
- (50,48) and die f766/782. Zero unwalkable, zero FROZEN, all 9
- deaths ClusterKite - the standing shapes stay fixed. Loss
- driver, same as the 1/9 before: dragoons die in the first
- contact minute (#162 f421 here, #186 f218 last time) and the
- zealots get mopped after - DPS lost early, not formation
- standing. Six-game Zeal band: one 12/5 win vs five losses;
- the win needs the early brawl, not the march.
- 2026-10-22 two more games on the #182/#183 tree (Defeat 3/9, 662f +
- Defeat 3/9, 794f): coordination held first (~150f of FormHold attacks
- in the journals, zealots broke to the fight as designed), then both
- brawls lost the same way - dragoons die in the first contact minute
- and zealots get mopped after. Eight-game band: one 12/5 win vs seven
- losses; the freeze shapes are gone (zero FROZEN, all deaths mobile -
- see #182), what is open is winnability (early-brawl DPS), not
- coordination.
- 2026-10-26 headless ZealDrag_v_Zeal on the current tree (Defeat 3/9 in
- 37 s, 893f): ninth band game, same shape - coordination held first
- (HOLD 9x: FormHold attacks in the journals, zealots broke to the
- fight), veto broke the rest (VETO 30x). Zero FROZEN, zero standing
- deaths (all 9 ClusterKite, incl. 2x ClusterUnstick live). Latch
- fires in multi-foe too (released-finished 156 rows). KITE 218
- (179 stepped / 26 frozen-reset / 13 stuck). Brawl lost on DPS
- (3 kills), not on coordination or freezing.
+  (owner 2026-10-21/22). Doctrine: zealots hold formation until a
+  ranged weapon fires or a zealot is attacked; formation hold owns
+  only the 2.5-9 tile approach window; kite outranks holding and
+  trading (chewed voids every stand; swamped-4+ holds fire while the
+  step rides); shoot-now targeting (weakest valid in range first,
+  re-arm disciplined); post-swing settle; frozen detection + error
+  row (FrozenWatch, passive by design). Landed, all pinned
+  (`FormationHoldTest`, `AcquireTargetTest`, `AttackSettleTest`,
+  `FrozenWatchTest`, `PhalanxVsPackSimTest`, arc re-geometrized to
+  in-contact starts, fogged-snapshot own-copies). Live band (9 games):
+  one 12/5 win vs eight losses; march-from-frame-0 proven, holds fire
+  then veto breaks correctly, zero FROZEN, all deaths mobile
+  (ClusterKite/Unstick) - coordination and freezing closed as causes.
+  Open: winnability (early-brawl DPS - dragoons die in the first
+  contact minute, zealots mopped after), not coordination.
+
 - **#180** Per-second unit telemetry (owner 2026-10-21/22, extends
  #176): the death log gains meaning only with the fight around
  it. Every second log per unit: zealot-dragoon distances, HP,
@@ -1841,79 +1366,23 @@ the deletion order. Combat work stays off the commanders
 (CONVENTIONS §23): new logic lives in FormationHold / FightTarget /
 AcquireTarget seams, BattleCommander only keeps delegating.
 
-- **#182** FormHold stands into chews; frozen holders have no remedy (owner 2026-10-22, HIGH priority):
- ZealDrag_v_Zeal live, game 144553: Dragoon#162 holds formation slots f82-282 while 5-8 zealots stay within 2 tiles (telemetry n2), hp 260→~90, then kites f362+ with ZERO displacement until death (ux/uy frozen f112-412) - stood 300 frames, died standing. Zero FROZEN rows all game.
- Mechanism, verified in code (no guessing): (a) all proximity gates (veto 2.0, contact 2.5, needsKite) read `unit.enemiesNear()` (AliveEnemies, 5-frame cached selection) while shooting and telemetry read `Select.enemy().combatUnits()` - two membership sources; when they disagree the hold is blind and only HP-drop breaks it; (b) the damage gate is structurally dead for steady holders, see #183; (c) remedy gap: `unstickFrozenQueue` (FightTarget) only watches kite-steppers (`lastStep` fresh <48f) - a holder takes no kite steps, so it can never trip; FrozenWatch is passive by design (paints + logs) and DEPLOYED-gated (never flags units that banked <3 tiles of movement - #162 banked ~2).
- Direction (senior): commanders stay clean - remedy lives in FightTarget next to unstickFrozenQueue, detection stays in FrozenWatch/UnitTelemetry. (1) Owner doctrine, no exceptions: melee within 3 tiles breaks the hold - veto 2.0→3.0, contact stays 2.5 as the inner ring (widening alone fixes nothing while (a) stands, hence (2)-(4) first); (2) HOLD twin row (throttled): veto/contact/damage/nearest-listed inputs + verdict, so the next report is decidable from logs instead of forensics; (3) extend the unstick watch to holders (no kite step riding + no displacement + order age): STOP once + fresh order, same cadence discipline as the kite path, never every frame; (4) relax FrozenWatch DEPLOYED gate for already-decided units (a unit with a fresh combat order that never displaced is the stuck shape even at 0 banked tiles) - or document why not after measuring false positives on the opening march.
- Prove in sim first (holder with wedged queue gets STOP + displaces; no-op on healthy holders - mutation-proofed), then live on ZealDrag_v_Zeal: no 200f stands, FormHold deaths carry prior FROZEN/until rows or none at all. Non-goals: touching the kite/fight order flow; retreat logic untouched.
- 2026-10-22 sim-first slice LANDED (no behavior change without the trip):
- veto 2.0→3.0, HoldVerdict + throttled HOLD twin (flip + 150f heartbeat,
- foe dist + foes-in-2), holder unstick (48f still + >1 tile from slot →
- STOP once + forgetMotion). Pins: FormationHold 11/11 (veto 2.9 breaks,
- 3.5 holds; wound breaks an otherwise calm hold with unwounded-twin
- control), HoldTwin 3/3 (verdict rows, throttle ≤3 rows/200f, flips
- always row), HolderUnstickSim 1/1 (wedged STOPs ≥1, healthy marchers
- 0 STOPs + displace, UNSTICK row in the log); suite 1279/1279, our
- files checkstyle-clean. Live proof pending: ZealDrag_v_Zeal (no 200f
- stands; FormHold deaths carry prior FROZEN/UNSTICK rows or none).
- 2026-10-22 live proof, 2 ZealDrag_v_Zeal games on this tree (Defeat
- 3/9 in 662f + Defeat 3/9 in 794f): the #182 freeze shape did NOT
- recur - zero FROZEN rows both games, every death tooltip ClusterKite
- (all 9+9 died moving), UNSTICK fired live (1 hold-unstick + 17 kite
- frozen-resets in game 1), the veto fires on the boundary live (HOLD
- foe 27-30 x10 = 2.7-3.0 tiles), throttle holds (6-10 HOLD rows/game).
- New shape found instead, twice, same signature (dragoon#188 g1:
- ~280f f161-438; dragoon#98 g2: ~160f f264-426): enemy inside 3 tiles,
- hp full, ZERO kite steps, same tile, hold correctly broken (VETO) -
- a fight-loop stall, not a hold freeze. Evidence: SHOT dist jumps
- 34->19->30->20->6->13 at a standing unit (target switching, not one
- chewer), telemetry tgt flips 178->156->169->211 across the stall,
- unit.target() null in UNIT_TRACE throughout (engine holds no order
- while the funnel names targets), `shot-fired` rows on cooldown 26/16
- and 3 fires in 4 frames (order spam, not projectiles - the twin logs
- issuance). Both units reacted only to damage (first HIT f439 -> first
- KITE f482; f360 -> f426) and died displacing. Fight code untouched by
- the #182/#183 commits, so this is not their regression - it is the
- churn the #184 ladder is designed to bound (rule 0 + switch bound).
- No implementation here (#184 stays sequenced post-cut); the sim/repro
- isolation is the next measurement.
- 2026-10-23 rearm side verified clean in the 1v1 latch batches (V0/V1/V2,
- 11 games): shot-rows 16/16/22 per game with 3-in-4f bursts are re-arms
- after glides (null->foe transitions), not cancelled shots - all games
- VICTORY 1/0 with normal frame counts, DPS intact. Rearm's own
- discipline (re-issue only on target change + step-ride guards) holds;
- the #182 spam shape needs multi-foe target churn to manifest, which
- duels cannot produce - still #184's switch bound to own.
- 2026-10-23 sim isolation LANDED (PocketVsOpenFieldKiteTest 2/2): same
- logic (BattleCommander.act), same threat, only geometry differs - open
- field kites (34 stepped-aside, 0 stuck, displaces 15.2 tiles), walled
- pocket stands and trades (157 stuck-no-step vs 23 validated steps under
- contact, displaces 1.0 tile, 11 shots fired, takes hits). Pocket-vs-logic
- decided for the trap shape: geometry alone explains the stand-and-trade,
- logic issues steps in both. Mechanism note: a THICK back wall reproduces
- the stuck signature (aims land inside the mass, spiral shift finds only
- the unit's own corridor cells, short-distance gate kills them); a thin
- wall instead validates aims beyond it (reachable-looking, sim-blocked
- around the corner - stepped-aside rows, zero net displacement). Row
- flavor depends on trap tightness, displacement separation (~15x) holds
- in both. Vehicle: arena-backed MapTiles.Source for the run, restored in
- finally (FakeMapTiles answers walkable-everywhere otherwise).
- 2026-10-26 #182(4) decided: KEEP the DEPLOYED gate, no relaxation -
- documented why instead of measured-away. (a) The gate guards a measured
- live artifact, not a hypothesis: pre-gate, all 9 units flagged at f40
- while still deploying (game-start actuation lag under frameskip - orders
- ride, the engine has not moved anything yet). Any "fresh combat order"
- distinguisher re-admits exactly that flood, because deployment orders
- ARE combat orders; telling lag from wedged-from-start needs a game-clock
- hack with its own live proof. (b) The sim cannot clear the relaxation:
- sim movement actuates on frame 1, so a relaxed gate shows zero false
- positives in-sim while the live flood stands - sim evidence here is
- one-sided by construction. (c) The blind spot is diagnostic-only: the
- remedy side never needed banking - holder unstick trips on 48f still +
- >1 tile from slot (WEDGE_STILL_FRAMES/ARRIVED_TILES, no banked tiles),
- kite unstick on step-riding + 48f motionless, and both row it (HOLD
- UNSTICK verdict, KITE frozen-reset - fired live). A wedged-from-start
- unit gets STOP + fresh queue without ever rowing FROZEN. No code change.
+- **#182** FormHold stands into chews; frozen holders have no remedy (owner 2026-10-22, HIGH priority).
+  Mechanism (verified in code): proximity gates read `enemiesNear()`
+  while shooting/telemetry read `Select.enemy().combatUnits()` - when
+  they disagree the hold is blind; damage gate structurally dead for
+  steady holders (see #183); holder unstick missing. Landed,
+  sim-first, no behavior change without the trip (pins:
+  `FormationHold` veto 2.0->3.0 + HoldVerdict + throttled HOLD twin,
+  holder unstick 48f-still + off-slot -> STOP once).
+  Live proof: no 200f stands since; the new shape found instead is a
+  fight-loop stall (target churn + re-arm spam while holdSwing/settle
+  starve kite), owned by the #184 ladder, not this item.
+  Sim isolation (PocketVsOpenFieldKiteTest): geometry alone explains
+  stand-and-trade (open field displaces 15.2 tiles, pocket 1.0).
+  Decision #182(4) (documented, not relaxed): the FrozenWatch DEPLOYED
+  gate stays - pre-gate all 9 units flagged at f40 deploying, sim
+  cannot clear the relaxation (actuates frame 1), and the remedy side
+  never needed banking (holder/kite unstick trip on stillness, row it).
 
 - **#183** `isUnderAttack()` is dead for steady holders (owner 2026-10-22, HIGH priority):
  Pipeline order (FramePipeline.steps): UnitStateCommander (step 2) runs UnitStateManager for every unit BEFORE BattleCommander (step 6); the manager appends current `hp()` every frame it runs, and the order-latency gate skips it exactly when an order is in flight (`SleepUntilFrameGate.mustSleep`). A holder that stopped re-issuing (same slot) gets fresh history every frame, so `hp() < last` is false by construction - the damage gate in shouldHold, the #179 zealot hold-fire discipline ("break the moment attacked"), and the Terran/repair/interrupt consumers all read a signal that can only fire on gate-skipped frames. (Side correction for the record: the `needsKite` comment "HP history misses shield damage" is stale - `hp()` = hitPoints+shields and the history stores `hp()`; shields were never blind, freshness was.)
@@ -2081,6 +1550,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Slice 3b LANDED 2026-10-26 (WINDUP lookup fix + re-baselining): `WINDUP.getOrDefault` read `type().name()` ("Dragoon") against "Protoss_Dragoon" keys, so every type ran windup 6 and the map entries were dead - now reads `fullName()`. Fallout triaged: the windup pin now asserts the intended 8, and one scenario (`woundedDragoonsWithdrawAndSurvive`) needed recalibration to its documented intent (4 lings lethal under correct physics - dragoons shoot slower, lings chew faster; hp band untouched for pinch-line semantics, one presser fewer). No production code touched - sim harness only. Suite 1354/1354. The duel sims never noticed (taken bounds held throughout).
  Slice 4 LANDED 2026-10-26 (stop-point race, pure function + 6 pins, no wiring yet): `ProtossAttackHoldToShoot.shouldHoldEarly` answers the race given R* (nominal minus enemy cover during our windup/latency plus our braking glide, computed by a later slice): hold iff the weapon is ready on enemy arrival (`reachIn >= readyIn`); runners never hold; inside-R* holds only in the fire-now sliver. Key insight pinned: the caller invokes it under `distTo < hold`, so with R* below the hold the rule can actually fire (with R* at nominal it would be dead). Suite 1349/1349. Slice 5 LANDED 2026-10-26 (R* estimator + wiring + sim verdict): `effectiveRange` = foe edge-to-edge reach + chaser cover during windup - braking glide (new `bodyRadiusPx` engine seam; tile truncation rounded melee bodies to zero); `DuelKite.shouldYield` stands when the race favors waiting (2f hold margin = the imminent-shot gate's own slop). Sim verdict: T-duel taken unchanged 40/40/40, win preserved every arm - the sim cannot discriminate the wiring either; the owner's gate-edge pins (cd 6 yields, imminent 5 holds) all still pass. Suite 1354/1354. Remainder: live 1Drag proof (same bar: win + hits toward 0-2).
  Live proof LANDED 2026-10-26 (Wine 1Drag batch n=3, PARAM_TWEAKER=0, full stack: latch + window + hold-early wiring): 3/3 VICTORY, hits 13/8/8 (mean 9.7) vs V0 16/16/15 (15.7) and V2 9.6-10.3 - win kept, hits in the V2 band, no regression and no clear wiring-attributable gain at n=3 (same discrimination limit as the sim; a same-jar wiring-off A/B was not run). All hits while kiting except one boxed stand (pocket, not the race). The bar holds as win-preservation + V2-band hits; 0-2 remains open territory.
+ Overnight replication 2026-10-23 (n=6, same jar: full stack): 6/6 VICTORY, hits 8/7/8/12/6/14 (mean 9.2) - win kept, V2 band holds at n=9 combined; still no wiring-attributable gain (discrimination limit stands).
 
 
 - **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands). Update 2026-10-26: clock-cutoff slice LANDED (sim-pinned): `ScoutNearEnemyBase` no longer declines past 340 s - the ancient gate evicted unchased scouts into far-expo wander; leaving is the chase machinery's call only (5/5 `ScoutCirclesEnemyMainTest`, suite 1335/1335). Live proof still pending.

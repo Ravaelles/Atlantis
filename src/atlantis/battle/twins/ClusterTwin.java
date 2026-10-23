@@ -21,6 +21,12 @@ import atlantis.util.log.LogKey;
  * <p>Cluster center readout (owner 2026-10-26): the file carries the
  * army's mean position and the nearest enemy's distance to it - the
  * forward-movement measure per-unit traces cannot give.</p>
+ *
+ * <p>Leader dest readout (owner 2026-10-23, Stardust-style: log the
+ * transition target, not every step): the leader's current move dest.
+ * On a retreat every unit walks its own home point, so the leader's
+ * dest names the rally the army is actually walking (standoff vs base
+ * vs anchor) - the question no center trace can answer.</p>
  */
 public final class ClusterTwin {
 
@@ -39,6 +45,8 @@ public final class ClusterTwin {
         int ghostDist = -1;
         int ghostX = -1;
         int ghostY = -1;
+        int destX = -1;
+        int destY = -1;
         try {
             if (center != null) {
                 AUnit nearest = Select.enemy()
@@ -53,6 +61,14 @@ public final class ClusterTwin {
                     ghostDist = (int) (leader.distTo(ghost) * 10);
                     ghostX = ghost.tx();
                     ghostY = ghost.ty();
+                }
+                try {
+                    APosition dest = leader.targetPosition();
+                    if (dest != null) {
+                        destX = dest.tx();
+                        destY = dest.ty();
+                    }
+                } catch (Exception ignored) {
                 }
             }
         } catch (Exception ignored) {
@@ -70,6 +86,8 @@ public final class ClusterTwin {
             .param("gdist", ghostDist)
             .param("gx", ghostX)
             .param("gy", ghostY)
+            .param("dtx", destX)
+            .param("dty", destY)
             .log(A.now(), A.minSec());
     }
 }

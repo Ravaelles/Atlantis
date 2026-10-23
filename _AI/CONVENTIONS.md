@@ -305,3 +305,14 @@ decompiled archives:
 - E2E gates fail on CRITICAL only (`assert-openbw-scenario.sh`,
   `EXPECT_NO_CRITICAL`); old `CRITICAL` spellings in retained logs
   keep matching (the gate accepts both).
+
+## 28. Commit discipline for `_AI/` logs (owner's ruling, 2026-10-23)
+
+- `_AI/WINE-MACRO-DATUMS.md` is machine-local bulk: it stays in the
+  working tree only (gitignored), never enters git. Per-game rows
+  accumulate too fast to version; the committed history stays in the
+  git log.
+- `_AI/`-only changes (datum rows, NEXT tips, audit notes) are never
+  committed alone. They accumulate in the working tree and ride the
+  next code commit - a commit exists only when production or test code
+  moves. This extends §26 (no doc-only commits) to all `_AI/` edits.
