@@ -245,6 +245,7 @@ archive ground truth (Total time verdicts; fed counts by realpath-dedup script):
  2026-10-26 Wine TauCross macro 092241 (VICTORY 6/8, 496s game, 8 own deaths): BOARD_FED 2x (sustained-zealot f5130 pumps 6, sustained-dragoon f9930 pumps 7) - both rescue; tally 97 rescue, 0 routine, still no candidate (29th/30th live demotes; Cyber sup14 earliest on record; Nexus#2 warped f10769 [51,113] per ledger, roster Nexus=2).
  2026-10-26 Wine TauCross macro 110209 (VICTORY 6/11, 613s game, 11 own deaths): BOARD_FED 1x (sustained-zealot f8250 pumps 8) - rescue; tally 98 rescue, 0 routine, still no candidate (CyberneticsC took-too-long cancel + 50 core-single-instance refusals, never warped; gasless Dragoon-less game; Nexus=3).
  2026-10-26 Wine TauCross macro 111728 (VICTORY 2/0, 388s game, zero own deaths): BOARD_FED 2x (sustained-zealot f5100 pumps 6, sustained-dragoon f7710 pumps 7) - both rescue; tally 100 rescue, 0 routine, still no candidate (3 homeward FLEE episodes, 0 deaths; first frames had visible foe, remainder foe-unknown).
+ 2026-10-26 Wine TauCross macro 112115 (VICTORY 0/0, 420s game, zero own deaths): BOARD_FED 3x (sustained-zealot f4920 pumps 6, supply-pylon f6600 pumps 1, sustained-dragoon f7350 pumps 5) - all rescue; tally 103 rescue, 0 routine, still no candidate (no FLEE rows at all - nothing to retreat from).
 ## §2 — item 1 re-sweep chain (retained-log recounts)
 
  2026-10-23 re-sweep over 64 unique retained logs (latest-symlink
@@ -436,6 +437,7 @@ archive ground truth (Total time verdicts; fed counts by realpath-dedup script):
  2026-10-26 re-sweep over 182 unique retained logs: 74 BOARD_FED rows, all rescue, 0 routine - tally 97 rescue / 0 routine (B52 +2; foreign row in rows-total only).
  2026-10-26 re-sweep over 183 unique retained logs: 75 BOARD_FED rows, all rescue, 0 routine - tally 98 rescue / 0 routine (B53 +1).
  2026-10-26 re-sweep over 184 unique retained logs: 77 BOARD_FED rows, all rescue, 0 routine - tally 100 rescue / 0 routine (B54 +2).
+ 2026-10-26 re-sweep over 185 unique retained logs: 80 BOARD_FED rows, all rescue, 0 routine - tally 103 rescue / 0 routine (B55 +3).
 ## §3 — #150 adopt/cancel ledger
 
  2026-10-23 Wine TauCross macro 203305 (VICTORY 1/0, 374 s, supply-cap exit): same quiet shape - 0 CANCELs, 0 ADOPTED, builder-rich; no overlap rows.
@@ -480,6 +482,7 @@ archive ground truth (Total time verdicts; fed counts by realpath-dedup script):
 2026-10-26 macro 092241 (VICTORY 6/8, 496s game, 8 own deaths): 0 ADOPTED; 1 CANCEL (Pylon refresh [112,100] f10941 never re-warped, 13 of 14 STARTED warped); DEMOTE_STALLED twin 2x ([90,108] Gateway f6474 90f warped f6479 - 5f re-arm ties B49's record; [79,121] Pylon f7674 90f warped f7733) - 29th/30th live demotes (30 total across retained logs).
 2026-10-26 macro 110209 (VICTORY 6/11, 613s game, 11 own deaths): 0 ADOPTED; 2 CANCELs (CyberneticsC [98,111] f7405 took-too-long 116s - second took-too-long on record after B50's Gateway; Pylon resite [90,107] f8604 -> [79,114] warped - cancel-and-replace).
 2026-10-26 macro 111728 (VICTORY 2/0, 388s game, zero own deaths): 0 ADOPTED; 1 CANCEL (Pylon refresh [117,12] f5336 -> resite [113,8] warped [112,7] f5423 same order, 87f gap; [117,12] re-warped late f8205 as order #44); 0 DEMOTEs; 0 BREAKDOWNs.
+2026-10-26 macro 112115 (VICTORY 0/0, 420s game, zero own deaths): 0 ADOPTED; 0 CANCELs; 0 DEMOTEs; 0 BREAKDOWNs.
 ## §4 — #71 lottery (700 s+ run)
 
  2026-10-23 macro 203305: supply-cap exit at 374 s, Nexus#2 queued 6:11 but unwarped at the cap - too short and multi-base trajectory, not the lottery shape.
@@ -578,6 +581,7 @@ archive ground truth (Total time verdicts; fed counts by realpath-dedup script):
  2026-10-26 macro 092241 (496s VICTORY 6/8, 2 bases - Nexus#2 warped f10769 [51,113] per ledger, archived roster Nexus=2): multi-base, not the lottery shape; second 2-base with a sub-500s clock.
  2026-10-26 macro 110209 (613s VICTORY 6/11, 3 bases - Nexus#2 warped f11948 [51,113] + Nexus#3 warped f12250 per ledger, archived roster Nexus=3): multi-base, not the lottery shape.
  2026-10-26 macro 111728 (388s VICTORY 2/0, 1 base, Nexus never queued, Nexus=1, no Forge): right shape, still far too short of the 700 s+ lottery.
+ 2026-10-26 macro 112115 (420s VICTORY 0/0, 1 base, Nexus#2 warp placed f9149 [14,13] per ledger but archived roster Nexus=1, Lost:0 - uncompleted-or-lost at exit, unresolved, explicitly not concluded): not the lottery shape by outcome (no second base standing); Forge#1 warped f9097 (Forge game).
 ## §5 — #84 pipeline + cancel ledger
 
  2026-10-23 macro 203305: pipeline healthy (13 STARTED, 0 CANCELs); one stall-with-recovery (Assimilator builder 121f, GasWorker assigned after, warped) - known class, not a new instance. STUCK_WORKER twin rows 221x at ~30f cadence per worker are the cyclic diagnostic, not 221 stalls.
@@ -725,6 +729,7 @@ archive ground truth (Total time verdicts; fed counts by realpath-dedup script):
  2026-10-26 macro 092241 (VICTORY 6/8, BUILDER_LOG=1): pipeline busy - Pylon#1 f976 [92,113] (bottom spawn), 14 STARTED, 1 CANCEL (Pylon refresh [112,100] f10941 took-too-long shape, never re-warped), DEMOTE twin 2x (Gateway#31 f6474 + Pylon f7674, both 90f); BREAKDOWN twin 2x early (Pylon [94,101] f3210 63f + [112,114] f8550 71f, both recovered) + late Gateway cluster f11160-11670 (stoodStill 82->222, exit-cutoff, unrecovered) + Nexus pair f10350; 13 of 14 STARTED warped; GW#2/#3 instant starts (no PREPARING twin); Nexus#2 STARTED f10769 [53,114] cid60 warp placed [51,113] per ledger; Assimilator#1 warped f6837; no Forge; CyberneticsC STARTED f5127 warped f5181 (sup14, earliest Cyber on record); STUCK_WORKER 306x across 32 workers - cyclic, not stalls. No refresh-cancel on Cyber, no zombie row, no core-single-instance.
  2026-10-26 macro 110209 (VICTORY 6/11, BUILDER_LOG=1): pipeline busy - Pylon#1 f976 [92,113] (bottom spawn), 16 STARTED, 2 CANCELs (Cyber took-too-long + Pylon resite); CyberneticsC STARTED f7405 cid54 oid9, 50x core-single-instance refusals, NEVER warped (fifth terminal-Cyber shape (B48 datum names the fourth) - refusal, not lock, per lock-pair test); Assimilator never STARTED (gasless, fourth Assimilator-less after B36/B44/B48); no Dragoons warped; 14 of 16 STARTED warped (Cyber never + Pylon [90,107] superseded by resite); GW#2/#3 instant starts (no PREPARING twin, dynamic oids 33/55 only); Nexus#2 f11948 + Nexus#3 f12250 warped; no Forge; STUCK_WORKER 0x; NexusQ 156. No refresh-cancel on Cyber (cancel was took-too-long), no zombie row beyond the refusal shape, no core-single-instance outside Cyber.
  2026-10-26 macro 111728 (VICTORY 2/0, BUILDER_LOG=1): pipeline busy - Pylon#1 f957 [113,15] (top spawn), 16 STARTED, 1 CANCEL (Pylon refresh [117,12] f5336 superseded by resite+late rewarp); 15 of 16 STARTED warped; GW#2 PREPARING twin f1684 (27f before STARTED - ends the B41-B53 instant-start run); CyberneticsC warped f4336 clean; Assimilator warped f4757; Nexus never queued (final Nexus=1); no Forge; STUCK_WORKER 0x; NexusQ 0. No refresh-cancel on Cyber, no zombie row, no core-single-instance.
+ 2026-10-26 macro 112115 (VICTORY 0/0, BUILDER_LOG=1): pipeline busy - Pylon#1 f952 [10,52] (top spawn), 17 STARTED, 0 CANCELs, 0 DEMOTEs; 17 of 17 STARTED warped (Nexus#2 placed-unfinished-or-lost, see lottery note); GW#2/#3 instant starts (no PREPARING twin, only dynamic oids 30/64); Nexus#2 STARTED f9149 warp placed f9149 [14,13] per ledger; Forge#1 warped f9097; Assimilator#1 warped f4572; CyberneticsC warped f4283 clean; STUCK_WORKER 0x (third straight zero game); NexusQ 35. No zombie row, no core-single-instance.
 ## §6 — #74 breakdown + demote analyses
 
 Collects the demote/abnormal-exit analyses attached to the #84 and #74 chain regions.
@@ -820,6 +825,7 @@ Collects the demote/abnormal-exit analyses attached to the #84 and #74 chain reg
 
  2026-10-26 macro 092241: same schema (0 MOVE_BUILD rows); 2 early Pylon breakdowns recovered ([94,101] f3210, [112,114] f8550) + Nexus pair f10350 + late Gateway exit-cutoff cluster (6 rows f11160-11670, stoodStill 82->222, unrecovered); demote-timing: 29th/30th live demotes, both exactly 90f (30 DEMOTE_STALLED total across 182 retained logs).
  2026-10-26 macro 111728: same schema (0 MOVE_BUILD rows); zero breakdowns; 3 homeward FLEE episodes (centers (75,76)->(101,50), foe mostly unknown, first frames foe-visible) - no scatter deaths; blocking-override live proof still pending (no blocking situation in this game).
+ 2026-10-26 macro 112115: same schema (0 MOVE_BUILD rows); zero breakdowns; zero FLEE rows (nothing to retreat from - no fight in this game).
 ## §7 — #92 second-Gateway lag
 
  2026-10-23 macro 203305: same +1 lag, systematic (Gateway #2 sup 11 vs BO At 10, #3 sup 13 vs At 12, Pylon #5 sup 17, Assimilator sup 25) - no 3-min lateness, warped all.
@@ -916,6 +922,7 @@ Collects the demote/abnormal-exit analyses attached to the #84 and #74 chain reg
 2026-10-26 macro 092241: gateway +1 lag holds (GW#2/#3 sup 11/13, P5 sup 16 vs At 15) but P8 sup 21 ON PLAN (rare, 1 prior in chain) and Cyber sup 14 vs At 22 (-8, lowest on record, prior min 17); P11 sup 31 vs At 27 (+4); console audit 5 off-plan - lateness pattern holds for gateways only.
 2026-10-26 macro 110209: gateway +1 lag holds (GW#2/#3 sup 11/13, P5 sup 17 vs At 15 (+2)) but P8 sup 19 vs At 21 (-2, early) and P11 sup 25 vs At 27 (-2, early); console audit 5 off-plan.
 2026-10-26 macro 111728: systematic +1 lag (Gateways #2/#3 sup 11/13, Pylon #5 sup 17 vs At 15 (+2), Pylon #8 sup 23 vs At 21 (+2), Pylon #11 sup 28 vs At 27 (+1, passes); CyberneticsC sup 22 vs At 22 ON PLAN, Assimilator sup 23 vs At 23 ON PLAN; console audit 4 off-plan - gateway lateness holds, Pylon lateness mixed.
+2026-10-26 macro 112115: systematic +1 lag (Gateways #2/#3 sup 11/13, P5 sup 16 vs At 15 (+1), P8 sup 23 vs At 21 (+2), P11 sup 29 vs At 27 (+2); CyberneticsC sup 23 vs At 22 (+1); Assimilator sup 23 vs At 23 ON PLAN; console audit 5 off-plan.
 ## §8 — #95 artefact re-checks
 
  Re-checked 2026-10-22 (later, 52 logs): still zero - the deadlock shape
@@ -1014,6 +1021,7 @@ Collects the demote/abnormal-exit analyses attached to the #84 and #74 chain reg
  Re-checked 2026-10-26 (182 unique logs, incl. 092241 + foreign 091345): no new artifact shape (both archives complete: verdict + roster + Total time present, full streams, no twin-stream loss).
  Re-checked 2026-10-26 (183 unique logs, incl. 110209): no new artifact shape (B53 archive complete: verdict + roster + Total time present, 4366 rows).
  Re-checked 2026-10-26 (184 unique logs, incl. 111728): no new artifact shape (B54 archive complete: verdict + roster + Total time present, 2300 rows, maxframe 9240 = 385s vs Total 388s).
+ Re-checked 2026-10-26 (185 unique logs, incl. 112115): no new artifact shape (B55 archive complete: verdict + roster + Total time present, 3008 rows, maxframe 10020 = 417s vs Total 420s).
 ## §9 — #155 BUILD_REFUSED guards
 
  2026-10-23 macro 203305 (374 s, supply-cap exit): BUILD_REFUSED Pylon 5 + Gateway 3 (min-supply 4, earlier-reserve 2, funding 1, core-priority 1 re-fire); no new gate proven.
@@ -1106,6 +1114,7 @@ Collects the demote/abnormal-exit analyses attached to the #84 and #74 chain reg
  2026-10-26 macro 092241 (13 warps): re-fire only - unstarted-pylon 8x, pylon-overstock 6x, below-min-supply-and-poor 11x (Pylon 5/CyberneticsC 4/Gateway 2), earlier-reserve 7x (Gateway 3/CyberneticsC 2/Pylon 1/Nexus 1), core-priority 2x, funding 1x; zero live fires, no new guard shapes vs the chain.
  2026-10-26 macro 110209 (14 warps): re-fire only - CyberneticsC core-single-instance 50x + below-min-supply 12x + earlier-reserve 3x, Pylon pylon-overstock 17x, below-min-supply 8x, earlier-reserve 1x, pylon-cap 2x, core-priority 1x, unstarted-pylon 1x, Gateway below-min-supply 2x + funding 1x; zero live fires, no new guard shapes vs the chain.
  2026-10-26 macro 111728 (15 warps): re-fire only - pylon-cap 6x, unstarted-pylon 3x, below-min-supply 2x (Pylon x2/Gateway x2), earlier-reserve 2x, core-priority 2x, funding 1x, CyberneticsC funding 1x; zero live fires, no new guard shapes vs the chain.
+ 2026-10-26 macro 112115 (17 warps): re-fire only - unstarted-pylon 5x, pylon-cap 4x, below-min-supply 4x (Gateway 2/Pylon 2), earlier-reserve 3x (Pylon 2/Gateway 1), core-priority 2x, funding 2x (Gateway/CyberneticsC); zero live fires, no new guard shapes vs the chain.
 ## §10 — game-state snapshot 2026-10-21
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
