@@ -299,6 +299,7 @@ The index of which document answers which question is `_AI/README.md`.
  2026-10-26 Wine TauCross macro 061958 (VICTORY 1/0, 379s game, zero own deaths): BOARD_FED 2x
  (sustained-zealot f5010 pumps 8, sustained-dragoon f7650 pumps 10) - both rescue; tally 60 rescue,
  0 routine, still no candidate.
+ 2026-10-26 Wine TauCross macro 062321: ABNORMAL EXIT, no verdict - JVM gone ~f8661 with no VICTORY/Defeat/ForceExit/tail (last ledger warp Dragoon f8661, last stream event 6:06); twin stream lost (32 startup rows retained, cause undetermined - no OOM in dmesg); contributes 0 BOARD_FED rows; tally holds at 60 rescue, 0 routine.
  2026-10-23 re-sweep over 97 unique retained logs: 9 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 33 rescue / 0
  routine, still no candidate (the newest runs are UMS duels, no
@@ -352,6 +353,9 @@ The index of which document answers which question is `_AI/README.md`.
  2026-10-26 re-sweep over 153 unique retained logs: 36 BOARD_FED rows,
  all rescue, 0 routine - cumulative tally holds at 60 rescue / 0
  routine, still no candidate.
+ 2026-10-26 re-sweep over 154 unique retained logs: 36 BOARD_FED rows,
+ all rescue, 0 routine - cumulative tally holds at 60 rescue / 0
+ routine, still no candidate (062321's twin stream lost in the abnormal exit - 0 rows from that game).
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -909,6 +913,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 macro 060458 (343s VICTORY 0/0, 1 base, Nexus never queued): right shape, still far too short of the 700 s+ lottery - shortest macro on record.
  2026-10-26 macro 061711 (366s VICTORY 0/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
  2026-10-26 macro 061958 (379s VICTORY 1/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
+ 2026-10-26 macro 062321: no lottery info - abnormal JVM exit ~f8661 (~6:04), no verdict, twin stream lost; not a lottery data point.
  2026-10-26 macro 060844 (394s VICTORY 1/0, 2 bases, Nexus#2 warped f6969): NOT the lottery shape anymore (multi-base) - and the first game that outgrew the 1-base lottery frame entirely.
  2026-10-26 macro 003012 (427 s VICTORY, supply-cap exit at 51, Nexus#2 STARTED f8940 but unwarped at the cap): multi-base trajectory - not the 1-base 700 s+ lottery shape.
 
@@ -993,6 +998,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 macro 060458 (VICTORY 0/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f964 [92,113] (bottom spawn), 12 STARTED, 0 CANCELs, BREAKDOWN x2 Pylon both unexplored ([94,101] f3180 recovered/warped f3355; [112,100] f7590 attempt-only, never STARTED); DEMOTE x0; 11 of 12 STARTED warped (Gateway [83,107] cut off by the supply-cap exit). STUCK_WORKER 216x across 24 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 061711 (VICTORY 0/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f952 [10,52], 13 STARTED, 0 CANCELs, BREAKDOWN x1 Pylon [35,65] f8730 (STARTED f8725, stranded by the supply-cap exit 5f later); DEMOTE x0; 12 of 13 STARTED warped. STUCK_WORKER 220x across 25 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 061958 (VICTORY 1/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f952 [10,52], 13 STARTED, 0 CANCELs, BREAKDOWN x1 Gateway [14,51] f2040 (builder-on-site, fifth occurrence, self-recovered); DEMOTE twin 1x Assimilator (first of its type), recovered per ledger; all 13 STARTED warped. STUCK_WORKER 231x across 24 workers at ~30f cadence - cyclic, not stalls.
+2026-10-26 macro 062321: ABNORMAL EXIT, no pipeline datum - JVM gone ~f8661 with no verdict/tail; twin stream lost (32 startup rows: no CANCEL/DEMOTE/REFUSED/STUCK/NexusQ evidence retained - the 3 stream-observed deaths, the Pylon demote 131f, the BOARD_FED row and the breakdowns are explicitly NOT datumed). Ledger-only facts: 22 warps (9 Zealot, 5 Pylon, 3 Gateway, 3 Dragoon, 1 CyberneticsC, 1 Assimilator), last warp Dragoon f8661 [113,18]; Pylon#1 f1154 [113,15] (top spawn).
 2026-10-26 macro 060844 (VICTORY 1/0, BUILDER_LOG=1): pipeline busy - Pylon#1 f957 [113,15] (top spawn), 17 STARTED, 8 CANCELs (7 refresh + 1 siteless Gateway, all archived), BREAKDOWN x6 (Gateway x3 incl. the 291f stall, Pylon [123,23] x3 same-frame triple); DEMOTE x0 (the 291f stall never tripped it - dist gate held, builder never within 3.5); 13 of 17 STARTED warped (5 Pylon + 7 Gateway + Nexus#2; unwarped: CyberneticsC (lock, see below) + Pylon [118,13] + the [117,12] churn (3 STARTED rows, 1 warp)); Nexus#2 warped f6969 (final Nexus=2). STUCK_WORKER 262x across 28 workers at ~30f cadence - cyclic, not stalls.
  2026-10-26 macro 003012 (VICTORY 4/0, BUILDER_LOG=1): pipeline healthy - Pylon#1 f964, 18 STARTED, 2 CANCELs (Pylon refresh f8316; Gateway siteless f8937), BREAKDOWN x2 Pylon self-recovered; DEMOTE_STALLED 1x Forge (twin live, recovered); BO audit only 3 mismatches. STUCK_WORKER 234x across 25 workers at ~30f cadence - cyclic, not stalls.
 
@@ -1112,6 +1118,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 2026-10-26 macro 060458: systematic +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 16 vs At 15, Pylon #8 sup 22 vs At 21; BO audit 3 off-plan, the same +1s) - lateness not reproduced.
 2026-10-26 macro 061711: systematic +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 16 vs At 15, Pylon #8 sup 23 vs At 21 (+2), Pylon #11 sup 29 vs At 27 (+2); BO audit 5 off-plan) - lateness not reproduced.
 2026-10-26 macro 061958: systematic +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17 vs At 15, Pylon #8 sup 23 vs At 21 (+2), Pylon #11 sup 28 vs At 27 (+1), all warped; console audit printed P5->16/P11->29, ledger says 17/28 - ledger rules, first caught audit-number mismatch) - lateness not reproduced.
+2026-10-26 macro 062321 (ledger-only, no twin stream): Gateways #2/#3 ON PLAN (sup 10/12, ledger-verified) - second on-plan game after 045503, and like it a top spawn ([113,15]); Pylon #8 sup 20 vs At 21 (early, like 045503) but Pylon #5 sup 17 (+2, unlike 045503's 16). Spawn-correlated pattern idea (N=2, coincidence noted, no causal claim): on-plan Gateways + early P8 on top spawns, +1 lag everywhere else.
 2026-10-26 macro 060844: systematic +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 16 vs At 15, Pylon #8 sup 23 vs At 21 (+2, like 045940/050409), Pylon #11 sup 33 vs At 27 (+6 - largest lag on record); BO audit 5 off-plan, the same +1s plus the two big Pylon lags) - lateness not reproduced.
 2026-10-26 macro 003012: identical +1 lag again (Gateways #2/#3 sup 11/13, Pylon #5 sup 17, all warped; only 3 BO mismatches, Pylon #8/#11 on plan for once) - lateness not reproduced.
 
@@ -1343,6 +1350,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  Re-checked 2026-10-26 (151 unique logs, incl. 060844): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (152 unique logs, incl. 061711): still zero - same single known transient, no deadlock shape.
  Re-checked 2026-10-26 (153 unique logs, incl. 061958): still zero - same single known transient, no deadlock shape.
+ Re-checked 2026-10-26 (154 unique logs, incl. 062321): still zero - same single known transient, no deadlock shape (062321's 32 retained rows are startup-only).
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
