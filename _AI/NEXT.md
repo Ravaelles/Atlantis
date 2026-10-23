@@ -492,7 +492,7 @@ re-measure before quoting, never copy old counts here.
   lottery continues, one axis at a time.
  2026-10-22 Wine TauCross macro (VICTORY 6:49, 1 base, BUILDER_LOG=1): no Nexus warp all game - right shape, 409 s short of 700 s; the 1-base lottery continues.
  2026-10-26 macro 091041 (367s VICTORY 1/0, 1 base, Nexus never queued, Nexus=1, no Forge): right shape, still far too short of the 700 s+ lottery.
-  Vehicle finding 2026-10-24 (code-read, decisive): Wine macros cannot win this lottery as configured - `ForceExitAtSupply` (horizon 50 in ENV-WINE-FAST) ends every macro game at supply ~51 (340-502s observed), and nothing else ever ends them (foe unknown all game, 0/0 most games). The 944s game was OpenBW (their gates own the end). One long macro now running with a per-run env (horizon 90, shared ENV untouched) - first attempt at the shape, not at the verdict. - DONE 2026-10-26: B134 ran 1209s to the 20:00 map/engine cap (horizon 90 worked, game ended at exactly f28800 with base intact), multi-base so not the lottery shape; still no 1-base 700s+ game anywhere (best remains the 944s OpenBW run).
+  Vehicle finding 2026-10-24 (code-read, decisive): Wine macros cannot win this lottery as configured - `ForceExitAtSupply` (horizon 50 in ENV-WINE-FAST) ends every macro game at supply ~51 (340-502s observed), and nothing else ever ends them (foe unknown all game, 0/0 most games). The 944s game was OpenBW (their gates own the end). One long macro now running with a per-run env (horizon 90, shared ENV untouched) - first attempt at the shape, not at the verdict. - DONE 2026-10-24: B134 ran 1209s to exactly f28800 = 20:00 game time, which is the bot's own `inGameSecondsLimit` default, not a map cap (base intact, army wiped, DEFEAT on exit); multi-base in any case, so still not the lottery shape. A real attempt needs horizon 90 AND the ingame cap raised/disabled AND a 1-base game - still no 1-base 700s+ game anywhere (best remains the 944s OpenBW run).
   → full chain: _AI/WINE-MACRO-DATUMS.md §4
 
 - **#81** Corner-stall Pylon search (top-right base [119,10]): needs the corner-stall game to decide doctrine vs leash-relax (owner call). Game happened (corner [119,10], 46 fails, Pylons still landed, supply unblocked): ranked refusals are physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 - leash never bound (doctrine wins on evidence, 99.5% tile rules). Instruments landed (refusal-breakdown accessor + `PylonSearchBreakdownTest` + `StreetGridDoctrineTest`); total failure removed by a last-resort ladder (doctrine untouched, `PYLON_FIND_FAILED` only when all passes fail, pinned 2/2). `PylonNeedsRoomAround` in place (pinned 4/4): two no-harm proofs, zero misfires, zero firing shapes yet - the firing path still rests on the stub pin until a real corner shape appears.
@@ -790,24 +790,12 @@ re-measure before quoting, never copy old counts here.
   `isTerminal` - additive, stub-pinned, zero behavior change), then
   migrate readers one by one with a game proof each (construction
   is the most Wine-proven area; no batch migration). LANDED
-  2026-10-20: all nine PREPARING readers (skip/cancel/overdue
-  guards, builderless-site filter, twin path label, adopt path +
-  guard) read isWaiting() instead of re-spelling the disjunction -
-  same predicate, zero behavior change, suite green
+  2026-10-20: all nine PREPARING readers read isWaiting() instead of
+  re-spelling the disjunction - same predicate, zero behavior change
   (`ConstructionOrderStatusTest`, `CoreSingleInstanceGateTest`
-  carry the semantics). 2026-10-21 sweep: no re-spelled disjunctions
-  left in prod (countPreparingOfType, adopt-prepared check, painter
-  orange tile migrated the same day, pinned by existing acceptance +
-  unit coverage); the remaining status() uses are single-state checks
-  or different predicates (hasStarted mixes, buildingUnit==null pairs),
-  not disjunctions - migration complete pending per-reader game proof,
-  which rides normal macros (no dedicated games).
- 2026-10-22 sweep: zero re-spelled disjunctions left in prod (all readers via isWaiting()); Wine TauCross macro (VICTORY 6:49, 17 warps, 0 CANCELs) is another clean per-reader run.
- 2026-10-22 re-sweep: still zero (only the isWaiting() definition, one
- isWaiting-based radius reader, and single-state checks).
- 2026-10-26 re-sweep: still zero re-spelled disjunctions in prod (the
- only PREPARING equality left is the isWaiting() definition itself).
- 2026-10-26 re-sweep: still zero (grep finds only the definition).
+  carry the semantics). Re-sweeps stay zero (definition + one
+  isWaiting-based radius reader + single-state checks only);
+  per-reader game proofs ride normal macros, no dedicated games.
 
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
@@ -1117,31 +1105,20 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Overnight replication 2026-10-23 (n=6, same jar: full stack): 6/6 VICTORY, hits 8/7/8/12/6/14 (mean 9.2) - win kept, V2 band holds at n=9 combined; still no wiring-attributable gain (discrimination limit stands). Replication 2026-10-24 (n=4, same jar): 4/4 VICTORY, hits 11/12/12/14 (mean 12.25) - combined n=13 at mean ~10.5, V2 band holds; A/B wiring-off still not run.
 
 
-- **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands). Update 2026-10-26: clock-cutoff slice LANDED (sim-pinned): `ScoutNearEnemyBase` no longer declines past 340 s - the ancient gate evicted unchased scouts into far-expo wander; leaving is the chase machinery's call only (5/5 `ScoutCirclesEnemyMainTest`, suite 1335/1335). Live proof still pending. Steamhammer FFA (real opponent): only separation micro fired (ScoutSeparateFromCloseEnemies 5x, HoldCourse 3x) - no enemy-main watch rows anywhere, and combat-unit-only telemetry carries no scout trail, so the watch is unproven and unwitnessed there too.
+- **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands). Update 2026-10-26: clock-cutoff slice LANDED (sim-pinned): `ScoutNearEnemyBase` no longer declines past 340 s - the ancient gate evicted unchased scouts into far-expo wander; leaving is the chase machinery's call only (5/5 `ScoutCirclesEnemyMainTest`, suite 1335/1335). Live proof still pending. Steamhammer FFA (real opponent): only separation micro fired (ScoutSeparateFromCloseEnemies 5x, HoldCourse 3x) - no enemy-main watch rows anywhere, and combat-unit-only telemetry carries no scout trail, so the watch is unproven and unwitnessed there too. B134: no SCOUT twin rows at all in 97k rows; early ling rush killed 3 probes at f4330-f4402, likely including the scout before any main-watch.
 - **#189** Log priority adoption (owner 2026-10-26, remainder after the
-  central slice): every console line now carries `[LOW]/[MED]/[HIGH]/[CRIT]`
-  (untagged call sites read `[MED]`), event rows always carry short `"lvl"`,
-  `[TEMP]` marks removable lines, `query-events.py --group KEY` prints the
-  `KEY:{frame:{params}}` shape (CONVENTIONS §27). Slice 1 LANDED: error
-  channel HIGH by construction (`ErrorLog.print`, debug stays LOW),
-  OpenBW FATAL is CRITICAL, init/map warnings HIGH, force-exit banner
-  HIGH, all six cancel paths HIGH (matches the CONSTRUCTION_CANCEL=HIGH
-  policy). Slice 2 LANDED: the other two force-exit banners + time-limit
-  notices HIGH, build-order load failure + RACE MISMATCH block + race-compare
-  failure HIGH (the handled UMS early-exception stays MEDIUM by design).
-  Slice 3 LANDED: throttle keys are stable slugs, never the rendered
-  message (live values silently disabled the once-per-minute throttle -
-  QUEUE_BASE twin rows every refresh; ~25 call sites migrated, routine
-  gas assignment rides LOW). Suite 1334/1334. Slice 4 verdict (measured,
-  no code): console side is DONE - B75-B79 macros carry 11-15 MED lines
-  per game, all one-shot startup/audit/exit, and UMS duels 0-9 (banners,
-  hit totals); there is no remaining routine MED flow on console. The
-  high-volume event-side MED (UNIT_TELEMETRY, ORDER_NOT_READY, CLUSTER,
-  TECH/SINGULARITY_CHECK) is the diagnostic dataset, not flow -
-  reclassifying it would fight #180 (thin/delete on owner call) and the
-  #95 watch, so it stays MED by design. #189 console work closed;
-  `[TEMP]` lines die per session.
-- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Steamhammer FFA loss (real opponent, 61 deaths audited): ZERO march-through deaths - every death either fought (attack orders + in-range targets to the end, e.g. #177/#178/#199 kiting while chewing) or retreated-caught-at-rally (e.g. #239 marched with foe 50+ away, died to the pursuer at the standoff); the chewer rule fires live (in-range ling/hydra attacks in all zealot death logs, tgt- only in the final frames); dtx/dty live on 413/413 CLUSTER rows (FLEE dests split standoff (98,96) vs mission anchor, no donation into the enemy observed - centers recede or hold). Blocking-geometry fight-through itself still unproven (enemy positions still absent - the dtx half exists now, the foe-position half does not). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest). Proof vehicle since 2026-10-24: CLUSTER twin carries the leader dest (dtx/dty) - the next retreat names its rally, so standoff-vs-base-vs-anchor is decidable per frame; enemy positions in the twin stay the missing half for blocker geometry. A real-opponent game (Steamhammer vehicle) is the live vehicle for all three. Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
+  central slice): every console line carries `[LOW]/[MED]/[HIGH]/[CRIT]`
+  (untagged reads `[MED]`), event rows carry short `"lvl"`, `[TEMP]`
+  marks removable lines (CONVENTIONS section 27). Slices 1-3 LANDED
+  (HIGH-by-construction error channel, remaining banners + load/race
+  failures, stable-slug throttle keys - suite green). Slice 4 verdict
+  (measured, no code): console side DONE (macros carry only one-shot
+  startup/audit/exit MED lines); event-side MED volume (UNIT_TELEMETRY,
+  ORDER_NOT_READY, CLUSTER, TECH/SINGULARITY_CHECK) is the diagnostic
+  dataset and stays MED by design (reclassifying fights #180 and the
+  #95 watch). #189 console work closed; `[TEMP]` lines die per session.
+
+- **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Steamhammer FFA loss (real opponent, 61 deaths audited): ZERO march-through deaths - every death either fought (attack orders + in-range targets to the end, e.g. #177/#178/#199 kiting while chewing) or retreated-caught-at-rally (e.g. #239 marched with foe 50+ away, died to the pursuer at the standoff); the chewer rule fires live (in-range ling/hydra attacks in all zealot death logs, tgt- only in the final frames); dtx/dty live on 413/413 CLUSTER rows (FLEE dests split standoff (98,96) vs mission anchor, no donation into the enemy observed - centers recede or hold). Blocking-geometry fight-through itself still unproven live. (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest). Proof vehicle complete since 2026-10-24 (leader dest dtx/dty + nearest-foe tile fx/fy, verified on every CLUSTER row of B132/B133/B134) - the next FLEE with a visible foe is decidable per frame, no new code needed; Steamhammer + B134 show the other half still missing (all FLEEs foe-unknown); sim proof done instead (BlockingForceSimTest). A real-opponent game (Steamhammer vehicle) is the live vehicle for all three. Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
 
 ## Current game state (updated 2026-10-21)
 
