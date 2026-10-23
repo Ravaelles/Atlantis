@@ -931,7 +931,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  2026-10-26 macro 060458 (343s VICTORY 0/0, 1 base, Nexus never queued): right shape, still far too short of the 700 s+ lottery - shortest macro on record.
  2026-10-26 macro 061711 (366s VICTORY 0/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
  2026-10-26 macro 061958 (379s VICTORY 1/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
- 2026-10-26 macro 062321: no lottery info - abnormal JVM exit ~f8661 (~6:04), no verdict, twin stream lost; not a lottery data point.
+ 2026-10-26 macro 062321: no lottery info - abnormal JVM exit ~f8661 (~6:04), no verdict, twin stream lost; not a lottery data point. Follow-up 2026-10-26: three subsequent macros (062612, 062958, 063315) completed normally with full twin streams - points to a Wine/X11 flake rather than a deterministic bot crash; the NPE-shaped suspect from B24 stays unreproduced.
  2026-10-26 macro 062612 (350s VICTORY 1/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
  2026-10-26 macro 062958 (364s VICTORY 1/0, 1 base, Nexus queued once never started): right shape, still far too short of the 700 s+ lottery.
  2026-10-26 macro 063315 (361s VICTORY 6/1, 1 base, Nexus never queued): right shape, still far too short of the 700 s+ lottery - second real fight (6 kills, Zerg rush f4600+).
