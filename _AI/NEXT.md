@@ -2086,8 +2086,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   Slice 3 LANDED: throttle keys are stable slugs, never the rendered
   message (live values silently disabled the once-per-minute throttle -
   QUEUE_BASE twin rows every refresh; ~25 call sites migrated, routine
-  gas assignment rides LOW). Suite 1334/1334. What remains is LOW for
-  remaining routine flow, never a batch; `[TEMP]` lines die per session.
+  gas assignment rides LOW). Suite 1334/1334. Slice 4 verdict (measured,
+  no code): console side is DONE - B75-B79 macros carry 11-15 MED lines
+  per game, all one-shot startup/audit/exit, and UMS duels 0-9 (banners,
+  hit totals); there is no remaining routine MED flow on console. The
+  high-volume event-side MED (UNIT_TELEMETRY, ORDER_NOT_READY, CLUSTER,
+  TECH/SINGULARITY_CHECK) is the diagnostic dataset, not flow -
+  reclassifying it would fight #180 (thin/delete on owner call) and the
+  #95 watch, so it stays MED by design. #189 console work closed;
+  `[TEMP]` lines die per session.
 - **#188** ClusterFlee overhaul live proof (owner report 2026-10-26: fleeing into death, fleeing with no visible enemy, scattered advance/retreat). Landed, sim-pinned: stragglers rally home on FLEE (never onto a forward-kiting leader); chased keeps ClusterFlee/RUN_ENEMY, unchased walks home as ClusterOrganizedRetreat/MOVE_FORMATION; blocking army between cluster and home forces FIGHT (Stardust rule, latch bypassed). Proven: new unit/chain tests green, full suite green, no-regression across clean Wine macros (homeward FLEEs, 0 scatter deaths). Pending: a real fight showing (a) organized tag in a death log, (b) a blocking-geometry fight-through, (c) cohesion through a lost fight. Update 2026-10-23: (a)+(c) partially closed by B58 - chased-FLEE + home-rally verified live (Zealot#145 died chased, both FLEE dests home; straggler-to-leader not reproduced); organized branch taken on every foe-unknown FLEE frame by construction, no death ever carried its tag; density rule deferred with measurement (max combat spread 2.7 tiles across 53 buckets, existing 2-tile leash + formation slots suffice unless scatter recurs). (b) still open live - no reconstructable blocker geometry in any twin (no enemy positions); sim proof done instead (BlockingForceSimTest: same wounded force both arms, blocked attacks through, lateral walks home untouched). Advance cohesion reviewed against Stardust (UnitCluster::move + moveAsBall boids + narrow-choke exclusions): our formation slots + 2-tile gather leash + GhostAdvance line-march cover the same intent, measured spreads stay ≤2.7, no change without scatter evidence.
 
 ## Current game state (updated 2026-10-21)
