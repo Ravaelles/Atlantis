@@ -473,7 +473,7 @@ re-measure before quoting, never copy old counts here.
   Vehicle finding 2026-10-24 (code-read, decisive): Wine macros cannot win this lottery as configured - `ForceExitAtSupply` (horizon 50 in ENV-WINE-FAST) ends every macro game at supply ~51 (340-502s observed), and nothing else ever ends them (foe unknown all game, 0/0 most games). The 944s game was OpenBW (their gates own the end). One long macro now running with a per-run env (horizon 90, shared ENV untouched) - first attempt at the shape, not at the verdict. - DONE 2026-10-24: B134 ran 1209s to exactly f28800 = 20:00 game time, which is the bot's own `inGameSecondsLimit` default, not a map cap (base intact, army wiped, DEFEAT on exit); multi-base in any case, so still not the lottery shape. A real attempt needs horizon 90 AND the ingame cap raised/disabled AND a 1-base game - still no 1-base 700s+ game anywhere (best remains the 944s OpenBW run).
   → full chain: _AI/WINE-MACRO-DATUMS.md §4
 
-- **#81** Corner-stall Pylon search (top-right base [119,10]): needs the corner-stall game to decide doctrine vs leash-relax (owner call). Game happened (corner [119,10], 46 fails, Pylons still landed, supply unblocked): ranked refusals are physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 - leash never bound (doctrine wins on evidence, 99.5% tile rules). Instruments landed (refusal-breakdown accessor + `PylonSearchBreakdownTest` + `StreetGridDoctrineTest`); total failure removed by a last-resort ladder (doctrine untouched, `PYLON_FIND_FAILED` only when all passes fail, pinned 2/2). `PylonNeedsRoomAround` in place (pinned 4/4): two no-harm proofs, zero misfires, zero firing shapes yet - the firing path still rests on the stub pin until a real corner shape appears.
+- **#81** Corner-stall Pylon search (top-right base [119,10]): needs the corner-stall game to decide doctrine vs leash-relax (owner call). Game happened (corner [119,10], 46 fails, Pylons still landed, supply unblocked): ranked refusals are physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 - leash never bound (doctrine wins on evidence, 99.5% tile rules). Instruments landed (refusal-breakdown accessor + `PylonSearchBreakdownTest` + `StreetGridDoctrineTest`); total failure removed by a last-resort ladder (doctrine untouched, `PYLON_FIND_FAILED` only when all passes fail, pinned 2/2). `PylonNeedsRoomAround` in place (pinned 4/4): two no-harm proofs, zero misfires, zero firing shapes yet - the firing path still rests on the stub pin until a real corner shape appears. B134 (20-min, crowded base): 0 PYLON_FIND_FAILED - last-resort ladder never needed, doctrine untouched.
 
 - **#84** Wine Pylon ordered but unbuilt (worker stall, placement refusal,
   null builder and cancels all ruled out from flag-off logs): needs a
@@ -485,7 +485,7 @@ re-measure before quoting, never copy old counts here.
   twin added per decision). Open: the STARTED-twin gap on the
   re-request door (cid=98/oid=67 "Null position" with zero REQUESTED
   rows); live proof of the warp-observer naming rides the next
-  legacy-minted warp game. Pipelines healthy on all flagged games since.
+  legacy-minted warp game. Pipelines healthy on all flagged games since. (B134 cid60 names its builder + tile in STARTED - the order side attributed fine; the stall itself is the #150 builder-alive shape, not an order gap).
   -> full chain: _AI/WINE-MACRO-DATUMS.md section 5
 
 - **#74** Wine builder variance remainder (requeue/distances/debounce
@@ -515,7 +515,7 @@ re-measure before quoting, never copy old counts here.
   correctly silent without Forge at any bank, without 700-bank/3rd
   base, without 8 combat units; the post-Forge window EXISTS and
   completes through L2 (Singularity 7:30, Legs 13:37, L1 14:33, L2
-  17:43 in one macro). Open: a post-Forge L3 window (richer still),
+  17:43 in one macro). B134 (20-min): SINGULARITY_CHECK True 1x / False 408x, TECH True 104x - post-Forge window exists but razor-thin. Open: a post-Forge L3 window (richer still),
   and a longer window after research starts (one 743 s run STARTED
   at 11:16 but the wall clock ended the game first).
 
@@ -534,7 +534,7 @@ re-measure before quoting, never copy old counts here.
   Gateway row names the layer when it recurs. Verdict across 8+ clean
   runs vs 3 late runs in the archive: intermittent, still no blind
   patch. Standing shape is systematic +1 supply lag on #2/#3 (not
-  lateness - warps land on time, audit tolerance confirmed).
+  lateness - warps land on time, audit tolerance confirmed). B134 (Wine, 20-min): GW#2 (BO At 10) warped 1:21, GW#3 (BO At 12) warped 1:47 - both prompt, late shape absent again (intermittent stands).
   -> full chain: _AI/WINE-MACRO-DATUMS.md section 7
 
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
