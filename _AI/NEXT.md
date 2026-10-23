@@ -1046,6 +1046,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the stuck-at-low-supply shape absent everywhere.
  2026-10-22 re-sweep across all 45 retained EVENTS logs: zero reserved>=250 rows at supply<=10 - the deadlock shape absent everywhere again.
  Re-checked 2026-10-26 (180 unique logs, incl. 091041): still only the four artifact instances - same test-boot shape, no deadlock shape.
+ Re-checked 2026-10-26 (214 unique logs): 4 reserved>=250 rows at supply<=10, all frame-3 BO-load CyberneticsC at sup 10 (test-boot transient, same family as the sup-10 artifact) - the supply-4/bank-74 deadlock shape absent everywhere.
   → full chain: _AI/WINE-MACRO-DATUMS.md §8
 
 - **#96** Wine verification batch (headless, model or owner): painter warping labels
@@ -2070,7 +2071,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  Relation: #184 (standoff distance is a targeting/kiting threshold candidate, not pre-decided); #185 (this is exactly one of the hand-written gates the learner will replace - features: our speed, relative speed, angle, cooldown, distance, orderTarget commitment).
 
 
-- **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands).
+- **#187** Scout persists in the enemy main (owner report 2026-10-23, critical): a scout that finds the enemy main with no battle units yet leaves and wanders to far expos instead of watching. Required: stay in/around the enemy main gathering intel until battle units chase it out; then keep a circling mission nearby and retreat (natural, third base) only when hurt. No unprompted wander to unscouted expos while the main still has unseen area. Sim pin first (scout-vs-chaser: intel frames in main dominate the pre-contact window), live proof after on a game with a real enemy main (Wine with a real opponent; the UMS vehicle once #34 lands). Update 2026-10-26: clock-cutoff slice LANDED (sim-pinned): `ScoutNearEnemyBase` no longer declines past 340 s - the ancient gate evicted unchased scouts into far-expo wander; leaving is the chase machinery's call only (5/5 `ScoutCirclesEnemyMainTest`, suite 1335/1335). Live proof still pending.
 - **#189** Log priority adoption (owner 2026-10-26, remainder after the
   central slice): every console line now carries `[LOW]/[MED]/[HIGH]/[CRIT]`
   (untagged call sites read `[MED]`), event rows always carry short `"lvl"`,

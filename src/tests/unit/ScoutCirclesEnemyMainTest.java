@@ -5,6 +5,7 @@ import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
+import atlantis.map.scout.enemy.ScoutNearEnemyBase;
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 import org.junit.jupiter.api.AfterEach;
@@ -204,5 +205,27 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
         }
         assertTrue(homeward, "hurt chased scout retreats toward home, not merely south: scoutHp=" + ours[1].hp()
             + " pos=" + ours[1].position() + " logs=" + ours[1].managerLogs());
+    }
+
+    /**
+     * NEXT #187 remainder: the enemy-main watch used to end at 340 s
+     * ({@code ScoutNearEnemyBase} declined past {@code A.s >= 340}) whether
+     * anything chased the scout or not - the exact reported shape (leaves
+     * the found main, wanders to far expos). Required: an unchased scout
+     * keeps the main past the cutoff; leaving is the chase machinery's
+     * call (separation micro, hurt retreat), never the clock's.
+     */
+    @Test
+    public void unchasedScoutKeepsMainPast340() {
+        FakeUnit[] ours = oursWithScoutAt(113, 12);
+        FakeUnit foeNexus = fakeEnemies(fake(AUnitType.Protoss_Nexus, FOE_X, FOE_Y))[0];
+
+        runScoutChain(60, ours, new FakeUnit[]{foeNexus}, null);
+
+        atlantis.game.A.setNow(11000, 366);
+
+        assertTrue(new ScoutNearEnemyBase(ours[1]).applies(),
+            "unchased scout keeps watching the found main past 340 s: "
+                + ours[1].managerLogs());
     }
 }

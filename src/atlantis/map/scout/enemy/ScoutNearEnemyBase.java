@@ -2,7 +2,6 @@ package atlantis.map.scout.enemy;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.game.A;
 import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutState;
@@ -19,7 +18,10 @@ public class ScoutNearEnemyBase extends Manager {
     @Override
     public boolean applies() {
         if (ScoutState.scoutsKilledCount >= 3) return false;
-        if (A.s >= 340) return false;
+
+        // No clock cutoff by design (NEXT #187): an unchased scout keeps
+        // the found main; leaving is the chase machinery's call, never
+        // the clock's. The old 340 s gate evicted it into far-expo wander.
 
         enemyMain = EnemyMainBase.get();
         if (enemyMain == null) return false;
