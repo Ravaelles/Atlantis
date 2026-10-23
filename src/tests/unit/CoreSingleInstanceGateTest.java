@@ -136,6 +136,43 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
         ConstructionRequests.constructions.add(construction);
     }
 
+    /**
+     * BUG characterization (NEXT #150, Wine TauCross B22 060844): a
+     * refresh-cancel removes the Construction row but NOT the
+     * ProductionOrder row. The zombie order (older, siteless, ready)
+     * and its own re-request then refuse each other via this gate
+     * forever - the older waits on the younger's preparing site
+     * (coming-for-another), the younger waits on the older zombie
+     * (older-ready-waiter) - and the Core never warps (live: 34
+     * refusals, 0 CyberneticsC, 0 Dragoons). This pins the mechanism
+     * green; the fix retires the zombie order row on re-request, and
+     * re-points this test at the retired shape (a lone re-request
+     * proceeds).
+     */
+    @Test
+    public void cancelledZombieRowAndItsRerequestRefuseEachOther() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 11, 10);
+
+        world(30, AbstractTestWithWorld.units(nexus, probe), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 10) return;
+
+            currentSupplyUsed = 30;
+            currentMinerals = 1000;
+
+            ProductionOrder zombie = new ProductionOrder(CORE, 8);
+            ProductionOrder rerequest = new ProductionOrder(CORE, 8);
+            Queue.get().addNew(0, zombie);
+            Queue.get().addNew(1, rerequest);
+            linkNotStartedSite(rerequest);
+
+            assertEquals("core-single-instance", gate().check(CORE, rerequest),
+                "the re-request waits behind the older ready zombie row");
+            assertEquals("core-single-instance", gate().check(CORE, zombie),
+                "the zombie waits on the re-request's preparing site - nobody proceeds, the lock is terminal");
+        });
+    }
+
     private static BuildGate gate() {
         for (BuildGate gate : BuildGates.all()) {
             if (gate.name().equals("core-single-instance")) return gate;
