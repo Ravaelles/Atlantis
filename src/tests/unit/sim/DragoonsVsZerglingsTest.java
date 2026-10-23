@@ -121,15 +121,20 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     @Test
     public void woundedDragoonsWithdrawAndSurvive() {
         // Band matters: all three under the 80hp pinch line (wounded),
-        // healthy enough that 4 lings cannot eat them before focus fire
-        // (about a ling per 2 volleys) clears the pressers.
+        // healthy enough that 3 lings cannot eat them before focus fire
+        // (about a ling per 2 volleys) clears the pressers. Recalibrated
+        // 2026-10-26: the WINDUP lookup fix (dragoon 6->8, ling 6->5)
+        // made the old 4-ling heat lethal - dragoons shoot a third slower
+        // while lings chew faster. Hp band untouched on purpose (pinch-line
+        // semantics); one presser fewer restores the intended regime under
+        // the corrected physics.
         FakeUnit[] dragoons = new FakeUnit[] {
             woundedDragoon(30, 20, 70),
             woundedDragoon(29, 21, 75),
             woundedDragoon(31, 19, 75),
         };
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 36, 19 }, { 36, 20 }, { 36, 21 }, { 37, 20 } }) {
+        for (double[] spot : new double[][] { { 36, 19 }, { 36, 20 }, { 36, 21 } }) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);

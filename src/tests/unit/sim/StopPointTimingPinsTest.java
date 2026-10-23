@@ -58,14 +58,14 @@ public class StopPointTimingPinsTest extends WorldStubForTests {
                     break;
                 }
             }
-            // Measured 6, not the map's 8: WINDUP keys ("Protoss_Dragoon")
-            // never match unit.type().name() ("Dragoon" - prefixes stripped),
-            // so every type falls through to the default 6. The map entries
-            // are dead until the lookup is fixed (filed follow-up, NEXT
-            // #186 - fixing it re-baselines every sim number). This pins
-            // the sim as-run, not the intent.
-            assertEquals(6, dropTick,
-                "dragoon damage lands 6 ticks after the attack starts in this sim");
+            // Measured 8: WINDUP keys ("Protoss_Dragoon") match
+            // type().fullName() (prefixes intact, unlike name() which
+            // strips them). A 2026-10-26 fix corrected a
+            // getOrDefault(name(), 6) lookup under which every type fell
+            // through to default 6 and the map entries were dead.
+            assertEquals(8, dropTick,
+                "dragoon damage lands 8 ticks after the attack starts (sim WINDUP model seam, "
+                    + "PurpleWave-derived - not engine data; a changed value fails loudly here)");
             assertEquals(dragoon.damageAgainst(zealot), before - (zealot.hp + zealot.shields),
                 "one windup cycle deals exactly one damage packet");
         }

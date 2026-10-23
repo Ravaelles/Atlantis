@@ -322,7 +322,7 @@ public class SimWorld {
                 unit.attackStartedAt = frame;
                 continue;
             }
-            int windup = WINDUP.getOrDefault(unit.type().name(), 6);
+            int windup = WINDUP.getOrDefault(unit.type().fullName(), 6);
             if (frame - attackStartedAt.get(unit.id()) >= windup) {
                 fire(unit, target);
                 attackStartedAt.remove(unit.id());
