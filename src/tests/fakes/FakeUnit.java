@@ -65,6 +65,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean stimmed = false;
     public boolean underDarkSwarm = false;
     public FakeUnit target = null;
+    public FakeUnit orderTarget = null;
     public String lastCommand = "None";
     public TechType lastTechUsed = null;
     public TechType researching = null;
@@ -349,6 +350,11 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public AUnit target() {
         return target;
+    }
+
+    @Override
+    public AUnit orderTarget() {
+        return orderTarget;
     }
 
     @Override
