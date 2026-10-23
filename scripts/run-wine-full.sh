@@ -523,13 +523,18 @@ else
 fi
 
 # Replay name carries opponent + engine (owner: bare MAP_DATE.rep names are
-# unattributable). Same template as run-wine-game.sh; this script owns the
-# live ini on the headless path, so it enforces the line every run instead
-# of inheriting whatever a watched run left behind. Placeholders mirror the
-# dist default (proven on real BWAPI 4.4.0 - %ENEMYNAMES% saved NOTHING live
-# on B64, race letters only).
+# unattributable). MEASURED on real BWAPI 4.4.0, macro path: any template
+# beyond %MAP% + strftime ($Y...) silently saves NOTHING (B64 ENEMYNAMES,
+# B65/B66 BOTRACE/ENEMYRACES, B69 static PvsZ - zero reps; old template
+# saved 7/9 incl. B67/B68/B72, duel path unaffected). So the engine keeps the
+# proven template and the RICH name is composed here, where both races are
+# known (client race above, enemy_race below): the per-run archive and the
+# shared dir get MAP_PvsZ_wine_DATE.rep next to the engine's file.
 REPLAYS_DIR="${REPLAYS_DIR:-/sc-ai/REPLAYS}"
-REPLAY_TEMPLATE="%MAP%_%BOTRACE%vs%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep"
+ENEMY_RACE_INI="$(grep -oE '^enemy_race *= *[A-Za-z]+' "$INI" | grep -oE '[A-Za-z]+$' || true)"
+BOT_LETTER="$(printf '%s' "${CLIENT_RACE:-Protoss}" | cut -c1)"
+FOE_LETTER="$(printf '%s' "${ENEMY_RACE_INI:-Zerg}" | cut -c1)"
+REPLAY_TEMPLATE="%MAP%_\$Y\$m\$d_\$H\$M\$S.rep"
 if grep -qE "^save_replay *=" "$INI"; then
   sed -i -E "s|^save_replay *=.*|save_replay=$REPLAYS_DIR/$REPLAY_TEMPLATE|" "$INI"
 else
@@ -614,6 +619,18 @@ say "###############################################"
 while kill -0 "$CLIENT_PID" 2>/dev/null; do
   sleep 2
 done
+# Teardown-race guard (replay save flakiness, measured B64-B71: the engine
+# sometimes writes no .rep at all on the macro path): give the engine up
+# to 20 s after client exit to flush the replay before the -9 below.
+# Breaks early the moment a new rep lands; a no-op when it was already
+# saved (or when nothing ever comes - bounded cost, no behavior change).
+for _ in $(seq 1 20); do
+  CUR_REP="$(ls -t "$REPLAYS_DIR"/*.rep 2>/dev/null | head -1 || true)"
+  if [ -n "${CUR_REP:-}" ] && [ "$CUR_REP" != "${PRE_REP:-}" ]; then break; fi
+  [ "$_" = "1" ] && say "  waiting for the engine replay file..." || true
+  sleep 1
+done
+ls -lt "$REPLAYS_DIR"/ 2>/dev/null | head -3
 say "Client JVM exit, killing SC & ChaosLauncher."
 cleanup
 # Buildings ledger: the bot rewrites bwapi-data/write/BUILDINGS.json on
@@ -680,10 +697,16 @@ fi
   # The replay carries opponent + engine in its name (see template above);
   # archive this game's file next to its logs. The newest-first comparison
   # attributes correctly: a game that saved nothing leaves POST==PRE.
+  # Rich copy: the engine's file keeps its proven name; the archive and
+  # the shared dir also get MAP_PvsZ_wine_DATE.rep (opponent + engine),
+  # composed here from the known races - never via engine placeholders.
   POST_REP="$(ls -t "$REPLAYS_DIR"/*.rep 2>/dev/null | head -1 || true)"
   if [ -n "${POST_REP:-}" ] && [ "$POST_REP" != "${PRE_REP:-}" ]; then
-    cp -f "$POST_REP" "$RUN_DIR/" 2>/dev/null \
-      && say "replay archived: $RUN_DIR/$(basename "$POST_REP")" || true
+    RICH_NAME="$(basename "$POST_REP" .rep | sed -E "s/_([0-9]{8}_[0-9]{6})\$/_${BOT_LETTER:-P}vs${FOE_LETTER:-Z}_wine_\1/").rep"
+    cp -f "$POST_REP" "$RUN_DIR/$RICH_NAME" 2>/dev/null \
+      && say "replay archived: $RUN_DIR/$RICH_NAME" || true
+    [ "$RICH_NAME" != "$(basename "$POST_REP")" ] \
+      && cp -f "$POST_REP" "$REPLAYS_DIR/$RICH_NAME" 2>/dev/null || true
   fi
   ln -sfn "$RUN_DIR" "$WINE_RUNS_DIR/latest"
   say "run archived: $RUN_DIR"

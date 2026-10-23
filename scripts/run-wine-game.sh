@@ -163,11 +163,12 @@ game_type = $GAME_TYPE
 race = $RACE
 enemy_count = 1
 enemy_race = $ENEMY_RACE
-; Replay name carries opponent + engine (owner: bare MAP_DATE.rep names are
-; unattributable). Placeholders mirror the dist template (proven on real
-; BWAPI 4.4.0 - %ENEMYNAMES% saved NOTHING live on B64, race letters only):
-; a macro reads e.g. Tau_Cross_1.1_PvsZ_wine_20261023_110208.rep.
-save_replay = $REPLAYS_DIR/%MAP%_%BOTRACE%vs%ENEMYRACES%_wine_\$Y\$m\$d_\$H\$M\$S.rep
+; Replay name: the engine keeps the proven %MAP% + strftime template
+; (anything beyond it silently saves NOTHING on real BWAPI 4.4.0,
+; measured on the macro path). The rich MAP_PvsZ_wine_DATE.rep name is
+; composed by run-wine-full.sh at archive time, where both races are
+; known - this watched path only starts the game.
+save_replay = $REPLAYS_DIR/%MAP%_\$Y\$m\$d_\$H\$M\$S.rep
 
 [config]
 ; Wine-specific knob, documented in the 4.4.0 template: shared_memory = ON
