@@ -1614,6 +1614,18 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   unexplored/sweep/region plays are sim-testable. NN on this map rides the sim proxy + a live owner game when the
   vehicle is ready.
 
+- - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
+  9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").
+  Twin rows: PLACEMENT_FAILED dominant "Can't physically build here" x108-139 (of 152-225 sampled tiles), some "OK"
+  (guard-nulled, #145 shape); CONSTRUCTION_CANCEL "Null position" same frame each. Zero gateway warps after f4486 -
+  the flood fight ran on 2 gates. Cancel site: NewConstructionRequest.cancelNullPositionConstructionIfNeeded (ancient,
+  Dec 2025 rename only, no per-case design): non-pylon + A.s>=70 + supply>=11 -> order.cancel. Demand re-mints
+  (new oids keep coming), so the cancel does not kill demand forever - it kills every attempt while the area reads
+  unusable. Open root cause (needs order aroundPosition/maxDistance - not in twins - or a sim repro with blockers):
+  (a) transient battle clutter (army + raiders + rubble on tiles) -> the order should WAIT, not die; (b) wrong search
+  center -> search elsewhere. Next: sim repro (blocked home base -> READY order waits, never cancels) + twin carries
+  aroundPosition; no blind change to the cancel (it guards real stuck loops).
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;
