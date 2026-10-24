@@ -336,3 +336,30 @@ decompiled archives:
   deterministic mode stays forever as the A/B baseline. No
   end-to-end pixel policies; no training on a sim with unclosed
   dynamics gaps (Stage A bar first).
+
+## 30. StarEngine-first workflow (owner's ruling, 2026-10-26)
+
+- StarEngine (`tests/unit/sim/`, `tests/fakes/`) is the DEFAULT
+  work environment, not a combat-only harness: every defect that can
+  move units gets a one-scenario repro there (or a plain unit test
+  for pure logic) BEFORE any other verification. A report becomes
+  one failing scenario first; the fix lands with it green.
+- Iterate targeted: `--select-class` the repro plus directly
+  affected classes only. Never re-run the whole scope to check one
+  hypothesis - the full unit scope runs ONCE, as the pre-commit
+  gate (CONVENTIONS §6, §10), and stays green there. Architecture
+  scope stays advisory in the loop, authoritative via its own script.
+- Full-suite output noise is known (deliberate loud logging in
+  exercised error paths); targeted runs stay readable. A new test
+  prints at most one summary line.
+- Wine on a mini-map is a standing allowance for the cases the sim
+  cannot model (regions, fog, engine specifics): headless, bounded,
+  one game at a time, never overlapping the test suite (§14), with
+  the reason recorded in the test or commit. Games confirm, never
+  discover (§29).
+- Fidelity direction: replicate BASE unit behaviors faithfully
+  (facing, accel/braking, attack cycles, cooldowns), not the engine
+  pixel-perfectly. Regions may stay simple: the rect-region fake map
+  (quadrants + chokes + blocked bands) stands in for a real map
+  wherever the sim needs ground. Gaps vs live are filed as NEXT
+  items with measurement, never silently worked around.

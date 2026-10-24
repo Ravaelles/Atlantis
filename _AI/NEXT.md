@@ -1592,6 +1592,21 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   threatIfCutOff no-odds (CutoffRetreat.java:33-45), fight-if-can-hit-back falls through (RetreatFromLostFight.java:62+)
   - glue is live-validation gap, as filed.
 
+- - **#191** Post-fight freeze + idle twins + StarEngine rect-region map (owner report 2026-10-26, Drag_v_LingsUpg2:
+  after killing part of a pack the line stands ~10 s instead of forming up and marching at the last-seen enemy;
+  per-unit no-move + no-foe-near + weapon-ready is the signature, army-wide stillness the alarm). Mechanism (code-read):
+  fresh ghost at the kill site shadows older memory for the 240f stale window while the reached-claim holds the unit
+  with no order, and HuntLastContact leashes the line back to the stale site past 9 tiles (tug-of-war with the ghost
+  march). Fix LANDED 2026-10-26 (sim-first, zero behavior change without the trip): reached-fresh reroutes to older
+  memory with a departure marker (no ping-pong), hunt yields while departed, arrival stays terminal. Pins:
+  PostFightFreezeSimTest (displacement), PostFightPursuitDurationSimTest (two-wave clear, measured 336 vs pre-fix
+  never, bound 520). Logger LANDED: IDLE rows (per-unit, MED) + STALL rows (army-wide, HIGH) via IdleWatch +
+  ClusterTwin, pinned in IdleWatchTest + LogKeySeverityTest. Fidelity track (CONVENTIONS section 30, owner sketch):
+  rect-region fake map for the sim (main TR, natural BR, middle BL, enemy TL, choke gaps, blocked bands) carrying
+  base behaviors (facing, accel/braking, attack cycles, cooldowns) - regions may stay simple, ground must exist so
+  unexplored/sweep/region plays are sim-testable. NN on this map rides the sim proxy + a live owner game when the
+  vehicle is ready.
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;
