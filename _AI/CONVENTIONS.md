@@ -352,11 +352,17 @@ decompiled archives:
 - Full-suite output noise is known (deliberate loud logging in
   exercised error paths); targeted runs stay readable. A new test
   prints at most one summary line.
-- Wine on a mini-map is a standing allowance for the cases the sim
-  cannot model (regions, fog, engine specifics): headless, bounded,
-  one game at a time, never overlapping the test suite (§14), with
-  the reason recorded in the test or commit. Games confirm, never
-  discover (§29).
+- Wine games need no permission, ever (owner's ruling, 2026-10-26):
+  the assistant never asks whether it may launch a match - it decides
+  and runs it. Standing allowance covers any Wine match, mini-map or
+  full (mini-map preferred: faster, cheaper); headless, bounded, one
+  game at a time, in the background, never overlapping the test suite
+  (§14), never on top of the owner's own live game (check first).
+  The order stays: StarEngine repro first whenever the defect can
+  move units there; Wine when the sim cannot model it (regions, fog,
+  engine specifics) or the sim already answered and a game must
+  confirm. The reason is recorded in the test or commit. Games
+  confirm, never discover (§29).
 - Fidelity direction: replicate BASE unit behaviors faithfully
   (facing, accel/braking, attack cycles, cooldowns), not the engine
   pixel-perfectly. Regions may stay simple: the rect-region fake map
