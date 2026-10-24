@@ -901,6 +901,98 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    /**
+     * NEXT #97 (M4 funnel) + #185 Stage B, first harder-scenario
+     * fixture: the funnel has no ling-break (pinned above), but ranged
+     * pressers that outrange the guns shell it untouched. Guardians walk
+     * the same raid corridor, stop at their own max range and trade -
+     * the cannons never get an answer (scriptCannon holds: foe never in
+     * cannon reach). This is the losing side of the sim-siege leg: the
+     * funnel holds raids, it does NOT hold pressers. Also the first
+     * Stage B discrimination scenario (duel sims cannot separate the
+     * hold-early wiring; a harder scenario may).
+     */
+    @Test
+    public void wallFallsToRangedPressers() {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit[] pressers = new FakeUnit[] {
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 13),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 14),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 16),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 17),
+        };
+        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, pressers, arena);
+        APosition gap = APosition.create(30, 15);
+        int cannonHpStart = cannonA.hp + cannonB.hp;
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 2200; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, pressers);
+                    scriptCannon(cannonB, pressers);
+                    for (FakeUnit presser : pressers) {
+                        scriptRangedPresser(presser, gap, ours);
+                    }
+                });
+                boolean gunsDead = cannonA.hp <= 0 && cannonB.hp <= 0;
+                if (gunsDead) {
+                    break;
+                }
+            }
+            double cannonFraction = (Math.max(0, cannonA.hp) + Math.max(0, cannonB.hp))
+                / (double) Math.max(1, cannonHpStart);
+            assertTrue(cannonFraction < 1.0,
+                "pressers outranging the guns bleed the funnel (ling raids leave it untouched): "
+                    + cannonFraction);
+            for (FakeUnit presser : pressers) {
+                assertTrue(presser.hp >= presser.maxHp(),
+                    "outranging means unanswered: a presser that held max range takes no cannon fire: "
+                        + presser.hp + "/" + presser.maxHp());
+            }
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    /**
+     * Ranged presser: walk the raid corridor, but stop at own max range
+     * and shell - never enter the funnel mouth (that would hand the guns
+     * their range back). Mirrors scriptWallRaid's approach, inverts its
+     * ending: hold the standoff the guns cannot answer.
+     */
+    static void scriptRangedPresser(FakeUnit presser, APosition gap, FakeUnit[] guns) {
+        if (presser.hp <= 0) return;
+
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit gun : guns) {
+            if (gun == null || gun.hp <= 0) continue;
+            double dist = presser.distTo(gun);
+            if (dist < best) {
+                best = dist;
+                nearest = gun;
+            }
+        }
+        if (nearest != null && presser.distTo(nearest) <= SimWorld.reachTiles(presser, nearest)) {
+            presser.lastCommand = "AttackUnit";
+            presser.target = nearest;
+            presser.targetPosition = nearest.position;
+        }
+        else {
+            presser.lastCommand = "Move";
+            presser.target = null;
+            presser.targetPosition = presser.distTo(gap) > 1 ? gap.position() : nearest.position;
+        }
+    }
+
     @Test
     public void wallFunnelHoldsRaidWithoutHelp() {
         FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
