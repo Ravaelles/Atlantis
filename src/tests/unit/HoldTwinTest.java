@@ -83,6 +83,50 @@ public class HoldTwinTest extends WorldStubForTests {
         assertTrue(count >= 1 && count <= 3, "throttled, not flooding: " + count);
     }
 
+    /**
+     * NEXT #188 MOVE_FAILED follow-up: the 373x quiet refusals are
+     * BWAPI-level {@code u().move()} false, so the twin names the
+     * engine state at refuse time (canCommand/canMove) instead of
+     * another stack trace. Uniform across verdicts: the holders are
+     * the control group the coming unstick decision compares against.
+     */
+    @Test
+    public void moveFailedRowsNameBwapiRefusalState() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        foe.setEnemy();
+        dragoon.canCommand = false;
+        dragoon.canMove = false;
+
+        world(3, fakeOurs(dragoon), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.MOVE_FAILED);
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"verdict\":\"MOVE_FAILED\""), "got: " + rows);
+            assertTrue(rows.contains("\"canCmd\":false") && rows.contains("\"canMove\":false"),
+                "the refusal names the engine state that refused it: " + rows);
+        });
+    }
+
+    @Test
+    public void holdersRowTheCommandableControlGroup() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32.5, 20);
+        foe.setEnemy();
+
+        world(3, fakeOurs(dragoon), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            HoldTwin.note(dragoon, foe, FightOrFlight.Tactic.FIGHT,
+                FormationHold.HoldVerdict.HOLD);
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"canCmd\":true") && rows.contains("\"canMove\":true"),
+                "commandable holders row true - the control group: " + rows);
+        });
+    }
+
     @Test
     public void verdictFlipAlwaysRows() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);

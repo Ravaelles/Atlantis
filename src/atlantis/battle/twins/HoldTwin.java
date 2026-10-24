@@ -73,6 +73,8 @@ public final class HoldTwin {
                 .param("verdict", name)
                 .param("foe", foeDist)
                 .param("foes2", foes2)
+                .param("canCmd", unit.canCommand())
+                .param("canMove", unit.canMove())
                 .param("ux", unit.x() / 32)
                 .param("uy", unit.y() / 32)
                 .log(now, A.minSec());

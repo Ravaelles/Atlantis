@@ -2506,6 +2506,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return u != null && u.isLockedDown();
     }
 
+    /**
+     * NEXT #188 (Steamhammer MOVE_FAILED shape): the 373x quiet refusals
+     * are BWAPI-level {@code u().move()} false, invisible to every loud
+     * twin. The HOLD twin names this state at refuse time so the coming
+     * unstick decision reads data, not forensics. Guarded like the rest
+     * of the raw-state readers (null engine handle reads false).
+     */
+    public boolean canCommand() {
+        return u != null && u.canCommand();
+    }
+
+    public boolean canMove() {
+        return u != null && u.canMove();
+    }
+
     public boolean isDefenseMatrixed() {
 
         return u != null && u.isDefenseMatrixed();

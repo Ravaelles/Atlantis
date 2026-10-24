@@ -200,6 +200,19 @@ public class FakeUnit extends AUnit implements Serializable {
         return loaded;
     }
 
+    public boolean canCommand = true;
+    public boolean canMove = true;
+
+    @Override
+    public boolean canCommand() {
+        return canCommand;
+    }
+
+    @Override
+    public boolean canMove() {
+        return canMove;
+    }
+
     @Override
     public boolean isUnderStorm() {
         return false;
