@@ -178,12 +178,14 @@ public class MoveAway {
         APosition newPosition = destinationFor(unit, aim, moveDistance, threat);
         if (newPosition == null) return false;
 
+        // A refused order is not a step: try the next aim instead of
+        // reporting success (owner: a scout died walking into a zealot
+        // while every frame reported a move that never issued).
         if (unit.move(newPosition, action, "Move away" + unit.distToDigit(threat), false)) {
             return true;
         }
-        else {
-            return true;
-        }
+
+        return false;
     }
 
     /**
