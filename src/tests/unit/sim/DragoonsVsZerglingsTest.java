@@ -816,6 +816,92 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     // =========================================================
 
     @Test
+    public void wallHoldsEvenHeavyRaidUntouched() {
+        // NEXT #97 capacity leg, measured truth: there IS no ling-break
+        // for this funnel. 8-raid dies (the original proof); 32-raid dies
+        // too, tick 969, guns still at FULL hp - the funnel serializes
+        // the pack and the cannons out-trade every wave before it touches
+        // them. A losing fixture needs a different attacker shape
+        // (ranged pressers that outrange the guns), noted for Stage B,
+        // not built here. The sim-siege leg stands strengthened, not
+        // bounded.
+        Outcome eight = raid(8);
+        assertTrue(eight.wiped && eight.cannonFraction > 0.5,
+            "control: 8-raid dies in the funnel with gun margin: " + eight);
+
+        Outcome thirtytwo = raid(32);
+        assertTrue(thirtytwo.wiped && thirtytwo.cannonFraction == 1.0,
+            "even a 32-raid dies in the funnel without scratching the guns: " + thirtytwo);
+    }
+
+    private static final class Outcome {
+        boolean wiped;
+        double cannonFraction;
+        int ticks;
+
+        @Override
+        public String toString() {
+            return "wiped=" + wiped + ",cannonFraction=" + cannonFraction + ",ticks=" + ticks;
+        }
+    }
+
+    private static Outcome raid(int n) {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit[] lings = new FakeUnit[n];
+        for (int i = 0; i < n; i++) {
+            lings[i] = fakeEnemy(AUnitType.Zerg_Zergling, 10, 12 + i * (7.0 / Math.max(1, n - 1)));
+        }
+        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, lings, arena);
+        APosition gap = APosition.create(30, 15);
+        int cannonHpStart = cannonA.hp + cannonB.hp;
+        Outcome out = new Outcome();
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 2200; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, lings);
+                    scriptCannon(cannonB, lings);
+                    for (FakeUnit ling : lings) {
+                        scriptWallRaid(ling, gap, ours);
+                    }
+                });
+                boolean wiped = true;
+                for (FakeUnit ling : lings) {
+                    if (ling.hp > 0) wiped = false;
+                }
+                if (wiped) {
+                    out.ticks = i;
+                    break;
+                }
+                boolean gunsDead = cannonA.hp <= 0 && cannonB.hp <= 0;
+                if (gunsDead) {
+                    out.ticks = i;
+                    break;
+                }
+                out.ticks = i;
+            }
+            out.wiped = true;
+            for (FakeUnit ling : lings) {
+                if (ling.hp > 0) out.wiped = false;
+            }
+            out.cannonFraction = (Math.max(0, cannonA.hp) + Math.max(0, cannonB.hp))
+                / (double) Math.max(1, cannonHpStart);
+
+            return out;
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    @Test
     public void wallFunnelHoldsRaidWithoutHelp() {
         FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
         FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);

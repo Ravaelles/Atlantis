@@ -197,7 +197,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Unit 1431/1431 green (2026-10-24, `bash scripts/run-tests.sh`: keepable-efficacy pin included); architecture advisory
+Unit 1425/1425 green (2026-10-24, `bash scripts/run-tests.sh` on clean `out/` rebuild: wall-capacity pin included; prior 1431 irreproducible, stale-`out/` inflation per the §13 trap - re-baselined, re-measured per doctrine); architecture advisory
 9/11 (same 2 pre-existing edges, empty store diff). History rots -
 re-measure before quoting, never copy old counts here.
 
@@ -569,7 +569,7 @@ re-measure before quoting, never copy old counts here.
   anchor [106,42]; deaths cluster at [54,110] then [70,86], away from
   it. No attack onto the wall occurred, so the game cannot settle
   DPS-sufficiency either way - HOLD proof needs an attack onto the
-  wall (or a sim siege), not just another FE macro.) [ ] M5 module extraction (assessed
+  wall (or a sim siege), not just another FE macro.) Sim-siege leg LANDED 2026-10-24 (`wallFunnelHoldsRaidWithoutHelp` + capacity pin `wallHoldsEvenHeavyRaidUntouched`: 8-raid AND 32-raid both die in the funnel, guns at FULL hp - tick 969 for 32; no ling-break exists for this funnel, the pack serializes and the cannons out-trade every wave. A losing fixture needs a different attacker shape (ranged pressers outranging the guns), noted for Stage B, not built here.) [ ] M5 module extraction (assessed
   2026-10-17: 7 files, engine-import-free except own map types +
   `AUnitType`; single engine-coupled adapter (`EngineGroundLink`) already
   isolated behind `GroundLink` - physical extraction is build/repo
