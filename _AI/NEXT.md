@@ -1373,7 +1373,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  GhostAdvance:304) - no gating, no drift. Learner audit 2026-10-26b: no gated Behavior classes in prod (pre-existing
  applies() in detectors/siting is old framework, not the seam), no NN - spec-only holds. Dependency audit 2026-10-26b:
  zero NN libs in src/lib (no deeplearning/nd4j/neuralnet/tensorflow/onnx; vendored jars are
- archunit/jbwapi/junit/junixsocket) - gap (3) confirmed at dep level, in-house bandit/linear path stands.
+ archunit/jbwapi/junit/junixsocket) - gap (3) confirmed at dep level, in-house bandit/linear path stands. S1 LANDED
+ 2026-10-26 (sim -> CSV -> train -> eval -> gate vehicle, test scope only, zero production touch): SimMLP (9-12-1,
+ full-batch Adam, fixed seed, Java 8, zero deps) + HoldEarlyDataset (1v1 duels, dists x policies x seeds, 4800 ticks,
+ 9 deployment-readable features incl. the leaving conjunction, labels from DuelKite.shouldYield) + LearnedHoldEarlyGate
+ (0.5 verdict, fail-safe hold). Bar held: loss 0.79 -> 0.01; holdout (fully held-out STAND policy + held-out seeds)
+ agreement 0.993 vs 0.709 majority; downstream 6/6 duel wins preserved net-for-hand (fresh spawn offset). Measured gap
+ on record (S4 stimulant, not re-proven on schedule): fully held-out kite-back scores 0.647 vs 1.000 majority - the
+ never-yield-to-a-runner rule is unlearnable without a runner example in train, so the runner shape stays in train by
+ design. Pin: LearnedHoldEarlyGateTest 3/3.
 
 - **#186** ProtossAttackHoldToShoot: real firing range vs nominal weapon range (owner 2026-10-26, from the owner's old code under the same name).
  The nominal dragoon range (4.0 tiles) is NOT the range at which a shot actually lands while both sides move. From the moment we start stopping (braking distance at current speed) through windup to the damage frame, a chasing enemy keeps closing - by the time the shot can fire it is drastically closer than nominal range suggests. This is why holding further out showed nothing (E-hold65: 17/14/15, back at baseline): the hold point was never the binding constraint, the stop-to-shoot window is.
