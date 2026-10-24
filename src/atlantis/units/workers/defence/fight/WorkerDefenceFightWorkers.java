@@ -12,7 +12,9 @@ public class WorkerDefenceFightWorkers extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.hp() >= 14
+        // Owner 2026-10-26 (live 7th_rav game): a worker at 16 hp or less
+        // fights nothing, whatever the matchup - it dies to one swing.
+        return unit.hp() > 16
             && unit.enemiesNear().workers().atLeast(2)
             && unit.enemiesNear().combatUnits().inRadius(7, unit).empty()
             && unit.distToBase() <= 9;

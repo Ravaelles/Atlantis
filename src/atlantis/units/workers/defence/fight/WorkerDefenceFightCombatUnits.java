@@ -32,6 +32,16 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      */
     private static final double EVAL_DO_NOT_FIGHT = 0.7;
 
+    /**
+     * Clearly lost even for a supported line (owner 2026-10-26, live
+     * 7th_rav game): at or below this eval the exchange is so bad that a
+     * worker with no combat-unit support nearby must not join it - nobody
+     * answers the breach it would die for. Stricter than
+     * {@link #EVAL_DO_NOT_FIGHT} on purpose: that floor owns the
+     * losing-and-outnumbered shape, this one owns losing-and-ALONE.
+     */
+    private static final double EVAL_DO_NOT_FIGHT_BADLY = 0.4;
+
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
     }
@@ -142,6 +152,27 @@ public class WorkerDefenceFightCombatUnits extends Manager {
             return false;
         }
 
+        // Owner's rule (2026-10-26, live 7th_rav game): a worker that is
+        // both losing badly (eval at or below 0.4) AND alone - no
+        // combat-unit support nearby - must not fight. The owner's
+        // `havingCooldown` reads here as "armed friends in reach": counting
+        // only cooldown-zero units would undercount melee support, and a
+        // Zealot next to the worker is support even mid-swing. The swarm
+        // is exempt on purpose: few raiders with enough workers around is
+        // the won fight the swarm exists to take (WorkerSwarmTest pins a
+        // 3-probe attack at eval 0.145), and the outnumbered gate above
+        // already owns the losing-and-outnumbered shape.
+        if (
+            unit.hasEnemyForEval()
+                && unit.eval() <= EVAL_DO_NOT_FIGHT_BADLY
+                && !hasCombatSupportNear(unit)
+                && !isSwarmShapedFight(unit)
+        ) {
+            unit.setTooltipTactical("BadEvalNoSupport");
+
+            return false;
+        }
+
         Selection potentialEnemies = potentialEnemies(unit);
         AUnit enemy = potentialEnemies.nearestTo(unit);
 
@@ -185,6 +216,30 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         int workers = Select.ourWorkers().inRadius(6, worker).count();
 
         return raiders > workers;
+    }
+
+    /**
+     * True when an armed friend is close enough to answer: any combat unit
+     * within 10 tiles, the same radius the help path demands before it lets
+     * a worker join. Cannons count - a firing Photon Cannon is support.
+     */
+    private static boolean hasCombatSupportNear(AUnit worker) {
+        return worker.friendsNear().combatUnits().countInRadius(10, worker) > 0;
+    }
+
+    /**
+     * True when the fight around this worker has the swarm's shape: fewer
+     * raiders than the run threshold, enough workers to finish them. Same
+     * numbers as {@link #shouldSwarm}, read from the worker's side (the
+     * gate runs before a target is picked, so there is no enemy to read
+     * from yet) - the exemption for the won fight the swarm exists to take.
+     */
+    private static boolean isSwarmShapedFight(AUnit worker) {
+        if (worker.enemiesNear().combatUnits().groundUnits().countInRadius(9, worker) >= WORKERS_RUN_THRESHOLD) {
+            return false;
+        }
+
+        return Select.ourWorkers().inRadius(9, worker).count() >= 2;
     }
 
     /** The nearest raider worth walking towards, if the swarm is on. */
