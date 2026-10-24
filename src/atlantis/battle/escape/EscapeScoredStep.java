@@ -54,6 +54,12 @@ public final class EscapeScoredStep {
             if (minerals != null) blockers.addAll(minerals.inRadius(12, unit).list());
             Selection buildings = Select.ourBuildings();
             if (buildings != null) blockers.addAll(buildings.inRadius(12, unit).list());
+            // NEXT #187 remainder: a scout boxed by ENEMY buildings hugged
+            // their edges - the clearance veto never saw them, so the scored
+            // pick validated shirt-steps the first-success fallback issued.
+            // A building boxes movement whoever owns it.
+            Selection foes = Select.enemy();
+            if (foes != null) blockers.addAll(foes.buildings().inRadius(12, unit).list());
         } catch (Exception ignored) {
         }
         return blockers;

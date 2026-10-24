@@ -96,9 +96,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 //        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
         if (center != null) {
-            if (unit.moveAwayFrom(center, 6, Actions.RUN_ENEMY, "ScoutSeparateA")) {
-                return usedManager(this);
-            }
+            if (separateFallback(nearestEnemy())) return usedManager(this);
         }
 
 //        if (unit.enemiesThatCanAttackMe(2.4 + unit.woundPercent() / 30.0).empty()) {
@@ -106,6 +104,26 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 //        }
 
         return null;
+    }
+
+    /**
+     * NEXT #187 remainder: the old fallback walked straight into corners -
+     * first-success validates fine while sliding along a wall, then the
+     * next frames glue at dist 0 with the threat mid-swing. Scored 8-tile
+     * pick first (the same pick the running manager and the hurt branch
+     * use - corners, blockers and the second enemy scored, not just
+     * validated); the old first-success stays as the last resort when
+     * nothing scores. Public as a seam: the pin drives it without
+     * staging a full DoAvoidEnemies failure.
+     */
+    public boolean separateFallback(AUnit threat) {
+        if (threat != null) {
+            atlantis.map.position.APosition scored =
+                atlantis.battle.escape.EscapeScoredStep.pickScored(unit, threat, 8);
+            if (scored != null
+                && unit.move(scored, Actions.RUN_ENEMY, "ScoutSeparateScored")) return true;
+        }
+        return center != null && unit.moveAwayFrom(center, 6, Actions.RUN_ENEMY, "ScoutSeparateA");
     }
 
     private AUnit nearestEnemy() {
