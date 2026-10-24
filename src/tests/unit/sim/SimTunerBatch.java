@@ -114,6 +114,17 @@ public final class SimTunerBatch {
 
         List<TunerBatchManifest.Game> manifestGames = new ArrayList<>();
         Map<String, double[]> bounds = ParamTweakerFactory.bounds();
+        // A/B wiring switch (NEXT #186): pulled out before the vector
+        // validation (it is not a tuner knob and must never enter the
+        // registry or the digest-compat row shapes). try/finally: a
+        // leaked true would silently run every later batch unwired.
+        Double wiringOverride = overrides.remove("HoldEarlyDisabled");
+        atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB =
+            wiringOverride != null && wiringOverride >= 0.5;
+        if (atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB) {
+            System.out.println("[sim-batch] HoldEarlyDisabled=1 (A/B arm: pre-wiring formula)");
+        }
+        try {
         for (int i = 1; i <= games; i++) {
             Map<String, Double> vector;
             try {
@@ -147,6 +158,9 @@ public final class SimTunerBatch {
 
         Files.write(out.resolve("manifest.txt"),
             TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
+        } finally {
+            atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB = false;
+        }
         System.out.println("[sim-batch] done: " + games + " games, manifest: "
             + out.resolve("manifest.txt"));
 

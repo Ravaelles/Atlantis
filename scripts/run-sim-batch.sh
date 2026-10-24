@@ -15,7 +15,7 @@
 
 set -u
 
-ATLANTIS_DIR="/sc-ai/Atlantis"
+ATLANTIS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 MAP=""
 N=""
 OUTDIR=""

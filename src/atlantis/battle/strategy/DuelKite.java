@@ -36,6 +36,16 @@ public final class DuelKite {
     /** Hold margin for order-issue slop: the same 2f cover as the imminent-shot gate above (measured re-issue refusal at 1-2f). */
     private static final int HOLD_MARGIN_FRAMES = 2;
 
+    /**
+     * A/B wiring switch (NEXT #186): when true, {@link #shouldYield}
+     * answers the pre-wiring formula (in hold = yield) and skips the
+     * hold-early race. Test scope only - the sim batch flips it per
+     * arm, live always runs false. Volatile: the batch reuses the JVM
+     * across arms, and a stale true would silently run every later
+     * arm unwired.
+     */
+    public static volatile boolean holdEarlyDisabledForAB = false;
+
     private DuelKite() {
     }
 
@@ -56,6 +66,9 @@ public final class DuelKite {
         if (threat.isMoving() && !unit.isOtherFacingThisUnit(threat)) return false;
 
         if (unit.distTo(threat) >= holdDistance(unit)) return false;
+
+        // A/B switch (#186): pre-wiring formula, exactly as before slice 5.
+        if (holdEarlyDisabledForAB) return unit.distTo(threat) < holdDistance(unit);
 
         // Hold-early (#186): a committed chaser faces us, so closing runs
         // at its top speed head-on; at an angle the true closing is lower

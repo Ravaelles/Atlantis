@@ -117,6 +117,29 @@ public class DuelKiteTest extends WorldStubForTests {
     }
 
     @Test
+    public void wiringToggleRestoresPreWiringAnswer() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 33, 20);
+        zealot.setEnemy();
+        zealot.setAngle(Math.PI);
+        dragoon.cooldown = 6;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            assertFalse(DuelKite.shouldYield(dragoon, zealot),
+                "wired: at 3 tiles with cooldown 6 the stop-point race favors waiting - hold, don't yield");
+            DuelKite.holdEarlyDisabledForAB = true;
+            try {
+                assertTrue(DuelKite.shouldYield(dragoon, zealot),
+                    "unwired (A/B arm): the pre-wiring formula yields inside the hold - same board, race skipped");
+            } finally {
+                DuelKite.holdEarlyDisabledForAB = false;
+            }
+            assertFalse(DuelKite.shouldYield(dragoon, zealot),
+                "flag resets: the race decides again once the A/B arm ends");
+        });
+    }
+
+    @Test
     public void nonMeleeNoYield() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit foe = fake(AUnitType.Protoss_Dragoon, 32, 20);
