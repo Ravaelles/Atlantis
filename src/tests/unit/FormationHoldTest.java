@@ -39,6 +39,38 @@ public class FormationHoldTest extends WorldStubForTests {
     }
 
     @Test
+    public void breachedBaseNeverHolds() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 30);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 24, 20);
+        ling.setEnemy();
+
+        world(1, fakeOurs(nexus, zealot), fakeEnemies(ling), () -> {
+            assertTrue(atlantis.battle.cluster.ClusterBreach.breachForcesFight(),
+                "raider within 8 of the main: the test board is breached");
+            assertFalse(FormationHold.shouldHold(zealot, ling, FightOrFlight.Tactic.FIGHT),
+                "breach means everybody attacks: no forming up while raiders chew the base");
+        });
+    }
+
+    @Test
+    public void breachedBaseTwinsBreachNotHold() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 30);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 24, 20);
+        ling.setEnemy();
+
+        world(1, fakeOurs(nexus, zealot), fakeEnemies(ling), () -> {
+            assertFalse(FormationHold.holdIfCalm(
+                    zealot, ling, FightOrFlight.Tactic.FIGHT, zealot, null),
+                "breach declines the hold before any slot is considered");
+            String rows = atlantis.util.log.EventLog.toJsonLines();
+            assertTrue(rows.contains("\"verdict\":\"BREACH\""),
+                "the twin names the deciding gate: " + rows);
+        });
+    }
+
+    @Test
     public void rangedEnemyNeverHolds() {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 20, 20);
         FakeUnit foeZealot = fake(AUnitType.Protoss_Zealot, 40, 20);

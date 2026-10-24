@@ -1,5 +1,6 @@
 package atlantis.battle;
 
+import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.kite.CombatTuning;
@@ -112,6 +113,8 @@ public final class FormationHold {
         GHOST,
         /** Anything else that declines the hold (tactic, ranged enemy, ...). */
         OTHER,
+        /** Raiders in our base: no forming up, everybody attacks (owner doctrine). */
+        BREACH,
         /** Hold decided, but no formation slot exists (duels fall through). */
         NO_SLOT,
         /** Hold decided, but the move order was refused. */
@@ -137,6 +140,11 @@ public final class FormationHold {
     static HoldVerdict decide(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
         if (unit == null || target == null || !unit.isAlive()) return HoldVerdict.OTHER;
         if (hasCloseMeleeEnemy(unit)) return HoldVerdict.VETO;
+        // Raiders in the base mean everybody attacks, no forming up
+        // (owner: workers dying while the army holds its slots is the
+        // breach itself being misread as a calm board). Reads after the
+        // chew veto so an actually-chewed unit still names VETO first.
+        if (ClusterBreach.breachForcesFight()) return HoldVerdict.BREACH;
         if (tactic != FightOrFlight.Tactic.FIGHT) return HoldVerdict.OTHER;
         if (!target.isVisibleUnitOnMap() && !isThreatened(unit)) return HoldVerdict.GHOST;
 
