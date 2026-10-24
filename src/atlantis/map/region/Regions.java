@@ -35,6 +35,22 @@ public class Regions {
         source = newSource;
     }
 
+    /**
+     * Test-seam twin of {@link #useSource}: the sim installs its own
+     * region list (rect-region fake map) because there is no BWEM
+     * behind it. Production never calls this; tests clear it in
+     * {@code finally} next to the source.
+     */
+    private static java.util.List<ARegion> regionsOverride = null;
+
+    public static void useRegions(java.util.List<ARegion> regions) {
+        regionsOverride = regions;
+    }
+
+    public static void clearRegions() {
+        regionsOverride = null;
+    }
+
     public static void useEngine() {
         source = null;
     }
@@ -123,6 +139,8 @@ public class Regions {
 
     // =========================================================
     public static List<ARegion> regions() {
+        if (regionsOverride != null) return regionsOverride;
+
         return (List<ARegion>) cache.get(
             "regions",
             -1,
