@@ -35,6 +35,7 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.HIGH, LogKey.BUILD_REFUSED.level());
         assertEquals(LogLevel.HIGH, LogKey.CONSTRUCTION_CANCEL.level());
         assertEquals(LogLevel.HIGH, LogKey.CLOSE_WARPS.level());
+        assertEquals(LogLevel.HIGH, LogKey.STALL.level());
     }
 
     @Test
@@ -59,4 +60,5 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.MEDIUM, LogKey.SUPPLY_BLOCKED.level());
         assertEquals(LogLevel.MEDIUM, LogKey.QUEUE_BASE.level());
         assertEquals(LogLevel.MEDIUM, LogKey.BOARD_FED.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.IDLE.level());
     }}

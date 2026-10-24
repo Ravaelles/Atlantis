@@ -97,10 +97,11 @@ public class BattleCommander extends Commander {
         regroup(unit, tactic, anchor, leader, strategy);
     }
 
-    /** Twin + frozen-watch sampling, once per unit per frame. */
+    /** Twin + frozen-watch + idle-watch sampling, once per unit per frame. */
     private static void observe(AUnit unit) {
         atlantis.battle.twins.UnitTelemetry.sample(unit);
         atlantis.battle.FrozenWatch.note(unit);
+        atlantis.battle.IdleWatch.note(unit);
         atlantis.battle.DuelMemory.noteBattleFrame(unit);
     }
 
@@ -154,6 +155,8 @@ public class BattleCommander extends Commander {
         atlantis.battle.twins.HoldTwin.clearForTests();
         atlantis.battle.twins.UnitTelemetry.clearForTests();
         atlantis.battle.FrozenWatch.clearForTests();
+        atlantis.battle.IdleWatch.clearForTests();
+        atlantis.battle.twins.ClusterTwin.clearForTests();
         atlantis.battle.ArmyContact.clearForTests();
         atlantis.battle.cluster.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();

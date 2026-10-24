@@ -115,6 +115,10 @@ public enum LogKey {
     GHOST_TARGET,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
+    /** A combat unit still with no enemy near and weapon ready (unit, still frames, foe dist): the post-fight freeze signature. */
+    IDLE,
+    /** The whole army still with no enemy near (center, count, still frames): the all-units freeze. */
+    STALL,
     /** A base order the refresh sees (throttled): type, status, bank, supply. */
     QUEUE_BASE,
     /** The feeder's filled gap (throttled): which goal got its missing row. */
@@ -134,7 +138,8 @@ public enum LogKey {
         LogKey.REQUEST_REFUSED_DUPLICATE,
         LogKey.BUILD_REFUSED,
         LogKey.CONSTRUCTION_CANCEL,
-        LogKey.CLOSE_WARPS
+        LogKey.CLOSE_WARPS,
+        LogKey.STALL
     );
 
     private static final java.util.Set<LogKey> CRITICAL = java.util.EnumSet.of(

@@ -32,6 +32,14 @@ public final class HuntLastContact {
         if (Count.bases() == 0) {
             APosition last = FightTarget.lastContact(unit);
             if (last != null && unit.distTo(last) > 9) {
+                // Departed for older memory: the ghost march owns
+                // re-acquisition now - yanking back to the stale site
+                // leashes the line forever against the march (post-fight
+                // freeze: hunt wins every frame it fires, the ghost never
+                // gets to creep). Hunt only the fresh contact; a
+                // departed unit is already hunting something newer.
+                if (isDepartedForOlderMemory(unit, last)) return false;
+
                 if (unit.move(last, Actions.MOVE_ENGAGE, Behavior.HUNT.tag())) {
                     FightTarget.markRepositioned(unit);
 
@@ -40,5 +48,22 @@ public final class HuntLastContact {
             }
         }
         return false;
+    }
+
+    /**
+     * True when the unit marches at older memory instead of this contact:
+     * the effective ghost names a real unreached address elsewhere, so
+     * the hunt back here would fight the march instead of re-acquiring.
+     */
+    private static boolean isDepartedForOlderMemory(AUnit unit, APosition last) {
+        try {
+            APosition eff = atlantis.battle.strategy.GhostAdvance.effectiveGhostPointFor(unit);
+            if (eff == null) return false;
+            if (unit.distTo(eff) < 2) return false;
+
+            return eff.distTo(last) >= 1;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }

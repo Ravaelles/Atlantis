@@ -102,5 +102,51 @@ public final class ClusterTwin {
             .param("dtx", destX)
             .param("dty", destY)
             .log(A.now(), A.minSec());
+
+        noteArmyStall(center);
+    }
+
+    /**
+     * The all-units freeze (owner, Drag_v_LingsUpg2): every combat unit
+     * banked ten idle seconds with no enemy near the center - the
+     * per-unit IDLE rows share one cause, and it deserves one HIGH row.
+     * Throttled: at most one row per 240 frames while it persists.
+     */
+    private static int lastStallLogFrame = -1000000;
+
+    public static void clearForTests() {
+        lastStallLogFrame = -1000000;
+    }
+
+    private static void noteArmyStall(HasPosition center) {
+        try {
+            if (center == null || Alpha.get().size() <= 0) return;
+            if (A.now() - lastStallLogFrame < atlantis.battle.IdleWatch.IDLE_FRAMES * 2) return;
+
+            int stillMin = Integer.MAX_VALUE;
+            for (AUnit unit : Alpha.get().selection().list()) {
+                if (unit == null || !unit.isAlive() || !unit.isCombatUnit()) continue;
+                int still = atlantis.battle.IdleWatch.stillFramesOf(unit.id());
+                if (still < stillMin) stillMin = still;
+            }
+            if (stillMin < atlantis.battle.IdleWatch.IDLE_FRAMES * 2) return;
+
+            AUnit nearest = Select.enemy().combatUnits().nearestTo(center);
+            if (nearest != null) {
+                try {
+                    if (center.distTo(nearest) < atlantis.battle.IdleWatch.FOE_FAR_TILES) return;
+                } catch (Exception ignored) {
+                    return;
+                }
+            }
+            lastStallLogFrame = A.now();
+            EventLog.key(LogKey.STALL)
+                .param("cx", center.tx())
+                .param("cy", center.ty())
+                .param("count", Alpha.get().size())
+                .param("still", stillMin)
+                .log(A.now(), A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 }

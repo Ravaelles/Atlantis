@@ -192,7 +192,10 @@ public final class ClusterRally {
     private static HasPosition expectedDirectionPoint(AUnit leader, HasPosition anchor) {
         try {
             if (atlantis.game.A.isUms()) {
-                APosition ghost = atlantis.battle.strategy.GhostAdvance.ghostPointFor(leader);
+                // The effective ghost, not the newest memory: a reached
+                // kill site faces the line at its own feet instead of
+                // at where the fight lives on.
+                APosition ghost = atlantis.battle.strategy.GhostAdvance.effectiveGhostPointFor(leader);
                 if (ghost != null) return ghost;
             }
             else if (atlantis.battle.cluster.ClusterTactic.holdsHomeGround()) {

@@ -98,6 +98,16 @@ public final class GhostAdvance {
     private static final Map<Integer, APosition> lastCreepPos = new HashMap<>();
     private static final Map<Integer, Integer> lastCreepFrame = new HashMap<>();
 
+    /**
+     * Fresh-contact frame at which the unit departed a reached kill
+     * site for older memory. While the marker stands, the reached
+     * fresh contact stays suppressed - reselecting it every frame
+     * ping-pongs the line around the site (step out, step back)
+     * instead of marching out. A new contact (advanced frame), a
+     * stale contact, or a reached/gone older memory clears it.
+     */
+    private static final Map<Integer, Integer> departedAtFreshFrame = new HashMap<>();
+
     private GhostAdvance() {
     }
 
@@ -105,6 +115,7 @@ public final class GhostAdvance {
         firstGhostFrame.clear();
         lastCreepPos.clear();
         lastCreepFrame.clear();
+        departedAtFreshFrame.clear();
     }
 
     /**
@@ -143,8 +154,13 @@ public final class GhostAdvance {
             }
         }
 
-        APosition ghost = ghostPointFor(unit);
+        APosition ghost = effectiveGhostPointFor(unit);
         if (ghost == null) {
+            // Arrived with nowhere else to go (fresh contact reached,
+            // no older memory): stand - the old reached-claim. Nothing
+            // remembered at all: hand the unit back, the formation and
+            // the rally own it, not the ghost.
+            if (freshContactFor(unit) != null) return true;
             forget(unit);
 
             return false;
@@ -279,7 +295,7 @@ public final class GhostAdvance {
             }
         }
 
-        APosition ghost = ghostPointFor(unit);
+        APosition ghost = effectiveGhostPointFor(unit);
         if (ghost == null) return null;
 
         double dist;
@@ -288,8 +304,8 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return null;
         }
-        if (dist < REACHED_TILES
-            || (dist > LOST_TILES && !atlantis.game.A.isUms())) return null;
+        if (dist < REACHED_TILES) return null;
+        if (dist > LOST_TILES && !atlantis.game.A.isUms()) return null;
 
         double step = isVanguard(unit) ? SCOUT_STEP_TILES : LINE_STEP_TILES;
         try {
@@ -356,7 +372,16 @@ public final class GhostAdvance {
     public static String ghostSourceFor(AUnit unit) {
         if (unit == null || !unit.isAlive()) return "-";
         try {
-            if (freshContactFor(unit) != null) return "contact";
+            // What the unit actually marches at (the effective ghost),
+            // not the kill site underfoot: a reached fresh contact is
+            // suppressed by the departure marker, so the source must be
+            // too, or the twin names "contact" for a fogged march.
+            // Standing ON the fresh contact with nowhere else to go
+            // still names contact - the address is held, not abandoned.
+            APosition eff = effectiveGhostPointFor(unit);
+            APosition fresh = freshContactFor(unit);
+            if (eff == null) return fresh == null ? "none" : "contact";
+            if (fresh != null && eff == fresh) return "contact";
         } catch (Exception ignored) {
         }
         try {
@@ -455,9 +480,79 @@ public final class GhostAdvance {
      * enemy with a position that is not visible now. Null when nobody
      * remembers anything - then the formation fallback owns the unit.
      */
+    /**
+     * The ghost selection, newest memory first (unit tests pin the
+     * chain order through here).
+     */
     public static APosition ghostPointFor(AUnit unit) {
         APosition last = freshContactFor(unit);
         if (last != null) return last;
+
+        return ghostPointSkippingFresh(unit);
+    }
+
+    /**
+     * Where the unit actually goes: the newest memory with somewhere to
+     * go. A reached fresh contact is the kill site underfoot, not a
+     * destination - selecting it every frame ping-pongs the line around
+     * the reached tile (step out on the fallthrough, step back on the
+     * reselect) instead of marching at the remembered enemy. So a
+     * reached fresh contact reroutes to older memory, and the departure
+     * marker keeps it suppressed until a new contact renews it (frame
+     * advance), it goes stale, or the older memory is reached or gone.
+     * Arrival at the effective ghost still stands (terminal, correct).
+     */
+    public static APosition effectiveGhostPointFor(AUnit unit) {
+        if (unit == null) return null;
+
+        try {
+            APosition fresh = freshContactFor(unit);
+            if (fresh == null) {
+                departedAtFreshFrame.remove(unit.id());
+
+                return ghostPointSkippingFresh(unit);
+            }
+            Integer freshFrame = atlantis.battle.FightTarget.lastContactFrame(unit);
+            Integer departedAt = departedAtFreshFrame.get(unit.id());
+            if (departedAt != null && departedAt.equals(freshFrame)) {
+                // Departed: the reached kill site stays suppressed while
+                // the unit marches out - reselecting it past the 2-tile
+                // boundary ping-pongs the line (step out, step back).
+                // Renewal (frame advance), staleness, or a reached/gone
+                // older memory releases the march.
+                APosition older = ghostPointSkippingFresh(unit);
+                if (older == null || unit.distTo(older) < REACHED_TILES) {
+                    departedAtFreshFrame.remove(unit.id());
+                }
+
+                return older;
+            }
+            if (departedAt != null) departedAtFreshFrame.remove(unit.id());
+            boolean reached;
+            try {
+                reached = unit.distTo(fresh) < REACHED_TILES;
+            } catch (Exception ignored) {
+                return fresh;
+            }
+            if (!reached) return fresh;
+            APosition older = ghostPointSkippingFresh(unit);
+            if (older == null || unit.distTo(older) < REACHED_TILES) return older;
+            if (freshFrame != null) departedAtFreshFrame.put(unit.id(), freshFrame);
+
+            return older;
+        } catch (Exception ignored) {
+            return ghostPointSkippingFresh(unit);
+        }
+    }
+
+    /**
+     * The ghost chain without the fresh contact: fogged memory, then
+     * unexplored ground, then the region sweep. The reached-fresh
+     * fallthrough in {@link #move} reads through here so a reached
+     * kill site never shadows somewhere else the fight lives on.
+     */
+    static APosition ghostPointSkippingFresh(AUnit unit) {
+        if (unit == null) return null;
 
         try {
             Selection seen = EnemyUnits.discovered();
