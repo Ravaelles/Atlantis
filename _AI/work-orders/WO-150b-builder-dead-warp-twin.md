@@ -71,3 +71,11 @@ signal, so the next one is decidable from logs instead of forensics.
   shipped, fail-open by construction); the demote gate stays parked
   behind a live freeze, and that live freeze is now known-rare, not
   just unseen. Do not build urgency on top of this WO.
+
+## Demote-chain integrity 2026-10-24 (290 retained logs)
+- 94 DEMOTE_STALLED rows, all `stoodStillFor=*`, zero `builder gone`
+  (negative sweep extended: 287 -> 290 logs).
+- 94 = 93 chain ordinals (1st..93rd, DRY_RUN 002228's two included -
+  its CyberneticsC demote is the referenced first-Cyber ordinal) + 1
+  explicitly ordinal-less foreign row (141623 Pylon f5014, documented
+  without ordinal, never in tally). Counter exact, no gap, no double.
