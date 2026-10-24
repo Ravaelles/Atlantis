@@ -79,3 +79,22 @@ signal, so the next one is decidable from logs instead of forensics.
   its CyberneticsC demote is the referenced first-Cyber ordinal) + 1
   explicitly ordinal-less foreign row (141623 Pylon f5014, documented
   without ordinal, never in tally). Counter exact, no gap, no double.
+
+## Stop-condition demonstrated live 2026-10-24 (Steamhammer game 1, Pylon cid121 [93,126])
+
+- Shape: STARTED f9260, warp entity visible f9263, builder #24 died
+  f9394 (+134f), then twin silence from f9600 to game end - no
+  CANCEL, no DEMOTE, no FROZEN, no ledger row. Reads exactly like a
+  builder-dead warp freeze in the twins.
+- Engine ground truth (`logs_1/unit_events.csv`): the Pylon completed
+  f11957 (~2300f of silence) and stood to the base fall. Healthy slow
+  warp, not a freeze. The normal-completion FINISH
+  (`OnOurNewUnitCompleted.cleanUpProductionOrderAndConstruction` ->
+  `setStatus(FINISHED)` -> `removeOrder`) carries NO twin - only the
+  proximity-finish FINISH names itself.
+- Consequence for this WO (strengthens the stop condition, does not
+  relax it): twin silence after STARTED is AMBIGUOUS between frozen
+  and slow-completing without engine ground truth. The live freeze
+  proof requires the engine cross-check (morph/complete rows for the
+  site), never the twins alone. Hunt total: 5 macros + 2 Steamhammer
+  games, 0 freezes; the demote gate stays parked.
