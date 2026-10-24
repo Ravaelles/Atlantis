@@ -425,4 +425,41 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         });
     }
 
+    /**
+     * NEXT #150, oid36 shape (Wine 182050: Pylon STARTED f6793, builder
+     * alive, never tracked again, no building ever, no twin ever fires).
+     * The age-cap cannot see whether the attached builder works THIS site:
+     * a builder constructing elsewhere shields an ancient building-less
+     * stall forever (only the stoodStill and builder-gone branches look at
+     * the builder, and both miss a far-away constructing worker). Pinned
+     * as-shielded (no behavior change): fixing this hole needs an owner
+     * decision, never a silent flip.
+     */
+    private Construction busyStall;
+    private FakeUnit busyProbe;
+
+    @Test
+    public void attachedBuilderConstructingElsewhereShieldsAncientStall() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        busyProbe = fake(AUnitType.Protoss_Probe, 30, 30);
+        busyProbe.setConstructing(true);
+
+        world(2600, units(nexus, busyProbe), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                busyProbe.unitState().setLastPositionChanged(A.now());
+                busyStall = stalledCoreAt(busyProbe, 12, 10);
+            }
+
+            if (A.now() == 2500) {
+                assertFalse(
+                    ConstructionStatusChanger.demoteStalledInProgress(busyStall, busyProbe),
+                    "builder constructing elsewhere shields even a 2490f-old building-less stall"
+                        + " (oid36 shape: attached, alive, untracked - named hole, not a fix)");
+                assertEquals(
+                    ConstructionOrderStatus.IN_PROGRESS, busyStall.status(),
+                    "no demote means no status change");
+            }
+        });
+    }
+
 }
