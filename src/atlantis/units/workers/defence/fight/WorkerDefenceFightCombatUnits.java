@@ -42,6 +42,18 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      */
     private static final double EVAL_DO_NOT_FIGHT_BADLY = 0.4;
 
+    /**
+     * Owner's line (2026-10-26, Zealot Hell run-by corridor): workers
+     * never walk out to fight combat units far from base. Entry gates
+     * read the worker's position, but the attack order pursues - a legal
+     * engagement at the base edge becomes a cross-map chase while every
+     * entry gate still reads "near" from the decision frame. Read the
+     * ENEMY's address instead: raiders beyond this of our nearest base
+     * are not ours to chase. (FurMotherland below stays: an enemy raiding
+     * deep in our territory is by construction inside.)
+     */
+    public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 15;
+
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
     }
@@ -176,6 +188,16 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         Selection potentialEnemies = potentialEnemies(unit);
         AUnit enemy = potentialEnemies.nearestTo(unit);
 
+        // Owner's rule, enforced at the attack (not just at entry): never
+        // walk out to a raider far from base, even when the worker itself
+        // still reads near. The entry gates above passed on the decision
+        // frame; the pursuit that follows does not re-ask them.
+        if (enemy != null && enemyTooFarFromBase(enemy)) {
+            unit.setTooltipTactical("TooFarFromBase");
+
+            return false;
+        }
+
         // A melee worker (a Probe attacks at range 1) cannot reach a Zealot that
         // is still 2 tiles away, so `canBeAttackedBy` finds nothing and the
         // worker never moves - which is exactly "a lone Zealot kills the mineral
@@ -184,6 +206,11 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (enemy == null) {
             AUnit raider = nearestSwarmableRaider(unit);
             if (raider == null) return false;
+            if (enemyTooFarFromBase(raider)) {
+                unit.setTooltipTactical("TooFarFromBase");
+
+                return false;
+            }
 
             unit.setTooltipTactical("Swarm!");
             return unit.move(raider, Actions.MOVE_ATTACK, "SwarmMove");
@@ -240,6 +267,22 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         }
 
         return Select.ourWorkers().inRadius(9, worker).count() >= 2;
+    }
+
+    /**
+     * True when engaging this enemy means walking out to fight far from
+     * base: the raider sits beyond {@link #MAX_FIGHT_DIST_TO_BASE_TILES}
+     * of our nearest base. The worker's own gates already passed - this
+     * reads the fight's address, which is what the pursuit follows.
+     */
+    static boolean enemyTooFarFromBase(AUnit enemy) {
+        try {
+            if (enemy == null) return true;
+
+            return enemy.distToBase() > MAX_FIGHT_DIST_TO_BASE_TILES;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /** The nearest raider worth walking towards, if the swarm is on. */
