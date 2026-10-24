@@ -1095,6 +1095,13 @@ test-runner hygiene).
   or away from chokes when quiet. The no-contact-near-choke shape
   these games never produce is exactly what the live proof needs;
   duels can't supply it either (baseless forces kite/fallback).
+
+  2026-10-26 PurpleWave guard port, slice 1 (geometry only, owner order: Sparta-at-the-mouth vs melee):
+  ChokePlug seam (plug point 3 tiles home-side of the choke mouth, melee-first arc slots facing the enemy side)
+  wired into formationSlotFor (home-choke anchor + melee-only enemy) and the defend focus (plug instead of the
+  8-tile standoff vs melee-only; ranged enemies keep the old depth per #170). Hold behavior deliberately untouched
+  (kite-outranks-hold + ZealotHoldFire already cover it; sim pins: ChokePlugSimTest, pre-fix red on the march).
+  No-contact hold now yields to formation (blind wait only when no slot owns the unit).
 - **#171** High-ground choke scoring (owner 2026-10-20, formation
   follow-up): for every choke, score BOTH sides as defensive spots -
   height delta first. A wide choke with a step is not "pointless": the

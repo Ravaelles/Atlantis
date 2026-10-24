@@ -7,6 +7,7 @@ import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -108,6 +109,20 @@ public final class ProtossDefendFocusPoint {
 
     // =========================================================
 
+    /**
+     * True when the known enemy cannot shoot over a mouth plug: combat
+     * units exist and none is ranged. Workers-only and empty reads keep
+     * the old stand - the plug answers an army, not a scout.
+     */
+    private static boolean enemyMeleeOnly() {
+        try {
+            atlantis.units.select.Selection foes = Select.enemy().combatUnits();
+            return foes != null && foes.notEmpty() && foes.ranged().empty();
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
     private static AFocusPoint atAnyBase(AUnit mainBase) {
         if (AtlantisRaceConfig.BASE == null) return null;
 
@@ -143,6 +158,22 @@ public final class ProtossDefendFocusPoint {
      */
     private static AFocusPoint atMainChokeStandoff(AUnit mainBase) {
         if (mainBase == null || mainBase.position() == null) return null;
+
+        // PurpleWave guard: against melee-only enemies the line waits AT
+        // the mouth (melee plugs, dragoons second row), not 8 tiles back
+        // - the standoff depth stays for ranged enemies, which shoot over
+        // a mouth plug. NEXT #170's depth rule survives for that case.
+        if (enemyMeleeOnly()) {
+            AChoke choke = Chokes.mainChoke();
+            APosition plug = atlantis.battle.formation.ChokePlug.plugPointFor(choke, mainBase);
+            if (plug != null) {
+                return new AFocusPoint(
+                    plug,
+                    mainBase,
+                    "MainChoke"
+                );
+            }
+        }
 
         HasPosition standoff = ClusterRally.chokeStandoffPoint();
         if (standoff == null) return null;

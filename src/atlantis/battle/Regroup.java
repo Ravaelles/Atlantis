@@ -68,14 +68,18 @@ public final class Regroup {
         // small line across the map and uncovered the base while raiders
         // ran by. Only on FIGHT (FLEE owns its own rally), only for a
         // home anchor (an attack anchor must still march out), never
-        // into an ongoing fight (join it instead). Strategy points and
-        // the reinforce answer first - this owns only the blind wait.
+        // into an ongoing fight (join it instead). Strategy points, the
+        // reinforce and the formation answer first - this owns only the
+        // blind wait no slot wants.
         if (tactic == FightOrFlight.Tactic.FIGHT && !ArmyContact.isOngoingFight()) {
             APosition hold = ClusterRally.noContactHoldPoint(anchor);
-            if (hold != null && unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
-                FightTarget.markRepositioned(unit);
+            if (hold != null) {
+                HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+                if (slot == null && unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
+                    FightTarget.markRepositioned(unit);
 
-                return;
+                    return;
+                }
             }
         }
         // March in formation (owner 2026-10-26): the line takes slots

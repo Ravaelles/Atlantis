@@ -9,6 +9,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.move.MoveAway;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 /**
  * Where the cluster and its units move when they are not fighting
@@ -171,6 +172,9 @@ public final class ClusterRally {
         if (leader == null || !leader.isAlive()) return null;
         if (tactic == FightOrFlight.Tactic.FLEE) return null;
 
+        HasPosition guard = guardSlotFor(unit, anchor);
+        if (guard != null) return guard;
+
         HasPosition pivot = atlantis.battle.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
         if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {
@@ -179,6 +183,49 @@ public final class ClusterRally {
         if (pivot == null) return null;
 
         return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
+    }
+
+    /**
+     * PurpleWave guard (SquadDefendBase): at our main choke against
+     * melee-only enemies the line plugs the mouth - melee in, ranged
+     * behind - instead of taking the free crescent. Null when the setup
+     * is not a guarded choke (duels, open field, ranged enemies, no
+     * anchor): the crescent below owns those. Also null while the ghost
+     * march owns the unit (known enemy elsewhere to march at): the plug
+     * is the formation answer when there is nowhere to go, never a
+     * leash against the pursuit.
+     */
+    private static HasPosition guardSlotFor(AUnit unit, HasPosition anchor) {
+        if (!(anchor instanceof atlantis.battle.advance.focus.AFocusPoint)) return null;
+        if (!((atlantis.battle.advance.focus.AFocusPoint) anchor).isMainChoke()) return null;
+
+        try {
+            Selection foes = Select.enemy().combatUnits();
+            if (foes == null || foes.empty() || foes.ranged().notEmpty()) return null;
+
+            APosition march = atlantis.battle.strategy.GhostAdvance.effectiveGhostPointFor(unit);
+            if (march != null) {
+                try {
+                    if (unit.distTo(march) >= 2) return null;
+                } catch (Exception ignored) {
+                    return null;
+                }
+            }
+
+            AUnit main = Select.main();
+            if (main == null || main.position() == null) return null;
+
+            AChoke choke = Chokes.mainChoke();
+            if (choke == null || choke.center() == null) return null;
+
+            APosition plug = atlantis.battle.formation.ChokePlug.plugPointFor(choke, main);
+            if (plug == null) return null;
+
+            return atlantis.battle.formation.ChokePlug.slotFor(
+                unit, Alpha.get().selection(), plug, choke.center(), choke.width() / 2.0);
+        } catch (RuntimeException ignored) {
+            return null;
+        }
     }
 
     /**
