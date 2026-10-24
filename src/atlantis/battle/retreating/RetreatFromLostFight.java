@@ -87,7 +87,13 @@ public final class RetreatFromLostFight {
                 // 2026-10-26, from a tested loss vs Protoss): it piles
                 // onto the mineral line and blocks itself - it forms up
                 // at the choke standoff instead.
-                if (Alpha.get().size() > CombatTuning.current().getRetreatFormationMinArmy()) {
+                // Vs Protoss the bar is lower and absolute (owner):
+                // with 4+ combat units the army holds the main choke
+                // as usual, even outmatched - no retreat home, ever.
+                boolean bigArmy = Alpha.get().size() > CombatTuning.current().getRetreatFormationMinArmy();
+                boolean protossStand =
+                    atlantis.game.player.Enemy.protoss() && Alpha.get().size() >= 4;
+                if (bigArmy || protossStand) {
                     HasPosition standoff = ClusterRally.chokeStandoffPoint();
                     if (standoff != null) home = standoff;
                 }
