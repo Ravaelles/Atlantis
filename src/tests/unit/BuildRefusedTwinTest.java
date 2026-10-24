@@ -1,6 +1,10 @@
 package tests.unit;
 
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.PrepareConstructionSite;
+import atlantis.map.position.APosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
@@ -116,6 +120,41 @@ public class BuildRefusedTwinTest extends AbstractTestWithWorld {
             assertFalse(
                 EventLog.toJsonLines().contains("power-not-funded"),
                 "bank 300 covers Pylon + Forge - the power gate stays open");
+        });
+    }
+
+    /**
+     * NEXT #155 (B142 Gateway series): 7 prepare-site-overlap refusals at
+     * one tile linked to the eventual warp only by parsing the order
+     * string - the row carried no dedicated oid, and the DEMOTE row not
+     * even that (cid only). Both now name the order, so the refusal
+     * series, the stall demote and the warp join mechanically.
+     */
+    @Test
+    public void prepareSiteOverlapRefusalNamesOid() {
+        currentMinerals = 300;
+        currentSupplyUsed = 24;
+        currentSupplyTotal = 30;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Construction cover = new Construction(AUnitType.Protoss_Cybernetics_Core);
+            cover.setPositionToBuild(APosition.create(30, 30));
+            cover.setStatus(ConstructionOrderStatus.PREPARING);
+            ConstructionRequests.addConstruction(cover);
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 8);
+            order.setAroundPosition(APosition.create(30, 30));
+            order.markAsUsingExactPosition();
+            EventLog.clearForTests();
+            PrepareConstructionSite.prepareIfDue(order);
+            String rows = EventLog.toJsonLines();
+            assertTrue(
+                rows.contains("prepare-site-overlap")
+                    && rows.contains("\"oid\":" + order.id()),
+                "the refusal names the refused order dedicately, got: " + rows);
         });
     }
 

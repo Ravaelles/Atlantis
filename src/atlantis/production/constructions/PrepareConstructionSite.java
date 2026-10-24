@@ -78,6 +78,7 @@ public class PrepareConstructionSite {
             EventLog.key(LogKey.BUILD_REFUSED)
                 .param("type", type.name())
                 .param("guard", "prepare-site-overlap")
+                .param("oid", order.id())
                 .param("order", order.toString())
                 .param("tile", "[" + site.tx() + "," + site.ty() + "]")
                 .param("supplyUsed", A.supplyUsed())

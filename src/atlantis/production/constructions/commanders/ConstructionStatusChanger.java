@@ -455,6 +455,8 @@ public class ConstructionStatusChanger extends Commander {
     private static void twinDemote(Construction construction, String reason) {
         EventLog.key(LogKey.DEMOTE_STALLED)
             .param("cid", construction.id())
+            .param("oid", construction.productionOrder() == null
+                ? null : construction.productionOrder().id())
             .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
             .param("tile", construction.buildPosition() == null ? "-" : construction.buildPosition().toString())
             .param("reason", reason)

@@ -7,6 +7,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
@@ -254,6 +255,38 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
                     + " server-side - demoting on the pre-attempt standstill"
                     + " clock kills fresh warps (measured: demote 7f after an"
                     + " accepted attempt)");
+        });
+    }
+
+    /**
+     * NEXT #155 (B142 oid25/cid122): the stall demote named cid only, so
+     * the refusal series (order string), the demote and the warp never
+     * joined mechanically. The row now names the order too.
+     */
+    @Test
+    public void demoteTwinNamesOid() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(130, units(nexus, probe), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                probe.unitState().setLastPositionChanged(A.now());
+                standstill = stalledCoreAt(probe, 12, 10);
+                standstill.setProductionOrder(
+                    new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 22));
+            }
+
+            if (A.now() == 120) {
+                EventLog.clearForTests();
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(standstill, probe),
+                    "fixture check: idle builder at an empty site demotes");
+                String rows = EventLog.toJsonLines();
+                assertTrue(
+                    rows.contains("DEMOTE_STALLED")
+                        && rows.contains("\"oid\":" + standstill.productionOrder().id()),
+                    "the demote names the stalled order, got: " + rows);
+            }
         });
     }
 
