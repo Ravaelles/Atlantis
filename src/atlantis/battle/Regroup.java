@@ -61,6 +61,23 @@ public final class Regroup {
                 return;
             }
         }
+        // No-contact hold (owner 2026-10-26, live game vs Protoss): with
+        // no enemy to engage and the line defending home, hold halfway
+        // between the main base and the main choke instead of marching to
+        // a far anchor or creeping after a ghost - the far march walked a
+        // small line across the map and uncovered the base while raiders
+        // ran by. Only on FIGHT (FLEE owns its own rally), only for a
+        // home anchor (an attack anchor must still march out), never
+        // into an ongoing fight (join it instead). Strategy points and
+        // the reinforce answer first - this owns only the blind wait.
+        if (tactic == FightOrFlight.Tactic.FIGHT && !ArmyContact.isOngoingFight()) {
+            APosition hold = ClusterRally.noContactHoldPoint(anchor);
+            if (hold != null && unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
+                FightTarget.markRepositioned(unit);
+
+                return;
+            }
+        }
         // March in formation (owner 2026-10-26): the line takes slots
         // facing the expected enemy before anyone creeps - the vanguard
         // still detaches fast, everyone else advances as a line, never

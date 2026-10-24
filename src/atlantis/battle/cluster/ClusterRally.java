@@ -25,6 +25,12 @@ public final class ClusterRally {
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
     /**
+     * An anchor this close to the main still counts as home: the
+     * no-contact hold owns the unit instead of marching it out.
+     */
+    public static final double NO_CONTACT_HOME_TILES = 20;
+
+    /**
      * Where a baseless retreat rallies (owner): a point away from the
      * nearest threat to regroup at, never the enemy base the mission
      * anchor would march it to. Null when nothing presses (then the
@@ -68,6 +74,59 @@ public final class ClusterRally {
         }
         catch (RuntimeException ignored) {
             return null;
+        }
+    }
+
+    /**
+     * Where the line holds with no enemy to engage (owner 2026-10-26,
+     * live game vs Protoss: a 2-unit line marched to the far choke
+     * standoff with no contact and uncovered the base while Zealots ran
+     * by - the standoff is the fighting point, not the waiting point).
+     * Halfway between the main base and the main choke: close enough to
+     * answer a breach, far enough out not to pile onto the mineral line.
+     * Only for a home anchor - an attack anchor must still march out -
+     * so the caller checks {@link #isHomeAnchor}. Null when there is no
+     * main, no choke, or no room to stand. Public as a seam: the point
+     * pins in a stub state without running the frame.
+     */
+    public static APosition noContactHoldPoint(HasPosition anchor) {
+        AUnit main = Select.main();
+        if (main == null || main.position() == null) return null;
+        if (!isHomeAnchor(anchor, main)) return null;
+
+        try {
+            AChoke choke = Chokes.mainChoke();
+            if (choke == null || choke.center() == null) return null;
+
+            APosition half = main.position().translatePercentTowards(50, choke.center());
+            if (half == null) return null;
+            if (!half.isWalkable()) half = half.makeWalkable(6, 3, null);
+
+            return half;
+        }
+        catch (RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * True when the mission anchor is home: the main-choke focus, or
+     * anything standing near the main. An attack anchor (enemy base, far
+     * unexplored start) is never home - the line must march out to it.
+     */
+    public static boolean isHomeAnchor(HasPosition anchor, AUnit main) {
+        if (anchor == null || main == null || main.position() == null) return false;
+
+        try {
+            if (anchor instanceof atlantis.battle.advance.focus.AFocusPoint
+                && ((atlantis.battle.advance.focus.AFocusPoint) anchor).isMainChoke()) {
+                return true;
+            }
+
+            return anchor.distTo(main) <= NO_CONTACT_HOME_TILES;
+        }
+        catch (RuntimeException ignored) {
+            return false;
         }
     }
 
