@@ -98,3 +98,10 @@ signal, so the next one is decidable from logs instead of forensics.
   proof requires the engine cross-check (morph/complete rows for the
   site), never the twins alone. Hunt total: 5 macros + 2 Steamhammer
   games, 0 freezes; the demote gate stays parked.
+
+## Owner decision 2026-10-26: stays parked
+Zero live freezes in every retained game (FROZEN_WARP 0 in all 296 logs, re-verified 2026-10-24). Signal + twin stay, demote gate stays parked behind a live freeze.
+
+## Demote-chain re-check 2026-10-24 (296 retained logs)
+- 101 DEMOTE_STALLED rows, all `stoodStillFor=*`, zero `builder gone`.
+- 101 = 100 chain ordinals (1st..100th, DRY_RUN 002228's two included) + 1 explicitly ordinal-less foreign row (141623). Counter exact, no gap, no double. Gate stays parked.

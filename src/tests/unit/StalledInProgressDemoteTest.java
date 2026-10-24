@@ -135,6 +135,49 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         });
     }
 
+    /**
+     * B134 cid60 shape (NEXT #150): live builder walked away from the site,
+     * no warping entity ever appears, IN_PROGRESS sits 20k frames - the
+     * 3.5-tile shield holds forever and no demote/twin ever fires. The
+     * age-cap re-arms ancient entries (2400f > longest legal 1800f warp +
+     * margin) while young travellers keep the shield (same far-away
+     * fixture, frame 120 stays IN_PROGRESS).
+     */
+    private Construction walkedAway;
+    private FakeUnit walkedProbe;
+
+    @Test
+    public void aWalkedAwayBuilderAgesOutAfter2400() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        walkedProbe = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        world(2600, units(nexus, walkedProbe), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                walkedProbe.unitState().setLastPositionChanged(A.now());
+                walkedAway = stalledCoreAt(walkedProbe, 12, 10);
+            }
+
+            if (A.now() == 120) {
+                assertFalse(
+                    ConstructionStatusChanger.demoteStalledInProgress(walkedAway, walkedProbe),
+                    "young walked-away entry keeps the distance shield"
+                        + " (travellers unaffected, 110f old)");
+                assertEquals(
+                    ConstructionOrderStatus.IN_PROGRESS, walkedAway.status(),
+                    "no demote means no status change");
+            }
+
+            if (A.now() == 2500) {
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(walkedAway, walkedProbe),
+                    "ancient entry with no building re-arms to NOT_STARTED"
+                        + " however far the live builder went (B134 cid60)");
+                assertEquals(
+                    ConstructionOrderStatus.NOT_STARTED, walkedAway.status());
+            }
+        });
+    }
+
     // =========================================================
 
     private Construction aging;

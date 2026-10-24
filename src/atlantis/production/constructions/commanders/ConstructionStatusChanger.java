@@ -372,6 +372,25 @@ public class ConstructionStatusChanger extends Commander {
             return true;
         }
 
+        // B134 cid60 shape (NEXT #150): live builder walked away, no warping
+        // entity, IN_PROGRESS forever - the 3.5-tile / movement / standstill
+        // shields below hold young travellers (pinned), the age-cap re-arms
+        // ancient entries regardless of where the builder went. Threshold is
+        // the frozen-warp age (2400f > longest legal 1800f Nexus warp +
+        // accept-latency margin), so no healthy warp trips it: a real warp
+        // shows its entity within a minute and exits through the warping
+        // branch above. Terran constructing stays shielded (builder works
+        // the whole build).
+        if (construction.startedAgo() >= FROZEN_WARP_OBSERVED_FRAMES) {
+            if (builder.isConstructing()) return false;
+
+            logDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
+            twinDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+            return true;
+        }
+
         if (builder.isConstructing() || builder.isMoving()) return false;
         if (builder.distTo(construction.buildPosition()) > 3.5) return false;
         if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
