@@ -28,6 +28,17 @@ public class KiteTwin {
         row(dragoon, threat, "stuck-no-step");
     }
 
+    /**
+     * The escape validation passed but the engine refused the order
+     * (NEXT #188 follow-up on the fight side: quiet BWAPI-level
+     * {@code u().move()} false, same shape the HOLD twin names with
+     * canCmd/canMove). Names the refusal state at refuse time so the
+     * coming unstick/run-escalation decision reads data, not forensics.
+     */
+    public static void refusedStep(AUnit dragoon, AUnit threat) {
+        row(dragoon, threat, "stuck-order-refused");
+    }
+
     public static void frozenReset(AUnit dragoon, AUnit threat) {
         row(dragoon, threat, "frozen-reset");
     }
@@ -62,6 +73,8 @@ public class KiteTwin {
             .param("uy", dragoon.y() / 32)
             .param("tx", threat.x() / 32)
             .param("ty", threat.y() / 32)
+            .param("canCmd", dragoon.canCommand())
+            .param("canMove", dragoon.canMove())
             .param("result", result)
             .log(A.now(), A.minSec());
     }

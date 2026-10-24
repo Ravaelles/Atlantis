@@ -254,13 +254,23 @@ public final class FightTarget {
             // Dragoons died shooting nothing, glued on a Gateway). A
             // vetoed step is not a step - fall through and trade.
             if (dest != null && violatesBuildingClearance(dest, unit)) dest = null;
-            if (dest != null && unit.move(dest, Actions.MOVE_AVOID, Behavior.KITE.tag())) {
+            if (dest == null) {
+                KiteTwin.nowhereToStep(unit, threat);
+
+                return false;
+            }
+            if (unit.move(dest, Actions.MOVE_AVOID, Behavior.KITE.tag())) {
                 KiteTwin.steppedAside(unit, threat);
                 DuelMemory.stepped(unit, now);
 
                 return true;
             }
-            KiteTwin.nowhereToStep(unit, threat);
+            // Validation passed but the engine refused the order (quiet
+            // BWAPI-level false, same shape the HOLD twin names with
+            // canCmd/canMove): a refused order is not a step, name the
+            // refusal state instead of misfiling it as nowhere-to-step.
+            KiteTwin.refusedStep(unit, threat);
+            return false;
         }
         return false;
     }
