@@ -27,6 +27,44 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
     }
 
     @Test
+    public void trappedPostureHoldsAfterContactLost() {
+        FakeUnit d1 = fake(AUnitType.Protoss_Dragoon, 48, 10);
+        FakeUnit d2 = fake(AUnitType.Protoss_Dragoon, 49, 10);
+        FakeUnit d3 = fake(AUnitType.Protoss_Dragoon, 50, 10);
+        FakeUnit d4 = fake(AUnitType.Protoss_Dragoon, 51, 10);
+        FakeUnit[] foes = new FakeUnit[] {
+            fake(AUnitType.Protoss_Zealot, 30, 9), fake(AUnitType.Protoss_Zealot, 31, 9),
+            fake(AUnitType.Protoss_Zealot, 32, 9), fake(AUnitType.Protoss_Zealot, 30, 10),
+            fake(AUnitType.Protoss_Zealot, 31, 10), fake(AUnitType.Protoss_Zealot, 32, 10) };
+        for (FakeUnit zealot : foes) zealot.setEnemy();
+
+        world(400, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            d1, d2, d3, d4
+        ), foes, () -> {
+            int now = atlantis.game.A.now();
+            if (now == 12) {
+                assertEquals(ClusterMission.Posture.ATTACK,
+                    ClusterMission.postureFor(Count.ourCombatUnits(), false),
+                    "trapped shape marches out");
+            }
+            if (now == 40) {
+                for (FakeUnit zealot : foes) zealot.hp = 0;
+            }
+            if (now == 60) {
+                assertEquals(ClusterMission.Posture.ATTACK,
+                    ClusterMission.postureFor(Count.ourCombatUnits(), false),
+                    "contact lost, but the flip holds its window");
+            }
+            if (now == 260) {
+                assertEquals(ClusterMission.Posture.DEFEND,
+                    ClusterMission.postureFor(Count.ourCombatUnits(), false),
+                    "window over: small army with no threat holds home");
+            }
+        });
+    }
+
+    @Test
     public void trappedArmyMarchesOut() {
         FakeUnit d1 = fake(AUnitType.Protoss_Dragoon, 48, 10);
         FakeUnit d2 = fake(AUnitType.Protoss_Dragoon, 49, 10);

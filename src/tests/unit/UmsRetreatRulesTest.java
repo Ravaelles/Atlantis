@@ -186,14 +186,19 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
 
     @Test
     public void breachHoldsDefendPostureAtAnyArmySize() {
+        // Independent hypotheticals: the posture latch is per-game state,
+        // one query must not hold the next.
+        atlantis.battle.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.DEFEND,
             ClusterMission.postureFor(ClusterMission.ATTACK_ARMY_SIZE + 20, true),
             "raiders in the base pin even a big army home - marching out abandons the workers");
+        atlantis.battle.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.ATTACK,
             ClusterMission.postureFor(ClusterMission.ATTACK_ARMY_SIZE + 20, false),
             "clear base, big army: march as before");
+        atlantis.battle.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.DEFEND,
             ClusterMission.postureFor(3, false),

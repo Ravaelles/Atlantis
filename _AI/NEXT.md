@@ -1684,7 +1684,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   (PostureReasonsTest 5/5) + live-shape pin (PostureTrappedArmyTest). PurpleWave read: no global flip there, per-squad
   modes + confidence; ours stays one posture with named reasons (02_COMBAT Phase 0 property). Remainder: live macro
   proof (trapped army marches + kites instead of donating); old-changer reason inventory (pressure/punish/GoWithGoonz
-  shapes, ling-variant of the trapped rule) as follow-up slices.
+  shapes, ling-variant of the trapped rule) as follow-up slices. Slice 2 LANDED (pins + wired latch behavior):
+  PostureLatch holds every flip (attack-commit 5 s strong / 8 s weak, defend-commit 4 s - both old cooldowns,
+  weak/strong line is the existing headcount, no new threshold; breach bypasses immediately like the old
+  force-defend); pinned PostureLatchTest 7/7 (windows, release, no re-arm, backwards clock) + wired hold/release
+  in PostureTrappedArmyTest. UmsRetreatRulesTest resets the latch between hypotheticals (independent scenarios).
 
 ## Current game state (updated 2026-10-21)
 

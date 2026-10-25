@@ -146,6 +146,7 @@ public class BattleCommander extends Commander {
     }
 
     public static void clearForTests() {
+        atlantis.battle.cluster.PostureLatch.resetForTests();
         atlantis.battle.kite.CombatTuning.resetToDefaults();
         atlantis.battle.escape.EscapeTuning.resetToDefaults();
         atlantis.battle.strategy.GhostAdvance.clearForTests();
