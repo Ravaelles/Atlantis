@@ -424,12 +424,12 @@ with zipfile.ZipFile(out_jar) as z:
                  or n.startswith('tests/') or n.startswith('starengine/')]
     assert not forbidden, 'test data, harness classes or nested jars leaked in: %s' % forbidden[:5]
     assert 'main/Main.class' in names, 'entry point missing'
-    # BATTLE CUTOVER: the squad-assignment chain is deleted - the jar must
-    # ship the battle entry instead, and no combat classes at all. (The old
-    # assertion here demanded the deleted callback targets; inverted.)
+    # CONVENTIONS section 33 (2026-10-26): atlantis.combat is the reclaimed
+    # home for Combat-context decisions, so the jar must ship it - the battle
+    # entry first of all. (An older cutover check forbade every
+    # atlantis/combat/* entry, which contradicts this very line AND section 33;
+    # it failed every fresh build since the re-home, masked by reused jars.)
     assert 'atlantis/combat/BattleCommander.class' in names, 'battle entry missing from bot jar'
-    combat = [n for n in names if n.startswith('atlantis/combat/')]
-    assert not combat, 'deleted combat classes shipped in bot jar: %s' % combat[:5]
 
     # The payload is only the right size if nothing in it still names the harness.
     # A class can reference tests/ without importing it (reflection, a string), so
