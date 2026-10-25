@@ -103,6 +103,8 @@ public class BuildingTilesAreOccupied {
      * free of <i>structures</i>, say before any builder exists). It is no longer the whole
      * answer to "can this building stand here" - see {@link #check(APosition, AUnitType,
      * AUnit)} for that, and note the difference is exactly the mining-worker case.
+     * Only <i>completed</i> buildings count: an unfinished warping one is the
+     * construction itself in progress, not a verdict on the tile.
      */
     public static boolean checkBuildingsOnly(APosition position, AUnitType buildingType) {
         if (position == null || buildingType == null)
@@ -111,7 +113,15 @@ public class BuildingTilesAreOccupied {
         for (AUnit unit : Select.all().list()) {
             if (unit == null || !unit.isAlive())
                 continue;
-            if (!unit.isABuilding())
+            // Only completed buildings count: a warping one is not a
+            // verdict, it is the construction itself in progress -
+            // counting it cancels our own warp every 23 frames and
+            // re-requests the same tile until something else breaks the
+            // loop (measured: 15x Gateway cancel/re-request at [112,19]
+            // while its own warp stood there). An unfinished overlap
+            // waits (the warp settles it, B-41 adopts); a completed one
+            // kills the tile and the caller moves on.
+            if (!unit.isABuilding() || !unit.isCompleted())
                 continue;
 
             if (overlaps(unit, position, buildingType))

@@ -1624,7 +1624,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   unusable. Open root cause (needs order aroundPosition/maxDistance - not in twins - or a sim repro with blockers):
   (a) transient battle clutter (army + raiders + rubble on tiles) -> the order should WAIT, not die; (b) wrong search
   center -> search elsewhere. Next: sim repro (blocked home base -> READY order waits, never cancels) + twin carries
-  aroundPosition; no blind change to the cancel (it guards real stuck loops).
+  aroundPosition; no blind change to the cancel (it guards real stuck loops). Self-cancel slice LANDED 2026-10-25
+  (sim-first, red-green): checkBuildingsOnly and completedBuildingOverlaps both read completed-only, so a warping
+  building on its own site no longer cancels itself (pinned warpingBuildingDoesNotCancel; standing-building cancel
+  unchanged). Null-position root cause (aroundPosition WAIT-vs-search) stays open.
 
 ## Current game state (updated 2026-10-21)
 

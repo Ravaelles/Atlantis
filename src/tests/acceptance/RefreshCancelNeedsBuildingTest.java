@@ -152,6 +152,43 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
     }
 
     @Test
+    public void warpingBuildingDoesNotCancel() {
+        FakeUnit mason = fake(AUnitType.Protoss_Probe, SX, SY);
+        FakeUnit warping = fake(AUnitType.Protoss_Gateway, SX, SY);
+        warping.setCompleted(false);
+
+        world(30, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 7, 44),
+            warping,
+            mason
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 23 || fired) return;
+
+            fired = true;
+            vetoPosture();
+
+            APosition site = APosition.create(SX, SY);
+            Construction duplicate = new Construction(AUnitType.Protoss_Gateway);
+            duplicate.setPositionToBuild(site);
+            ProductionOrder replaced = new ProductionOrder(AUnitType.Protoss_Gateway, 8);
+            duplicate.setProductionOrder(replaced);
+            duplicate.setBuilder(mason);
+            ConstructionRequests.addConstruction(duplicate);
+
+            RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
+                mason, duplicate, AUnitType.Protoss_Gateway, site, mason);
+
+            assertTrue(
+                ConstructionRequests.constructions.contains(duplicate),
+                "a warping building on the site is the construction itself in "
+                    + "progress, not a verdict - cancelling it re-requests the "
+                    + "same tile in a loop (measured 15x at [112,19])");
+        });
+
+        assertTrue(fired, "the frame was reached - else this test proves nothing");
+    }
+
+    @Test
     public void nullSiteKeepsTheOldPath() {
         world(30, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 7, 44),
