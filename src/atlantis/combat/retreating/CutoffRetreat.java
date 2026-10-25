@@ -1,6 +1,8 @@
 package atlantis.combat.retreating;
 
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.kite.Kite;
+import atlantis.combat.strategy.DuelKite;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -42,6 +44,19 @@ public final class CutoffRetreat {
         if (unit.distTo(threat) > DETACHED_THREAT_TILES) return null;
 
         return threat;
+    }
+
+    /**
+     * No-odds stand (NEXT #190): swamped and chewed means the fight is
+     * already lost - trading it donates the unit. The caller marches
+     * home instead (run-escalation behind STEP_CUTOFF). Reuses the
+     * swamped count (3+ melee in 2.5, DuelKite) and the chewing flag,
+     * so no new threshold lives here.
+     */
+    public static boolean hopelessStand(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return false;
+
+        return Kite.isBeingChewed(unit) && DuelKite.isSwamped(unit);
     }
 
     static AUnit nearestEnemyCombatUnit(AUnit unit) {

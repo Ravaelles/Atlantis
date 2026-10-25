@@ -1600,7 +1600,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   - glue is live-validation gap, as filed. First post-split game adjudicated 2026-10-26 (Wine 1a2a3a Micro 2,
   Ghosts vs Lings): 63 KITE rows, ALL frozen-reset, canCmd+canMove all true, 0 stuck-no-step, 0 order-refused -
   the twin discriminates live as designed, but this shape never glues (no surround, no death); decision still
-  parked, the sim must reproduce stuck-while-chewed->death first.
+  parked, the sim must reproduce stuck-while-chewed->death first. Lethal shape CONFIRMED 2026-10-26 (Wine TauCross
+  PvsZ, VICTORY 9450f): Dragoons #165 (48 stuck-no-step + 16 hits f8855-9024, died f9033) and #173 (126 + 19 hits
+  f8870-9152, died f9162) - backed to a wall, chewed, every aim fails validation, fight in place, dead ~10f after
+  the last stuck row. Run-escalation LANDED 2026-10-26 (red-green): cutoff dragoons no longer trade hopeless
+  fights - CutoffRetreat.hopelessStand (swamped 3+ melee in 2.5 + chewed, both pre-existing measures, zero new
+  thresholds) routes to RALLY, and a stuck (no scored step) chewed unit rallies instead of last-standing; unchewed
+  last-stand unchanged. Pinned PocketGluedDragoonTest (red was displacement 1.76 + death f98 on old code; green
+  marches home; stash-verified both ways). FIGHT-path kite-site glue (dest==null while chewed on FIGHT tactic)
+  stays a follow-up slice.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").
@@ -1683,7 +1691,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   the dominant per-unit verdict (`fleeReason`, "-" outside FLEE) via ClusterTwin.dominantFleeReason over the live
   decide() classification (majority wins, first-seen breaks ties); pinned ClusterTwinDestTest 2/2 (RALLY
   dominant on a lost squad, "-" outside FLEE). No new thresholds (representation only, aggregation at the
-  existing CLUSTER site).
+  existing CLUSTER site). Run-escalation LANDED 2026-10-26 behind STEP_CUTOFF (red-green, same home): hopeless
+  cutoff stands (swamped + chewed) march home instead of trading, stuck + chewed rallies instead of
+  last-standing; unchewed last-stand untouched. Pinned PocketGluedDragoonTest (NEXT #190).
 
 - - **#196** Workers trade beyond the army (owner report: workers fight drastically too far from base, engaging
   enemies our own army ignores). Hard 10-tile line with a named reason: MAX_FIGHT_DIST_TO_BASE_TILES 15 -> 10

@@ -95,7 +95,11 @@ public final class RetreatFromLostFight {
             // fights instead, otherwise it steps away locally - donating
             // the march home is how reinforcements die without firing.
             AUnit threat = CutoffRetreat.threatIfCutOff(unit);
-            if (threat != null) {
+            // Run-escalation (NEXT #190): a swamped cutoff fight is
+            // already lost - trading it donates the unit, so it marches
+            // home with the rally below instead of taking the verdicts.
+            boolean runHome = threat != null && CutoffRetreat.hopelessStand(unit);
+            if (threat != null && !runHome) {
                 if (unit.hasWeaponRangeToAttack(threat, 1)) {
                     return new Verdict(FleeReason.FIGHT_CUTOFF, null);
                 }
@@ -105,7 +109,12 @@ public final class RetreatFromLostFight {
                     return new Verdict(FleeReason.STEP_CUTOFF, step);
                 }
 
-                return new Verdict(FleeReason.CORNERED_CUTOFF, null);
+                // Stuck with chewers on it is dying, not trading: the
+                // last-stand gun below is only for unchewed units.
+                // Chewed ones fall through to the rally and run.
+                if (!atlantis.combat.kite.Kite.isBeingChewed(unit)) {
+                    return new Verdict(FleeReason.CORNERED_CUTOFF, null);
+                }
             }
 
             HasPosition home;
