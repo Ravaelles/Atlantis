@@ -1717,8 +1717,16 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   BattleCommander.act (zero behavior change for other types); ProduceScarabs (brew at <=3 with banked minerals,
   no double orders, never mid-swing); CorsairHunt (unmolested Corsair closes a cooling Overlord and kills it
   instead of idling). Pinned SpecialistBehaviorsTest 6/6 (decision + wired act integration both ways).
-  Next: DT run-when-attacked, HT storm-on-clump (same registration shape), Observer coverage audit (detector
-  chain exists - verify, don't rebuild).
+  Slice 2 LANDED 2026-10-26 (red-green): RunWhenAttacked (hurt DT breaks contact via moveAwayFrom instead of
+  trading like a zealot; unhurt DTs and unhittable threats ignored - legacy window 150f + threat radius 5, hp-split
+  to-leader variant deferred); CastStorm (75+ energy storms the densest in-range clump at the clump center, bar
+  3-vs-Protoss/4-otherwise lowered by one past 110 energy; coordinator dedupe + no-storm-on-storm kept - legacy
+  veryCondensed provenance; crucial/important snipes + deep-energy relaxations stay a later slice). Pinned
+  SpecialistBehaviorsTest 17/17 (11 new: decision + wired act both ways per behavior). Observer audit DONE
+  (verify, no rebuild): detectors fly via SpecialUnitsCommander -> Observer -> MobileDetector chain (10 behaviors
+  + avoid carve-outs), specialists provably ignore them (observerFallsThroughSpecialists pin); no routing test in
+  unit scope (only e2e ScenarioObserver), chain verified by read.
+  Next: slice 3 (crucial/important snipes, deep-energy relaxations) + Observer live coverage on a real-enemy game.
 - - **#199** Unwalkable regroup points spam the log (owner report 2026-10-26, HIGHEST priority, KEEP THIS LINE on
   close per owner order): `### Trying to move to unwalkable position for #219 Dragoon @[6,31] / a:M_ENGAGE /
   t:[13,27]` + stack trace from `AUnitOrders.move` via `Regroup.march` <- `BattleCommander.regroup`. Root cause:

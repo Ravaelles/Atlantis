@@ -27,11 +27,10 @@ public final class SpecialistBehaviors {
     public static boolean act(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
 
+        if (RunWhenAttacked.act(unit)) return true;
         if (CorsairHunt.act(unit)) return true;
         if (ProduceScarabs.act(unit)) return true;
-
-        // DarkTemplarRunBehavior + HighTemplarStormBehavior register here
-        // in the same one-line shape (NEXT #198, slice 2).
+        if (CastStorm.act(unit)) return true;
 
         return false;
     }

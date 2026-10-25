@@ -3,6 +3,8 @@ package tests.unit;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.behaviors.CorsairHunt;
 import atlantis.combat.behaviors.ProduceScarabs;
+import atlantis.combat.behaviors.CastStorm;
+import atlantis.combat.behaviors.RunWhenAttacked;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import tests.fakes.FakeOrderSink;
@@ -134,6 +136,219 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
             assertFalse(CorsairHunt.applies(fake(AUnitType.Protoss_Dragoon, 20, 20)),
                 "dragoons never hunt: wrong unit, no opinion");
         });
+    }
+
+    @Test
+    public void dtBreaksContactWhenHurt() {
+        FakeUnit dt = fake(AUnitType.Protoss_Dark_Templar, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(dt), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            dt.unitState().setLastUnderAttack(atlantis.game.A.now());
+
+            assertTrue(RunWhenAttacked.act(dt),
+                "a hurt DT breaks contact instead of trading like a zealot");
+            assertTrue(movesAwayFrom(ordersOf(dt), dt, 32, 20),
+                "the run goes away from the threat, not through it: " + ordersOf(dt));
+        });
+    }
+
+    @Test
+    public void dtHoldsWhenUnmolested() {
+        FakeUnit dt = fake(AUnitType.Protoss_Dark_Templar, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(dt), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(RunWhenAttacked.act(dt),
+                "an unhurt DT keeps killing: the run is for contact, not presence");
+        });
+    }
+
+    @Test
+    public void dtIgnoresEnemiesThatCannotHitIt() {
+        FakeUnit dt = fake(AUnitType.Protoss_Dark_Templar, 30, 20);
+        FakeUnit overlord = fake(AUnitType.Zerg_Overlord, 32, 20);
+        overlord.setEnemy();
+
+        world(20, fakeOurs(dt), fakeEnemies(overlord), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            dt.unitState().setLastUnderAttack(atlantis.game.A.now());
+
+            assertFalse(RunWhenAttacked.act(dt),
+                "nothing here can hit the DT: running blind wastes the cloak");
+        });
+    }
+
+    @Test
+    public void hookedDtRunsThroughAct() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dt = fake(AUnitType.Protoss_Dark_Templar, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, dt), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            dt.unitState().setLastUnderAttack(atlantis.game.A.now());
+
+            ordersOf(dt).clear();
+            BattleCommander.act(dt, FightOrFlight.Tactic.FIGHT, null, dt);
+
+            assertTrue(movesAwayFrom(ordersOf(dt), dt, 32, 20),
+                "hooked act() breaks the DT out instead of trading: " + ordersOf(dt));
+        });
+    }
+
+    @Test
+    public void templarStormsCondensedClump() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 20);
+        ht.setEnergy(100);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 35, 20),
+            fake(AUnitType.Protoss_Zealot, 36, 20),
+            fake(AUnitType.Protoss_Zealot, 35, 21)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "75+ energy and 3 in storm radius: storm the clump");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void templarHoldsWithoutEnergy() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 24);
+        ht.setEnergy(50);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 35, 24),
+            fake(AUnitType.Protoss_Zealot, 36, 24),
+            fake(AUnitType.Protoss_Zealot, 35, 25)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht), "50 energy: hold the storm");
+        });
+    }
+
+    @Test
+    public void templarHoldsOnSpreadEnemies() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 28);
+        ht.setEnergy(150);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 35, 28),
+            fake(AUnitType.Protoss_Zealot, 45, 28)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht), "no 3-clump in range: hold the storm");
+        });
+    }
+
+    @Test
+    public void zergClumpNeedsFourOrCharge() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 32);
+        ht.setEnergy(100);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Zerg_Zergling, 35, 32),
+            fake(AUnitType.Zerg_Zergling, 36, 32),
+            fake(AUnitType.Zerg_Zergling, 35, 33)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht),
+                "vs Zerg 3 lings at 100 energy is not a storm (legacy: 4, or 3 charged)");
+        });
+    }
+
+    @Test
+    public void chargedTemplarStormsZergTrio() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 36);
+        ht.setEnergy(120);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Zerg_Zergling, 35, 36),
+            fake(AUnitType.Zerg_Zergling, 36, 36),
+            fake(AUnitType.Zerg_Zergling, 35, 37)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "110+ energy lowers the bar by one (legacy): storm the trio");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void hookedTemplarStormsThroughAct() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 40);
+        ht.setEnergy(120);
+
+        world(20, fakeOurs(nexus, ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 35, 40),
+            fake(AUnitType.Protoss_Zealot, 36, 40),
+            fake(AUnitType.Protoss_Zealot, 35, 41)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            ordersOf(ht).clear();
+            BattleCommander.act(ht, FightOrFlight.Tactic.FIGHT, null, ht);
+
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "hooked act() storms the clump instead of walking in: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void observerFallsThroughSpecialists() {
+        FakeUnit observer = fake(AUnitType.Protoss_Observer, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(observer), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(atlantis.combat.behaviors.SpecialistBehaviors.act(observer),
+                "detectors are flown by the Observer chain, never grabbed here");
+        });
+    }
+
+    private static boolean movesAwayFrom(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
+        int fromX = unit.position().tx();
+        int fromY = unit.position().ty();
+        double before = Math.hypot(fromX - tx, fromY - ty);
+        for (FakeOrderSink.Record record : orders) {
+            if (!record.operation.equals("move")) continue;
+            int[] at = parseTile(record.toString());
+            if (at == null) continue;
+            if (Math.hypot(at[0] - tx, at[1] - ty) > before) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean stormCastAt(java.util.List<FakeOrderSink.Record> orders, int unitId) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals("useTechAt")
+                && record.toString().contains("Psionic_Storm")) return true;
+        }
+
+        return false;
     }
 
     private static boolean movesToward(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
