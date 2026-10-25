@@ -1474,6 +1474,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   0 SCOUT rows again - 5th real-opponent game, watch still unproven and unwitnessed; live proof still rides a real-enemy
   main Re-verify 2026-10-24 sweep: SCOUT 0 in 306 files (out + REPLAYS), FROZEN_WARP 0 - watch still unproven, vehicle
   blind. Re-verify 2026-10-26: sweep still 0 (no new games since 12:20), 5th real-opponent game still missing.
+  Root cause found 2026-10-26 (no SCOUT-family key exists in the twin vocabulary): the blindness is structural,
+  not a dead scout - even a perfect game leaves zero rows. Witness slice LANDED (red-green): SCOUT_WATCH rows
+  the scout tile next to the known enemy main on the cluster cadence (ScoutWatch.sample hooked at the end of
+  ScoutCommander.handle; MEDIUM, representation only), pinned ScoutWatchTest 2/2 (watch at main trails the
+  main; no scout, no rows). Next live game with a scout decides watch-vs-wander from the trail.
 - **#189** Log priority adoption (owner 2026-10-26, remainder after the
   central slice): every console line carries `[LOW]/[MED]/[HIGH]/[CRIT]`
   (untagged reads `[MED]`), event rows carry short `"lvl"`, `[TEMP]`

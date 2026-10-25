@@ -52,6 +52,7 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.MEDIUM, LogKey.TRAIN_ATTEMPT.level());
         assertEquals(LogLevel.MEDIUM, LogKey.CLUSTER.level());
         assertEquals(LogLevel.MEDIUM, LogKey.CATALOGUE_SITE.level());
+        assertEquals(LogLevel.MEDIUM, LogKey.SCOUT_WATCH.level());
         assertEquals(LogLevel.MEDIUM, LogKey.KITE.level());
         assertEquals(LogLevel.MEDIUM, LogKey.HOLD.level());
         assertEquals(LogLevel.MEDIUM, LogKey.MISSION.level());

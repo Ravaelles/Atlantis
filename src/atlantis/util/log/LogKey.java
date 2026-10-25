@@ -91,6 +91,9 @@ public enum LogKey {
     TRAIN_ATTEMPT,
     /** A catalogue answer for a legacy site search: answered tile or decline reason. */
     CATALOGUE_SITE,
+    /** A scout's tile next to the known enemy main, throttled (NEXT #187):
+      a trail clustered at the main is watching, at far expos wandering. */
+    SCOUT_WATCH,
     /** A kiting step or a kite with nowhere to go (dist x10, cooldown, result). */
     KITE,
     /** A hold decision: march, or which gate broke it (unit, target, tactic, verdict). */

@@ -68,6 +68,8 @@ public class ScoutCommander extends Commander {
         } catch (ConcurrentModificationException ignore) {
         }
 
+        ScoutWatch.sample();
+
         // CodeProfiler.endMeasuring(this);
 
         return false;
