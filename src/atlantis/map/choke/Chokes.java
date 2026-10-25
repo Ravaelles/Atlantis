@@ -15,6 +15,7 @@ import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Chokes {
@@ -22,6 +23,42 @@ public class Chokes {
 //    private static HashMap<APosition, AChoke> cached_basesToChokes = new HashMap<>();
 //    protected final Set<AChoke> disabledChokes = new HashSet<>();
 //    protected static AChoke cached_basesToChokepoints = null;
+
+    // =========================================================
+
+    /**
+     * NEXT #193: a main/natural designation (ours or the enemy's) under
+     * this width, or it is not a choke at all. The region-null fallback
+     * used to pick the Euclidean-nearest choke with no check, so a giant
+     * area far from every base could designate as "main choke" (TauCross
+     * bottom start). Wide areas stay in chokes() for micro use - only
+     * the designations refuse them.
+     */
+    public static final int MAX_DESIGNATED_CHOKE_WIDTH_TILES = 10;
+
+    /** True when this choke may designate as a main/natural choke. */
+    public static boolean isPlausibleDesignatedChoke(AChoke choke) {
+        return choke != null && choke.width() < MAX_DESIGNATED_CHOKE_WIDTH_TILES;
+    }
+
+    /** Nearest designation-plausible choke, or null when none qualifies. */
+    public static AChoke nearestNarrowChoke(HasPosition from, Collection<AChoke> chokes) {
+        if (from == null || chokes == null) return null;
+
+        AChoke nearest = null;
+        double best = Double.MAX_VALUE;
+        for (AChoke choke : chokes) {
+            if (!isPlausibleDesignatedChoke(choke)) continue;
+
+            double dist = choke.distTo(from);
+            if (dist < best) {
+                best = dist;
+                nearest = choke;
+            }
+        }
+
+        return nearest;
+    }
 
     // =========================================================
 
@@ -103,6 +140,7 @@ public class Chokes {
 
     public static boolean fullfillsConditionsForNatural(AChoke choke, String flag) {
         if (choke == null) return false;
+        if (!isPlausibleDesignatedChoke(choke)) return false;
 
         return choke.position().distToMapBorders() > 9
             && choke.center().distToOr999(flagToChoke(flag)) >= 10;

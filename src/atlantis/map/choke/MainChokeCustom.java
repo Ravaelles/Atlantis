@@ -1,7 +1,6 @@
 package atlantis.map.choke;
 
 import atlantis.map.position.APosition;
-import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -15,9 +14,7 @@ public class MainChokeCustom {
             return null;
         }
 
-        AChoke choke = (AChoke) Positions.nearestToFrom(main, Chokes.chokes());
-
-        return choke;
+        return Chokes.nearestNarrowChoke(main, Chokes.chokes());
 
 //        // Define region where our main base is
 //        ARegion mainRegion = MainRegion.mainRegion();

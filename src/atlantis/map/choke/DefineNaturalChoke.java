@@ -42,6 +42,7 @@ public class DefineNaturalChoke {
 
         for (AChoke choke : naturalRegion.chokes()) {
             if (choke.equals(mainChoke)) continue;
+            if (!Chokes.isPlausibleDesignatedChoke(choke)) continue;
 
 //            AAdvancedPainter.paintChoke(choke, Color.Yellow, "NATURAL CHOKE");
             return choke;

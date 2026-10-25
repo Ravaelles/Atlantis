@@ -1633,6 +1633,14 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   building on its own site no longer cancels itself (pinned warpingBuildingDoesNotCancel; standing-building cancel
   unchanged). Null-position root cause (aroundPosition WAIT-vs-search) stays open.
 
+- - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
+  nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
+  check). Slice LANDED 2026-10-25 (sim-first, red-green): designated chokes (ours + enemy's, main + natural) must
+  read under 10 tiles (Chokes.isPlausibleDesignatedChoke + nearestNarrowChoke, wired through MainChokeCustom,
+  DefineMainChoke, DefineNaturalChoke and fullfillsConditionsForNatural); all-wide means no designation (callers
+  already null-handle, the army falls back to anchor instead of marching across the map). Pinned
+  DesignatedChokeWidthGuardTest. Remainder: live TauCross bottom-start proof (narrow main choke + army holding it).
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;

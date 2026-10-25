@@ -43,7 +43,10 @@ public class DefineMainChoke {
 
         naturalRegion = reachableRegions.get(0);
 
-        return region.chokeBetween(naturalRegion);
+        AChoke choke = region.chokeBetween(naturalRegion);
+        if (!Chokes.isPlausibleDesignatedChoke(choke)) return null;
+
+        return choke;
     }
 
     protected static ARegion naturalRegion() {
