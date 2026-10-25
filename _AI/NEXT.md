@@ -1613,6 +1613,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   base behaviors (facing, accel/braking, attack cycles, cooldowns) - regions may stay simple, ground must exist so
   unexplored/sweep/region plays are sim-testable. NN on this map rides the sim proxy + a live owner game when the
   vehicle is ready. Slice 1 LANDED: SimRectMap (enemy TL / main TR / middle BL / natural BR + blocked bands with 2-tile choke gaps) + Regions.useRegions port + SimRectMapTest (mapping + sweep march with no memory); suite green.
+  Snapshot slice LANDED 2026-10-25 (micro-pinned, zero behavior change without the flag): MAP_SNAPSHOT dump
+  (tiles/regions/chokes/resources/starts/buildings, never throws into the startup path) + SimMap loader
+  (walkable/buildable/region answers + mineral/geyser/preplaced spawn helpers, install/uninstall). Real-file proof
+  still needs a quiet game.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").

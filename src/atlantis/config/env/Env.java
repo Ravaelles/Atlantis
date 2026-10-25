@@ -25,6 +25,7 @@ public class Env {
     private static boolean wine = false;
     private static boolean wineClient = false;
     private static boolean paramTweaker = false;
+    private static boolean mapSnapshot = false;
     /**
      * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
      * new engine in parallel with the legacy queue and only logs what it would
@@ -268,6 +269,11 @@ public class Env {
                     || trueFalse(value);
                 return true;
 
+            case "MAP_SNAPSHOT":
+                mapSnapshot = "1".equals(value == null ? "" : value.trim())
+                    || trueFalse(value);
+                return true;
+
             default:
                 // Wine game-window geometry, tweakable without recompiling.
                 atlantis.config.launcher.WineWindowConfig.applyEnvValue(key, value);
@@ -348,6 +354,15 @@ public class Env {
      */
     public static boolean isParamTweaker() {
         return paramTweaker;
+    }
+
+    /**
+     * One-shot map snapshot dump (StarEngine map library): when set, the
+     * game writes the full map copy (tiles, regions, chokes, resources,
+     * starts) once at game start and keeps playing normally.
+     */
+    public static boolean isMapSnapshot() {
+        return mapSnapshot;
     }
 
     public static boolean isFirstRun() {

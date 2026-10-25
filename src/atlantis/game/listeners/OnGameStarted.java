@@ -135,6 +135,18 @@ public class OnGameStarted {
 
         InitialMainPosition.remember();
 
+        // One-shot map snapshot for the StarEngine map library
+        // (CONVENTIONS section 30, NEXT #191): MAP_SNAPSHOT=1 in ENV
+        // writes out/map-snapshots/<Map>.json once, then the game
+        // continues normally. Never throws into the startup path.
+        if (atlantis.config.env.Env.isMapSnapshot()) {
+            try {
+                atlantis.map.snapshot.MapSnapshotDumper.dumpOnce();
+            }
+            catch (Throwable ignored) {
+            }
+        }
+
         try {
             AInitialActions.executeInitialActions();
         } catch (Exception e) {
