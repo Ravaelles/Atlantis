@@ -58,7 +58,10 @@ trade a measurement for an explanation (§3a).
    `MiddleFocusChoke` standing line, never behind it; (b) every choke
    standoff stands RADIUS + 6 tiles off the center (a 9-tile radius =>
    15 tiles). Pinned `RetreatFloorTest` 4/4 and `ChokeStandoffDistanceTest`
-   3/3; live proof rides the next quiet game.
+   3/3. Graded 2026-10-26 into the **retreat ladder** (commit `e06adb27d`,
+   #204) - the floor now reads the ground the army last fought on instead
+   of a single line - pins `RetreatLadderTest` 5/5 + `RetreatFloorTest` 8/8.
+   Live proof still rides the next quiet game.
 2. **Per-gate legacy deletions**, one game of proof each: no candidate yet.
    Deletions wait for routine feeder coverage; board-invisible production
    (Forge, cannons) is capability, not duplication. Latest verdict: no routine
@@ -88,6 +91,19 @@ trade a measurement for an explanation (§3a).
 10. **Housekeeping:** drop the four stale worktrees (`w-zealot-gas`,
     `w-anti-flap`, `w-regroup-march`, `w-middle-focus`) once their content is
     confirmed inside commit ce4de4034; keep the box quiet between games.
+11. **Sweep of #144–#204** (owner order 2026-10-26: work the next 40
+    positions as Senior Engineer, autonomous, long-term answers first).
+    Triage of the whole range: everything that needs a game or owner data
+    stays in the one-game queue (step 7) or the owner-data queue (step 8);
+    what is executable now runs in this order, each its own commit:
+    (a) #211 suite attribution so the gate is honest, (b) #194's shared
+    anchor/rally input resolver (one seam for the duplicated inputs, unblocks
+    #195/#200/#205 anchors), (c) #201 Corsair cluster sim-first (queued
+    behind #195/#190, both landed), (d) #184 one TargetLadder rule at a time
+    with a sim no-regression proof, (e) sim-only slices of #188/#190/#192.
+    #156 stays parked (owner: no blind merge), #144–#147 wait on parity
+    runs, #160/#185 wait on K-of-N data. #206–#210 are new owner findings
+    from the 2026-10-26 games and slot into the same queues.
 
 ## Goal board track (active)
 
@@ -107,6 +123,20 @@ trade a measurement for an explanation (§3a).
 Do not store suite counts here; measure with `scripts/run-tests.sh` when needed.
 Before cleaning `out/`, inspect it: it can contain archived game logs as well
 as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
+
+- **#211** The acceptance tier is red at HEAD since `8d1e7ce47` (Prioritize
+  blocked supply construction). A/B-measured 2026-10-26: the identical
+  failure list comes back with and without any combat change (retreat
+  ladder, first-Dragoon gate), and the architecture advisory's violation
+  counts are byte-identical with and without them - so the breakage sits in
+  the placement/supply rules that commit touched (`CatalogueSiteAdapter*`,
+  `RequestBuildingNear*`, dragoon production rows, `CombatEvaluator`,
+  `PostureTrapped*`). Do not patch it from a combat change; whoever owns
+  that commit re-runs
+  `bash scripts/run-tests.sh --allow-slow --select-package tests.acceptance`
+  until green (that exact invocation is the one that works -
+  `run-acceptance-tests.sh --allow-slow` alone silently drops the selection
+  and runs the unit scope).
 
 ## Architecture migration — stages E–J
 
@@ -392,7 +422,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `build-bot-jar.sh`.
 - **#200** Against early Zerg, fewer than five combat units hold at the main
   when the midpoint exceeds six tiles, leaving room for workers to join
-  (`NoContactHoldTest`). Open: live proof.
+  (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
+  (#205): a dragoon build holds the main regardless of that count until its
+  first Dragoon is finished. Open: live proof.
 - **#201** Corsairs trail the main army instead of hunting: they need their own
   (default solo) cluster, merging only when threatening air exists; the
   "numerous Wraiths" line becomes a named constant with a pin (AEC §31).
@@ -423,3 +455,65 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   rebased on the same seam. Suite 1568/1568, arch 2-failure advisory
   unchanged. Open: live proof - a game where a losing fight stops at the
   middle instead of running home.
+  - Graded further 2026-10-26 into the **retreat ladder** (owner order,
+    commit `e06adb27d`) after the floor's own gate failed live: in
+    GAME_26E683D4 an army at 64 tiles from home ran 42 tiles back to the
+    Nexus, past the line it held - "already inside the line" switched the
+    floor off exactly where it was needed. The floor now reads the ground
+    the army last fought on (`ArmyContact.noteFight` ->
+    `RetreatLadder.noteFightGround`, only 4+ unit fights): beyond the
+    middle choke line, then the natural (main) choke line, and that is the
+    floor - the Nexus is never a retreat destination. `RetreatLadderTest`
+    5/5 + `RetreatFloorTest` 8/8 (was 4), both mutation-proven (killing the
+    middle rung fails 4 pins, dropping the hold guard fails 1). The owner's
+    companion symptom "came home, then hid in the main" is #206.
+- **#205** First-Dragoon gate vs Zerg (owner order 2026-10-26): on a build
+  that trains Dragoons the line defending home stays at the main base until
+  the first Dragoon is finished - the early-Zerg small-army hold (#200) only
+  covered the count, so six Zealots of a dragoon build walked out to the
+  halfway standoff with no ranged unit on the field. Landed 2026-10-26
+  (commit `fe2c0431b`): `FirstDragoonGate` = Zerg x zero finished Dragoons x
+  build plans a Dragoon, written as a flag because combat never reads
+  production - `OnGameStarted` hands over `CurrentBuildOrder.plansDragoon()`
+  (the same bridge pattern as the scout setting) and
+  `BattleCommander.clearForTests` drops it per game. Pinned
+  `FirstDragoonGateTest` 8/8 (pure gate math, fresh-game default,
+  build-order rows, unknown build) + `NoContactHoldTest` +3 (six Zealots
+  hold the main, one Dragoon opens it, an ungated build stages out),
+  mutation-proven both ways. Open: live proof in an early-Zerg defense;
+  rides the same one-game queue as #200.
+- **#206** Army hides in the main after coming home (owner live finding
+  2026-10-26): the line comes back and then stays tucked into the main
+  despite repeated attempts to stop doing that. Everything nearby points
+  home by design - the ladder (#204) stops the run at the choke line,
+  #200/#205 hold small or gated armies at the main, `defendAnchor` answers
+  the main building for a non-Protoss enemy - so the open question is which
+  of them keeps the army in AFTER contact is over. Needs one game where the
+  fight ends and the army must re-deploy: read the anchor/hold/posture rows
+  in the frames after contact, name the latch that keeps it home, then one
+  rule with a pin. Do not add a fourth home-pointer before that reading.
+- **#207** Army forms as if the enemy were in a different base (owner live
+  finding 2026-10-26): an enemy base is detected, yet the army positions
+  toward a base the enemy is not in. Open: line the scout/enemy-base memory
+  (`EnemyUnits`, last-seen positions) up against the anchor chosen in the
+  same frames of one trace and decide whether the stale base or the anchor
+  choice is at fault - fix whichever one the frames convict, with a pin.
+  Needs a game where both bases are known.
+- **#208** Formation in our own base faces our own main (owner live finding
+  2026-10-26): slots are laid out as if we were attacking our own Nexus -
+  a sign/orientation error between the formation pivot and the threat
+  direction. Open: pin the pivot computation with a fake threat on the far
+  side of the base (sim, no game needed) and prove the formation faces it;
+  then confirm the same orientation live.
+- **#209** Units deep in our own main stack on each other (owner live
+  finding 2026-10-26): blocked units inside the base occupy the same
+  ground instead of spreading, i.e. the unstick/holder logic assumes open
+  ground or an enemy in front. Open: reproduce the geometry in a sim
+  (blocked unit with neighbours inside the base), pin a spacing answer, and
+  check it against #182's holder-unstick so the two do not fight.
+- **#210** Formation orders while defending at most once per 10 frames
+  (owner order 2026-10-26): re-issuing formation orders every frame during
+  a defense churns the line. Open: one latch on the formation order writer
+  (one issuance per 10 frames while the posture is defend - a latch, not a
+  per-unit cooldown), pinned with a frame counter, plus a check that the
+  FIRST deployment of a fight is not delayed by it.
