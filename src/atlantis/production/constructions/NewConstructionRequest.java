@@ -127,6 +127,8 @@ public class NewConstructionRequest {
         // =========================================================
         // Successfully found position for new building
 
+        if (order != null) order.clearFailedSearchStreak();
+
         APositionFinder.clearCache();
 
         // Assign optimal builder for this building
@@ -221,7 +223,12 @@ public class NewConstructionRequest {
         return "-";
     }
 
-    private static String dominantRefusal(AUnitType building) {
+    /**
+     * The dominant refusal of the last placement search for this building.
+     * Public as a seam: the wait/cancel decision pins on the production
+     * verdict itself, not a hand-made string.
+     */
+    public static String dominantRefusal(AUnitType building) {
         java.util.Map<String, Integer> breakdown = building.isPylon()
             ? ProtossPositionFinder.lastRefusalBreakdown()
             : PositionFulfillsAllConditions.lastRefusalBreakdown();
@@ -271,36 +278,7 @@ public class NewConstructionRequest {
         // that killed the search (measured: 8x Gateway "Not powered" while
         // the bulk was elsewhere).
         String dominant = dominantRefusal(building);
-        EventLog.key(LogKey.PLACEMENT_FAILED)
-            .param("type", building.name())
-            .param("order", order == null ? "-" : order.toString())
-            .param("reason", dominant == null ? "-" : dominant)
-            .log(A.now(), A.minSec());
-
-        // Owner 2026-10-17 (Phase 4): power verdict pulls a Pylon instead
-        // of churning. The legacy finder never checks power, so an
-        // unpowered area fails every gateway row forever (measured: 12/13
-        // placement failures in a 20-min game). A pylon near the searched
-        // area, at most one coming (needsPylon reads 5.3 tiles around it),
-        // and the row retries on later frames. Physical failures are left
-        // alone - no pylon fixes a full map.
-        if (shouldPullPylon(building, dominant, order)) {
-            HasPosition near = order.aroundPosition() != null
-                ? order.aroundPosition()
-                : Select.mainOrAnyBuilding();
-            if (near != null && BuildPylonFirst.needsPylon(near)) {
-                BuildPylonFirst.requestNear(near);
-            }
-        }
-//                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
-        if (AbstractPositionFinder._STATUS != null) {
-            ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
-        }
-        else {
-            ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
-        }
-
-        boolean cancelled = cancelNullPositionConstructionIfNeeded(building, order);
+        boolean cancelled = handleFailedSearch(building, order, dominant);
 
 //        System.err.println("cancelled = " + cancelled);
 //        if (true) throw new RuntimeException("cancelled = " + cancelled + " / " + building);
@@ -337,6 +315,88 @@ public class NewConstructionRequest {
         return false;
     }
 
+    /**
+     * A failed search quits loudly and then decides: the twin names the
+     * search window (NEXT #192 - without around/maxDist the live choice
+     * between transient clutter and a wrong search center is unreadable),
+     * and the order waits out the blockage for a bounded patience instead
+     * of dying instantly. Only a failure that outlasts the patience still
+     * cancels, so the stuck-loop guard stays, delayed not removed.
+     * Public as a seam: the wait/cancel decision pins without a game.
+     *
+     * @return true when the order was cancelled, false when it waits.
+     */
+    public static boolean handleFailedSearch(AUnitType building, ProductionOrder order, String dominant) {
+        EventLog.key(LogKey.PLACEMENT_FAILED)
+            .param("type", building.name())
+            .param("order", order == null ? "-" : order.toString())
+            .param("around", order == null || order.aroundPosition() == null ? "-"
+                : "[" + order.aroundPosition().tx() + "," + order.aroundPosition().ty() + "]")
+            .param("maxDist", order == null ? -1 : order.maximumDistance())
+            .param("reason", dominant == null ? "-" : dominant)
+            .log(A.now(), A.minSec());
+
+        // Owner 2026-10-17 (Phase 4): power verdict pulls a Pylon instead
+        // of churning. The legacy finder never checks power, so an
+        // unpowered area fails every gateway row forever (measured: 12/13
+        // placement failures in a 20-min game). A pylon near the searched
+        // area, at most one coming (needsPylon reads 5.3 tiles around it),
+        // and the row retries on later frames. Physical failures are left
+        // alone - no pylon fixes a full map.
+        if (shouldPullPylon(building, dominant, order)) {
+            HasPosition near = order.aroundPosition() != null
+                ? order.aroundPosition()
+                : Select.mainOrAnyBuilding();
+            if (near != null && BuildPylonFirst.needsPylon(near)) {
+                BuildPylonFirst.requestNear(near);
+            }
+        }
+//                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
+        if (AbstractPositionFinder._STATUS != null) {
+            ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
+        }
+        else {
+            ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
+        }
+
+        if (!nullPositionGuardIsLive()) return false;
+
+        if (order != null && shouldWaitOutNullPosition(order.failedSearchStreak())) {
+            order.noteFailedSearch();
+
+            return false;
+        }
+
+        return cancelNullPositionConstructionIfNeeded(building, order);
+    }
+
+    /**
+     * Patience for a failed placement search, in attempts (about one
+     * attempt per frame per live order, so ~20 s): battle clutter clears
+     * in seconds while a structurally unusable area never clears. A
+     * failure that outlasts this still cancels - the number bounds the
+     * wait, and its calibration rides the live proof (NEXT #192).
+     */
+    public static final int NULL_POSITION_PATIENCE_ATTEMPTS = 480;
+
+    /**
+     * The wait half of the null-position guard (NEXT #192): an order
+     * whose search failed fewer times than the patience waits instead
+     * of dying. Pure except reading nothing - the streak decides, so
+     * the boundary pins without a game.
+     */
+    public static boolean shouldWaitOutNullPosition(int failedSearchStreak) {
+        return failedSearchStreak < NULL_POSITION_PATIENCE_ATTEMPTS;
+    }
+
+    /**
+     * The null-position guard only runs mid/late game with real supply
+     * (ancient shape, kept): before that a failed search never cancels.
+     */
+    private static boolean nullPositionGuardIsLive() {
+        return A.s >= 70 && A.supplyTotal() >= 11;
+    }
+
     private static boolean cancelNullPositionConstructionIfNeeded(AUnitType building, ProductionOrder order) {
         boolean cancelled = false;
 
@@ -350,7 +410,7 @@ public class NewConstructionRequest {
             }
         }
         else if (!building.isPylon()) {
-            if (A.s >= 70 && A.supplyTotal() >= 11) {
+            if (nullPositionGuardIsLive()) {
                 cancelled = true;
                 order.cancel("Null position for " + building);
                 AConsole.errPrintln(LogLevel.HIGH, A.minSec() + ": Cancelled order: " + order);

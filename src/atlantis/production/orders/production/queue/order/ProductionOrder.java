@@ -51,6 +51,12 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
      */
     private int maximumDistance = MaxBuildingDist.MAX_DIST;
     /**
+     * Consecutive failed placement searches behind this order (NEXT #192):
+     * a blocked search window waits out the blockage for a bounded
+     * patience instead of cancelling instantly; a success clears it.
+     */
+    private int failedSearchStreak = 0;
+    /**
      * At this supply we should change global mission to this.
      */
     private Mission mission;
@@ -418,6 +424,18 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int maximumDistance() {
         return maximumDistance;
+    }
+
+    public int failedSearchStreak() {
+        return failedSearchStreak;
+    }
+
+    public void noteFailedSearch() {
+        failedSearchStreak++;
+    }
+
+    public void clearFailedSearchStreak() {
+        failedSearchStreak = 0;
     }
 
     public ProductionOrder setMaximumDistance(int maximumDistance) {

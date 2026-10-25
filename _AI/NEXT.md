@@ -1640,8 +1640,18 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   standing-cover check reads the same any-type completed-footprint predicate as the refresh
   (OverlapsOurStandingBuilding delegates to the completed-only check), so a different-type overlap can no longer be
   picked for the refresh to cancel (live: CyberneticsC at [91,111] cancelled in a loop); the refresh names the
-  blocking building in the twin. Packed touching-edge neighbours stay legal. Null-position root cause
-  (aroundPosition WAIT-vs-search) stays open.
+  blocking building in the twin. Packed touching-edge neighbours stay legal. WAIT slice LANDED 2026-10-26
+  (sim-first, red-green): a failed non-Pylon search no longer cancels instantly mid/late game - the order waits out
+  the blockage for a bounded patience (NULL_POSITION_PATIENCE_ATTEMPTS 480, ~20 s at one attempt/frame; battle clutter
+  clears in seconds, structural blockage never does) and only a failure that outlasts it still cancels, so the
+  stuck-loop guard stays, delayed not removed (deviation from "never cancels" recorded: unbounded waiting leaks queue
+  slots on structural failure). Cause-agnostic by design: the live-vs-stub refusal vocabularies differ, so a
+  cause-keyed predicate would pin the harness; the patience has identical semantics in sim and live. Seam
+  handleFailedSearch (twin + pull-Pylon + wait/cancel) extracted 1:1 from the quit path, dominantRefusal(building)
+  public as the verdict seam. Pinned GatewayWaitsOnBlockedBaseTest 3/3 (blocked radius-3 spiral fails, order alive
+  after 100 attempts, dead after 485; freed base warps on the waiting order). Twin half: PLACEMENT_FAILED carries
+  around + maxDist, so the live clutter-vs-center choice is decidable per row. Calibration of the patience + live
+  proof ride the next quiet game.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
