@@ -85,7 +85,11 @@ public class PositionFulfillsAllConditions {
 
         if (We.protoss()) {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
-            if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return failed();
+            // No sibling-spacing rule (owner 2026-10-26): pushing every
+            // early pylon 4-6 tiles from the last one walked the spiral
+            // into third regions; below the owner's line the search takes
+            // the nearest valid tile instead. PylonNeedsRoomAround below
+            // still stops true stacking.
             if (PylonNeedsRoomAround.isTooTight(builder, building, position)) return failed();
             if (PylonTooFarFromBaseEarly.isTooFar(builder, building, position)) return failed();
             if (ProtossTooCloseToMapBoundaries.isTooClose(building, position)) return failed();
