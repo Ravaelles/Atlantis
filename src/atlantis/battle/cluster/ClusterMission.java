@@ -1,5 +1,9 @@
 package atlantis.battle.cluster;
 
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.units.select.Count;
+
 /**
  * Where the one cluster belongs: home while small, at the enemy once it
  * can fight. Pure posture - the fight/flee inside the posture belongs to
@@ -28,7 +32,19 @@ public class ClusterMission {
     public static Posture postureFor(int combatUnits, boolean breached) {
         if (breached) return Posture.DEFEND;
 
-        return decide(combatUnits);
+        // The reasons read live game state; without a game (world-free
+        // pins) fall back to the standing headcount rule, never crash.
+        try {
+            return PostureReasons.decide(
+                combatUnits,
+                Count.dragoons(),
+                EnemyUnits.zealots(),
+                A.minerals(),
+                A.s).posture;
+        }
+        catch (RuntimeException ignored) {
+            return decide(combatUnits);
+        }
     }
 
     public static Mission toMission(Posture posture) {

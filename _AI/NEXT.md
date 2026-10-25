@@ -1676,7 +1676,17 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   stopped; entry gate untouched - a worker within 8 of main is always inside the line). Remainder: live macro proof
   (workers hold <=10).
 
-## Current game state (updated 2026-10-21)## Current game state (updated 2026-10-21)
+- - **#197** Trapped dragoons must march out (owner report: dragoons defending the main against many early zealots
+  get overwhelmed with no kite room, mobility unused - attack out and use them). Slice 1 LANDED (sim-first,
+  red-green): PostureReason + PostureReasons.decide (HEADCOUNT/BANKED/TRAPPED/HOLD_GROUND) wired into
+  ClusterMission.postureFor 1:1 (breach override untouched, world-free fallback to headcount). Trapped line
+  sim-calibrated (TrappedDragoonsAttackOutTest: hold loses dragoons at 6 and 8 zealots, wins at 4) + decision pins
+  (PostureReasonsTest 5/5) + live-shape pin (PostureTrappedArmyTest). PurpleWave read: no global flip there, per-squad
+  modes + confidence; ours stays one posture with named reasons (02_COMBAT Phase 0 property). Remainder: live macro
+  proof (trapped army marches + kites instead of donating); old-changer reason inventory (pressure/punish/GoWithGoonz
+  shapes, ling-variant of the trapped rule) as follow-up slices.
+
+## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;
    newer macro evidence lives in the §1–§9 chains).

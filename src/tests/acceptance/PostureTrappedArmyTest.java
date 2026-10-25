@@ -1,0 +1,58 @@
+package tests.acceptance;
+
+import atlantis.battle.cluster.ClusterMission;
+import atlantis.battle.cluster.PostureReason;
+import atlantis.battle.cluster.PostureReasons;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
+import bwapi.Race;
+import org.junit.jupiter.api.Test;
+import tests.fakes.FakeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemies;
+import static tests.unit.AbstractTestWithUnits.fakeOurs;
+
+/**
+ * NEXT #197: the trapped shape from the live report, wired end to end -
+ * four dragoons boxed against six early zealots flip the posture to
+ * ATTACK with the trapped reason (pre-wire: DEFEND by headcount).
+ */
+public class PostureTrappedArmyTest extends WorldStubForTests {
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
+
+    @Test
+    public void trappedArmyMarchesOut() {
+        FakeUnit d1 = fake(AUnitType.Protoss_Dragoon, 48, 10);
+        FakeUnit d2 = fake(AUnitType.Protoss_Dragoon, 49, 10);
+        FakeUnit d3 = fake(AUnitType.Protoss_Dragoon, 50, 10);
+        FakeUnit d4 = fake(AUnitType.Protoss_Dragoon, 51, 10);
+        FakeUnit z1 = fake(AUnitType.Protoss_Zealot, 30, 9);
+        FakeUnit z2 = fake(AUnitType.Protoss_Zealot, 31, 9);
+        FakeUnit z3 = fake(AUnitType.Protoss_Zealot, 32, 9);
+        FakeUnit z4 = fake(AUnitType.Protoss_Zealot, 30, 10);
+        FakeUnit z5 = fake(AUnitType.Protoss_Zealot, 31, 10);
+        FakeUnit z6 = fake(AUnitType.Protoss_Zealot, 32, 10);
+        for (FakeUnit zealot : new FakeUnit[] { z1, z2, z3, z4, z5, z6 }) zealot.setEnemy();
+
+        world(20, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            d1, d2, d3, d4
+        ), new FakeUnit[] { z1, z2, z3, z4, z5, z6 }, () -> {
+            if (atlantis.game.A.now() != 12) return;
+
+            PostureReasons.Verdict verdict = PostureReasons.decideLive();
+
+            assertEquals(PostureReason.TRAPPED_BY_MASS_ZEALOTS, verdict.reason,
+                "four dragoons against six early zealots name the trap");
+            assertEquals(ClusterMission.Posture.ATTACK,
+                ClusterMission.postureFor(Count.ourCombatUnits(), false),
+                "the posture marches out instead of holding the pocket");
+        });
+    }
+}
