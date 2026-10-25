@@ -1673,8 +1673,13 @@ AcquireTarget seams, BattleCommander only keeps delegating.
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
   (breach, sparta, main, natural, base; first non-null wins, null = no opinion), pinned DefendedPlaceTest (priority
-  order + ranks + last resort + null). Next: wire ProtossDefendFocusPoint 1:1 (slice 2), then anchor/rally through
-  the same answer (slice 3), formation adapt (slice 4), CherryVis row (slice 5). Micro untouched. Re-home
+  order + ranks + last resort + null). Slice 2 LANDED 2026-10-26 (mechanical 1:1, zero behavior):
+  focusPoint resolves the candidates (breach, sparta-gated main choke, standable main choke, multi-base
+  natural/base) and DefendedPlace.defendGround owns the priority; the HOW per kind stays in the focus
+  (breach target, Choke300, plug-or-standoff-8, natural-5, last base). Dead atAnyBase removed. Pinned by the
+  existing outcome tests (ProtossDefendFocusTest 3/3 + DefendedPlaceTest 5/5 green untouched, per CONVENTIONS
+  section 24). Next: anchor/rally through the same answer (slice 3), formation adapt (slice 4), CherryVis row
+  (slice 5). Micro untouched. Re-home
   LANDED (mechanical, zero behavior): the decision family (DefendedPlace, PostureReason/Reasons/Latch,
   ProtossDefendFocusPoint + new AttackFocusPoint extracted 1:1 from ClusterAnchor.attackAnchor) moved to
   atlantis.combat.focus with an empty ArchUnit store diff (CONVENTIONS §33: new combat code lands there, battle.*

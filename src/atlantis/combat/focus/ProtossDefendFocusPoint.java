@@ -66,47 +66,70 @@ public final class ProtossDefendFocusPoint {
                         return null;
                     }
 
-                    // === Enemies that breached into base ================
+                    // === Inputs: what qualifies ===================
+                    // The priority between them lives in
+                    // DefendedPlace.defendGround (NEXT #194) - this
+                    // only resolves the candidates, then builds the
+                    // focus the answer names (the HOW stays here).
 
                     AUnit enemyInBase = EnemyUnitBreachedBase.get();
-                    if (enemyInBase != null && enemyInBase.isAlive()) {
-                        return new AFocusPoint(
-                            enemyInBase,
-                            "EnemyBreachedBase"
-                        );
+                    if (enemyInBase != null && !enemyInBase.isAlive()) enemyInBase = null;
+
+                    AChoke mainChoke = Chokes.mainChoke();
+                    Selection unfinishedBases = Select.ourWithUnfinished().bases();
+                    boolean sparta = unfinishedBases.count() <= 1
+                        && Missions.isGlobalMissionSparta();
+
+                    // The main stand resolves here so the HOW below
+                    // reuses it: the choke answers the mission only
+                    // when there is room to stand on it.
+                    AFocusPoint mainStand = atMainChokeStandoff(mainBase);
+
+                    boolean multiBase = unfinishedBases.count() >= 2;
+                    AChoke naturalChoke = multiBase ? Chokes.natural() : null;
+                    AUnit natural = multiBase ? Bases.natural() : null;
+                    AUnit lastBase = null;
+                    if (multiBase && AtlantisRaceConfig.BASE != null) {
+                        lastBase = Select.ourWithUnfinishedOfType(AtlantisRaceConfig.BASE)
+                            .mostDistantTo(mainBase);
                     }
 
-                    // ====================================================
+                    DefendedPlace.Answer answer = DefendedPlace.defendGround(
+                        enemyInBase,
+                        sparta ? mainChoke : null,
+                        mainStand != null ? mainChoke : null,
+                        naturalChoke != null && natural != null ? naturalChoke : null,
+                        lastBase);
+                    if (answer == null) return null;
 
-                    Selection basesWithUnfinished = Select.ourWithUnfinished().bases();
-                    if (basesWithUnfinished.count() <= 1 && Missions.isGlobalMissionSparta()) {
-                        AChoke mainChoke = Chokes.mainChoke();
-                        if (mainChoke != null) {
+                    switch (answer.kind) {
+                        case BREACH:
+                            return new AFocusPoint(
+                                enemyInBase,
+                                "EnemyBreachedBase"
+                            );
+                        case SPARTA_CHOKE:
                             return new AFocusPoint(
                                 mainChoke,
                                 mainBase,
                                 "Choke300"
                             );
-                        }
+                        case MAIN_CHOKE:
+                            return mainStand;
+                        case NATURAL_CHOKE:
+                            return new AFocusPoint(
+                                naturalChoke.translateTilesTowards(5, natural),
+                                natural,
+                                "NaturalChoke"
+                            );
+                        case BASE:
+                            return new AFocusPoint(
+                                lastBase,
+                                "LastBase"
+                            );
+                        default:
+                            return null;
                     }
-
-                    // === Main choke standoff (8 tiles home-side, tested) =
-
-                    AFocusPoint focus = atMainChokeStandoff(mainBase);
-                    if (focus != null) {
-                        return focus;
-                    }
-
-                    // ====================================================
-
-                    if (basesWithUnfinished.count() >= 2) {
-                        focus = atAnyBase(mainBase);
-                        if (focus != null) {
-                            return focus;
-                        }
-                    }
-
-                    return null;
                 }
             );
         }
@@ -129,33 +152,6 @@ public final class ProtossDefendFocusPoint {
         } catch (RuntimeException ignored) {
             return false;
         }
-    }
-
-    private static AFocusPoint atAnyBase(AUnit mainBase) {
-        if (AtlantisRaceConfig.BASE == null) return null;
-
-        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisRaceConfig.BASE)
-            .mostDistantTo(mainBase);
-        if (lastBase == null) return null;
-
-        // === At natural =========================================
-
-        AChoke naturalChoke = Chokes.natural();
-        AUnit natural = Bases.natural();
-        if (naturalChoke != null && natural != null) {
-            return new AFocusPoint(
-                naturalChoke.translateTilesTowards(5, natural),
-                natural,
-                "NaturalChoke"
-            );
-        }
-
-        // === Standard ===========================================
-
-        return new AFocusPoint(
-            lastBase,
-            "LastBase"
-        );
     }
 
     /**
