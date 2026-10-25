@@ -9,9 +9,11 @@ import atlantis.units.select.Count;
 /**
  * Choke doctrine (NEXT #170): never push a narrow choke into a nearby
  * enemy without crushing superiority; on defense wait as long as
- * possible. The line holds ~10 tiles off the choke center - unseen, in
- * range to collapse - so the enemy commits into the funnel and dies
- * retreating. Macro only (choke play needs bases); duels kite instead.
+ * possible. The line holds RADIUS + 6 tiles off the choke center -
+ * unseen, in range to collapse - so the enemy commits into the funnel
+ * and dies retreating (owner 2026-10-25: always stand that far back,
+ * never at the mouth). Macro only (choke play needs bases); duels kite
+ * instead.
  */
 public final class ChokeStandoff {
 
@@ -21,11 +23,17 @@ public final class ChokeStandoff {
     /** Enemies this close to the choke contest it. */
     public static final double CONTEST_TILES = 12;
 
-    /** Stand this far off the choke center, on our side: unseen, able to collapse. */
-    public static final double STANDOFF_TILES = 10;
-
     /** Crushing superiority: at this ratio or better the line may push through. */
     public static final double CRUSH_RATIO = 2.0;
+
+    /**
+     * Owner order 2026-10-25: the line always stands RADIUS + this many
+     * tiles off the choke center, so the enemy has to commit into the
+     * funnel instead of meeting us at the mouth (a 9-tile radius =>
+     * 15 tiles). The spare is a doctrine number, deliberately not a
+     * tuning coefficient.
+     */
+    public static final double SPARE_TILES = 6;
 
     private ChokeStandoff() {
     }
@@ -59,11 +67,29 @@ public final class ChokeStandoff {
         return mayAdvance(ours, enemies);
     }
 
-    /** Pure geometry: the hold point, standoff tiles off the center toward our side. */
-    public static APosition holdPoint(APosition chokeCenter, HasPosition ourSide) {
-        if (chokeCenter == null || ourSide == null) return null;
+    /**
+     * How far off the choke center the line stands: half the opening
+     * plus the spare, so the formation never sits inside the funnel and
+     * the enemy has to commit through the whole mouth to reach it
+     * (owner 2026-10-25: a 9-tile radius => 15 tiles). Null-safe: an
+     * unreadable choke answers the spare alone rather than throwing.
+     */
+    public static double standoffTiles(AChoke choke) {
+        if (choke == null) return SPARE_TILES;
 
-        return chokeCenter.translateTilesTowards(ourSide, STANDOFF_TILES);
+        try {
+            return (choke.width() / 2.0) + SPARE_TILES;
+        }
+        catch (RuntimeException ignored) {
+            return SPARE_TILES;
+        }
+    }
+
+    /** Pure geometry: the hold point, standoff off the center toward our side. */
+    public static APosition holdPoint(AChoke choke, HasPosition ourSide) {
+        if (choke == null || choke.center() == null || ourSide == null) return null;
+
+        return choke.center().translateTilesTowards(ourSide, standoffTiles(choke));
     }
 
     /** Guarded detection: this unit's hold point, or null when no choke is held. */
@@ -72,7 +98,7 @@ public final class ChokeStandoff {
             AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
 
-            APosition ours = holdPoint(choke.center(), unit);
+            APosition ours = holdPoint(choke, unit);
             // High side first (NEXT #171): both lips are candidates and
             // the heights choose. Flat or unreadable ground keeps today.
             APosition foeHold = foeSideHold(choke, unit);
@@ -116,7 +142,7 @@ public final class ChokeStandoff {
             if (foe == null || foe.position() == null) return null;
             if (unit.distTo(foe) <= unit.distTo(choke.center())) return null;
 
-            return holdPoint(choke.center(), foe.position());
+            return holdPoint(choke, foe.position());
         } catch (Exception ignored) {
             return null;
         }

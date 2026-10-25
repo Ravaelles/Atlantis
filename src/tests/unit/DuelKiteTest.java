@@ -230,14 +230,16 @@ public class DuelKiteTest extends WorldStubForTests {
     }
 
     @Test
-    public void chokeHoldPointStandsTenTilesOffCenter() {
+    public void chokeHoldPointStandsRadiusPlusSixOffCenter() {
         APosition center = APosition.create(50, 50);
         APosition ours = APosition.create(50, 70);
+        // Width 8 => radius 4, so the doctrine distance is 4 + 6 = 10.
+        atlantis.map.choke.AChoke choke = new tests.fakes.FakeChoke(center, 8);
 
-        APosition hold = ChokeStandoff.holdPoint(center, ours);
+        APosition hold = ChokeStandoff.holdPoint(choke, ours);
 
-        assertTrue(Math.abs(hold.distTo(center) - ChokeStandoff.STANDOFF_TILES) < 0.6,
-            "standoff is ten tiles off the choke: " + hold.distTo(center));
+        assertTrue(Math.abs(hold.distTo(center) - ChokeStandoff.standoffTiles(choke)) < 0.6,
+            "standoff is RADIUS + 6 tiles off the choke: " + hold.distTo(center));
         assertTrue(hold.distTo(ours) < center.distTo(ours),
             "on our side of the center");
     }

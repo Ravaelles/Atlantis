@@ -62,13 +62,6 @@ public final class CombatTuning {
      */
     private double breachLeaveMinDistTiles = 15;
     /**
-     * Choke standoff: the defensive formation point stands this far from
-     * the main choke center toward the main (tiles). Owner 2026-10-24,
-     * from a lost game vs Protoss: holding at the base leaves no room to
-     * retreat, and a 4+ army retreating into the base blocks itself.
-     */
-    private double chokeStandoffTiles = 8;
-    /**
      * Armies bigger than this never retreat to the base (tiles count as
      * combat units). Owner 2026-10-24: a 5+ army running home piles onto
      * the mineral line and blocks itself - it forms up at the choke
@@ -131,7 +124,6 @@ public final class CombatTuning {
         breachRetreatCooldown = other.breachRetreatCooldown;
         breachRallyTiles = other.breachRallyTiles;
         breachLeaveMinDistTiles = other.breachLeaveMinDistTiles;
-        chokeStandoffTiles = other.chokeStandoffTiles;
         retreatFormationMinArmy = other.retreatFormationMinArmy;
         umsNoRetreatFrames = other.umsNoRetreatFrames;
         regroupThreatTiles = other.regroupThreatTiles;
@@ -301,10 +293,6 @@ public final class CombatTuning {
 
     public double getBreachLeaveMinDistTiles() {
         return breachLeaveMinDistTiles;
-    }
-
-    public double getChokeStandoffTiles() {
-        return chokeStandoffTiles;
     }
 
     public int getRetreatFormationMinArmy() {
@@ -546,13 +534,6 @@ public final class CombatTuning {
     public CombatTuning withBreachLeaveMinDistTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.breachLeaveMinDistTiles = value;
-
-        return copy;
-    }
-
-    public CombatTuning withChokeStandoffTiles(double value) {
-        CombatTuning copy = new CombatTuning(this);
-        copy.chokeStandoffTiles = value;
 
         return copy;
     }

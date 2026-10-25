@@ -61,13 +61,15 @@ public final class ClusterRally {
 
     /**
      * Where a bigger-than-squad army forms up instead of running home
-     * (owner 2026-10-26, from a lost game vs Protoss): 8 tiles from the
-     * main choke center toward the main. Retreating a 5+ army into the
-     * base piles it onto the mineral line with no room to re-engage -
-     * the choke standoff keeps the line facing out with room behind it.
-     * Null-safe: no main, no choke, or an unhostable point falls back
-     * to the caller (which keeps its own base rally). Public as a seam:
-     * the point pins in a stub state without a game.
+     * (owner 2026-10-26, from a lost game vs Protoss): RADIUS + 6 tiles
+     * from the main choke center toward the main - the same depth every
+     * choke standoff answers (owner 2026-10-25: always stand that far
+     * back, so the enemy commits into the funnel). Retreating a 5+ army
+     * into the base piles it onto the mineral line with no room to
+     * re-engage - the choke standoff keeps the line facing out with room
+     * behind it. Null-safe: no main, no choke, or an unhostable point
+     * falls back to the caller (which keeps its own base rally). Public
+     * as a seam: the point pins in a stub state without a game.
      */
     public static HasPosition chokeStandoffPoint() {
         AUnit main = Select.main();
@@ -78,7 +80,7 @@ public final class ClusterRally {
             if (choke == null || choke.center() == null) return null;
 
             APosition point = choke.center().translateTilesTowards(
-                CombatTuning.current().getChokeStandoffTiles(), main.position());
+                atlantis.combat.strategy.ChokeStandoff.standoffTiles(choke), main.position());
             if (point == null) return null;
             if (!point.isWalkable()) point = point.makeWalkable(6, 3, null);
 
