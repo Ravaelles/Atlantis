@@ -78,15 +78,14 @@ public class NumberOfGasWorkersCommander extends Commander {
 //        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
 //            worker.returnCargo();
 //            worker.setTooltip("Cargo");
-//
-
 //            return;
 //        }
 
         worker.gather(gasBuilding);
         worker.setTooltipTactical("Gas");
-        atlantis.util.AConsole.println(atlantis.util.log.LogLevel.LOW,
-            "GasWorker assigned " + worker.typeWithUnitId() + " to " + gasBuilding.type());
+
+//        atlantis.util.AConsole.println(atlantis.util.log.LogLevel.LOW,
+//            "GasWorker assigned " + worker.typeWithUnitId() + " to " + gasBuilding.type());
     }
 
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {

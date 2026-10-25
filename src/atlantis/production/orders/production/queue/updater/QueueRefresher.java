@@ -24,11 +24,11 @@ public class QueueRefresher {
             // and any REQUEST/cancel (measured twice: 6:19 order, nothing
             // after). Throttled; shows whether refresh even sees the order.
             if (order.unitType() != null && order.unitType().isBase()) {
-                atlantis.util.log.ErrorLog.printMaxOncePerMinute("QUEUE_BASE", 
-                    "QUEUE_BASE " + order.unitType().name()
-                        + " status=" + order.status()
-                        + " min=" + atlantis.game.A.minerals()
-                        + " supply=" + atlantis.game.A.supplyUsed() + "/" + atlantis.game.A.supplyTotal());
+//                atlantis.util.log.ErrorLog.printMaxOncePerMinute("QUEUE_BASE",
+//                    "QUEUE_BASE " + order.unitType().name()
+//                        + " status=" + order.status()
+//                        + " min=" + atlantis.game.A.minerals()
+//                        + " supply=" + atlantis.game.A.supplyUsed() + "/" + atlantis.game.A.supplyTotal());
                 atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.QUEUE_BASE)
                     .param("type", order.unitType().name())
                     .param("status", order.status() == null ? "-" : order.status().name())
