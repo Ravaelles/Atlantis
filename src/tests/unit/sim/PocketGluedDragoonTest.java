@@ -104,6 +104,11 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
             assertTrue(displacement >= 5.0,
                 "a swamped cutoff dragoon runs home instead of donating in the pocket, got displacement "
                     + displacement + (deathTick >= 0 ? ", died tick " + deathTick : ", survived"));
+            if (tactic == FightOrFlight.Tactic.FIGHT) {
+                String rows = atlantis.util.log.EventLog.toJsonLines();
+                assertTrue(rows.contains("\"result\":\"stuck-escalated-run\""),
+                    "the FIGHT-path handoff must be twinned for live adjudication: " + rows.length());
+            }
         }
         finally {
             for (FakeUnit u : ours) Alpha.get().removeUnit(u);

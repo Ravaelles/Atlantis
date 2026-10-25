@@ -576,7 +576,8 @@ test-runner hygiene).
   crowded base): 0 PYLON_FIND_FAILED - last-resort ladder never needed, doctrine untouched. Re-verify 2026-10-24: 0
   PYLON_FIND_FAILED in 726D7D69/9415845A - ladder still never needed. TauCross 2026-10-26 (top-right base
   [119,10] itself): 8 pylons warped around the corner ([113,15],[112,10],[116,17]...), 0 PYLON_FIND_FAILED -
-  doctrine holds on the corner, ladder still never needed.
+  doctrine holds on the corner, ladder still never needed. Game 3 same map/start: 0 PYLON_FIND_FAILED again,
+  3 pylons warped - corner doctrine stands.
 
 - **#84** Wine Pylon ordered but unbuilt (worker stall, placement refusal,
   null builder and cancels all ruled out from flag-off logs): needs a
@@ -1480,7 +1481,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   not a dead scout - even a perfect game leaves zero rows. Witness slice LANDED (red-green): SCOUT_WATCH rows
   the scout tile next to the known enemy main on the cluster cadence (ScoutWatch.sample hooked at the end of
   ScoutCommander.handle; MEDIUM, representation only), pinned ScoutWatchTest 2/2 (watch at main trails the
-  main; no scout, no rows). Next live game with a scout decides watch-vs-wander from the trail.
+  main; no scout, no rows). Next live game with a scout decides watch-vs-wander from the trail. Game 3 (TauCross, VICTORY 8910f,
+  walkover): 244 SCOUT_WATCH rows live, scout #6 lived the whole game - but the enemy main stayed unknown
+  (-1,-1) all game, trail covered the east edge + mid-map without ever resolving it. Watch-vs-wander still
+  undecided (no main to watch); NEW sub-question: discovery coverage - 8910 frames of scouting without
+  finding the main on a known map.
 - **#189** Log priority adoption (owner 2026-10-26, remainder after the
   central slice): every console line carries `[LOW]/[MED]/[HIGH]/[CRIT]`
   (untagged reads `[MED]`), event rows carry short `"lvl"`, `[TEMP]`
@@ -1561,7 +1566,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   reconstructable geometry' clause is superseded as of this game (geometry reconstructs; instances still unseen).
   TauCross-II 2026-10-26 (VICTORY 9630f, bottom start): 19 FLEE, 13 foe-known, nearest shave f9610 (center (82,36),
   foe (115,35), dest (11,33), t=-0.46 perp 2.4) - pursuer dead-astern, foe never between center and home;
-  14th reconstructed non-instance, (b) stays open.
+  14th reconstructed non-instance, (b) stays open. Game 3 (walkover): 0 FLEE rows, nothing to adjudicate.
   Re-verify 2026-10-26: HoldTwinTest 5/5 green, still no post-split game - unstick decision still pending live rows.
   Sweep 2026-10-26b confirms no new game. Code audit: Stardust rule + latch bypass (ClusterTactic.java:57-64),
   BlockingArmy MIN_BLOCKING_ENEMIES count (:38-49) - mechanism as filed. (b) stays open live. Same game, MOVE_FAILED
@@ -1626,7 +1631,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   LANDED 2026-10-26 (red-green): kiteThreat's stuck-no-step while chewed no longer falls through to trade -
   the frame leaves through the same retreat net (dragoon-only, zealot last-stand untouched; anchor+leader
   threaded through fight()). Pinned the FIGHT variant in PocketGluedDragoonTest (red: 0.9 tiles, died f78;
-  stash-verified both ways); KiteTwin.escalatedRun rows the handoff for live adjudication.
+  stash-verified both ways); KiteTwin.escalatedRun rows the handoff for live adjudication. Game 3 (walkover): 0 KITE rows, 0 deaths -
+  escalation silent, non-firing guard intact.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").
@@ -1666,30 +1672,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   by non-firing; a contested-base battle is still needed for calibration. TauCross-II same day (VICTORY 9630f):
   16 PLACEMENT_FAILED (2 can't-build, 14 unpowered) across Gateway orders #31/#32, ZERO "Null position" cancels -
   the WAIT path engages live: orders survive failed searches and warp (5 Gateways requested). Patience never
-  exhausted; calibration still rides a longer siege.
-
-- - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
-  nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
-  check). Slice LANDED 2026-10-25 (sim-first, red-green): designated chokes (ours + enemy's, main + natural) must
-  read under 10 tiles (Chokes.isPlausibleDesignatedChoke + nearestNarrowChoke, wired through MainChokeCustom,
-  DefineMainChoke, DefineNaturalChoke and fullfillsConditionsForNatural); all-wide means no designation (callers
-  already null-handle, the army falls back to anchor instead of marching across the map). Pinned
-  DesignatedChokeWidthGuardTest. Slice 2 LANDED 2026-10-26 (sim-first, red-green): choke designations decide by
-  ground, never by air (nearestNarrowChoke + Bases natural detection read groundDistanceTo; nearestChoke already did).
-  Micro-distance helpers (AUnit nearestChokeDist/nearestChokeCenterDist/distToMainChokeOr) inventoried, NOT converted:
-  their thresholds are tuned on Euclidean, conversion is re-tuning and needs its own slice + game proof. Remainder:
-  live TauCross bottom-start proof (narrow main choke + army holding it). Slice 3 LANDED 2026-10-26 (sim-first,
-  red-green): every choke distance reads ground - nearestChokeDist, nearestChokeCenterDist, distToMainChokeOr,
-  the distToFocusPoint choke branch and IsUnitWithinChoke (short ground path within the mouth width); flyers read
-  far / take the fallback (chokes are ground concepts). ChokeTest re-pinned to ground semantics (test-world
-  fallback reads center distance, not the width-subtracted air edge). Threshold-shift risk on tuned gates
-  (<=3/4/5/9) rides the live proof above. TauCross datapoint 2026-10-26 (PvsZ, VICTORY 9450f, top start at
-  (117,9), Nexus (119,10)): army firewalled the home side of the narrow choke (117,35,w2) - 104/184 CLUSTER
-  centers on tiles (7,1) between base and choke - then pushed mid-map late; no cross-map donation march.
-  Designation behaves on the top start; the bottom-start variant from the report still unseen. TauCross-II same
-  day (VICTORY 9630f, BOTTOM start at (7,44), Nexus (9,45)): army held the home tile (0,2) 119/194 CLUSTER rows,
-  pushed east mid-map late; nearest choke (12,25,w1) narrow - no cross-map donation, designation behaves;
-  behavioral consistency, same standard as the top start (the twin names no designated choke).
+  exhausted; calibration still rides a longer siege. Game 3: 0 PLACEMENT_FAILED rows,
+  2 Gateways + 1 Assimilator requested, guard intact by non-firing.
 
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
@@ -1703,8 +1687,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   defendAnchor's race branch (Zerg hug-main vs Protoss standoff) is deliberate untested-direction doctrine
   DefendedPlace does not model, and the RALLY tail resolves its own inputs - forcing either through today
   means a behavior change without proof or a second resolver drifting from focusPoint's; candidates:
-  race-aware answer kind, or a shared input-resolver both callers use), formation adapt (slice 4),
-  CherryVis row (slice 5). Micro untouched. Re-home
+  race-aware answer kind, or a shared input-resolver both callers use), formation adapt (slice 4 -
+  same blocker: the answer-to-geometry mapping (which choke to face/plug, how deep) is doctrine, and
+  the twin already renders the anchor string), CherryVis row (slice 5 - representation only, but the twin
+  would need the resolved inputs, i.e. the same shared resolver or a re-derivation that drifts), Micro untouched. Re-home
   LANDED (mechanical, zero behavior): the decision family (DefendedPlace, PostureReason/Reasons/Latch,
   ProtossDefendFocusPoint + new AttackFocusPoint extracted 1:1 from ClusterAnchor.attackAnchor) moved to
   atlantis.combat.focus with an empty ArchUnit store diff (CONVENTIONS §33: new combat code lands there, battle.*
@@ -1721,7 +1707,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   dominant on a lost squad, "-" outside FLEE). No new thresholds (representation only, aggregation at the
   existing CLUSTER site). Run-escalation LANDED 2026-10-26 behind STEP_CUTOFF (red-green, same home): hopeless
   cutoff stands (swamped + chewed) march home instead of trading, stuck + chewed rallies instead of
-  last-standing; unchewed last-stand untouched. Pinned PocketGluedDragoonTest (NEXT #190).
+  last-standing; unchewed last-stand untouched. Pinned PocketGluedDragoonTest (NEXT #190). FIGHT-path
+  coverage LANDED same day (red-green): kiteThreat's stuck-no-step while chewed no longer falls through to
+  trade - the frame leaves through the same retreat net (dragoon-only, anchor/leader threaded through
+  fight(); zealot last-stand untouched), rowed as stuck-escalated-run for live adjudication.
 
 - - **#196** Workers trade beyond the army (owner report: workers fight drastically too far from base, engaging
   enemies our own army ignores). Hard 10-tile line with a named reason: MAX_FIGHT_DIST_TO_BASE_TILES 15 -> 10
@@ -1733,7 +1722,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   no enemy ever came within 25 tiles of the base (closest contact 110 tiles out, all attack outward) - no
   pressure, no conclusion; still needs a game where raiders reach the mineral line. TauCross-II same day
   (VICTORY 9630f): same shape again (0 worker deaths, 0 foe-near-base rows) - the native AI never pressures;
-  pressure proof likely needs a different opponent or map. Stray-rule slice LANDED 2026-10-26 (red-green, owner
+  pressure proof likely needs a different opponent or map. Game 3 (walkover VICTORY 8910f): 0 foe contacts
+  all game, 0 worker deaths - native AI passive 3/3 macro games; pressure-dependent proofs (#196, #192
+  calibration, #188b) need a livelier vehicle (Steamhammer FFA gave real fights before). Stray-rule slice LANDED 2026-10-26 (red-green, owner
   report: workers marched to the natural and fought without army support): the 10-tile line now reads from the
   MAIN base, never the nearest one - extracted as WorkerStrayedFromBase.tooFarFromHome, single home for the
   entry/attack/stop/help-Cannon gates (TOO_FAR_FROM_BASE reason kept). A natural Nexus no longer legitimizes a
@@ -1758,6 +1749,7 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   TauCross datapoint 2026-10-26 (VICTORY 9450f): 119 DEFEND / 65 ATTACK postures, no trapped shape (won fast,
   army attacking out) - macro proof still rides a defensive game. TauCross-II same day (VICTORY 9630f):
   120 DEFEND / 74 ATTACK, same attacking shape, no trap - still rides defense.
+  Game 3 (walkover): 119 DEFEND / 51 ATTACK, zero enemy contact all game - no trap and no test of it.
 
 - - **#198** Specialist combat behaviors (owner: Corsair/Reaver/DT/HT need their own behaviors, not the generic
   duel pipeline; short verb-first names, no Behavior suffix - the tag vocabulary already lives in the Behavior
@@ -1809,7 +1801,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   the re-home, CONVENTIONS section 33; every fresh build failed, masked by reused jars). Macro proof LANDED
   2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f, 196 KITE + 184 CLUSTER + 8 HOLD): zero unwalkable-move rows -
   the hold/bait/collapse producers hold live under a real army. TauCross-II same day (VICTORY 9630f):
-  zero again (179 stuck-no-step + 194 CLUSTER) - third straight game clean.
+  zero again (179 stuck-no-step + 194 CLUSTER) - third straight game clean. Game 3 (walkover): zero again
+  (no KITE at all) - fourth straight clean game.
 
 - - **#200** Small army holds home vs early Zerg (owner report 2026-10-26, lost game: with fewer than 5 battle
   units the line must stay within 6 tiles of the main so mining workers can join; the no-contact hold marched
