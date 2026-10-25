@@ -162,7 +162,7 @@ public class AddToQueue {
 //        }
 
         if (type.is(AUnitType.Protoss_Nexus)) {
-            AConsole.errPrintln(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
+//            AConsole.errPrintln(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
             if ("_NO_EXPAND_REASON_".equals(ShouldExpand.reason)) {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
 
@@ -195,7 +195,7 @@ public class AddToQueue {
             // construction that never starts leaves no first trace. Buildings
             // only - workers flow through direct train orders, not this queue.
             if (type.isABuilding()) {
-                AConsole.errPrintln(A.minSec() + ": " + type.name() + " ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed());
+//                AConsole.errPrintln(A.minSec() + ": " + type.name() + " ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed());
             }
 
             // Owner: a dynamic Dragoon row fires an event so the same frame

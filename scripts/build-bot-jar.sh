@@ -427,7 +427,7 @@ with zipfile.ZipFile(out_jar) as z:
     # BATTLE CUTOVER: the squad-assignment chain is deleted - the jar must
     # ship the battle entry instead, and no combat classes at all. (The old
     # assertion here demanded the deleted callback targets; inverted.)
-    assert 'atlantis/battle/BattleCommander.class' in names, 'battle entry missing from bot jar'
+    assert 'atlantis/combat/BattleCommander.class' in names, 'battle entry missing from bot jar'
     combat = [n for n in names if n.startswith('atlantis/combat/')]
     assert not combat, 'deleted combat classes shipped in bot jar: %s' % combat[:5]
 
