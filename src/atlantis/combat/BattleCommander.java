@@ -167,6 +167,7 @@ public class BattleCommander extends Commander {
         IdleWatch.clearForTests();
         atlantis.combat.twins.ClusterTwin.clearForTests();
         ArmyContact.clearForTests();
+        atlantis.combat.retreating.RetreatLadder.reset();
         atlantis.combat.focus.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();

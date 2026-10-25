@@ -56,6 +56,15 @@ public final class ArmyContact {
 
         lastFightAt = target.position();
         lastFightFrame = A.now();
+
+        // Same funnel feeds the retreat ladder (owner 2026-10-26): the
+        // ground this fight is on is the rung a later retreat falls
+        // back to, so it is recorded while the army still stands there.
+        atlantis.battle.cluster.Squad cluster = atlantis.battle.cluster.Alpha.get();
+        atlantis.combat.retreating.RetreatLadder.noteFightGround(
+            cluster.center() != null ? cluster.center() : unit.position(),
+            cluster.size()
+        );
     }
 
     /**
