@@ -5,6 +5,7 @@ import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.combat.strategy.GhostAdvance;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -50,7 +51,11 @@ public final class ClusterTwin {
         int ghostY = -1;
         int destX = -1;
         int destY = -1;
+        String fleeReason = "-";
         try {
+            if (tactic == FightOrFlight.Tactic.FLEE) {
+                fleeReason = dominantFleeReason(tactic, anchor);
+            }
             if (center != null) {
                 AUnit nearest = Select.enemy()
                     .combatUnits().nearestTo(center);
@@ -102,9 +107,44 @@ public final class ClusterTwin {
             .param("gy", ghostY)
             .param("dtx", destX)
             .param("dty", destY)
+            .param("fleeReason", fleeReason)
             .log(A.now(), A.minSec());
 
         noteArmyStall(center);
+    }
+
+    /**
+     * The dominant flee reason across the cluster (NEXT #195): on FLEE
+     * frames the row names why the army runs - the majority of the
+     * per-unit verdicts from the single classification point. "-"
+     * when the cluster is empty or nobody flees. Public as a seam: the
+     * aggregation pins without a game.
+     */
+    public static String dominantFleeReason(FightOrFlight.Tactic tactic, HasPosition anchor) {
+        java.util.Map<String, Integer> counts = new java.util.HashMap<>();
+        String best = null;
+        int bestCount = 0;
+
+        AUnit leader = Alpha.get().leader();
+        for (AUnit unit : Alpha.get().selection().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+
+            RetreatFromLostFight.Verdict verdict;
+            try {
+                verdict = RetreatFromLostFight.decide(unit, tactic, anchor, leader);
+            } catch (RuntimeException ignored) {
+                continue;
+            }
+            if (verdict == null || verdict.reason == null) continue;
+
+            int count = counts.merge(verdict.reason.name(), 1, Integer::sum);
+            if (count > bestCount) {
+                best = verdict.reason.name();
+                bestCount = count;
+            }
+        }
+
+        return best == null ? "-" : best;
     }
 
     /**

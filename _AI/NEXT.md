@@ -1685,7 +1685,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   (single classification point, retreat() only executes), pinned FleeReasonTest (tactic/grab/cutoff-fight/
   cutoff-step/rally); STAY_BASELESS/CORNERED/NOWHERE ride the existing retreat net until a scenario names them.
   Next: twin carries the reason on FLEE rows (representation the CherryVis review asked for), then the swamped-dragoon
-  run-escalation behind STEP_CUTOFF (NEXT #190).
+  run-escalation behind STEP_CUTOFF (NEXT #190). Twin slice LANDED 2026-10-26 (red-green): CLUSTER rows carry
+  the dominant per-unit verdict (`fleeReason`, "-" outside FLEE) via ClusterTwin.dominantFleeReason over the live
+  decide() classification (majority wins, first-seen breaks ties); pinned ClusterTwinDestTest 2/2 (RALLY
+  dominant on a lost squad, "-" outside FLEE). No new thresholds (representation only, aggregation at the
+  existing CLUSTER site).
 
 - - **#196** Workers trade beyond the army (owner report: workers fight drastically too far from base, engaging
   enemies our own army ignores). Hard 10-tile line with a named reason: MAX_FIGHT_DIST_TO_BASE_TILES 15 -> 10

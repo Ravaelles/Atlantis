@@ -4,6 +4,7 @@ import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.twins.ClusterTwin;
+import atlantis.config.env.Env;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.EventLog;
@@ -97,7 +98,30 @@ public class ClusterTwinDestTest extends WorldStubForTests {
     }
 
     @Test
-    public void noFoeRowsMinusOne() {
+    public void fleeReasonDominantRowsOnFlee() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 30);
+        FakeUnit mate = fake(AUnitType.Protoss_Dragoon, 62, 32);
+
+        world(32, fakeOurs(nexus, dragoon, mate), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() != 31) return;
+            Env.setLocalForTest(true);
+            try {
+                Alpha.gather();
+                ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, nexus.position());
+            } finally {
+                Env.setLocalForTest(false);
+            }
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+        assertTrue(rows.contains("\"fleeReason\":\"RALLY\""),
+            "lost units march home: the dominant reason rides the FLEE row: " + rows);
+    }
+
+    @Test
+    public void fleeReasonMinusOneOutsideFlee() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
 
@@ -110,7 +134,7 @@ public class ClusterTwinDestTest extends WorldStubForTests {
 
         String rows = EventLog.toJsonLines();
         assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
-        assertTrue(rows.contains("\"fx\":-1") && rows.contains("\"fy\":-1"),
-            "no foe reads -1, never a stale position: " + rows);
+        assertTrue(rows.contains("\"fleeReason\":\"-\""),
+            "outside FLEE there is no flee reason: " + rows);
     }
 }
