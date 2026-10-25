@@ -1,3 +1,5 @@
+# Boolean flags accept true/1 (on) and false/0 (off), any letter case;
+# anything else logs an error once and keeps the default (off).
 LOCAL=true
 BWAPI_DATA_PATH=C:\\Program Files (x86)\\Starcraft\\
 CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe

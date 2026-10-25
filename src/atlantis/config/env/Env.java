@@ -183,7 +183,7 @@ public class Env {
                 return true;
 
             case "FORCE_GG_FOR_ENEMY":
-                GGForEnemy.allowed = "true".equals(value);
+                GGForEnemy.allowed = parseBool(key, value, false);
                 return true;
 
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
@@ -197,19 +197,19 @@ public class Env {
                 return true;
 
             case "LOCAL":
-                isLocal = trueFalse(value);
+                isLocal = parseBool(key, value, false);
                 return true;
 
             case "END_GAME_VIA_ENGINE":
-                endGameViaEngine = trueFalse(value);
+                endGameViaEngine = parseBool(key, value, false);
                 return true;
 
             case "GENERATE_CHERRYVIS_REPLAY":
-                generateCherryVisReplay = trueFalse(value);
+                generateCherryVisReplay = parseBool(key, value, false);
                 return true;
 
             case "MODIFY_BWAPI_INI":
-                modifyBwapiIni = trueFalse(value);
+                modifyBwapiIni = parseBool(key, value, false);
                 return true;
 
             case "PRODUCTION_V2":
@@ -217,13 +217,11 @@ public class Env {
                 return true;
 
             case "BUILDER_LOG":
-                builderLog = "1".equals(value == null ? "" : value.trim())
-                    || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                builderLog = parseBool(key, value, false);
                 return true;
 
             case "WINE_SUPER_FAST_MODE":
-                wineSuperFast = "1".equals(value == null ? "" : value.trim())
-                    || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                wineSuperFast = parseBool(key, value, false);
                 return true;
 
             case "FORCE_END_AT_SUPPLY":
@@ -238,7 +236,7 @@ public class Env {
                 // PROVEN (a finished Cybernetics Core and at least one Dragoon), instead of
                 // playing the full game length. The shell asserts the same facts at the end,
                 // so a run that exits early without them is still a failure.
-                coreAndDragoonGate = trueFalse(value);
+                coreAndDragoonGate = parseBool(key, value, false);
                 return true;
 
             case "PLACEMENT":
@@ -265,13 +263,11 @@ public class Env {
                 // Overnight tuning loop (owner): the game randomizes the
                 // registered coefficients at start and appends W/L, frames,
                 // kills, losses, hits taken and the values to CSV.
-                paramTweaker = "1".equals(value == null ? "" : value.trim())
-                    || trueFalse(value);
+                paramTweaker = parseBool(key, value, false);
                 return true;
 
             case "MAP_SNAPSHOT":
-                mapSnapshot = "1".equals(value == null ? "" : value.trim())
-                    || trueFalse(value);
+                mapSnapshot = parseBool(key, value, false);
                 return true;
 
             default:
@@ -320,8 +316,31 @@ public class Env {
         return false;
     }
 
-    private static boolean trueFalse(String value) {
-        return value != null && value.equals("true");
+    /**
+     * Lenient boolean ENV reader (owner direction 2026-10-25): "true"/"1"
+     * read true (any letter case), "false"/"0" read false. Anything else
+     * is a config error, never a silent false: it logs once with a stack
+     * trace and answers the caller's default (every flag's default is
+     * false today, so garbage can never switch a diagnostic on). Null or
+     * blank means absent: default, no log. This replaces the old
+     * case-sensitive literal-"true" check plus the four hand-rolled
+     * "1"-or-"TRUE" variants, which disagreed with each other.
+     */
+    public static boolean parseBool(String key, String value, boolean defaultValue) {
+        if (value == null) return defaultValue;
+
+        String v = value.trim();
+        if (v.isEmpty()) return defaultValue;
+        if (v.equalsIgnoreCase("true") || v.equals("1")) return true;
+        if (v.equalsIgnoreCase("false") || v.equals("0")) return false;
+
+        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+            "env-bool-" + key,
+            "ENV " + key + " has an unreadable boolean value \"" + value
+                + "\" - expected true/1 or false/0, continuing with default " + defaultValue
+        );
+
+        return defaultValue;
     }
 
     private static int toInt(String value) {

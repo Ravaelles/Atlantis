@@ -785,10 +785,14 @@ test-runner hygiene).
  Open tuning question: Pylon prepared at 15 warps ~2:24, past the 17/17 block (adoption+travel+warp ~25 s outruns the
  15->17 window) - lever if still late is `IsReadyToProduceOrder` pull-forward amounts. CherryVis on docker
  matches (owner ask 2026-10-25): scbw.play has no --cvis flag (no cvis key in the installed scbw package) -
- the switch is the bot slot ENV (GENERATE_CHERRYVIS_REPLAY=true, literal "true" per Env.trueFalse); wrapper
+ the switch is the bot slot ENV (GENERATE_CHERRYVIS_REPLAY=true); wrapper
  scripts/run-scbw-with-cvis.sh flips it for one run and restores after, then points at the newest game dir
  (trace.json under write_0). Trace cost stays opt-in, routine games unaffected. Proven 2026-10-25
  (GAME_97948C74 via the wrapper: trace.json + .zst + game_summary.json all present, keys valid).
+ Lenient booleans LANDED 2026-10-25 (owner: accept true/1, false/0): Env.parseBool (case-insensitive
+ true/false, 1/0; garbage logs once with a stack trace and answers the caller's default, null/blank is
+ absent) replaces the case-sensitive literal-"true" check and the four disagreeing "1"-or-"TRUE" variants;
+ all ten boolean keys unified, every default stays false. Pinned EnvBoolParseTest 4/4.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -

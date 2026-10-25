@@ -9,6 +9,9 @@
 # Recipe (see StardustDevEnvironment/DOCS/HOW-ATLANTIS-OPENBW.md):
 #   Terminal 1 (server): StardustDevEnvironment/scripts/run-openbw-server.sh
 #   Terminal 2 (bot):    java -jar Atlantis.jar   (from the Atlantis dir)
+#
+# Boolean flags accept true/1 (on) and false/0 (off), any letter case;
+# anything else logs an error once and keeps the default (off).
 LOCAL=true
 GAME_LAUNCHER=OPENBW
 BWAPI_DATA_PATH=
