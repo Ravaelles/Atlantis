@@ -4,5 +4,5 @@ public class MaxBuildingDist {
     /**
      * Maximum distance for a standard building search radius.
      */
-    public static final int MAX_DIST = 36;
+    public static final int MAX_DIST = 47;
 }
