@@ -3,6 +3,7 @@ package atlantis.production.constructions.position.protoss;
 import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.game.player.Enemy;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
@@ -42,8 +43,18 @@ public class ProtossDefineNearTo {
         }
 
         if (nearTo == null && t.isGateway() && (Enemy.terran() || Count.gateways() == 2)) {
-            nearTo = Chokes.mainChoke();
-            if (t != null) nearTo.translateTilesTowards(5, Select.mainOrAnyBuilding());
+            // Anchor on our power by the choke, never on bare choke geometry:
+            // the choke center is often unwalkable and its rings span both
+            // sides of the wall, while a non-Pylon building must stand in a
+            // psi field anyway - so search around the existing Pylon nearest
+            // the choke (NEXT #192). No Pylon, no anchor: fall through to the
+            // Pylon-side branches below instead of a geometry that cannot
+            // power anything.
+            AChoke choke = Chokes.mainChoke();
+            if (choke != null) {
+                nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).nearestTo(choke);
+            }
+            if (nearTo == null) nearTo = Chokes.mainChoke();
         }
 
         if (nearTo == null && A.supplyUsed() <= 75) {

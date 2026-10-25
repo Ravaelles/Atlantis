@@ -1634,7 +1634,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   unchanged). Spiral slice LANDED 2026-10-26 (sim-first, red-green): ProtossPositionFinder skips candidates
   with groundDist > maxDistance and keeps scanning (the across-wall class: Euclidean-near but ground-far no longer
   returns for the final guard to kill); refusal named 'Too far by ground' in the breakdown instead of 'OK'.
-  Null-position root cause (aroundPosition WAIT-vs-search) stays open.
+  Anchor slice LANDED 2026-10-26 (sim-first, red-green): 3rd Gateway (and vs-Terran Gateway) centers on the
+  existing Pylon nearest the main choke instead of bare choke geometry (a non-Pylon must stand in psi anyway);
+  no Pylon falls back to the choke. Null-position root cause (aroundPosition WAIT-vs-search) stays open.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
