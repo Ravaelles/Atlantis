@@ -1,5 +1,6 @@
 package atlantis.units.interrupt.protoss;
 
+import atlantis.battle.DuelMemory;
 import atlantis.units.AUnit;
 
 public class PreventAttacksInMissionDefend {
@@ -20,7 +21,7 @@ public class PreventAttacksInMissionDefend {
         // Damage signal is the battle-hook latch (NEXT #183), not the
         // manager history: a steady defender re-issues no orders, so its
         // history reads fresh by construction and can never fire.
-        if (atlantis.battle.DuelMemory.damagedLessThanAgo(unit, 45)) return false;
+        if (DuelMemory.damagedLessThanAgo(unit, 45)) return false;
         if (unit.enemiesNear().nearestToDistLess(unit, 3)) return false;
 
         if (unit.distToFocusPoint() >= 15) return true;

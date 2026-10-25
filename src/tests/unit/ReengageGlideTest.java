@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.MapTiles;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Reengage glide discipline (owner 2026-10-26): the glide destination

@@ -1,7 +1,8 @@
 package tests.unit;
 
 
-import atlantis.battle.twins.ShotTwin;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.twins.ShotTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -15,8 +16,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Every attack acquisition and every animation hold names itself,
@@ -69,8 +68,8 @@ public class ShotTwinTest extends AbstractTestWithWorld {
         // cooling rule stays silent and the margin holds, so the
         // standing attack order fires and names the shot.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             boolean attacked = false;
             for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
@@ -94,8 +93,8 @@ public class ShotTwinTest extends AbstractTestWithWorld {
             ((tests.fakes.FakeOrderSink) dragoon.orderSink()).clear();
             if (!dragoon.isAttackFrame()) return;
 
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(ordersOf(dragoon).isEmpty(), "hold the shot, issue nothing");
             assertTrue(EventLog.toJsonLines().contains("\"result\":\"holding-shot\""),

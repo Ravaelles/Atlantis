@@ -1,7 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.ArmyContact;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Split-cluster reinforcement (NEXT #181, owner 2026-10-26): one part of
@@ -117,7 +116,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             }
             if (now != 2) return;
 
-            assertNull(atlantis.battle.ArmyContact.reinforcePointFor(b),
+            assertNull(ArmyContact.reinforcePointFor(b),
                 "already at the fight: nothing to join");
         });
     }
@@ -130,7 +129,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
         world(3, fakeOurs(a, b), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
 
-            assertNull(atlantis.battle.ArmyContact.reinforcePointFor(b),
+            assertNull(ArmyContact.reinforcePointFor(b),
                 "nobody fights: the formation fallback owns the unit as before");
         });
     }
@@ -148,11 +147,11 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
                 BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
             }
             if (now == 2) {
-                assertTrue(atlantis.battle.ArmyContact.isOngoingFight(),
+                assertTrue(ArmyContact.isOngoingFight(),
                     "one frame after the report the fight is ongoing");
             }
             if (now == 100) {
-                assertFalse(atlantis.battle.ArmyContact.isOngoingFight(),
+                assertFalse(ArmyContact.isOngoingFight(),
                     "99 frames of silence: old news, not an ongoing fight");
             }
         });

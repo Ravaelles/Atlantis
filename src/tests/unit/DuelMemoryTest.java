@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.DuelMemory;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
@@ -12,8 +12,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Battle-hook damage window (NEXT #183): the latch answers from
@@ -37,7 +35,7 @@ public class DuelMemoryTest extends WorldStubForTests {
             world(60, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
                 int now = A.now();
                 BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
                 if (now == 10) dragoon.hp = 90;
                 if (now == 11) {
@@ -71,7 +69,7 @@ public class DuelMemoryTest extends WorldStubForTests {
         try {
             world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
                 BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
                 if (A.now() == 2) {
                     assertFalse(DuelMemory.damagedLessThanAgo(dragoon, 45),
                         "no hp drop, no latch - a calm holder reads clean");

@@ -1,7 +1,8 @@
 package tests.unit;
 
 
-import atlantis.battle.kite.Kite;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -14,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * A Dragoon steps back only while the threat sits inside its safety
@@ -340,8 +339,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 20;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -365,8 +364,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 0;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -383,8 +382,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 20;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -404,12 +403,12 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30.9, 20);
         dragoon.cooldown = 15;
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
 
         try {
             world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-                atlantis.battle.BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                BattleCommander.act(
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             });
 
             int moves = 0;
@@ -423,7 +422,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                     + ordersOf(dragoon));
         }
         finally {
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 
@@ -466,8 +465,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
         try {
             world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-                atlantis.battle.BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                BattleCommander.act(
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             });
 
             assertTrue(
@@ -495,15 +494,15 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 15;
         dragoon.hp = 20;
         dragoon.shields = 0;
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
         atlantis.util.log.EventLog.clearForTests();
         double oldModifier = tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME;
         tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME = 0;
 
         try {
             world(70, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-                atlantis.battle.BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                BattleCommander.act(
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             });
 
             assertTrue(
@@ -516,7 +515,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         }
         finally {
             tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME = oldModifier;
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
     }
@@ -545,8 +544,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -571,8 +570,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
         // No Nexus: defendAnchor() is null, so FLEE has nowhere to go.
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FLEE, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -599,10 +598,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         // target, else sleep).
         // Based on purpose: order discipline, not kiting.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             int attacks = 0;
             for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
@@ -634,20 +633,20 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         // to 2.8 - nearer, still beyond 2.6), so the cooling rule stays
         // silent and the standoff is about the pick, not the step.
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealotA, zealotB), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 1, "acquires A: " + ordersOf(dragoon));
 
             zealotB.position = atlantis.map.position.APosition.createFromPixels(1050, 20 * 32);
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 1,
                 "B nearer but A alive and in range - no switch, no re-order: " + ordersOf(dragoon));
 
             zealotA.hp = 0;
             dragoon.cooldown = 0;
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 2,
                 "A dead - the pick re-arms onto B: " + ordersOf(dragoon));
         });
@@ -664,8 +663,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         zealot.cooldown = 10;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot, dragoon), fakeEnemies(foe), () -> {
-            atlantis.battle.BattleCommander.act(
-                zealot, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, zealot);
+            BattleCommander.act(
+                zealot, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, zealot);
 
             assertFalse(
                 hasOrder(ordersOf(zealot), zealot.id(), "move"),
@@ -685,8 +684,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         zealot.cooldown = 10;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot), fakeEnemies(foe), () -> {
-            atlantis.battle.BattleCommander.act(
-                zealot, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, zealot);
+            BattleCommander.act(
+                zealot, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, zealot);
 
             assertFalse(
                 hasOrder(ordersOf(zealot), zealot.id(), "move"),
@@ -710,8 +709,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 3;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -733,8 +732,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 10;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -752,8 +751,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 10;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -782,8 +781,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 4;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB, lingC), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -808,8 +807,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 10;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB, lingC), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -832,8 +831,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 15;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FLEE, null, null);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, null, null);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -857,8 +856,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             ((tests.fakes.FakeOrderSink) dragoon.orderSink()).clear();
             if (!dragoon.isAttackFrame()) return;
 
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FLEE, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, null, dragoon);
 
             assertTrue(ordersOf(dragoon).isEmpty(),
                 "mid-animation: hold the shot, issue nothing");
@@ -872,8 +871,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 5;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
@@ -895,8 +894,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         zealot.attackFrame = true;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
@@ -920,8 +919,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 0;
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),

@@ -1,7 +1,7 @@
 package atlantis.debug.tweaker;
 
 import atlantis.battle.kite.CombatTuning;
-import atlantis.battle.escape.EscapeTuning;
+import atlantis.combat.escape.EscapeTuning;
 
 import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.ARandom;

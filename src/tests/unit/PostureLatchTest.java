@@ -1,14 +1,13 @@
 package tests.unit;
 
-import atlantis.battle.cluster.ClusterMission;
 import atlantis.combat.focus.PostureLatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static atlantis.battle.cluster.ClusterMission.Posture.ATTACK;
-import static atlantis.battle.cluster.ClusterMission.Posture.DEFEND;
+import static atlantis.combat.cluster.ClusterMission.Posture.ATTACK;
+import static atlantis.combat.cluster.ClusterMission.Posture.DEFEND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

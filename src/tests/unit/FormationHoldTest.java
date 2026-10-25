@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.FormationHold;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.FormationHold;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Formation hold (owner 2026-10-26, Stardust doctrine): while the enemy
@@ -46,7 +44,7 @@ public class FormationHoldTest extends WorldStubForTests {
         ling.setEnemy();
 
         world(1, fakeOurs(nexus, zealot), fakeEnemies(ling), () -> {
-            assertTrue(atlantis.battle.cluster.ClusterBreach.breachForcesFight(),
+            assertTrue(atlantis.combat.cluster.ClusterBreach.breachForcesFight(),
                 "raider within 8 of the main: the test board is breached");
             assertFalse(FormationHold.shouldHold(zealot, ling, FightOrFlight.Tactic.FIGHT),
                 "breach means everybody attacks: no forming up while raiders chew the base");

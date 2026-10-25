@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.strategy.ProtossAttackHoldToShoot;
+import atlantis.combat.strategy.ProtossAttackHoldToShoot;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

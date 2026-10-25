@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.ClusterBreach;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.cluster.LeaveBreachedBase;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.ClusterBreach;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.cluster.LeaveBreachedBase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner: with raiders in the base the cluster ALWAYS fights - even two

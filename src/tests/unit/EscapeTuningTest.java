@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.escape.EscapeTuning;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.escape.EscapeTuning;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

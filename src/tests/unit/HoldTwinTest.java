@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.FormationHold;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.twins.HoldTwin;
+import atlantis.combat.FormationHold;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.twins.HoldTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * HOLD twin (NEXT #182): every hold decision names its verdict - hold,

@@ -1,6 +1,6 @@
 package atlantis.production.constructions.position.modifier;
 
-import atlantis.battle.siting.BunkerEstimatePositionAtNatural;
+import atlantis.combat.siting.BunkerEstimatePositionAtNatural;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
 import atlantis.map.base.BaseLocations;

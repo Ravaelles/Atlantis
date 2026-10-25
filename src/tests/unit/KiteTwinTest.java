@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.kite.KiteTwin;
+import atlantis.combat.kite.KiteTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Every kiting step names itself (dist x10, cooldown, result) so a kite

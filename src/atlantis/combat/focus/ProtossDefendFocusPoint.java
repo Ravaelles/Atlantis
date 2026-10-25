@@ -1,7 +1,7 @@
 package atlantis.combat.focus;
 
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.battle.cluster.ClusterRally;
+import atlantis.combat.cluster.ClusterRally;
 import atlantis.battle.cluster.Missions;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
@@ -173,7 +173,7 @@ public final class ProtossDefendFocusPoint {
         // a mouth plug. NEXT #170's depth rule survives for that case.
         if (enemyMeleeOnly()) {
             AChoke choke = Chokes.mainChoke();
-            APosition plug = atlantis.battle.formation.ChokePlug.plugPointFor(choke, mainBase);
+            APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, mainBase);
             if (plug != null) {
                 return new AFocusPoint(
                     plug,

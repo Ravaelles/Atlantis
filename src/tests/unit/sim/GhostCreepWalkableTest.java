@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import atlantis.combat.BattleCommander;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import atlantis.battle.DuelMemory;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.GhostAdvance;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.GhostAdvance;
 import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -23,7 +24,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Ghost-creep walkability (owner side observation, Steamhammer game:
@@ -98,7 +98,7 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
             new FakeUnit[] { nexus, d }, new FakeUnit[0], arena);
         try {
             useArenaWalkability(arena);
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
             GhostAdvance.clearForTests();
 
             for (int i = 0; i < 120; i++) {
@@ -121,7 +121,7 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
         }
         finally {
             world.close();
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
             GhostAdvance.clearForTests();
             FakeMapTiles.installAsSource();
         }

@@ -1,9 +1,9 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.escape.EscapeTuning;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.escape.EscapeTuning;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

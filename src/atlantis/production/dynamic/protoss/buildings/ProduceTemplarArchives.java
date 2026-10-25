@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
-import atlantis.util.AConsole;
 
 import static atlantis.units.AUnitType.*;
 

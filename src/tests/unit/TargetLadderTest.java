@@ -5,8 +5,8 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.targeting.AcquireTarget;
-import atlantis.battle.targeting.TargetLadder;
+import atlantis.combat.targeting.AcquireTarget;
+import atlantis.combat.targeting.TargetLadder;
 import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The targeting ladder is an explicit ordered behavior list (owner

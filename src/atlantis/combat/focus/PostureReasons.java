@@ -1,6 +1,6 @@
 package atlantis.combat.focus;
 
-import atlantis.battle.cluster.ClusterMission;
+import atlantis.combat.cluster.ClusterMission;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;

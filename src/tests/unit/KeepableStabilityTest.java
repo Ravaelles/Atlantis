@@ -3,7 +3,7 @@ package tests.unit;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.targeting.AcquireTarget;
+import atlantis.combat.targeting.AcquireTarget;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
@@ -11,8 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Stability pin for the laddder's top (NEXT #184): against a mixed pack

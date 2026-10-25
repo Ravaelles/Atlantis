@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -13,8 +13,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Choke doctrine wiring (NEXT #170): with no contact, a BASED line near a
@@ -64,8 +62,8 @@ public class ChokeStandoffTest extends WorldStubForTests {
             // 3 vs 1 at the choke is crushing: no hold, no lone bait -
             // the decider sends the whole line to the funnel mouth.
             assertTrue(
-                atlantis.battle.strategy.BattleStrategies.pick(a, null)
-                    == atlantis.battle.strategy.BattleStrategy.COLLAPSE,
+                atlantis.combat.strategy.BattleStrategies.pick(a, null)
+                    == atlantis.combat.strategy.BattleStrategy.COLLAPSE,
                 "crushing superiority collapses instead of holding");
             BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
             assertNotNull(a.targetPosition, "engages instead of idling");
@@ -88,8 +86,8 @@ public class ChokeStandoffTest extends WorldStubForTests {
             // 3 vs 1 at the contested choke is crushing with contact:
             // the decider sends the line to the funnel mouth, not the standoff.
             assertTrue(
-                atlantis.battle.strategy.BattleStrategies.pick(a, null)
-                    == atlantis.battle.strategy.BattleStrategy.COLLAPSE,
+                atlantis.combat.strategy.BattleStrategies.pick(a, null)
+                    == atlantis.combat.strategy.BattleStrategy.COLLAPSE,
                 "crushing + contested: collapse onto the bait");
             for (AUnit u : new AUnit[] { a, b, c }) {
                 BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
@@ -114,7 +112,7 @@ public class ChokeStandoffTest extends WorldStubForTests {
         zealot.setEnemy();
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
-            AUnit bait = atlantis.battle.strategy.SquadScout
+            AUnit bait = atlantis.combat.strategy.SquadScout
                 .pickBait(atlantis.units.select.Select.ourCombatUnits());
             assertNotNull(bait, "someone volunteers");
             for (AUnit u : new AUnit[] { a, b, c }) {
@@ -170,7 +168,7 @@ public class ChokeStandoffTest extends WorldStubForTests {
 
             APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
             if (now == 55) {
-                assertTrue(atlantis.battle.strategy.SquadScout.pickBait(
+                assertTrue(atlantis.combat.strategy.SquadScout.pickBait(
                         atlantis.units.select.Select.ourCombatUnits()).id() == a.id(),
                     "lowest id scouts while the line holds");
                 assertTrue(a.position().distTo(aStart[0]) >= 2.0,

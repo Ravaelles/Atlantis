@@ -1,4 +1,5 @@
 package atlantis.battle.cluster;
+import atlantis.combat.cluster.ClusterMission;
 
 import atlantis.game.A;
 import atlantis.util.log.EventLog;

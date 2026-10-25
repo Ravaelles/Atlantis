@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.battle.cluster.ClusterMission;
+import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.focus.PostureReason;
 import atlantis.combat.focus.PostureReasons;
 import atlantis.units.AUnitType;
@@ -11,8 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #197: the trapped shape from the live report, wired end to end -

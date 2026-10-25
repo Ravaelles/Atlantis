@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 
 /**
  * Test-scope learned gate (NEXT #185 S1): the trained net behind the
- * same boolean shape as {@link atlantis.battle.strategy.DuelKite#shouldYield}.
+ * same boolean shape as {@link atlantis.combat.strategy.DuelKite#shouldYield}.
  * Exception-safe by construction - any failure answers "hold" (shoot),
  * never a blind yield. Production gating rides S3; this class proves
  * the vehicle sim -&gt; CSV -&gt; train -&gt; eval -&gt; gate, nothing more.

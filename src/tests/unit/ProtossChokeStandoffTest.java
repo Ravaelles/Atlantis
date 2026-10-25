@@ -1,11 +1,10 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterBreach;
-import atlantis.battle.cluster.ClusterRally;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.retreating.RetreatFromLostFight;
+import atlantis.combat.cluster.ClusterBreach;
+import atlantis.combat.cluster.ClusterRally;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
@@ -19,8 +18,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner doctrine (vs Protoss): with 4+ combat units the army never

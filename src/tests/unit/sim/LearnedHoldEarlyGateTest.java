@@ -6,10 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.Behavior;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.DuelKite;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.Behavior;
+import atlantis.combat.strategy.DuelKite;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;

@@ -1,8 +1,9 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.GhostAdvance;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.FightTarget;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.GhostAdvance;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -18,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Ghost advance (owner: dragoons stood in formation against remembered-but-
@@ -57,7 +56,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                     BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, a);
                 }
                 assertNotNull(
-                    atlantis.battle.FightTarget.lastContact(a),
+                    FightTarget.lastContact(a),
                     "visible fight snapshots the contact point");
                 zealot.position = APosition.createFromPixels(28 * 32, 45 * 32);
                 // The line restages away from the contact (cleared orders,
@@ -77,7 +76,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, nexus);
             }
             if (now == 2) {
-                APosition ghost = atlantis.battle.FightTarget.lastContact(a);
+                APosition ghost = FightTarget.lastContact(a);
                 assertNotNull(ghost, "the squad remembers the fight");
                 assertNotNull(a.targetPosition, "scout steps out immediately");
                 assertTrue(
@@ -92,7 +91,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (now != 120) return;
 
-            APosition ghost = atlantis.battle.FightTarget.lastContact(a);
+            APosition ghost = FightTarget.lastContact(a);
             assertNotNull(ghost, "the squad remembers the fight");
             for (FakeUnit u : new FakeUnit[] { a, b, c }) {
                 assertTrue(
@@ -203,8 +202,8 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 "line creeps ~1.5 tiles once the scout is out: " + lineStepB);
             assertTrue(Math.abs(lineStepC - GhostAdvance.LINE_STEP_TILES) < 0.6,
                 "line creeps ~1.5 tiles once the scout is out: " + lineStepC);
-            assertTrue(a.position().distTo(atlantis.battle.FightTarget.lastContact(a))
-                    <= b.position().distTo(atlantis.battle.FightTarget.lastContact(a)),
+            assertTrue(a.position().distTo(FightTarget.lastContact(a))
+                    <= b.position().distTo(FightTarget.lastContact(a)),
                 "scout stays ahead of the line");
         });
     }
@@ -224,11 +223,11 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (atlantis.game.A.now() != 2) return;
 
-            assertNotNull(atlantis.battle.FightTarget.lastContact(dragoon), "ghost exists");
+            assertNotNull(FightTarget.lastContact(dragoon), "ghost exists");
             assertNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FLEE),
                 "FLEE owns retreating units, never the creep");
 
-            APosition ghost = atlantis.battle.FightTarget.lastContact(dragoon);
+            APosition ghost = FightTarget.lastContact(dragoon);
             double before = dragoon.position().distTo(ghost);
             BattleCommander.act(dragoon, FightOrFlight.Tactic.FLEE, null, dragoon);
             if (dragoon.targetPosition != null) {
@@ -255,7 +254,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (atlantis.game.A.now() != 2) return;
 
-            assertNotNull(atlantis.battle.FightTarget.lastContact(dragoon), "ghost exists");
+            assertNotNull(FightTarget.lastContact(dragoon), "ghost exists");
             assertNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
                 "first second on UMS: stand, do not scout out of the line");
         });
@@ -287,7 +286,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
 
             assertNotNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
                 "past the 1 s release the vanguard owns the march: "
-                    + atlantis.battle.FightTarget.lastContact(dragoon));
+                    + FightTarget.lastContact(dragoon));
             assertTrue(GhostAdvance.move(dragoon, FightOrFlight.Tactic.FIGHT),
                 "the march issues steps instead of holding the line");
         });
@@ -435,7 +434,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (now != 2) return;
 
-            APosition contact = atlantis.battle.FightTarget.lastContact(dragoon);
+            APosition contact = FightTarget.lastContact(dragoon);
             assertNotNull(contact, "contact snapshot exists");
             zealot.isVisibleUnitOnMap = false;
             zealot.position = APosition.createFromPixels(70 * 32, 29 * 32);
@@ -471,7 +470,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (now != 300) return;
 
-            APosition stale = atlantis.battle.FightTarget.lastContact(dragoon);
+            APosition stale = FightTarget.lastContact(dragoon);
             assertNotNull(stale, "the snapshot itself never expires, only its use");
             assertEquals(zealot.position(), GhostAdvance.ghostPointFor(dragoon),
                 "stale contact drops, fogged memory owns the march: " + stale);
@@ -602,7 +601,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             }
             if (atlantis.game.A.now() != 2) return;
 
-            assertNotNull(atlantis.battle.FightTarget.lastContact(dragoon), "ghost exists");
+            assertNotNull(FightTarget.lastContact(dragoon), "ghost exists");
             BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             APosition choke = dragoon.nearestChoke().center();

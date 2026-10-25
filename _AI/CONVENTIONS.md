@@ -235,7 +235,7 @@ decompiled archives:
   regroup, breach). Never machinery words (`order`, `process`,
   `manager`, `strategy-tag`). Framework overrides keep framework names
   (`handle`, `subcommanders`) - bodies obey the rules anyway.
-- Per-unit vocabulary lives only in `atlantis.battle.Behavior`
+- Per-unit vocabulary lives only in `atlantis.combat.Behavior`
   (`KITE`, `HOLD_FORMATION`, ...); `Actions` is the order (move/attack),
   `Behavior` the reason. Tag strings are frozen journal spellings.
 - Table-of-contents test: a non-programmer retells the battle story

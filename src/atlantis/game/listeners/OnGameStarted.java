@@ -3,6 +3,7 @@ package atlantis.game.listeners;
 
 
 import atlantis.Atlantis;
+import atlantis.combat.BattleCommander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
@@ -53,7 +54,7 @@ public class OnGameStarted {
         atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
         atlantis.game.listeners.OnGameEnd.reset();
         atlantis.map.scout.ScoutState.reset();
-        atlantis.battle.BattleCommander.reset();
+        BattleCommander.reset();
         atlantis.battle.cluster.Missions.reset();
 
         // Per-game state with test-shared seams: a new game is a fresh
@@ -63,8 +64,8 @@ public class OnGameStarted {
         // game - it only drops stale entries.
         atlantis.production.orders.production.queue.add.AddToQueue.clearForTests();
         atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
-        atlantis.battle.twins.HitTwin.clearForTests();
-        atlantis.battle.twins.ShotTwin.clearForTests();
+        atlantis.combat.twins.HitTwin.clearForTests();
+        atlantis.combat.twins.ShotTwin.clearForTests();
         atlantis.game.listeners.WarpedBuildingRecorder.clearForTests();
         atlantis.game.util.BuildOrderAudit.clearForTests();
 

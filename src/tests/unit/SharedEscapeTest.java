@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.formation.SharedEscape;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.formation.SharedEscape;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Pins the shared escape direction (formation Phase A): one direction

@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -477,11 +477,11 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             // needs 9+), so this leg isolates the pinch: hurt + 2 melee
             // inside 2 tiles with room yields, whatever the quarry does
             // 5 tiles out.
-            assertTrue(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+            assertTrue(atlantis.combat.kite.Kite.shouldKite(dragoon, quarry),
                 "pinch on: hurt + 2 melee inside 2 tiles yields");
             atlantis.battle.kite.CombatTuning.install(
                 atlantis.battle.kite.CombatTuning.defaults().withDragoonPinchMeleeCount(99));
-            assertFalse(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+            assertFalse(atlantis.combat.kite.Kite.shouldKite(dragoon, quarry),
                 "pinch off: 5 tiles out the margin holds, no stand (only 2 melee)");
             // Same board, weapon cooling: the flankers at 1.4-1.5 are
             // inside the wounded contact radius, so the cooling rule
@@ -489,7 +489,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             // owns close flankers now, the pinch toggle is unobservable
             // while cooling.
             dragoon.cooldown = 20;
-            assertTrue(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+            assertTrue(atlantis.combat.kite.Kite.shouldKite(dragoon, quarry),
                 "cooling with close flankers: kite, pinch or no pinch");
         }
         finally {
@@ -517,10 +517,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             new FakeUnit[] { escaper, helper, third },
             new FakeUnit[] { pursuer }, arena);
         try {
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
 
-            atlantis.battle.formation.CoverWithdraw.Step step =
-                atlantis.battle.formation.CoverWithdraw.makeWayStep(helper);
+            atlantis.combat.formation.CoverWithdraw.Step step =
+                atlantis.combat.formation.CoverWithdraw.makeWayStep(helper);
             assertTrue(step != null,
                 "helper stands on the escape ray: it must step aside");
             assertTrue(step.escaper == escaper,
@@ -528,12 +528,12 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(Math.abs(step.dest.y() - helper.position.y()) > 1,
                 "the step is lateral (off the ray), not along it");
 
-            assertTrue(atlantis.battle.formation.CoverWithdraw.makeWayStep(third) == null,
+            assertTrue(atlantis.combat.formation.CoverWithdraw.makeWayStep(third) == null,
                 "far from the corridor: no step, fight on unchanged");
         }
         finally {
             world.close();
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 
@@ -548,13 +548,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             new FakeUnit[] { escaper, helper },
             new FakeUnit[] { pursuer }, arena);
         try {
-            atlantis.battle.BattleCommander.clearForTests();
-            assertTrue(atlantis.battle.formation.CoverWithdraw.makeWayStep(helper) == null,
+            atlantis.combat.BattleCommander.clearForTests();
+            assertTrue(atlantis.combat.formation.CoverWithdraw.makeWayStep(helper) == null,
                 "two units is a duel: frozen per-unit behavior, no sharing");
         }
         finally {
             world.close();
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 
@@ -587,8 +587,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                             dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                     }
                     scriptLings(lings, wounded);
-                    if (atlantis.battle.formation.CoverWithdraw.makeWayStep(holderA) != null
-                        || atlantis.battle.formation.CoverWithdraw.makeWayStep(holderB) != null) {
+                    if (atlantis.combat.formation.CoverWithdraw.makeWayStep(holderA) != null
+                        || atlantis.combat.formation.CoverWithdraw.makeWayStep(holderB) != null) {
                         sawMakeWay[0] = true;
                     }
                 });
@@ -626,8 +626,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         try {
             BattleCommander.clearForTests();
 
-            atlantis.battle.formation.CoverWithdraw.Cover cover =
-                atlantis.battle.formation.CoverWithdraw.coverTarget(healthy);
+            atlantis.combat.formation.CoverWithdraw.Cover cover =
+                atlantis.combat.formation.CoverWithdraw.coverTarget(healthy);
             assertTrue(cover != null && cover.pursuer == pursuer,
                 "cover names the pursuer chewing the wounded, not the nearer ling");
             assertTrue(cover.escaper == wounded,
@@ -1349,7 +1349,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == ling,
+            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == ling,
                 "fog flicker inside the grace window keeps the commitment");
             for (int i = 0; i < 60; i++) {
                 world.tick(() -> {
@@ -1358,7 +1358,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == null,
+            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == null,
                 "a long-unseen target in range still drops (visibility, not distance)");
             // Phase 3: far away and long unseen - the ghost drops, the hunt takes over.
             world.teleport(dragoon, APosition.create(15, 20));
@@ -1372,7 +1372,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == null,
+            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == null,
                 "a stale ghost stops pinning the frame");
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "dropped ghost hands over to the hunt: " + ordersOf(dragoon));

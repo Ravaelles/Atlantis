@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
@@ -111,11 +111,11 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                         }
                         if (!chewed) continue;
                         try {
-                            atlantis.units.AUnit threat = atlantis.battle.targeting.ASquadTargeting
+                            atlantis.units.AUnit threat = atlantis.combat.targeting.ASquadTargeting
                                 .nearestEngageableEnemy(d, atlantis.battle.kite.CombatTuning
                                     .current().getKiteEnemyTiles());
                             if (threat != null
-                                && atlantis.battle.kite.Kite.shouldKite(d, threat)) {
+                                && atlantis.combat.kite.Kite.shouldKite(d, threat)) {
                                 kiteTrueWhileChewed[0]++;
                             }
                             else {

@@ -30,7 +30,7 @@ public class ScoutState {
 
     /**
      * Builds the per-unit manager for one scout. The implementation is Combat's
-     * ({@code atlantis.battle.scout.ScoutUnitManagers}); the
+     * ({@code atlantis.combat.scout.ScoutUnitManagers}); the
      * game root sets it once, because Scouting must not name a Combat class.
      *
      * @see ScoutUnitManager

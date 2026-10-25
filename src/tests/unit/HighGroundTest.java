@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.strategy.HighGround;
+import atlantis.combat.strategy.HighGround;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -74,9 +74,9 @@ public class HighGroundTest {
         atlantis.map.position.APosition ours = atlantis.map.position.APosition.create(20, 20);
         atlantis.map.position.APosition foeHold = atlantis.map.position.APosition.create(30, 20);
 
-        assertEquals(foeHold, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, 0, 2));
-        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, 2, 2));
-        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, foeHold, -1, 2));
-        assertEquals(ours, atlantis.battle.strategy.ChokeStandoff.chooseHold(ours, null, 0, 2));
+        assertEquals(foeHold, atlantis.combat.strategy.ChokeStandoff.chooseHold(ours, foeHold, 0, 2));
+        assertEquals(ours, atlantis.combat.strategy.ChokeStandoff.chooseHold(ours, foeHold, 2, 2));
+        assertEquals(ours, atlantis.combat.strategy.ChokeStandoff.chooseHold(ours, foeHold, -1, 2));
+        assertEquals(ours, atlantis.combat.strategy.ChokeStandoff.chooseHold(ours, null, 0, 2));
     }
 }

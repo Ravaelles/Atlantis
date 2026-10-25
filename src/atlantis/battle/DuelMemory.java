@@ -21,7 +21,7 @@ import java.util.Map;
 public final class DuelMemory {
 
     /** Settle window before any swing was ever observed (covers a zealot swing + margin). */
-    static final int PRE_CALIBRATION_SETTLE_FRAMES = 6;
+    public static final int PRE_CALIBRATION_SETTLE_FRAMES = 6;
 
     private static final Map<Integer, Integer> lastStepFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastMovedFrame = new HashMap<>();
@@ -53,7 +53,7 @@ public final class DuelMemory {
      * previous battle frame. Called once per unit per frame from the
      * battle hook, before any decision reads the latch below.
      */
-    static void noteBattleFrame(AUnit unit) {
+    public static void noteBattleFrame(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return;
 
@@ -87,7 +87,7 @@ public final class DuelMemory {
     }
 
     /** True when hp dropped between the last two battle-hook snapshots. */
-    static boolean tookDamageSinceLastBattleFrame(AUnit unit) {
+    public static boolean tookDamageSinceLastBattleFrame(AUnit unit) {
         if (unit == null) return false;
 
         try {
@@ -122,7 +122,7 @@ public final class DuelMemory {
     private DuelMemory() {
     }
 
-    static void clear() {
+    public static void clear() {
         lastStepFrame.clear();
         lastMovedFrame.clear();
         lastMovedPos.clear();
@@ -139,22 +139,22 @@ public final class DuelMemory {
     }
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
-    static void markRepositioned(AUnit unit) {
+    public static void markRepositioned(AUnit unit) {
         lastRepositionFrame.put(unit.id(), A.now());
     }
 
     /** Frames since a reposition rode, or a large number when never. */
-    static int repositionedAgo(AUnit unit) {
+    public static int repositionedAgo(AUnit unit) {
         return A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000000);
     }
 
     /** Last engaged point while visible, or null when this unit never fought. */
-    static APosition lastContact(AUnit unit) {
+    public static APosition lastContact(AUnit unit) {
         return lastContactPos.get(unit.id());
     }
 
     /** Frame of the last visible contact snapshot, or null when never fought. */
-    static Integer lastContactFrame(AUnit unit) {
+    public static Integer lastContactFrame(AUnit unit) {
         return lastContactFrame.get(unit.id());
     }
 
@@ -170,37 +170,37 @@ public final class DuelMemory {
         lastContactFrame.put(unit.id(), A.now());
     }
 
-    static Integer lastStepFrame(AUnit unit) {
+    public static Integer lastStepFrame(AUnit unit) {
         return lastStepFrame.get(unit.id());
     }
 
-    static void stepped(AUnit unit, int now) {
+    public static void stepped(AUnit unit, int now) {
         lastStepFrame.put(unit.id(), now);
         lastRepositionFrame.put(unit.id(), now);
     }
 
-    static Integer lastGhostFrame(AUnit unit) {
+    public static Integer lastGhostFrame(AUnit unit) {
         return lastGhostFrame.get(unit.id());
     }
 
-    static void noteGhost(AUnit unit) {
+    public static void noteGhost(AUnit unit) {
         lastGhostFrame.put(unit.id(), A.now());
     }
 
-    static Integer lastMovedFrame(AUnit unit) {
+    public static Integer lastMovedFrame(AUnit unit) {
         return lastMovedFrame.get(unit.id());
     }
 
-    static APosition lastMovedPos(AUnit unit) {
+    public static APosition lastMovedPos(AUnit unit) {
         return lastMovedPos.get(unit.id());
     }
 
-    static void noteMoved(AUnit unit, int now, APosition position) {
+    public static void noteMoved(AUnit unit, int now, APosition position) {
         lastMovedFrame.put(unit.id(), now);
         lastMovedPos.put(unit.id(), position);
     }
 
-    static void forgetMotion(AUnit unit) {
+    public static void forgetMotion(AUnit unit) {
         lastStepFrame.remove(unit.id());
         lastMovedFrame.remove(unit.id());
         lastMovedPos.remove(unit.id());
@@ -211,12 +211,12 @@ public final class DuelMemory {
      * animation just opened - remember when, so the settle window can
      * be measured instead of guessed.
      */
-    static void openAttackAnim(AUnit unit, int now) {
+    public static void openAttackAnim(AUnit unit, int now) {
         attackAnimOpenFrame.put(unit.id(), now);
         lastAttackStartFrame.put(unit.id(), now);
     }
 
-    static boolean attackAnimOpen(AUnit unit) {
+    public static boolean attackAnimOpen(AUnit unit) {
         return attackAnimOpenFrame.containsKey(unit.id());
     }
 
@@ -225,19 +225,19 @@ public final class DuelMemory {
      * duration plus PurpleWave's empirical +2. Stored per unit, so a
      * dragoon's long swing and a zealot's short one calibrate apart.
      */
-    static void closeAttackAnim(AUnit unit, int now) {
+    public static void closeAttackAnim(AUnit unit, int now) {
         Integer open = attackAnimOpenFrame.remove(unit.id());
         if (open != null && now - open > 0) {
             attackSettleFrames.put(unit.id(), now - open + 2);
         }
     }
 
-    static Integer lastAttackStart(AUnit unit) {
+    public static Integer lastAttackStart(AUnit unit) {
         return lastAttackStartFrame.get(unit.id());
     }
 
     /** Observed settle window, or the pre-calibration default. */
-    static int attackSettle(AUnit unit) {
+    public static int attackSettle(AUnit unit) {
         return attackSettleFrames.getOrDefault(unit.id(), PRE_CALIBRATION_SETTLE_FRAMES);
     }
 }

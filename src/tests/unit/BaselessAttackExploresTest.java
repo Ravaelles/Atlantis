@@ -1,7 +1,8 @@
 package tests.unit;
 
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterAnchor;
+import atlantis.combat.cluster.ClusterAnchor;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -17,8 +18,7 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+
 import org.junit.jupiter.api.Tag;
 
 /**
@@ -48,7 +48,7 @@ public class BaselessAttackExploresTest extends AbstractTestWithWorld {
 
     @AfterEach
     public void clean() {
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
     }
 
     @Test

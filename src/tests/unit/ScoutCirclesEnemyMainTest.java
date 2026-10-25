@@ -1,8 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.scout.ScoutUnitManagers;
+import atlantis.combat.scout.ScoutUnitManagers;
 import atlantis.map.base.define.EnemyMainBase;
-import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
@@ -24,8 +23,6 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner report 2026-10-23 (NEXT #187, critical): a scout that finds the

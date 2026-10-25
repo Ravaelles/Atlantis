@@ -1,6 +1,6 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.debug.tweaker.DuelHitsMinutesScenario;
 import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.debug.tweaker.TunerBatchManifest;
@@ -60,7 +60,7 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
 
         ParamTweakerFactory.apply("EscapeStaticWeight", 5.0);
         assertEquals(5.0,
-            atlantis.battle.escape.EscapeTuning.current().getStaticWeight(), 0.0001);
+            atlantis.combat.escape.EscapeTuning.current().getStaticWeight(), 0.0001);
     }
 
     @Test

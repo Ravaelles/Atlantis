@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.escape.EscapeDestination;
-import atlantis.battle.escape.EscapeRays;
-import atlantis.battle.strategy.DuelKite;
+import atlantis.combat.escape.EscapeDestination;
+import atlantis.combat.escape.EscapeRays;
+import atlantis.combat.strategy.DuelKite;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Long-vector escape (NEXT #173, owner doctrine): walk straight out as

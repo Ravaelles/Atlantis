@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.targeting.AcquireTarget;
+import atlantis.combat.targeting.AcquireTarget;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Shoot-now targeting (owner 2026-10-26): a dragoon that walks past an

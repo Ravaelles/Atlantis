@@ -1,7 +1,8 @@
 package tests.unit;
 
 
-import atlantis.battle.formation.FocusFire;
+import atlantis.combat.formation.FocusFire;
+import atlantis.combat.BattleCommander;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -17,8 +18,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Pins the shared focus target (formation Phase A): the weakest valid
@@ -131,8 +130,8 @@ public class FocusFireTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Nexus, 20, 20),
             dragoon
         ), fakeEnemies(strong, weak), () -> {
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(weak, dragoon.target(),
                     "no current target, no squad: the weaker zealot draws the fire, "
@@ -155,8 +154,8 @@ public class FocusFireTest extends AbstractTestWithWorld {
             dragoon.attackUnit(strong);
             ((tests.fakes.FakeOrderSink) dragoon.orderSink()).clear();
 
-            atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            BattleCommander.act(
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(strong, dragoon.target(),
                     "sticky first: the committed target survives a weaker distraction");

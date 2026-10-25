@@ -1,8 +1,9 @@
 package tests.unit;
 
-import atlantis.battle.Regroup;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.BattleStrategy;
+import atlantis.combat.ArmyContact;
+import atlantis.combat.Regroup;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.BattleStrategy;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
@@ -20,8 +21,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * No-contact hold (owner 2026-10-26, live game vs Protoss on 7th_rav):
@@ -47,7 +46,7 @@ public class NoContactHoldTest extends WorldStubForTests {
             world(5, fakeOurs(nexus, a), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
 
-                atlantis.battle.ArmyContact.clearForTests();
+                ArmyContact.clearForTests();
                 APosition anchor = APosition.create(26, 20);
                 Regroup.march(a, FightOrFlight.Tactic.FIGHT, anchor, a, BattleStrategy.OPEN_FIELD);
 
@@ -78,7 +77,7 @@ public class NoContactHoldTest extends WorldStubForTests {
             world(5, fakeOurs(nexus, a), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
 
-                atlantis.battle.ArmyContact.clearForTests();
+                ArmyContact.clearForTests();
                 APosition farAnchor = APosition.create(90, 90);
                 Regroup.march(a, FightOrFlight.Tactic.FIGHT, farAnchor, a, BattleStrategy.OPEN_FIELD);
 
@@ -103,7 +102,7 @@ public class NoContactHoldTest extends WorldStubForTests {
             world(5, fakeOurs(nexus, a), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
 
-                atlantis.battle.ArmyContact.clearForTests();
+                ArmyContact.clearForTests();
                 APosition anchor = APosition.create(26, 20);
                 Regroup.march(a, FightOrFlight.Tactic.FLEE, anchor, a, BattleStrategy.OPEN_FIELD);
 

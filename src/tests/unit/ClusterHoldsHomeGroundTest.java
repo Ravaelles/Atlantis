@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterTactic;
+import atlantis.combat.cluster.ClusterTactic;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
@@ -13,8 +13,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Under two tiles from the main base the cluster stands instead of

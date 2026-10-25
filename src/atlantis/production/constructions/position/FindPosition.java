@@ -10,7 +10,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.base.FindPositionForBase;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
 import atlantis.production.constructions.position.terran.SupplyDepotPositionFinder;
-import atlantis.battle.siting.NewBunkerPositionFinder;
+import atlantis.combat.siting.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

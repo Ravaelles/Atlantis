@@ -1,7 +1,7 @@
 # Formations: how Stardust keeps the cluster together (read 2026-10-20)
 
 > **STATUS: Phase A IMPLEMENTED (owner 2026-10-20, same prompt).**
-> `atlantis.battle.formation`: `FormationSlots` (Moon crescent, no
+> `atlantis.combat.formation`: `FormationSlots` (Moon crescent, no
 > shrink/path), `SharedEscape` (leader direction per 10f), `FocusFire`
 > (weakest in reach of most guns, sticky-first order) - all wired into
 > `BattleCommander.act`, all gated so duels and pairs stay frozen

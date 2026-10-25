@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.escape.EscapeDestination;
-import atlantis.battle.escape.EscapeRays;
+import atlantis.combat.escape.EscapeDestination;
+import atlantis.combat.escape.EscapeRays;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Escape slice 8 (NEXT #172): the destination pick is walkability- and
@@ -66,9 +64,9 @@ public class EscapeDestinationTest extends WorldStubForTests {
 
         assertNotNull(dest);
         assertNotEquals(lurker, dest, "never step onto the lurker");
-        double picked = atlantis.battle.escape.EscapeScoring.enemyPressure(dest,
+        double picked = atlantis.combat.escape.EscapeScoring.enemyPressure(dest,
             Collections.singletonList(lurker), 20);
-        double occupied = atlantis.battle.escape.EscapeScoring.enemyPressure(lurker,
+        double occupied = atlantis.combat.escape.EscapeScoring.enemyPressure(lurker,
             Collections.singletonList(lurker), 20);
         assertTrue(picked < occupied, "picked ground is safer than the lurker tile");
     }
@@ -80,13 +78,13 @@ public class EscapeDestinationTest extends WorldStubForTests {
         threat.setEnemy();
 
         world(1, fakeOurs(dragoon), fakeEnemies(threat), () -> {
-            assertNull(atlantis.battle.escape.EscapeScoredStep.pickScored(null, threat, 2),
+            assertNull(atlantis.combat.escape.EscapeScoredStep.pickScored(null, threat, 2),
                 "null unit scores nothing");
-            assertNull(atlantis.battle.escape.EscapeScoredStep.pickScored(dragoon, null, 2),
+            assertNull(atlantis.combat.escape.EscapeScoredStep.pickScored(dragoon, null, 2),
                 "null threat scores nothing");
-            assertNull(atlantis.battle.escape.EscapeScoredStep.pickScored(dragoon, threat, 0),
+            assertNull(atlantis.combat.escape.EscapeScoredStep.pickScored(dragoon, threat, 0),
                 "no step scores nothing");
-            assertNotNull(atlantis.battle.escape.EscapeScoredStep.pickScored(dragoon, threat, 2),
+            assertNotNull(atlantis.combat.escape.EscapeScoredStep.pickScored(dragoon, threat, 2),
                 "open stub field always scores somewhere");
         });
     }

@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.FrozenWatch;
+import atlantis.combat.FrozenWatch;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import org.junit.jupiter.api.AfterEach;
@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Frozen-unit detection (owner 2026-10-26): a move/attack order riding

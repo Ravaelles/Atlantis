@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.targeting.AcquireTarget;
-import atlantis.battle.targeting.MeleeChewerTarget;
+import atlantis.combat.targeting.AcquireTarget;
+import atlantis.combat.targeting.MeleeChewerTarget;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -12,8 +12,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Seam pin for the chewed-melee rule (owner, Steamhammer loss): a melee

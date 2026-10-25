@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterRally;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.ClusterRally;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Formation orientation by expected direction (owner 2026-10-26): with
@@ -271,8 +269,8 @@ public class ClusterRallyTest extends WorldStubForTests {
             Alpha.get().addUnit(b);
             Alpha.get().addUnit(c);
             try {
-                atlantis.battle.BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
-                atlantis.battle.BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, a);
+                BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+                atlantis.combat.BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, a);
 
                 assertTrue(a.commandHistory().toString().contains("ClusterGhost")
                     || a.commandHistory().toString().contains("ClusterScout"),

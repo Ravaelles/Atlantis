@@ -3,9 +3,9 @@ package tests.unit.sim;
 import java.util.ArrayList;
 import java.util.List;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.DuelKite;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.DuelKite;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;

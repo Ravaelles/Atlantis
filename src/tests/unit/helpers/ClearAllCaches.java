@@ -1,6 +1,7 @@
 package tests.unit.helpers;
 
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.combat.ArmyContact;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
@@ -51,7 +52,7 @@ public class ClearAllCaches {
 
         Missions.reset();
         Alpha.get().clear();
-        atlantis.battle.ArmyContact.clearForTests();
+        ArmyContact.clearForTests();
         UnitsArchive.reset();
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();

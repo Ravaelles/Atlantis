@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import org.junit.jupiter.api.Test;
 import tests.unit.UnitTest;

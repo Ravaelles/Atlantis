@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.twins.UnitTelemetry;
+import atlantis.combat.twins.UnitTelemetry;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +12,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Per-second unit telemetry (NEXT #180): every combat unit reports hp,

@@ -10,10 +10,9 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.map.position.APosition;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
@@ -22,8 +21,6 @@ import tests.unit.AbstractTestWithUnits;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Repro of the Steamhammer loss (Zealot#177, owner report): surrounded by

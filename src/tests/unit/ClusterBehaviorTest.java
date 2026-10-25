@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.FightOrFlight;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

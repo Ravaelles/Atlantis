@@ -1,9 +1,9 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterTactic;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.ClusterTactic;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Stardust rule, live-fire proof in the sim (owner 2026-10-26, NEXT #188):

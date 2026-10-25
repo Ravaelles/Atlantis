@@ -1,10 +1,10 @@
 package tests.unit;
 
-import atlantis.battle.FormationHold;
-import atlantis.battle.Regroup;
+import atlantis.combat.FormationHold;
+import atlantis.combat.Regroup;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.strategy.BattleStrategy;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.BattleStrategy;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The march without a target: with no strategy point and no ghost the

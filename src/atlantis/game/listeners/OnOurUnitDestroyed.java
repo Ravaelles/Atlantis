@@ -17,7 +17,7 @@ import atlantis.units.AUnit;
 public class OnOurUnitDestroyed {
     public static void update(AUnit unit) {
         printOurDeadUnit(unit);
-        atlantis.battle.twins.FightTrace.died(unit);
+        atlantis.combat.twins.FightTrace.died(unit);
 
         RepairAssignments.removeRepairer(unit);
         OurWorkerWasKilled.onWorkedKilled(unit);
@@ -76,7 +76,7 @@ public class OnOurUnitDestroyed {
         if (!unit.commandHistory().isEmpty()) {
             System.out.println(prefix + "Orders: " + orders);
         }
-        java.util.List<String> trail = atlantis.battle.twins.UnitTelemetry.trailFor(unit.id());
+        java.util.List<String> trail = atlantis.combat.twins.UnitTelemetry.trailFor(unit.id());
         if (!trail.isEmpty()) {
             System.out.println(prefix + "Telemetry (last " + trail.size() + "s):");
             for (String row : trail) {

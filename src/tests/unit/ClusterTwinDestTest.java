@@ -1,9 +1,9 @@
 package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.twins.ClusterTwin;
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.twins.ClusterTwin;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.EventLog;
@@ -16,8 +16,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner 2026-10-23 (Stardust-style: log the transition target, not every

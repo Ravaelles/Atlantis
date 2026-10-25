@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.kite.ZealotWithdraw;
+import atlantis.combat.kite.ZealotWithdraw;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Zealot withdrawal (NEXT #178, owner 2026-10-21): lings attack faster

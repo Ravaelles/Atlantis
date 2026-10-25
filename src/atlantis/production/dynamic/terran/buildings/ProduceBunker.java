@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.terran.buildings;
 
-import atlantis.battle.siting.TerranBunker;
+import atlantis.combat.siting.TerranBunker;
 import atlantis.units.select.Have;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;

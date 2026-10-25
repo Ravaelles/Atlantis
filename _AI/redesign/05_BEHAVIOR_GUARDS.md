@@ -5,7 +5,7 @@
 > down so the idea does not rot while started work gets finished first
 > (owner direction: finish what's started, no new big projects).
 > Sources: this repo's battle package (`atlantis.battle`,
-> `atlantis.battle.targeting`, `atlantis.battle.escape`) and the
+> `atlantis.combat.targeting`, `atlantis.combat.escape`) and the
 > frozen-failure post-mortems in `_AI/NEXT.md` #182/#183.
 
 ## 0. The failure mode, with receipts

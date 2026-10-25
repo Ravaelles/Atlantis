@@ -6,11 +6,10 @@ import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.escape.EscapeDestination;
-import atlantis.battle.escape.EscapeRays;
+import atlantis.combat.escape.EscapeDestination;
+import atlantis.combat.escape.EscapeRays;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;

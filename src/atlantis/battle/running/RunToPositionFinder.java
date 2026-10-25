@@ -96,7 +96,7 @@ public class RunToPositionFinder {
 
         running._lastRunMode = "AnyDir";
         if (runAwayFrom instanceof AUnit) {
-            APosition scored = atlantis.battle.escape.EscapeScoredStep
+            APosition scored = atlantis.combat.escape.EscapeScoredStep
                 .pickScored(unit, (AUnit) runAwayFrom, 8);
             if (scored != null) return running.setRunTo(scored);
         }

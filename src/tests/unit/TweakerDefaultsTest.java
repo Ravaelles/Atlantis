@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.kite.CombatTuning;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

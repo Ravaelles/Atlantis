@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.cluster.ClusterMission;
+import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.focus.PostureReason;
 import atlantis.combat.focus.PostureReasons;
 import org.junit.jupiter.api.Tag;

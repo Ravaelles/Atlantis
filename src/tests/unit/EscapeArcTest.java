@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.escape.EscapeArc;
+import atlantis.combat.escape.EscapeArc;
 import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

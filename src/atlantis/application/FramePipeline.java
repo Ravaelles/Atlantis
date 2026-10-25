@@ -1,7 +1,7 @@
 package atlantis.application;
 
 import atlantis.architecture.Commander;
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;

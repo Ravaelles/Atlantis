@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.FightTarget;
-import atlantis.battle.strategy.BattleStrategy;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.FightTarget;
+import atlantis.combat.strategy.BattleStrategy;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -17,8 +17,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * A refused kite order is not "nowhere to step" (NEXT #188 follow-up,

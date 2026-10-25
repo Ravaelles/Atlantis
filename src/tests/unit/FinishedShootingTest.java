@@ -1,7 +1,7 @@
 package tests.unit;
 
+import atlantis.combat.BattleCommander;
 import atlantis.battle.DuelMemory;
-import atlantis.battle.BattleCommander;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -13,8 +13,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Finished shooting (owner): one of our observed projectiles is 1-2
@@ -99,7 +97,7 @@ public class FinishedShootingTest extends WorldStubForTests {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 31.5, 20);
         zealot.setEnemy();
         dragoon.cooldown = 25;
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
 
         try {
             world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
@@ -112,7 +110,7 @@ public class FinishedShootingTest extends WorldStubForTests {
                 if (now == 2) {
                     atlantis.util.log.EventLog.clearForTests();
                     BattleCommander.act(
-                        dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                        dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
                     assertTrue(
                         hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                         "bullet age 1: swing hold and settle release, the kite step issues: "
@@ -125,7 +123,7 @@ public class FinishedShootingTest extends WorldStubForTests {
             });
         }
         finally {
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 
@@ -138,7 +136,7 @@ public class FinishedShootingTest extends WorldStubForTests {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 31.5, 20);
         zealot.setEnemy();
         dragoon.cooldown = 25;
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
 
         try {
             world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
@@ -147,7 +145,7 @@ public class FinishedShootingTest extends WorldStubForTests {
                 dragoon.attackUnit(zealot);
                 dragoon.attackFrame = true;
                 BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
                 assertFalse(
                     hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                     "mid-swing with no confirmed projectile: hold, do not step: "
@@ -155,7 +153,7 @@ public class FinishedShootingTest extends WorldStubForTests {
             });
         }
         finally {
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 

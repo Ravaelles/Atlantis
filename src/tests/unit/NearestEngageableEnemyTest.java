@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.targeting.ASquadTargeting;
+import atlantis.combat.targeting.ASquadTargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The cluster walked past enemies to the anchor because nothing ever set

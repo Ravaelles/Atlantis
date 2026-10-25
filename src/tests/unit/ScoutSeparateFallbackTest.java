@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.escape.EscapeScoredStep;
-import atlantis.battle.scout.ScoutSeparateFromCloseEnemies;
+import atlantis.combat.escape.EscapeScoredStep;
+import atlantis.combat.scout.ScoutSeparateFromCloseEnemies;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;

@@ -1,10 +1,10 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.ClusterRally;
-import atlantis.battle.cluster.ClusterTactic;
-import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.ClusterRally;
+import atlantis.combat.cluster.ClusterTactic;
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * UMS retreat discipline (owner): on custom maps there is no base to
@@ -188,17 +186,17 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
     public void breachHoldsDefendPostureAtAnyArmySize() {
         // Independent hypotheticals: the posture latch is per-game state,
         // one query must not hold the next.
-        atlantis.battle.cluster.ClusterMission.resetForTests();
+        atlantis.combat.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.DEFEND,
             ClusterMission.postureFor(ClusterMission.ATTACK_ARMY_SIZE + 20, true),
             "raiders in the base pin even a big army home - marching out abandons the workers");
-        atlantis.battle.cluster.ClusterMission.resetForTests();
+        atlantis.combat.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.ATTACK,
             ClusterMission.postureFor(ClusterMission.ATTACK_ARMY_SIZE + 20, false),
             "clear base, big army: march as before");
-        atlantis.battle.cluster.ClusterMission.resetForTests();
+        atlantis.combat.cluster.ClusterMission.resetForTests();
         assertEquals(
             ClusterMission.Posture.DEFEND,
             ClusterMission.postureFor(3, false),

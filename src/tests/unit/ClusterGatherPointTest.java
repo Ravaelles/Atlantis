@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.cluster.ClusterRally;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.ClusterRally;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -12,8 +12,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The cluster marches and retreats as one (owner 2026-10-19: both strung

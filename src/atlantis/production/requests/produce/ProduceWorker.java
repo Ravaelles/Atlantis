@@ -15,7 +15,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import static atlantis.battle.siting.RebaseToNewMineralPatches.isBaseMinedOut;
+import static atlantis.combat.siting.RebaseToNewMineralPatches.isBaseMinedOut;
 
 public class ProduceWorker {
     // The door's domain half must be registered before the first issuance -

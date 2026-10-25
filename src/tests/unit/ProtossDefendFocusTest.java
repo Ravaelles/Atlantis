@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.cluster.ClusterAnchor;
+import atlantis.combat.cluster.ClusterAnchor;
 import atlantis.combat.focus.ProtossDefendFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -16,8 +16,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Where the Protoss army stands on defend depends on the enemy (owner

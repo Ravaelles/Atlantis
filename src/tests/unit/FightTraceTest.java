@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.twins.FightTrace;
+import atlantis.combat.twins.FightTrace;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The per-unit fight trace (owner 2026-10-20): samples carry health and

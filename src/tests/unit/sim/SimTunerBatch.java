@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.debug.tweaker.DuelHitsMinutesScenario;
 import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.debug.tweaker.TunerBatchManifest;
@@ -119,9 +119,9 @@ public final class SimTunerBatch {
         // registry or the digest-compat row shapes). try/finally: a
         // leaked true would silently run every later batch unwired.
         Double wiringOverride = overrides.remove("HoldEarlyDisabled");
-        atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB =
+        atlantis.combat.strategy.DuelKite.holdEarlyDisabledForAB =
             wiringOverride != null && wiringOverride >= 0.5;
-        if (atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB) {
+        if (atlantis.combat.strategy.DuelKite.holdEarlyDisabledForAB) {
             System.out.println("[sim-batch] HoldEarlyDisabled=1 (A/B arm: pre-wiring formula)");
         }
         try {
@@ -159,7 +159,7 @@ public final class SimTunerBatch {
         Files.write(out.resolve("manifest.txt"),
             TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
         } finally {
-            atlantis.battle.strategy.DuelKite.holdEarlyDisabledForAB = false;
+            atlantis.combat.strategy.DuelKite.holdEarlyDisabledForAB = false;
         }
         System.out.println("[sim-batch] done: " + games + " games, manifest: "
             + out.resolve("manifest.txt"));

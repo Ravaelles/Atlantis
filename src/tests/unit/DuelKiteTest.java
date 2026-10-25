@@ -1,11 +1,12 @@
 package tests.unit;
 
+import atlantis.combat.BattleCommander;
 import atlantis.battle.kite.CombatTuning;
-import atlantis.battle.strategy.BattleStrategies;
-import atlantis.battle.strategy.BattleStrategy;
-import atlantis.battle.strategy.ChokeStandoff;
-import atlantis.battle.strategy.DuelKite;
-import atlantis.battle.strategy.SquadScout;
+import atlantis.combat.strategy.BattleStrategies;
+import atlantis.combat.strategy.BattleStrategy;
+import atlantis.combat.strategy.ChokeStandoff;
+import atlantis.combat.strategy.DuelKite;
+import atlantis.combat.strategy.SquadScout;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -20,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Duel kiting (NEXT #169): while the weapon cools, a Dragoon steps off
@@ -214,7 +213,7 @@ public class DuelKiteTest extends WorldStubForTests {
         dragoon.cooldown = 20;
 
         world(1, fakeOurs(dragoon), fakeEnemies(ling), () -> {
-            APosition dest = atlantis.battle.escape.EscapeDestination.pick(dragoon, ling, 2,
+            APosition dest = atlantis.combat.escape.EscapeDestination.pick(dragoon, ling, 2,
                 (x, y) -> false, java.util.Collections.emptyList(), java.util.Collections.emptyList());
             assertNull(dest, "no walkable step: the caller falls back, not into a wall");
         });
@@ -275,15 +274,15 @@ public class DuelKiteTest extends WorldStubForTests {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32.5, 20);
         zealot.setEnemy();
         dragoon.cooldown = 6;
-        atlantis.battle.BattleCommander.clearForTests();
+        BattleCommander.clearForTests();
 
         try {
             world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
                 if (atlantis.game.A.now() != 1) return;
 
                 atlantis.util.log.EventLog.clearForTests();
-                atlantis.battle.BattleCommander.act(
-                    dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                BattleCommander.act(
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
                 assertTrue(
                     hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                     "yield step issues while the margin holds: " + ordersOf(dragoon));
@@ -293,7 +292,7 @@ public class DuelKiteTest extends WorldStubForTests {
             });
         }
         finally {
-            atlantis.battle.BattleCommander.clearForTests();
+            BattleCommander.clearForTests();
         }
     }
 

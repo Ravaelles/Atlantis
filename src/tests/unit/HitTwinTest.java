@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.twins.HitTwin;
+import atlantis.combat.twins.HitTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Every hit a fighting unit takes names itself (lost HP+shields,

@@ -1,6 +1,6 @@
 package atlantis.combat.focus;
 
-import atlantis.battle.cluster.ClusterMission;
+import atlantis.combat.cluster.ClusterMission;
 
 /**
  * Posture stability (NEXT #197): a flip holds long enough to march

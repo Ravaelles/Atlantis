@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.cluster.BlockingArmy;
+import atlantis.combat.cluster.BlockingArmy;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

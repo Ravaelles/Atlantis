@@ -3,10 +3,10 @@ package tests.unit.sim;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.FormationHold;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.FormationHold;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;

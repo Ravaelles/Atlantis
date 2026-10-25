@@ -1,8 +1,8 @@
 package tests.unit;
 
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.kite.Kite;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Stardust desired-distance rule (see `_AI/CHALLENGES/MicroKiting.md`):
@@ -107,7 +105,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -134,7 +132,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
-                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),

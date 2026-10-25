@@ -2,6 +2,7 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
+import atlantis.combat.FrozenWatch;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.battle.advance.focus.AFocusPoint;
@@ -67,7 +68,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static atlantis.units.AUnitType.*;
 import static bwapi.Color.*;
 
 public class AAdvancedPainter extends APainter {
@@ -197,7 +197,7 @@ public class AAdvancedPainter extends APainter {
             // === decision - four unfilled purple rings, hard to miss.
             // =========================================================
 
-            if (atlantis.battle.FrozenWatch.isFrozen(unit)) {
+            if (FrozenWatch.isFrozen(unit)) {
                 APainter.paintCircle(unit, new int[] { 10, 12, 14, 16 }, Color.Purple);
             }
 

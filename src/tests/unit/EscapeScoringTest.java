@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.escape.EscapeScoring;
-import atlantis.battle.escape.EscapeTuning;
+import atlantis.combat.escape.EscapeScoring;
+import atlantis.combat.escape.EscapeTuning;
 import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

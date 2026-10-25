@@ -6,11 +6,10 @@ import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;

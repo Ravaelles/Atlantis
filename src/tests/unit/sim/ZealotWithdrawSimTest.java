@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.battle.BattleCommander;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
 import java.util.List;

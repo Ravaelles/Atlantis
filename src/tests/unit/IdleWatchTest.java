@@ -1,10 +1,11 @@
 package tests.unit;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.IdleWatch;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.twins.ClusterTwin;
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.twins.ClusterTwin;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
@@ -18,8 +19,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner, Drag_v_LingsUpg2: a combat unit that does not displace while
@@ -33,13 +32,13 @@ public class IdleWatchTest extends WorldStubForTests {
     @BeforeEach
     public void cleanLogBefore() {
         EventLog.clearForTests();
-        atlantis.battle.IdleWatch.clearForTests();
+        IdleWatch.clearForTests();
     }
 
     @AfterEach
     public void cleanLogAfter() {
         EventLog.clearForTests();
-        atlantis.battle.IdleWatch.clearForTests();
+        IdleWatch.clearForTests();
         ClusterTwin.clearForTests();
         for (atlantis.units.AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);
     }

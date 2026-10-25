@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.scout.ScoutUnitManagers;
+import atlantis.combat.scout.ScoutUnitManagers;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnitType;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Chain wiring proof for ScoutHoldCourse (owner: the early scout circled

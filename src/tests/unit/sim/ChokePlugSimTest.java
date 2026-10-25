@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -21,8 +21,6 @@ import tests.unit.AbstractTestWithUnits;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Choke plug (owner, PurpleWave SquadDefendBase guard port): against a
@@ -99,7 +97,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                     });
                 }
 
-                APosition plug = atlantis.battle.formation.ChokePlug.plugPointFor(choke, nexus);
+                APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, nexus);
                 assertTrue(plug != null, "the plug names the mouth");
                 double plugX = plug.x();
 
@@ -109,7 +107,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 double zealotSlotFoe = -1;
                 double dragoonSlotFoe = Double.MAX_VALUE;
                 for (FakeUnit z : new FakeUnit[] { z1, z2, z3 }) {
-                    APosition s = atlantis.battle.formation.ChokePlug.slotFor(
+                    APosition s = atlantis.combat.formation.ChokePlug.slotFor(
                         z, atlantis.battle.cluster.Alpha.get().selection(), plug, choke.center(),
                         choke.width() / 2.0);
                     assertTrue(s != null, "every zealot gets a plug slot");
@@ -117,7 +115,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                     zealotSlotFoe = Math.max(zealotSlotFoe, sd);
                 }
                 for (FakeUnit d : new FakeUnit[] { d1, d2, d3 }) {
-                    APosition s = atlantis.battle.formation.ChokePlug.slotFor(
+                    APosition s = atlantis.combat.formation.ChokePlug.slotFor(
                         d, atlantis.battle.cluster.Alpha.get().selection(), plug, choke.center(),
                         choke.width() / 2.0);
                     assertTrue(s != null, "every dragoon gets a plug slot");

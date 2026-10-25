@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import atlantis.battle.BattleCommander;
+import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.FightOrFlight;
+import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;

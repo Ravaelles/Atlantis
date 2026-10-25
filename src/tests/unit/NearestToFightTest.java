@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.ClusterTactic;
+import atlantis.combat.cluster.ClusterTactic;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -11,8 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The gate listens to the hottest point of the cluster, not the leader
