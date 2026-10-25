@@ -3332,7 +3332,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
 
         if (focusPoint.isAroundChoke()) {
-            return (focusPoint.choke().center()).distTo(this);
+            // Chokes are ground concepts (NEXT #193); flyers keep the air
+            // mission distance, which is the only one that applies to them.
+            if (isFlying()) return focusPoint.distTo(this);
+
+            return PositionUtil.groundDistanceTo(this, focusPoint.choke().center());
         }
 
         return focusPoint.distTo(this);
@@ -3932,10 +3936,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             "nearestChokeDist",
             77,
             () -> {
+                // Chokes are ground concepts (NEXT #193): flyers read far.
+                if (isFlying()) return 999.0;
+
                 AChoke nearestChoke = nearestChoke();
                 if (nearestChoke == null) return 999.0;
 
-                return distTo(nearestChoke);
+                return PositionUtil.groundDistanceTo(this, nearestChoke);
             }
         );
     }
@@ -3945,10 +3952,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             "nearestChokeCenterDist",
             77,
             () -> {
+                // Chokes are ground concepts (NEXT #193): flyers read far.
+                if (isFlying()) return 999.0;
+
                 AChoke nearestChoke = nearestChoke();
                 if (nearestChoke == null) return 999.0;
 
-                return distTo(nearestChoke.center());
+                return PositionUtil.groundDistanceTo(this, nearestChoke.center());
             }
         );
     }
@@ -4346,9 +4356,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public double distToMainChokeOr(int fallback) {
+        // Chokes are ground concepts (NEXT #193): flyers take the fallback.
+        if (isFlying()) return fallback;
+
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke != null) {
-            return distTo(mainChoke);
+            return PositionUtil.groundDistanceTo(this, mainChoke);
         }
         return fallback;
     }

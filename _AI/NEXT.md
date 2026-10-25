@@ -1643,7 +1643,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   ground, never by air (nearestNarrowChoke + Bases natural detection read groundDistanceTo; nearestChoke already did).
   Micro-distance helpers (AUnit nearestChokeDist/nearestChokeCenterDist/distToMainChokeOr) inventoried, NOT converted:
   their thresholds are tuned on Euclidean, conversion is re-tuning and needs its own slice + game proof. Remainder:
-  live TauCross bottom-start proof (narrow main choke + army holding it).
+  live TauCross bottom-start proof (narrow main choke + army holding it). Slice 3 LANDED 2026-10-26 (sim-first,
+  red-green): every choke distance reads ground - nearestChokeDist, nearestChokeCenterDist, distToMainChokeOr,
+  the distToFocusPoint choke branch and IsUnitWithinChoke (short ground path within the mouth width); flyers read
+  far / take the fallback (chokes are ground concepts). ChokeTest re-pinned to ground semantics (test-world
+  fallback reads center distance, not the width-subtracted air edge). Threshold-shift risk on tuned gates
+  (<=3/4/5/9) rides the live proof above.
 
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
