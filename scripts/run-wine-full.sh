@@ -47,6 +47,9 @@ set -u
 
 say() { echo "[wine-full] $*"; }
 
+close_lock_fd() { eval "exec ${WINE_GAME_LOCK_FD:-9}>&-" 2>/dev/null || true; }
+bgs() { ( close_lock_fd; exec setsid "$@" ) & }
+
 # =============================================================================
 # CONFIGURATION - edit here, nothing below needs touching
 # =============================================================================
@@ -148,8 +151,6 @@ exec {WINE_GAME_LOCK_FD}>"$WINE_GAME_LOCK" || { echo "[wine-full] cannot open lo
 # via bgs() below so it never inherits the fd. NOTE: call bgs WITHOUT a
 # trailing `&` (it backgrounds internally); an extra `&` spawns a throwaway
 # wrapper whose instant exit makes CLIENT_PID look dead (measured).
-close_lock_fd() { eval "exec ${WINE_GAME_LOCK_FD:-9}>&-" 2>/dev/null || true; }
-bgs() { ( close_lock_fd; exec setsid "$@" ) & }
 if ! flock -n "$WINE_GAME_LOCK_FD" 2>/dev/null; then
   # fuser names the actual lock holders (our own fd is filtered out);
   # pgrep on the script name would also match this very check.
