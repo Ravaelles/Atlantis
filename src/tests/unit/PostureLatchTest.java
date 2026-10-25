@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.PostureLatch;
+import atlantis.combat.focus.PostureLatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

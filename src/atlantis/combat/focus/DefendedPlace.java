@@ -1,4 +1,4 @@
-package atlantis.battle.cluster;
+package atlantis.combat.focus;
 
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;

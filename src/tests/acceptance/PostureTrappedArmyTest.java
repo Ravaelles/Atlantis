@@ -1,8 +1,8 @@
 package tests.acceptance;
 
 import atlantis.battle.cluster.ClusterMission;
-import atlantis.battle.cluster.PostureReason;
-import atlantis.battle.cluster.PostureReasons;
+import atlantis.combat.focus.PostureReason;
+import atlantis.combat.focus.PostureReasons;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import bwapi.Race;

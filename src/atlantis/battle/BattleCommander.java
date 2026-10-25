@@ -146,7 +146,7 @@ public class BattleCommander extends Commander {
     }
 
     public static void clearForTests() {
-        atlantis.battle.cluster.PostureLatch.resetForTests();
+        atlantis.combat.focus.PostureLatch.resetForTests();
         atlantis.battle.kite.CombatTuning.resetToDefaults();
         atlantis.battle.escape.EscapeTuning.resetToDefaults();
         atlantis.battle.strategy.GhostAdvance.clearForTests();
@@ -160,7 +160,7 @@ public class BattleCommander extends Commander {
         atlantis.battle.IdleWatch.clearForTests();
         atlantis.battle.twins.ClusterTwin.clearForTests();
         atlantis.battle.ArmyContact.clearForTests();
-        atlantis.battle.cluster.ProtossDefendFocusPoint.clearForTests();
+        atlantis.combat.focus.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
     }

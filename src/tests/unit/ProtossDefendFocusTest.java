@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.ClusterAnchor;
-import atlantis.battle.cluster.ProtossDefendFocusPoint;
+import atlantis.combat.focus.ProtossDefendFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;

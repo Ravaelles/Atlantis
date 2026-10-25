@@ -1659,7 +1659,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
   (breach, sparta, main, natural, base; first non-null wins, null = no opinion), pinned DefendedPlaceTest (priority
   order + ranks + last resort + null). Next: wire ProtossDefendFocusPoint 1:1 (slice 2), then anchor/rally through
-  the same answer (slice 3), formation adapt (slice 4), CherryVis row (slice 5). Micro untouched.
+  the same answer (slice 3), formation adapt (slice 4), CherryVis row (slice 5). Micro untouched. Re-home
+  LANDED (mechanical, zero behavior): the decision family (DefendedPlace, PostureReason/Reasons/Latch,
+  ProtossDefendFocusPoint + new AttackFocusPoint extracted 1:1 from ClusterAnchor.attackAnchor) moved to
+  atlantis.combat.focus with an empty ArchUnit store diff (CONVENTIONS §33: new combat code lands there, battle.*
+  is frozen legacy).
 
 - - **#195** Flee reasons as named verdicts (owner: name each flee case, one home deciding when it fires).
   Slice 1 LANDED 2026-10-26 (extraction, zero behavior change): FleeReason (9 reasons) + RetreatFromLostFight.decide
@@ -1689,6 +1693,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   weak/strong line is the existing headcount, no new threshold; breach bypasses immediately like the old
   force-defend); pinned PostureLatchTest 7/7 (windows, release, no re-arm, backwards clock) + wired hold/release
   in PostureTrappedArmyTest. UmsRetreatRulesTest resets the latch between hypotheticals (independent scenarios).
+  Trapped case extracted to TrappedByMassZealots (own predicate + sim-bracketed line, PostureReasons delegates;
+  pinned TrappedByMassZealotsTest). Re-home: the whole family now lives in atlantis.combat.focus (see #194).
 
 ## Current game state (updated 2026-10-21)
 

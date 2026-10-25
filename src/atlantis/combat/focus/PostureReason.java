@@ -1,4 +1,4 @@
-package atlantis.battle.cluster;
+package atlantis.combat.focus;
 
 /**
  * Why the cluster holds home ground or marches out (NEXT #197, 02_COMBAT

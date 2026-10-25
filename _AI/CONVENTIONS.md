@@ -400,3 +400,18 @@ decompiled archives:
   so a later failure can find it.
 - Standing disagreements stay in the open (chat + commit message):
   what is contested, what would settle it, what the fallback is.
+
+## 33. New combat code lives in atlantis.combat (owner's ruling 2026-10-26)
+
+- atlantis.combat is the reclaimed home for Combat-context decisions
+  (the old manager framework under the same name is retired in src-old/
+  and never compiled). New combat code lands in atlantis.combat.*
+  subpackages (today: combat.focus for the which-ground and
+  whether-to-march family); no new production combat code lands in
+  atlantis.battle.*.
+- atlantis.battle.* is frozen legacy: read-only, except deletion and
+  the mechanical rewiring that moves a seam out (zero behavior change,
+  suite green). A change that needs new battle.* logic is a sign the
+  seam belongs in combat.* instead (CONVENTIONS §31).
+- Old vs new is decided by package, never by memory: if it lives under
+  battle.* outside a reclaimed seam, it is old.

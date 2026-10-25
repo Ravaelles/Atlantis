@@ -1,5 +1,7 @@
 package atlantis.battle.cluster;
 
+import atlantis.combat.focus.PostureLatch;
+import atlantis.combat.focus.PostureReasons;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;

@@ -1,6 +1,8 @@
-package atlantis.battle.cluster;
+package atlantis.combat.focus;
 
 import atlantis.battle.advance.focus.AFocusPoint;
+import atlantis.battle.cluster.ClusterRally;
+import atlantis.battle.cluster.Missions;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;

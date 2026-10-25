@@ -1,5 +1,6 @@
-package atlantis.battle.cluster;
+package atlantis.combat.focus;
 
+import atlantis.battle.cluster.ClusterMission;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;
@@ -23,18 +24,6 @@ public final class PostureReasons {
 
     private PostureReasons() {
     }
-
-    /** A line that can trade on open ground instead of donating boxed in. */
-    public static final int TRAPPED_MIN_COMBAT_UNITS = 4;
-
-    /** Enough dragoons to hold a kite line once out. */
-    public static final int TRAPPED_MIN_DRAGOONS = 2;
-
-    /** A zealot mass the base cannot kite around (sim-bracketed: 4 no, 6 yes). */
-    public static final int TRAPPED_MIN_ENEMY_ZEALOTS = 6;
-
-    /** Early game, single-base economies with no room to kite at home. */
-    public static final int TRAPPED_MAX_GAME_SECONDS = 650;
 
     /** A bank that buys its own army while the attack runs. */
     public static final int BANKED_MINERALS = 1000;
@@ -65,10 +54,7 @@ public final class PostureReasons {
             return new Verdict(PostureReason.HEADCOUNT, ClusterMission.Posture.ATTACK);
         }
 
-        if (ours >= TRAPPED_MIN_COMBAT_UNITS
-            && ourDragoons >= TRAPPED_MIN_DRAGOONS
-            && enemyZealots >= TRAPPED_MIN_ENEMY_ZEALOTS
-            && gameSeconds <= TRAPPED_MAX_GAME_SECONDS) {
+        if (atlantis.combat.focus.TrappedByMassZealots.applies(ours, ourDragoons, enemyZealots, gameSeconds)) {
             return new Verdict(PostureReason.TRAPPED_BY_MASS_ZEALOTS, ClusterMission.Posture.ATTACK);
         }
 

@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.cluster.DefendedPlace;
+import atlantis.combat.focus.DefendedPlace;
 import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
