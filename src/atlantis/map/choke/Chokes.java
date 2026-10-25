@@ -7,6 +7,7 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.PositionUtil;
 import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
@@ -50,7 +51,7 @@ public class Chokes {
         for (AChoke choke : chokes) {
             if (!isPlausibleDesignatedChoke(choke)) continue;
 
-            double dist = choke.distTo(from);
+            double dist = PositionUtil.groundDistanceTo(from, choke);
             if (dist < best) {
                 best = dist;
                 nearest = choke;

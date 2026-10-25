@@ -1639,7 +1639,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   read under 10 tiles (Chokes.isPlausibleDesignatedChoke + nearestNarrowChoke, wired through MainChokeCustom,
   DefineMainChoke, DefineNaturalChoke and fullfillsConditionsForNatural); all-wide means no designation (callers
   already null-handle, the army falls back to anchor instead of marching across the map). Pinned
-  DesignatedChokeWidthGuardTest. Remainder: live TauCross bottom-start proof (narrow main choke + army holding it).
+  DesignatedChokeWidthGuardTest. Slice 2 LANDED 2026-10-26 (sim-first, red-green): choke designations decide by
+  ground, never by air (nearestNarrowChoke + Bases natural detection read groundDistanceTo; nearestChoke already did).
+  Micro-distance helpers (AUnit nearestChokeDist/nearestChokeCenterDist/distToMainChokeOr) inventoried, NOT converted:
+  their thresholds are tuned on Euclidean, conversion is re-tuning and needs its own slice + game proof. Remainder:
+  live TauCross bottom-start proof (narrow main choke + army holding it).
 
 ## Current game state (updated 2026-10-21)
 

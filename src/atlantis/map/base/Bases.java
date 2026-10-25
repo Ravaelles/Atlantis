@@ -26,7 +26,7 @@ public class Bases {
                 if (mainChoke == null) return null;
 
                 for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-                    double distToMainChoke = base.distTo(mainChoke);
+                    double distToMainChoke = base.groundDist(mainChoke);
                     if (distToMainChoke <= 15 && base.distToMain() >= 15) return base;
                 }
 
