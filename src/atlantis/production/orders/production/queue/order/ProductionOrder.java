@@ -482,6 +482,16 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return true;
     }
 
+    /**
+     * A waiting order holds no earmark (NEXT #192 follow-up: unblocking
+     * unit production while placement searches fail). The order itself
+     * stays queued and keeps retrying; only the reservation lifts until
+     * a site is found. See {@link OrderReservations#releaseWhileWaiting}.
+     */
+    public void releaseReservedResourcesWhileWaiting() {
+        orderReservations.releaseWhileWaiting();
+    }
+
     public OrderReservations reservations() {
         return orderReservations;
     }

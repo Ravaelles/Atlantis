@@ -26,9 +26,12 @@ public class ClusterAnchor {
      * the main choke so a lost fight has room to retreat instead of
      * wiping against the buildings. Terran keeps the old hug-the-main
      * stand - no tested direction there yet, deliberately unchanged.
+     * Absolute ban (owner order): a Protoss dragoon mass over 10 stages
+     * at the middle on every matchup - the small-army home doctrines
+     * above never hold a finished army back.
      */
     public static HasPosition defendAnchor() {
-        if (Enemy.protoss()) {
+        if (Enemy.protoss() || ProtossDefendFocusPoint.mainChokeBannedByDragoons()) {
             HasPosition focus = ProtossDefendFocusPoint.focusPoint();
             if (focus != null) return focus;
         }

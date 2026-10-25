@@ -33,6 +33,9 @@ public final class FightTarget {
     private FightTarget() {
     }
 
+    /** 5 s at 24 fps: a just-issued retreat must execute instead of being cancelled by the next frame's attack. */
+    private static final int RETREAT_REENGAGE_COOLDOWN_FRAMES = 120;
+
     /** Memory lives in {@link DuelMemory}; the four methods below only forward it. */
     public static void markRepositioned(AUnit unit) {
         DuelMemory.markRepositioned(unit);
@@ -53,6 +56,8 @@ public final class FightTarget {
     }
 
     public static void fight(AUnit unit, AUnit target, BattleStrategy strategy, HasPosition anchor, AUnit leader) {
+        if (DuelMemory.retreatedAgo(unit) < RETREAT_REENGAGE_COOLDOWN_FRAMES && unit.eval() <= 1.1) return;
+
         // Snapshot the contact point while it is visible: once sight is
         // lost the enemy position reads null (or goes stale), so the hunt
         // has nothing to march to (1Drag_v_1Zeal sat 9 min for exactly

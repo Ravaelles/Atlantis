@@ -33,6 +33,15 @@ public class ProduceZealot {
     private static int freeGateways;
 
     /**
+     * Banked gas means Dragoons, not more Zealots (owner report: 14 Zealots vs 6 Dragoons
+     * with 350 gas banked vs Zerg). The first zealot(s) are always allowed - this brake
+     * targets flood production, not the opener (NoZealotsVsZ spirit). With zealots already
+     * present, the floor met, and gas banked, the dragoon pump (which runs first) takes
+     * the gateways.
+     */
+    private static final int GAS_BANK_PREFER_DRAGOONS = 200;
+
+    /**
      * Why the last call did not produce a zealot. Set at every gate, for the same reason
      * the commander keeps a reason: B-22 spent a week on "the bot stopped producing and
      * nothing says why", and a reason nobody reads is a comment.
@@ -57,7 +66,10 @@ public class ProduceZealot {
 
         if (!AllowProduceZealot.allowed()) return no("NotAllowed");
 
+        zealots = Count.zealotsWithUnfinished();
+
         if (ZealotInsteadDragoon.needZealot()) return produceZealot("ZealotInsteadOfDragoon");
+        if (bankedGasPrefersDragoons()) return no("GasBankGoDragoons");
 
         if (freeGateways >= 2 && A.hasMinerals(600) && A.supplyUsed() <= 180) return produceZealot("LotsOfMinerals");
         if (freeGateways >= 2 && A.hasMinerals(550) && Count.zealots() <= 13) return produceZealot("WealthyGoZealots");
@@ -71,7 +83,6 @@ public class ProduceZealot {
 
         if (A.hasGas(50) && A.supplyUsed() <= 25 && Count.dragoonsWithUnfinished() == 0 && Have.cyberneticsCore()) return false;
 
-        zealots = Count.zealotsWithUnfinished();
         if (preventExcessiveZealots()) return false;
 
         if (preventDoubleOrdersFromBuildOrderAndDynamic()) return false;
@@ -243,6 +254,14 @@ public class ProduceZealot {
         ) return false;
 
         return false;
+    }
+
+    private static boolean bankedGasPrefersDragoons() {
+        return Enemy.zerg()
+            && A.hasGas(GAS_BANK_PREFER_DRAGOONS)
+            && Have.cyberneticsCore()
+            && Count.zealots() > 0
+            && !notEnoughZealots();
     }
 
     public static double minZealots() {

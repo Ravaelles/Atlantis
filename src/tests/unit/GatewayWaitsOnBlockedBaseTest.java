@@ -14,7 +14,11 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.FindPosition;
+import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
+import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,6 +27,7 @@ import bwapi.Race;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,12 +68,14 @@ public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {
     @BeforeEach
     public void clearLog() {
         EventLog.clearForTests();
+        ReservedResources.reset();
     }
 
     @AfterEach
     public void clean() {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
+        ReservedResources.reset();
     }
 
     @Test
@@ -139,6 +146,86 @@ public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {
                 "a freed tile is found on the waiting order, dominant: " + dominant());
             assertTrue(queueContains(held[0]), "the warping order is not cancelled");
         });
+    }
+
+    @Test
+    public void waitingOrdersDoNotStarveUnitProduction() {
+        currentMinerals = 410;
+        currentGas = 250;
+        currentSupplyUsed = 30;
+        currentSupplyTotal = 40;
+
+        List<FakeUnit> ours = new ArrayList<>();
+        ours.add(fake(AUnitType.Protoss_Nexus, 26, 30));
+        ours.add(fake(AUnitType.Protoss_Pylon, 32, 30));
+        ours.add(fake(AUnitType.Protoss_Cybernetics_Core, 26, 26));
+        ours.add(fake(AUnitType.Protoss_Gateway, 22, 28));
+        ours.add(fake(AUnitType.Protoss_Gateway, 23, 28));
+        ours.add(fake(AUnitType.Protoss_Probe, 26, 32));
+        ours.add(fake(AUnitType.Protoss_Dragoon, 24, 26));
+        ours.add(fake(AUnitType.Protoss_Dragoon, 25, 26));
+        ours.add(fake(AUnitType.Protoss_Dragoon, 24, 27));
+        ours.add(fake(AUnitType.Protoss_Dragoon, 25, 27));
+        List<FakeUnit> blockers = new ArrayList<>();
+        for (int tx = 29; tx <= 35; tx++) {
+            for (int ty = 27; ty <= 33; ty++) {
+                blockers.add(fake(AUnitType.Protoss_Zealot, tx, ty));
+            }
+        }
+        ours.addAll(blockers);
+
+        final int[] tick = { 0 };
+        final int[] trainedBefore = { -1 };
+        world(21, fakeOurs(ours.toArray(new FakeUnit[0])), fakeEnemies(), () -> {
+            tick[0]++;
+            // Keep the null-position guard live every frame (its clock
+            // reads seconds, the world clock reads frames).
+            A.setNow(2100 + tick[0], 71);
+
+            if (tick[0] == 1) {
+                for (int i = 0; i < 2; i++) {
+                    ProductionOrder gateway = new ProductionOrder(
+                        AUnitType.Protoss_Gateway, APosition.create(32, 30), 12);
+                    gateway.setMaximumDistance(3);
+                    Queue.get().addNew(0, gateway);
+                    gateway.setStatus(OrderStatus.READY_TO_PRODUCE);
+                }
+                assertEquals(300, ReservedResources.minerals(),
+                    "two READY gateways reserve their price up front");
+                trainedBefore[0] = countTrainedDragoons();
+            }
+            if (tick[0] >= 1 && tick[0] <= 6) {
+                for (ProductionOrder order : Queue.get().allOrders()) {
+                    if (order.unitType() == AUnitType.Protoss_Gateway) {
+                        assertNull(searchFor(order),
+                            "the blocked search finds nothing");
+                        NewConstructionRequest.handleFailedSearch(
+                            AUnitType.Protoss_Gateway, order, dominant());
+                    }
+                }
+            }
+            if (tick[0] == 7) {
+                assertEquals(0, ReservedResources.minerals(),
+                    "failed searches hold no minerals while waiting - the earmark belongs to committed spending");
+            }
+            if (tick[0] >= 7) {
+                new ProtossDynamicUnitProductionCommander().forceHandle();
+            }
+            if (tick[0] == 9) {
+                assertTrue(countTrainedDragoons() > trainedBefore[0],
+                    "an affordable Dragoon trains despite the blocked base, commander says: "
+                        + ProtossDynamicUnitProductionCommander.reason);
+            }
+        });
+    }
+
+    private int countTrainedDragoons() {
+        int count = 0;
+        for (AUnitType type : tests.fakes.FakeUnitData.TRAIN) {
+            if (type == AUnitType.Protoss_Dragoon) count++;
+        }
+
+        return count;
     }
 
     private APosition searchFor(ProductionOrder order) {

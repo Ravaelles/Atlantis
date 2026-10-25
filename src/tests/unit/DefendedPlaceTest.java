@@ -25,12 +25,13 @@ public class DefendedPlaceTest {
     public void declarationOrderIsThePriority() {
         DefendedPlace.Kind[] kinds = DefendedPlace.Kind.values();
 
-        assertEquals(5, kinds.length);
+        assertEquals(6, kinds.length);
         assertEquals(DefendedPlace.Kind.BREACH, kinds[0]);
         assertEquals(DefendedPlace.Kind.SPARTA_CHOKE, kinds[1]);
-        assertEquals(DefendedPlace.Kind.MAIN_CHOKE, kinds[2]);
-        assertEquals(DefendedPlace.Kind.NATURAL_CHOKE, kinds[3]);
-        assertEquals(DefendedPlace.Kind.BASE, kinds[4]);
+        assertEquals(DefendedPlace.Kind.MIDDLE, kinds[2]);
+        assertEquals(DefendedPlace.Kind.MAIN_CHOKE, kinds[3]);
+        assertEquals(DefendedPlace.Kind.NATURAL_CHOKE, kinds[4]);
+        assertEquals(DefendedPlace.Kind.BASE, kinds[5]);
     }
 
     @Test
@@ -40,6 +41,7 @@ public class DefendedPlaceTest {
         DefendedPlace.Answer answer = DefendedPlace.defendGround(
             breach,
             new FakeChoke(APosition.create(60, 60), 3),
+            new FakeChoke(APosition.create(65, 65), 3),
             new FakeChoke(APosition.create(70, 70), 3),
             new FakeChoke(APosition.create(80, 80), 3),
             BASE);
@@ -50,12 +52,22 @@ public class DefendedPlaceTest {
     }
 
     @Test
-    public void chokesRankSpartaMainNatural() {
+    public void chokesRankSpartaMiddleMainNatural() {
         DefendedPlace.Answer sparta = DefendedPlace.defendGround(
-            null, new FakeChoke(APosition.create(60, 60), 3), null, null, BASE);
+            null, new FakeChoke(APosition.create(60, 60), 3), null, null, null, BASE);
         assertEquals(DefendedPlace.Kind.SPARTA_CHOKE, sparta.kind);
 
+        DefendedPlace.Answer middle = DefendedPlace.defendGround(
+            null,
+            null,
+            new FakeChoke(APosition.create(65, 65), 3),
+            new FakeChoke(APosition.create(70, 70), 3),
+            new FakeChoke(APosition.create(80, 80), 3),
+            BASE);
+        assertEquals(DefendedPlace.Kind.MIDDLE, middle.kind);
+
         DefendedPlace.Answer main = DefendedPlace.defendGround(
+            null,
             null,
             null,
             new FakeChoke(APosition.create(70, 70), 3),
@@ -64,13 +76,27 @@ public class DefendedPlaceTest {
         assertEquals(DefendedPlace.Kind.MAIN_CHOKE, main.kind);
 
         DefendedPlace.Answer natural = DefendedPlace.defendGround(
-            null, null, null, new FakeChoke(APosition.create(80, 80), 3), BASE);
+            null, null, null, null, new FakeChoke(APosition.create(80, 80), 3), BASE);
         assertEquals(DefendedPlace.Kind.NATURAL_CHOKE, natural.kind);
     }
 
     @Test
+    public void middleNullFallsThroughToMain() {
+        DefendedPlace.Answer answer = DefendedPlace.defendGround(
+            null,
+            null,
+            null,
+            new FakeChoke(APosition.create(70, 70), 3),
+            new FakeChoke(APosition.create(80, 80), 3),
+            BASE);
+
+        assertNotNull(answer);
+        assertEquals(DefendedPlace.Kind.MAIN_CHOKE, answer.kind);
+    }
+
+    @Test
     public void baseIsTheLastResort() {
-        DefendedPlace.Answer answer = DefendedPlace.defendGround(null, null, null, null, BASE);
+        DefendedPlace.Answer answer = DefendedPlace.defendGround(null, null, null, null, null, BASE);
 
         assertNotNull(answer);
         assertEquals(DefendedPlace.Kind.BASE, answer.kind);
@@ -80,7 +106,7 @@ public class DefendedPlaceTest {
     @Test
     public void nothingQualifiesIsNoOpinion() {
         assertNull(
-            DefendedPlace.defendGround(null, null, null, null, null),
+            DefendedPlace.defendGround(null, null, null, null, null, null),
             "UMS/baseless: the caller falls back, same as the old null path");
     }
 }

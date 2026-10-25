@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.Behavior;
+import atlantis.battle.DuelMemory;
 import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterRally;
@@ -40,6 +41,8 @@ public final class RetreatFromLostFight {
         else {
             unit.move(verdict.dest, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
         }
+
+        DuelMemory.noteRetreated(unit);
 
         return true;
     }

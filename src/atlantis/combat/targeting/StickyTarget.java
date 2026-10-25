@@ -36,6 +36,7 @@ public final class StickyTarget {
 
         AUnit current = unit.target();
         if (current == null || !current.isAlive()) return null;
+        if (!current.isDetected()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
         if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
 

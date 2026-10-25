@@ -46,12 +46,11 @@ public interface AUnitOrders {
         }
 
         if (!target.isDetected()) {
+            // Throttled row only: the per-frame console prints used to
+            // flood the log (an undetected Observer named every frame by
+            // a targeting path that skipped the detected gate). The
+            // ErrorLog line below stays as the witness, max once a minute.
             if (target.isVisibleUnitOnMap()) {
-                AConsole.errPrintln("Trying to attack not detected unit for " + unit.typeWithHash());
-                AConsole.errPrintln(target);
-                AConsole.errPrintln(target.position());
-                AConsole.errPrintln(target.isPositionVisible());
-                AConsole.errPrintln(target.hp());
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("not-detected-target", "Not detected target for " + unit);
             }
             return false;

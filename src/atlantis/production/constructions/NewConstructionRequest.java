@@ -128,6 +128,7 @@ public class NewConstructionRequest {
         // Successfully found position for new building
 
         if (order != null) order.clearFailedSearchStreak();
+        if (order != null) order.makeSureResourcesAreReserved();
 
         APositionFinder.clearCache();
 
@@ -363,6 +364,7 @@ public class NewConstructionRequest {
 
         if (order != null && shouldWaitOutNullPosition(order.failedSearchStreak())) {
             order.noteFailedSearch();
+            order.releaseReservedResourcesWhileWaiting();
 
             return false;
         }

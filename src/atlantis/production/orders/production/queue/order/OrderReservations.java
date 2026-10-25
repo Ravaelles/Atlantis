@@ -40,6 +40,24 @@ public class OrderReservations {
 //        System.err.println("CLEARED reservedMinerals = " + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
     }
 
+    /**
+     * A waiting order holds no earmark: a failed placement search keeps
+     * the order alive (NEXT #192 WAIT), but the minerals stay spendable
+     * until a site is actually found. Fully reversible - the next
+     * successful search re-reserves - unlike the terminal release above.
+     */
+    public void releaseWhileWaiting() {
+        if (reservedMinerals == 0 && reservedGas == 0) return;
+
+        ReservedResources.reserveMinerals(-reservedMinerals, order.toString());
+        ReservedResources.reserveGas(-reservedGas, order.toString());
+
+        reservedMinerals = 0;
+        reservedGas = 0;
+        alreadyReserved = false;
+        alreadyReleased = false;
+    }
+
     public int minerals() {
         return reservedMinerals;
     }

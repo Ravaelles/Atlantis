@@ -63,6 +63,7 @@ public final class ClusterBreach {
 
         AUnit breached = atlantis.information.enemy.EnemyUnitBreachedBase.get();
         if (breached == null || !breached.isAlive()) return null;
+        if (!breached.isDetected()) return null;
 
         atlantis.units.select.Selection enemies =
             atlantis.units.select.Select.enemy().combatUnits().havingWeapon();
@@ -79,6 +80,8 @@ public final class ClusterBreach {
             foe = main == null ? breached : enemies.nearestTo(main);
         }
         if (foe == null) return breached;
+
+        if (!foe.isDetected()) return null;
 
         return unit.hasWeaponToAttackThisUnit(foe) ? foe : null;
     }

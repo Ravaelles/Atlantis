@@ -59,6 +59,7 @@ public final class MeleeChewerTarget {
         for (AUnit enemy : enemies.list()) {
             if (enemy == null || !enemy.isAlive()) continue;
             if (!enemy.hasPosition()) continue;
+            if (!enemy.isDetected()) continue;
             if (!unit.hasWeaponToAttackThisUnit(enemy)) continue;
             if (unit.distTo(enemy) > MELEE_HIT_TILES) continue;
 

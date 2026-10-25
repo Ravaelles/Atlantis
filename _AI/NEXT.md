@@ -783,7 +783,12 @@ test-runner hygiene).
  MAP_PvsZ_wine_DATE (:527-532). Attribution rule (learned the hard way): a live console belongs to an archived game only
  if Pylon#1 tile + maxframe + STARTED rows match - never quote console details into a datum without the cross-check.
  Open tuning question: Pylon prepared at 15 warps ~2:24, past the 17/17 block (adoption+travel+warp ~25 s outruns the
- 15->17 window) - lever if still late is `IsReadyToProduceOrder` pull-forward amounts.
+ 15->17 window) - lever if still late is `IsReadyToProduceOrder` pull-forward amounts. CherryVis on docker
+ matches (owner ask 2026-10-25): scbw.play has no --cvis flag (no cvis key in the installed scbw package) -
+ the switch is the bot slot ENV (GENERATE_CHERRYVIS_REPLAY=true, literal "true" per Env.trueFalse); wrapper
+ scripts/run-scbw-with-cvis.sh flips it for one run and restores after, then points at the newest game dir
+ (trace.json under write_0). Trace cost stays opt-in, routine games unaffected. Proven 2026-10-25
+ (GAME_97948C74 via the wrapper: trace.json + .zst + game_summary.json all present, keys valid).
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
@@ -1319,7 +1324,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
  legacy-backed) - action space exists as slots, class migration pending. Ghost-creep follow-up CLOSED 2026-10-24 (pin
  existed and is green: `GhostCreepWalkableTest` 2/2 - `slideOffWall` seam plus `move()` issuing walkable-only dests over
  120 ticks with the ghost inside a wall; the `move()` walkability check plus slide it asked for had already landed, only
- the NEXT line was stale).
+ the NEXT line was stale). Undetected-gate slice IN TREE (owner log-spam report: dragoons surrounding an unseen
+ Observer named it every frame - "Trying to attack not detected unit" x5 lines/frame; weakest-first preferred
+ exactly the unshootable unit). Gates: ASquadTargeting.isValidTarget + nearestEngageableEnemy, StickyTarget,
+ MeleeChewerTarget, CoverWithdraw.coverTarget, ClusterBreach (breached + foe) - zero behavior for detected
+ units, the engine refused these orders anyway. Emission hardening: the 4 unthrottled per-frame console prints
+ in AUnitOrders.attackUnit deleted, throttled ErrorLog row stays as the witness. Pinned UndetectedTargetTest
+ 4/4 (validity/range agree, ladder answers the shootable zealot, nearest skips). Suite 1557/1557, arch
+ 2-failure advisory unchanged (stash-compare). Live 2026-10-25 GAME_97948C74: 0 "not detected" rows -
+ weak evidence (80 s rush loss, no cloaked foe fielded), sim pins carry the proof until a DT/Observer game.
 
 - **#185** Learned behavior gating over a faithful Java sim (owner 2026-10-22):
  Direction (owner): keep the behaviors, learn WHEN - the tuner tunes global scalars, the pain is state-conditional gates
@@ -1673,7 +1686,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   16 PLACEMENT_FAILED (2 can't-build, 14 unpowered) across Gateway orders #31/#32, ZERO "Null position" cancels -
   the WAIT path engages live: orders survive failed searches and warp (5 Gateways requested). Patience never
   exhausted; calibration still rides a longer siege. Game 3: 0 PLACEMENT_FAILED rows,
-  2 Gateways + 1 Assimilator requested, guard intact by non-firing.
+  2 Gateways + 1 Assimilator requested, guard intact by non-firing. Release-while-waiting slice IN TREE
+  (uncommitted, sim-pinned, mechanism rides #202): WAIT lifts the mineral earmark (reversible, re-reserved
+  on success, terminal paths untouched), pinned 4th row in GatewayWaitsOnBlockedBaseTest (waiting orders
+  hold 0 minerals, affordable Dragoon still trains).
 
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
@@ -1694,7 +1710,22 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   LANDED (mechanical, zero behavior): the decision family (DefendedPlace, PostureReason/Reasons/Latch,
   ProtossDefendFocusPoint + new AttackFocusPoint extracted 1:1 from ClusterAnchor.attackAnchor) moved to
   atlantis.combat.focus with an empty ArchUnit store diff (CONVENTIONS §33: new combat code lands there, battle.*
-  is frozen legacy).
+  is frozen legacy). Slice 3 MIDDLE IN TREE (uncommitted, red-green): priority BREACH > SPARTA > MIDDLE >
+  MAIN (vetoed when Protoss and ours >= 6, MIDDLE_CHOKE_MIN_ARMY) > NATURAL > BASE; middle = n/2 choke of
+  PathToEnemyBase.chokesLeadingToEnemyBase via MiddleFocusChoke.get; SPARTA carve-out deliberate (wall-in
+  plans hold their choke whatever the size). Pinned DefendedPlaceTest 6/6 (order + fallthrough) +
+  ProtossDefendFocusTest 6/6 (big army stages middle not main, no-middle falls natural not main). Hard dragoon
+  ban IN TREE (owner order, 5th report: 32 dragoons still holding main): We.protoss and Count.dragoons() > 10
+  (DRAGOON_BAN_MAIN_CHOKE) withdraws the main input AND the Sparta input - absolute, no carve-outs - and
+  ClusterAnchor.defendAnchor consults the focus on every matchup when the ban fires (vs Zerg the old
+  hug-main doctrine stood even for a finished army). Pinned 3/3 (11 banish Sparta to middle, 11 vs Zerg
+  leave home, exactly-10 boundary still hugs). Live proof 2026-10-25 GAME_97948C74 (ZealotHell via
+  scbw.play, jar rebuilt pre-game): 153/218 CLUSTER rows anchor MiddleFocusChoke [40,56], ZERO MainChoke
+  rows (58 ATTACK rows anchor the attack point, 5 breach rows the raider - both correct). Caveat: max 9
+  dragoons alive, so this proves the 6-army veto live; the >10 absolute-ban branch is sim-pinned, its live
+  instance rides a longer game. Follow-ups, not this slice: small-army main-standoff crescent
+  (ClusterRally.expectedDirectionPoint anchor-under-feet bunch, holdsHomeGround gate) and guardSlotFor
+  isMainChoke=false for standoff foci - both ride the ClusterRally/standoff workstream.
 
 - - **#195** Flee reasons as named verdicts (owner: name each flee case, one home deciding when it fires).
   Slice 1 LANDED 2026-10-26 (extraction, zero behavior change): FleeReason (9 reasons) + RetreatFromLostFight.decide
@@ -1710,7 +1741,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   last-standing; unchewed last-stand untouched. Pinned PocketGluedDragoonTest (NEXT #190). FIGHT-path
   coverage LANDED same day (red-green): kiteThreat's stuck-no-step while chewed no longer falls through to
   trade - the frame leaves through the same retreat net (dragoon-only, anchor/leader threaded through
-  fight(); zealot last-stand untouched), rowed as stuck-escalated-run for live adjudication.
+  fight(); zealot last-stand untouched), rowed as stuck-escalated-run for live adjudication. Anti-flap slice
+  IN TREE (uncommitted, red-green): a just-issued retreat rides 120f (5 s) before FIGHT may re-attack -
+  DuelMemory.lastRetreatFrame stamped by RetreatFromLostFight.retreat, gate at the top of FightTarget.fight,
+  exempt when eval > 1.1. Pinned RetreatReengageTest 3/3 (fresh retreat suppresses, expiry re-attacks,
+  winning eval exempts) + neighbors green; live proof rides the next quiet game.
 
 - - **#196** Workers trade beyond the army (owner report: workers fight drastically too far from base, engaging
   enemies our own army ignores). Hard 10-tile line with a named reason: MAX_FIGHT_DIST_TO_BASE_TILES 15 -> 10
@@ -1811,6 +1846,37 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   halfway point would sit past EARLY_ZERG_HOLD_TILES (6) - attack anchors still march out, FLEE keeps its rally,
   bigger armies and non-Zerg matchups untouched. Pinned NoContactHoldTest 3/3 (hold at main vs Zerg, halfway
   otherwise). Remainder: live proof (weak early army holds home and workers join vs lings).
+
+- - **#201** Corsairs trail the main army instead of hunting (owner report: unled Corsairs follow the army
+  and cannot kill Zerg units). Required: exclude Corsairs from following the main army - they get their own
+  cluster; default each Corsair to its own solo cluster, and merge into one big cluster only when threatening
+  air exists (Zerg Mutalisks, numerous Terran Wraiths, Protoss Carriers). Open design (AEC §31): the
+  "numerous" Wraith line as a named constant with a pin; the cluster-assignment seam (investigate whether
+  Alpha/formation herds them vs a dedicated Corsair home); SpecialistBehaviors.CorsairHunt keeps working.
+  Queued behind the retreat fixes (NEXT #195, #190); sim-first when taken.
+
+- - **#202** Production stall with banked gas (owner report: 85/97 supply, 250 gas banked, zero units trained -
+  not even Zealots). Mechanism (code-read, unverified live): MissingMinerals gate
+  (ProtossDynamicUnitProductionCommander) blocks ALL unit production while ReservedResources.minerals() is held;
+  reservations are held by READY construction orders (OrderStatusWasChanged) and released only on cancel/finish -
+  and since NEXT #192 WAIT keeps failed-search orders alive instead of cancelling, a blocked base piles up
+  reservations that lock the bank (gas banks because nothing spends it; minerals are the binding constraint).
+  Repro: blocked base + READY Gateway order(s) + banked minerals -> ProduceDragoon/forceHandle should still
+  train (sim-first). Fix IN TREE (uncommitted, red-green): release-while-waiting (WAIT lifts the earmark via
+  OrderReservations.releaseWhileWaiting, re-reserved on the next successful search, terminal release paths
+  untouched). Pinned waitingOrdersDoNotStarveUnitProduction (GatewayWaitsOnBlockedBaseTest 4/4: 2x READY
+  Gateway hold 300, WAIT drops to 0, affordable Dragoon trains with commander reason attached); full suite
+  1550/1550 green with all four slices in tree. BLOCKED on owner data for the live verdict: what were minerals
+  at the stall? Which twin rows dominated - ORDER_NOT_READY vs PLACEMENT_FAILED vs BUILD_REFUSED? Gateway
+  count/state? If minerals were ~0, no bug (broke, correct). Live proof rides a quiet game after commit.
+
+- - **#203** Zealots yield to Dragoons when gas banked vs Zerg (owner report: 14 Zealots vs 6 Dragoons with
+  350 gas banked). Slice IN TREE (uncommitted, red-green): ProduceZealot brakes flood-zealots when Enemy.zerg
+  and gas >= 200 (GAS_BANK_PREFER_DRAGOONS) and Have.cyberneticsCore and Count.zealots > 0 and floor met
+  (notEnoughZealots false) - first zealot(s) always allowed, dragoon pump (runs first) takes the gateways.
+  Hoist: zealots = Count.zealotsWithUnfinished moved above needZealot (was one-call-stale). Pinned
+  ZealotGasBankBrakeTest 3/3 (bank stops flood, lean gas keeps flowing, thin floor still zeals) +
+  TrainOrderGuardTest 5/5 green. Live proof rides a quiet game after commit.
 
 ## Current game state (updated 2026-10-21)
 

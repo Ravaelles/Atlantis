@@ -27,6 +27,7 @@ public final class DefendedPlace {
     public enum Kind {
         BREACH,
         SPARTA_CHOKE,
+        MIDDLE,
         MAIN_CHOKE,
         NATURAL_CHOKE,
         BASE
@@ -51,12 +52,14 @@ public final class DefendedPlace {
     public static Answer defendGround(
         HasPosition breachEnemy,
         AChoke spartaChoke,
+        AChoke middleChoke,
         AChoke mainChoke,
         AChoke naturalChoke,
         HasPosition base
     ) {
         if (breachEnemy != null) return new Answer(Kind.BREACH, breachEnemy);
         if (spartaChoke != null) return new Answer(Kind.SPARTA_CHOKE, spartaChoke);
+        if (middleChoke != null) return new Answer(Kind.MIDDLE, middleChoke);
         if (mainChoke != null) return new Answer(Kind.MAIN_CHOKE, mainChoke);
         if (naturalChoke != null) return new Answer(Kind.NATURAL_CHOKE, naturalChoke);
         if (base != null) return new Answer(Kind.BASE, base);

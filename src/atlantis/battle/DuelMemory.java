@@ -30,6 +30,7 @@ public final class DuelMemory {
     private static final Map<Integer, APosition> lastContactPos = new HashMap<>();
     private static final Map<Integer, Integer> lastContactFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
+    private static final Map<Integer, Integer> lastRetreatFrame = new HashMap<>();
     private static final Map<Integer, Integer> attackAnimOpenFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastAttackStartFrame = new HashMap<>();
     private static final Map<Integer, Integer> attackSettleFrames = new HashMap<>();
@@ -130,6 +131,7 @@ public final class DuelMemory {
         lastContactPos.clear();
         lastContactFrame.clear();
         lastGhostFrame.clear();
+        lastRetreatFrame.clear();
         attackAnimOpenFrame.clear();
         lastAttackStartFrame.clear();
         attackSettleFrames.clear();
@@ -146,6 +148,21 @@ public final class DuelMemory {
     /** Frames since a reposition rode, or a large number when never. */
     public static int repositionedAgo(AUnit unit) {
         return A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000000);
+    }
+
+    /** A retreat move just issued for this unit - the next fight frames let it ride. */
+    public static void noteRetreated(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return;
+
+            lastRetreatFrame.put(unit.id(), A.now());
+        } catch (Exception ignored) {
+        }
+    }
+
+    /** Frames since a retreat move issued, or a large number when never. */
+    public static int retreatedAgo(AUnit unit) {
+        return A.now() - lastRetreatFrame.getOrDefault(unit.id(), -1000000);
     }
 
     /** Last engaged point while visible, or null when this unit never fought. */

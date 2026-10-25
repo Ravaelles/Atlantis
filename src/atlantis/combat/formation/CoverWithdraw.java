@@ -102,6 +102,7 @@ public final class CoverWithdraw {
             if (ally == null || ally.id() == healthy.id() || !isWithdrawing(ally)) continue;
             AUnit pursuer = nearestMeleeThreat(ally);
             if (pursuer == null || !pursuer.isAlive()) continue;
+            if (!pursuer.isDetected()) continue;
             if (!healthy.hasWeaponToAttackThisUnit(pursuer)) continue;
             // Pursue-validity, deliberately NOT the focus gate above:
             // focus optimizes DPS (lings, workers and the wounded stay

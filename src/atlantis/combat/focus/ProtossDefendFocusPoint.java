@@ -12,8 +12,10 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 /**
@@ -46,6 +48,35 @@ public final class ProtossDefendFocusPoint {
      * cadence, tune only with a measured cadence (CONVENTIONS §31).
      */
     private static final int FOCUS_TTL_FRAMES = 29;
+
+    /**
+     * A Protoss army of this size never holds the main choke: with room
+     * to fight it stages at the middle choke instead, falling to the
+     * natural or the base when there is no middle. Below it the line
+     * stays home, within worker-help range of the main.
+     */
+    private static final int MIDDLE_CHOKE_MIN_ARMY = 6;
+
+    /**
+     * Absolute main-choke ban (owner order, repeated: an army with more
+     * than this many Dragoons stages at the middle, never at the main -
+     * no Sparta carve-out, no matchup carve-out). The 6-army veto above
+     * already covers most of these games; this line names the dragoon
+     * floor explicitly so the ban survives refactors of the army rule.
+     */
+    private static final int DRAGOON_BAN_MAIN_CHOKE = 10;
+
+    /**
+     * The absolute ban read for other seams: a Protoss dragoon mass this
+     * big never stages home (NEXT #194). Pure read, no orders.
+     */
+    public static boolean mainChokeBannedByDragoons() {
+        try {
+            return We.protoss() && Count.dragoons() > DRAGOON_BAN_MAIN_CHOKE;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
 
     public static void clearForTests() {
         CACHE.forget("focusPoint");
@@ -94,10 +125,25 @@ public final class ProtossDefendFocusPoint {
                             .mostDistantTo(mainBase);
                     }
 
+                    AChoke middleChoke = MiddleFocusChoke.get();
+
+                    // A 6+ Protoss army never holds the main choke: with
+                    // room to fight it stages at the middle instead, so
+                    // the main input is withdrawn and the answer falls to
+                    // NATURAL/BASE. The SPARTA branch above is a
+                    // deliberate carve-out: a wall-in plan holds its
+                    // choke on purpose, whatever the army size - except
+                    // under the absolute dragoon ban below, which a
+                    // finished wall has no claim against.
+                    boolean holdsMainChoke = mainStand != null
+                        && !(We.protoss() && Count.ourCombatUnits() >= MIDDLE_CHOKE_MIN_ARMY)
+                        && !mainChokeBannedByDragoons();
+
                     DefendedPlace.Answer answer = DefendedPlace.defendGround(
                         enemyInBase,
-                        sparta ? mainChoke : null,
-                        mainStand != null ? mainChoke : null,
+                        sparta && !mainChokeBannedByDragoons() ? mainChoke : null,
+                        middleChoke,
+                        holdsMainChoke ? mainChoke : null,
                         naturalChoke != null && natural != null ? naturalChoke : null,
                         lastBase);
                     if (answer == null) return null;
@@ -113,6 +159,12 @@ public final class ProtossDefendFocusPoint {
                                 mainChoke,
                                 mainBase,
                                 "Choke300"
+                            );
+                        case MIDDLE:
+                            return new AFocusPoint(
+                                middleChoke,
+                                mainBase,
+                                "MiddleFocusChoke"
                             );
                         case MAIN_CHOKE:
                             return mainStand;
