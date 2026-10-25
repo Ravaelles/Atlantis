@@ -144,6 +144,78 @@ public class WorkerFarFightTest extends WorldStubForTests {
     }
 
     @Test
+    public void naturalStrayWorkerDoesNotFight() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit mainNexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit naturalNexus = fake(AUnitType.Protoss_Nexus, 35, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 34, 20);
+        probe.hp = 35;
+        FakeUnit mateA = fake(AUnitType.Protoss_Probe, 33, 21);
+        mateA.hp = 35;
+        FakeUnit mateB = fake(AUnitType.Protoss_Probe, 33, 19);
+        mateB.hp = 35;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 36, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(mainNexus, naturalNexus, probe, mateA, mateB), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            assertTrue(!atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits(worker),
+                "a swarm 16 tiles from the main does not fight at the natural, Nexus or not");
+        });
+    }
+
+    @Test
+    public void naturalStrayAttackerTurnsBack() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit mainNexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit naturalNexus = fake(AUnitType.Protoss_Nexus, 35, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 34, 20);
+        probe.hp = 40;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 36, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(mainNexus, naturalNexus, probe), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.attackUnit(zealot);
+            assertTrue(new WorkerDefenceStopFighting(worker).applies(),
+                "an attacking worker 14 tiles from the main stops, natural Nexus or not");
+            assertTrue(new WorkerDefenceStopFighting(worker).forceHandled(),
+                "the stop executes instead of letting the natural fight continue");
+        });
+    }
+
+    @Test
+    public void cannonHelpStandsDownAtFarNatural() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit mainNexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit naturalNexus = fake(AUnitType.Protoss_Nexus, 35, 20);
+        FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon, 36, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 34, 20);
+        probe.hp = 30;
+        FakeUnit l1 = fake(AUnitType.Zerg_Zergling, 37, 20);
+        FakeUnit l2 = fake(AUnitType.Zerg_Zergling, 37.5, 20);
+        FakeUnit l3 = fake(AUnitType.Zerg_Zergling, 38, 20);
+        l1.setEnemy();
+        l2.setEnemy();
+        l3.setEnemy();
+
+        world(20, fakeOurs(mainNexus, naturalNexus, cannon, probe), fakeEnemies(l1, l2, l3), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            assertTrue(!new WorkerDefenceHelpCannon(worker).applies(),
+                "no worker walks 15 tiles to a natural cannon's fight");
+        });
+    }
+
+    @Test
     public void cannonHelpStillFightsAtBase() {
         enemyRaceInWorld = Race.Zerg;
 

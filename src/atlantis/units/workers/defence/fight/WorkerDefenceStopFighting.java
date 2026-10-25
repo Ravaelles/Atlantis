@@ -21,7 +21,7 @@ public class WorkerDefenceStopFighting extends Manager {
         // however it got there (the entry gates read the decision frame,
         // the pursuit that follows does not re-ask them). Same named
         // reason as the attack gate (CONVENTIONS §31).
-        if (unit.distToBase() >= WorkerDefenceFightCombatUnits.MAX_FIGHT_DIST_TO_BASE_TILES) return true;
+        if (WorkerStrayedFromBase.tooFarFromHome(unit)) return true;
 
         if (unit.isAttacking() || unit.action().isAttacking() || unit.lastAttackFrameLessThanAgo(60)) {
             if (Enemy.protoss()) {
@@ -44,7 +44,7 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     protected Manager handle() {
-        if (unit.distToBase() >= WorkerDefenceFightCombatUnits.MAX_FIGHT_DIST_TO_BASE_TILES) {
+        if (WorkerStrayedFromBase.tooFarFromHome(unit)) {
             unit.setTooltipTactical(WorkerDefenceFightCombatUnits.TOO_FAR_FROM_BASE);
         }
 

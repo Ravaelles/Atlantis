@@ -574,7 +574,9 @@ test-runner hygiene).
   when all passes fail, pinned 2/2). `PylonNeedsRoomAround` in place (pinned 4/4): two no-harm proofs, zero misfires,
   zero firing shapes yet - the firing path still rests on the stub pin until a real corner shape appears. B134 (20-min,
   crowded base): 0 PYLON_FIND_FAILED - last-resort ladder never needed, doctrine untouched. Re-verify 2026-10-24: 0
-  PYLON_FIND_FAILED in 726D7D69/9415845A - ladder still never needed.
+  PYLON_FIND_FAILED in 726D7D69/9415845A - ladder still never needed. TauCross 2026-10-26 (top-right base
+  [119,10] itself): 8 pylons warped around the corner ([113,15],[112,10],[116,17]...), 0 PYLON_FIND_FAILED -
+  doctrine holds on the corner, ladder still never needed.
 
 - **#84** Wine Pylon ordered but unbuilt (worker stall, placement refusal,
   null builder and cancels all ruled out from flag-off logs): needs a
@@ -1727,7 +1729,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   no enemy ever came within 25 tiles of the base (closest contact 110 tiles out, all attack outward) - no
   pressure, no conclusion; still needs a game where raiders reach the mineral line. TauCross-II same day
   (VICTORY 9630f): same shape again (0 worker deaths, 0 foe-near-base rows) - the native AI never pressures;
-  pressure proof likely needs a different opponent or map.
+  pressure proof likely needs a different opponent or map. Stray-rule slice LANDED 2026-10-26 (red-green, owner
+  report: workers marched to the natural and fought without army support): the 10-tile line now reads from the
+  MAIN base, never the nearest one - extracted as WorkerStrayedFromBase.tooFarFromHome, single home for the
+  entry/attack/stop/help-Cannon gates (TOO_FAR_FROM_BASE reason kept). A natural Nexus no longer legitimizes a
+  far fight; the entry distToMain<8 clause it subsumed was dead code and went. Pinned WorkerFarFightTest 3/3
+  (swarm at natural refused, attacker turns back, cannon help stands down).
 
 - - **#197** Trapped dragoons must march out (owner report: dragoons defending the main against many early zealots
   get overwhelmed with no kite room, mobility unused - attack out and use them). Slice 1 LANDED (sim-first,
@@ -1799,6 +1806,14 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f, 196 KITE + 184 CLUSTER + 8 HOLD): zero unwalkable-move rows -
   the hold/bait/collapse producers hold live under a real army. TauCross-II same day (VICTORY 9630f):
   zero again (179 stuck-no-step + 194 CLUSTER) - third straight game clean.
+
+- - **#200** Small army holds home vs early Zerg (owner report 2026-10-26, lost game: with fewer than 5 battle
+  units the line must stay within 6 tiles of the main so mining workers can join; the no-contact hold marched
+  it halfway to the choke instead). Slice LANDED 2026-10-26 (red-green): ClusterRally.noContactHoldPoint
+  returns the main itself when Enemy.zerg() and fewer than EARLY_ZERG_HOLD_MAX_ARMY (5) combat units and the
+  halfway point would sit past EARLY_ZERG_HOLD_TILES (6) - attack anchors still march out, FLEE keeps its rally,
+  bigger armies and non-Zerg matchups untouched. Pinned NoContactHoldTest 3/3 (hold at main vs Zerg, halfway
+  otherwise). Remainder: live proof (weak early army holds home and workers join vs lings).
 
 ## Current game state (updated 2026-10-21)
 

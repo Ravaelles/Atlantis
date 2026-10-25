@@ -112,4 +112,86 @@ public class NoContactHoldTest extends WorldStubForTests {
             });
         }
     }
+
+    @Test
+    public void smallArmyHoldsMainVsZergEarly() {
+        enemyRaceInWorld = bwapi.Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 22);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 22);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 30, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(nexus, a, b, c), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) <= 6,
+                    "3 units vs Zerg hold the main for worker help, not the halfway standoff: " + hold);
+            });
+        }
+    }
+
+    @Test
+    public void bigArmyStillHoldsHalfwayVsZerg() {
+        enemyRaceInWorld = bwapi.Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] army = new FakeUnit[6];
+        for (int i = 0; i < 6; i++) army[i] = fake(AUnitType.Protoss_Dragoon, 28 + i, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) > 10,
+                    "6 units hold the halfway standoff as before: " + hold);
+            });
+        }
+    }
+
+    @Test
+    public void smallArmyProtossEnemyUnchanged() {
+        enemyRaceInWorld = bwapi.Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 22);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 22);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 30, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(nexus, a, b, c), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) > 10,
+                    "vs Protoss the small line keeps the standoff: " + hold);
+            });
+        }
+    }
+
+    private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
+        FakeUnit[] all = new FakeUnit[rest.length + 1];
+        all[0] = first;
+        System.arraycopy(rest, 0, all, 1, rest.length);
+
+        return all;
+    }
 }

@@ -25,7 +25,7 @@ public class WorkerDefenceHelpCannon extends Manager {
             // from base. This path issues direct attacks (no shared gate)
             // with a 99-tile reach, so without this line a worker anywhere
             // walks across the map to a forward cannon's fight.
-            && unit.distToBase() <= WorkerDefenceFightCombatUnits.MAX_FIGHT_DIST_TO_BASE_TILES
+            && !WorkerStrayedFromBase.tooFarFromHome(unit)
             && (cannon = defineCannon()) != null
             && (enemiesNearCannon = cannon.enemiesNear().inRadius(7.8, cannon)).notEmpty()
             && enemiesNearCannon.countInRadius(7.8, cannon) >= 3

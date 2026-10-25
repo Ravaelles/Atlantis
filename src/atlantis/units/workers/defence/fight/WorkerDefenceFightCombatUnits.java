@@ -84,7 +84,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (!nearOurBuildings) return false;
 
         return unit.hp() >= (Enemy.protoss() ? 34 : 26)
-            && unit.distToBase() <= MAX_FIGHT_DIST_TO_BASE_TILES;
+            && !WorkerStrayedFromBase.tooFarFromHome(unit);
     }
 
     @Override
@@ -285,13 +285,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      * reads the fight's address, which is what the pursuit follows.
      */
     static boolean enemyTooFarFromBase(AUnit enemy) {
-        try {
-            if (enemy == null) return true;
-
-            return enemy.distToBase() > MAX_FIGHT_DIST_TO_BASE_TILES;
-        } catch (Exception | Error ignored) {
-            return false;
-        }
+        return WorkerStrayedFromBase.tooFarFromHome(enemy);
     }
 
     /** The nearest raider worth walking towards, if the swarm is on. */

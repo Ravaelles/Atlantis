@@ -27,6 +27,16 @@ public final class ClusterRally {
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
     /**
+     * A small army holds the main itself, never the halfway standoff
+     * (owner order, lost game vs early Zerg: with fewer than this many
+     * battle units the line stays within worker-help range of the main).
+     */
+    private static final int EARLY_ZERG_HOLD_MAX_ARMY = 5;
+
+    /** Worker-help range of the main base (owner order: 6 tiles). */
+    private static final double EARLY_ZERG_HOLD_TILES = 6;
+
+    /**
      * An anchor this close to the main still counts as home: the
      * no-contact hold owns the unit instead of marching it out.
      */
@@ -103,6 +113,17 @@ public final class ClusterRally {
             APosition half = main.position().translatePercentTowards(50, choke.center());
             if (half == null) return null;
             if (!half.isWalkable()) half = half.makeWalkable(6, 3, null);
+
+            // Small army vs Zerg holds the main itself, never the
+            // halfway standoff (owner order, lost game vs early Zerg:
+            // with fewer than EARLY_ZERG_HOLD_MAX_ARMY battle units the
+            // line stays within worker-help range of the main so the
+            // miners can join). Far stands keep today's point.
+            if (atlantis.game.player.Enemy.zerg()
+                && atlantis.units.select.Count.ourCombatUnits() < EARLY_ZERG_HOLD_MAX_ARMY
+                && main.position().distTo(half) > EARLY_ZERG_HOLD_TILES) {
+                return main.position();
+            }
 
             return half;
         }
