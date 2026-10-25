@@ -202,6 +202,13 @@ public class OnGameStarted {
             // atlantis.map.scout does not depend on atlantis.production.
             ScoutState.scoutIsNthWorker = BuildOrderSettings.scoutIsNthWorker();
 
+            // Same bridge for combat (owner order 2026-10-26): the first-Dragoon
+            // gate holds the defending line at the main vs Zerg, but only for a
+            // build that trains Dragoons - combat must not read production, so
+            // the build's intent is read once, here, and handed over as a flag.
+            atlantis.combat.cluster.FirstDragoonGate.setBuildPlansDragoons(
+                CurrentBuildOrder.plansDragoon());
+
             if (CurrentBuildOrder.get() != null) {
                 // Gated to a real local game: the stub world starts a game in every
                 // test, and 99 lines in the acceptance tier is log noise, not a signal.

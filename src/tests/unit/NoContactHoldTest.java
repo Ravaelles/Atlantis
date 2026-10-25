@@ -187,6 +187,104 @@ public class NoContactHoldTest extends WorldStubForTests {
         }
     }
 
+    /**
+     * First-Dragoon gate (owner order 2026-10-26): on a dragoon build vs
+     * Zerg the Zealot phase holds at the main even with six battle units
+     * - the rule that used to let the line out at five units is exactly
+     * what uncovered the base before the first Dragoon existed.
+     */
+    @Test
+    public void dragoonBuildHoldsTheMainUntilItsFirstDragoon() {
+        enemyRaceInWorld = bwapi.Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] zealots = new FakeUnit[6];
+        for (int i = 0; i < 6; i++) zealots[i] = fake(AUnitType.Protoss_Zealot, 28 + i, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(concat(nexus, zealots)), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                atlantis.combat.cluster.FirstDragoonGate.setBuildPlansDragoons(true);
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) <= 6,
+                    "a dragoon build with no Dragoon holds the main: " + hold);
+            });
+        }
+    }
+
+    /**
+     * The other half of the owner's order: the gate must OPEN. The same
+     * six Zealots stage out to the halfway standoff once a Dragoon is on
+     * the field - holding a finished dragoon build at home forever would
+     * be the same defect with the sign flipped.
+     */
+    @Test
+    public void aFinishedDragoonOpensTheGateForTheSameArmy() {
+        enemyRaceInWorld = bwapi.Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] army = new FakeUnit[7];
+        for (int i = 0; i < 6; i++) army[i] = fake(AUnitType.Protoss_Zealot, 28 + i, 22);
+        army[6] = fake(AUnitType.Protoss_Dragoon, 34, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                atlantis.combat.cluster.FirstDragoonGate.setBuildPlansDragoons(true);
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) > 10,
+                    "one Dragoon opens the gate: dest " + hold);
+            });
+        }
+    }
+
+    /**
+     * Control for the gate flag: six Zealots on a build that never
+     * trains Dragoons stage out exactly as they did before the order -
+     * the gate is the flag, not the army size or the matchup.
+     */
+    @Test
+    public void aZealotBuildWithSixUnitsKeepsStagingOut() {
+        enemyRaceInWorld = bwapi.Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] zealots = new FakeUnit[6];
+        for (int i = 0; i < 6; i++) zealots[i] = fake(AUnitType.Protoss_Zealot, 28 + i, 22);
+
+        AChoke choke = new FakeChoke(APosition.create(60, 20), 5);
+        try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
+            chokes.when(Chokes::mainChoke).thenReturn(choke);
+
+            world(5, fakeOurs(concat(nexus, zealots)), fakeEnemies(), () -> {
+                if (A.now() != 2) return;
+
+                atlantis.combat.cluster.FirstDragoonGate.setBuildPlansDragoons(false);
+                APosition anchor = APosition.create(26, 20);
+                APosition hold = atlantis.combat.cluster.ClusterRally.noContactHoldPoint(anchor);
+                assertNotNull(hold, "a home line holds somewhere");
+                assertTrue(hold.distTo(nexus) > 10,
+                    "an ungated build keeps today's halfway standoff: " + hold);
+            });
+        }
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    public void forgetTheBuildFlag() {
+        atlantis.combat.cluster.FirstDragoonGate.clearForTests();
+    }
+
     private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
         FakeUnit[] all = new FakeUnit[rest.length + 1];
         all[0] = first;

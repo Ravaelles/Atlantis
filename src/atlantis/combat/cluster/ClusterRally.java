@@ -116,22 +116,30 @@ public final class ClusterRally {
             if (half == null) return null;
             if (!half.isWalkable()) half = half.makeWalkable(6, 3, null);
 
-            // Small army vs Zerg holds the main itself, never the
-            // halfway standoff (owner order, lost game vs early Zerg:
-            // with fewer than EARLY_ZERG_HOLD_MAX_ARMY battle units the
-            // line stays within worker-help range of the main so the
-            // miners can join). Far stands keep today's point.
-            if (atlantis.game.player.Enemy.zerg()
-                && atlantis.units.select.Count.ourCombatUnits() < EARLY_ZERG_HOLD_MAX_ARMY
-                && main.position().distTo(half) > EARLY_ZERG_HOLD_TILES) {
-                return main.position();
-            }
+            if (holdsAtMain(main, half)) return main.position();
 
             return half;
         }
         catch (RuntimeException ignored) {
             return null;
         }
+    }
+
+    /**
+     * The owner's "stay at the main" answers, both needing the halfway
+     * standoff to sit outside worker-help range in the first place (a
+     * short march is not leaving the base): a small army vs Zerg holds
+     * the main so the miners can join (owner order, lost game vs early
+     * Zerg), and the first-Dragoon gate holds it for a dragoon build
+     * until its first Dragoon is finished (owner order 2026-10-26).
+     * Far stands and non-Zerg matchups keep today's point.
+     */
+    private static boolean holdsAtMain(AUnit main, APosition half) {
+        if (main.position().distTo(half) <= EARLY_ZERG_HOLD_TILES) return false;
+        if (FirstDragoonGate.holdsAtMain()) return true;
+
+        return atlantis.game.player.Enemy.zerg()
+            && atlantis.units.select.Count.ourCombatUnits() < EARLY_ZERG_HOLD_MAX_ARMY;
     }
 
     /**
