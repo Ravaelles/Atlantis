@@ -70,7 +70,13 @@ public final class SquadScout {
             AUnit foe = Select.enemy().combatUnits().nearestTo(choke.center());
             if (foe == null || foe.position() == null) return null;
 
-            return baitPoint(choke.center(), foe.position());
+            APosition bait = baitPoint(choke.center(), foe.position());
+
+            // Marchable-or-nothing (NEXT #198): the mouth is pure
+            // geometry and can land inside a wall - see holdPointFor.
+            if (bait != null && !bait.isWalkable()) bait = bait.makeWalkable(6, 3, null);
+
+            return bait;
         } catch (Exception ignored) {
             return null;
         }

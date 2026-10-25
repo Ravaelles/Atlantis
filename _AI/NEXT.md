@@ -1709,6 +1709,17 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   instead of idling). Pinned SpecialistBehaviorsTest 6/6 (decision + wired act integration both ways).
   Next: DT run-when-attacked, HT storm-on-clump (same registration shape), Observer coverage audit (detector
   chain exists - verify, don't rebuild).
+- - **#199** Unwalkable regroup points spam the log (owner report 2026-10-26, HIGHEST priority, KEEP THIS LINE on
+  close per owner order): `### Trying to move to unwalkable position for #219 Dragoon @[6,31] / a:M_ENGAGE /
+  t:[13,27]` + stack trace from `AUnitOrders.move` via `Regroup.march` <- `BattleCommander.regroup`. Root cause:
+  `holdPointFor` / `baitPointFor` / `collapsePointFor` answer pure geometry off the choke center
+  (`translateTilesTowards`), nothing stops the point from landing inside a wall; `move()` refuses and logs
+  error-with-stacktrace every frame. Fix LANDED 2026-10-25 (red-green): pin test
+  `WalkableRegroupPointsTest` (red was `hold point must be marchable, got: [20,26]`); each producer nudges to
+  nearby walkable ground (`makeWalkable(6, 3, null)`, `ClusterRally` precedent) or answers null, which the caller
+  already handles. Neighbors green (Regroup 1/1, NoContactHold 3/3, ChokeStandoff 5/5, ChokePlugSim 1/1, DuelKite
+  18/18); full suite 1500/1500. Pre-existing arch advisory 9/2 (stash-verified, untouched). Remaining: live-game
+  proof needs quiet box (standing Wine order).
 
 ## Current game state (updated 2026-10-21)
 

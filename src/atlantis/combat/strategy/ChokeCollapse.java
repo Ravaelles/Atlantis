@@ -47,7 +47,13 @@ public final class ChokeCollapse {
             AUnit foe = Select.enemy().combatUnits().nearestTo(choke.center());
             if (foe == null || foe.position() == null) return null;
 
-            return SquadScout.baitPoint(choke.center(), foe.position());
+            APosition collapse = SquadScout.baitPoint(choke.center(), foe.position());
+
+            // Marchable-or-nothing (NEXT #198): same wall hazard as the
+            // bait and hold points above.
+            if (collapse != null && !collapse.isWalkable()) collapse = collapse.makeWalkable(6, 3, null);
+
+            return collapse;
         } catch (Exception ignored) {
             return null;
         }

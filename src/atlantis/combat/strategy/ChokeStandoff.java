@@ -76,9 +76,18 @@ public final class ChokeStandoff {
             // High side first (NEXT #171): both lips are candidates and
             // the heights choose. Flat or unreadable ground keeps today.
             APosition foeHold = foeSideHold(choke, unit);
-            return chooseHold(ours, foeHold,
+            APosition chosen = chooseHold(ours, foeHold,
                 HighGround.groundHeightOf(ours),
                 foeHold == null ? -1 : HighGround.groundHeightOf(foeHold));
+
+            // Marchable-or-nothing (NEXT #198): the lips are pure
+            // geometry and can land inside a wall - march() would feed
+            // that to move(), which refuses and logs a stack trace every
+            // frame. Nudge to nearby walkable ground instead; null (no
+            // march) when nothing is in reach, which the caller handles.
+            if (chosen != null && !chosen.isWalkable()) chosen = chosen.makeWalkable(6, 3, null);
+
+            return chosen;
         } catch (Exception ignored) {
             return null;
         }
