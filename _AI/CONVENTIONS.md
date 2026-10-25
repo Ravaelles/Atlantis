@@ -369,3 +369,20 @@ decompiled archives:
   (quadrants + chokes + blocked bands) stands in for a real map
   wherever the sim needs ground. Gaps vs live are filed as NEXT
   items with measurement, never silently worked around.
+
+## 31. Anti-Edge-Case rule - AEC (owner's ruling 2026-10-26)
+
+- No new bare edge-case `if`: a new condition belongs to an already
+  existing behavior/decision site with a named owner (the gate chain,
+  the ladder, the verdict enum), or it gets a deliberately designed
+  home - a new Behavior class with `applies()` + `act()`, its position
+  in the single order written down, and an order-sensitivity pin. A
+  condition with no owner is not landed, however small it looks.
+- No arbitrary magic radii: a new `inRadius(2.5)`-style literal is a
+  defect until it is a named constant with a measurement and a pin.
+  Thresholds live once, next to the behavior that owns them, never
+  inline in a caller.
+- A new behavior lands sim-pinned first (§29/30): one failing
+  scenario, then the fix, then the suite green. A behavior
+  indistinguishable in sim from the one it replaces does not land as
+  a behavior change - it lands as a pin or not at all.

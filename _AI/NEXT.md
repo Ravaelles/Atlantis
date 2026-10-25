@@ -1645,6 +1645,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   their thresholds are tuned on Euclidean, conversion is re-tuning and needs its own slice + game proof. Remainder:
   live TauCross bottom-start proof (narrow main choke + army holding it).
 
+- - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
+  to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
+  (breach, sparta, main, natural, base; first non-null wins, null = no opinion), pinned DefendedPlaceTest (priority
+  order + ranks + last resort + null). Next: wire ProtossDefendFocusPoint 1:1 (slice 2), then anchor/rally through
+  the same answer (slice 3), formation adapt (slice 4), CherryVis row (slice 5). Micro untouched.
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;

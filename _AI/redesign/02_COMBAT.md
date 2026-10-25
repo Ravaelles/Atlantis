@@ -352,3 +352,31 @@ Measured shape (Wine ZealDrag, 3-15 hydras + 16 lings vs 7 zealots +
 - **Hysteresis Stability**: Zero attack/regroup oscillations under 6 frames of simulation consensus.
 - **Codebase Simplification**: Reduction of combat architecture classes from ~60 to ~20.
 - **Winrate / Unit Trades**: Measured in equal-supply A/B tournament benchmarks.
+
+## Next slices: DefendedPlace track (owner 2026-10-26)
+
+"Tell the army WHICH ground, it decides HOW to stand" - the mission
+owns the place (L1), the formation owns slots/standoffs/plugs (L2),
+micro executes. Under AEC (CONVENTIONS §31) every new "where does the
+army stand" condition lands in `DefendedPlace`, never as an inline if.
+
+1. **Slice 1 (LANDED): `DefendedPlace` skeleton** - pure
+   `defendGround` (breach, sparta, main, natural, base; first
+   non-null wins, null = no opinion), pinned by `DefendedPlaceTest`
+   (priority order + each rank + last resort + null). Unwired on
+   purpose: no consumer changes in this slice.
+2. **Slice 2: wire ProtossDefendFocusPoint 1:1** - choke branches read
+   the seam, same inputs, same outputs, suite green, zero behavior
+   change. Breach-first and standoff depths stay where they are (L2).
+3. **Slice 3: one source for ClusterAnchor + rally** - defendAnchor and
+   the standoff read the same answer; anchor/focus/rally stop naming
+   the place three times.
+4. **Slice 4: formation adapts to place + mission** - slots already
+   exist (formationSlotFor/ChokePlug); adapt, never reduplicate.
+5. **Slice 5: CherryVis representation** - one row per frame: which
+   ground + why (Kind) + slot geometry. CLUSTER rows already carry
+   anchor/dest/foe; this adds the decision.
+
+Non-goals: micro execution untouched (DuelKite, FightTarget, kite
+hold/fire frozen); no manager resurrection; no new Behavior until a
+consumer slice needs one.
