@@ -138,6 +138,56 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
         return ((tests.unit.sim.SimRectRegion) region).name();
     }
 
+    /**
+     * The real-file proof (NEXT #191): tonight's TauCross dump loads
+     * through the same loader and answers as sim ground. The file is a
+     * committed fixture (out/ gets wiped), read like other source-pinned
+     * tests via a repo-relative path.
+     */
+    @Test
+    public void realTauCrossFileLoadsAndAnswers() throws Exception {
+        String json = new String(
+            java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("src/tests/resources/taucross-snapshot.json")),
+            java.nio.charset.StandardCharsets.UTF_8);
+        MapSnapshot snap = MapSnapshot.parse(json);
+
+        assertEquals(128, snap.w);
+        assertEquals(128, snap.h);
+        assertEquals(21, snap.regions.size(), "TauCross regions");
+        assertEquals(21, snap.chokes.size(), "TauCross chokes");
+        assertEquals(102, snap.resources.size(), "minerals + geysers");
+        assertEquals(3, snap.starts.size());
+        assertEquals(128 * 128, snap.regionOf.size());
+
+        MapSnapshot reread = MapSnapshot.parse(snap.toJson());
+        assertEquals(snap.regionOf, reread.regionOf, "tiles survive the round trip");
+
+        SimMap map = SimMap.fromJson(json);
+        map.install();
+        try {
+            assertTrue(firstTileOf(snap, '.').isWalkable(), "open ground walks");
+            assertFalse(firstTileOf(snap, 'x').isWalkable(), "walls block");
+            assertEquals(21, map.chokes.size());
+            assertFalse(map.minerals().isEmpty(), "mineral lines spawn");
+            assertFalse(map.geysers().isEmpty(), "geysers spawn");
+        }
+        finally {
+            SimMap.uninstall();
+        }
+    }
+
+    private static APosition firstTileOf(MapSnapshot snap, char tile) {
+        for (int ty = 0; ty < snap.h; ty++) {
+            String row = snap.tiles.get(ty);
+            for (int tx = 0; tx < row.length(); tx++) {
+                if (row.charAt(tx) == tile) return APosition.create(tx, ty);
+            }
+        }
+
+        throw new IllegalStateException("no '" + tile + "' tile in the snapshot");
+    }
+
     private static int countChar(MapSnapshot snap, char c, boolean buildable) {
         int count = 0;
         for (String row : snap.tiles) {

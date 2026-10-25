@@ -1597,26 +1597,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   post-split game (newest REPLAYS 12:20 < twin 12:41, newest out/wine_runs 10:40); KiteRefusedOrderTest 2/2 green - twin
   waits, no behavior. Sweep 2026-10-26b: still no post-split game (REPLAYS 12:20, wine_runs 10:40). Code audit:
   threatIfCutOff no-odds (CutoffRetreat.java:33-45), fight-if-can-hit-back falls through (RetreatFromLostFight.java:62+)
-  - glue is live-validation gap, as filed.
-
-- - **#191** Post-fight freeze + idle twins + StarEngine rect-region map (owner report 2026-10-26, Drag_v_LingsUpg2:
-  after killing part of a pack the line stands ~10 s instead of forming up and marching at the last-seen enemy;
-  per-unit no-move + no-foe-near + weapon-ready is the signature, army-wide stillness the alarm). Mechanism (code-read):
-  fresh ghost at the kill site shadows older memory for the 240f stale window while the reached-claim holds the unit
-  with no order, and HuntLastContact leashes the line back to the stale site past 9 tiles (tug-of-war with the ghost
-  march). Fix LANDED 2026-10-26 (sim-first, zero behavior change without the trip): reached-fresh reroutes to older
-  memory with a departure marker (no ping-pong), hunt yields while departed, arrival stays terminal. Pins:
-  PostFightFreezeSimTest (displacement), PostFightPursuitDurationSimTest (two-wave clear, measured 336 vs pre-fix
-  never, bound 520). Logger LANDED: IDLE rows (per-unit, MED) + STALL rows (army-wide, HIGH) via IdleWatch +
-  ClusterTwin, pinned in IdleWatchTest + LogKeySeverityTest. Fidelity track (CONVENTIONS section 30, owner sketch):
-  rect-region fake map for the sim (main TR, natural BR, middle BL, enemy TL, choke gaps, blocked bands) carrying
-  base behaviors (facing, accel/braking, attack cycles, cooldowns) - regions may stay simple, ground must exist so
-  unexplored/sweep/region plays are sim-testable. NN on this map rides the sim proxy + a live owner game when the
-  vehicle is ready. Slice 1 LANDED: SimRectMap (enemy TL / main TR / middle BL / natural BR + blocked bands with 2-tile choke gaps) + Regions.useRegions port + SimRectMapTest (mapping + sweep march with no memory); suite green.
-  Snapshot slice LANDED 2026-10-25 (micro-pinned, zero behavior change without the flag): MAP_SNAPSHOT dump
-  (tiles/regions/chokes/resources/starts/buildings, never throws into the startup path) + SimMap loader
-  (walkable/buildable/region answers + mineral/geyser/preplaced spawn helpers, install/uninstall). Real-file proof
-  still needs a quiet game.
+  - glue is live-validation gap, as filed. First post-split game adjudicated 2026-10-26 (Wine 1a2a3a Micro 2,
+  Ghosts vs Lings): 63 KITE rows, ALL frozen-reset, canCmd+canMove all true, 0 stuck-no-step, 0 order-refused -
+  the twin discriminates live as designed, but this shape never glues (no surround, no death); decision still
+  parked, the sim must reproduce stuck-while-chewed->death first.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").
@@ -1651,7 +1635,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   public as the verdict seam. Pinned GatewayWaitsOnBlockedBaseTest 3/3 (blocked radius-3 spiral fails, order alive
   after 100 attempts, dead after 485; freed base warps on the waiting order). Twin half: PLACEMENT_FAILED carries
   around + maxDist, so the live clutter-vs-center choice is decidable per row. Calibration of the patience + live
-  proof ride the next quiet game.
+  proof ride the next quiet game. Macro datapoint 2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f): 0 PLACEMENT_FAILED
+  rows all game, 3rd Gateway warped early at [116,17] - the patience never engaged (nothing failed), guard intact
+  by non-firing; a contested-base battle is still needed for calibration.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
@@ -1668,7 +1654,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   the distToFocusPoint choke branch and IsUnitWithinChoke (short ground path within the mouth width); flyers read
   far / take the fallback (chokes are ground concepts). ChokeTest re-pinned to ground semantics (test-world
   fallback reads center distance, not the width-subtracted air edge). Threshold-shift risk on tuned gates
-  (<=3/4/5/9) rides the live proof above.
+  (<=3/4/5/9) rides the live proof above. TauCross datapoint 2026-10-26 (PvsZ, VICTORY 9450f, top start at
+  (117,9), Nexus (119,10)): army firewalled the home side of the narrow choke (117,35,w2) - 104/184 CLUSTER
+  centers on tiles (7,1) between base and choke - then pushed mid-map late; no cross-map donation march.
+  Designation behaves on the top start; the bottom-start variant from the report still unseen.
 
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
@@ -1702,7 +1691,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   attacking worker at 10+ (was 14, and blind while the SwarmMove pursuit had not landed yet), reason TOO_FAR_FROM_BASE
   shared by both paths (CONVENTIONS §31). Pinned WorkerFarFightTest 6/6 (12-tile chase refused, 11-tile pursuit
   stopped; entry gate untouched - a worker within 8 of main is always inside the line). Remainder: live macro proof
-  (workers hold <=10).
+  (workers hold <=10). TauCross datapoint 2026-10-26 (VICTORY 9450f): zero worker deaths, zero TOO_FAR rows, but
+  no enemy ever came within 25 tiles of the base (closest contact 110 tiles out, all attack outward) - no
+  pressure, no conclusion; still needs a game where raiders reach the mineral line.
 
 - - **#197** Trapped dragoons must march out (owner report: dragoons defending the main against many early zealots
   get overwhelmed with no kite room, mobility unused - attack out and use them). Slice 1 LANDED (sim-first,
@@ -1719,6 +1710,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   in PostureTrappedArmyTest. UmsRetreatRulesTest resets the latch between hypotheticals (independent scenarios).
   Trapped case extracted to TrappedByMassZealots (own predicate + sim-bracketed line, PostureReasons delegates;
   pinned TrappedByMassZealotsTest). Re-home: the whole family now lives in atlantis.combat.focus (see #194).
+  TauCross datapoint 2026-10-26 (VICTORY 9450f): 119 DEFEND / 65 ATTACK postures, no trapped shape (won fast,
+  army attacking out) - macro proof still rides a defensive game.
 
 - - **#198** Specialist combat behaviors (owner: Corsair/Reaver/DT/HT need their own behaviors, not the generic
   duel pipeline; short verb-first names, no Behavior suffix - the tag vocabulary already lives in the Behavior
@@ -1762,8 +1755,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   run-wine-full.sh called bgs before its definition (line 123 vs 152 - masked whenever Xvfb persisted; cold
   box died at XVFB_PID=$! with the not-found hidden by the line's own 2>&1 redirect) + build-bot-jar.sh
   contradicting asserts (BattleCommander.class required AND no atlantis/combat/* allowed - impossible since
-  the re-home, CONVENTIONS section 33; every fresh build failed, masked by reused jars). Remaining: macro-game
-  proof for the hold/bait/collapse producers under base pressure.
+  the re-home, CONVENTIONS section 33; every fresh build failed, masked by reused jars). Macro proof LANDED
+  2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f, 196 KITE + 184 CLUSTER + 8 HOLD): zero unwalkable-move rows -
+  the hold/bait/collapse producers hold live under a real army.
 
 ## Current game state (updated 2026-10-21)
 
