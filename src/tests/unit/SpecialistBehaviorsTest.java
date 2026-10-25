@@ -441,6 +441,63 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
                 "a Psionic Storm goes out, not a move: " + ordersOf(ht));
         });
     }
+
+    @Test
+    public void chargedTemplarLowersBarToPair() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 40, 76);
+        ht.setEnergy(190);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Zerg_Zergling, 45, 76),
+            fake(AUnitType.Zerg_Zergling, 46, 76)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "at 190 vs Zerg the bar is two (legacy): storm the pair");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void fullTemplarStormsPairAtFullCharge() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 40, 81);
+        ht.setEnergy(200);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 45, 81),
+            fake(AUnitType.Protoss_Zealot, 46, 81)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "at 200 the bar is one (legacy): storm the pair");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void deepTierHoldsPairVsZerg() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 40, 86);
+        ht.setEnergy(179);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Zerg_Zergling, 45, 86),
+            fake(AUnitType.Zerg_Zergling, 46, 86)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht),
+                "at 179 the bar is still three vs Zerg: hold the pair");
+        });
+    }
+
     private static boolean movesAwayFrom(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
         int fromX = unit.position().tx();
         int fromY = unit.position().ty();

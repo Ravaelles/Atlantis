@@ -1557,6 +1557,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   fully (182/182 foe-known CLUSTER, FLEE 8-row single episode f8649-8866, centers (57,101)->(46,80) toward dest (33,53),
   foe tiles east/southeast throughout, dest opposite) - non-blocking (13th reconstructed non-instance); the old 'no
   reconstructable geometry' clause is superseded as of this game (geometry reconstructs; instances still unseen).
+  TauCross-II 2026-10-26 (VICTORY 9630f, bottom start): 19 FLEE, 13 foe-known, nearest shave f9610 (center (82,36),
+  foe (115,35), dest (11,33), t=-0.46 perp 2.4) - pursuer dead-astern, foe never between center and home;
+  14th reconstructed non-instance, (b) stays open.
   Re-verify 2026-10-26: HoldTwinTest 5/5 green, still no post-split game - unstick decision still pending live rows.
   Sweep 2026-10-26b confirms no new game. Code audit: Stardust rule + latch bypass (ClusterTactic.java:57-64),
   BlockingArmy MIN_BLOCKING_ENEMIES count (:38-49) - mechanism as filed. (b) stays open live. Same game, MOVE_FAILED
@@ -1613,7 +1616,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   thresholds) routes to RALLY, and a stuck (no scored step) chewed unit rallies instead of last-standing; unchewed
   last-stand unchanged. Pinned PocketGluedDragoonTest (red was displacement 1.76 + death f98 on old code; green
   marches home; stash-verified both ways). FIGHT-path kite-site glue (dest==null while chewed on FIGHT tactic)
-  stays a follow-up slice.
+  stays a follow-up slice. Second lethal instance CONFIRMED same session (Wine TauCross
+  PvsZ, VICTORY 9630f, bottom start, pre-escalation jar): Dragoon #174, 117 stuck-no-step + 16 hits f8899-9025,
+  died f9027 at (117,32) - 0-2 frames after the last stuck row. During its window the cluster rows read
+  FLEE/RALLY dominant (new fleeReason twin): the army marched home while the cutoff dragoon glued in place -
+  exactly the shape the escalation targets; adjudication of the fix rides the next game.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").
@@ -1650,7 +1657,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   around + maxDist, so the live clutter-vs-center choice is decidable per row. Calibration of the patience + live
   proof ride the next quiet game. Macro datapoint 2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f): 0 PLACEMENT_FAILED
   rows all game, 3rd Gateway warped early at [116,17] - the patience never engaged (nothing failed), guard intact
-  by non-firing; a contested-base battle is still needed for calibration.
+  by non-firing; a contested-base battle is still needed for calibration. TauCross-II same day (VICTORY 9630f):
+  16 PLACEMENT_FAILED (2 can't-build, 14 unpowered) across Gateway orders #31/#32, ZERO "Null position" cancels -
+  the WAIT path engages live: orders survive failed searches and warp (5 Gateways requested). Patience never
+  exhausted; calibration still rides a longer siege.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width
@@ -1670,7 +1680,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   (<=3/4/5/9) rides the live proof above. TauCross datapoint 2026-10-26 (PvsZ, VICTORY 9450f, top start at
   (117,9), Nexus (119,10)): army firewalled the home side of the narrow choke (117,35,w2) - 104/184 CLUSTER
   centers on tiles (7,1) between base and choke - then pushed mid-map late; no cross-map donation march.
-  Designation behaves on the top start; the bottom-start variant from the report still unseen.
+  Designation behaves on the top start; the bottom-start variant from the report still unseen. TauCross-II same
+  day (VICTORY 9630f, BOTTOM start at (7,44), Nexus (9,45)): army held the home tile (0,2) 119/194 CLUSTER rows,
+  pushed east mid-map late; nearest choke (12,25,w1) narrow - no cross-map donation, designation behaves;
+  behavioral consistency, same standard as the top start (the twin names no designated choke).
 
 - - **#194** DefendedPlace: mission owns which ground (owner direction: tell the army WHICH ground, it decides HOW
   to stand; 02_COMBAT Squad target). Slice 1 LANDED 2026-10-26 (skeleton, pinned, unwired): DefendedPlace.defendGround
@@ -1680,8 +1693,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   natural/base) and DefendedPlace.defendGround owns the priority; the HOW per kind stays in the focus
   (breach target, Choke300, plug-or-standoff-8, natural-5, last base). Dead atAnyBase removed. Pinned by the
   existing outcome tests (ProtossDefendFocusTest 3/3 + DefendedPlaceTest 5/5 green untouched, per CONVENTIONS
-  section 24). Next: anchor/rally through the same answer (slice 3), formation adapt (slice 4), CherryVis row
-  (slice 5). Micro untouched. Re-home
+  section 24). Next: anchor/rally through the same answer (slice 3 - NEEDS DESIGN, not mechanical:
+  defendAnchor's race branch (Zerg hug-main vs Protoss standoff) is deliberate untested-direction doctrine
+  DefendedPlace does not model, and the RALLY tail resolves its own inputs - forcing either through today
+  means a behavior change without proof or a second resolver drifting from focusPoint's; candidates:
+  race-aware answer kind, or a shared input-resolver both callers use), formation adapt (slice 4),
+  CherryVis row (slice 5). Micro untouched. Re-home
   LANDED (mechanical, zero behavior): the decision family (DefendedPlace, PostureReason/Reasons/Latch,
   ProtossDefendFocusPoint + new AttackFocusPoint extracted 1:1 from ClusterAnchor.attackAnchor) moved to
   atlantis.combat.focus with an empty ArchUnit store diff (CONVENTIONS §33: new combat code lands there, battle.*
@@ -1708,7 +1725,9 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   stopped; entry gate untouched - a worker within 8 of main is always inside the line). Remainder: live macro proof
   (workers hold <=10). TauCross datapoint 2026-10-26 (VICTORY 9450f): zero worker deaths, zero TOO_FAR rows, but
   no enemy ever came within 25 tiles of the base (closest contact 110 tiles out, all attack outward) - no
-  pressure, no conclusion; still needs a game where raiders reach the mineral line.
+  pressure, no conclusion; still needs a game where raiders reach the mineral line. TauCross-II same day
+  (VICTORY 9630f): same shape again (0 worker deaths, 0 foe-near-base rows) - the native AI never pressures;
+  pressure proof likely needs a different opponent or map.
 
 - - **#197** Trapped dragoons must march out (owner report: dragoons defending the main against many early zealots
   get overwhelmed with no kite room, mobility unused - attack out and use them). Slice 1 LANDED (sim-first,
@@ -1726,7 +1745,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   Trapped case extracted to TrappedByMassZealots (own predicate + sim-bracketed line, PostureReasons delegates;
   pinned TrappedByMassZealotsTest). Re-home: the whole family now lives in atlantis.combat.focus (see #194).
   TauCross datapoint 2026-10-26 (VICTORY 9450f): 119 DEFEND / 65 ATTACK postures, no trapped shape (won fast,
-  army attacking out) - macro proof still rides a defensive game.
+  army attacking out) - macro proof still rides a defensive game. TauCross-II same day (VICTORY 9630f):
+  120 DEFEND / 74 ATTACK, same attacking shape, no trap - still rides defense.
 
 - - **#198** Specialist combat behaviors (owner: Corsair/Reaver/DT/HT need their own behaviors, not the generic
   duel pipeline; short verb-first names, no Behavior suffix - the tag vocabulary already lives in the Behavior
@@ -1748,7 +1768,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   (verify, no rebuild): detectors fly via SpecialUnitsCommander -> Observer -> MobileDetector chain (10 behaviors
   + avoid carve-outs), specialists provably ignore them (observerFallsThroughSpecialists pin); no routing test in
   unit scope (only e2e ScenarioObserver), chain verified by read.
-  Next: deep-energy relaxations (180/195) + Observer live coverage on a real-enemy game.
+  Next: deep-energy relaxations (180/195) + Observer live coverage on a real-enemy game. Deep-energy slice
+  LANDED 2026-10-26 (red-green, legacy bar verbatim): 195+ storms on one, 180+ on two, else race base minus one
+  past 110. Pinned chargedTemplarLowersBarToPair (differential: vs Zerg pair at 190 storms, old code holds -
+  stash-verified) + deepTierHoldsPairVsZerg (179 holds) + full pair at 200. Limitation recorded honestly: the 195
+  tier is behaviorally near-dead in sim (friendsNear excludes self, so a true loner never yields an aim - same as
+  legacy); it rides for live geometries the sim cannot express.
 - - **#199** Unwalkable regroup points spam the log (owner report 2026-10-26, HIGHEST priority, KEEP THIS LINE on
   close per owner order): `### Trying to move to unwalkable position for #219 Dragoon @[6,31] / a:M_ENGAGE /
   t:[13,27]` + stack trace from `AUnitOrders.move` via `Regroup.march` <- `BattleCommander.regroup`. Root cause:
@@ -1772,7 +1797,8 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   contradicting asserts (BattleCommander.class required AND no atlantis/combat/* allowed - impossible since
   the re-home, CONVENTIONS section 33; every fresh build failed, masked by reused jars). Macro proof LANDED
   2026-10-26 (Wine TauCross PvsZ, VICTORY 9450f, 196 KITE + 184 CLUSTER + 8 HOLD): zero unwalkable-move rows -
-  the hold/bait/collapse producers hold live under a real army.
+  the hold/bait/collapse producers hold live under a real army. TauCross-II same day (VICTORY 9630f):
+  zero again (179 stuck-no-step + 194 CLUSTER) - third straight game clean.
 
 ## Current game state (updated 2026-10-21)
 

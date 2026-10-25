@@ -26,6 +26,8 @@ public final class CastStorm {
 
     private static final int STORM_ENERGY = 75;
     private static final int CHARGED_ENERGY = 110;
+    private static final int DEEP_ENERGY = 180;
+    private static final int FULL_ENERGY = 195;
     private static final double SEARCH_RADIUS = 8.8;
     private static final double STORM_RADIUS = 3.3;
 
@@ -171,10 +173,15 @@ public final class CastStorm {
     }
 
     /**
-     * The legacy bar: 3 vs Protoss, 4 otherwise, lowered by one past
-     * 110 energy. Strictly greater wins, so the bar itself never storms.
+     * The legacy bar: 1 past 195 energy, 2 past 180, the race base
+     * lowered by one past 110, else the base. Strictly greater wins,
+     * so the bar itself never storms.
      */
     static int minClump(AUnit unit) {
+        int energy = unit.energy();
+        if (energy >= FULL_ENERGY) return 1;
+        if (energy >= DEEP_ENERGY) return 2;
+
         int base = Enemy.protoss() ? 3 : 4;
 
         return unit.energy(CHARGED_ENERGY) ? base - 1 : base;
