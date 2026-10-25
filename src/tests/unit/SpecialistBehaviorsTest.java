@@ -328,6 +328,119 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void templarSnipesCrucialReaver() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 64);
+        ht.setEnergy(100);
+        FakeUnit screen = fake(AUnitType.Protoss_Dragoon, 34, 63);
+
+        world(20, fakeOurs(ht, screen), fakeEnemies(
+            fake(AUnitType.Protoss_Reaver, 35, 64),
+            fake(AUnitType.Protoss_Zealot, 36, 64)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "a Reaver with one screener storms, not the clump bar");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void templarHoldsCrucialInCrowd() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 66);
+        ht.setEnergy(100);
+
+        world(20, fakeOurs(
+            ht,
+            fake(AUnitType.Protoss_Dragoon, 34, 65),
+            fake(AUnitType.Protoss_Dragoon, 36, 67),
+            fake(AUnitType.Protoss_Dragoon, 33, 66)
+        ), fakeEnemies(
+            fake(AUnitType.Protoss_Reaver, 35, 66),
+            fake(AUnitType.Protoss_Zealot, 36, 66)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht),
+                "three of ours on the Reaver: storming wastes our line, hold");
+        });
+    }
+
+    @Test
+    public void templarSnipesImportantCarrier() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 68);
+        ht.setEnergy(100);
+        FakeUnit screen = fake(AUnitType.Protoss_Dragoon, 34, 67);
+
+        world(20, fakeOurs(ht, screen), fakeEnemies(
+            fake(AUnitType.Protoss_Carrier, 35, 68),
+            fake(AUnitType.Protoss_Zealot, 36, 68)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "a Carrier with one escort storms below the clump bar");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
+
+    @Test
+    public void templarHoldsLoneImportant() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 70);
+        ht.setEnergy(100);
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Carrier, 35, 70)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht),
+                "a lone Carrier with no pack around it is no storm");
+        });
+    }
+
+    @Test
+    public void templarHoldsImportantInCrowd() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 72);
+        ht.setEnergy(100);
+
+        world(20, fakeOurs(
+            ht,
+            fake(AUnitType.Protoss_Dragoon, 34, 71),
+            fake(AUnitType.Protoss_Dragoon, 36, 73),
+            fake(AUnitType.Protoss_Dragoon, 33, 72)
+        ), fakeEnemies(
+            fake(AUnitType.Protoss_Carrier, 35, 72),
+            fake(AUnitType.Protoss_Zealot, 36, 72)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(CastStorm.act(ht),
+                "three of ours on the pack: hold the storm");
+        });
+    }
+
+    @Test
+    public void dyingTemplarForcesStormOnPair() {
+        FakeUnit ht = fake(AUnitType.Protoss_High_Templar, 30, 74);
+        ht.setEnergy(80);
+        ht.hp = 20;
+
+        world(20, fakeOurs(ht), fakeEnemies(
+            fake(AUnitType.Protoss_Zealot, 35, 74),
+            fake(AUnitType.Protoss_Zealot, 36, 74)
+        ), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(CastStorm.act(ht),
+                "at 20 hp the bar is gone: storm the pair");
+            assertTrue(stormCastAt(ordersOf(ht), ht.id()),
+                "a Psionic Storm goes out, not a move: " + ordersOf(ht));
+        });
+    }
     private static boolean movesAwayFrom(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
         int fromX = unit.position().tx();
         int fromY = unit.position().ty();
