@@ -75,7 +75,7 @@ public class BattleCommander extends Commander {
      * the how lives in that step, never here.
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
-        if (unit == null || !unit.isAlive()) return;
+        if (unit == null || !unit.isAlive() || !unit.isOur()) return;
 
         observe(unit);
 

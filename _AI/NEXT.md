@@ -1736,8 +1736,20 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   `WalkableRegroupPointsTest` (red was `hold point must be marchable, got: [20,26]`); each producer nudges to
   nearby walkable ground (`makeWalkable(6, 3, null)`, `ClusterRally` precedent) or answers null, which the caller
   already handles. Neighbors green (Regroup 1/1, NoContactHold 3/3, ChokeStandoff 5/5, ChokePlugSim 1/1, DuelKite
-  18/18); full suite 1500/1500. Pre-existing arch advisory 9/2 (stash-verified, untouched). Remaining: live-game
-  proof needs quiet box (standing Wine order).
+  18/18); full suite 1500/1500. Pre-existing arch advisory 9/2 (stash-verified, untouched). Live proof LANDED
+  2026-10-26 (Wine 1a2a3a Micro 2 PvsZ, loss, EXIT 0 - first cold-box game in a while; launcher + jar-build fixes
+  below were its toll): ZERO regroup-spam instances for our units across the game (all three sanitized producers
+  hold live). One residual instance, same shape, other producer: renegade Zergling #252 marched an
+  ADVANCE_FORMATION slot into unwalkable ground (Regroup.march:94) - transiently ours under UMS renegade
+  mechanics (in Alpha at gather, ownership flipped before the move), stale roster slot served post-flip.
+  Ownership-gate slice LANDED same session (red-green): BattleCommander.act re-checks isOur (Alpha sources
+  ours, but ownership can flip mid-frame; zero normal-game behavior - every acted unit there is ours), pinned
+  ForeignUnitSkippedTest 2/2 (rostered-flip red was a stale-slot move order). Cold-box toll, fixed same session:
+  run-wine-full.sh called bgs before its definition (line 123 vs 152 - masked whenever Xvfb persisted; cold
+  box died at XVFB_PID=$! with the not-found hidden by the line's own 2>&1 redirect) + build-bot-jar.sh
+  contradicting asserts (BattleCommander.class required AND no atlantis/combat/* allowed - impossible since
+  the re-home, CONVENTIONS section 33; every fresh build failed, masked by reused jars). Remaining: macro-game
+  proof for the hold/bait/collapse producers under base pressure.
 
 ## Current game state (updated 2026-10-21)
 
