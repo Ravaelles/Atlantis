@@ -43,7 +43,8 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     private static final double EVAL_DO_NOT_FIGHT_BADLY = 0.4;
 
     /**
-     * Owner's line (2026-10-26, Zealot Hell run-by corridor): workers
+     * Owner's line (2026-10-26, Zealot Hell run-by corridor; tightened to
+     * 10 on the live report that workers trade far beyond the army): workers
      * never walk out to fight combat units far from base. Entry gates
      * read the worker's position, but the attack order pursues - a legal
      * engagement at the base edge becomes a cross-map chase while every
@@ -52,7 +53,15 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      * are not ours to chase. (FurMotherland below stays: an enemy raiding
      * deep in our territory is by construction inside.)
      */
-    public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 15;
+    public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 10;
+
+    /**
+     * The refusal reason for the line above, shared by the attack gate
+     * here and the stop-fighting path: one named reason, not scattered
+     * literals (CONVENTIONS §31). It rides the tactical tooltip, so the
+     * twin names it on every refusal.
+     */
+    public static final String TOO_FAR_FROM_BASE = "TooFarFromBase";
 
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
@@ -75,7 +84,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (!nearOurBuildings) return false;
 
         return unit.hp() >= (Enemy.protoss() ? 34 : 26)
-            && unit.distToBase() <= 15;
+            && unit.distToBase() <= MAX_FIGHT_DIST_TO_BASE_TILES;
     }
 
     @Override
@@ -193,7 +202,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // still reads near. The entry gates above passed on the decision
         // frame; the pursuit that follows does not re-ask them.
         if (enemy != null && enemyTooFarFromBase(enemy)) {
-            unit.setTooltipTactical("TooFarFromBase");
+            unit.setTooltipTactical(TOO_FAR_FROM_BASE);
 
             return false;
         }
@@ -207,7 +216,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
             AUnit raider = nearestSwarmableRaider(unit);
             if (raider == null) return false;
             if (enemyTooFarFromBase(raider)) {
-                unit.setTooltipTactical("TooFarFromBase");
+                unit.setTooltipTactical(TOO_FAR_FROM_BASE);
 
                 return false;
             }

@@ -17,9 +17,11 @@ public class WorkerDefenceStopFighting extends Manager {
         if (!unit.isAttacking()) return false;
         if (unit.isGatheringResources()) return false;
 
-        double distToBase = unit.distToBase();
-        if (distToBase >= 14) return true;
-        if (distToBase >= 10 && unit.enemiesNear().combatUnits().countInRadius(2, unit) == 0) return true;
+        // Owner's hard line: no worker fights at 10+ tiles from base,
+        // however it got there (the entry gates read the decision frame,
+        // the pursuit that follows does not re-ask them). Same named
+        // reason as the attack gate (CONVENTIONS §31).
+        if (unit.distToBase() >= WorkerDefenceFightCombatUnits.MAX_FIGHT_DIST_TO_BASE_TILES) return true;
 
         if (unit.isAttacking() || unit.action().isAttacking() || unit.lastAttackFrameLessThanAgo(60)) {
             if (Enemy.protoss()) {
@@ -42,6 +44,10 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.distToBase() >= WorkerDefenceFightCombatUnits.MAX_FIGHT_DIST_TO_BASE_TILES) {
+            unit.setTooltipTactical(WorkerDefenceFightCombatUnits.TOO_FAR_FROM_BASE);
+        }
+
 //        if (unit.hp() >= 19) {
 //            if ((new GatherResources(unit)).forceHandle() != null) return usedManager(this);
 //        }

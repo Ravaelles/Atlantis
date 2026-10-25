@@ -1668,7 +1668,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   Next: twin carries the reason on FLEE rows (representation the CherryVis review asked for), then the swamped-dragoon
   run-escalation behind STEP_CUTOFF (NEXT #190).
 
-## Current game state (updated 2026-10-21)
+- - **#196** Workers trade beyond the army (owner report: workers fight drastically too far from base, engaging
+  enemies our own army ignores). Hard 10-tile line with a named reason: MAX_FIGHT_DIST_TO_BASE_TILES 15 -> 10
+  (attack gate reads the enemy address; HelpCannon rides the same constant), WorkerDefenceStopFighting stops any
+  attacking worker at 10+ (was 14, and blind while the SwarmMove pursuit had not landed yet), reason TOO_FAR_FROM_BASE
+  shared by both paths (CONVENTIONS §31). Pinned WorkerFarFightTest 6/6 (12-tile chase refused, 11-tile pursuit
+  stopped; entry gate untouched - a worker within 8 of main is always inside the line). Remainder: live macro proof
+  (workers hold <=10).
+
+## Current game state (updated 2026-10-21)## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;
    newer macro evidence lives in the §1–§9 chains).
