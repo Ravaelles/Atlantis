@@ -81,6 +81,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public static final int NEAR_DIST = 15;
 
     /**
+     * Choke answers re-derive ~3x per second; preserved verbatim cadence,
+     * tune only with a measured cadence (CONVENTIONS §31).
+     */
+    private static final int NEAREST_CHOKE_TTL_FRAMES = 77;
+
+    /** Within-choke containment re-derives every frame. */
+    private static final int IS_WITHIN_CHOKE_TTL_FRAMES = 1;
+
+    /**
      * Inner BWAPI Unit object that we extend for easier code maintainability.
      */
     private Unit u;
@@ -3906,7 +3915,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         return cacheBoolean.get(
             "isWithinChoke",
-            1,
+            IS_WITHIN_CHOKE_TTL_FRAMES,
             () -> IsUnitWithinChoke.check(closestChoke, this)
         );
     }
@@ -3914,7 +3923,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public AChoke nearestChoke() {
         return (AChoke) cache.get(
             "nearestChoke",
-            77,
+            NEAREST_CHOKE_TTL_FRAMES,
             () -> Chokes.nearestChoke(this, "ALL")
         );
     }
@@ -3934,7 +3943,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public double nearestChokeDist() {
         return (double) cache.get(
             "nearestChokeDist",
-            77,
+            NEAREST_CHOKE_TTL_FRAMES,
             () -> {
                 // Chokes are ground concepts (NEXT #193): flyers read far.
                 if (isFlying()) return 999.0;
@@ -3950,7 +3959,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public double nearestChokeCenterDist() {
         return (double) cache.get(
             "nearestChokeCenterDist",
-            77,
+            NEAREST_CHOKE_TTL_FRAMES,
             () -> {
                 // Chokes are ground concepts (NEXT #193): flyers read far.
                 if (isFlying()) return 999.0;

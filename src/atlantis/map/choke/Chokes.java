@@ -21,6 +21,12 @@ import java.util.List;
 
 public class Chokes {
     private static Cache<Object> cache = new Cache<>();
+
+    /**
+     * Map geometry never changes mid-game, so designations compute once
+     * (CONVENTIONS §31: the cadence lives here, named, not as bare -1s).
+     */
+    private static final int MAP_STATIC_TTL_FRAMES = -1;
 //    private static HashMap<APosition, AChoke> cached_basesToChokes = new HashMap<>();
 //    protected final Set<AChoke> disabledChokes = new HashSet<>();
 //    protected static AChoke cached_basesToChokepoints = null;
@@ -70,7 +76,7 @@ public class Chokes {
     public static List<AChoke> chokes() {
         return (List<AChoke>) cache.get(
             "chokes",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> AllChokes.get()
         );
     }
@@ -84,7 +90,7 @@ public class Chokes {
     public static AChoke mainChoke() {
         return (AChoke) cache.get(
             "mainChoke",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
 //            () -> mainChokeFromJbweb()
             () -> DefineMainChoke.define()
         );
@@ -103,7 +109,7 @@ public class Chokes {
     public static AChoke natural() {
         return (AChoke) cache.getIfValid(
             "natural",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> DefineNaturalChoke.define()
         );
     }
@@ -115,7 +121,7 @@ public class Chokes {
 
         return (AChoke) cache.get(
             "natural:" + relativeTo.toStringPixels(),
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> {
                 ARegion naturalRegion = Regions.getRegion(DefineNaturalBase.naturalIfMainIsAt(relativeTo.position()));
                 if (naturalRegion == null) {
@@ -165,7 +171,7 @@ public class Chokes {
         return (AChoke) cache.get(
 //            "nearestChoke:" + position.toStringPixels(),
             "nearestChoke:" + flag + ";ex" + (position.x() / 48) + ",ey:" + (position.y() / 48),
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> {
 
                 double nearestDist = 99999;
@@ -195,7 +201,7 @@ public class Chokes {
 
         return (AChoke) cache.getIfValid(
             "enemyMainChoke",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
 //            () -> nearestChoke(enemyMain, "MAIN")
             () -> {
                 HasPosition nearTo = enemyMain;
@@ -228,7 +234,7 @@ public class Chokes {
 
         return (AChoke) cache.get(
             "enemyNaturalChoke",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> nearestChoke(enemyNatural, "ENEMY_NATURAL")
         );
     }
@@ -246,7 +252,7 @@ public class Chokes {
     public static void fakeChokes(AChoke fakeChoke) {
         cache.set(
             "chokes",
-            -1,
+            MAP_STATIC_TTL_FRAMES,
             () -> {
                 List<AChoke> chokes = new ArrayList<>();
                 chokes.add(fakeChoke);

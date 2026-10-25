@@ -13,6 +13,12 @@ public class Bases {
     private static Cache<AUnit> cache = new Cache<>();
 
     /**
+     * The natural re-derives every ~4 seconds; preserved verbatim
+     * cadence, tune only with a measured cadence (CONVENTIONS §31).
+     */
+    private static final int NATURAL_TTL_FRAMES = 93;
+
+    /**
      * Our natural expansion base.
      */
     public static AUnit natural() {
@@ -20,7 +26,7 @@ public class Bases {
 
         return cache.get(
             "natural",
-            93,
+            NATURAL_TTL_FRAMES,
             () -> {
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke == null) return null;

@@ -9,6 +9,12 @@ import atlantis.util.log.ErrorLog;
 public class IsUnitWithinChoke {
     private static Cache<Boolean> cache = new Cache<>();
 
+    /**
+     * Containment re-derives ~3x per second; preserved verbatim cadence,
+     * tune only with a measured cadence (CONVENTIONS §31).
+     */
+    private static final int WITHIN_TTL_FRAMES = 19;
+
     public static boolean check(AChoke choke, AUnit unit) {
         if (choke == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null choke in IsUnitWithinChoke.check");
@@ -23,7 +29,7 @@ public class IsUnitWithinChoke {
 
         return cache.get(
             CacheKey.create("check", choke, unit),
-            19,
+            WITHIN_TTL_FRAMES,
             () -> {
                 // Chokes are ground concepts (NEXT #193): flyers are never
                 // inside; containment is a short ground path within the

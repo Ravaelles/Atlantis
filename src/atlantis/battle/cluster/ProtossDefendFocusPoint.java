@@ -39,6 +39,12 @@ public final class ProtossDefendFocusPoint {
 
     private static final Cache<AFocusPoint> CACHE = new Cache<>();
 
+    /**
+     * The focus re-derives about twice per second; preserved verbatim
+     * cadence, tune only with a measured cadence (CONVENTIONS §31).
+     */
+    private static final int FOCUS_TTL_FRAMES = 29;
+
     public static void clearForTests() {
         CACHE.forget("focusPoint");
     }
@@ -47,7 +53,7 @@ public final class ProtossDefendFocusPoint {
         try {
             return (AFocusPoint) CACHE.get(
                 "focusPoint",
-                29,
+                FOCUS_TTL_FRAMES,
                 () -> {
                     if (A.isUms()) {
                         return null;
