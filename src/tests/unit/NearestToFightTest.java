@@ -22,7 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * in the area the leader assesses (eval 9874, march on).
  */
 @Tag("combat")
-public class VanguardAssessorTest extends AbstractTestWithWorld {
+public class NearestToFightTest extends AbstractTestWithWorld {
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -55,7 +55,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(vanguard,
-                    ClusterTactic.assessVanguard(leader),
+                    ClusterTactic.nearestToFight(leader),
                     "the vanguard 2 tiles from the enemy assesses, not the leader 22 away");
             } finally {
                 Alpha.get().removeUnit(leader);
@@ -80,7 +80,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(leader,
-                    ClusterTactic.assessVanguard(leader),
+                    ClusterTactic.nearestToFight(leader),
                     "20 tiles to the enemy is march territory for the whole cluster");
             } finally {
                 Alpha.get().removeUnit(leader);
@@ -103,7 +103,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(vanguard,
-                    ClusterTactic.assessVanguard(null),
+                    ClusterTactic.nearestToFight(null),
                     "contact assesses even with no leader");
             } finally {
                 Alpha.get().removeUnit(vanguard);

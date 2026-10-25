@@ -27,7 +27,7 @@ public final class ClusterTactic {
 
     public static FightOrFlight.Tactic decide() {
         AUnit leader = Alpha.get().leader();
-        AUnit assessor = assessVanguard(leader);
+        AUnit assessor = nearestToFight(leader);
         double eval = assessor != null ? assessor.eval() : 0;
 
         // Breach rule (owner): raiders in the base mean fight - always. Two
@@ -102,7 +102,7 @@ public final class ClusterTactic {
      * area assessment - the gate answers for where the fight is, not for
      * where the leader stands). Public as a seam, pinned without a game.
      */
-    public static AUnit assessVanguard(AUnit leader) {
+    public static AUnit nearestToFight(AUnit leader) {
         AUnit best = leader;
         double bestDist = Double.MAX_VALUE;
         for (AUnit unit : Alpha.get().selection().list()) {
