@@ -53,12 +53,29 @@ public class SitedDoorOverlapTest extends WorldStubForTests {
         world(1, fakeOurs(standing), fakeEnemies(), () -> {
             assertFalse(RequestBuildingNear.isSiteBlockedByKnownBuilding(
                 APosition.create(119, 18), AUnitType.Protoss_Pylon));
+            // Gateway 4x3 at [118,18] spans y18-20: disjoint from the
+            // pylon's y16-17, touching at the edge - packed, legal.
             assertFalse(RequestBuildingNear.isSiteBlockedByKnownBuilding(
-                APosition.create(118, 17), AUnitType.Protoss_Gateway));
+                APosition.create(118, 18), AUnitType.Protoss_Gateway));
             assertFalse(RequestBuildingNear.isSiteBlockedByKnownBuilding(
                 null, AUnitType.Protoss_Pylon));
             assertFalse(RequestBuildingNear.isSiteBlockedByKnownBuilding(
                 APosition.create(118, 17), null));
+        });
+    }
+
+    @Test
+    public void differentTypeOverlapIsRefusedToo() {
+        FakeUnit standing = fake(AUnitType.Protoss_Pylon, 118, 16);
+
+        world(1, fakeOurs(standing), fakeEnemies(), () -> {
+            // Gateway 4x3 at [118,17] spans y17-19, sharing the y=17 row
+            // with the standing pylon - overlapping, not packed. The engine
+            // refuses occupied footprints of any type, and so does the door
+            // now (NEXT #192: CyberneticsC cancelled in a loop on exactly
+            // this shape).
+            assertTrue(RequestBuildingNear.isSiteBlockedByKnownBuilding(
+                APosition.create(118, 17), AUnitType.Protoss_Gateway));
         });
     }
 }

@@ -15,11 +15,13 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * A site a standing same-type building covers can never build - the
- * proximity finish removes it the same frame. The pick-time guard must
- * see the same coverage, or the finder re-offers the dead tile every
- * frame (measured OpenBW: oid 72, 38 requests for covered [116,19],
- * 38 same-frame cancels, one BUILD row per cycle).
+ * A site a standing building covers can never build - the proximity
+ * finish removes it the same frame. The pick-time guard must see the
+ * same coverage, or the finder re-offers the dead tile every frame
+ * (measured OpenBW: oid 72, 38 requests for covered [116,19],
+ * 38 same-frame cancels, one BUILD row per cycle; live: CyberneticsC
+ * at [91,111] cancelled in a loop against a different-type overlap the
+ * old same-type-only guard could not see).
  */
 @Tag("production")
 public class OverlapsStandingBuildingTest extends WorldStubForTests {
@@ -48,12 +50,16 @@ public class OverlapsStandingBuildingTest extends WorldStubForTests {
     }
 
     @Test
-    public void differentTypeOverlapIsNotOurs() {
+    public void differentTypeOverlapIsAlsoCovered() {
         FakeUnit standing = fake(AUnitType.Protoss_Gateway, 114, 18);
 
         world(1, fakeOurs(standing), fakeEnemies(), () -> {
-            assertFalse(OverlapsOurStandingBuilding.check(
-                APosition.create(116, 19), AUnitType.Protoss_Pylon));
+            APosition site = APosition.create(116, 19);
+            assertTrue(OverlapsOurStandingBuilding.check(site, AUnitType.Protoss_Pylon),
+                "a different-type completed overlap kills the tile the same way");
+            assertTrue(atlantis.units.BuildingTilesAreOccupied.checkBuildingsOnly(
+                    site, AUnitType.Protoss_Pylon),
+                "pick-time and adopt-time guards read one predicate now");
         });
     }
 

@@ -1636,7 +1636,12 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   returns for the final guard to kill); refusal named 'Too far by ground' in the breakdown instead of 'OK'.
   Anchor slice LANDED 2026-10-26 (sim-first, red-green): 3rd Gateway (and vs-Terran Gateway) centers on the
   existing Pylon nearest the main choke instead of bare choke geometry (a non-Pylon must stand in psi anyway);
-  no Pylon falls back to the choke. Null-position root cause (aroundPosition WAIT-vs-search) stays open.
+  no Pylon falls back to the choke. Overlap slice LANDED 2026-10-26 (sim-first, red-green): the spiral's
+  standing-cover check reads the same any-type completed-footprint predicate as the refresh
+  (OverlapsOurStandingBuilding delegates to the completed-only check), so a different-type overlap can no longer be
+  picked for the refresh to cancel (live: CyberneticsC at [91,111] cancelled in a loop); the refresh names the
+  blocking building in the twin. Packed touching-edge neighbours stay legal. Null-position root cause
+  (aroundPosition WAIT-vs-search) stays open.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width

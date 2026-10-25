@@ -201,6 +201,11 @@ public class RefreshConstructionPosition {
 
             System.err.println(A.minSec() + " [LVL=HIGH] WTF?!? Cancel and request again.");
             APosition prevPosition = construction.buildPosition();
+            AUnit blocker = blockingCompletedBuilding(prevPosition, buildingType);
+            if (blocker != null) {
+                System.err.println(A.minSec() + " [LVL=HIGH] site blocked by "
+                    + blocker.type().name() + " at [" + blocker.tx() + "," + blocker.ty() + "]");
+            }
             construction.cancel(buildingType + " position still not good after refresh");
 
             // A completed building on the site kills the tile forever -
@@ -239,14 +244,12 @@ public class RefreshConstructionPosition {
     }
 
     /**
-     * Overlap twin of the status changer's exact-tiles finish: a completed
-     * building anywhere on the reserved footprint (not just the same
-     * origin) kills the tile, so the re-request must move on instead of
-     * re-pinning it. Unfinished overlap returns false - the warp settles
-     * it.
+     * The completed building overlapping the site, or null: names the
+     * blocker the pick-time guard must already have refused. Log-only;
+     * the cancel decision below does not read it.
      */
-    private static boolean completedBuildingOverlaps(APosition site, AUnitType type) {
-        if (site == null) return false;
+    private static AUnit blockingCompletedBuilding(APosition site, AUnitType type) {
+        if (site == null) return null;
 
         int left = site.tx();
         int top = site.ty();
@@ -260,10 +263,22 @@ public class RefreshConstructionPosition {
             int unitRight = unit.tx() + unit.type().getTilesWidth();
             int unitBottom = unit.ty() + unit.type().getTilesHeights();
             if (unit.tx() < right && left < unitRight && unit.ty() < bottom && top < unitBottom) {
-                return true;
+                return unit;
             }
         }
-        return false;
+
+        return null;
+    }
+
+    /**
+     * Overlap twin of the status changer's exact-tiles finish: a completed
+     * building anywhere on the reserved footprint (not just the same
+     * origin) kills the tile, so the re-request must move on instead of
+     * re-pinning it. Unfinished overlap returns false - the warp settles
+     * it.
+     */
+    private static boolean completedBuildingOverlaps(APosition site, AUnitType type) {
+        return blockingCompletedBuilding(site, type) != null;
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction) {

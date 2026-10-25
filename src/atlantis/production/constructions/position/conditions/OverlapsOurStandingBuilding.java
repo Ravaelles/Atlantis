@@ -1,14 +1,12 @@
 package atlantis.production.constructions.position.conditions;
 
 import atlantis.map.position.APosition;
-import atlantis.production.constructions.PrepareConstructionSite;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
+import atlantis.units.BuildingTilesAreOccupied;
 
 /**
- * True when the candidate tile overlaps one of OUR OWN standing
- * (completed) buildings of the same type.
+ * True when the candidate tile overlaps any standing (completed)
+ * building's footprint, regardless of type.
  *
  * <p>The mirror of the proximity finish ({@code buildingFinishedAtSite}):
  * a site it would remove the same frame must not be picked in the first
@@ -16,33 +14,22 @@ import atlantis.units.select.Select;
  * 38 times, every one proximity-cancelled the same frame against the
  * standing Gateway at [114,18] (4x3 footprint covers [116,19]) - 38
  * BUILD rows, 38 CANCEL twins, zero progress until the spiral drifted
- * elsewhere. The pick-time guard saw only unfinished overlap, so the
- * covered tile passed every check on the way in.</p>
+ * elsewhere.</p>
  *
- * <p>Same type only, like the finish: a different-type overlap dies
- * elsewhere (engine refusal at issue time) and stays out to keep this
- * guard narrow. Footprint overlap, not nearness: an adjacent packed
- * sibling (touching edges, disjoint footprints) stays legal. Reads the
- * same live unit list as the finish, so the two cannot disagree.</p>
+ * <p>Any type, not same-type only: the old same-type-only rule assumed a
+ * different-type overlap dies at issue time, but the refresh cancels it
+ * first - so the spiral kept offering tiles the refresh kept killing
+ * (measured live: CyberneticsC at [91,111], cancel/re-request loop with
+ * an order re-minted every cycle while the bank hoarded). The pick-time
+ * guard and the adopt-time guard read the same predicate now
+ * ({@link BuildingTilesAreOccupied#checkBuildingsOnly}), so they cannot
+ * disagree again. Footprint overlap, not nearness: an adjacent packed
+ * sibling (touching edges, disjoint footprints) stays legal. Unfinished
+ * warps never block (B-41 adopts them on position).</p>
  */
 public class OverlapsOurStandingBuilding {
 
     public static boolean check(APosition position, AUnitType building) {
-        if (position == null || building == null) return false;
-
-        int width = building.getTilesWidth();
-        int height = building.getTilesHeights();
-
-        for (AUnit unit : Select.ourOfTypeWithUnfinished(building).list()) {
-            if (unit == null || !unit.isAlive() || !unit.isCompleted()) continue;
-
-            if (PrepareConstructionSite.footprintsOverlap(
-                position.tx(), position.ty(), width, height,
-                unit.tx(), unit.ty(),
-                unit.type().getTilesWidth(), unit.type().getTilesHeights()
-            )) return true;
-        }
-
-        return false;
+        return BuildingTilesAreOccupied.checkBuildingsOnly(position, building);
     }
 }
