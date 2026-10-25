@@ -31,7 +31,40 @@ public final class RetreatFromLostFight {
     public static boolean retreat(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
     ) {
-        if (tactic != FightOrFlight.Tactic.FLEE) return false;
+        Verdict verdict = decide(unit, tactic, anchor, leader);
+        if (verdict.dest == null) return false;
+
+        if (isChased(unit)) {
+            unit.move(verdict.dest, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+        }
+        else {
+            unit.move(verdict.dest, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
+        }
+
+        return true;
+    }
+
+    /** One decision with its destination, or a null destination to fight in place. */
+    public static final class Verdict {
+        public final FleeReason reason;
+        public final HasPosition dest;
+
+        Verdict(FleeReason reason, HasPosition dest) {
+            this.reason = reason;
+            this.dest = dest;
+        }
+    }
+
+    /**
+     * The single classification point: which flee reason owns this unit
+     * this frame, and where it marches (null = stay and fight). Test
+     * seam and the only place new flee conditions land (CONVENTIONS
+     * §31). retreat() only executes the verdict, never re-decides.
+     */
+    public static Verdict decide(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
+    ) {
+        if (tactic != FightOrFlight.Tactic.FLEE) return new Verdict(FleeReason.STAY_TACTIC, null);
         // Owner: ClusterFlee is banned on baseless UMS maps - with no
         // base anywhere a retreat (shared direction or per-unit) only
         // donates the duel, so the unit falls through and fights.
@@ -52,7 +85,7 @@ public final class RetreatFromLostFight {
             if (unit.isMelee() && unit.cooldown() <= MeleeChewerTarget.READY_COOLDOWN_FRAMES) {
                 AUnit grabber = CutoffRetreat.nearestEnemyCombatUnit(unit);
                 if (grabber != null && grabber.isAlive() && unit.hasWeaponRangeToAttack(grabber, 1)) {
-                    return false;
+                    return new Verdict(FleeReason.STAY_MELEE_GRAB, null);
                 }
             }
 
@@ -63,21 +96,16 @@ public final class RetreatFromLostFight {
             // the march home is how reinforcements die without firing.
             AUnit threat = CutoffRetreat.threatIfCutOff(unit);
             if (threat != null) {
-                if (unit.hasWeaponRangeToAttack(threat, 1)) return false;
+                if (unit.hasWeaponRangeToAttack(threat, 1)) {
+                    return new Verdict(FleeReason.FIGHT_CUTOFF, null);
+                }
 
                 APosition step = EscapeScoredStep.pickScored(unit, threat, 8);
                 if (step != null) {
-                    if (isChased(unit)) {
-                        unit.move(step, Actions.RUN_ENEMY, Behavior.FLEE.tag());
-                    }
-                    else {
-                        unit.move(step, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
-                    }
-
-                    return true;
+                    return new Verdict(FleeReason.STEP_CUTOFF, step);
                 }
 
-                return false;
+                return new Verdict(FleeReason.CORNERED_CUTOFF, null);
             }
 
             HasPosition home;
@@ -110,21 +138,14 @@ public final class RetreatFromLostFight {
             }
             HasPosition point = ClusterRally.gatherPointFor(unit, leader, home, tactic);
             if (point != null && unit.distTo(point) >= 0.2) {
-                if (isChased(unit)) {
-                    unit.move(point, Actions.RUN_ENEMY, Behavior.FLEE.tag());
-                }
-                else {
-                    unit.move(point, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
-                }
-
-                return true;
+                return new Verdict(FleeReason.RALLY, point);
             }
-        }
-        // Nowhere to run to (baseless map, null anchor): standing
-        // still with DoNothing until death is never the answer -
-        // fall through and fight in place instead (kite included).
 
-        return false;
+            return new Verdict(FleeReason.NOWHERE_TO_RUN, null);
+        }
+        if (noFleeOnBaselessUms) return new Verdict(FleeReason.STAY_BASELESS, null);
+
+        return new Verdict(FleeReason.STAY_MID_SWING, null);
     }
 
     /**

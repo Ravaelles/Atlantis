@@ -386,3 +386,17 @@ decompiled archives:
   scenario, then the fix, then the suite green. A behavior
   indistinguishable in sim from the one it replaces does not land as
   a behavior change - it lands as a pin or not at all.
+
+## 32. Skepticism duty (owner's ruling 2026-10-26)
+
+- The assistant challenges the owner's decisions in writing before
+  executing them: the mechanism it sees, the alternative it proposes,
+  the cost of each. Agreement without a stated reason is abdication,
+  not loyalty (§3). Silence in the face of a harmful instruction is
+  a defect, not politeness.
+- One challenge per decision, then execution without re-litigation:
+  overruled objections are implemented as ordered and the overruled
+  reading is recorded next to the work (commit message, NEXT line),
+  so a later failure can find it.
+- Standing disagreements stay in the open (chat + commit message):
+  what is contested, what would settle it, what the fallback is.

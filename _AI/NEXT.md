@@ -1656,6 +1656,13 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   order + ranks + last resort + null). Next: wire ProtossDefendFocusPoint 1:1 (slice 2), then anchor/rally through
   the same answer (slice 3), formation adapt (slice 4), CherryVis row (slice 5). Micro untouched.
 
+- - **#195** Flee reasons as named verdicts (owner: name each flee case, one home deciding when it fires).
+  Slice 1 LANDED 2026-10-26 (extraction, zero behavior change): FleeReason (9 reasons) + RetreatFromLostFight.decide
+  (single classification point, retreat() only executes), pinned FleeReasonTest (tactic/grab/cutoff-fight/
+  cutoff-step/rally); STAY_BASELESS/CORNERED/NOWHERE ride the existing retreat net until a scenario names them.
+  Next: twin carries the reason on FLEE rows (representation the CherryVis review asked for), then the swamped-dragoon
+  run-escalation behind STEP_CUTOFF (NEXT #190).
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;
