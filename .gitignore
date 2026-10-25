@@ -2,6 +2,7 @@
 *.ear
 *.war
 .idea/
+.vscode/
 /build/
 /bwapi-data/BWTA2/*
 /dist/
