@@ -82,6 +82,12 @@ public class BattleCommander extends Commander {
         if (retreatIfBeaten(unit, tactic, anchor, leader)) return;
         if (leaveIfBreached(unit)) return;
 
+        // Specialist behaviors own their frame before the generic
+        // engagement: a brewing Reaver, a hunting Corsair, a running Dark
+        // Templar, a storming High Templar. Anything else falls through
+        // untouched to the shared pipeline below.
+        if (atlantis.combat.behaviors.SpecialistBehaviors.act(unit)) return;
+
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null) {

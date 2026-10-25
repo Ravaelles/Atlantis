@@ -1701,6 +1701,15 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   Trapped case extracted to TrappedByMassZealots (own predicate + sim-bracketed line, PostureReasons delegates;
   pinned TrappedByMassZealotsTest). Re-home: the whole family now lives in atlantis.combat.focus (see #194).
 
+- - **#198** Specialist combat behaviors (owner: Corsair/Reaver/DT/HT need their own behaviors, not the generic
+  duel pipeline; short verb-first names, no Behavior suffix - the tag vocabulary already lives in the Behavior
+  enum). Slice 1 LANDED (red-green): SpecialistBehaviors ordered dispatch hooked past retreat/leave in
+  BattleCommander.act (zero behavior change for other types); ProduceScarabs (brew at <=3 with banked minerals,
+  no double orders, never mid-swing); CorsairHunt (unmolested Corsair closes a cooling Overlord and kills it
+  instead of idling). Pinned SpecialistBehaviorsTest 6/6 (decision + wired act integration both ways).
+  Next: DT run-when-attacked, HT storm-on-clump (same registration shape), Observer coverage audit (detector
+  chain exists - verify, don't rebuild).
+
 ## Current game state (updated 2026-10-21)
 
    Snapshot 2026-10-21 → _AI/WINE-MACRO-DATUMS.md §10 (frozen reference;

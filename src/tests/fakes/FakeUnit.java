@@ -57,6 +57,8 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean effVisible = true;
     public int hp;
     public int shields = 0;
+    public int scarabCount = 5;
+    public boolean training = false;
     public boolean isVisibleUnitOnMap = true;
     public boolean lifted = false;
     public boolean loaded = false;
@@ -234,6 +236,15 @@ public class FakeUnit extends AUnit implements Serializable {
     }
 
     @Override
+    public int scarabCount() {
+        return scarabCount;
+    }
+
+    @Override
+    public boolean isTrainingAnyUnit() {
+        return training;
+    }
+
     public int energy() {
         return energy;
     }
