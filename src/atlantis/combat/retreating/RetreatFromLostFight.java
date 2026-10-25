@@ -148,6 +148,9 @@ public final class RetreatFromLostFight {
                     CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
                 if (home == null) home = ClusterRally.regroupRallyPoint(unit);
             }
+            // Retreat floor (owner 2026-10-25): a retreat stops at the
+            // middle-choke line, it never runs all the way home.
+            home = RetreatFloor.clamp(home);
             HasPosition point = ClusterRally.gatherPointFor(unit, leader, home, tactic);
             if (point != null && unit.distTo(point) >= 0.2) {
                 return new Verdict(FleeReason.RALLY, point);
