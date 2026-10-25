@@ -11,9 +11,14 @@
 #     --map="sscai/(3)TauCross.scx" --bots AtlantisP:P "Zealot Hell"
 #
 # After the game the trace lives in the newest game dir:
-#   ~/.scbw/games/<GAME>/write_0/cherryvis_*.cvis/trace.json
-# which is the layout the viewer opens. Needs one quiet box: never run
-# alongside the test suite or another game (CONVENTIONS one-game rule).
+#   ~/.scbw/games/<GAME>/write_0/cherryvis_dir.rep.cvis/trace.json
+# That is where the bot writes it, NOT where the viewer reads it: the
+# server pairs <name>.rep with a sibling <name>.rep.cvis/ directory, so
+# stage the trace first:
+#   bash scripts/stage-cvis.sh ~/.scbw/games/<GAME>
+# (then open the `cvis` container - see _AI/CHERRYVIS-DOCKER.md). Needs
+# one quiet box: never run alongside the test suite or another game
+# (CONVENTIONS one-game rule).
 
 set -u
 
