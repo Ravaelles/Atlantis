@@ -1622,7 +1622,11 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   PvsZ, VICTORY 9630f, bottom start, pre-escalation jar): Dragoon #174, 117 stuck-no-step + 16 hits f8899-9025,
   died f9027 at (117,32) - 0-2 frames after the last stuck row. During its window the cluster rows read
   FLEE/RALLY dominant (new fleeReason twin): the army marched home while the cutoff dragoon glued in place -
-  exactly the shape the escalation targets; adjudication of the fix rides the next game.
+  exactly the shape the escalation targets; adjudication of the fix rides the next game. FIGHT-path slice
+  LANDED 2026-10-26 (red-green): kiteThreat's stuck-no-step while chewed no longer falls through to trade -
+  the frame leaves through the same retreat net (dragoon-only, zealot last-stand untouched; anchor+leader
+  threaded through fight()). Pinned the FIGHT variant in PocketGluedDragoonTest (red: 0.9 tiles, died f78;
+  stash-verified both ways); KiteTwin.escalatedRun rows the handoff for live adjudication.
 
 - - **#192** Gateway demand dies on null position during battle (owner report, Zealot Hell GAME_21D55CA9 7:00-7:30):
   9 Gateway orders READY_TO_PRODUCE (#87-#98) minted and instantly cancelled one by one ("Null position for Gateway").

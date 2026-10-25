@@ -39,6 +39,17 @@ public class KiteTwin {
         row(dragoon, threat, "stuck-order-refused");
     }
 
+    /**
+     * Stuck with chewers on (NEXT #190 follow-up): the validated escape
+     * has nowhere to go and standing trades a lost DPS race, so the
+     * frame leaves through the retreat net instead. Rows next to
+     * stuck-no-step: without it the run is invisible and the next
+     * stuck row looks like a repeated decision instead of a handoff.
+     */
+    public static void escalatedRun(AUnit dragoon, AUnit threat) {
+        row(dragoon, threat, "stuck-escalated-run");
+    }
+
     public static void frozenReset(AUnit dragoon, AUnit threat) {
         row(dragoon, threat, "frozen-reset");
     }

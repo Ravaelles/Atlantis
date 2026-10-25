@@ -16,6 +16,7 @@ import atlantis.combat.twins.FightTrace;
 import atlantis.combat.twins.HitTwin;
 import atlantis.combat.twins.ShotTwin;
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -51,7 +52,7 @@ public final class FightTarget {
         DuelMemory.clear();
     }
 
-    public static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
+    public static void fight(AUnit unit, AUnit target, BattleStrategy strategy, HasPosition anchor, AUnit leader) {
         // Snapshot the contact point while it is visible: once sight is
         // lost the enemy position reads null (or goes stale), so the hunt
         // has nothing to march to (1Drag_v_1Zeal sat 9 min for exactly
@@ -111,7 +112,7 @@ public final class FightTarget {
         // the moment one is really hit, the formation breaks and it
         // attacks. Lone-zealot armies never hold (they would stare).
         if (unit.isZealot() && atlantis.combat.strategy.ZealotHoldFire.hold(unit)) return;
-        if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
+        if (kiteThreat(unit, threat, now, lastStep, strategy, anchor, leader)) return;
         if (reengage(unit, target, now, lastStep)) return;
 
         rearmAttack(unit, target, now, lastStep);
@@ -200,7 +201,8 @@ public final class FightTarget {
     }
 
     /** Kite the threat when the margin rule says so, or false to close in. */
-    private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep, BattleStrategy strategy) {
+    private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep, BattleStrategy strategy,
+        HasPosition anchor, AUnit leader) {
         if (threat == null) return false;
         if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
 
@@ -257,6 +259,19 @@ public final class FightTarget {
             if (dest != null && violatesBuildingClearance(dest, unit)) dest = null;
             if (dest == null) {
                 KiteTwin.nowhereToStep(unit, threat);
+
+                // Stuck with chewers on (NEXT #190 follow-up): validated
+                // steps have nowhere to go and standing trades a lost DPS
+                // race, so the frame leaves through the retreat net
+                // instead of falling through to trade. Dragoons only:
+                // the zealot last-stand gun (NEXT #188) stays untouched.
+                if (unit.isDragoon() && Kite.isBeingChewed(unit)
+                    && atlantis.combat.retreating.RetreatFromLostFight.retreat(
+                        unit, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, anchor, leader)) {
+                    KiteTwin.escalatedRun(unit, threat);
+
+                    return true;
+                }
 
                 return false;
             }

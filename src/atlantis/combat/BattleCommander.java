@@ -94,7 +94,7 @@ public class BattleCommander extends Commander {
             ArmyContact.noteFight(unit, target, tactic);
             if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;
 
-            fight(unit, target, strategy);
+            fight(unit, target, strategy, anchor, leader);
 
             return;
         }
@@ -125,8 +125,8 @@ public class BattleCommander extends Commander {
     }
 
     /** The engaged frame: swing discipline, kite, glide, re-arm. */
-    private static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
-        FightTarget.fight(unit, target, strategy);
+    private static void fight(AUnit unit, AUnit target, BattleStrategy strategy, HasPosition anchor, AUnit leader) {
+        FightTarget.fight(unit, target, strategy, anchor, leader);
     }
 
     /** Lost contact on a baseless map marches the remembered point. */

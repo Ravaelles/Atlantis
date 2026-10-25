@@ -25,10 +25,11 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * standing. canCmd+canMove all true: validation side, not refusal.
  *
  * <p>Shape: a dragoon detached from its army, backed into a pocket
- * mouth with four zerglings chewing, FLEE tactic. The current code
- * fights the hopeless race in place (red): near-zero displacement
- * and/or death in the pocket. The run-escalation fix turns this green
- * by marching home instead of donating.
+ * mouth with four zerglings chewing. The current code fights the
+ * hopeless race in place (red): near-zero displacement and/or death
+ * in the pocket. The run-escalation fix turns this green by marching
+ * home instead of donating - on FLEE via the cutoff verdicts, on
+ * FIGHT via the kite-site escalation into the same retreat net.
  */
 @Tag("combat")
 public class PocketGluedDragoonTest extends AbstractTestWithUnits {
@@ -37,7 +38,17 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
 
     @Test
     public void cutoffSwampedDragoonRunsHome() {
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 13, 19);
+        assertRunsHome(FightOrFlight.Tactic.FLEE, 13, new int[][] { { 18, 18 }, { 18, 19 }, { 18, 20 }, { 19, 19 } });
+    }
+
+    @Test
+    public void fightPathGlueEscalatesToRun() {
+        assertRunsHome(FightOrFlight.Tactic.FIGHT, 11, new int[][] { { 16, 18 }, { 16, 19 }, { 16, 20 }, { 17, 19 },
+            { 17, 18 }, { 17, 20 } });
+    }
+
+    private void assertRunsHome(FightOrFlight.Tactic tactic, int dragoonTx, int[][] lingTiles) {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, dragoonTx, 19);
         dragoon.hp = 120;
         dragoon.shields = 0;
         dragoon.cooldown = 10;
@@ -47,12 +58,11 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
         FakeUnit b = fake(AUnitType.Protoss_Dragoon, 51, 20);
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 52, 20);
 
-        FakeUnit l1 = fake(AUnitType.Zerg_Zergling, 18, 18);
-        FakeUnit l2 = fake(AUnitType.Zerg_Zergling, 18, 19);
-        FakeUnit l3 = fake(AUnitType.Zerg_Zergling, 18, 20);
-        FakeUnit l4 = fake(AUnitType.Zerg_Zergling, 19, 19);
-        FakeUnit[] lings = new FakeUnit[] { l1, l2, l3, l4 };
-        for (FakeUnit ling : lings) ling.setEnemy();
+        FakeUnit[] lings = new FakeUnit[lingTiles.length];
+        for (int i = 0; i < lingTiles.length; i++) {
+            lings[i] = fake(AUnitType.Zerg_Zergling, lingTiles[i][0], lingTiles[i][1]);
+            lings[i].setEnemy();
+        }
 
         // Home base far east: a RALLY verdict marches far, not in place.
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 55, 25);
@@ -60,8 +70,8 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
         // Pocket mouth: walls west/north/south, open east toward home.
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         arena.block(10 * TILE, 17 * TILE, 1 * TILE, 5 * TILE);
-        arena.block(10 * TILE, 17 * TILE, 5 * TILE, 1 * TILE);
-        arena.block(10 * TILE, 21 * TILE, 5 * TILE, 1 * TILE);
+        arena.block(10 * TILE, 17 * TILE, 7 * TILE, 1 * TILE);
+        arena.block(10 * TILE, 21 * TILE, 7 * TILE, 1 * TILE);
         useArenaWalkability(arena);
 
         int startX = dragoon.position.x();
@@ -79,7 +89,7 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
                 world.tick(() -> {
                     if (dragoon.hp > 0) {
                         BattleCommander.act(
-                            dragoon, FightOrFlight.Tactic.FLEE, null, dragoon);
+                            dragoon, tactic, null, dragoon);
                     }
                     ZombiePolicies.chaseNearest(
                         Arrays.asList(lings),

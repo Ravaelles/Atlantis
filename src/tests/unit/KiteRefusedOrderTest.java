@@ -57,7 +57,7 @@ public class KiteRefusedOrderTest extends WorldStubForTests {
         world(5, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            FightTarget.fight(dragoon, zealot, BattleStrategy.OPEN_FIELD);
+            FightTarget.fight(dragoon, zealot, BattleStrategy.OPEN_FIELD, null, null);
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"result\":\"stuck-order-refused\""),
                 "a validated step the engine refuses is not nowhere-to-step: " + rows);
@@ -79,7 +79,7 @@ public class KiteRefusedOrderTest extends WorldStubForTests {
         world(5, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            FightTarget.fight(dragoon, zealot, BattleStrategy.OPEN_FIELD);
+            FightTarget.fight(dragoon, zealot, BattleStrategy.OPEN_FIELD, null, null);
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"result\":\"stuck-order-refused\""), "got: " + rows);
             assertTrue(rows.contains("\"canCmd\":true") && rows.contains("\"canMove\":true"),
