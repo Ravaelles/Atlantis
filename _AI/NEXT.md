@@ -1631,7 +1631,10 @@ AcquireTarget seams, BattleCommander only keeps delegating.
   aroundPosition; no blind change to the cancel (it guards real stuck loops). Self-cancel slice LANDED 2026-10-25
   (sim-first, red-green): checkBuildingsOnly and completedBuildingOverlaps both read completed-only, so a warping
   building on its own site no longer cancels itself (pinned warpingBuildingDoesNotCancel; standing-building cancel
-  unchanged). Null-position root cause (aroundPosition WAIT-vs-search) stays open.
+  unchanged). Spiral slice LANDED 2026-10-26 (sim-first, red-green): ProtossPositionFinder skips candidates
+  with groundDist > maxDistance and keeps scanning (the across-wall class: Euclidean-near but ground-far no longer
+  returns for the final guard to kill); refusal named 'Too far by ground' in the breakdown instead of 'OK'.
+  Null-position root cause (aroundPosition WAIT-vs-search) stays open.
 
 - - **#193** Main/natural designation accepted giant areas (owner report: TauCross bottom start showed a giant area
   nowhere near any base as the main choke; the region-null fallback picked the Euclidean-nearest choke with no width

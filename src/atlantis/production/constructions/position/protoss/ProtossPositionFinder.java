@@ -138,6 +138,19 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                             continue;
                         }
 
+                        // Ground-contract rule (NEXT #192): rings are Euclidean,
+                        // but a builder walks the ground - a tile across the wall
+                        // reads near by ring and far by path (measured: Gateway
+                        // [105,110] 121 ground tiles from the choke at Euclidean
+                        // ring ~16, guard-nulled then order-cancelled in a loop).
+                        // Skip it here and keep scanning instead of returning the
+                        // first Euclidean hit for the final guard to kill.
+                        if (constructionPosition.groundDistanceTo(nearTo) > maxDistance) {
+                            AbstractPositionFinder._STATUS = "Too far by ground";
+                            if (reasons != null) reasons.merge(AbstractPositionFinder._STATUS, 1, Integer::sum);
+                            continue;
+                        }
+
                         if (!PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
                             builder, building, constructionPosition, nearTo
                         )) {
