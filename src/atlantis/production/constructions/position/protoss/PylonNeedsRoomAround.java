@@ -23,7 +23,7 @@ public class PylonNeedsRoomAround {
 
     public static boolean isTooTight(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
-        if (A.supplyFree() < 2) return false;
+        if (A.supplyFree() <= 1) return false;
 
         int[][] corners = {{ROOM_TILES, ROOM_TILES}, {-ROOM_TILES, -ROOM_TILES}, {ROOM_TILES, -ROOM_TILES}, {-ROOM_TILES, ROOM_TILES}};
         for (int[] corner : corners) {

@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position.protoss;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -9,6 +10,7 @@ import atlantis.units.select.Select;
 public class ProtossTooCloseToOtherBuildings {
     public static boolean isTooClose(AUnit builder, AUnitType building, APosition position) {
         if (!building.isProtossImportantTechBuilding()) return false;
+        if (IsProtossSupplyBlocked.duringNonEarlyGame()) return false;
 
         int radius = building.isCannon() ? 6 : 5;
 

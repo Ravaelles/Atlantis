@@ -12,6 +12,7 @@ public class ProtossTooCloseToMapBoundaries {
 //        if (true) return false;
 
         if (We.protoss() && !building.isGateway() && !building.isPylon()) return false;
+        if (A.supplyFree() <= 0 && A.supplyTotal() >= 40) return false;
 
         // A build tile is 32 pixels, not 30 (owner report, 2026-10-10). Every other
         // place in the tree uses 32 - APosition.create(tx, ty) multiplies by 32,
@@ -22,7 +23,7 @@ public class ProtossTooCloseToMapBoundaries {
         // truth is 119, so the bot threw away eight columns and rows of perfectly
         // good build sites and reported "Too close to right map boundary" for
         // positions nowhere near an edge.
-        int marginPx = 3 * PX_PER_TILE;
+        int marginPx = (int) (2.4 * PX_PER_TILE);
         if (A.supplyUsed() <= 30 && building.isPylon()) marginPx = 7 * PX_PER_TILE;
 
         int px = position.x();

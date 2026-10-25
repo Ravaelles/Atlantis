@@ -2,7 +2,9 @@ package atlantis.production.constructions.position.protoss;
 
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Positions;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,11 +37,13 @@ public class PylonTooFarFromBaseEarly {
         // bases, and an unnamed kill merges the previous candidate's _STATUS -
         // which is how a doctrine refusal once inflated "Can't physically
         // build here" by hundreds (NEXT #81). Same boolean as before.
-        if (Select.mainOrAnyUnit().groundDist(position) > 22) {
-            AbstractPositionFinder._STATUS = "Pylon too far from main, too early";
+//        if (Select.mainOrAnyUnit().groundDist(position) > 22) {
+        if (Positions.nearestToFrom(position, BaseLocations.baseLocations()).groundDist(position) > 25) {
+            AbstractPositionFinder._STATUS = "Pylon too far from base, too early";
 
             return true;
         }
+
         return false;
     }
 }

@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.AbstractPositionFinder;
+import atlantis.production.constructions.position.protoss.IsProtossSupplyBlocked;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -21,6 +22,8 @@ public class OtherConstructionTooClose {
 
         // Compare against planned construction places
         for (Construction otherConstr : ConstructionRequests.notFinished()) {
+            if (building.isPylon() && IsProtossSupplyBlocked.duringNonEarlyGame()) return false;
+
             HasPosition otherPosition = otherConstr.buildPosition();
 
             if (position != null && otherPosition != null) {
