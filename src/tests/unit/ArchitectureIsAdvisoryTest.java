@@ -70,9 +70,11 @@ public class ArchitectureIsAdvisoryTest {
                 "the architecture scope must be tracked separately (ARCH_ADVISORY), not mixed into "
                         + "the normal scope - a shared pass would have to downgrade unit failures too");
 
-        assertTrue(source.contains("exit $?") || source.contains("|| exit"),
-                "the normal scope must exit with its OWN code before the advisory pass runs, so a"
-                        + " real unit/e2e regression still fails the build");
+        assertTrue(source.contains("exit $?") || source.contains("|| exit")
+                || (source.contains("status=$?") && source.contains("exit $status")),
+                "the normal scope must exit with its OWN code before the advisory"
+                        + " pass runs, so a real unit/e2e regression still fails the build"
+                        + " (the || exit shape, or the captured-output shape with status=$?)");
 
         // The advisory pass must come after the normal one; otherwise a boundary
         // warning could
