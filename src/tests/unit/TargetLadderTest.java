@@ -125,6 +125,29 @@ public class TargetLadderTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void sharedFocusBeatsNearestWhenNothingIsInRange() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        d.hp = 100;
+        d.cooldown = 0;
+        FakeUnit x = fake(AUnitType.Protoss_Zealot, 30 + 5, 20);
+        x.setEnemy();
+        x.hp = 60;
+        FakeUnit y = fake(AUnitType.Protoss_Zealot, 30 + 7, 20);
+        y.setEnemy();
+        y.hp = 3;
+
+        world(3, fakeOurs(nexus, d), fakeEnemies(x, y), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertEquals(y.id(), idOf(AcquireTarget.acquire(d)),
+                "rules 1-4 decline (not melee, nothing committed, nothing "
+                + "in range, nothing stuck), so the shared weakest-in-nine "
+                + "wins over the nearer raider - rule 5 owns the pick");
+        });
+    }
+
     private static int idOf(atlantis.units.AUnit u) {
         return u == null ? -1 : u.id();
     }

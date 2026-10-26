@@ -344,8 +344,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   HP is refreshed every frame. `DuelMemory` now latches battle-frame damage; it
   is a backstop, while VETO/guns-in-range usually decide first. The one active
   Protoss consumer migrated; remaining consumers are Terran-only or dormant.
-- **#184** TargetLadder owns the explicit nine-rule order; three rules are
-  extracted, six still delegate to legacy implementations. Sim-pinned slices
+- **#184** TargetLadder owns the explicit nine-rule order; five rules are
+  extracted (chewer, keep-current, weakest-in-range, sticky, shared),
+  four still delegate to legacy implementations. Sim-pinned slices
   cover chewer selection, re-arm/step interaction and undetected targets. A
   forced finish on a 10-HP chewer donates the Dragoon, so a faithful finish rule
   waits for post-cut ladder work. Coordination preferences remain removal
