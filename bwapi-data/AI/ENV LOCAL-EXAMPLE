@@ -5,7 +5,7 @@ BWAPI_DATA_PATH=C:\\Program Files (x86)\\Starcraft\\
 CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
 FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
-GENERATE_CHERRYVIS_REPLAY=true
+CHERRYVIS_ENABLED=true
 MODIFY_BWAPI_INI=true
 # After every local Wine game, the WINE_LOG / WINE_DEBUG / WINE_DECISIONS
 # triple lands in this directory when non-empty (fixed basenames, no

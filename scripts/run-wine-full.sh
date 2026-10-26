@@ -678,7 +678,7 @@ if [ -d "$CVIS_SRC" ]; then
   cp -f "$CVIS_SRC"/trace.json "$CVIS_SRC"/trace.json.zst "$CVIS_SRC"/trace_raw.json "$CVIS_SRC"/game_summary.json "$LOG_DIR/CVIS/" 2>/dev/null || true
   say "cherryvis trace collected: $LOG_DIR/CVIS"
 else
-  say "cherryvis trace missing: $CVIS_SRC was never written (was GENERATE_CHERRYVIS_REPLAY seen by the bot?)"
+  say "cherryvis trace missing: $CVIS_SRC was never written (was CHERRYVIS_ENABLED seen by the bot?)"
 fi
 # Per-run archive (MAP is final here): the live copy above stays where the
 # tooling reads it; the run's own directory keeps the evidence past the

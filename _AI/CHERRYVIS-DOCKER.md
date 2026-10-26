@@ -40,3 +40,7 @@ immediate but dies with the next rebuild: stopgap only, then bake the diff.
 Traces: `--cvis` runs leave `/sc-ai/REPLAYS/<name>.rep` + `<name>.rep.cvis/`
 (`trace.json` + `trace.json.zst`). Since NEXT #76 the trace carries direct
 `unit_ids` pairs, so the viewer skips fuzzy matching entirely.
+Flag: `CHERRYVIS_ENABLED=1` in the bot slot ENV (renamed 2026-10-26 from
+`GENERATE_CHERRYVIS_REPLAY`). scbw launchers (`/sc-ai/BOTS/_*.sh`) run
+through `/sc-ai/BOTS/play-cvis.sh`, which ensures the flag and pairs the
+game's trace next to its root replay after the match.

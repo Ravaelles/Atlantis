@@ -36,4 +36,4 @@ WINE_SUPER_FAST_MODE=1
 # non-UMS games write bwapi-data/write/cherryvis_dir.rep.cvis, collected
 # and archived per run by run-wine-full.sh. The viewer opens the archived
 # CVIS dir (same 4-file layout as the OpenBW runner).
-GENERATE_CHERRYVIS_REPLAY=true
+CHERRYVIS_ENABLED=true

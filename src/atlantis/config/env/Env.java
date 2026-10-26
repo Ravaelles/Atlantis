@@ -16,7 +16,7 @@ import java.io.File;
  */
 public class Env {
     private static boolean firstRun = true;
-    private static boolean generateCherryVisReplay = false;
+    private static boolean cherryVisEnabled = false;
     private static boolean isBenchmark = false;
     private static boolean isLocal = false;
     private static boolean isTesting = false;
@@ -204,8 +204,8 @@ public class Env {
                 endGameViaEngine = parseBool(key, value, false);
                 return true;
 
-            case "GENERATE_CHERRYVIS_REPLAY":
-                generateCherryVisReplay = parseBool(key, value, false);
+            case "CHERRYVIS_ENABLED":
+                cherryVisEnabled = parseBool(key, value, false);
                 return true;
 
             case "MODIFY_BWAPI_INI":
@@ -534,7 +534,7 @@ public class Env {
         return modifyBwapiIni;
     }
 
-    public static boolean generateCherryVisReplay() {
-        return generateCherryVisReplay;
+    public static boolean cherryVisEnabled() {
+        return cherryVisEnabled;
     }
 }

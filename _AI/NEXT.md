@@ -234,7 +234,7 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#96** Wine verification: owner-side checks remain for painter labels and a
   missions game. Macro artifacts and replay naming are verified; UMS duels
   intentionally collect EVENTS + WINE_LOG. Replay saving remains flaky
-  engine-side; CherryVis is opt-in via `GENERATE_CHERRYVIS_REPLAY=true`
+  engine-side; CherryVis is opt-in via `CHERRYVIS_ENABLED=true`
   (booleans read `true`/`1` on, `false`/`0` off, any case; garbage logs once
   and keeps the default - `Env.parseBool`, landed 2026-10-25). On docker runs
   use `scripts/run-scbw-with-cvis.sh` (scbw.play has no --cvis flag).

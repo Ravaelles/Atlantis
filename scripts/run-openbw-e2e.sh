@@ -86,7 +86,7 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 #   --long    the economy runs: >=5 Pylons, >=3 Gateways, >=1 Zealot, >=5 Dragoons,
 #             >=2 Assimilators, >=3 Nexus at the end of a full-length game.
 #
-#   --cvis    also record a CherryVis trace for the run (GENERATE_CHERRYVIS_REPLAY
+#   --cvis    also record a CherryVis trace for the run (CHERRYVIS_ENABLED
 #             in the bot's ENV). The bot writes bwapi-data/write/cherryvis_dir.rep.cvis/
 #             next to where it ran; this script copies it into the run directory
 #             (and next to the .rep when combined with --save-replay, as
@@ -500,7 +500,7 @@ EOF
   if [ "${CVIS:-0}" = "1" ]; then
     # --cvis: the bot records its CherryVis trace for this run. Written only
     # when asked - the trace costs per-frame bookkeeping the normal tiers skip.
-    echo "GENERATE_CHERRYVIS_REPLAY=true" >> "$1"
+    echo "CHERRYVIS_ENABLED=true" >> "$1"
   fi
   if [ "${SHORT_GATE:-0}" = "1" ]; then
     # --short: end the game the moment the opening is PROVEN (a finished Cybernetics Core
@@ -887,7 +887,7 @@ if [ "${CVIS:-0}" = "1" ]; then
     cp -f "$CVIS_SRC"/trace.json "$CVIS_SRC"/trace.json.zst "$CVIS_SRC"/trace_raw.json "$CVIS_SRC"/game_summary.json "$CVIS_DEST/" 2>/dev/null || true
     say "cherryvis trace collected: $CVIS_DEST"
   else
-    say "cherryvis trace missing: $CVIS_SRC was never written (was GENERATE_CHERRYVIS_REPLAY seen by the bot?)"
+    say "cherryvis trace missing: $CVIS_SRC was never written (was CHERRYVIS_ENABLED seen by the bot?)"
   fi
   if [ "${SAVE_REPLAY:-0}" = "1" ] && [ -n "${REPLAY_FILE:-}" ]; then
     # Pair with the ACTUAL .rep on disk, not the configured name: the engine

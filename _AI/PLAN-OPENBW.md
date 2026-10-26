@@ -82,7 +82,7 @@ minerals.
 timeout 150 bash scripts/run-openbw-e2e.sh --short --cvis "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
-Sets `GENERATE_CHERRYVIS_REPLAY=true` in the bot's ENV. The bot writes
+Sets `CHERRYVIS_ENABLED=true` in the bot's ENV. The bot writes
 `bwapi-data/write/cherryvis_dir.rep.cvis/` (`trace.json` plain, `trace.json.zst`
 compressed copy, `trace_raw.json`, `game_summary.json`); the script copies it
 into the run dir and, with `--save-replay`, next to the replay as

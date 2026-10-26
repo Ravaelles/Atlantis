@@ -4,7 +4,7 @@
 # scbw.play itself has no --cvis flag (verified: no cvis/CHERRYVIS key in
 # the installed scbw package) - the switch is the bot's ENV file, which
 # the container mounts from the bot slot. This wrapper flips
-# GENERATE_CHERRYVIS_REPLAY to true for one run and restores it after,
+# CHERRYVIS_ENABLED to true for one run and restores it after,
 # so routine games pay no trace cost.
 #
 #   bash scripts/run-scbw-with-cvis.sh --headless --timeout 1000 \
@@ -34,9 +34,9 @@ cp "$BOT_ENV" "$BACKUP"
 restore() { cp "$BACKUP" "$BOT_ENV"; rm -f "$BACKUP"; }
 trap restore EXIT
 
-sed -i 's/^GENERATE_CHERRYVIS_REPLAY=.*/GENERATE_CHERRYVIS_REPLAY=true/' "$BOT_ENV"
-grep -q '^GENERATE_CHERRYVIS_REPLAY=true' "$BOT_ENV" \
-  || echo "GENERATE_CHERRYVIS_REPLAY=true" >> "$BOT_ENV"
+sed -i 's/^CHERRYVIS_ENABLED=.*/CHERRYVIS_ENABLED=true/' "$BOT_ENV"
+grep -q '^CHERRYVIS_ENABLED=true' "$BOT_ENV" \
+  || echo "CHERRYVIS_ENABLED=true" >> "$BOT_ENV"
 echo "[scbw-cvis] trace ON for this run ($BOT_ENV)"
 
 BEFORE="$(ls -t "$HOME/.scbw/games" 2>/dev/null | head -1)"

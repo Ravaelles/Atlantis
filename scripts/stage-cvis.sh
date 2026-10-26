@@ -95,7 +95,7 @@ for root in "$@"; do
         # Older replays whose trace was never in this tree are history, not a
         # failure - only a root that produced nothing usable is reported.
         if [ "${#traces[@]}" -eq 0 ]; then
-            echo "[stage-cvis] no trace under $root (was GENERATE_CHERRYVIS_REPLAY=true seen by the bot?)" >&2
+            echo "[stage-cvis] no trace under $root (was CHERRYVIS_ENABLED=true seen by the bot?)" >&2
             untraceable=$((untraceable + 1))
         elif [ "${#paired[@]}" -eq 0 ]; then
             echo "[stage-cvis] no usable trace under $root (trace dirs without trace.json)" >&2

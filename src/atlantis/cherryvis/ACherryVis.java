@@ -9,7 +9,7 @@ public class ACherryVis {
     public static boolean isEnabled() {
 //        if (true) return false;
 
-        return !A.isUms() && Env.generateCherryVisReplay();
+        return !A.isUms() && Env.cherryVisEnabled();
     }
 
     // =========================================================
