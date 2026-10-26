@@ -13,66 +13,31 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
 
 ---
 
-- **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
-  and is bounded, but an E2E test is not "fully working" until all of these hold:
+- **#47 - OpenBW E2E "fully working" (open umbrella, tracked in `NEXT.md`,
+  not a resolved case).** Only the lasting trap is kept here, because it
+  re-appears in every runner investigation: **`Pylons=0` is never a placement
+  bug by itself.** The placement hunt was re-opened three times on that
+  symptom, each killed by a probe; the causes sat one layer below:
+  - the builder was assigned but never started (`BuilderManager` history, 1799
+    frames, the order never issued);
+  - `DefineConstructionForNewUnit` matched by NOT_STARTED status, so a building
+    whose construction was already IN_PROGRESS logged `CANNOT define
+    construction` and held its worker forever (#49);
+  - `Game.hasPath` is region-based and OpenBW publishes no regions, so it
+    answered `false` for every pair (fixed by the vendored
+    `lib/jbwapi-2.2.0-atlantis.jar`).
 
-  1. **Attach is now reliable - fixed 2026-10-09.** The host was killed a few
-     seconds after starting and left its PID in the registry, so the client
-     looped on `No server proc ID` while the run still reported exit 0. The bot
-     JVM is now killed 10 s before the host, so the host outlives the client, and
-     a log with no `HELLO_ATLANTIS` is an assertion failure. Verified: three
-     consecutive runs attached and passed. Remaining: a run that fails for some
-        other reason must still be distinguishable from a pass. **Non-zero bot exits
-        now fail before scenario assertions** (a timed-out run previously printed
-        `SCENARIO PASSED` with no expectations); this is pinned by
-        `LauncherBuildsTheJarTest` and fast suite 346/346. A real non-zero process-exit
-        integration run is still unverified.
-     2. **A Pylon is placed in a real run.** NO at first, and the cause chain
-     ran through three wrong readings, each killed by a probe (transcripts in
-     git): "the engine lies" (wrong: `engBuild=true`, only genuinely occupied
-     tile (7,44) refuses); invisibility (wrong: 1149 invisible tiles answer
-     `buildInc=true`); "unbuildable search area" (artefact of a diagnostics
-     bug - plus our own failure print logged `x == y`, fixed, print-only).
-     Measured roots: the first-Pylon `nearTo` was the base coordinate itself
-     (a `translateTilesTowards(mineralsCenter, 50)` landed 36 tiles off-map,
-     `ensureWithinBounds` nulled, guard skipped - rewritten to push 7 tiles
-     off the base), and `Region mismatch` fired on every candidate
-     (`Game.hasPath` is region-based, always false on OpenBW - routed through
-     `MapTiles.hasPathBetween`). Result: `SUCCESS FOR Pylon at 113,15`,
-     failures 2208+ to 0. Engine jar ground truth used throughout: Pylon 2x2,
-     Gateway 4x3.
+  Two engine-level facts measured along the way: the engine never "lies"
+  (`isBuildable(tx,ty,true)` refuses a tile only when a *unit* stands there,
+  including our own mining worker - the builder itself is exempt, see
+  `CHALLENGES/Bwapi.md`), and Pylon is 2x2 (4x3 is Nexus/Gateway) - sizes come
+  from `bwapi.UnitType`, never from memory (§9). Current status and the open
+  remainder live in `NEXT.md` (#94: no enemy spawns; `IDEA-E2E-TESTS.md` §3.5
+  orders the E2E steps). Measure the builder and the status chain before
+  re-opening the placement hunt on `Pylons=0` alone - see `NOTES.md`,
+  "Tracing one construction's life from logs".
 
-     **NEW BLOCKER (open, and it is #48's territory): the builder never starts.**
-     With placement working, the log shows the construction is created and assigned -
-     `Builder diagnostic: unit=#118 Probe @[113,15] (BuilderManager) construction=Pylon
-     status=NOT_STARTED`, 1799 frames of `BuilderManager` in its history - and then
-     `Cancel construction: Pylon took too long (44s) / at:[113,15] / buildable:true`.
-     So the tile is good, the builder is assigned and in `BuilderManager`, and the order
-     is never issued. **`Pylons=0` is now this, not placement.**
-
-     **Do not re-open the placement hunt on account of `Pylons=0`:** placement benefits
-     from `canBuildHere`, `BuildingTilesAreOccupied`, the terrain flags and visibility
-     were all measured and none of them was the cause; the remaining failure is
-     builder execution.
-
-     A second, independent defect is confirmed but is not the blocker: 549 log lines
-     of `Region mismatch` (`IsProbablyInAnotherRegion` asks `hasPathTo`, which is
-     region-based and always false on OpenBW because the server publishes no
-     regions - `OpenBW.md`). It is reached after `CanBuildHere`, so it is a
-     follow-up once placement accepts tiles at all.
-
-     If the default legacy path still refuses after the owner's latest changes,
-     diagnose its candidate search from a fresh bounded run. The planned long-term
-     option remains the Production V2 cut-over in `_AI/PLACEMENT-CUTOVER-PLAN.md`;
-     #48 tracks the separate LIVE scheduler/dispatch blocker.
-  3. A scenario file instead of loose environment variables (not implemented).
-  4. A deliberately broken build fails the same scenario (not verified).
-    5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
-       `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
-       `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
-       refusals. Still not verified on OpenBW.
-
-  - **#49 CLOSED 2026-10-11 - A PYLON IS BUILT, AND THE CHAIN RUNS.** The fix that finished
+- **#49 CLOSED 2026-10-11 - A PYLON IS BUILT, AND THE CHAIN RUNS.** The fix that finished
     it is written up in the commit that follows the library patch: `DefineConstructionForNewUnit`
     matched a new building to its construction by NOT_STARTED status, while the building's own
     construction was already IN_PROGRESS by then - so every building logged
@@ -90,39 +55,11 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
     the three that existed are all closed** (#48 duplicates, #52 slide, occupancy rule),
     and the search was already finding valid tiles (`Region mismatch` 549 -> 0).
 
-  - **Superseded note (kept as the record of the investigation): #49 is the single
-    blocker that gates everything else on OpenBW.** Measured
-    2026-10-10 with a fresh bounded run (bot exit 0, `ingame=251s`, and
-    `MAP_ANALYSIS areas=21 chokes=42` so the map model is healthy): the only
-    building the bot ever tried to place was the Pylon, and it was refused once
-    (`Can't find place for \`Pylon\`, At 8 Pylon (READY_TO_PRODUCE)(#1)`) after
-    which no further construction was requested at all. So nothing downstream can
-    be exercised - a Cybernetics Core never gets far enough to test the power rule
-    (#50), and the mineral-distance rule (#51) never gets a candidate to reject.
-    **Do not read a green suite or a clean run as evidence that #50/#51 work in a
-    game: they are behind this item and currently unexercised.**
-
-  - **#49 - IMPLEMENTED 2026-10-10 (contract + wiring); it does not change the outcome
-    yet, because the library still refuses the command (#49's own note, below, predicted
-    this shape).** `BuildingTilesAreOccupied.check(position, type, builder)` now asks the
-    rule the game enforces - the footprint may contain the assigned **builder** and
-    nothing else - and the two production call sites that have a builder pass it:
-    `RefreshConstructionPosition.shouldRefreshConstructionPosition` (which had
-    `construction.builder()` in hand and was asking "is a unit on the tiles" without it,
-    so a builder arriving at its own site looked like an obstacle) and
-    `MapTiles.canBuildHere` (whose occupancy guard called a tile occupied by the builder
-    that had walked there to build). `checkBuildingsOnly` keeps the old question for
-    callers that genuinely ask it.
-
-    Verified: 8 cases in `PlacementSearchMatchesCommandTest` (mutation-checked - dropping
-    the builder exemption fails one), 405/405 fast suite, ArchUnit 7/7.
-
-    **Live result, stated plainly: `Pylons=0` is unchanged**, and `construction=Pylon
-    status=NOT_STARTED` is logged 2038 times. That is the expected consequence of the
-    stage-4 blocker, not a failure of this fix: the order IS issued and the library
-    refuses it, so the construction status cannot advance whatever occupancy says. #49 is
-    correct and necessary; it is behind the same wall as everything else on this path.
-    Do not read the unchanged `Pylons=0` as evidence against the rule.
+  - **Superseded intermediate (kept as one line):** before the library
+    patch, the builder-exempt occupancy rule (`BuildingTilesAreOccupied`,
+    pinned in `PlacementSearchMatchesCommandTest`) landed behind the
+    stage-4 wall: the order WAS issued and the library refused it, so
+    `Pylons=0` was unchanged by design, not by failure of the rule.
 
   **The mechanism behind the Pylon refusal, as originally measured:**
 
@@ -152,8 +89,10 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   wall), stuck `Gateway NOT_STARTED` frames 3534 -> 86, and build attempts reaching the
   engine 0 accepted -> 3/3 `engineAccepted=true`. Tests: `OrphanedConstructionTest` (2),
   fast suite 418/418, ArchUnit 7/7. The per-frame `BUILDER` trace was removed in the same
-  cycle (10 283 log lines -> 64, `BUILDER @` = 0). What stays open under the item below is
-  the strategy half (should a worker held at a site that cannot start return to mining).
+  cycle (10 283 log lines -> 64, `BUILDER @` = 0). What stays open is the
+  strategy half, now tracked as `NEXT.md` #212 (a worker held at a site
+  that cannot start should return to mining; the 250-mineral worker gate
+  is worth re-examining).
 
   ---
 
@@ -182,75 +121,29 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   fill the way BWAPI expects. Fix on our side of the seam (`isConstructing`
   IS published correctly, `UnitUpdate.cpp:359`), no library fork.
 
-  ### Three fixes landed, and the last probe showed the real shape
+  Four fixes landed, each verified by a run, not by reading: status
+  advances on `isConstructing` (not the null `buildUnit()`); the "was
+  destroyed" guard no longer cancels a building it never saw (5 false
+  cancels before, none after); a finished construction is removed; and
+  the Protoss "do not switch while moving" guard no longer blocks an
+  ARRIVED builder (`lastActionLessThanAgo(20, MOVE_BUILD)` was refreshed
+  every 13 frames, so `IssueBuildOrder` was never reached - a builder one
+  tile from its Gateway climbed `lastActionAgo` 0..44, never `Build`).
+  The last two are what made the bot build reliably - but `FINISHED`
+  still stayed 0, because the construction's recorded site is not where
+  its building was put (`ourOfType(Pylon) = 1` with no Pylon within 12
+  tiles of the waiting `[16,46]`).
 
-  What was implemented and measured, in order:
+  **The finish path was the missing half - `ProtossWarping` (closed same day):**
 
-  1. **Status advances on `isConstructing` + builder at the site** (not on `buildUnit()`).
-     Verified: `status=IN_PROGRESS` appears 150 times in a run where it was zero before, and
-     the run reached `Pylons=3 Gateways=2` with minerals peaking at 306 (was ~46).
-  2. **The "was destroyed" guard no longer fires when the building was simply never seen.**
-     It read `(building == null || !building.isAlive())`, and `buildingUnit()` is null on
-     OpenBW for the whole construction, so it cancelled live Pylons 30 frames after they
-     started - measured 5 such cancels. Now it requires a building that WAS seen and has
-     since died.
-  3. **A finished construction is now removed** (`FINISHED` + `removeOrder`), which is what
-     gives the worker back to mining.
-
-  **Fix 3 does not fire yet, and the probe says why - this is the actual remaining
-  defect, and it is not in the status logic at all:**
-
-  ```
-  FINISH_CHECK Pylon at=[16,46] found=null isCompleted=false
-               status=NOT_STARTED builderAtSite=false
-  ```
-
-  On the tile the construction reserved there is **no building**, and the builder is not
-  there either - `Pylons=3` in the same run proves Pylons were built, just **somewhere
-  else**. So the construction and the building it produces have lost track of each other,
-  and the worker is held by a construction whose site is empty forever.
-
-  **FOUR FIXES LANDED, and the measurement that closes the loop (2026-10-11).** Each was
-  verified by a run, not by reading:
-
-  1. status advances on `isConstructing` (not on the null `buildUnit()`) - `IN_PROGRESS`
-     went from zero to 2631 occurrences;
-  2. the "was destroyed" guard no longer cancels a building it never saw - 5 false cancels
-     measured before, none after;
-  3. a finished construction is removed - **still does not fire, and now we know why**;
-  4. **the Protoss "do not switch while moving" guard no longer blocks an ARRIVED builder**
-     (`TravelToConstruct.asProtossMultiBuilderDoNotSwitchConstructions`): its check is
-     `lastActionLessThanAgo(20, MOVE_BUILD)` and `moveToConstruct` refreshes that action
-     every 13 frames, so it was true forever and `IssueBuildOrder` was never reached.
-     Measured before: a builder one tile from its Gateway with `action=MOVE_BUILD`,
-     `lastActionAgo` climbing 0..44, never `Build`.
-
-  **Fix 4 is the one that made the bot build both types reliably:** `Pylons=2 Gateways=2`,
-  `Gateway status=IN_PROGRESS` 1344 frames, exit 0.
-
-  The finish half was NOT status logic: `ourOfType(Pylon) = 1` with
-  `ourOfTypeWithUnfinished=0` in the same breath - a Pylon stands, and
-  the construction waiting at `[16,46]` has no Pylon within 12 tiles.
-  The construction's recorded site is not where its building was put,
-  have a building. **`FINISHED` stays 0 for that reason alone.**
-
-  ### CLOSED 2026-10-11: the finish path was the missing half - `ProtossWarping`
-
-  **This was it.** `ProtossWarping.updateNewBuildingJustWarped` runs from `OnOurUnitCreated`
-  for a building that now exists - i.e. exactly when a construction is over - and it did two
-  things wrong, both measured and both fixed:
-
-  1. **It marked the construction `IN_PROGRESS`, never `FINISHED`.** `setStatus(FINISHED)` is
-     the only status that removes it from `ConstructionRequests`, so an `IN_PROGRESS`
-     construction lasted the rest of the game: `countPendingOfType` counted a building that
-     already stood, and `BuilderManager.isBuilder` kept treating it as a reason to hold its
-     worker. Now `FINISHED` - which is also what the method's own javadoc claimed all along
-     ("remove them from construction queue").
-  2. **A building that appeared away from its reserved tile matched no construction at all.**
-     The lookup is positional (`DefineConstructionForNewUnit`, 2.5 tiles), and the site moves
-     (`RefreshConstructionPosition`) or the engine snaps a footprint. Now the positional hit
-     still wins, and on a miss the oldest unfinished construction of the same type is adopted
-     - the one whose worker has been claimed longest, which is the point.
+  `ProtossWarping.updateNewBuildingJustWarped` runs from `OnOurUnitCreated`
+  for a building that now exists - exactly when a construction is over -
+  and did two things wrong, both measured and both fixed: it marked the
+  construction `IN_PROGRESS`, never `FINISHED` (the only status that removes
+  it from `ConstructionRequests`, so it lasted the game and held its worker),
+  and a building warped away from its reserved tile matched nothing
+  (positional lookup, 2.5 tiles). Now `FINISHED` on warp, and on a positional
+  miss the oldest unfinished construction of the same type is adopted.
 
   **Evidence, unit tier:** `tests/unit/OrphanedConstructionTest` (2) - a Pylon on its reserved
   tile and a Pylon 8 tiles away both leave `constructions` empty with `builder=null`; the first
@@ -275,62 +168,16 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   immediately after `engineAccepted=true` and `getOrder=PlaceBuilding`), which is exactly what
   never happened before. **This is the measurement that closes the finish half of #53.**
 
-  **What is still open under #53:** the *engine-side* half. `buildUnit()` is null on OpenBW
-  (the harness's `getUnitFromBWAPI` id lookup fails - see `CHALLENGES/OpenBW.md`), so
-  `isConstructing` and "the building stands at the site" are the only working signals. The
-  status logic and the finish path now use those; whether an ORPHANED worker also needs the
-  `ShouldNotTravelToConstructYet` release (a worker held at a site that cannot start should
-  return to mining) is a strategy decision the owner must make, and the 250-mineral worker
-  gate is still worth re-examining - a base short of minerals refuses to buy the thing that
-  would earn it more.
-
-  Ruled out along the way: the finder re-offering one tile (tile is fine,
-  the recorded construction is not the one the builder went to);
-  `RefreshConstructionPosition` mutating the site (guarded since; the
-  mismatch reproduces after the guard). Measured: TWO constructions for
-  one building (IN_PROGRESS at `[94,111]` + NOT_STARTED twin 4 tiles
-  away; same for Pylons) - one builds, the other waits forever holding
-  its worker. `alreadyExists` misses it: same-type + within 6 tiles
-  passes, but the second order takes a path that never reaches the
-  check (creation side, not site side). Severity: every building, one
-  miner lost per duplication. Reachable since #48 gave BuilderManager
-  first priority with no claim bound. Open strategy half (owner call):
-  a worker held at an unstartable site should return to mining
-  (`ShouldNotTravelToConstructYet` covers only the travel half).
-
-  **Superseded detail, kept because the gate is still worth fixing:**
-
-  ```java
-  if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals())
-      return dont("CriticalStuff");
-  ```
-
-  Below 250 minerals - and with nothing "critical" queued - the bot refuses to train a
-  worker. So a base that is short of minerals does not buy the thing that would earn it
-  more: it waits. Every other gate above it (`NoSupply`, `CantAfford` at 50, `RushPriority`,
-  `FollowBO`, the Protoss `MineralsMargin` at 175) is a variation on the same shape -
-  "not rich enough yet" - so the whole worker path is gated on being rich, which is the
-  one state a young base is not in.
-
-  **Why this only surfaced now:** before the placement fix, nothing could be built at all,
-  so the economy never got far enough for the difference between "a worker early" and "a
-  worker 250 minerals later" to matter. The library patch made building work and exposed
-  the layer underneath it.
-
-  **Not a regression from this session's work:** none of the commits here touch
-  `production/dynamic/**` (checked with `git log` over those paths).
-
-  **Why it is a livelock rather than a slow start:** the output of waitng is fewer
-  minerals, so the condition that stops the worker also prevents the state that would
-  release it. Nothing in the tree breaks the cycle, because each gate is individually
-  reasonable.
-
-  **Decision needed (owner's call - it is a strategy question, not a bug fix):** which
-  gate should yield. Candidates: exempt a base below N workers from the mineral-margin
-  gates (a worker is only worth refusing if there is something better to buy), or make
-  the worker goal a V2 `DynamicGoals` contributor at `PRIORITY_WORKERS` and let the
-  scheduler's arbitration decide instead of the commanders' vetoes - which is what
-  Production V2 was built to do.
+  Traps to keep: an order-issuing manager must never set its "I am doing X"
+  flag before the engine accepts the order - the flag becomes the evidence
+  that blocks the re-try; TWO constructions for one building (measured:
+  IN_PROGRESS at `[94,111]` + NOT_STARTED twin 4 tiles away - one builds,
+  the other waits forever holding its worker, because the second order takes
+  a path that never reaches the `alreadyExists` check) reads as one miner
+  lost per duplication and rides `NEXT.md` #144's duplicate-Pylon
+  attribution; and the livelock shape itself - the output of waiting is
+  fewer minerals, so the condition that stops the worker also prevents
+  the state that would release it.
 
 ## #43 — the OpenBW client never attached (resolved 2026-10-08)
 
