@@ -440,8 +440,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   solo by default, merges on any visible non-Wraith air combat or
   `NUMEROUS_WRAITHS = 3` known Wraiths, pinned `CorsairClusterTest` 10/10
   (pure math + live stub-world on both conditions and the boundary),
-  mutation-proven both ways. Open: the `Alpha.gather` split that reads
-  the rule, then live proof the solo flight hunts.
+  mutation-proven both ways. The `Alpha.gather` split landed 2026-10-26:
+  solo Corsairs stay out of Alpha (CorsairHunt still owns them), merging
+  only when the rule fires, pinned `CorsairGatherSplitTest` 2/2. Open:
+  live proof the solo flight hunts.
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and

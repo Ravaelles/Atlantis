@@ -24,6 +24,11 @@ public class Alpha {
      * Roster fill: every squadless combat unit joins the cluster. Runs
      * once per frame from the fight composition before anything reads
      * the roster.
+     *
+     * <p>One exception (NEXT #201): a solo Corsair does not join - it
+     * hunts on its own (CorsairHunt) instead of trailing the army, and
+     * merges only when the CorsairCluster rule says threatening air
+     * needs Dragoon cover.</p>
      */
     public static void gather() {
         atlantis.units.select.Selection army = Select.ourCombatUnits();
@@ -31,6 +36,9 @@ public class Alpha {
 
         for (AUnit unit : army.list()) {
             if (unit != null && unit.isAlive() && unit.squad() == null) {
+                if (unit.isCorsair()
+                    && !atlantis.combat.cluster.CorsairCluster.mergeWithArmy()) continue;
+
                 ALPHA.addUnit(unit);
             }
         }
