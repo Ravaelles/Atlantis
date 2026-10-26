@@ -40,36 +40,20 @@ a long post-mortem belongs in an ADR or a commit message.
   history and `_AI/CASE-STUDIES.md`. What is left is a **game run**:
   stub-world physics is harness rules, not the game (NEXT #34).
 
-## B-25 — the bot jar ships four serialisation libraries for unreachable code
+## B-25 - FIXED 2026-10-11 (NEXT #38) - deleted; jar 10.83 -> 10.34 MB.
 
-> **FIXED 2026-10-11 (`NEXT.md` #38).** `atlantis.debug.object` and three of the four
-> libraries are deleted; the jar went from 10.83 MB to 10.34 MB. `objenesis` stays in the
-> project because Mockito needs it for tests, but it is no longer packaged. Kept here as a
-> one-line record rather than a post-mortem - the git log is the archive. The entry that
-> follows is the original report.
+`atlantis.debug.object` and three of the four serialisation libraries are gone;
+`objenesis` stays for Mockito but is no longer packaged. `scripts/build-bot-jar.sh`
+is the one place that decides what enters the jar. Kept as a one-line record - the
+git log is the archive.
 
-- **Measured 2026-10-04:** `atlantis.debug.object` (9 files, 510 lines,
-  kryo-based) has exactly one production call site,
-  `OnEveryFrameHelper.serializeMapDataLikeRegionsToAFile()`, whose first line is
-  `if (true) return;`, and one test, which is `@Disabled` (all four skipped tests
-  in the suite come from it).
-- **Consequence:** `scripts/build-bot-jar.sh` ships `kryo`, `minlog`,
-  `reflectasm` and `objenesis` in every bot jar for code nothing reachable can
-  call. Measured jar: 6.1 MB fat, 3610 entries.
-- **Owner's answer (2026-10-04):** note it as a candidate for removal; if nothing
-  plans to use it, it is probably a dead idea. Checked against the plans and
-  found nowhere. **Decision, not a chore** - tracked as NEXT #38.
+## B-41 - FIXED 2026-10-11 (NEXT #53) - deleted; `ProtossWarping` is the finish path.
 
-## B-41 — a construction whose building was warped was never finished, holding its worker
-
-> **FIXED 2026-10-11 (`NEXT.md` #53).** `ProtossWarping.updateNewBuildingJustWarped`
-> marked the construction `IN_PROGRESS`, never `FINISHED`, and a building warped
-> away from its reserved tile matched nothing (positional lookup, 2.5 tiles) -
-> so constructions survived the game and held their workers. Fixed: `FINISHED`
-> on warp + oldest-same-type adoption on positional miss. Measured: bounded run
-> `Pylons=0/5 gateways=0` → `Pylon=2 Gateway=1`, `CANNOT define construction`
-> 1799-frame wall → 0. Test: `OrphanedConstructionTest` (2). Full mechanism in
-> `_AI/CASE-STUDIES.md` (#53); the original report lives in git history.
+`ProtossWarping.updateNewBuildingJustWarped` marked the construction `IN_PROGRESS`,
+never `FINISHED`, and a building warped away from its reserved tile matched nothing
+(positional lookup, 2.5 tiles) - so constructions survived the game and held their
+workers. Fix: `FINISHED` on warp + oldest-same-type adoption on a positional miss.
+Test: `OrphanedConstructionTest` (2). Mechanism: `_AI/CASE-STUDIES.md` #53.
 
 ## B-42 — bot KILLED counter inflates per-frame on multi-unit UMS maps (OpenBW-only)
 
