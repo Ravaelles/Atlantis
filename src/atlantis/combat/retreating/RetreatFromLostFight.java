@@ -152,6 +152,11 @@ public final class RetreatFromLostFight {
             // middle-choke line, it never runs all the way home.
             home = RetreatFloor.clamp(home);
             HasPosition point = ClusterRally.gatherPointFor(unit, leader, home, tactic);
+            // The floor gates the spread too: the rally scatter around a
+            // line-clamped anchor can step behind the line again, which is
+            // exactly what the floor forbids - so the final point, not just
+            // the shared anchor, goes through the clamp.
+            if (tactic == FightOrFlight.Tactic.FLEE) point = RetreatFloor.clamp(point);
             if (point != null && unit.distTo(point) >= 0.2) {
                 return new Verdict(FleeReason.RALLY, point);
             }

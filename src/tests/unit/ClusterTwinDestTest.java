@@ -121,6 +121,26 @@ public class ClusterTwinDestTest extends WorldStubForTests {
     }
 
     @Test
+    public void strengthAndFocusRideTheRow() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+
+        world(32, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() == 31) {
+                Alpha.gather();
+                ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, nexus.position());
+            }
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+        assertTrue(rows.contains("\"strength\":"),
+            "the army's relative strength rides the row: " + rows);
+        assertTrue(rows.contains("\"focus\":"),
+            "the focus point rides the row: " + rows);
+    }
+
+    @Test
     public void fleeReasonMinusOneOutsideFlee() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);

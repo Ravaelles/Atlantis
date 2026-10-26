@@ -52,6 +52,8 @@ public final class ClusterTwin {
         int destX = -1;
         int destY = -1;
         String fleeReason = "-";
+        int strength = -1;
+        String focus = "-";
         try {
             if (tactic == FightOrFlight.Tactic.FLEE) {
                 fleeReason = dominantFleeReason(tactic, anchor);
@@ -88,12 +90,19 @@ public final class ClusterTwin {
                 } catch (Exception ignored) {
                 }
             }
+            try {
+                strength = atlantis.information.generic.Army.strength();
+                focus = focusName(anchor);
+            } catch (Exception ignored) {
+            }
         } catch (Exception ignored) {
         }
         EventLog.key(LogKey.CLUSTER)
             .param("cluster", Alpha.get().size())
             .param("posture", posture.name())
             .param("tactic", tactic.name())
+            .param("strength", strength)
+            .param("focus", focus)
             .param("breached", ClusterBreach.breachForcesFight())
             .param("anchor", anchor == null ? "-" : anchor.toString())
             .param("cx", center == null ? -1 : center.tx())
@@ -111,6 +120,32 @@ public final class ClusterTwin {
             .log(A.now(), A.minSec());
 
         noteArmyStall(center);
+    }
+
+    /**
+     * Short focus name for the row (owner: place + kind, mobile units
+     * excluded - a building anchor names its type, a chasing unit never
+     * does). Non-focus anchors fall back to their own string.
+     */
+    private static String focusName(HasPosition anchor) {
+        if (!(anchor instanceof atlantis.battle.advance.focus.AFocusPoint)) {
+            return anchor == null ? "-" : anchor.toString();
+        }
+        atlantis.battle.advance.focus.AFocusPoint fp =
+            (atlantis.battle.advance.focus.AFocusPoint) anchor;
+        String name = fp.name() == null ? "Focus" : fp.name();
+        String tile = "?";
+        try {
+            if (fp.position() != null) tile = fp.position().tx() + "," + fp.position().ty();
+        } catch (Exception ignored) {
+        }
+        try {
+            AUnit u = fp.unit();
+            if (u != null && u.isAlive() && !u.isABuilding() && u.canMove()) return name + "@" + tile;
+            if (u != null && u.isAlive() && u.isABuilding()) return name + "@" + tile + ":" + u.type().name();
+        } catch (Exception ignored) {
+        }
+        return name + "@" + tile;
     }
 
     /**
