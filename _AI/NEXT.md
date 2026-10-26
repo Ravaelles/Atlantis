@@ -124,19 +124,26 @@ Do not store suite counts here; measure with `scripts/run-tests.sh` when needed.
 Before cleaning `out/`, inspect it: it can contain archived game logs as well
 as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
-- **#211** The acceptance tier is red at HEAD since `8d1e7ce47` (Prioritize
-  blocked supply construction). A/B-measured 2026-10-26: the identical
-  failure list comes back with and without any combat change (retreat
-  ladder, first-Dragoon gate), and the architecture advisory's violation
-  counts are byte-identical with and without them - so the breakage sits in
-  the placement/supply rules that commit touched (`CatalogueSiteAdapter*`,
-  `RequestBuildingNear*`, dragoon production rows, `CombatEvaluator`,
-  `PostureTrapped*`). Do not patch it from a combat change; whoever owns
-  that commit re-runs
-  `bash scripts/run-tests.sh --allow-slow --select-package tests.acceptance`
-  until green (that exact invocation is the one that works -
-  `run-acceptance-tests.sh --allow-slow` alone silently drops the selection
-  and runs the unit scope).
+- **#211** The acceptance tier is red at HEAD (24 failing) and was ALREADY
+  red on the parent `1050eb070` (25 failing) - A/B-measured 2026-10-26 in a
+  worktree, so the redness is NOT the plon of `8d1e7ce47` as first written
+  here. What that commit did change is the composition: 21 failures are
+  shared on both sides (pre-existing, owner unknown -
+  `CatalogueSiteAdapter*`, dragoon production rows, `CombatEvaluator`,
+  `PostureTrapped*`, `AUnitTest`, `EnemyUnitsTest` and more), it FIXED its
+  own 3 `RequestBuildingNear*` placement tests, and 4 queue/reservation
+  tests turned red after it (`Queue2Test`, `Queue3Test.medics`,
+  `QueueInProgressInvariantTest`, `ResourcesReservedTest` - same area as
+  "Prioritize blocked supply construction", per-test blame unmeasured).
+  Combat changes are clean either way: the identical lists come back with
+  and without the ladder and the gate, and the arch advisory's violation
+  counts are byte-identical. Two runner holes found while measuring are
+  closed (commit `3e7136a8e`): the acceptance wrapper no longer drops its
+  selection under `--allow-slow`, and a JVM that dies before the JUnit
+  summary (measured: missing ENV -> `System.exit(0)` in setUp) now fails
+  instead of reporting green. Open: whoever owns the 21 shared reds and
+  the 4 queue reds re-runs the tier until green; `run-full-tests.sh`
+  stays red until then and that is honest.
 
 ## Architecture migration — stages E–J
 
