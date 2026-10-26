@@ -367,6 +367,15 @@ decompiled archives:
   engine specifics) or the sim already answered and a game must
   confirm. The reason is recorded in the test or commit. Games
   confirm, never discover (§29).
+- **Wine games are slow. Always try StarEngine first.** A Wine match
+  runs headless and can be launched at any moment (standing allowance
+  above) - but it costs minutes, while a sim episode is ~250 ms. So
+  the DEFAULT is always to reproduce the defect in our own engine,
+  StarEngine (`tests/unit/sim/`, `tests/fakes/`, §29/§30), and to
+  reach for Wine only when the sim genuinely cannot model the defect
+  (regions, fog, engine specifics) or when a game must confirm a fix
+  the sim already proved. Do not treat Wine as the first tool just
+  because it is allowed.
 - Fidelity direction: replicate BASE unit behaviors faithfully
   (facing, accel/braking, attack cycles, cooldowns), not the engine
   pixel-perfectly. Regions may stay simple: the rect-region fake map

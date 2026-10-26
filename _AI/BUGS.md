@@ -39,6 +39,23 @@ a long post-mortem belongs in an ADR or a commit message.
   drill-volume split cannon 12 / zealot 2 / probes 7) is kept in git
   history and `_AI/CASE-STUDIES.md`. What is left is a **game run**:
   stub-world physics is harness rules, not the game (NEXT #34).
+- **Status 2026-10-26:** the game run happened (two Wine games, both archived
+  under `out/wine_runs/`). TauCross melee `20261026_122015`: no contact (424 s,
+  0/0 kills, supply-horizon exit) - the rush never came, verdict inconclusive.
+  ProtossBaseB `20261026_122342` (base-defence UMS): DEFEAT 7/24 in 202 s, 14
+  Probes dead to Zerglings and 13 of them carrying the `RunHellFar` tooltip -
+  each one fought first (`Attack:Zergling#.../WorkerDefenceFightCombatUnits`)
+  and then `WorkerDefenceRun` pulled it out of the swarm for a cross-map run
+  it could not win. Reproduced in StarEngine (`ProbesVsPackSimTest`): fight ->
+  `RunHellFar` -> die running, same order names. Fix, rule
+  `StandAndTradeAtHome`: `WorkerDefenceRun.runFromMassLings` declines the
+  region run while `BaseUnderAttack.check()`, and the two eval refusals in
+  `WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits` (`TooBadEval`,
+  `BadEvalNoSupport`) do not apply at home. Wounded extraction via
+  `WorkerDefenceStopFighting` and the far-chase ban still hold, so this is
+  stand-and-trade, not stand-and-donate. Sim verdict: cannon + standing swarm
+  wipes 8 lings with 7/8 probes alive (no-support physics loses either way -
+  measured 0-2 kills - which is why the scenario carries the cannon).
 
 ## B-25 - FIXED 2026-10-11 (NEXT #38) - deleted; jar 10.83 -> 10.34 MB.
 

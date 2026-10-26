@@ -16,6 +16,15 @@ import java.util.List;
 
 public class WorkerDefenceRun extends Manager {
 
+    /**
+     * B-19 rule name: while the base is under attack a worker STANDS AND TRADES
+     * instead of being pulled out of the swarm for a cross-map run. Declining the
+     * region run below carries this name; the game log and the sim pin
+     * ({@code ProbesVsPackSimTest}) both name it.
+     */
+    public static final String STAND_AND_TRADE_AT_HOME = "StandAndTradeAtHome";
+
+
     /** From this many raiders the workers flee, if the fight is also going badly. */
     private static final int RAIDERS_THAT_MEAN_FLEE = 3;
 
@@ -248,6 +257,21 @@ public class WorkerDefenceRun extends Manager {
 
         Selection lings = unit.enemiesNear().zerglings();
         if (lings.countInRadius(3, unit) >= (unit.isWounded() ? 1 : 3)) {
+            // B-19, StandAndTradeAtHome: at home a long run is not an escape, it
+            // is an abandonment. The attacker is faster than a worker (Zergling
+            // 5.49 px/frame vs Probe 4.93), so RunHellFar across the map trades
+            // the swarm's damage for a race the worker cannot win - measured
+            // identically in a Wine game (13 of 14 dead Probes carried the
+            // RunHellFar tooltip, 1 Zergling killed) and in the StarEngine
+            // scenario (ProbesVsPackSimTest: 0 of 8 killed while fleeing).
+            // While the base itself is under attack the worker stays in the
+            // swarm and trades; the field keeps the region run unchanged.
+            if (BaseUnderAttack.check()) {
+                unit.setTooltipTactical(STAND_AND_TRADE_AT_HOME);
+
+                return false;
+            }
+
             return runFromEnemyToAnotherRegion(unit, lings.first());
         }
 

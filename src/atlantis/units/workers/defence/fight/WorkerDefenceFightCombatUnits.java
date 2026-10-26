@@ -163,8 +163,20 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         //
         // hasEnemyForEval() keeps the reading meaningful: with nothing to simulate,
         // eval() is NO_ENEMY_IN_REACH (9874), far above the floor.
+        //
+        // B-19 StandAndTradeAtHome: at home these two eval refusals do not
+        // apply. The sim measured why (ProbesVsPackSimTest: eval 0.01,
+        // outnumbered, no support - every gate said "do not fight"), and the
+        // Wine game measured the price (13 of 14 dead Probes with the
+        // RunHellFar tooltip, 1 Zergling killed). Fleeing a lost FIELD fight
+        // saves the worker; fleeing the HOME fight abandons the base while
+        // the swarm could still trade. Wounded workers are still extracted by
+        // WorkerDefenceStopFighting (hp gates) and the far-chase ban below
+        // still holds, so this is stand-and-trade, not stand-and-donate.
+        boolean holdGround = BaseUnderAttack.check();
         if (
-            unit.hasEnemyForEval()
+            !holdGround
+                && unit.hasEnemyForEval()
                 && unit.eval() <= EVAL_DO_NOT_FIGHT
                 && outnumberedByNearbyRaiders(unit)
         ) {
@@ -184,7 +196,8 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // 3-probe attack at eval 0.145), and the outnumbered gate above
         // already owns the losing-and-outnumbered shape.
         if (
-            unit.hasEnemyForEval()
+            !holdGround
+                && unit.hasEnemyForEval()
                 && unit.eval() <= EVAL_DO_NOT_FIGHT_BADLY
                 && !hasCombatSupportNear(unit)
                 && !isSwarmShapedFight(unit)
