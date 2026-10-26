@@ -21,6 +21,7 @@ import atlantis.combat.cluster.ClusterTactic;
 import atlantis.combat.cluster.ClusterAnchor;
 
 import atlantis.battle.cluster.Alpha;
+import atlantis.game.A;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
@@ -59,6 +60,8 @@ public class BattleCommander extends Commander {
         HasPosition anchor = ClusterAnchor.anchorFor(posture);
 
         ClusterTwin.sample(posture, tactic, anchor);
+
+        atlantis.cherryvis.simple.ArmyBoard.publish(A.now(), posture, tactic, anchor);
 
         for (AUnit unit : Alpha.get().selection().list()) {
             act(unit, tactic, anchor, Alpha.get().leader());

@@ -125,9 +125,11 @@ public final class ClusterTwin {
     /**
      * Short focus name for the row (owner: place + kind, mobile units
      * excluded - a building anchor names its type, a chasing unit never
-     * does). Non-focus anchors fall back to their own string.
+     * does). Non-focus anchors fall back to their own string. Public as
+     * a seam: the board publisher reads the same answer, never its own
+     * copy.
      */
-    private static String focusName(HasPosition anchor) {
+    public static String focusName(HasPosition anchor) {
         if (!(anchor instanceof atlantis.battle.advance.focus.AFocusPoint)) {
             return anchor == null ? "-" : anchor.toString();
         }

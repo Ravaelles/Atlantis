@@ -530,6 +530,10 @@ public class Env {
         isLocal = local;
     }
 
+    public static void setCherryVisEnabledForTest(boolean enabled) {
+        cherryVisEnabled = enabled;
+    }
+
     public static boolean shouldModifyBwapiIni() {
         return modifyBwapiIni;
     }
