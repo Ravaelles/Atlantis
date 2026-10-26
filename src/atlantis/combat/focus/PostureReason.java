@@ -29,5 +29,26 @@ public enum PostureReason {
     HEADCOUNT,
 
     /** No attack reason fired: hold the home ground. */
-    HOLD_GROUND
+    HOLD_GROUND,
+
+    /**
+     * Owner order 2026-10-26: 3+ units at 140%+ relative strength march
+     * instead of holding.
+     */
+    EARLY_STRENGTH,
+
+    /**
+     * Owner order 2026-10-26: a dragoon pair kites instead of holding -
+     * always vs Zerg, vs Protoss only with no known ranged enemy (an
+     * unscouted map counts as ranged: never march blind into hydras).
+     * The intent is pressure from alive dragoons, not the pair as such.
+     */
+    EARLY_DRAGOONS_OK_SO_PRESSURE,
+
+    /**
+     * Owner order 2026-10-26: the attack found a stronger army - at most
+     * one dragoon left at 120% or less means coming home instead of
+     * feeding. Ends attacks, never prevents them.
+     */
+    OUTGUNNED_SO_COME_HOME
 }
