@@ -26,7 +26,7 @@ public final class BlockingArmy {
     }
 
     public static boolean blocksWayHome() {
-        AUnit main = Select.main();
+        AUnit main = HomeGround.resolve().main();
         if (main == null || main.position() == null) return false;
 
         HasPosition center = Alpha.alphaCenter();

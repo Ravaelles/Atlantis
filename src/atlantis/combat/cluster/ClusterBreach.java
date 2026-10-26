@@ -32,7 +32,7 @@ public final class ClusterBreach {
     public static boolean breachForcesFight() {
         if (atlantis.information.enemy.EnemyUnitBreachedBase.someone()) return true;
 
-        AUnit main = Select.main();
+        AUnit main = HomeGround.resolve().main();
         if (main == null) return false;
 
         AUnit foe = main.enemiesNear().nearestTo(main);
@@ -95,16 +95,14 @@ public final class ClusterBreach {
      * Public as a seam: the rally pins in a stub state without a game.
      */
     public static HasPosition breachRallyPoint() {
-        AUnit main = Select.main();
-        if (main == null || main.position() == null) return ClusterAnchor.defendAnchor();
+        HomeGround home = HomeGround.resolve();
+        if (!home.isComplete()) return ClusterAnchor.defendAnchor();
+
+        AUnit main = home.main();
 
         try {
-            atlantis.map.choke.AChoke choke =
-                atlantis.map.choke.Chokes.mainChoke();
-            if (choke == null || choke.center() == null) return ClusterAnchor.defendAnchor();
-
             APosition point = main.position()
-                .translateTilesTowards(CombatTuning.current().getBreachRallyTiles(), choke.center());
+                .translateTilesTowards(CombatTuning.current().getBreachRallyTiles(), home.mainChoke().center());
             if (point == null) return ClusterAnchor.defendAnchor();
 
             return point;

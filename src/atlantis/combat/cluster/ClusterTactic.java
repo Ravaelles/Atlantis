@@ -88,7 +88,7 @@ public final class ClusterTactic {
      * is not an option there. Public as a seam, pinned without a game.
      */
     public static boolean holdsHomeGround() {
-        AUnit main = Select.main();
+        AUnit main = HomeGround.resolve().main();
         if (main == null) return false;
 
         HasPosition center = Alpha.get().center();

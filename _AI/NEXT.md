@@ -400,8 +400,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   instead of five copies of the same null-handling. Pinned
   `HomeGroundTest` 5/5, mutation-proven on `isComplete()`; full unit
   scope green. Small-army main standoff and `guardSlotFor` remain
-  follow-ups; `ClusterBreach`/`ClusterTactic`/`BlockingArmy` still read
-  the pair directly and convert in a follow-up.
+  follow-ups; `ClusterBreach`/`ClusterTactic`/`BlockingArmy` converted
+  2026-10-26 (same pair, same answers - consumer pins green).
 - **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
   shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
   re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
