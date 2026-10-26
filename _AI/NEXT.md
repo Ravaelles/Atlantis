@@ -30,10 +30,11 @@ Work rules: never batch rewrites; never gate commits on full games; never
 trade a measurement for an explanation (§3a).
 
 ## Current owner priorities
-1. Fast, self-terminating OpenBW sims (§17).
-2. Production V2 (#45; `redesign/01_PRODUCTION.md`).
-3. Placement cut-over (`redesign/03_PLACEMENT.md`).
-4. OpenBW/E2E testing (`IDEA-E2E-TESTS.md` §3.5).
+1. Decision reasons in CherryVis (#214 - the army dies without a trace).
+2. Fast, self-terminating OpenBW sims (§17).
+3. Production V2 (#45; `redesign/01_PRODUCTION.md`).
+4. Placement cut-over (`redesign/03_PLACEMENT.md`).
+5. OpenBW/E2E testing (`IDEA-E2E-TESTS.md` §3.5).
 
 ## Process (normative)
 
@@ -571,3 +572,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   toMain=40/toNatural=0). Open: live proof on a two-base custom map -
   TauCross proves nothing (its natural detection holds, the leak never
   fires there).
+- **#214** Decision reasons in CherryVis (owner: VERY HIGH priority).
+  Every big decision logs its reason; where a behavior is unattributed
+  today, the reason row IS the fix. (a) Siting: every construction logs
+  nearTo + chosen tile + author (BO/supply/wall-in/per-base) - the Pylon
+  case needs WHERE, not WHY. (b) Army: main-cluster task (posture +
+  focus-ground kind: MAIN_CHOKE/NATURAL_CHOKE/MIDDLE/...) on change,
+  plus retreat start/end. (c) Units: active Behavior per combat unit on
+  change; workers only while fighting/fleeing. Board for time-varying
+  values (task, strength), Logs for events. Volume rule: transitions,
+  never per-frame rows. Motivating game: 14:25:25 Tomas Cere (TauCross,
+  Defeat 95/86, 52 Dragoons lost, army never left the main -
+  unattributed, no trace).
