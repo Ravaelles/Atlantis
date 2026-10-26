@@ -19,6 +19,32 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 public class IsReadyToProduceOrder {
+    /**
+     * Owner bank rule (NEXT #202, live stall with banked gas): with 550
+     * minerals in the bank every production is affordable; gas blocks only
+     * below the late-game amount (300 at most 150 supply, 400 above) - and
+     * a gas-free order never waits on gas. Named constants, pinned by
+     * {@code RichBankBypassTest}: the 550/300/400 split is the owner's
+     * measurement (Arbiter's 350 gas is the ceiling), not tuning.
+     */
+    private static final int RICH_BANK_MINERALS = 550;
+
+    private static final int RICH_BANK_GAS_EARLY = 300;
+
+    private static final int RICH_BANK_GAS_LATE = 400;
+
+    private static final int RICH_BANK_LATE_SUPPLY = 150;
+
+    private static boolean richBankCoversEverything(ProductionOrder order) {
+        if (!A.hasMinerals(RICH_BANK_MINERALS)) return false;
+
+        AUnitType type = order.unitType();
+        if (type != null && type.gasPrice() <= 0) return true;
+
+        return A.hasGas(
+            A.supplyUsed() <= RICH_BANK_LATE_SUPPLY ? RICH_BANK_GAS_EARLY : RICH_BANK_GAS_LATE);
+    }
+
     public static boolean isReady(ProductionOrder order) {
         if (order.isStatus(OrderStatus.FINISHED)) {
             return false;
@@ -96,8 +122,12 @@ public class IsReadyToProduceOrder {
 
         // D3 priority waiting: a strictly-higher unfinished order waits and
         // the bank does not cover both - lower spending pauses (self
-        // excluded, so a HIGH waiter itself is never blocked here).
-        if (PriorityWaiters.blocksSpending(order, order.mineralPrice(), order.gasPrice())) {
+        // excluded, so a HIGH waiter itself is never blocked here). The
+        // rich-bank rule above already returned for a covered bank, so a
+        // block here means genuinely uncovered savings, never a stale
+        // earmark.
+        if (!richBankCoversEverything(order)
+            && PriorityWaiters.blocksSpending(order, order.mineralPrice(), order.gasPrice())) {
             if (order.isBuilding() && (order.is(AUnitType.Protoss_Nexus) || order.is(AUnitType.Protoss_Photon_Cannon))) {
                 atlantis.util.log.ErrorLog.printMaxOncePerMinute(
                     "ORDER_WAITING " + order.unitType() + " @" + A.now()

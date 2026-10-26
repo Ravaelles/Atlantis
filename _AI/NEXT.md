@@ -444,8 +444,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
-  re-reserve on success, pinned in `GatewayWaitsOnBlockedBaseTest`. Live
-  verdict needs owner data on minerals, dominant twin rows, and Gateway count.
+  re-reserve on success, pinned in `GatewayWaitsOnBlockedBaseTest`. Owner
+  bank rule landed 2026-10-26: 550 minerals covers everything, gas stops
+  mattering at 300 (150 supply or less) / 400 above, gas-free orders never
+  wait on gas - a rich bank flows through reservations and D3 waiters alike,
+  pinned in `RichBankBypassTest`. Live verdict needs owner data on minerals,
+  dominant twin rows, and Gateway count.
 - **#203** Zerg matchup: landed 2026-10-25 (commit ce4de4034) `ProduceZealot`
   brakes excess Zealots at >=200 gas when a Core exists and the minimum Zealot
   floor is met; initial Zealots remain allowed. Pinned by
