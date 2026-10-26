@@ -99,7 +99,9 @@ trade a measurement for an explanation (§3a).
     (a) #211 suite attribution so the gate is honest [LANDED 2026-10-26:
     runner-integrity commit `3e7136a8e` + attribution correction], (b) #194's
     shared anchor/rally input resolver [LANDED 2026-10-26: `HomeGround`,
-    commit `ea378db7f`], (c) #201 Corsair cluster sim-first (queued
+    commit `ea378db7f`], (c) #201 Corsair cluster sim-first [LANDED
+    2026-10-26: membership rule `716a46142`, the `Alpha.gather` split
+    stays open], (d) #184 one TargetLadder rule at a time
     behind #195/#190, both landed), (d) #184 one TargetLadder rule at a time
     with a sim no-regression proof, (e) sim-only slices of #188/#190/#192.
     #156 stays parked (owner: no blind merge), #144–#147 wait on parity
@@ -444,7 +446,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#201** Corsairs trail the main army instead of hunting: they need their own
   (default solo) cluster, merging only when threatening air exists; the
   "numerous Wraiths" line becomes a named constant with a pin (AEC §31).
-  Queued behind #195/#190; sim-first.
+  Queued behind #195/#190; sim-first. Membership rule LANDED 2026-10-26
+  (commit `716a46142`): `CorsairCluster` in `atlantis.combat.cluster` -
+  solo by default, merges on any visible non-Wraith air combat or
+  `NUMEROUS_WRAITHS = 3` known Wraiths, pinned `CorsairClusterTest` 10/10
+  (pure math + live stub-world on both conditions and the boundary),
+  mutation-proven both ways. Open: the `Alpha.gather` split that reads
+  the rule, then live proof the solo flight hunts.
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
