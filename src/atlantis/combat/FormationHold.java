@@ -262,6 +262,12 @@ public final class FormationHold {
 
             return true;
         }
+        // NEXT #210: the unstick above is not a formation order, so the
+        // latch guards only the march below - a wedged holder still trips
+        // on its own cadence, a marching one stops churning the line.
+        if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, slot)) {
+            return true;
+        }
         if (!unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
             HoldTwin.note(unit, target, tactic, HoldVerdict.MOVE_FAILED);
 

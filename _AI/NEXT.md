@@ -529,15 +529,22 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#209** Units deep in our own main stack on each other (owner live
   finding 2026-10-26): blocked units inside the base occupy the same
   ground instead of spreading, i.e. the unstick/holder logic assumes open
-  ground or an enemy in front. Open: reproduce the geometry in a sim
-  (blocked unit with neighbours inside the base), pin a spacing answer, and
-  check it against #182's holder-unstick so the two do not fight.
+  ground or an enemy in front. Sim proof landed 2026-10-26
+  (`PocketSpreadSimTest`): formation slots must be standable, not just
+  walkable - the engine's walkability is terrain-only, so a slot inside a
+  building read valid and the march wedged on its wall;
+  `FormationSlots.valid` now refuses building tiles and the line spreads
+  around them instead. Checked against #182's holder-unstick: displacing
+  units never trip the wedge watch, and its pins stay green.
 - **#210** Formation orders while defending at most once per 10 frames
   (owner order 2026-10-26): re-issuing formation orders every frame during
-  a defense churns the line. Open: one latch on the formation order writer
-  (one issuance per 10 frames while the posture is defend - a latch, not a
-  per-unit cooldown), pinned with a frame counter, plus a check that the
-  FIRST deployment of a fight is not delayed by it.
+  a defense churns the line. Landed 2026-10-26: shared `FormationOrderLatch`
+  - identical re-issues wait out the window, first deployment and changed
+  destinations always flow, leaving DEFEND forgets the latch; denied
+  callers hold instead of falling through (pinned `FormationOrderLatchTest`
+  4/4, red-first on the deny path). Measured first: 120 identical orders
+  per unit per 120 defended frames in the sim. Open: live proof the line
+  calms down.
 - **#212** Worker acquisition strategy (owner call, surfaced in
   `CASE-STUDIES.md` #53): a worker held at a construction site that cannot
   start should return to mining (`ShouldNotTravelToConstructYet` covers

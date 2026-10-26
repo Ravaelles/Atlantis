@@ -75,10 +75,17 @@ public final class Regroup {
             APosition hold = ClusterRally.noContactHoldPoint(anchor);
             if (hold != null) {
                 HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-                if (slot == null && unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
-                    FightTarget.markRepositioned(unit);
+                if (slot == null) {
+                    // NEXT #210: a throttled hold stands instead of falling
+                    // through to the advance below - falling through would
+                    // re-issue a different formation order on the same frame
+                    // the latch just refused, which is the churn with a new name.
+                    if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, hold)) return;
+                    if (unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
+                        FightTarget.markRepositioned(unit);
 
-                    return;
+                        return;
+                    }
                 }
             }
         }
@@ -91,10 +98,20 @@ public final class Regroup {
         // formation never stands into chews, with or without a target.
         if (!GhostAdvance.isVanguard(unit) && !FormationHold.hasCloseMeleeEnemy(unit)) {
             HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
-            if (slot != null && unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
-                FightTarget.markRepositioned(unit);
+            if (slot != null) {
+                // NEXT #210: same latch as the calm hold - a throttled
+                // advance stands instead of falling through to creep/gather
+                // below, which would scatter the line the latch is calming.
+                // FLEE never throttles: retreats own their movement.
+                if (tactic != FightOrFlight.Tactic.FIGHT
+                    || atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, slot)) {
+                    if (unit.move(slot, Actions.MOVE_ENGAGE, Behavior.ADVANCE_FORMATION.tag())) {
+                        FightTarget.markRepositioned(unit);
 
-                return;
+                        return;
+                    }
+                }
+                else return;
             }
         }
         if (GhostAdvance.move(unit, tactic)) {
