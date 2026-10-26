@@ -143,6 +143,17 @@ public final class FormationSlots {
     private static boolean valid(APosition slot, AUnit unit) {
         if (slot == null) return false;
         if (!unit.isGroundUnit()) return true;
+
+        return isStandable(slot);
+    }
+
+    /**
+     * Ground a unit can stand on: walkable terrain and no building
+     * footprint. Shared seam (the retreat scatter reads the same rule,
+     * never its own copy).
+     */
+    public static boolean isStandable(APosition slot) {
+        if (slot == null) return false;
         if (!slot.isWalkable()) return false;
 
         return !standsInBuilding(slot);

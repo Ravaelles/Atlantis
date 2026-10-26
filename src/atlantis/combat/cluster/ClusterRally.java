@@ -175,9 +175,37 @@ public final class ClusterRally {
      * running the frame.
      */
     public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor, FightOrFlight.Tactic tactic) {
-        if (tactic == FightOrFlight.Tactic.FLEE) return anchor;
+        if (tactic == FightOrFlight.Tactic.FLEE) return spreadRallyPoint(unit, anchor);
         if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
             return leader;
+        }
+        return anchor;
+    }
+
+    /**
+     * Rally scatter (Tomas Cere game, 52 Dragoons lost): on FLEE every
+     * unit shared one rally pixel, converged body-on-body, and died
+     * standing with retreat orders active. Each unit rallies onto its
+     * own standable point around the same anchor instead - a scatter,
+     * never an arc (FLEE still never forms up). Deterministic per unit
+     * id (golden-angle ring, no randomness); falls back to the anchor
+     * itself, never worse than today.
+     */
+    private static final double RALLY_SPREAD_TILES = 2.0;
+
+    private static HasPosition spreadRallyPoint(AUnit unit, HasPosition anchor) {
+        if (anchor == null) return null;
+        try {
+            double golden = Math.PI * (3.0 - Math.sqrt(5.0));
+            double angle = (unit.id() * golden) % (Math.PI * 2);
+            for (double r = RALLY_SPREAD_TILES; r <= RALLY_SPREAD_TILES + 2; r += 1.0) {
+                APosition p = APosition.create(
+                    (int) (anchor.tx() + Math.cos(angle) * r),
+                    (int) (anchor.ty() + Math.sin(angle) * r));
+                if (p != null && FormationSlots.isStandable(p)) return p;
+            }
+        }
+        catch (RuntimeException ignored) {
         }
         return anchor;
     }

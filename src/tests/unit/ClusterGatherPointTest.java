@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -11,6 +12,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
@@ -106,9 +108,12 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            assertSame(anchor,
-                ClusterRally.gatherPointFor(straggler, leader, anchor, FightOrFlight.Tactic.FLEE),
+            HasPosition point =
+                ClusterRally.gatherPointFor(straggler, leader, anchor, FightOrFlight.Tactic.FLEE);
+            assertTrue(point != null && point.distTo(leader) > 1.0,
                 "owner 2026-10-23: rallying stragglers onto a forward-kiting leader marches them back into the fight");
+            assertTrue(point.distTo(anchor) <= 5.0,
+                "the rally scatter stays around the anchor (Tomas Cere pile-up): " + point);
         });
     }
 }

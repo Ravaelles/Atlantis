@@ -59,9 +59,10 @@ public class ProtossChokeStandoffTest extends WorldStubForTests {
 
                 HasPosition dest = a.targetPosition();
                 assertNotNull(dest, "the retreat names a destination");
-                assertTrue(dest.distTo(standoff) < 1,
+                assertTrue(dest.distTo(standoff) <= 3.0,
                     "the rally stands off at the choke, not inside the base: dest "
-                        + dest + " vs standoff " + standoff);
+                        + dest + " vs standoff " + standoff
+                        + " (rally scatter: own standable point within 2 tiles)");
                 assertTrue(standoff.distTo(ClusterBreach.breachRallyPoint()) >= 1,
                     "standoff and breach-rally are different answers: " + standoff);
             }
