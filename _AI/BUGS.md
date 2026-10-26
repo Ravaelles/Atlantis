@@ -10,23 +10,7 @@ documented in code with a comment. The closure goes into the commit message.
 **Fixed defects do not stay here as history** - the git log is the archive, and
 a long post-mortem belongs in an ADR or a commit message.
 
-## B-1 — `AUnit.eval()` has no documented scale, and 228 call sites assume one
-
-- **Where:** `AUnit.eval()` and the ~228 production comparisons against
-  thresholds in `[0.6, 3]` (`ShouldStopRunning`, `TooFarFromFocusPoint`,
-  `ProtossLowEval`, ...).
-- **What it is:** `enemyScore / (ourScore + 0.001)` over cost-like negative
-  scores - higher means our side is stronger. It is **unbounded above**, and the
-  "no enemy in reach" reading is **9873.7**, which every `eval() >= x` guard
-  reads as "safe".
-- **Still open:** whether the thresholds are right for an unbounded ratio. Not a
-  test change and not a threshold tweak - it needs a decision (ADR 0006) and a
-  scenario sweep over the real evaluator. The guard audit itself closed with
-  NEXT #41 (`164c377f`: quiet reading named, defend-mission chase guarded);
-  the evidence tables are frozen in `DOCS/adr/0006-combat-eval-scale.md`.
-- **Documented in code:** the javadoc now states what the number is, what it is
-  not, and the three distortions by name. The misleading half of this entry is
-  closed; only the threshold question remains.
+## B-1 - FIXED 2026-10-26 - deleted; unbounded scale stands (owner ruling: no enemy means locally very strong, not infinite - code expecting a range is wrong, fix per site).
 
 ## B-19 - FIXED 2026-10-26 - deleted; rule `StandAndTradeAtHome`, pinned `ProbesVsPackSimTest`, live-confirmed 133232 (4 probe deaths vs 14, 1 residual RunHellFar untraced).
 

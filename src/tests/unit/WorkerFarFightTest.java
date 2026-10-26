@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits;
 import atlantis.units.workers.defence.fight.WorkerDefenceHelpCannon;
@@ -236,6 +237,55 @@ public class WorkerFarFightTest extends WorldStubForTests {
             AUnit worker = Select.ourWorkers().first();
             assertTrue(new WorkerDefenceHelpCannon(worker).applies(),
                 "the home cannon keeps its worker support");
+        });
+    }
+
+    @Test
+    public void unsupportedPursuitFarFromBaseWithdraws() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 32, 20);
+        probe.hp = 40;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, probe), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.move(zealot, Actions.MOVE_ATTACK, "SwarmMove");
+
+            assertTrue(new WorkerDefenceStopFighting(worker).applies(),
+                "a healthy worker pursuing 12 tiles from base, 12 from any "
+                + "building, with no combat support, withdraws instead of "
+                + "donating - pursuit without support is the reported death");
+            assertTrue(new WorkerDefenceStopFighting(worker).forceHandled(),
+                "the withdraw executes instead of letting the pursuit continue");
+        });
+    }
+
+    @Test
+    public void supportedPursuitNearBuildingsKeepsFighting() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon, 30, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 32, 20);
+        probe.hp = 40;
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 33, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, cannon, probe, dragoon), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.move(zealot, Actions.MOVE_ATTACK, "SwarmMove");
+
+            assertFalse(new WorkerDefenceStopFighting(worker).applies(),
+                "a pursuing worker with a building at 2 and a Dragoon at 1 "
+                + "is supported - the withdraw rule must not fire at home");
         });
     }
 

@@ -175,6 +175,10 @@ at the end, never reused.
   aggregates/repositories.
 - Large changes proceed incrementally per `_AI/NEXT.md`, bot playable,
   each checked against `DOCS/SOLID-CHECKLIST.md`.
+- Protoss-only today, open for Terran tomorrow (owner decision 2026-10-26):
+  race-specific code stays behind race policies, so a Terran play stays
+  addable without reopening closed code (OCP). No hardcoded Protoss-only
+  closures in shared paths.
 
 ## 21. Domain knowledge in domain packages, never machinery (owner's ruling, 2026-10-15)
 
