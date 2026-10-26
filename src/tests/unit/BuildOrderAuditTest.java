@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import bwapi.Race;
 
 /**
  * End-of-log build-order audit (owner): a BO building warping at a
@@ -99,5 +100,10 @@ public class BuildOrderAuditTest extends AbstractTestWithWorld {
 
         assertTrue(BuildOrderAudit.mismatchLines().isEmpty(),
             "dynamic demand has no planned supply to break: " + BuildOrderAudit.mismatchLines());
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

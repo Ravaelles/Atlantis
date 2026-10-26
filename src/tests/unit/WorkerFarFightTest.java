@@ -238,4 +238,9 @@ public class WorkerFarFightTest extends WorldStubForTests {
                 "the home cannon keeps its worker support");
         });
     }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
 }

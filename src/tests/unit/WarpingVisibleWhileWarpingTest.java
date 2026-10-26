@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
+import bwapi.Race;
 
 /**
  * A Protoss building that just warped (exists but is not completed yet)
@@ -88,5 +89,10 @@ public class WarpingVisibleWhileWarpingTest extends AbstractTestWithWorld {
             assertEquals(OrderStatus.FINISHED, order.status(), "order closes with it");
             assertNull(warping.construction(), "unit unlinks");
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

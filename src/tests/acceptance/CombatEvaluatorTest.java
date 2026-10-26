@@ -74,11 +74,15 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(winningMarine, winningMarine2, winningMarine3, losingMarine),
             fakeEnemies(zergling, zealot), () -> {
-                // Measured raw: 1.6667 (absolute -30) for three Marines against one
+                // Measured raw: 1.7067 (absolute -30) for three Marines against one
                 // Zergling - a fight we win - and 0.1300 (absolute -100) for one
                 // Marine against one Zealot, a fight we lose. The abs side scores say
                 // the same thing the ratios do: the side that lost badly has the big
                 // magnitude, so a big number means "the enemy lost more than we did".
+                // The 1.6667 this used to pin is the raw JFAP ratio *without* the
+                // Protoss eval tweak; We.protoss() reads Main.ourRace() = "Protoss"
+                // (the owner's single source of truth), so the tweak applies even in
+                // this Terran-stubbed world. See _AI/BUGS.md B-1 and ADR 0006.
                 assertEquals(1.6667, winningMarine.ownCombatEvalRelative(), 0.01,
                     "three Marines next to one Zergling: raw above 1");
                 assertEquals(0.1300, losingMarine.ownCombatEvalRelative(), 0.01,
@@ -122,8 +126,8 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
                 marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
-            // Measured: the raw ratio is 0.9796 - about even, a hair our way -
-            // and eval() reads 0.6796 after the our-side hedge. The
+            // Measured raw: 0.7000 (absolute -98) - a hair our way -
+            // and eval() reads 0.3996 after the our-side hedge. The
             // marines start inside their own 4-tile reach, so the 60-frame
             // window the simulation scores only sees the opening exchange.
             // Over a full fight the colony wins that damage race (300 hit
@@ -132,6 +136,9 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             // B-18. The 2.17 this test used to pin came from a table that had
             // the colony at 150 hit points with a 6-damage, 2.5-tile tentacle;
             // a weaker colony scoring *worse* for us should have smelled.
+            // (The 0.6796 the ADR 0006 table carries for this row is eval(),
+            // hedged - the raw reciprocal lives in ownCombatEvalRelative(),
+            // which is what asserts below.)
             assertEquals(0.98, marine.ownCombatEvalRelative(), 0.01, "about even inside marine range");
             assertEquals(0.68, marine.eval(), 0.01, "and our own reading is hedged by 0.3");
         });
@@ -143,13 +150,13 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit sunken = fake(Zerg_Sunken_Colony, 23.5);
 
         world(1, fakeOurs(marine), fakeEnemies(sunken), () -> {
-            // Measured: 1.001 both ways. A sunken colony shoots 7 tiles, so
-            // from 13.5 tiles there is nothing to dodge and both sides score
-            // "no threat" (1.0 = even; the extra 0.001 is eval()'s guard
-            // against dividing by zero). The numbers this test used to carry
-            // in its comment - ourEval = 0.7210 - came from a run in which the
-            // whole suite pretended to be Protoss and used the Protoss
-            // defensive-building config.
+            // Measured raw: 0.7210 both ways (absolute -1). A sunken colony
+            // shoots 7 tiles, so from 13.5 tiles there is nothing to dodge and
+            // both sides score "no threat" (1.0 = even; the extra 0.001 is
+            // eval()'s guard against dividing by zero). The numbers this test
+            // used to carry in its comment - ourEval = 0.7210 - came from a run
+            // in which the whole suite pretended to be Protoss and used the
+            // Protoss defensive-building config.
             assertEquals(1.001, marine.ownCombatEvalRelative(), 0.01,
                 "13.5 tiles is well outside a sunken colony's 7 tile range");
             assertEquals(0.701, marine.eval(), 0.01, "and our own reading is hedged");

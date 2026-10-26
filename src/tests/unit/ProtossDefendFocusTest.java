@@ -310,4 +310,9 @@ public class ProtossDefendFocusTest extends WorldStubForTests {
                     + anchor.distTo(nexus));
         });
     }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
 }

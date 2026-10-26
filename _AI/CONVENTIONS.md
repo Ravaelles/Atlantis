@@ -77,6 +77,10 @@ never reuse a deleted number - other documents cite "CONVENTIONS §N".
   the work they describe. Message says **what and why** (documentary
   value is the point). Never mix unrelated work. Never rewrite history.
 - The ArchUnit store is versioned on purpose, never `.gitignore`d.
+- **Commits containing only documentation (`.md` files) are forbidden.**
+  A work cycle is done only when code changed and was verified by
+  execution; doc-only changes ride along with the work they document,
+  never as a standalone commit.
 - Never `git push` unless the user explicitly asks.
 
 ## 7. TODO tracking in `_AI/NEXT.md` (mandatory)

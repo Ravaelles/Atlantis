@@ -12,6 +12,7 @@ import bwapi.*;
 import org.mockito.Mockito;
 import tests.fakes.FakeBaseLocations;
 import tests.fakes.FakeChokes;
+import main.Main;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -43,12 +44,29 @@ public class MockEverything {
     public void mockEverything() {
         Cache.nukeAllCaches();
 
+        mockOurRace();
         mockAtlantisConfig();
         mockGameObject();
         mockAGameObject();
         mockBaseLocations();
         mockChokes();
         mockOtherStaticClasses();
+    }
+
+    /**
+     * Answers the race question the bot actually asks - {@code Main.ourRace()} -
+     * with whatever {@code initRace()} declared, so {@code We.protoss()/terran()/zerg()}
+     * agree with the config below instead of both disagreeing with the test.
+     *
+     * <p>The source is mocked, not {@code We}: {@code RaceWiringTest} is a standalone
+     * infra class that reads the real {@code Main} to pin the owner's ruling, and it
+     * must keep seeing the truth. {@code We.*()} is not cached for the binary
+     * questions, so one answer per call is enough; the cached {@code We.race()} is
+     * dropped by {@code Cache.nukeAllCaches()} above and rebuilt from these.</p>
+     */
+    private void mockOurRace() {
+        if (test.main == null) test.main = Mockito.mockStatic(Main.class);
+        test.main.when(Main::ourRace).thenAnswer(invocation -> test.initRace().name());
     }
 
     private void mockAtlantisConfig() {

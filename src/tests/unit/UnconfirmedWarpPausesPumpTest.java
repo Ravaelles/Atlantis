@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import bwapi.Race;
 
 /**
  * Warp-window pump calm (NEXT #83): an IN_PROGRESS construction with no
@@ -98,5 +99,10 @@ public class UnconfirmedWarpPausesPumpTest extends AbstractTestWithWorld {
                 ProtossCriticalStuffInQueue.hasEnoughMinerals(),
                 "a rich bank needs no protection - a retry is affordable");
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

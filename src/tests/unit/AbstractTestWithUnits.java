@@ -43,6 +43,7 @@ import tests.fakes.FakeOrderFallback;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitOrigin;
 import tests.unit.helpers.ClearAllCaches;
+import main.Main;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -66,6 +67,23 @@ public class AbstractTestWithUnits extends UnitTest {
     public static MockedStatic<EnemyRace> enemyRace;
     public static MockedStatic<AllBaseLocations> allBaseLocations;
     public static MockedStatic<AllChokes> allChokes;
+
+    /**
+     * The race the test declared with {@link #initRace()}, answered through the
+     * same source the bot reads in a game: {@code Main.ourRace()}.
+     *
+     * <p>Without this the harness was lying about its own race. {@code We.protoss()}
+     * reads {@code Main.ourRace()} directly (the owner's single source of truth),
+     * while the harness only ever set {@code AtlantisRaceConfig.MY_RACE} - so with
+     * {@code Main} hardcoded to "Protoss" every one of the ~323 {@code We.*()}
+     * branches played Protoss inside a suite that declared Terran, and the Protoss
+     * eval tweak subtracted its 0.3 even in a Terran stub world (that is what broke
+     * three {@code CombatEvaluatorTest} pins). Mocking the source - not {@code We} -
+     * keeps {@code RaceWiringTest} (a standalone infra class that reads the real
+     * {@code Main}) honest, and keeps the wiring {@code We.*()} reads
+     * {@code Main.ourRace()} pinned exactly as the owner ruled.</p>
+     */
+    public static MockedStatic<Main> main;
 
     protected Options options = new Options();
 

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import bwapi.Race;
 
 /**
  * A queued Cybernetics Core pauses the worker pump below 250 minerals.
@@ -63,5 +64,10 @@ public class CriticalStuffCoreTest extends AbstractTestWithWorld {
                 ProtossCriticalStuffInQueue.hasEnoughMinerals(),
                 "nothing critical queued - the pump decides on its own gates");
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

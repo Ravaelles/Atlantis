@@ -15,6 +15,7 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import bwapi.Race;
 
 /**
  * A construction whose building appears somewhere OTHER than the reserved tile
@@ -149,5 +150,10 @@ public class OrphanedConstructionTest extends AbstractTestWithWorld {
                     "and it must release the worker it claimed, so the worker can mine again -"
                             + " the measured duplicate-worker deadlock of NEXT.md #53");
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

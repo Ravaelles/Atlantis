@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import bwapi.Race;
 
 /**
  * Fallback Pylons go out just before the cap, never for a hoard (owner
@@ -140,5 +141,10 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
                 atlantis.production.constructions.ConstructionRequests.constructions.clear();
             }
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }

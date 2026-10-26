@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import bwapi.Race;
 
 /**
  * The worker pump must flow from the first minute: no gate may hold back
@@ -313,5 +314,10 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
                 "450 covers Nexus+worker - the stream flows, got: "
                     + AutoProduceWorkersCommander.REASON);
         });
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 }
