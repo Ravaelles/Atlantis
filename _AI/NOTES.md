@@ -3,24 +3,34 @@
 Hard-won operational facts that do not belong anywhere else. Architecture lives in `DOCS/`.
 
 ## Test runner hygiene
-- `scripts/run-tests.sh` does **not** clean `out/` before compiling, so a deleted
-  or renamed class keeps running as a stale `.class` file and corrupts counts (and
-  can flip order-dependent tests). For any definitive run: `rm -rf out` first.
-  Measured 2026-10-08: a deleted `Block8x8` class kept failing a test that no
-  longer had a source.
+- `scripts/run-tests.sh` does **not** clean `out/` before compiling: stale `.class`
+  files can run after deletion or rename. Before a definitive run, inspect `out/`
+  and preserve non-build artifacts, then remove only stale build output and rerun.
+  Measured 2026-10-08: deleted `Block8x8` still failed a test despite having no
+  source. Never blindly `rm -rf out/`; the directory has also held Wine run logs.
 - JUnit class execution order is not source order; a new test class can shift it.
 - `scripts/run-full-tests.sh` takes NO `--select-package` (only
   `--skip-scenarios`): an extra flag is appended to EVERY scope's launcher
   invocation, so JUnit runs the union and every scope reports the same mixed
   failures. Measured 2026-10-19: 17 "failing" acceptance tests with a mixed
-  flag vs 748/0 green through `scripts/run-acceptance-tests.sh --allow-slow`.
-  Per-scope scripts are the only way to run one scope.
-- Flag position matters: `run-acceptance-tests.sh --allow-slow` (bare flag,
-  no selector) silently runs the UNIT scope - the script only defaults to
-  `tests.acceptance` when called with zero args, and `run-tests.sh` strips
-  `--allow-slow` before selecting. Measured 2026-10-19: bare-flag run
-  reported 848/848 (unit), masking 17 acceptance reds. Always pass an
-  explicit `--select-package` with any flag.
+  flag vs a green unit-only run through the acceptance wrapper. Per-scope
+  scripts are the only way to run one scope.
+- Flag position used to matter: before 2026-10-26,
+  `run-acceptance-tests.sh --allow-slow` (bare flag, no selector) silently
+  ran the UNIT scope - the script only defaulted to `tests.acceptance`
+  with zero args, and `run-tests.sh` strips `--allow-slow` before
+  selecting. Measured 2026-10-19: bare-flag run reported the unit tier
+  green while acceptance sat red. Fixed in `3e7136a8e` (the default
+  selection now survives any flag); an explicit `--select-package` with
+  any flag stays the robust form.
+- A scope that prints no JUnit summary ran zero tests: the JVM died before
+  the launcher could report. Measured 2026-10-26: with no `ENV` file,
+  `Env.readEnvFile` calls `AGame.exit` → `System.exit(0)` in the first
+  world `setUp`, so the run exited 0 having executed nothing. Both
+  `run-tests.sh` and `run-full-tests.sh` now fail loudly on a missing
+  summary (`NO JUNIT SUMMARY` / `no JUnit summary`) instead of reporting
+  green (`3e7136a8e`). A green run with no `tests found` line is a broken
+  runner, never a pass.
 - Every test's `setUp` re-reads the machine-local `bwapi-data/AI/ENV`
   (`AbstractTestWithUnits` → `Env.readEnvFile`, which never resets
   flags), so the suite result depends on the owner's local file.
