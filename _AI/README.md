@@ -15,7 +15,7 @@ AI assistant.
 
 | I want to… | Read |
 |---|---|
-| know **what to work on next** | `NEXT.md` (open backlog: phase checklist for the quarter, ordered next steps for the week; the top item, next priority and current plan are named at the top of the file) |
+| know **what to work on next** | `NEXT.md` (phase checklist, ordered next steps, and open work; the live verdicts stay here, per-game rows in `WINE-MACRO-DATUMS.md`) |
 | see the **whole road** | `NEXT.md` "Phases (the quarter)" (big phases in priority order, with exit criteria; detail in the linked documents) |
 | **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
 | work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `CHALLENGES/PositionFinder.md`, `CHALLENGES/BuildingBlockers.md` (certain vs refuted vs open, per site) |
@@ -26,6 +26,8 @@ AI assistant.
 | understand a **resolved defect's cause** | `CASE-STUDIES.md`, then `CHALLENGES/` for the system-level traps |
 | understand **why the architecture is like this** | `redesign/STARDUST_VS_ATLANTIS.md`, then `DOCS/adr/` |
 | check **known defects** | `BUGS.md` (things still wrong today, not a history) |
+| work on the **learner / sim-first gating** | `NN-PLAN.md` (phase gates G0-G4, slice plan S1-S5; backlog item is `NEXT.md` #185) |
+| work on the **OpenBW engine track** (other model) | `OPENBW-HANDOFF.md` (tasks T1-T7 + M1, done-signal protocol; backlog item is `NEXT.md` #166) |
 
 ---
 
@@ -33,11 +35,13 @@ AI assistant.
 
 - **`NEXT.md`** - the single source of truth for open work. Stable numbers, never
   renumbered; a closed item's line is **deleted** and the commit says
-  `Closes #<n>` with the evidence (CONVENTIONS §7). It is meant to be **scannable**:
-  long post-mortems of resolved defects live in `CASE-STUDIES.md`, not here.
-- **`WINE-MACRO-DATUMS.md`** - per-game Wine-macro datum chains extracted
-  from `NEXT.md` (CONVENTIONS §26): one record per game per chain, newest
-  tails stay in `NEXT.md` as the live verdict.
+  `Closes #<n>` with execution evidence (CONVENTIONS §7). Keep current conclusions
+  and open questions here; per-game rows belong in the gitignored
+  `WINE-MACRO-DATUMS.md`, long operational learnings in `NOTES.md`, and resolved
+  defect mechanisms in `CASE-STUDIES.md`.
+- **`WINE-MACRO-DATUMS.md`** - machine-local per-game Wine-macro rows (one record
+  per game per chain, CONVENTIONS §26). `NEXT.md` keeps only current conclusions
+  and deciding questions. **Gitignored on purpose**; never commit (§28).
 - **`DECISIONS.md`** - choices only the owner can make, one per entry. Approve
   by saying so; the entry is then executed and deleted.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
@@ -47,8 +51,12 @@ AI assistant.
   Not a TODO list; a fixed defect is **deleted**, so absence is not proof it never
   existed (the git log is the archive).
 - **`NOTES.md`** - operational learnings that do not fit anywhere else.
-- **`PLACEMENT-CUTOVER-PLAN.md`** - the cut-over plan behind NEXT #47/#49; it
-  changes with the blocker, so re-read it rather than trusting a quotation.
+- **`NN-PLAN.md`** - the learner track: why gating (not mechanics), phase gates
+  G0-G4 with falsification triggers, slice plan S1-S5, non-goals.
+- **`OPENBW-HANDOFF.md`** - the independent OpenBW engine-track task list and
+  its done-signal protocol (`NEXT.md` #166).
+- **`PLACEMENT-CUTOVER-PLAN.md`** - superseded 2026-10-14 (read the banner at
+  the top first); the remaining cut-over lives in NEXT #45's deletion ordering.
 
 ## Reference documents (change rarely)
 
