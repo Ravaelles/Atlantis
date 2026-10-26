@@ -58,8 +58,8 @@ Test: `OrphanedConstructionTest` (2). Mechanism: `_AI/CASE-STUDIES.md` #53.
   `initializeSharedMemory`, per-frame reset covers strings/commands but
   not events), and the client re-processes stale destroys every frame.
   Wine's real BWAPI does not do this.
-- **Status 2026-10-21: PARKED with all OpenBW work** (owner: Wine only
-  for now). Nothing downstream is affected: `--game` fails only on
+- **Status 2026-10-21: PARKED with all OpenBW work until 2026-11-09** (owner: Wine only
+  for now; then reopen with the OpenBW track or keep parked). Nothing downstream is affected: `--game` fails only on
   explicit 0/0/0, TIMES_HIT is event-sourced and sane on both
   platforms, the tuner objective uses win/hits/seconds. Reopen with the
   OpenBW track, fix at the server event queue (reset/drain per frame),

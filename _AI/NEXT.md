@@ -103,8 +103,9 @@ trade a measurement for an explanation (§3a).
     2026-10-26: membership rule `716a46142`, the `Alpha.gather` split
     stays open], (d) #184 one TargetLadder rule at a time with a sim
     no-regression proof, (e) sim-only slices of #188/#190/#192.
-    #156 stays parked (owner: no blind merge), #144–#147 wait on parity
-    runs, #160/#185 wait on K-of-N data. #206–#210 are new owner findings
+    #156 stays parked until 2026-11-09 (owner: no blind merge), #144–#147
+    wait on parity runs (review 2026-11-09), #160/#185 wait on K-of-N data
+    (review 2026-11-09). #206–#210 are new owner findings
     from the 2026-10-26 games and slot into the same queues.
 
 ## Goal board track (active)
@@ -126,26 +127,14 @@ Do not store suite counts here; measure with `scripts/run-tests.sh` when needed.
 Before cleaning `out/`, inspect it: it can contain archived game logs as well
 as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
-- **#211** The acceptance tier is red at HEAD (24 failing) and was ALREADY
-  red on the parent `1050eb070` (25 failing) - A/B-measured 2026-10-26 in a
-  worktree, so the redness is NOT the plon of `8d1e7ce47` as first written
-  here. What that commit did change is the composition: 21 failures are
-  shared on both sides (pre-existing, owner unknown -
-  `CatalogueSiteAdapter*`, dragoon production rows, `CombatEvaluator`,
-  `PostureTrapped*`, `AUnitTest`, `EnemyUnitsTest` and more), it FIXED its
-  own 3 `RequestBuildingNear*` placement tests, and 4 queue/reservation
-  tests turned red after it (`Queue2Test`, `Queue3Test.medics`,
-  `QueueInProgressInvariantTest`, `ResourcesReservedTest` - same area as
-  "Prioritize blocked supply construction", per-test blame unmeasured).
-  Combat changes are clean either way: the identical lists come back with
-  and without the ladder and the gate, and the arch advisory's violation
-  counts are byte-identical. Two runner holes found while measuring are
-  closed (commit `3e7136a8e`): the acceptance wrapper no longer drops its
-  selection under `--allow-slow`, and a JVM that dies before the JUnit
-  summary (measured: missing ENV -> `System.exit(0)` in setUp) now fails
-  instead of reporting green. Open: whoever owns the 21 shared reds and
-  the 4 queue reds re-runs the tier until green; `run-full-tests.sh`
-  stays red until then and that is honest.
+- **#211** The acceptance tier is red at HEAD `2167421e7` (18 of 294 failing,
+  measured 2026-10-26): CatalogueSiteAdapter 5, RequestBuildingNear 3,
+  ProtossDynamicUnitProduction 2, ProtossDragoonProduction 2,
+  PostureTrappedArmy 2, AUnit 2, Queue3 1, CountInQueue 1 - the same per-class
+  set as the `0b2198f29` baseline, so recent work regressed nothing.
+  Runner-integrity holes closed (`3e7136a8e`). Open: whoever owns the 18
+  re-runs the tier until green; `run-full-tests.sh` stays red until then
+  and that is honest.
 
 ## Architecture migration — stages E–J
 

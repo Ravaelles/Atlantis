@@ -41,7 +41,7 @@ AI assistant.
   defect mechanisms in `CASE-STUDIES.md`.
 - **`WINE-MACRO-DATUMS.md`** - machine-local per-game Wine-macro rows (one record
   per game per chain, CONVENTIONS §26). `NEXT.md` keeps only current conclusions
-  and deciding questions. **Gitignored on purpose**; never commit (CONVENTIONS §28).
+  and deciding questions. **Gitignored on purpose**; never commit (CONVENTIONS §6).
 - **`DECISIONS.md`** - choices only the owner can make, one per entry. Approve
   by saying so; the entry is then executed and deleted.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,

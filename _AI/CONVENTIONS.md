@@ -2,7 +2,8 @@
 
 Normative for all current and future work, including AI assistants.
 English-only (see §1). Section numbers are stable: never renumber,
-never reuse a deleted number - other documents cite "CONVENTIONS §N".
+never reuse a deleted number. Retired numbers (§4, §28, §29, §32) sit
+at the end, never reused.
 (There is no §4; the number stays retired.)
 
 ## 1. Language rule
@@ -12,25 +13,23 @@ never reuse a deleted number - other documents cite "CONVENTIONS §N".
 - Chat answers use the language of the user's message: Polish message
   → Polish answer, English → English.
 
-## 2. Architecture
-
-- Clean architecture is mandatory. All changes follow SOLID, above all
-  **Single Responsibility**: one reason to change per unit.
-- Backend selection behind a Strategy interface
-  (`GameLauncher` / `GameLauncherFactory`), never scattered `if`s.
-- Touch only what the task needs; refactoring stays inside that scope.
-- Verify by execution: build, run the binary, check outputs.
-
 ## 3. AI assistant role: substantive, not agreeable
 
-- The assistant is a technical advisor, not an order-taker. Say so
-  directly when a proposal is wrong or weak: consequence, alternative,
-  trade-off. Bare "bad idea" is not enough.
+- The assistant is a technical advisor, not an order-taker. Challenge
+  the owner's decisions in writing before executing them: the mechanism
+  it sees, the alternative it proposes, the cost of each. Agreement
+  without a stated reason is abdication, not loyalty. Bare "bad idea"
+  is not enough.
 - Mark **evidence** (verified in code or by execution) vs **opinion**.
   Never silently comply with a harmful instruction; never trade
-  long-term maintainability for short-term convenience.
-- If the user overrules an argued objection, implement without
-  re-litigating.
+  long-term maintainability for short-term convenience. Silence in the
+  face of a harmful instruction is a defect, not politeness.
+- One challenge per decision, then execution without re-litigating:
+  overruled objections are implemented as ordered and the overruled
+  reading is recorded next to the work (commit message, NEXT line),
+  so a later failure can find it. Standing disagreements stay in the
+  open (chat + commit message): what is contested, what would settle
+  it, what the fallback is.
 
 ## 3a. Never manufacture a result (owner's ruling, 2026-10-10)
 
@@ -48,6 +47,112 @@ never reuse a deleted number - other documents cite "CONVENTIONS §N".
   strong evidence - they divert the whole investigation.
 - Withdrawing is cheap: name it, revert (revert commit, no rewrites),
   leave the item open.
+
+## 3b. Bugs before features (owner's ruling, 2026-10-26)
+
+- A confirmed broken behavior outranks a missing one: `BUGS.md` items are
+  worked before new features and new vocabulary. New code that papers over
+  a known defect without fixing it is not landed.
+- Within bugs, damage decides the order: crash/data-loss first, then wrong
+  behavior, then friction/polish. `NEXT.md` order already encodes this; a
+  feature that unblocks a bugfix outranks both.
+
+## 19. Work rhythm: small steps, one-sentence next step (owner's ruling, 2026-10-12)
+
+- Name the next action in one sentence, do it, report in one sentence,
+  name the next. Long silent stretches are not acceptable.
+
+## 20. Unfinished work is a commit or a NEXT item, never a prose file (owner's ruling, 2026-10-14)
+
+- No "status" / "in progress" prose files under any name (precedents:
+  `STATUS.md`, `__IN-PROGRESS.md` - deleted). They rot; nobody owns
+  cleanup. A commit is timestamped evidence, a NEXT item has a number
+  a commit can close. Neither → not started.
+
+## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
+
+- Single source of truth for open work; `_AI/NOTES.md` for learnings.
+- Stable numbers, never reused/renumbered. Finished item's line is
+  **deleted** (git history is the archive); commit says `Closes #<n>`
+  with evidence (test result, game-run id, ArchUnit output).
+- New items append with the next free number. Items close only when
+  **verified by execution**, never on "it compiles".
+- Health and tally lines carry their measurement (date + commit); a line
+  without one is a claim, not a verdict. Parked items carry a review date
+  (`parked until YYYY-MM-DD`): past the date the item returns to the queue
+  or gets a verdict, so nothing rots silently.
+
+## 6. Commit after every completed work cycle (owner's ruling 2026-10-21)
+
+- One **coherent unit of work** per commit; batch small doc updates with
+  the work they describe. Message says **what and why** (documentary
+  value is the point). Never mix unrelated work. Never rewrite history.
+- The ArchUnit store is versioned on purpose, never `.gitignore`d.
+- **Commits containing only documentation (`.md` files) are forbidden.**
+  A work cycle is done only when code changed and was verified by
+  execution; doc-only changes ride along with the work they document,
+  never as a standalone commit.
+- Never `git push` unless the user explicitly asks.
+- `_AI/` edits ride the same rule: datum rows, NEXT tips and audit notes
+  accumulate in the working tree and ride the next code commit - a commit
+  exists only when production or test code moves. `_AI/WINE-MACRO-DATUMS.md`
+  is machine-local bulk, gitignored on purpose, never committed. This extends
+  §26 (no doc-only commits) to all `_AI/` edits.
+
+## 26. The backlog is not a database (owner's ruling, 2026-10-23)
+
+- A commit must move the work forward: code, a test, a measured game
+  run with archived evidence, or a new verified conclusion with its
+  evidence. `_AI/NEXT.md` describes what the commit did; it is never
+  the commit's whole content.
+- Forbidden: a diff touching only `_AI/NEXT.md` (or only docs) that
+  adds no new information - restating the same verdict for the Nth
+  game, reformatting, re-shuffling chains, fixing typos in old datum
+  lines.
+- No raw statistics or per-game logs in `_AI/NEXT.md`. Per-game rows,
+  frame numbers, supply tables, sweep counts, and repeated verdicts
+  belong in `_AI/WINE-MACRO-DATUMS.md` (one record per game per chain)
+  or nowhere if no decision depends on them. NEXT.md keeps the current
+  conclusion, genuinely deciding number, and open question; detailed
+  history stays in the datum log, not duplicated across backlog entries.
+  A repeat-verdict game adds its datum row and nothing else - no commit
+  until commit-worthy work exists.
+- Backlog maintenance never justifies a commit alone: it rides inside
+  the next work commit, or happens on the owner's explicit order
+  (message says so). History is not rewritten: old commits stay.
+
+## 10. Tests: TDD for key features, not trivia (normative)
+
+- Key features ship with a pinning test, **in the same fix** - "X was
+  broken and I fixed it" names its test (`Test: <ClassName>`).
+- Trivial code gets no test (getters, logs, plumbing, one-liners); say
+  so in the commit message.
+- The **mega-test** (one OpenBW game over economy/production/combat/map)
+  is the behaviour-coverage goal - worth dozens of unit tests.
+- Budget: `scripts/run-tests.sh` stays well under 40 s (§12).
+
+## 12. Test runtime budget (owner's ruling, 2026-10-06)
+
+- `scripts/run-tests.sh` = fast inner loop (unit minus `full-tier`,
+  advisory architecture, cheap e2e smokes). It **refuses** slow scopes
+  (`tests.e2e`, `tests.acceptance`, bare `tests root`) with exit 2.
+- Slow scopes are **owner-only** (`scripts/run-full-tests.sh`).
+
+## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
+
+- Every unit test carries a `@Tag` area (`production`, `combat`,
+  `placement`, `map`, `infra`) plus `@Tag("full-tier")` when full-tier
+  only. New tests default to the fast loop; widening needs the settled
+  + slow justification written down. Detail: `DOCS/TESTING.md`.
+
+## 2. Architecture
+
+- Clean architecture is mandatory. All changes follow SOLID, above all
+  **Single Responsibility**: one reason to change per unit.
+- Backend selection behind a Strategy interface
+  (`GameLauncher` / `GameLauncherFactory`), never scattered `if`s.
+- Touch only what the task needs; refactoring stays inside that scope.
+- Verify by execution: build, run the binary, check outputs.
 
 ## 5. Architecture direction (agreed, normative)
 
@@ -71,43 +176,35 @@ never reuse a deleted number - other documents cite "CONVENTIONS §N".
 - Large changes proceed incrementally per `_AI/NEXT.md`, bot playable,
   each checked against `DOCS/SOLID-CHECKLIST.md`.
 
-## 6. Commit after every completed work cycle (owner's ruling 2026-10-21)
+## 21. Domain knowledge in domain packages, never machinery (owner's ruling, 2026-10-15)
 
-- One **coherent unit of work** per commit; batch small doc updates with
-  the work they describe. Message says **what and why** (documentary
-  value is the point). Never mix unrelated work. Never rewrite history.
-- The ArchUnit store is versioned on purpose, never `.gitignore`d.
-- **Commits containing only documentation (`.md` files) are forbidden.**
-  A work cycle is done only when code changed and was verified by
-  execution; doc-only changes ride along with the work they document,
-  never as a standalone commit.
-- Never `git push` unless the user explicitly asks.
+- Game meaning (what/when/in what order/at what price) lives in domain
+  packages (`decisions.goals.protoss`, race strategies), never in
+  generic algorithm packages (`decisions.board`). A tuning change is a
+  domain diff. Check: `grep -rn '^import atlantis' <generic-package>`
+  shows only `java.*` - a domain import there is a boundary violation.
+- Vocabularies are siblings of the machinery, never children
+  (`goals.protoss` next to `board`, never under it).
+- No new `Decision` usages: new decision logic goes through the goal
+  board (49 files tracked to zero before the type dies).
 
-## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
+## 24. Readability by extraction (owner's ruling, 2026-10-22)
 
-- Single source of truth for open work; `_AI/NOTES.md` for learnings.
-- Stable numbers, never reused/renumbered. Finished item's line is
-  **deleted** (git history is the archive); commit says `Closes #<n>`
-  with evidence (test result, game-run id, ArchUnit output).
-- New items append with the next free number. Items close only when
-  **verified by execution**, never on "it compiles".
+- One level of abstraction per method. Compound conditions, inline
+  best-tracking loops, multi-step computations get extracted - never
+  left inline with an explaining comment. Density is not elegance:
+  prefer a named local, then a named method, then a dedicated class.
+- Extractions never change behavior: pinning tests stay green
+  untouched. Applies to tests and scripts too.
+- Blank lines around returns (enforced by owner-run checkstyle,
+  auto-fix `--apply`): glued guard returns stay glued; a blank line
+  separates the last guard (or any code) from the final `return`.
 
-## 8. Workspace boundary (mandatory)
+## 25. Checkstyle is owner-run; the assistant never runs it (owner's ruling, 2026-10-22)
 
-- Work inside **`/sc-ai`** (stable symlink name - always use it, never
-  the resolved target). **`/ravaelles` is off limits**, even read-only;
-  never ask for access to it. If something is unreachable, ask *where
-  it is*.
-- **`/sc-ai/Stardust`, `/sc-ai/StardustDevEnvironment`,
-  `/sc-ai/PurpleWave`** may be read AND edited (owner's ruling,
-  2026-10-10); their own commit rules apply, never `git push`.
-- Scratch: `/tmp/opencode` (throwaway; survivors go into `Atlantis/`).
-- **`~/.scbw/games/` read-only** (scbw E2E verdicts only). **`~/.scbw/bots/AtlantisP`
-  and `AtlantisT`** hold real files (scbw bind-mounts read-only; hard
-  links count as links - a swapped jar once failed every game with `no
-  main manifest attribute`). Always rebuild straight into those `AI/`
-  folders (`build-bot-jar.sh <that path>`).
-- Helper tooling (venvs, packages) is a means, never a deliverable.
+- The assistant **never runs `scripts/checkstyle.sh`** - not to verify,
+  not to count, not to auto-fix. Pre-commit verification is the test
+  suite; checkstyle output is never part of the assistant's turn.
 
 ## 9. StarCraft facts: source hierarchy (mandatory)
 
@@ -123,33 +220,10 @@ decompiled archives:
   (`UnitStatsTableTest`); unguarded hand tables prove nothing. Guard
   pins beat commit-message claims on mismatch.
 
-## 10. Tests: TDD for key features, not trivia (normative)
+## 18. Unit-behaviour debugging: manager history first (owner's ruling, 2026-10-09)
 
-- Key features ship with a pinning test, **in the same fix** - "X was
-  broken and I fixed it" names its test (`Test: <ClassName>`).
-- Trivial code gets no test (getters, logs, plumbing, one-liners); say
-  so in the commit message.
-- The **mega-test** (one OpenBW game over economy/production/combat/map)
-  is the behaviour-coverage goal - worth dozens of unit tests.
-- Budget: `scripts/run-tests.sh` stays well under 40 s (§12).
-
-## 11. Challenge log: `_AI/CHALLENGES/` (added 2026-10-06)
-
-- A problem costing 2+ research cycles gets 1-2 lines: fact,
-  measurement, fix. No narrative. File named after the system, not bug.
-
-## 11a. READ FIRST before touching games/clients/packaging (owner's ruling, 2026-10-07)
-
-- `OpenBW.md` (client attach), `GameExecution.md` (Wine vs OpenBW
-  mixups), `BuildAndLogging.md` (wrong jar, stdout, races). Every past
-  failure here disguised itself as a different problem.
-
-## 12. Test runtime budget (owner's ruling, 2026-10-06)
-
-- `scripts/run-tests.sh` = fast inner loop (unit minus `full-tier`,
-  advisory architecture, cheap e2e smokes). It **refuses** slow scopes
-  (`tests.e2e`, `tests.acceptance`, bare `tests root`) with exit 2.
-- Slow scopes are **owner-only** (`scripts/run-full-tests.sh`).
+- Inspect `unit.managerLogs()` before inferring from state or
+  reordering managers. Read the focused frame window only.
 
 ## 13. Command timeout: 120 seconds, everywhere (owner's ruling, 2026-10-09)
 
@@ -179,14 +253,6 @@ decompiled archives:
 - Split layers before debugging attach failures (bare-classpath socket
   probe vs packed jar). A jar that cannot attach is a build failure.
 
-## 16. Java version: always 1.8 (owner's ruling; restated 2026-10-08)
-
-- Everywhere: game jar, IDE SDK, every `javac`, every tool JDK. No
-  upgrade plan - do not propose one.
-- Every compile passes `--release 8` (class major 52). Guard:
-  `tests.architecture.Java8BytecodeTest`. One forgotten flag = dead
-  keyboard / never-attaching bot, not a compile error.
-
 ## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09; 150 s since 2026-10-15)
 
 - `TIMEOUT_SECONDS=150` wall-clock + self-ending game at 20 game
@@ -194,99 +260,86 @@ decompiled archives:
   Wrap the runner in outer `timeout 150`. Timed-out = **inconclusive**.
 - Run only through `scripts/run-openbw-e2e.sh`.
 
-## 18. Unit-behaviour debugging: manager history first (owner's ruling, 2026-10-09)
+## 30. StarEngine-first workflow (owner's ruling, 2026-10-26)
 
-- Inspect `unit.managerLogs()` before inferring from state or
-  reordering managers. Read the focused frame window only.
+- StarEngine (`tests/unit/sim/`: SimArena + SimWorld + `BattleCommander.act`
+  with real engine data; `tests/fakes/`) is the DEFAULT work environment,
+  not a combat-only harness: every defect that can move units gets a
+  one-scenario repro there (or a plain unit test for pure logic) BEFORE any
+  other verification. A report becomes one failing scenario first (zombie
+  opponents: chase-nearest, stand-and-trade, plus one more policy per
+  scenario so gates never overfit one script); the fix lands with it green.
+- Iterate targeted: `--select-class` the repro plus directly
+  affected classes only. Never re-run the whole scope to check one
+  hypothesis - the full unit scope runs ONCE, as the pre-commit
+  gate (CONVENTIONS §6, §10), and stays green there. Architecture
+  scope stays advisory in the loop, authoritative via its own script.
+- Full-suite output noise is known (deliberate loud logging in
+  exercised error paths); targeted runs stay readable. A new test
+  prints at most one summary line.
+- Wine games need no permission, ever (owner's ruling, 2026-10-26):
+  the assistant never asks whether it may launch a match - it decides
+  and runs it. Standing allowance covers any Wine match, mini-map or
+  full (mini-map preferred: faster, cheaper); headless, bounded, one
+  game at a time, in the background, never overlapping the test suite
+  (§14), never on top of the owner's own live game (check first).
+  The order stays: StarEngine repro first whenever the defect can
+  move units there; Wine when the sim cannot model it (regions, fog,
+  engine specifics) or the sim already answered and a game must
+  confirm. The reason is recorded in the test or commit. Games
+  confirm, never discover.
+- **Wine games are slow. Always try StarEngine first.** A Wine match
+  costs minutes, a sim episode ~250 ms - so the DEFAULT above is not
+  optional. Do not treat Wine as the first tool just because it is
+  allowed.
+- Fidelity direction: replicate BASE unit behaviors faithfully
+  (facing, accel/braking, attack cycles, cooldowns), not the engine
+  pixel-perfectly. Regions may stay simple: the rect-region fake map
+  (quadrants + chokes + blocked bands) stands in for a real map
+  wherever the sim needs ground. Gaps vs live are filed as NEXT
+  items with measurement, never silently worked around.
+- Batch tuning rides SimTunerBatch + CSV manifests. Learner sequencing
+  (NEXT #185): the TargetLadder is the action space; hand-written gates
+  are replaced one rule at a time behind the same seam (hand rule OR net
+  score + DRY_RUN + kill-switch), deterministic mode stays forever as the
+  A/B baseline. No end-to-end pixel policies; no training on a sim with
+  unclosed dynamics gaps (Stage A bar first).
 
-## 19. Work rhythm: small steps, one-sentence next step (owner's ruling, 2026-10-12)
+## 11. Challenge log: `_AI/CHALLENGES/` (added 2026-10-06)
 
-- Name the next action in one sentence, do it, report in one sentence,
-  name the next. Long silent stretches are not acceptable.
+- A problem costing 2+ research cycles gets 1-2 lines: fact,
+  measurement, fix. No narrative. File named after the system, not bug.
 
-## 20. Unfinished work is a commit or a NEXT item, never a prose file (owner's ruling, 2026-10-14)
+## 11a. READ FIRST before touching games/clients/packaging (owner's ruling, 2026-10-07)
 
-- No "status" / "in progress" prose files under any name (precedents:
-  `STATUS.md`, `__IN-PROGRESS.md` - deleted). They rot; nobody owns
-  cleanup. A commit is timestamped evidence, a NEXT item has a number
-  a commit can close. Neither → not started.
+- `OpenBW.md` (client attach), `GameExecution.md` (Wine vs OpenBW
+  mixups), `BuildAndLogging.md` (wrong jar, stdout, races). Every past
+  failure here disguised itself as a different problem.
 
-## 21. Domain knowledge in domain packages, never machinery (owner's ruling, 2026-10-15)
+## 8. Workspace boundary (mandatory)
 
-- Game meaning (what/when/in what order/at what price) lives in domain
-  packages (`decisions.goals.protoss`, race strategies), never in
-  generic algorithm packages (`decisions.board`). A tuning change is a
-  domain diff. Check: `grep -rn '^import atlantis' <generic-package>`
-  shows only `java.*` - a domain import there is a boundary violation.
-- Vocabularies are siblings of the machinery, never children
-  (`goals.protoss` next to `board`, never under it).
-- No new `Decision` usages: new decision logic goes through the goal
-  board (49 files tracked to zero before the type dies).
+- Work inside **`/sc-ai`** (stable symlink name - always use it, never
+  the resolved target). **`/ravaelles` is off limits**, even read-only;
+  never ask for access to it. If something is unreachable, ask *where
+  it is*.
+- **`/sc-ai/Stardust`, `/sc-ai/StardustDevEnvironment`,
+  `/sc-ai/PurpleWave`** may be read AND edited (owner's ruling,
+  2026-10-10); their own commit rules apply, never `git push`.
+- Scratch: `/tmp/opencode` (throwaway; survivors go into `Atlantis/`).
+- **`~/.scbw/games/` read-only** (scbw E2E verdicts only). **`~/.scbw/bots/AtlantisP`
+  and `AtlantisT`** hold real files (scbw bind-mounts read-only; hard
+  links count as links - a swapped jar once failed every game with `no
+  main manifest attribute`). Always rebuild straight into those `AI/`
+  folders (`build-bot-jar.sh <that path>`).
+- Helper tooling (venvs, packages) is a means, never a deliverable.
 
-## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
+## 16. Java version: always 1.8 (owner's ruling; restated 2026-10-08)
 
-- Every unit test carries a `@Tag` area (`production`, `combat`,
-  `placement`, `map`, `infra`) plus `@Tag("full-tier")` when full-tier
-  only. New tests default to the fast loop; widening needs the settled
-  + slow justification written down. Detail: `DOCS/TESTING.md`.
-
-## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-22)
-
-- Commanders **delegate**: one public entry (`act`), one private step
-  per domain move. The how lives in the step's own class. A commander
-  that computes is a manager in disguise - split it.
-- Names use StarCraft's ubiquitous language (retreat, formation, kite,
-  regroup, breach). Never machinery words (`order`, `process`,
-  `manager`, `strategy-tag`). Framework overrides keep framework names
-  (`handle`, `subcommanders`) - bodies obey the rules anyway.
-- Per-unit vocabulary lives only in `atlantis.combat.Behavior`
-  (`KITE`, `HOLD_FORMATION`, ...); `Actions` is the order (move/attack),
-  `Behavior` the reason. Tag strings are frozen journal spellings.
-- Table-of-contents test: a non-programmer retells the battle story
-  from `handle()` + `act()` without opening an implementation.
-- Zero machinery in commander bodies: no engine order types, no
-  journal plumbing, no logging/twin assembly, no frame counting, no
-  cross-concept conditionals (the gate lives with the concept).
-
-## 24. Readability by extraction (owner's ruling, 2026-10-22)
-
-- One level of abstraction per method. Compound conditions, inline
-  best-tracking loops, multi-step computations get extracted - never
-  left inline with an explaining comment. Density is not elegance:
-  prefer a named local, then a named method, then a dedicated class.
-- Extractions never change behavior: pinning tests stay green
-  untouched. Applies to tests and scripts too.
-- Blank lines around returns (enforced by owner-run checkstyle,
-  auto-fix `--apply`): glued guard returns stay glued; a blank line
-  separates the last guard (or any code) from the final `return`.
-
-## 25. Checkstyle is owner-run; the assistant never runs it (owner's ruling, 2026-10-22)
-
-- The assistant **never runs `scripts/checkstyle.sh`** - not to verify,
-  not to count, not to auto-fix. Pre-commit verification is the test
-  suite; checkstyle output is never part of the assistant's turn.
-
-## 26. The backlog is not a database (owner's ruling, 2026-10-23)
-
-- A commit must move the work forward: code, a test, a measured game
-  run with archived evidence, or a new verified conclusion with its
-  evidence. `_AI/NEXT.md` describes what the commit did; it is never
-  the commit's whole content.
-- Forbidden: a diff touching only `_AI/NEXT.md` (or only docs) that
-  adds no new information - restating the same verdict for the Nth
-  game, reformatting, re-shuffling chains, fixing typos in old datum
-  lines.
-- No raw statistics or per-game logs in `_AI/NEXT.md`. Per-game rows,
-  frame numbers, supply tables, sweep counts, and repeated verdicts
-  belong in `_AI/WINE-MACRO-DATUMS.md` (one record per game per chain)
-  or nowhere if no decision depends on them. NEXT.md keeps the current
-  conclusion, genuinely deciding number, and open question; detailed
-  history stays in the datum log, not duplicated across backlog entries.
-  A repeat-verdict game adds its datum row and nothing else - no commit
-  until commit-worthy work exists.
-- Backlog maintenance never justifies a commit alone: it rides inside
-  the next work commit, or happens on the owner's explicit order
-  (message says so). History is not rewritten: old commits stay.
+- Everywhere: game jar, IDE SDK, every `javac`, every tool JDK. No
+  upgrade plan - do not propose one.
+- Every compile passes `--release 8` (class major 52). Guard:
+  `tests.architecture.Java8BytecodeTest`. One forgotten flag = dead
+  keyboard / never-attaching bot, not a compile error.
 
 ## 27. Log priority tags (owner's ruling, 2026-10-26)
 
@@ -310,78 +363,23 @@ decompiled archives:
   `EXPECT_NO_CRITICAL`); old `CRITICAL` spellings in retained logs
   keep matching (the gate accepts both).
 
-## 28. Commit discipline for `_AI/` logs (owner's ruling, 2026-10-23)
+## 23. Commanders speak the domain, never the machinery (owner's ruling, 2026-10-22)
 
-- `_AI/WINE-MACRO-DATUMS.md` is machine-local bulk: it stays in the
-  working tree only (gitignored), never enters git. Per-game rows
-  accumulate too fast to version; the committed history stays in the
-  git log.
-- `_AI/`-only changes (datum rows, NEXT tips, audit notes) are never
-  committed alone. They accumulate in the working tree and ride the
-  next code commit - a commit exists only when production or test code
-  moves. This extends §26 (no doc-only commits) to all `_AI/` edits.
-
-## 29. StarEngine sim-first is the main way of writing combat (owner's ruling, 2026-10-24)
-
-- Combat behaviors are specified, reproduced and pinned in the in-JVM
-  sim (`tests/unit/sim/`: SimArena + SimWorld + `BattleCommander.act`
-  with real engine data) BEFORE any game runs. A bug report becomes a
-  failing sim scenario first (zombie opponents: chase-nearest,
-  stand-and-trade, plus one more policy per scenario so gates never
-  overfit one script); the fix lands with the sim green; games then
-  confirm, never discover.
-- Real-bot games are sporadic verification only
-  (e.g. `/sc-ai/BOTS/Steamhammer.sh`), one at a time, never the inner
-  loop: a Wine game costs minutes (plus a minute to launch), a sim
-  episode ~250 ms. Batch tuning rides SimTunerBatch + CSV manifests.
-- Learner sequencing (NEXT #185): the TargetLadder is the action
-  space; hand-written gates are replaced one rule at a time behind
-  the same seam (hand rule OR net score + DRY_RUN + kill-switch),
-  deterministic mode stays forever as the A/B baseline. No
-  end-to-end pixel policies; no training on a sim with unclosed
-  dynamics gaps (Stage A bar first).
-
-## 30. StarEngine-first workflow (owner's ruling, 2026-10-26)
-
-- StarEngine (`tests/unit/sim/`, `tests/fakes/`) is the DEFAULT
-  work environment, not a combat-only harness: every defect that can
-  move units gets a one-scenario repro there (or a plain unit test
-  for pure logic) BEFORE any other verification. A report becomes
-  one failing scenario first; the fix lands with it green.
-- Iterate targeted: `--select-class` the repro plus directly
-  affected classes only. Never re-run the whole scope to check one
-  hypothesis - the full unit scope runs ONCE, as the pre-commit
-  gate (CONVENTIONS §6, §10), and stays green there. Architecture
-  scope stays advisory in the loop, authoritative via its own script.
-- Full-suite output noise is known (deliberate loud logging in
-  exercised error paths); targeted runs stay readable. A new test
-  prints at most one summary line.
-- Wine games need no permission, ever (owner's ruling, 2026-10-26):
-  the assistant never asks whether it may launch a match - it decides
-  and runs it. Standing allowance covers any Wine match, mini-map or
-  full (mini-map preferred: faster, cheaper); headless, bounded, one
-  game at a time, in the background, never overlapping the test suite
-  (§14), never on top of the owner's own live game (check first).
-  The order stays: StarEngine repro first whenever the defect can
-  move units there; Wine when the sim cannot model it (regions, fog,
-  engine specifics) or the sim already answered and a game must
-  confirm. The reason is recorded in the test or commit. Games
-  confirm, never discover (§29).
-- **Wine games are slow. Always try StarEngine first.** A Wine match
-  runs headless and can be launched at any moment (standing allowance
-  above) - but it costs minutes, while a sim episode is ~250 ms. So
-  the DEFAULT is always to reproduce the defect in our own engine,
-  StarEngine (`tests/unit/sim/`, `tests/fakes/`, §29/§30), and to
-  reach for Wine only when the sim genuinely cannot model the defect
-  (regions, fog, engine specifics) or when a game must confirm a fix
-  the sim already proved. Do not treat Wine as the first tool just
-  because it is allowed.
-- Fidelity direction: replicate BASE unit behaviors faithfully
-  (facing, accel/braking, attack cycles, cooldowns), not the engine
-  pixel-perfectly. Regions may stay simple: the rect-region fake map
-  (quadrants + chokes + blocked bands) stands in for a real map
-  wherever the sim needs ground. Gaps vs live are filed as NEXT
-  items with measurement, never silently worked around.
+- Commanders **delegate**: one public entry (`act`), one private step
+  per domain move. The how lives in the step's own class. A commander
+  that computes is a manager in disguise - split it.
+- Names use StarCraft's ubiquitous language (retreat, formation, kite,
+  regroup, breach). Never machinery words (`order`, `process`,
+  `manager`, `strategy-tag`). Framework overrides keep framework names
+  (`handle`, `subcommanders`) - bodies obey the rules anyway.
+- Per-unit vocabulary lives only in `atlantis.combat.Behavior`
+  (`KITE`, `HOLD_FORMATION`, ...); `Actions` is the order (move/attack),
+  `Behavior` the reason. Tag strings are frozen journal spellings.
+- Table-of-contents test: a non-programmer retells the battle story
+  from `handle()` + `act()` without opening an implementation.
+- Zero machinery in commander bodies: no engine order types, no
+  journal plumbing, no logging/twin assembly, no frame counting, no
+  cross-concept conditionals (the gate lives with the concept).
 
 ## 31. Anti-Edge-Case rule - AEC (owner's ruling 2026-10-26)
 
@@ -395,24 +393,10 @@ decompiled archives:
   defect until it is a named constant with a measurement and a pin.
   Thresholds live once, next to the behavior that owns them, never
   inline in a caller.
-- A new behavior lands sim-pinned first (§29/30): one failing
+- A new behavior lands sim-pinned first (§30): one failing
   scenario, then the fix, then the suite green. A behavior
   indistinguishable in sim from the one it replaces does not land as
   a behavior change - it lands as a pin or not at all.
-
-## 32. Skepticism duty (owner's ruling 2026-10-26)
-
-- The assistant challenges the owner's decisions in writing before
-  executing them: the mechanism it sees, the alternative it proposes,
-  the cost of each. Agreement without a stated reason is abdication,
-  not loyalty (§3). Silence in the face of a harmful instruction is
-  a defect, not politeness.
-- One challenge per decision, then execution without re-litigation:
-  overruled objections are implemented as ordered and the overruled
-  reading is recorded next to the work (commit message, NEXT line),
-  so a later failure can find it.
-- Standing disagreements stay in the open (chat + commit message):
-  what is contested, what would settle it, what the fallback is.
 
 ## 33. New combat code lives in atlantis.combat (owner's ruling 2026-10-26)
 
@@ -428,3 +412,18 @@ decompiled archives:
   seam belongs in combat.* instead (CONVENTIONS §31).
 - Old vs new is decided by package, never by memory: if it lives under
   battle.* outside a reclaimed seam, it is old.
+## 28. Retired (folded into §6, 2026-10-26)
+
+- Content moved verbatim into §6 to end the three-section overlap
+  (§6/§26/§28); the number stays retired, never reused.
+
+## 29. Retired (folded into §30, 2026-10-26)
+
+- Content moved into §30 to end the two-section overlap; the number
+  stays retired, never reused.
+
+## 32. Retired (folded into §3, 2026-10-26)
+
+- Content moved into §3 to end the two-section overlap; the number
+  stays retired, never reused.
+
