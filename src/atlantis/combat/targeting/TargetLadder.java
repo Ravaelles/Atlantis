@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import atlantis.combat.cluster.ClusterBreach;
-import atlantis.combat.formation.CoverWithdraw;
-import atlantis.combat.formation.FormationTwin;
 import atlantis.units.AUnit;
 
 /**
@@ -70,12 +68,8 @@ public final class TargetLadder {
         target = SharedFocusTarget.pick(unit);
         if (target != null) return target;
 
-        CoverWithdraw.Cover cover = CoverWithdraw.coverTarget(unit);
-        if (cover != null) {
-            FormationTwin.covering(unit, cover.pursuer, cover.escaper);
-
-            return cover.pursuer;
-        }
+        target = CoverTarget.pick(unit);
+        if (target != null) return target;
 
         target = ASquadTargeting.useSquadTargetIfPossible(unit);
         if (target != null) return target;

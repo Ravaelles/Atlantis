@@ -126,8 +126,7 @@ public class TargetLadderTest extends WorldStubForTests {
     }
 
     @Test
-    public void sharedFocusBeatsNearestWhenNothingIsInRange() {
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+    public void sharedFocusBeatsNearestWhenNothingIsInRange() {        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
         d.hp = 100;
         d.cooldown = 0;
@@ -145,6 +144,29 @@ public class TargetLadderTest extends WorldStubForTests {
                 "rules 1-4 decline (not melee, nothing committed, nothing "
                 + "in range, nothing stuck), so the shared weakest-in-nine "
                 + "wins over the nearer raider - rule 5 owns the pick");
+        });
+    }
+
+    @Test
+    public void coverBeatsSquadWhenWithdrawingAllyIsChewed() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit h = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        h.hp = 160;
+        FakeUnit h2 = fake(AUnitType.Protoss_Dragoon, 25, 20);
+        h2.hp = 160;
+        FakeUnit w = fake(AUnitType.Protoss_Dragoon, 35, 20);
+        w.hp = 30;
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 33.5, 20);
+        ling.setEnemy();
+        ling.hp = 35;
+
+        world(3, fakeOurs(nexus, h, h2, w), fakeEnemies(ling), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertEquals(ling.id(), idOf(AcquireTarget.acquire(h)),
+                "rules 1-5 decline (not melee, nothing committed, ling banned "
+                + "from focus, nothing stuck), so the cover rule owns the "
+                + "pick: the pursuer chewing the withdrawer, not the nearest");
         });
     }
 
