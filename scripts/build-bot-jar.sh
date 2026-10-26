@@ -41,8 +41,10 @@
 #   - everything in the BWAPI jar (lib/jbwapi-2.2.0.jar): bwapi/, bwem/, JNA
 #     (com/sun/jna/) and the win32-*/ natives - jnativehook needs JNA at runtime
 #   - runtime libraries only: jnativehook (atlantis.keyboard.AKeyboard), slf4j
-#     (jnativehook's logging), kryo + minlog + reflectasm + objenesis
-#     (atlantis.debug.object.ObjectToFile), vecmath (atlantis.util.Vector)
+#     (jnativehook's logging), vecmath (atlantis.util.Vector), zstd-jni
+#     (CherryVis trace writer AZstdWriter). kryo + minlog + reflectasm +
+#     objenesis were removed 2026-10-11 (NEXT #38) - RUNTIME_LIBS below and
+#     scripts/lib-classpath.md are the current list.
 #   - nothing else: no JUnit, no Mockito, no ByteBuddy, no ArchUnit, no
 #     lib/lib-unused/jbwapi-2.1.0.jar, no Maps/ (the bot reads maps and build
 #     orders from the filesystem next to the jar, never from the classpath -
