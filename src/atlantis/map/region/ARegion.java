@@ -50,6 +50,16 @@ public class ARegion implements HasPosition {
 
     // =========================================================
 
+    /**
+     * Test seam: stub regions have no BWEM area, so `create` never runs
+     * for them and every id stays 0 - and `equals` compares ids, which
+     * made every stub region equal to every other (a main-region-only
+     * rule could never fire in tests). Production ids come from areas.
+     */
+    protected final void setIdForTests(int id) {
+        this.id = id;
+    }
+
     @Override
     public APosition position() {
         return position;

@@ -22,6 +22,11 @@ public class MainRegion {
         return mainRegion;
     }
 
+    /** Test seam: worlds come and go, the cached answer must not outlive one. */
+    public static void clearForTests() {
+        mainRegion = null;
+    }
+
     public static HasPosition center() {
         ARegion mainRegion = mainRegion();
         if (mainRegion == null) return null;

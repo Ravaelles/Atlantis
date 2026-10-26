@@ -2,10 +2,12 @@ package atlantis.production.constructions.position.conditions;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.ReachableTiles;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -18,9 +20,13 @@ public class IsProbablyInAnotherRegion {
         if (building.isBase()) return false;
         if (handleIsBadRegionForFirstBunker(building, position)) return true;
 
-        if (Env.isTesting()) return apprxForTesting(builder, building, position, nearTo);
-
+        // The 60-supply escape reads the same in both worlds: at 60+ the
+        // region no longer constrains pylons, in the game or in a test.
         if (building.isPylon() && A.supplyTotal() >= 60) return false;
+
+        if (defaultPylonMustStayHome(builder, building, position, nearTo)) return true;
+
+        if (Env.isTesting()) return apprxForTesting(builder, building, position, nearTo);
 
 //        if (
 //            nearTo != null
@@ -65,6 +71,36 @@ public class IsProbablyInAnotherRegion {
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
+
+        return true;
+    }
+
+    /**
+     * Early pylons stay home (owner, lost game vs early aggression: the
+     * default-sited 2nd pylon walked to the natural and died there with
+     * the game). The default search starts at the main, but its rings
+     * reach connected ground - reachability passes while the pylon lands
+     * where nothing defends it. Until 60 supply a pylon from a
+     * main-anchored search cannot land outside the main region. Two
+     * exemptions, both deliberate: an origin away from home means an
+     * explicit request, not the default null-nearTo search; an expansion
+     * strategy means the natural pylon is the point. Public as a seam:
+     * the stub partition (one region per base) answers the same question
+     * as BWTA here, so this pins directly.
+     */
+    public static boolean defaultPylonMustStayHome(AUnit builder, AUnitType building, APosition position, HasPosition nearTo) {
+        if (!building.isPylon()) return false;
+        if (A.supplyTotal() > 60) return false;
+        if (Strategy.get().isExpansion()) return false;
+        if (nearTo == null || nearTo.position() == null || position == null) return false;
+
+        ARegion main = MainRegion.mainRegion();
+        if (main == null) return false;
+        if (!main.equals(nearTo.position().region())) return false;
+
+        if (main.equals(position.region())) return false;
+
+        AbstractPositionFinder._STATUS = "Early pylon outside main region";
 
         return true;
     }

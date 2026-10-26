@@ -17,10 +17,12 @@ import java.util.Objects;
 
 public class FakeRegion extends ARegion {
     private static Map<ABaseLocation, FakeRegion> regions = new HashMap<>();
+    private static int nextId = 1;
     private final ABaseLocation location;
 
     public FakeRegion(ABaseLocation location) {
         this.location = location;
+        setIdForTests(nextId++);
     }
 
     // =========================================================
@@ -37,7 +39,7 @@ public class FakeRegion extends ARegion {
         Positions<ABaseLocation> basePositions = new Positions<>();
         basePositions.addPositions(BaseLocations.baseLocations());
 
-        ABaseLocation location = basePositions.nearestTo(APosition.create(tx * 32, ty * 32));
+        ABaseLocation location = basePositions.nearestTo(APosition.create(tx, ty));
 
         if (regions.containsKey(location)) return regions.get(location);
 
