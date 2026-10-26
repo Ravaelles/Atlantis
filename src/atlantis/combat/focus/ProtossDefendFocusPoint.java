@@ -92,7 +92,9 @@ public final class ProtossDefendFocusPoint {
                         return null;
                     }
 
-                    AUnit mainBase = Select.main();
+                    atlantis.combat.cluster.HomeGround home =
+                        atlantis.combat.cluster.HomeGround.resolve();
+                    AUnit mainBase = home.main();
                     if (mainBase == null) {
                         return null;
                     }
@@ -102,11 +104,13 @@ public final class ProtossDefendFocusPoint {
                     // DefendedPlace.defendGround (NEXT #194) - this
                     // only resolves the candidates, then builds the
                     // focus the answer names (the HOW stays here).
+                    // The choke below shares the same home ground the
+                    // rally resolves from (HomeGround, NEXT #194).
 
                     AUnit enemyInBase = EnemyUnitBreachedBase.get();
                     if (enemyInBase != null && !enemyInBase.isAlive()) enemyInBase = null;
 
-                    AChoke mainChoke = Chokes.mainChoke();
+                    AChoke mainChoke = home.mainChoke();
                     Selection unfinishedBases = Select.ourWithUnfinished().bases();
                     boolean sparta = unfinishedBases.count() <= 1
                         && Missions.isGlobalMissionSparta();
@@ -220,7 +224,7 @@ public final class ProtossDefendFocusPoint {
         // - the standoff depth stays for ranged enemies, which shoot over
         // a mouth plug. NEXT #170's depth rule survives for that case.
         if (enemyMeleeOnly()) {
-            AChoke choke = Chokes.mainChoke();
+            AChoke choke = atlantis.combat.cluster.HomeGround.resolve().mainChoke();
             APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, mainBase);
             if (plug != null) {
                 return new AFocusPoint(

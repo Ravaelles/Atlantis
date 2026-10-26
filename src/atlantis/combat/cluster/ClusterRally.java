@@ -72,12 +72,13 @@ public final class ClusterRally {
      * as a seam: the point pins in a stub state without a game.
      */
     public static HasPosition chokeStandoffPoint() {
-        AUnit main = Select.main();
-        if (main == null || main.position() == null) return null;
+        HomeGround home = HomeGround.resolve();
+        if (!home.isComplete()) return null;
+
+        AUnit main = home.main();
 
         try {
-            AChoke choke = Chokes.mainChoke();
-            if (choke == null || choke.center() == null) return null;
+            AChoke choke = home.mainChoke();
 
             APosition point = choke.center().translateTilesTowards(
                 atlantis.combat.strategy.ChokeStandoff.standoffTiles(choke), main.position());
@@ -104,13 +105,14 @@ public final class ClusterRally {
      * pins in a stub state without running the frame.
      */
     public static APosition noContactHoldPoint(HasPosition anchor) {
-        AUnit main = Select.main();
-        if (main == null || main.position() == null) return null;
+        HomeGround home = HomeGround.resolve();
+        if (!home.isComplete()) return null;
+
+        AUnit main = home.main();
         if (!isHomeAnchor(anchor, main)) return null;
 
         try {
-            AChoke choke = Chokes.mainChoke();
-            if (choke == null || choke.center() == null) return null;
+            AChoke choke = home.mainChoke();
 
             APosition half = main.position().translatePercentTowards(50, choke.center());
             if (half == null) return null;
@@ -244,11 +246,11 @@ public final class ClusterRally {
                 }
             }
 
-            AUnit main = Select.main();
-            if (main == null || main.position() == null) return null;
+            HomeGround home = HomeGround.resolve();
+            if (!home.isComplete()) return null;
 
-            AChoke choke = Chokes.mainChoke();
-            if (choke == null || choke.center() == null) return null;
+            AUnit main = home.main();
+            AChoke choke = home.mainChoke();
 
             APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, main);
             if (plug == null) return null;
@@ -278,7 +280,8 @@ public final class ClusterRally {
                 if (ghost != null) return ghost;
             }
             else if (atlantis.combat.cluster.ClusterTactic.holdsHomeGround()) {
-                atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.mainChoke();
+                atlantis.map.choke.AChoke choke =
+                    atlantis.combat.cluster.HomeGround.resolve().mainChoke();
                 if (choke != null && choke.center() != null) return choke.center();
             }
         } catch (Exception ignored) {

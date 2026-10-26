@@ -142,11 +142,9 @@ ARCH_ADVISORY=0
 
 if [ ${#RUN_ARGS[@]} -gt 0 ]; then
   echo "[tests] running: ${RUN_ARGS[*]}"
-  status=0
   output=$(java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
-    "${RUN_ARGS[@]}" --details=summary --disable-ansi-colors 2>&1) || status=$?
+    "${RUN_ARGS[@]}" --details=summary --disable-ansi-colors 2>&1) || exit $?
   echo "$output"
-  if [ "$status" -ne 0 ]; then exit "$status"; fi
   # A scope that prints no JUnit summary ran zero tests: the JVM died
   # before the launcher could report (measured: a missing ENV file makes
   # Env.readEnvFile call AGame.exit -> System.exit(0) in the first world
