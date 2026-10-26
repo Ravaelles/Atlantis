@@ -34,22 +34,33 @@ public class ClusterMission {
      * reading happens at the call site. Public as a seam.
      */
     public static Posture postureFor(int combatUnits, boolean breached) {
+        return postureWithReasonFor(combatUnits, breached).posture;
+    }
+
+    /**
+     * Posture plus the firing reason's human text for the CherryVis
+     * board (NEXT #214: posture text is game-critical). Additive seam:
+     * postureFor keeps its shape for the callers that need posture
+     * alone.
+     */
+    public static PostureReasons.Verdict postureWithReasonFor(int combatUnits, boolean breached) {
         // The reasons read live game state; without a game (world-free
         // pins) fall back to the standing headcount rule, never crash.
         try {
-            if (breached) return PostureLatch.hold(Posture.DEFEND, combatUnits, A.now());
+            if (breached) {
+                Posture latched = PostureLatch.hold(Posture.DEFEND, combatUnits, A.now());
+                return new PostureReasons.Verdict(
+                    atlantis.combat.focus.PostureReason.HOLD_GROUND, latched, "Breach, hold home");
+            }
 
-            PostureReasons.Verdict verdict = PostureReasons.decide(
-                combatUnits,
-                Count.dragoons(),
-                EnemyUnits.zealots(),
-                A.minerals(),
-                A.s);
+            PostureReasons.Verdict verdict = PostureReasons.decideLive();
+            Posture latched = PostureLatch.hold(verdict.posture, combatUnits, A.now());
 
-            return PostureLatch.hold(verdict.posture, combatUnits, A.now());
+            return new PostureReasons.Verdict(verdict.reason, latched, verdict.text);
         }
         catch (RuntimeException ignored) {
-            return decide(combatUnits);
+            return new PostureReasons.Verdict(
+                atlantis.combat.focus.PostureReason.HOLD_GROUND, decide(combatUnits), "Hold ground (fallback)");
         }
     }
 

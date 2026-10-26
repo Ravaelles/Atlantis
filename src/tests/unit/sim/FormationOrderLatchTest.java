@@ -65,10 +65,20 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
         FakeUnit b = fake(AUnitType.Protoss_Dragoon, 21, 20);
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 22, 20);
-        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
-        foe.setEnemy();
+        // A lone zealot reads 790% strength here and flips the posture to
+        // ATTACK (early-strength rule) - the latch under test only exists
+        // on DEFEND, so the world fields a zealot mass that holds the line
+        // home under both the old headcount and the new strength rule.
+        FakeUnit[] foes = new FakeUnit[] {
+            fake(AUnitType.Protoss_Zealot, 60, 20),
+            fake(AUnitType.Protoss_Zealot, 61, 20),
+            fake(AUnitType.Protoss_Zealot, 62, 20),
+            fake(AUnitType.Protoss_Zealot, 60, 21),
+            fake(AUnitType.Protoss_Zealot, 61, 21),
+            fake(AUnitType.Protoss_Zealot, 62, 21),
+        };
 
-        world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+        world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foes), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
@@ -92,10 +102,16 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
         FakeUnit b = fake(AUnitType.Protoss_Dragoon, 21, 20);
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 22, 20);
-        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
-        foe.setEnemy();
+        FakeUnit[] foes = new FakeUnit[] {
+            fake(AUnitType.Protoss_Zealot, 60, 20),
+            fake(AUnitType.Protoss_Zealot, 61, 20),
+            fake(AUnitType.Protoss_Zealot, 62, 20),
+            fake(AUnitType.Protoss_Zealot, 60, 21),
+            fake(AUnitType.Protoss_Zealot, 61, 21),
+            fake(AUnitType.Protoss_Zealot, 62, 21),
+        };
 
-        world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+        world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foes), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
@@ -147,8 +163,15 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
         foe.setEnemy();
         foe.hp = 100;
+        FakeUnit[] pack = new FakeUnit[] {
+            fake(AUnitType.Protoss_Zealot, 61, 20),
+            fake(AUnitType.Protoss_Zealot, 62, 20),
+            fake(AUnitType.Protoss_Zealot, 60, 21),
+            fake(AUnitType.Protoss_Zealot, 61, 21),
+            fake(AUnitType.Protoss_Zealot, 62, 21),
+        };
 
-        world(5, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+        world(5, fakeOurs(nexus, a, b, c), fakeEnemies(foe, pack[0], pack[1], pack[2], pack[3], pack[4]), () -> {
             if (atlantis.game.A.now() != 2) return;
             for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
 
