@@ -91,6 +91,20 @@ public class BuilderManager extends Manager {
                 // on a site that never starts, print WHICH canBuild term refuses.
                 BuilderDiagnostics.logStandstillBreakdown(unit, construction);
 
+                // NEXT #212: a builder held AT an unstartable site mines
+                // instead of standing - the assignment stays (no
+                // Builder/Gather tug of war, unlike the IN_PROGRESS
+                // alternation), so when the bank covers the price the same
+                // travel path claims it back. The forecast is the gate both
+                // ways, so there is no new threshold to flap on. Mined
+                // FIRST, before travel: the CantAfford tail of
+                // IssueBuildOrder returns true (handled), so a branch after
+                // travelWhenReady never fires while poor.
+                if (shouldMineWhileWaiting(construction, unit)
+                    && atlantis.units.workers.gather.AMineralGathering.gatherResources(unit)) {
+                    return usedManager(this, "BuilderMiningWhileWaiting");
+                }
+
                 boolean moved = (new TravelToConstruct(unit)).travelWhenReady(construction);
                 if (moved) return usedManager(this);
 
@@ -110,6 +124,20 @@ public class BuilderManager extends Manager {
     }
 
     // =========================================================
+
+    /**
+     * True when the builder waits on the bank, not on its feet: the
+     * construction never started, and the same forecast that holds the
+     * walk back says the money will not cover it on arrival - so standing
+     * at the site earns nothing and mining nearby does. IN_PROGRESS warps
+     * never reach here (their hold rule owns them).
+     */
+    private boolean shouldMineWhileWaiting(Construction construction, AUnit builder) {
+        return builder != null && builder.isAlive() && construction.buildPosition() != null
+            && construction.status().countsAsDemand() && !builder.isConstructing()
+            && ShouldNotTravelToConstructYet.check(construction, builder,
+                builder.distTo(construction.buildPosition()));
+    }
 
     /**
      * Does a Protoss builder stay assigned while its construction is

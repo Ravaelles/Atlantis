@@ -556,4 +556,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   worker goal a V2 `DynamicGoals` contributor at `PRIORITY_WORKERS` and let
   the scheduler arbitrate. The duplicate-order half (TWO constructions for
   one building, one miner lost each) rides #144's duplicate-Pylon
-  attribution, not this item.
+  attribution, not this item. First half LANDED: a waiting builder mines
+  through the same forecast gate that holds its walk (assignment stays, no
+  Builder/Gather tug of war), pinned `BuilderMinesWhileWaitingTest` 2/2,
+  full unit scope green; the branch sits BEFORE travel because the
+  CantAfford tail of `IssueBuildOrder` returns handled. Open: the 250-gate
+  second half and live proof.
