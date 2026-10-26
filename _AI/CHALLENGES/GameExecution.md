@@ -102,10 +102,10 @@ exist in this workspace and mixing them is the whole story below.
   `out/wine/` triple (WINE_LOG/_DEBUG/_DECISIONS) collected; a missing
   triple with a live game means the teardown died mid-script (it parses
   itself as it runs - never edit it mid-run, see Wine.md).
-- `out/wine/` is wiped by the next run and by `rm -rf out`: copy logs
-  worth keeping to `/tmp/opencode/` (or the live-copy dir) before any
-  build/test command. Since 2026-10-20 `run-wine-full.sh` also archives
-  every game to `out/wine_runs/<stamp>_<map>/` + `latest` symlink.
+- `out/wine/` is wiped by the next run. `run-wine-full.sh` archives games to
+  `out/wine_runs/<stamp>_<map>/` plus a `latest` symlink; inspect `out/` before
+  cleaning because it may contain the only copy of game evidence. Copy valuable
+  logs to `/tmp/opencode/` or the live-copy directory first.
 
 ## 9. Two Wine games on one box cross-attach and mutually kill
 
