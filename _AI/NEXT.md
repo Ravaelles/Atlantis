@@ -96,9 +96,10 @@ trade a measurement for an explanation (§3a).
     Triage of the whole range: everything that needs a game or owner data
     stays in the one-game queue (step 7) or the owner-data queue (step 8);
     what is executable now runs in this order, each its own commit:
-    (a) #211 suite attribution so the gate is honest, (b) #194's shared
-    anchor/rally input resolver (one seam for the duplicated inputs, unblocks
-    #195/#200/#205 anchors), (c) #201 Corsair cluster sim-first (queued
+    (a) #211 suite attribution so the gate is honest [LANDED 2026-10-26:
+    runner-integrity commit `3e7136a8e` + attribution correction], (b) #194's
+    shared anchor/rally input resolver [LANDED 2026-10-26: `HomeGround`,
+    commit `ea378db7f`], (c) #201 Corsair cluster sim-first (queued
     behind #195/#190, both landed), (d) #184 one TargetLadder rule at a time
     with a sim no-regression proof, (e) sim-only slices of #188/#190/#192.
     #156 stays parked (owner: no blind merge), #144–#147 wait on parity
@@ -401,8 +402,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   ban, both pinned (`DefendedPlaceTest`, `ProtossDefendFocusTest`).
   The army-size veto is proven live (GAME_97948C74: 153/218 CLUSTER rows on
   MiddleFocusChoke, zero MainChoke); the absolute ban needs a longer game.
-  Open: a shared input resolver for anchor/rally, formation adaptation, and a
-  CherryVis row. Small-army main standoff and `guardSlotFor` remain follow-ups.
+  Open: formation adaptation and a CherryVis row. Shared input resolver
+  LANDED 2026-10-26 (commit `ea378db7f`): `HomeGround` in
+  `atlantis.combat.cluster` resolves the main base + main choke once per
+  resolution - `ClusterRally` (standoff, no-contact hold, guard slot,
+  expected direction) and `ProtossDefendFocusPoint` read through it
+  instead of five copies of the same null-handling. Pinned
+  `HomeGroundTest` 5/5, mutation-proven on `isComplete()`; full unit
+  scope green. Small-army main standoff and `guardSlotFor` remain
+  follow-ups; `ClusterBreach`/`ClusterTactic`/`BlockingArmy` still read
+  the pair directly and convert in a follow-up.
 - **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
   shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
   re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
