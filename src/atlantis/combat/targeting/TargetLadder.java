@@ -65,7 +65,7 @@ public final class TargetLadder {
         target = WeakestInRangeTarget.pick(unit);
         if (target != null) return target;
 
-        target = StickyTarget.currentTarget(unit);
+        target = StickyTarget.pick(unit);
         if (target != null) return target;
 
         target = FocusFire.sharedTarget(unit, 9);

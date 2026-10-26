@@ -81,6 +81,50 @@ public class TargetLadderTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void stickyHoldsCommittedTargetInChaseBand() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        d.hp = 100;
+        d.cooldown = 0;
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30 + 4.5, 20);
+        a.setEnemy();
+        a.hp = 60;
+
+        world(3, fakeOurs(nexus, d), fakeEnemies(a), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            d.attackUnit(a);
+
+            assertEquals(a.id(), idOf(AcquireTarget.acquire(d)),
+                "committed target past weapon range but inside the chase band"
+                    + " (4.5 vs 4 + 1.0) stays: keep-current slept, weakest"
+                    + " found nothing in range, sticky holds");
+        });
+    }
+
+    @Test
+    public void weakestTakesOverWhenEnemyEntersRange() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        d.hp = 100;
+        d.cooldown = 0;
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30 + 4.5, 20);
+        a.setEnemy();
+        a.hp = 60;
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 30 + 2.5, 20);
+        b.setEnemy();
+        b.hp = 3;
+
+        world(3, fakeOurs(nexus, d), fakeEnemies(a, b), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            d.attackUnit(a);
+
+            assertEquals(b.id(), idOf(AcquireTarget.acquire(d)),
+                "an in-range enemy hands the pick back to rule 3 even while"
+                    + " the committed target is still inside the chase band");
+        });
+    }
+
     private static int idOf(atlantis.units.AUnit u) {
         return u == null ? -1 : u.id();
     }

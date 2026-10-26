@@ -1349,7 +1349,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == ling,
+            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == ling,
                 "fog flicker inside the grace window keeps the commitment");
             for (int i = 0; i < 60; i++) {
                 world.tick(() -> {
@@ -1358,7 +1358,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == null,
+            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == null,
                 "a long-unseen target in range still drops (visibility, not distance)");
             // Phase 3: far away and long unseen - the ghost drops, the hunt takes over.
             world.teleport(dragoon, APosition.create(15, 20));
@@ -1372,7 +1372,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.currentTarget(dragoon) == null,
+            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == null,
                 "a stale ghost stops pinning the frame");
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "dropped ghost hands over to the hunt: " + ordersOf(dragoon));

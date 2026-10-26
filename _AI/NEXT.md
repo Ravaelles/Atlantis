@@ -101,9 +101,8 @@ trade a measurement for an explanation (§3a).
     shared anchor/rally input resolver [LANDED 2026-10-26: `HomeGround`,
     commit `ea378db7f`], (c) #201 Corsair cluster sim-first [LANDED
     2026-10-26: membership rule `716a46142`, the `Alpha.gather` split
-    stays open], (d) #184 one TargetLadder rule at a time
-    behind #195/#190, both landed), (d) #184 one TargetLadder rule at a time
-    with a sim no-regression proof, (e) sim-only slices of #188/#190/#192.
+    stays open], (d) #184 one TargetLadder rule at a time with a sim
+    no-regression proof, (e) sim-only slices of #188/#190/#192.
     #156 stays parked (owner: no blind merge), #144–#147 wait on parity
     runs, #160/#185 wait on K-of-N data. #206–#210 are new owner findings
     from the 2026-10-26 games and slot into the same queues.

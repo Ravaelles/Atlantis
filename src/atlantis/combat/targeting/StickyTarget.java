@@ -16,6 +16,10 @@ import atlantis.units.AUnit;
  * target (Commander.attack). Sits between the squad pick (shared
  * focus in small fights stays untouched) and the nearest re-pick
  * (still the answer when commitment ends). Public as a seam.
+ *
+ * <p>Ladder rule (4): one behavior, one gate, ordered visibly in
+ * {@link TargetLadder}. The gate protocol is {@code pick}, shared
+ * with rules (1)-(3).
  */
 public final class StickyTarget {
 
@@ -31,7 +35,7 @@ public final class StickyTarget {
         lastSeenVisible.clear();
     }
 
-    public static AUnit currentTarget(AUnit unit) {
+    public static AUnit pick(AUnit unit) {
         if (unit == null) return null;
 
         AUnit current = unit.target();
