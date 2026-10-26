@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
@@ -140,9 +141,49 @@ public final class FormationSlots {
     }
 
     private static boolean valid(APosition slot, AUnit unit) {
-        if (unit.isGroundUnit() && !slot.isWalkable()) return false;
+        if (slot == null) return false;
+        if (!unit.isGroundUnit()) return true;
+        if (!slot.isWalkable()) return false;
 
-        return true;
+        return !standsInBuilding(slot);
+    }
+
+    /**
+     * A slot inside a standing (or warping) building is not a slot: the
+     * engine's walkability is terrain-only, so it reads true there and
+     * the march wedges on the wall instead (NEXT #209: blocked units
+     * pile up inside the base instead of spreading). A finished wall
+     * and a warping one are equally solid underfoot, so unfinished
+     * counts too - unlike the placement seam, nothing is cancelled
+     * here, the slot is just stood on. Air units keep the sky.
+     */
+    private static final int SLOT_BODY_TILES = 1;
+
+    private static boolean standsInBuilding(APosition slot) {
+        try {
+            for (AUnit building : Select.all().buildings().list()) {
+                if (building == null || !building.isAlive() || building.position() == null) continue;
+                if (overlapsFootprint(slot, building)) return true;
+            }
+        } catch (Exception ignored) {
+        }
+
+        return false;
+    }
+
+    /** Tile-rectangle overlap between a 1x1 slot and a building footprint. */
+    static boolean overlapsFootprint(APosition slot, AUnit building) {
+        int sx = slot.tx();
+        int sy = slot.ty();
+        int bx = building.tx();
+        int by = building.ty();
+        int w = building.type().getTilesWidth();
+        int h = building.type().getTilesHeights();
+
+        return bx < sx + SLOT_BODY_TILES
+            && bx + w > sx
+            && by < sy + SLOT_BODY_TILES
+            && by + h > sy;
     }
 
     private static APosition nudgeTowardRegionCenter(APosition center) {
