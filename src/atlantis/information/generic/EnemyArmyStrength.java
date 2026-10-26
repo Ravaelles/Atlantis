@@ -5,11 +5,11 @@ import atlantis.units.select.Selection;
 
 public class EnemyArmyStrength {
     public static double calculate() {
-        return calculateFrom(EnemyUnits.discovered().combatUnits());
+        return calculateFrom(EnemyUnits.discoveredIncludingAddressless().combatUnits());
     }
 
     public static double calculateWithoutCB() {
-        return calculateFrom(EnemyUnits.discovered().combatUnits().nonBuildings());
+        return calculateFrom(EnemyUnits.discoveredIncludingAddressless().combatUnits().nonBuildings());
     }
 
     private static double calculateFrom(Selection combatUnits) {

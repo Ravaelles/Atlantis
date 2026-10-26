@@ -584,3 +584,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   never per-frame rows. Motivating game: 14:25:25 Tomas Cere (TauCross,
   Defeat 95/86, 52 Dragoons lost, army never left the main -
   unattributed, no trace).
+- **#215** Strength 999 with a known-but-unseen enemy: `discovered()`
+  ends in `havingPosition()`, so a fogged unit whose tile was seen
+  empty (address cleared, owner 2026-10-26) drops out of the sum and
+  strength reads 999 - the "forgotten army". Fixed:
+  `discoveredIncludingAddressless()` feeds `EnemyArmyStrength` (target
+  selection keeps `discovered()`, it needs positions), pinned
+  `EnemyStrengthCountsAddresslessTest`. Live proof from the 222936
+  TauCross game (first CLUSTER row: strength 999, foe unseen). Regression
+  note: the address-clearing change is correct for pursuit; strength
+  was its silent casualty.
