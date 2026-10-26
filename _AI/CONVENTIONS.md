@@ -272,14 +272,14 @@ decompiled archives:
   adds no new information - restating the same verdict for the Nth
   game, reformatting, re-shuffling chains, fixing typos in old datum
   lines.
-- No raw statistics or test results in `_AI/NEXT.md`. Per-game datum
-  rows, frame numbers, supply tables, sweep counts, repeated verdicts
-  live in `_AI/WINE-MACRO-DATUMS.md` (one line per game per chain) -
-  or nowhere, if no decision depends on them. NEXT.md carries the
-  conclusion or the single deciding number (best result on a map,
-  current tally, open question). A repeat-verdict game adds its datum
-  row to the log and nothing else - no commit until commit-worthy work
-  exists.
+- No raw statistics or per-game logs in `_AI/NEXT.md`. Per-game rows,
+  frame numbers, supply tables, sweep counts, and repeated verdicts
+  belong in `_AI/WINE-MACRO-DATUMS.md` (one record per game per chain)
+  or nowhere if no decision depends on them. NEXT.md keeps the current
+  conclusion, genuinely deciding number, and open question; detailed
+  history stays in the datum log, not duplicated across backlog entries.
+  A repeat-verdict game adds its datum row and nothing else - no commit
+  until commit-worthy work exists.
 - Backlog maintenance never justifies a commit alone: it rides inside
   the next work commit, or happens on the owner's explicit order
   (message says so). History is not rewritten: old commits stay.
