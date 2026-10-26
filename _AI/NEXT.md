@@ -562,3 +562,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   full unit scope green; the branch sits BEFORE travel because the
   CantAfford tail of `IssueBuildOrder` returns handled. Open: the 250-gate
   second half and live proof.
+- **#213** Pylon #3-4 sited at the natural (owner live finding): the
+  `exclude(natural).last()` fallthrough in `PylonPosition.nearToForPylon`
+  leaks the natural in whenever `Bases.natural()` is null with two bases
+  (exclude(null) excludes nothing, last() is the newest base). Fixed:
+  pylons < 4 pin to `Select.mainOrAnyBuilding()`, first/second-Pylon
+  origins unchanged, pinned `FirstFourPylonsStayAtMainTest` (red-first:
+  toMain=40/toNatural=0). Open: live proof on a two-base custom map -
+  TauCross proves nothing (its natural detection holds, the leak never
+  fires there).

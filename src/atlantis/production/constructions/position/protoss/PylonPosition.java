@@ -210,6 +210,16 @@ public class PylonPosition {
             nearTo = Select.mainOrAnyBuilding().translatePercentTowards(Chokes.mainChoke(), 50);
         }
 
+        // Owner: Pylons #3-#4 adjoin the main, never the natural. The old
+        // fallthrough (.exclude(natural).last()) leaked the natural in
+        // whenever Bases.natural() was null with two bases (custom maps,
+        // choke-detection gap): exclude(null) excludes nothing and last()
+        // is the newest base - the natural Nexus. Pinned in
+        // FirstFourPylonsStayAtMainTest.
+        if (nearTo == null && pylons < 4) {
+            nearTo = Select.mainOrAnyBuilding();
+        }
+
 //        AUnit main = Select.main();
 //        if (main != null) {
 //            if (main.friendsNear().buildings().atMost(13)) nearTo = main;
