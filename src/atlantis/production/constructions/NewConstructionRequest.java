@@ -167,6 +167,7 @@ public class NewConstructionRequest {
                 .param("type", building.name())
                 .param("cid", newConstruction.id())
                 .param("oid", order == null ? null : order.id())
+                .param("nearTo", nearToString(near))
                 .param("tile", newConstruction.buildPosition() == null ? "-"
                     : "[" + newConstruction.buildPosition().tx() + ","
                     + newConstruction.buildPosition().ty() + "]")
@@ -222,6 +223,26 @@ public class NewConstructionRequest {
             return simple + "." + frame.getMethodName();
         }
         return "-";
+    }
+
+    /**
+     * Siting center for the REQUESTED twin (NEXT #214): the tile the
+     * search walked out from, so a far-away warp names its origin
+     * instead of leaving tile forensics. A base anchor reads as its
+     * own tile; placeless answers read as the raw string.
+     */
+    static String nearToString(HasPosition near) {
+        if (near == null) return "-";
+        try {
+            if (near instanceof atlantis.units.AUnit) {
+                atlantis.units.AUnit unit = (atlantis.units.AUnit) near;
+                if (unit.position() == null) return unit.toString();
+                return "[" + unit.position().tx() + "," + unit.position().ty() + "]";
+            }
+            return String.valueOf(near);
+        } catch (Exception ignored) {
+            return "?";
+        }
     }
 
     /**
