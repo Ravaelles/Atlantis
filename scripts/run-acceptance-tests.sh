@@ -10,9 +10,19 @@
 #
 # Usage (from anywhere):
 #   bash scripts/run-acceptance-tests.sh
+#   bash scripts/run-acceptance-tests.sh --allow-slow
 #   bash scripts/run-acceptance-tests.sh --select-class tests.acceptance.Queue1Test
 #
 # Pass --everything to include tests.unit as well.
+#
+# Any flag must NOT cost us the selection: this script used to add
+# `--select-package tests.acceptance` only when called with zero arguments, so
+# `--allow-slow` (the flag you need for this scope - run-tests.sh refuses slow
+# scopes otherwise) REPLACED it and the wrapper silently ran the unit scope
+# instead. Measured 2026-10-19 (see _AI/NOTES.md) and again 2026-10-26: a bare
+# `--allow-slow` reported the unit tier green while acceptance sat red - the
+# exact failure this script's header exists to prevent. The default selection
+# now survives any flag; only an explicit selector from the caller overrides it.
 #
 # See DOCS/TESTING.md for the current known-failing baseline.
 set -euo pipefail
@@ -24,8 +34,9 @@ if [ "${1:-}" = "--everything" ]; then
   exec bash scripts/run-tests.sh --select-package tests "$@"
 fi
 
-if [ "$#" -eq 0 ]; then
-  set -- --select-package tests.acceptance
-fi
+case " $* " in
+  *" --select-package "*|*" --select-class "*|*" --select-method "*) ;;
+  *) set -- --select-package tests.acceptance "$@" ;;
+esac
 
 exec bash scripts/run-tests.sh "$@"

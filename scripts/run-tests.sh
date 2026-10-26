@@ -142,8 +142,20 @@ ARCH_ADVISORY=0
 
 if [ ${#RUN_ARGS[@]} -gt 0 ]; then
   echo "[tests] running: ${RUN_ARGS[*]}"
-  java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
-    "${RUN_ARGS[@]}" --details=summary --disable-ansi-colors || exit $?
+  status=0
+  output=$(java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
+    "${RUN_ARGS[@]}" --details=summary --disable-ansi-colors 2>&1) || status=$?
+  echo "$output"
+  if [ "$status" -ne 0 ]; then exit "$status"; fi
+  # A scope that prints no JUnit summary ran zero tests: the JVM died
+  # before the launcher could report (measured: a missing ENV file makes
+  # Env.readEnvFile call AGame.exit -> System.exit(0) in the first world
+  # setUp, so the "green" run executed nothing and exited 0). A missing
+  # summary is a failure, never a pass.
+  if ! echo "$output" | grep -qE '^\[ +[0-9]+ tests (found|successful)'; then
+    echo "[tests] NO JUNIT SUMMARY - the JVM exited before reporting (0 tests executed?)" >&2
+    exit 1
+  fi
 fi
 
 if [ "$ARCH_ADVISORY" -eq 1 ]; then

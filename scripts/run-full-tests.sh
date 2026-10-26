@@ -70,10 +70,17 @@ for entry in "${SCOPES[@]}"; do
   passed=$(echo "$output" | grep -oE '^\[ +[0-9]+ tests successful' | grep -oE '[0-9]+')
   broken=$(echo "$output" | grep -oE '^\[ +[0-9]+ tests failed' | grep -oE '[0-9]+')
 
-  if [ "$status" -eq 0 ] && [ "${broken:-0}" = "0" ]; then
-    printf '%-14s %-8s %s\n' "$name" "${seconds}s" "${passed:-?} passing"
+  if [ "$status" -eq 0 ] && [ "${broken:-0}" = "0" ] && [ -n "${passed:-}" ]; then
+    printf '%-14s %-8s %s\n' "$name" "${seconds}s" "${passed} passing"
   else
-    printf '%-14s %-8s %s\n' "$name" "${seconds}s" "FAILED: ${broken:-?} failing, ${passed:-?} passing"
+    if [ -z "${passed:-}" ] && [ -z "${broken:-}" ]; then
+      # Same hole as run-tests.sh had: the JVM can die before JUnit prints
+      # its summary (measured: missing ENV -> System.exit(0) in setUp),
+      # and status 0 with no counters used to report "? passing" green.
+      printf '%-14s %-8s %s\n' "$name" "${seconds}s" "FAILED: no JUnit summary (JVM died before reporting?)"
+    else
+      printf '%-14s %-8s %s\n' "$name" "${seconds}s" "FAILED: ${broken:-?} failing, ${passed:-?} passing"
+    fi
     failed+=("$name")
     echo "$output" | grep -E "MethodSource|=> " | head -n 20
   fi
