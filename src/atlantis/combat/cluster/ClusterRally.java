@@ -286,6 +286,63 @@ public final class ClusterRally {
             }
         } catch (Exception ignored) {
         }
+
+        // NEXT #208: an anchor behind the army faces the formation at our
+        // own base. The anchor is where to stand, not where to look: when
+        // the army sits past it (away from home) the expected contact is
+        // outward, not back at the anchor. At the anchor the old answer
+        // stands (a blind army bunches honestly instead of guessing).
+        if (anchorBehindArmy(leader, anchor)) return outwardPoint(leader);
+
         return anchor;
+    }
+
+    /**
+     * True when the army stands meaningfully past its anchor, away from
+     * home: the anchor is behind, so facing it cups our own base. The
+     * 2-tile deadband is the holdsHomeGround granularity - standing on
+     * the anchor is not "past it".
+     */
+    private static final int ANCHOR_BEHIND_DEADBAND_TILES = 2;
+
+    /**
+     * How far past the leader the outward pivot sits: beyond contact
+     * (the 3.3-tile formation floor) and inside the 11-tile arc cap, so
+     * the crescent that forms there is a real shape.
+     */
+    private static final int OUTWARD_PIVOT_TILES = 8;
+
+    private static boolean anchorBehindArmy(AUnit leader, HasPosition anchor) {
+        if (leader == null || anchor == null) return false;
+
+        try {
+            AUnit main = Select.main();
+            if (main == null || main.position() == null) return false;
+
+            return leader.distTo(main) > anchor.distTo(main) + ANCHOR_BEHIND_DEADBAND_TILES;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private static HasPosition outwardPoint(AUnit leader) {
+        try {
+            AUnit main = Select.main();
+            if (leader == null || main == null || main.position() == null) return null;
+
+            APosition l = leader.position();
+            APosition m = main.position();
+            double dx = l.x() - m.x();
+            double dy = l.y() - m.y();
+            double len = Math.hypot(dx, dy);
+            if (len < 1) return null;
+
+            double k = OUTWARD_PIVOT_TILES * 32.0 / len;
+            return APosition.createFromPixels(
+                (int) (l.x() + dx * k),
+                (int) (l.y() + dy * k));
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }

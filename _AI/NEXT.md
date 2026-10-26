@@ -518,9 +518,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#208** Formation in our own base faces our own main (owner live finding
   2026-10-26): slots are laid out as if we were attacking our own Nexus -
   a sign/orientation error between the formation pivot and the threat
-  direction. Open: pin the pivot computation with a fake threat on the far
-  side of the base (sim, no game needed) and prove the formation faces it;
-  then confirm the same orientation live.
+  direction. Sim proof landed 2026-10-26: a home anchor left behind the army
+  no longer owns the pivot - `expectedDirectionPoint` faces outward past the
+  army (at-anchor bunch and forward-anchor crescents unchanged), pinned in
+  `ClusterRallyTest` (red-first: old slots arc at [31,20] around the main).
+  Open: the same orientation live.
 - **#209** Units deep in our own main stack on each other (owner live
   finding 2026-10-26): blocked units inside the base occupy the same
   ground instead of spreading, i.e. the unstick/holder logic assumes open

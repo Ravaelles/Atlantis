@@ -288,4 +288,101 @@ public class ClusterRallyTest extends WorldStubForTests {
             }
         });
     }
+
+    @Test
+    public void armyBeyondHomeAnchorFacesOutward() {
+        // NEXT #208: an army past its home anchor arrayed around the anchor
+        // cups our own base (slots laid out as if attacking our own Nexus).
+        // The expected contact is outward, so the pivot goes outward with it.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 32, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 33, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Zealot, 33, 19);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 64, 20);
+        foe.setEnemy();
+
+        world(3, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.get().addUnit(a);
+            Alpha.get().addUnit(b);
+            Alpha.get().addUnit(c);
+            try {
+                HasPosition slot = ClusterRally.formationSlotFor(
+                    a, a, nexus, FightOrFlight.Tactic.FIGHT);
+                assertNotNull(slot, "a displaced crescent still forms");
+                assertTrue(slot.tx() >= 32,
+                    "slots face outward past the army, not back at the main: " + slot);
+            }
+            finally {
+                Alpha.get().removeUnit(a);
+                Alpha.get().removeUnit(b);
+                Alpha.get().removeUnit(c);
+            }
+        });
+    }
+
+    @Test
+    public void armyAtItsAnchorStillBunches() {
+        // The outward rule owns displacement, not presence: an army standing
+        // on its anchor keeps the old honest bunch instead of guessing.
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit natural = fake(AUnitType.Protoss_Nexus, 35, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 36, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 37, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Zealot, 37, 19);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 70, 20);
+        foe.setEnemy();
+
+        world(3, fakeOurs(main, natural, a, b, c), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.get().addUnit(a);
+            Alpha.get().addUnit(b);
+            Alpha.get().addUnit(c);
+            try {
+                assertNull(
+                    ClusterRally.formationSlotFor(a, a, natural, FightOrFlight.Tactic.FIGHT),
+                    "on its anchor the line bunches: the pivot is underfoot");
+            }
+            finally {
+                Alpha.get().removeUnit(a);
+                Alpha.get().removeUnit(b);
+                Alpha.get().removeUnit(c);
+            }
+        });
+    }
+
+    @Test
+    public void forwardAnchorStillFacesForward() {
+        // An anchor past the army is the attack direction: the outward rule
+        // only fires for anchors left behind, never for objectives ahead.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 31, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Zealot, 31, 19);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 70, 20);
+        foe.setEnemy();
+        APosition anchor = APosition.create(50, 20);
+
+        world(3, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.get().addUnit(a);
+            Alpha.get().addUnit(b);
+            Alpha.get().addUnit(c);
+            try {
+                HasPosition slot = ClusterRally.formationSlotFor(
+                    a, a, anchor, FightOrFlight.Tactic.FIGHT);
+                assertNotNull(slot, "a forward anchor still forms the crescent");
+                assertTrue(slot.tx() > 30,
+                    "slots face the objective ahead, not home: " + slot);
+            }
+            finally {
+                Alpha.get().removeUnit(a);
+                Alpha.get().removeUnit(b);
+                Alpha.get().removeUnit(c);
+            }
+        });
+    }
 }
