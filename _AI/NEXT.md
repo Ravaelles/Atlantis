@@ -541,3 +541,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (one issuance per 10 frames while the posture is defend - a latch, not a
   per-unit cooldown), pinned with a frame counter, plus a check that the
   FIRST deployment of a fight is not delayed by it.
+- **#212** Worker acquisition strategy (owner call, surfaced in
+  `CASE-STUDIES.md` #53): a worker held at a construction site that cannot
+  start should return to mining (`ShouldNotTravelToConstructYet` covers
+  only the travel half); and the 250-mineral `CriticalStuff` gate refuses
+  the worker that would earn the minerals - the whole worker path is gated
+  on being rich, the one state a young base is not in (the output of
+  waiting is fewer minerals, so the gate never releases). Candidates:
+  exempt a base below N workers from the mineral-margin gates, or make the
+  worker goal a V2 `DynamicGoals` contributor at `PRIORITY_WORKERS` and let
+  the scheduler arbitrate. The duplicate-order half (TWO constructions for
+  one building, one miner lost each) rides #144's duplicate-Pylon
+  attribution, not this item.
