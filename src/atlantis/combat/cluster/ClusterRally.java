@@ -244,6 +244,21 @@ public final class ClusterRally {
         }
         if (pivot == null) return null;
 
+        // A pivot beyond the arc cap would park the crescent at the
+        // destination while the army beelines it in single file - the
+        // march strings out instead of forming up. The weak formation
+        // (line abreast traveling ahead of the body) owns that case;
+        // contact keeps the crescent-or-nothing answer, FLEE never
+        // forms up.
+        if (tactic == FightOrFlight.Tactic.FIGHT && anchor != null) {
+            try {
+                if (leader.distTo(pivot) > FormationSlots.maxRadiusTiles()) {
+                    return FormationSlots.lineSlotFor(unit, Alpha.get().selection(), anchor);
+                }
+            } catch (RuntimeException ignored) {
+            }
+        }
+
         return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
     }
 

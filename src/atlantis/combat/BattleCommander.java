@@ -163,6 +163,7 @@ public class BattleCommander extends Commander {
         atlantis.combat.escape.EscapeTuning.resetToDefaults();
         atlantis.combat.strategy.GhostAdvance.clearForTests();
         atlantis.combat.formation.FormationSlots.clearForTests();
+        atlantis.combat.formation.FormationSlots.clearLineForTests();
         atlantis.combat.formation.ChokePlug.clearForTests();
         atlantis.combat.formation.SharedEscape.clearForTests();
         atlantis.combat.twins.FightTrace.clearForTests();

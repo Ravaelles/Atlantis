@@ -8,6 +8,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,18 @@ public final class FormationSlots {
 
     /** Arc never opens wider than this (Moon cap). */
     private static final double MAX_RADIUS_TILES = 11.0;
+
+    /**
+     * March line-up depth: the weak formation stands this far ahead of
+     * the army center toward the anchor - close enough to travel with
+     * the line, far enough to keep a lateral body instead of a file.
+     */
+    private static final double LINE_AHEAD_TILES = 6.0;
+
+    /** The far-pivot bar, shared with the march line (same arc cap). */
+    public static double maxRadiusTiles() {
+        return MAX_RADIUS_TILES;
+    }
 
     private static int cachedFrame = -1;
     private static Map<AUnit, APosition> cachedSlots = new HashMap<>();
@@ -122,6 +135,80 @@ public final class FormationSlots {
 
         List<AUnit> ordered = new ArrayList<>(units);
         ordered.sort((a, b) -> Double.compare(a.distTo(pivot), b.distTo(pivot)));
+        assignNearestFree(ordered, slots);
+    }
+
+    /**
+     * Weak formation: line abreast across the march axis, standing ahead
+     * of the army toward the anchor. Used when no crescent fits (pivot
+     * beyond the arc cap) - a far arc degenerates into a beeline where
+     * everyone races the same destination arc and the march strings out,
+     * while this line travels with the body. Never in contact (the caller
+     * keeps micro there) and never on FLEE (retreats own their movement).
+     */
+    public static APosition lineSlotFor(AUnit unit, Selection cluster, HasPosition anchor) {
+        if (unit == null || !unit.isAlive() || cluster == null || anchor == null) return null;
+        if (!applies(cluster.count())) return null;
+
+        if (lineCachedFrame != atlantis.game.A.now()) {
+            computeLine(cluster, anchor);
+        }
+        return lineCachedSlots.get(unit);
+    }
+
+    private static int lineCachedFrame = -1;
+    private static Map<AUnit, APosition> lineCachedSlots = new HashMap<>();
+
+    public static void clearLineForTests() {
+        lineCachedFrame = -1;
+        lineCachedSlots = new HashMap<>();
+    }
+
+    private static void computeLine(Selection cluster, HasPosition anchor) {
+        lineCachedFrame = atlantis.game.A.now();
+        lineCachedSlots = new HashMap<>();
+
+        List<AUnit> units = new ArrayList<>(cluster.list());
+        units.removeIf(u -> u == null || !u.isAlive() || u.position() == null);
+        if (units.size() < MIN_CLUSTER_SIZE) return;
+
+        APosition center = averageOf(units);
+        if (center == null) return;
+
+        center = nudgeTowardRegionCenter(center);
+
+        double dx = anchor.tx() - center.tx();
+        double dy = anchor.ty() - center.ty();
+        double len = Math.hypot(dx, dy);
+        if (len < 1) return;
+        double ahead = Math.min(LINE_AHEAD_TILES, len);
+        double ax = center.tx() + dx / len * ahead;
+        double ay = center.ty() + dy / len * ahead;
+
+        double separation = Math.max(1.0, 20.0 / (10 + units.size()));
+        int n = units.size();
+        List<APosition> slots = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            double off = (i - (n - 1) / 2.0) * separation;
+            APosition slot = APosition.create(
+                (int) (ax - dy / len * off),
+                (int) (ay + dx / len * off));
+            if (slot != null && valid(slot, units.get(i))) slots.add(slot);
+        }
+        if (slots.isEmpty()) return;
+
+        List<AUnit> ordered = new ArrayList<>(units);
+        ordered.sort(Comparator.comparingInt(AUnit::id));
+        assignNearestFreeInto(ordered, slots, lineCachedSlots);
+    }
+
+    private static void assignNearestFree(List<AUnit> ordered, List<APosition> slots) {
+        assignNearestFreeInto(ordered, slots, cachedSlots);
+    }
+
+    private static void assignNearestFreeInto(
+        List<AUnit> ordered, List<APosition> slots, Map<AUnit, APosition> cache
+    ) {
         boolean[] taken = new boolean[slots.size()];
         for (AUnit u : ordered) {
             int best = -1;
@@ -136,7 +223,7 @@ public final class FormationSlots {
             }
             if (best < 0) break;
             taken[best] = true;
-            cachedSlots.put(u, slots.get(best));
+            cache.put(u, slots.get(best));
         }
     }
 
