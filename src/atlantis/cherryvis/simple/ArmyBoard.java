@@ -20,6 +20,7 @@ public final class ArmyBoard {
     public static final int VALUES_EVERY_FRAMES = 31;
 
     private static String lastTask = null;
+    private static String lastReason = null;
     private static String lastFocus = null;
     private static int lastStrength = Integer.MIN_VALUE;
     private static int lastValuesFrame = Integer.MIN_VALUE;
@@ -28,7 +29,7 @@ public final class ArmyBoard {
     }
 
     public static void publish(
-        int frame, ClusterMission.Posture posture, FightOrFlight.Tactic tactic, HasPosition anchor
+        int frame, ClusterMission.Posture posture, FightOrFlight.Tactic tactic, String reason, HasPosition anchor
     ) {
         if (!ACherryVis.isEnabled()) return;
 
@@ -36,6 +37,11 @@ public final class ArmyBoard {
         if (!task.equals(lastTask)) {
             lastTask = task;
             ACherryVis_GlobalState.logNewState("Task", task);
+        }
+
+        if (!reason.equals(lastReason)) {
+            lastReason = reason;
+            ACherryVis_GlobalState.logNewState("Reason", reason);
         }
 
         String focus = ClusterTwin.focusName(anchor);
@@ -65,6 +71,7 @@ public final class ArmyBoard {
     /** Test seam: the last-value cache is per-game state, never cross-test. */
     public static void clearForTests() {
         lastTask = null;
+        lastReason = null;
         lastFocus = null;
         lastStrength = Integer.MIN_VALUE;
         lastValuesFrame = Integer.MIN_VALUE;

@@ -416,6 +416,22 @@ decompiled archives:
   seam belongs in combat.* instead (CONVENTIONS §31).
 - Old vs new is decided by package, never by memory: if it lives under
   battle.* outside a reclaimed seam, it is old.
+
+## 34. Every nontrivial decision carries its reason (owner's ruling, 2026-10-26)
+
+- A decision with no attributable reason is not landed: each
+  nontrivial branch names its verdict (an enum, never a bare boolean)
+  with the deciding numbers in a human sentence ("Not enough Goons
+  (1/2) vZ", never "hold=true"). Reasons live at the single decider
+  site (§31), never scattered across callers.
+- The reason is logged where the decision lands: board keys for
+  time-varying state (written on change, never per frame), Logs rows
+  for events. The CherryVis board is the readout; an unattributed
+  behavior is filed as a NEXT item with the missing reason named,
+  not worked around.
+- Precedent: posture verdicts (`PostureReason` + text, board "Reason"
+  key). New deciders copy the shape: enum, text with numbers, pin
+  test asserting both.
 ## 28. Retired (folded into §6, 2026-10-26)
 
 - Content moved verbatim into §6 to end the three-section overlap

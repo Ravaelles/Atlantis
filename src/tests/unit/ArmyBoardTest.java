@@ -47,20 +47,28 @@ public class ArmyBoardTest extends WorldStubForTests {
         world(64, fakeOurs(nexus, dragoon), new FakeUnit[] {}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
-            ArmyBoard.publish(0, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, anchor);
-            ArmyBoard.publish(1, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, anchor);
+            ArmyBoard.publish(0, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
+                "Not enough Goons (0/2) vZ", anchor);
+            ArmyBoard.publish(1, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
+                "Not enough Goons (0/2) vZ", anchor);
 
             String board = ACherryVis_GlobalStates.build();
             assertTrue(countKeys(board, "Task") == 1, "same task writes once: " + board);
             assertTrue(countKeys(board, "Focus") == 1, "same focus writes once: " + board);
             assertTrue(countKeys(board, "Strength") == 1, "same strength writes once: " + board);
+            assertTrue(countKeys(board, "Reason") == 1, "same reason writes once: " + board);
 
-            ArmyBoard.publish(31, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, anchor);
+            ArmyBoard.publish(31, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE,
+                "Outgunned (1 goon, 100%), coming home", anchor);
             board = ACherryVis_GlobalStates.build();
             assertTrue(countKeys(board, "Task") == 2, "changed task writes again: " + board);
             assertTrue(board.contains("\"Task\":\"DEFEND/FLEE\""), "task names posture/tactic: " + board);
+            assertTrue(countKeys(board, "Reason") == 2, "changed reason writes again: " + board);
+            assertTrue(board.contains("\"Reason\":\"Outgunned (1 goon, 100%), coming home\""),
+                "reason speaks with numbers: " + board);
 
-            ArmyBoard.publish(32, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, anchor);
+            ArmyBoard.publish(32, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE,
+                "Outgunned (1 goon, 100%), coming home", anchor);
             assertTrue(countKeys(ACherryVis_GlobalStates.build(), "Task") == 2,
                 "unchanged task stays silent: " + board);
 
