@@ -53,10 +53,10 @@ the server dies with the session.
 
 First line: UMS micro duel (bot owns pre-placed units, no base).
 Second line: melee opening (bot plays the build order from a base).
-Logs land in `out/wine/` (`WINE_LOG` game, `WINE_DEBUG` diagnostics,
-`WINE_DECISONS` decisions triple) - copy them to `/tmp/opencode/`
-before the next run or `rm -rf out`, both wipe the directory.
-Scripts never write to shared ENV files (owner: per-run flags leaked
+Logs land in `out/wine/` (`WINE_LOG`, `WINE_DEBUG`, `WINE_DECISIONS`); the
+post-run procedure - what to collect, what the archive layout is, what to
+copy where before the next run wipes it - lives in one place:
+`CHALLENGES/GameExecution.md` §8. Scripts never write to shared ENV files (owner: per-run flags leaked
 into watched IDE games, so the borrow-and-restore mechanism is gone).
 The Wine audio backends stay muted per run (missing device hangs
 startup). Never edit a
