@@ -4,6 +4,8 @@ import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import org.mockito.Mockito;
 import tests.unit.sim.SimConfig;
 import tests.unit.sim.SimDriver;
@@ -114,7 +116,8 @@ final class OpeningRunner {
 
                 return new OpeningResult(
                     numbers.supplyUsed(), driver.frame(), driver.warpLog(),
-                    driver.invalidOrders(), driver.cancels(), maxBank);
+                    driver.invalidOrders(), driver.cancels(), maxBank,
+                    driver.constructionStarts());
             } finally {
                 driver.close();
             }
@@ -203,13 +206,16 @@ final class OpeningRunner {
 
     /**
      * Duplicate-construction guard (live games duplicate Pylons and
-     * Gateways): during the opening every building warp must answer a
-     * row. Occurrence matching alone would absorb a duplicate into the
-     * next row's slot, so the counts are asserted too. Units are excluded
-     * - the dynamic army goal legitimately trains beyond its rows.
+     * Gateways): during the opening every construction start must answer
+     * a row. Occurrence matching alone would absorb a duplicate into the
+     * next row's slot, and warp counting alone would miss the ones that
+     * die in cancels (the sim starts 6 Pylons for 4 rows) - so the starts
+     * are asserted. Units are excluded: the dynamic army goal legitimately
+     * trains past its rows.
      */
     private static void assertNoExtraConstructions(
-            List<Row> rows, List<RowDivergence> table, List<SimDriver.WarpRecord> log,
+            List<Row> rows, List<RowDivergence> table,
+            Map<String, java.util.List<Integer>> starts, List<SimDriver.WarpRecord> log,
             List<SimOrder> invalid, List<String> cancels) {
         int openingEnd = 0;
         for (RowDivergence row : table) openingEnd = Math.max(openingEnd, row.warpFrame);
@@ -220,24 +226,25 @@ final class OpeningRunner {
         }
         List<String> extras = new ArrayList<>();
         for (Map.Entry<String, Integer> need : expected.entrySet()) {
-            int actual = 0;
-            for (SimDriver.WarpRecord record : log) {
-                if (!record.kind.equals("building")) continue;
-                if (record.frame > openingEnd) continue;
-                if (record.type.equals(need.getKey())) actual++;
+            List<Integer> at = starts.getOrDefault(need.getKey(), new ArrayList<Integer>());
+            List<Integer> inWindow = new ArrayList<>();
+            for (int frame : at) {
+                if (frame <= openingEnd) inWindow.add(frame);
             }
-            if (actual > need.getValue()) {
-                extras.add(need.getKey() + ": " + actual + " warps for " + need.getValue() + " rows");
+            if (inWindow.size() > need.getValue()) {
+                extras.add(need.getKey() + ": " + inWindow.size() + " starts for "
+                    + need.getValue() + " rows (frames " + inWindow + ")");
             }
         }
-        for (SimDriver.WarpRecord record : log) {
-            if (!record.kind.equals("building") || record.frame > openingEnd) continue;
-            if (!expected.containsKey(record.type)) {
-                extras.add(record.type + " f" + record.frame + ": no row wants it");
+        for (Map.Entry<String, java.util.List<Integer>> entry : starts.entrySet()) {
+            if (expected.containsKey(entry.getKey())) continue;
+            for (int frame : entry.getValue()) {
+                if (frame > openingEnd) continue;
+                extras.add(entry.getKey() + " f" + frame + ": no row wants it");
             }
         }
         if (!extras.isEmpty()) {
-            fail("extra constructions during the opening:\n  " + String.join("\n  ", extras) + "\n"
+            fail("extra constructions during the opening: " + extras
                 + describe(log, invalid, cancels, table));
         }
     }
@@ -304,16 +311,19 @@ final class OpeningRunner {
         private final List<SimOrder> invalid;
         private final List<String> cancels;
         private final int maxBank;
+        private final Map<String, java.util.List<Integer>> starts;
 
         OpeningResult(
             int supplyReached, int frames, List<SimDriver.WarpRecord> log,
-            List<SimOrder> invalid, List<String> cancels, int maxBank) {
+            List<SimOrder> invalid, List<String> cancels, int maxBank,
+            Map<String, java.util.List<Integer>> starts) {
             this.supplyReached = supplyReached;
             this.frames = frames;
             this.log = log;
             this.invalid = invalid;
             this.cancels = cancels;
             this.maxBank = maxBank;
+            this.starts = starts;
         }
 
         List<SimDriver.WarpRecord> warpLog() {
@@ -375,7 +385,7 @@ final class OpeningRunner {
                 System.out.println("SimOpening: late rows (delta>=2, tuning watch):\n  "
                     + String.join("\n  ", late));
             }
-            assertNoExtraConstructions(rows, table, log, invalid, cancels);
+            assertNoExtraConstructions(rows, table, starts, log, invalid, cancels);
         }
 
         /**

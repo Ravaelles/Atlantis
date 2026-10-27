@@ -210,6 +210,11 @@ public final class SimDriver {
     /**
      * Proximity-finish cancels (execution, not validation - cf. live twin rows).
      */
+    /** Start frames observed so far, per building type name. */
+    public java.util.Map<String, java.util.List<Integer>> constructionStarts() {
+        return constructions.starts();
+    }
+
     public List<String> cancels() {
         return new ArrayList<>(cancels);
     }

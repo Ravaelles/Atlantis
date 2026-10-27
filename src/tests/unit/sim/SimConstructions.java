@@ -32,6 +32,9 @@ public final class SimConstructions {
      */
     static final double ARRIVE_TILES = 2.0;
     private final Map<Construction, Site> sites = new HashMap<>();
+
+    /** Frames the sim first saw a construction, per building type name. */
+    private final Map<String, java.util.List<Integer>> starts = new HashMap<>();
     private final Map<Integer, TrainingJob> training = new HashMap<>();
     private final Map<Integer, ResearchJob> research = new HashMap<>();
 
@@ -68,6 +71,16 @@ public final class SimConstructions {
         advanceResearch(frame);
     }
 
+    /** Start frames observed so far, per building type name. */
+    public Map<String, java.util.List<Integer>> starts() {
+        Map<String, java.util.List<Integer>> copy = new HashMap<>();
+        for (Map.Entry<String, java.util.List<Integer>> e : starts.entrySet()) {
+            copy.put(e.getKey(), new java.util.ArrayList<>(e.getValue()));
+        }
+
+        return copy;
+    }
+
     public boolean hasWork() {
         if (!training.isEmpty() || !research.isEmpty()) return true;
 
@@ -90,6 +103,10 @@ public final class SimConstructions {
         if (site == null) {
             site = new Site();
             sites.put(construction, site);
+            if (construction.buildingType() != null) {
+                starts.computeIfAbsent(construction.buildingType().name(),
+                    k -> new java.util.ArrayList<Integer>()).add(frame.frame());
+            }
         }
 
         if (!ensureBuilder(frame, construction, site)) return;
