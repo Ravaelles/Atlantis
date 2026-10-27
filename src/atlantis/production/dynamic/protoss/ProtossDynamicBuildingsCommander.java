@@ -9,7 +9,6 @@ import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.buildings.*;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
-import atlantis.production.dynamic.supply.ProduceFallbackPylonWhenSupplyLow;
 import atlantis.production.orders.production.queue.CurrentQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.TrimQueue;
@@ -52,12 +51,6 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     private static boolean topPriority() {
         TrimQueue.trimIfTooBig(CurrentQueue.get());
-
-        if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) {
-            reportFirstAssimilatorBlockedBy("FallbackPylon");
-
-            return true;
-        }
 
         if (ProduceCyberneticsCore.produce()) {
             reportFirstAssimilatorBlockedBy("CyberneticsCore");

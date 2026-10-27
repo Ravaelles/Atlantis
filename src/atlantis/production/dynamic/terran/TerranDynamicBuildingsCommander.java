@@ -4,7 +4,6 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
-import atlantis.production.dynamic.supply.ProduceFallbackDepotWhenSupplyLow;
 import atlantis.production.dynamic.terran.turrets.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
 import atlantis.production.orders.production.queue.Queue;
@@ -23,7 +22,6 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     @Override
     protected boolean handle() {
-        if ((new ProduceFallbackDepotWhenSupplyLow()).produceIfNeeded()) return false;
 
         if (
             ProduceBunker.produce()

@@ -261,10 +261,6 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   “Protoss rich but idle” shape has no verdict.
 - **#144–#147** Rewrite order, clean-room: each lands specced, stub-pinned,
   default-flipped with a game proof, then the legacy files move to `src-old/`.
-  - **#144** `SupplyCommander` + fallbacks → board supply goal owns all demand.
-    Exit: one author, pumps silent. Dual authorship is confirmed in DRY_RUN;
-    routine macros cannot show the twin while V2 is OFF. Attribution of an
-    actual duplicate Pylon pair still needs a storm game.
   - **#145** Legacy site-finding chain → catalogue-only siting; delete the chain
     after cutover. The [119,12]/`Null position` storm mints here (no
     standing-cover check), so the cutover is the fix. `SITE_TOO_FAR` only rejects

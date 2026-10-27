@@ -6,7 +6,6 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.production.constructions.ConstructionsCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
-import atlantis.units.buildings.SupplyCommander;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
@@ -39,7 +38,6 @@ public class ProductionCommander extends Commander {
         return new CommanderFactory[]{
             ProductionOrdersCommander::new,
             GoalBoardFeederCommander::new,
-            SupplyCommander::new,
             ConstructionsCommander::new,
             DynamicProductionCommander::new,
             // The --short E2E gate: no-op unless CORE_AND_DRAGOON_GATE=true in ENV.
