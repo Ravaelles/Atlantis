@@ -221,6 +221,26 @@ public class TargetLadderTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void nearestStopsMarchForChaff() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        d.hp = 160;
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 37, 20);
+        ling.setEnemy();
+        ling.hp = 35;
+
+        world(3, fakeOurs(nexus, d), fakeEnemies(ling), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertEquals(ling.id(), idOf(AcquireTarget.acquire(d)),
+                "rules 1-7 decline (not melee, nothing committed, ling "
+                + "banned from focus and shared, nothing stuck, no squad, "
+                + "nothing withdrawing), so the nearest engageable enemy "
+                + "owns the pick - the march stops for chaff");
+        });
+    }
+
     private static int idOf(atlantis.units.AUnit u) {
         return u == null ? -1 : u.id();
     }

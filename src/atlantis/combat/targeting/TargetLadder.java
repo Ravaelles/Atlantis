@@ -74,7 +74,7 @@ public final class TargetLadder {
         target = SquadTarget.pick(unit);
         if (target != null) return target;
 
-        target = ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        target = NearestTarget.pick(unit);
         if (target != null) return target;
 
         return ClusterBreach.breachedBaseTarget(unit);
