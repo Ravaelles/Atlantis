@@ -153,9 +153,20 @@ public class IssueBuildOrder extends HasUnit {
                     // logBuildAttempt, so what is left to separate is the type check and the
                     // `isBuilding || isInterruptible` term. Printed only under BUILDER_LOG=1,
                     // and only on a REFUSAL, so it costs nothing on the working path.
+                    // Decomposed 2026-10-28: the natural-expansion chase (Refresh
+                    // Nexus position every frame, builder walking forever) needed
+                    // the sub-term, not just the verdict - explored/creep/path
+                    // name the blocker instead of another silent frame.
                     if (atlantis.config.env.Env.builderLog()) {
                         System.err.println("BUILD_REFUSED_WHY " + buildingType.name()
                             + " canBuild=" + unit.u().canBuild(buildingType.ut(), buildTilePosition)
+                            + " explored=" + atlantis.Atlantis.game().isExplored(buildTilePosition)
+                            + " creep=" + atlantis.Atlantis.game().hasCreep(buildTilePosition)
+                            + " reach=" + atlantis.Atlantis.game().hasPath(
+                                unit.u().getPosition(),
+                                new bwapi.Position(
+                                    buildTilePosition.getX() * 32 + 16,
+                                    buildTilePosition.getY() * 32 + 16))
                             + " isInterruptible=" + unit.u().isInterruptible()
                             + " isBuilding=" + unit.u().getType().isBuilding()
                             + " isMoving=" + unit.u().isMoving()
