@@ -615,6 +615,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   that never fulfils. Open: which author dominates and where the builders
   die - needs a builderLog game, not this trace (goal sources stop at the
   provider id).
+- **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
+  of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
+  t200) instead of screening mid-map, so a 4-ling runby is fought at the
+  mineral line - 4/6 probes fall vs chase-nearest, 6/6 vs focus-weakest,
+  1 Zealot dies in both. Lings die and the Nexus stands (that half is
+  pinned). Suspected eval conservatism at 2v4 rallying to the anchor -
+  the #206 shape. Combat-cluster tuning with live proof, not economy
+  work.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
