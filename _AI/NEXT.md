@@ -171,6 +171,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   storm comes from the legacy finder chain, which lacks a standing-cover check.
   The spiral guard is a separate funnel; no local patch. The fix and acceptance
   test ride #145. Latest FFA: 8 repetitions in the affected game, none elsewhere;
+  ENGINE DATUM 2026-10-28 (live 003802, V2 LIVE, 171 BUILD_BREAKDOWN rows on
+  the same [119,12] Nexus site): engine `canBuildHere` noBuilder=false AND
+  withBuilder=false while explored=12/12, unitsInRect=0 (not even minerals),
+  terrainOnly=ok, hasPower=true, canAfford, distToBuild 1.8-2.0, canBuild*
+  all false in every flag combination. The bot's own tile math says buildable;
+  the engine refuses - so the finder deterministically re-serves an illegal
+  tile and Refresh-Nexus chases it forever (3000+ BUILD_REFUSED_WHY, supply
+  parked at 49). Fix needs engine-validated siting or refused-tile memory,
+  both in #145's scope - deliberately untouched here.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
 
 - **#152** Dragoon kiting: instrumentation, targeting, escape and tuner are in
@@ -638,6 +647,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   pinned). Suspected eval conservatism at 2v4 rallying to the anchor -
   the #206 shape. Combat-cluster tuning with live proof, not economy
   work.
+- **#221** Task slot empty for army units (owner ask, measured live
+  20261028_000850, V2 LIVE TauCross): 10 of 26 units with `#Attack` rows
+  (6 Zealots ids 137/143/144/151/159/160, 4 Dragoons 180/181/187/188)
+  have no `units_updates` entry at all - the static battle functions
+  never call `usedManager`, so the managerLog funnel that feeds Task
+  never sees them. Manager-driven units are fine (15/25 Task entries).
+  The `#Attack/<behavior>` order-watcher tags already cover the log
+  half (114/114 attack rows tagged in the same game). Fix direction:
+  tag army units with their cluster/mission behavior through
+  `usedManager` (or wire the disabled tooltip channel change-only) -
+  needs a trace-size check, not a guess.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
