@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import atlantis.combat.targeting.AcquireTarget;
+import atlantis.combat.targeting.SquadTarget;
 import atlantis.combat.targeting.TargetLadder;
 import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
@@ -167,6 +168,56 @@ public class TargetLadderTest extends WorldStubForTests {
                 "rules 1-5 decline (not melee, nothing committed, ling banned "
                 + "from focus, nothing stuck), so the cover rule owns the "
                 + "pick: the pursuer chewing the withdrawer, not the nearest");
+        });
+    }
+
+    @Test
+    public void squadTargetHoldsSharedPick() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit h = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        h.hp = 160;
+        FakeUnit z = fake(AUnitType.Protoss_Zealot, 33, 20);
+        z.setEnemy();
+        z.hp = 60;
+
+        world(3, fakeOurs(nexus, h), fakeEnemies(z), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            atlantis.battle.cluster.Squad squad = new atlantis.battle.cluster.Squad("Alpha");
+            h.forceSetSquad(squad);
+            squad.targeting().setLastTarget(z);
+
+            assertEquals(z.id(), idOf(SquadTarget.pick(h)),
+                "squad's living valid target in reach is shared");
+        });
+    }
+
+    @Test
+    public void squadTargetYieldsInCrowds() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit h = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        h.hp = 160;
+        FakeUnit z = fake(AUnitType.Protoss_Zealot, 33, 20);
+        z.setEnemy();
+        z.hp = 60;
+
+        world(3, fakeOurs(
+            nexus, h,
+            fake(AUnitType.Protoss_Dragoon, 29, 20),
+            fake(AUnitType.Protoss_Dragoon, 31, 20),
+            fake(AUnitType.Protoss_Dragoon, 30, 21),
+            fake(AUnitType.Protoss_Dragoon, 30, 19),
+            fake(AUnitType.Protoss_Dragoon, 28, 20),
+            fake(AUnitType.Protoss_Dragoon, 32, 20)
+        ), fakeEnemies(z), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            atlantis.battle.cluster.Squad squad = new atlantis.battle.cluster.Squad("Alpha");
+            h.forceSetSquad(squad);
+            squad.targeting().setLastTarget(z);
+
+            assertEquals(-1, idOf(SquadTarget.pick(h)),
+                "6+ friendly combat units nearby pick their own focus");
         });
     }
 

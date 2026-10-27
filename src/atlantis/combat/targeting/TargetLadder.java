@@ -71,7 +71,7 @@ public final class TargetLadder {
         target = CoverTarget.pick(unit);
         if (target != null) return target;
 
-        target = ASquadTargeting.useSquadTargetIfPossible(unit);
+        target = SquadTarget.pick(unit);
         if (target != null) return target;
 
         target = ASquadTargeting.nearestEngageableEnemy(unit, 9);
