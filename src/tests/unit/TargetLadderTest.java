@@ -241,6 +241,25 @@ public class TargetLadderTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void breachAnswersLastWhenNothingElseEngages() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 38, 20);
+        d.hp = 160;
+        FakeUnit raider = fake(AUnitType.Protoss_Zealot, 22, 22);
+        raider.setEnemy();
+        raider.hp = 60;
+
+        world(3, fakeOurs(nexus, d), fakeEnemies(raider), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertEquals(raider.id(), idOf(AcquireTarget.acquire(d)),
+                "rules 1-8 decline (nothing committed, raider out of every "
+                + "9-tile envelope, no squad, nothing withdrawing), so the "
+                + "breached-base answer owns the pick - last resort by design");
+        });
+    }
+
     private static int idOf(atlantis.units.AUnit u) {
         return u == null ? -1 : u.id();
     }

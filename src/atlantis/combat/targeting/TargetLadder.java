@@ -3,7 +3,6 @@ package atlantis.combat.targeting;
 import java.util.Arrays;
 import java.util.List;
 
-import atlantis.combat.cluster.ClusterBreach;
 import atlantis.units.AUnit;
 
 /**
@@ -77,6 +76,6 @@ public final class TargetLadder {
         target = NearestTarget.pick(unit);
         if (target != null) return target;
 
-        return ClusterBreach.breachedBaseTarget(unit);
+        return BreachTarget.pick(unit);
     }
 }
