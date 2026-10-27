@@ -24,6 +24,12 @@ docker run -d --name cvis -p 8770:8770 -v /sc-ai/REPLAYS:/my-replays cvis \
   ./server.py --host 0.0.0.0:8770 --replays_pattern '/my-replays/*.rep'
 ```
 
+Boot persistence (no cron/systemd needed): `scripts/cherryvis-start.sh`
+(Atlantis repo) ensures the viewer runs now and after reboot - it enables
+the docker daemon autostart, recreates a stale `cvis` container with
+`--restart unless-stopped`, and verifies the server answers. Idempotent,
+safe to run any time.
+
 - The build needs more than 120 s wall (pip `zstandard` alone ~90 s): run it
   detached and poll, do not wrap the whole build in a 120 s foreground timeout
   (CONVENTIONS §13: shrink the step - background + poll).
