@@ -2,6 +2,7 @@ package atlantis.cherryvis.simple;
 
 import atlantis.cherryvis.CV;
 import atlantis.game.A;
+import atlantis.production.constructions.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -27,16 +28,35 @@ public class ACherryVis_OrderWatcher {
 
     public static void update() {
         for (AUnit unit : Select.ourUnitsWithUnfinishedList()) {
-            if (unit == null || unit.isABuilding() || unit.u() == null) continue;
+            if (unit == null || unit.isABuilding()) continue;
 
             // Owner spec: "#Move@0:12" from the unit's last command name (the
             // engine's own getLastCommand, null-safe inside).
-            String command = "#" + unit.lastCommandName();
+            // NEXT #214: name WHAT the builder is building and WHY next to
+            // the command, so a stuck builder (site-refresh chase, covered
+            // tile) reads off one row instead of needing a WINE_DEBUG hunt.
+            // Change-only on all three parts: a steady builder stays silent.
+            String command = "#" + unit.lastCommandName() + buildingTag(unit) + behaviorTag(unit);
             if (!command.equals(lastOrders.get(unit.id()))) {
                 lastOrders.put(unit.id(), command);
                 CV.unitLog(command + "@" + A.minSec(), unit);
             }
         }
+    }
+
+    /** "/Pylon" while this builder holds an unfinished construction. */
+    private static String buildingTag(AUnit unit) {
+        Construction construction = unit.construction();
+        if (construction == null || !construction.notFinished()) return "";
+
+        return "/" + construction.buildingType().name();
+    }
+
+    /** "/<tooltip>" - the behavior tag the bot last gave this unit. */
+    private static String behaviorTag(AUnit unit) {
+        String tooltip = unit.tooltip();
+
+        return tooltip == null || tooltip.isEmpty() ? "" : "/" + tooltip;
     }
 
     /**
