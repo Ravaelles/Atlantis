@@ -63,6 +63,7 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
         int count = Select.ourOfType(type).count()
             + Select.ourUnfinished().ofType(type).count()
             + ConstructionRequests.countNotStartedOfType(type)
+            + ConstructionRequests.countInProgressWithoutUnitOfType(type)
             + inTrainingQueues(type);
 
         return Math.max(0, count - startingCount(type));

@@ -66,6 +66,27 @@ public class ConstructionRequests {
         return total;
     }
 
+    /**
+     * Placed but not yet warping: IN_PROGRESS with no linked building
+     * unit. A warping building with a unit is arriving supply (counted
+     * with the unfinished units); without one it is still outstanding
+     * demand - the arrival-to-warp window that re-fired build-order rows
+     * live (duplicate Pylons/Gateways, 20261027_121013). No double count:
+     * a unit is either linked (counted there) or missing (counted here).
+     */
+    public static int countInProgressWithoutUnitOfType(AUnitType type) {
+        int total = 0;
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.IN_PROGRESS
+                && construction.buildingUnit() == null
+                && construction.buildingType().equals(type)) {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
     public static int countNotFinishedWithHighPriority() {
         int total = 0;
         for (Construction construction : constructions) {
