@@ -86,6 +86,30 @@ against 65-67 s and treat anything inside that band as no result at all.
 `run-full-tests.sh` compiles once and prints this table per run, with
 `--skip-scenarios` for "everything but the slow tier" (~30 s).
 
+## Real-game opening gate (post-game, not in JUnit)
+
+`scripts/assert-wine-opening.sh <run-dir>` plays no game itself - it
+adjudicates one already played on Wine (the only real-game vehicle;
+OpenBW is owner-frozen, the old StarEngine economy sim is gone, and a
+~15-minute exclusive-machine game cannot live in a seconds-scale
+suite). Over `BUILDINGS.json` + the `Use build order` line it asserts
+three things and exits 1 with evidence otherwise:
+
+1. the build-order rows appear in the played game as a subsequence;
+2. no finished building of a type absent from the build order completes
+   before the first Gateway (the Forge-before-Gateway class);
+3. the mineral bank never tops 550 before supply 50.
+
+Compose with the existing parse step after every Wine game:
+
+```bash
+bash scripts/parse-run.sh <run-dir> && bash scripts/assert-wine-opening.sh <run-dir>
+```
+
+The in-suite half of the same rule stays where seconds matter:
+`BuildOrderGoalsTest` (plan order) and `OpeningDoesNotHoardMineralsTest`
+(plan affordability).
+
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
 fixture and a `--add-opens` JVM flag - see its javadoc). **The suite is green**:
 nothing is failing, and random order (seeds 7, 42, 99, 1234, three rounds each)
