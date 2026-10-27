@@ -110,4 +110,29 @@ public class SupplyGoalTest {
             DynamicGoals.supplyGoal(oneComing, ProductionRacePolicy.forRace("Protoss")),
             "at 60 or below a single coming provider covers the need");
     }
+
+    @Test
+    public void buildOrderRowDefersThePreventiveFireButNeverTheEmergency() {
+        // The opening shape: free 3 of 9 at supply 6, the build order still
+        // holding its Pylon@8 row. The preventive fire defers to the row -
+        // the row is the single provider author, never two.
+        DynamicGoals.GameSnapshot opening =
+            new DynamicGoals.GameSnapshot(6, 1, 6, 3, 9, 120, true);
+
+        assertNull(
+            DynamicGoals.supplyGoal(opening, ProductionRacePolicy.forRace("Protoss"), true),
+            "a held provider row silences the preventive fire (the sim's warp-at-6-for-gate-8)");
+        assertNotNull(
+            DynamicGoals.supplyGoal(opening, ProductionRacePolicy.forRace("Protoss"), false),
+            "without a held row the same state still fires - no behavior change off the opening");
+
+        // A live block is already a failed plan: the emergency fire never
+        // defers, held row or not.
+        DynamicGoals.GameSnapshot blocked =
+            new DynamicGoals.GameSnapshot(10, 1, 32, 0, 32, 500, false);
+
+        assertNotNull(
+            DynamicGoals.supplyGoal(blocked, ProductionRacePolicy.forRace("Protoss"), true),
+            "at zero free supply any author beats none - the emergency fires through the deferral");
+    }
 }

@@ -186,15 +186,35 @@ public class BuildOrderGoalsTest {
     }
 
     @Test
-    public void supplyGateUsesTheLegacyLookahead() {
-        // Below 19 supply the row may start one supply early; from 19 on, three.
+    public void supplyGateIsExact() {
+        // No lookahead, no early-start bonus: a row with gate N is a goal
+        // only at supply N or later. The early first Pylon measured in the
+        // sim was the supply goal preempting the row, never this gate.
         List<BuildOrderRow> rows = Arrays.asList(BuildOrderRow.of(ZEALOT, 12));
-        assertTrue(BuildOrderGoals.from(rows, new Progress(10)).isEmpty());
-        assertEquals(1, BuildOrderGoals.from(rows, new Progress(11)).size());
+        assertTrue(BuildOrderGoals.from(rows, new Progress(11)).isEmpty());
+        assertEquals(1, BuildOrderGoals.from(rows, new Progress(12)).size());
 
         List<BuildOrderRow> late = Arrays.asList(BuildOrderRow.of(ZEALOT, 24));
-        assertTrue(BuildOrderGoals.from(late, new Progress(20)).isEmpty());
-        assertEquals(1, BuildOrderGoals.from(late, new Progress(21)).size());
+        assertTrue(BuildOrderGoals.from(late, new Progress(23)).isEmpty());
+        assertEquals(1, BuildOrderGoals.from(late, new Progress(24)).size());
+    }
+
+    @Test
+    public void unproducedRowOfAnswersTheSupplyGoalDeferral() {
+        List<BuildOrderRow> rows = coreOpening();
+
+        assertTrue(
+                BuildOrderGoals.hasUnproducedRowOf(rows, new Progress(5), PYLON),
+                "gate 8 unreached with no Pylon: the row still owns the provider");
+        assertTrue(
+                BuildOrderGoals.hasUnproducedRowOf(rows, new Progress(10).with(PYLON, 1), PYLON),
+                "first Pylon done but the 16-supply row is still open");
+        assertTrue(
+                !BuildOrderGoals.hasUnproducedRowOf(rows, new Progress(30).with(PYLON, 2), PYLON),
+                "both Pylons produced: the rows own nothing, the supply goal resumes");
+        assertTrue(
+                !BuildOrderGoals.hasUnproducedRowOf(rows, new Progress(30), ZEALOT),
+                "no Zealot row exists at all: nothing outstanding");
     }
 
     @Test

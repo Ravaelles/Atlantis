@@ -18,9 +18,12 @@ import java.util.Map;
  * Stateless and idempotent: row K of item T is the N-th occurrence of T in the
  * file, and it is a goal only while {@link BuildOrderProgress#produced} is
  * below N. A finished, queued or pending row therefore never comes back, and an
- * unqualified row returns by itself on a later frame. The supply gate is the
- * legacy one ({@code IsReadyToProduceOrder}): supply used plus a small
- * lookahead must reach the row's supply.
+ * unqualified row returns by itself on a later frame. The supply gate is
+ * exact: a row with gate N is a goal only at supply N or later, no
+ * lookahead. The early first Pylon measured in the sim (warp at supply 6
+ * for gate 8) was never this gate firing early - it was the supply-block
+ * prevention goal preempting the row - and a lookahead here would hide
+ * that second author instead of exposing it.
  * </p>
  */
 public final class BuildOrderGoals {
@@ -77,15 +80,34 @@ public final class BuildOrderGoals {
     }
 
     /**
-     * The legacy gate ({@code IsReadyToProduceOrder}): a row may start slightly
-     * before its supply, so the builder walk overlaps the last worker.
+     * Exact supply gate: a row with gate N is a goal only at supply N or
+     * later. No lookahead and no early-start bonus: the builder walk
+     * overlaps nothing, it starts when the gate opens.
      */
     static boolean supplyGateOpen(int minSupply, int supplyUsed) {
         if (minSupply <= 0) return true;
 
-        int lookahead = supplyUsed >= 19 ? 3 : 1;
+        return supplyUsed >= minSupply;
+    }
 
-        return supplyUsed + lookahead >= minSupply;
+    /**
+     * True while the rows still hold an unproduced row of this item: with
+     * total demand D over all rows of T, some row is outstanding while
+     * fewer than D exist. The supply goal reads this so the opening
+     * provider has exactly one author (the row), never two.
+     */
+    public static boolean hasUnproducedRowOf(
+            List<BuildOrderRow> rows, BuildOrderProgress progress, Producible item) {
+        if (rows == null || progress == null || item == null) return false;
+
+        int demanded = 0;
+        for (BuildOrderRow row : rows) {
+            if (row == null || !row.item().id().equals(item.id())) continue;
+            demanded += row.multiplicity();
+        }
+        if (demanded <= 0) return false;
+
+        return Math.max(0, progress.produced(item)) < demanded;
     }
 
     /**

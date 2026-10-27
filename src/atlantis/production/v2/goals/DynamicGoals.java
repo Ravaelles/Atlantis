@@ -197,10 +197,20 @@ public final class DynamicGoals {
      * Empty when the snapshot cannot support any of them.
      */
     public static List<ProductionGoal> contribute(GameSnapshot state, ProductionRacePolicy race) {
+        return contribute(state, race, false);
+    }
+
+    /**
+     * @param buildOrderOwnsProvider the build order still holds an unproduced
+     *                               provider row: the preventive supply fire
+     *                               defers to it (emergency still fires).
+     */
+    public static List<ProductionGoal> contribute(
+            GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
         List<ProductionGoal> goals = new ArrayList<>();
 
         addWorkerGoal(goals, state, race);
-        addSupplyGoal(goals, state, race);
+        addSupplyGoal(goals, state, race, buildOrderOwnsProvider);
         addArmyGoal(goals, state, race);
         addTechGoal(goals, state);
         addGasGoal(goals, state, race);
@@ -282,13 +292,29 @@ public final class DynamicGoals {
      * Supply-block prevention: a Pylon/Depot/Overlord the moment free supply
      * runs low. It is emitted as an emergency only at the edge (so it never
      * outranks real defence early), otherwise it is a normal-priority goal.
+     *
+     * <p>
+     * While the build order still holds an unproduced provider row, the
+     * PREVENTIVE fire defers to it: the row is the opening's single provider
+     * author (measured: the supply goal warped the first Pylon at supply 6
+     * for gate 8). The EMERGENCY fire (no free supply at all) never defers -
+     * a live block is already a failed plan, and any author beats none.
+     * </p>
      */
     public static ProductionGoal supplyGoal(GameSnapshot state, ProductionRacePolicy race) {
+        return supplyGoal(state, race, false);
+    }
+
+    public static ProductionGoal supplyGoal(
+            GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
         AUnitType supplyProvider = race.supplyProviderType();
         if (supplyProvider == null)
             return null;
 
         if (state.supplyFree > SUPPLY_WORRY_LEVEL)
+            return null;
+
+        if (buildOrderOwnsProvider && state.supplyFree > 0)
             return null;
 
         // A provider already on the way counts: supply arrives when the Pylon
@@ -314,7 +340,13 @@ public final class DynamicGoals {
     public static final int SUPPLY_WORRY_LEVEL = 4;
 
     private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
-        ProductionGoal goal = supplyGoal(state, race);
+        addSupplyGoal(goals, state, race, false);
+    }
+
+    private static void addSupplyGoal(
+            List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race,
+            boolean buildOrderOwnsProvider) {
+        ProductionGoal goal = supplyGoal(state, race, buildOrderOwnsProvider);
         if (goal != null) goals.add(goal);
     }
 

@@ -19,7 +19,10 @@ import atlantis.production.v2.execution.DryRunOrderDirector;
 import atlantis.production.v2.execution.GameOrderDirector;
 import atlantis.production.v2.execution.OrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.BuildOrderRow;
+import atlantis.production.v2.UnitProducible;
+import atlantis.units.AUnitType;
 import atlantis.production.v2.execution.V2DispatchTwin;
 import atlantis.util.log.ErrorLog;
 
@@ -191,7 +194,7 @@ public final class ProductionEngine {
             goals.addAll(state.buildOrderGoals(buildOrderRows));
         }
 
-        goals.addAll(state.dynamicGoals());
+        goals.addAll(state.dynamicGoals(buildOrderOwnsProvider(buildOrderRows)));
 
         // Pull-forward rules (01_PRODUCTION.md step 3): supply and gas structures
         // are wanted a little before they are needed, not after the block.
@@ -214,6 +217,21 @@ public final class ProductionEngine {
             return Collections.emptyList();
 
         return BuildOrderRow.fromLegacy(CurrentBuildOrder.get().productionOrders());
+    }
+
+    /**
+     * True while the build order still holds an unproduced supply-provider
+     * row: then the row is the opening's single provider author and the
+     * preventive supply fire stays off (the emergency fire never defers).
+     */
+    private boolean buildOrderOwnsProvider(List<BuildOrderRow> rows) {
+        if (rows.isEmpty()) return false;
+
+        AUnitType provider = racePolicy.supplyProviderType();
+        if (provider == null) return false;
+
+        return BuildOrderGoals.hasUnproducedRowOf(
+            rows, new LiveBuildOrderProgress(), UnitProducible.of(provider));
     }
 
     /** The plan of the last frame, for debug output and tests. Read-only. */

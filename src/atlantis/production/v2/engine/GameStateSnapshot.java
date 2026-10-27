@@ -142,6 +142,15 @@ public final class GameStateSnapshot {
 
     /** The dynamic goal generators for this frame. */
     public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
+        return dynamicGoals(false);
+    }
+
+    /**
+     * @param buildOrderOwnsProvider the build order still holds an unproduced
+     *                               provider row: the preventive supply fire
+     *                               defers to it (emergency still fires).
+     */
+    public List<atlantis.production.v2.ProductionGoal> dynamicGoals(boolean buildOrderOwnsProvider) {
         // Workers EXISTING PLUS those already in production. Using the existing
         // count alone is what made the worker goal ask for another Probe every
         // frame: the goal layer asked "do we have fewer than the cap", the answer
@@ -188,7 +197,7 @@ public final class GameStateSnapshot {
         snapshot.hasForge = We.protoss() && Have.forge();
         twinSuppressedSupply(snapshot);
 
-        return DynamicGoals.contribute(snapshot, racePolicy);
+        return DynamicGoals.contribute(snapshot, racePolicy, buildOrderOwnsProvider);
     }
 
     /**
