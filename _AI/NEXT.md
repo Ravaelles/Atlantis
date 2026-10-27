@@ -602,6 +602,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (scheduler with two bases) or sim-side (no worker transfer to the
   natural), and whether it predates the exact-gate cutover. The opening
   gate stops at the BO end (horizon 30) until this is settled.
+- **#218** V2 re-dispatch spam incl. the arrival-to-warp window (measured
+  20261027_121013, V2 LIVE): Pylon pair warped 124f apart (f3619+f3743),
+  per-frame `builder committed` stretches (f4754-4759, f6829-6838+). Root
+  closed by the produced-count fix (IN_PROGRESS without unit counts);
+  the sim never exhibited it (deterministic same-tile dedup), so this
+  needs a live Wine game showing one warp per row and no per-frame
+  re-dispatch stretches. Rides the one-game queue.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
