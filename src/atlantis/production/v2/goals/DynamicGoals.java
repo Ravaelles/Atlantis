@@ -66,6 +66,7 @@ public final class DynamicGoals {
         addWorkerGoal(goals, state, race);
         addSupplyGoal(goals, state, race, buildOrderOwnsProvider);
         addArmyGoal(goals, state, race);
+        addGatewayGoal(goals, state);
         addTechGoal(goals, state);
         addGasGoal(goals, state, race);
         addExpansionGoal(goals, state, race);
@@ -206,6 +207,33 @@ public final class DynamicGoals {
         ProductionGoal goal = supplyGoal(state, race, buildOrderOwnsProvider);
         if (goal != null) goals.add(goal);
     }
+
+    /**
+     * Mid-game Gateway demand: the build order owns the first two rows and
+     * nothing else ever asks for a Gateway in V2 (measured live 183253:
+     * 2 Gateways the whole game, bank to 7963 while Dragoon demand waited
+     * on busy facilities). Fires only when rich and every Gateway is busy,
+     * past the opening and capped at four - never ahead of the bank, never
+     * instead of the BO rows.
+     */
+    private static void addGatewayGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.supplyUsed < GATEWAY_DEMAND_SUPPLY) return;
+
+        if (state.gatewaysExisting < 2 || state.gatewaysExisting >= 4) return;
+        if (state.gatewaysFree > 0) return;
+        if (state.minerals < GATEWAY_BANK_MINERALS) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Gateway),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /** Third Gateway no earlier than this: the BO owns the opening. */
+    private static final int GATEWAY_DEMAND_SUPPLY = 30;
+
+    /** Rich-only rule: a new Gateway never starves tech or units. */
+    private static final int GATEWAY_BANK_MINERALS = 400;
 
     /**
      * Baseline army: always some combat units once we have a base and a
@@ -423,6 +451,22 @@ public final class DynamicGoals {
          * every frame until one completes.
          */
         public int supplyProvidersComing;
+
+        /**
+         * Gateways existing, completed or not. Set post-construction like
+         * {@link #supplyProvidersComing}: the build order owns the first
+         * two rows, the 3rd-and-next Gateway author reads this (measured
+         * live 183253: 2 Gateways the whole game, bank to 7963 while
+         * Dragoon demand waited on busy facilities).
+         */
+        public int gatewaysExisting;
+
+        /**
+         * Gateways free to take an order right now (same post-construction
+         * pattern). A free Gateway trains first; a new one is wanted only
+         * when every existing one is busy.
+         */
+        public int gatewaysFree;
 
         /**
          * A Forge already standing (Protoss; other races leave it true so the
