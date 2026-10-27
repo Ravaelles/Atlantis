@@ -598,3 +598,32 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   alternative vehicle is an owner call.
   Vehicle 2026-10-27 (owner): Wine + StarEngine only, OpenBW abandoned
   for now - parity and proofs ride Wine macros until further notice.
+
+## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
+
+Landed this sweep (all suite-green at commit, arch baseline unchanged):
+posture thresholds+fallback+Terran/mirror/Input (`4a89f42c`, `63ab38b9`),
+reason texts + Reason board key + §34, CLUSTER strength+focus twin +
+ArmyBoard game-values (`3d51a57b`, `f7c3ac7f0`), EnemyStrength
+addressless fix (#215, `25c78b9b5`), Pylon nearTo branch codes +
+PylonSite board (`e5483f96b`), ladder rules 6-9 (#184 complete:
+`af5fbb01`, `28f36a2`, `efbf2b1`, `91e0531`), retreat rally scatter,
+march line abreast, Alpha* board keys + FocusName tile (`c60035171`),
+kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
+#212-2 parked, #216 OpenBW hands-off, #212 parked, vehicle=Wine.
+- Open: WO-144 step 3 needs a full V2 LIVE verdict (running below);
+  #213 needs a two-base custom-map game; #215 needs a post-fix game
+  with foe-unseen stretches; #214a catalogue arm pending #145;
+  stance-from-focus rewiring (retreat rally/standoff read main-choke
+  geometry, not DefendedPlace Kind - confirmed by reading, needs
+  sim pins + game proof, NOT started); #212-2 parked to a stall game;
+  #211 acceptance tier red (owner-only scope); #156/#160/#185 parked
+  to dates/K-of-N; #144-147 wait on WO-144 step 3 + WO-145.
+- Running now: Wine V2 LIVE long macro, TauCross, supply-120 env
+  (`/tmp/opencode/ENV-WINE-V2LIVE`), super-fast headless, detached
+  (setsid, survives tool timeouts). Read its verdict next: no supply
+  blocks 17/17+25/25, no duplicate Pylon warps, SUPPLY_BLOCKED
+  samples, tech timing, PylonSite rows, strength curve sanity.
+- Next after verdict: adjudicate WO-144 step 3 (flip or name the
+  blocker with twin evidence) → WO-145 A/B on Wine → WO-146/147
+  deletion checklist → stance-from-focus sim pins.
