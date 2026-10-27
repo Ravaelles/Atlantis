@@ -623,3 +623,28 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
 - Next after verdict: adjudicate WO-144 step 3 (flip or name the
   blocker with twin evidence) → WO-145 A/B on Wine → WO-146/147
   deletion checklist → stance-from-focus sim pins.
+
+## Sweep 2026-10-27 midday (both owner-reported, both landed suite-green)
+- Retreat owns an escape route (`7e6db92da`, 6 pins): FLEE no longer
+  marches home through the enemy - road within 6 tiles of an enemy
+  combat unit reroutes to the farthest clear choke (farthest from the
+  enemy army + enemy base; into-enemy and through-enemy candidates
+  refused; all-roads-crossed steps locally). New verdict reason
+  ESCAPE_RALLY tells reroutes apart in telemetry.
+- Forge-before-Gateway fixed (`aeaf49bfd`, 3 pins): V2 fortification
+  emitted a Cannon goal from frame 0 (expectedCannons >= 1 always),
+  dropping legacy's Have.forge() + supply80/min200/2bases/mutas gates
+  - the Cannon's Forge [pre] got dispatched while the Cannon itself
+  never scheduled (0 Cannon dispatches in runs 104542/110507/115321;
+  Forge f2112-2746 before Gateway, never in BO). No Forge standing =
+  no Cannon goals now; baseline cannon returns once a Forge stands.
+- REMAINDER (not started): scheduler still leaves a planned prereq
+  behind when its parent goal fails to schedule (orphan mechanism
+  above - needs timeline-dealloc design); V2 has no legitimate
+  Forge/Cannon author (port ForgeGoal + CannonGoal board timing).
+- WO-145 A/B: catalogue arm 115321 done - DEFEAT f4500 to ling flood,
+  4 buildings, 1126 benign proximity-finish cancels (same shape as the
+  healthy game's 668), env mechanism verified (placementCatalogue=true
+  from ENV-WINE-V2CAT, V2 provably live in its log). Legacy arm
+  (ENV-WINE-V2LIVE, same supply-120 conditions) RUNNING now, detached,
+  log /tmp/opencode/wine-v2legacy.log - adjudicate A/B when it lands.
