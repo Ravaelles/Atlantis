@@ -151,11 +151,6 @@ public final class SimDriver {
         return map;
     }
 
-    /** The engine, for diagnostics (plan contents in scenario logs). */
-    public ProductionEngine engineForTests() {
-        return engine;
-    }
-
     /** Spawns the opening: Nexus on the base tile, workers on the line. */
     public FakeUnit spawnBase(int baseIndex, int workers) {
         MapSnapshotRef base = baseRef(baseIndex);

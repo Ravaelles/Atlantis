@@ -648,3 +648,36 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   from ENV-WINE-V2CAT, V2 provably live in its log). Legacy arm
   (ENV-WINE-V2LIVE, same supply-120 conditions) RUNNING now, detached,
   log /tmp/opencode/wine-v2legacy.log - adjudicate A/B when it lands.
+
+## Sweep 2026-10-27 late (StarEngine P0-P2 + gates, 6 commits, all green)
+- P0 map ground (`7784c158a`): snapshot v2 (bases + regionReach, loader
+  verifies matrix vs BFS), golden TauCross re-dumped. Found en route:
+  the dumper passed tile coords to BWAPI isWalkable (walk coords) and
+  scrambled the whole walkability grid - fixed by mirroring the bot's
+  own *4 rule; buildable '.' 6227 -> 11263 (recorded in
+  _AI/CHALLENGES/MapSnapshots.md). Without this no Gateway fit within
+  12 tiles of the sim base.
+- Ground truth + validation (`db9145086`): SimGround (single tile
+  authority), SimOrder verdicts + OpenBW-derived checks, 9/9 pins.
+- Arch (`abaae9f72`): SimWorld movement extracted byte-identical to
+  SimMovement (one transcription slip caught by the sim itself: swapped
+  atan2 args made builders flee - method-diff verified after the fix).
+- FakeUnit sim-safety (`5cba72977`): sim-owned remaining-time fields,
+  top-left tilePosition (center-based math put warps 4 tiles off; the
+  refinery missed its geyser by a tile). e2e shows only the 3 failures
+  that fail identically on unmodified HEAD (stash-proven pre-existing).
+- Opening gate, sim (`dedba5ebe`): SimDriver plays Zealot-into-Goon
+  to 100 raw supply through the real ProductionEngine - 11/11 BO rows
+  covered at/after their gates, no non-BO building before Gateway,
+  bank <= 550 below raw 50, zero invalid orders, exact golden warp
+  frames. FAITHFUL builder walks the tile map (mover reused).
+- Opening gate, Wine (`ed7e6f7cd`): strict file-order dropped, the gate
+  asserts coverage at/after each row's gate (V2 emits gated goals, not
+  a sequence - both retained live games interleave Assimilator too).
+  104542/110507 fail ONLY on the real Forge intruder; 115321 fails
+  honestly (died f4500).
+- Open questions (measured, not verdicts): live mining runs ~0.03/miner/
+  frame vs EconomyModel 0.045 (two Wine windows) - if the model is hot,
+  plans run ahead of the bank; needs a proper measurement pass, not a
+  guess. FAITHFUL full-opening + scripted enemy (P3) still open; WO-144–
+  147 deletions now have sim gates to run against (not yet executed).
