@@ -586,3 +586,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   TauCross game (first CLUSTER row: strength 999, foe unseen). Regression
   note: the address-clearing change is correct for pursuit; strength
   was its silent casualty.
+- **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
+  green): `run-openbw-e2e.sh` on TauCross attaches but the host never
+  publishes frames. Same map + script played full openings on 10-18/21.
+  Delta since: the harness was rebuilt from the dirty engine-track tree
+  (uncommitted GameUnits/Server/BWData edits; canonical openbw clean).
+  Engine-side, not bot-side - DO NOT touch (OPENBW-HANDOFF owns it).
+  Melee parity/LIVE runs (WO-144 step 3, WO-145 A/B) wait; Wine as
+  alternative vehicle is an owner call.
