@@ -178,7 +178,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   all false in every flag combination. The bot's own tile math says buildable;
   the engine refuses - so the finder deterministically re-serves an illegal
   tile and Refresh-Nexus chases it forever (3000+ BUILD_REFUSED_WHY, supply
-  parked at 49). Fix needs engine-validated siting or refused-tile memory,
+  parked at 49). RESOLVED SAME GAME by relocation: the expansion warped
+  f16700 at [103,37] supply 49 (not the cursed tile), died, rebuilt f20715
+  same tile. Fix needs engine-validated siting or refused-tile memory,
   both in #145's scope - deliberately untouched here.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
 
@@ -399,7 +401,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   anchoring, completed-footprint overlap, and bounded WAIT (480 attempts; the
   stuck-loop guard is delayed, not removed). WAIT engaged live; orders survived
   failed searches and warped. Longer-siege calibration remains open; reservation
-  release while waiting is tracked in #202.
+  release while waiting is tracked in #202. LIVE PROOF 2026-10-28 (game 003802,
+  V2 LIVE): 3rd Gateway warped f18424 at supply 59 on a V2 `At 0` order - the
+  BO owns only two Gateway rows and standing Gateways suppress prereq orphans,
+  so the only remaining author is the V2 dynamic demand goal (bank 807 at
+  f11017, 57 Dragoon `no free facility` blocks f17000-18500 = all-busy, supply
+  59 past the 30 gate, under the 4 cap). 4th Gateway pending at game end
+  (attempt f19950 engineAccepted, constructing, ended mid-warp f21030).
 - **#194** `DefendedPlace`: the mission selects ground; the army decides how to
   stand. The resolver and focus are in `atlantis.combat.focus`; landed
   2026-10-25 (commit ce4de4034): MIDDLE priority and an absolute >10-Dragoon
@@ -639,6 +647,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   one row in the dispatch-to-warp walk window, or the next row firing on
   a supply the twin does not log - either way the backstop now drops a
   second dispatch nobody asks for. Live proof rides the next macro.
+  LIVE VERDICT 2026-10-28 (game 003802, first jar with the backstop, V2 LIVE,
+  loss f21030): zero `stale: no live goal` skips in the whole game - every
+  dispatched item had a goal, so the backstop stands as defense-in-depth with
+  twin telemetry, not as a demonstrated save. The per-frame storm shape is
+  explained, not fixed: the Gateway f19442-20537 run (~600 `builder committed`
+  rows, 0 warps) is the committed re-offer path doing its job - one pending
+  GW#4, same tile, and its single BUILD_ATTEMPT f19950 reads engineAccepted
+  with constructing=true; the game ended f21030 exactly one Gateway build
+  time later, mid-warp. Churn, not stall. Remainder narrows to goal-layer
+  re-fire frequency (a goal per frame while in flight), harmless while
+  same-tile dedup absorbs it.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
@@ -657,7 +676,7 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   half (114/114 attack rows tagged in the same game). Fix direction:
   tag army units with their cluster/mission behavior through
   `usedManager` (or wire the disabled tooltip channel change-only) -
-  needs a trace-size check, not a guess.
+  needs a trace-size check, not a guess. (Log half rides #214(c).)
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
