@@ -53,32 +53,40 @@ public class ArmyBoardTest extends WorldStubForTests {
                 "Not enough Goons (0/2) vZ", anchor);
 
             String board = ACherryVis_GlobalStates.build();
-            assertTrue(countKeys(board, "Mission") == 1, "same mission writes once: " + board);
-            assertTrue(countKeys(board, "Tactic") == 1, "same tactic writes once: " + board);
-            assertTrue(countKeys(board, "Focus") == 1, "same focus writes once: " + board);
-            assertTrue(countKeys(board, "FocusName") == 1, "same focus name writes once: " + board);
-            assertTrue(countKeys(board, "Strength") == 1, "same strength writes once: " + board);
-            assertTrue(countKeys(board, "Reason") == 1, "same reason writes once: " + board);
+            assertTrue(countKeys(board, "AlphaMission") == 1, "same mission writes once: " + board);
+            assertTrue(countKeys(board, "AlphaTactic") == 1, "same tactic writes once: " + board);
+            assertTrue(countKeys(board, "AlphaFocus") == 1, "same focus writes once: " + board);
+            assertTrue(countKeys(board, "AlphaFocusName") == 1, "same focus name writes once: " + board);
+            assertTrue(countKeys(board, "AlphaStrength") == 1, "same strength writes once: " + board);
+            assertTrue(countKeys(board, "AlphaReason") == 1, "same reason writes once: " + board);
 
             ArmyBoard.publish(31, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
             board = ACherryVis_GlobalStates.build();
-            assertTrue(countKeys(board, "Mission") == 2, "changed mission writes again: " + board);
-            assertTrue(board.contains("\"Mission\":\"ATTACK\""), "mission names where the army belongs: " + board);
-            assertTrue(countKeys(board, "Tactic") == 2, "changed tactic writes again: " + board);
-            assertTrue(board.contains("\"Tactic\":\"FLEE\""), "tactic names what it does: " + board);
-            assertTrue(countKeys(board, "Reason") == 2, "changed reason writes again: " + board);
-            assertTrue(board.contains("\"Reason\":\"Outgunned (1 goon, 100%), coming home\""),
+            assertTrue(countKeys(board, "AlphaMission") == 2, "changed mission writes again: " + board);
+            assertTrue(board.contains("\"AlphaMission\":\"ATTACK\""), "mission names where the army belongs: " + board);
+            assertTrue(countKeys(board, "AlphaTactic") == 2, "changed tactic writes again: " + board);
+            assertTrue(board.contains("\"AlphaTactic\":\"FLEE\""), "tactic names what it does: " + board);
+            assertTrue(countKeys(board, "AlphaReason") == 2, "changed reason writes again: " + board);
+            assertTrue(board.contains("\"AlphaReason\":\"Outgunned (1 goon, 100%), coming home\""),
                 "reason speaks with numbers: " + board);
 
             ArmyBoard.publish(32, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
-            assertTrue(countKeys(ACherryVis_GlobalStates.build(), "Mission") == 2,
+            assertTrue(countKeys(ACherryVis_GlobalStates.build(), "AlphaMission") == 2,
                 "unchanged mission stays silent: " + board);
 
             String values = ACherryVis_GlobalValues.build(null);
             assertTrue(values.contains("\"31\":{\"Strength\":"), "strength graphs on cadence: " + values);
             assertTrue(!values.contains("\"32\""), "off-cadence frames stay out: " + values);
+
+            atlantis.battle.advance.focus.AFocusPoint named =
+                new atlantis.battle.advance.focus.AFocusPoint(nexus, "MiddleFocusChoke");
+            ArmyBoard.publish(33, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
+                "Outgunned (1 goon, 100%), coming home", named);
+            String namedBoard = ACherryVis_GlobalStates.build();
+            assertTrue(namedBoard.contains("MiddleFocusChoke ["),
+                "the focus name carries its tile: " + namedBoard);
         });
     }
 

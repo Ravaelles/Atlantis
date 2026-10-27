@@ -570,14 +570,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Every big decision logs its reason; where a behavior is unattributed
   today, the reason row IS the fix. (a) Siting: every construction logs
   nearTo + chosen tile + author (BO/supply/wall-in/per-base) - the Pylon
-  case needs WHERE, not WHY. (b) Army: main-cluster task (posture +
-  focus-ground kind: MAIN_CHOKE/NATURAL_CHOKE/MIDDLE/...) on change,
-  plus retreat start/end. (c) Units: active Behavior per combat unit on
-  change; workers only while fighting/fleeing. Board for time-varying
-  values (task, strength), Logs for events. Volume rule: transitions,
-  never per-frame rows. Motivating game: 14:25:25 Tomas Cere (TauCross,
-  Defeat 95/86, 52 Dragoons lost, army never left the main -
-  unattributed, no trace).
+  case needs WHERE, not WHY. (b) Army: AlphaMission/AlphaTactic,
+  AlphaReason with numbers, AlphaFocus/AlphaFocusName (name + tile),
+  AlphaStrength - each on change. (c) Units: active Behavior per combat
+  unit on change ("tag/Class" in units_logs); workers only while
+  fighting/fleeing. Board for time-varying values, Logs for events.
+  Volume rule: transitions, never per-frame rows. Motivating game:
+  14:25:25 Tomas Cere (TauCross, Defeat 95/86, 52 Dragoons lost, army
+  never left the main - unattributed, no trace).
 - **#215** Strength 999 with a known-but-unseen enemy: `discovered()`
   ends in `havingPosition()`, so a fogged unit whose tile was seen
   empty (address cleared, owner 2026-10-26) drops out of the sum and
