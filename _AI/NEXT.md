@@ -607,13 +607,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   now, pinned `WorkerGoalCapTest` 3/3. Open: the no-enemy half (army
   target met, nothing dies - needs the P3 scripted enemy) and the live
   proof of pre-saturation.
-- **#218** V2 re-dispatch spam incl. the arrival-to-warp window (measured
-  20261027_121013, V2 LIVE): Pylon pair warped 124f apart (f3619+f3743),
-  per-frame `builder committed` stretches (f4754-4759, f6829-6838+). Root
-  closed by the produced-count fix (IN_PROGRESS without unit counts);
-  the sim never exhibited it (deterministic same-tile dedup), so this
-  needs a live Wine game showing one warp per row and no per-frame
-  re-dispatch stretches. Rides the one-game queue.
+- **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
+  20261027_183253, V2 LIVE, jar with the produced-count fix): f24730-28800,
+  1568 Pylon goal rows (796 build-order + 772 dynamic) and 120 `builder
+  committed` dispatches, no Pylon warp after f24617. Different shape from
+  the opening re-fire: likely siege replacement demand (dying Pylons)
+  that never fulfils. Open: which author dominates and where the builders
+  die - needs a builderLog game, not this trace (goal sources stop at the
+  provider id).
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
