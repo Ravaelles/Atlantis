@@ -255,7 +255,8 @@ public class ProcessHelper {
         while ((read = stream.read(chunk)) != -1) {
             buffer.write(chunk, 0, read);
         }
-        return buffer.toString(StandardCharsets.UTF_8);
+
+        return new String(buffer.toByteArray(), "UTF-8");
     }
 
     /**

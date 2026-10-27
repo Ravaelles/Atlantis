@@ -173,14 +173,12 @@ public class ShouldRunTowardsBase {
             return false;
 
         if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
-            return unit.meleeEnemiesNearCount(3) == 0;
+            if (unit.meleeEnemiesNearCount(3) == 0) {
+                return true;
+            }
         }
 
-//        AUnit mainOrAnyBuilding = Select.mainOrAnyBuilding();
-//        if (mainOrAnyBuilding == null) return false;
-//
-//        return unit.distTo(mainOrAnyBuilding) >= 20
-//            && unit.meleeEnemiesNearCount(1.7) == 0;
+        return false;
     }
 
     private static boolean vsZergEarlyGame(AUnit unit, double distToMain) {
