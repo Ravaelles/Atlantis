@@ -554,7 +554,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Builder/Gather tug of war), pinned `BuilderMinesWhileWaitingTest` 2/2,
   full unit scope green; the branch sits BEFORE travel because the
   CantAfford tail of `IssueBuildOrder` returns handled. Open: the 250-gate
-  second half and live proof.
+  second half and live proof. Parked 2026-10-27 (owner: no young-base
+  stall has ever shown; 222936 ran a healthy bank through the whole
+  game - revisit when a game shows the stall, not before).
 - **#213** Pylon #3-4 sited at the natural (owner live finding): the
   `exclude(natural).last()` fallthrough in `PylonPosition.nearToForPylon`
   leaks the natural in whenever `Bases.natural()` is null with two bases
@@ -594,3 +596,5 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Engine-side, not bot-side - DO NOT touch (OPENBW-HANDOFF owns it).
   Melee parity/LIVE runs (WO-144 step 3, WO-145 A/B) wait; Wine as
   alternative vehicle is an owner call.
+  Vehicle 2026-10-27 (owner): Wine + StarEngine only, OpenBW abandoned
+  for now - parity and proofs ride Wine macros until further notice.
