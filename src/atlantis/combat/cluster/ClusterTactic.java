@@ -1,11 +1,10 @@
 package atlantis.combat.cluster;
-import atlantis.battle.cluster.Alpha;
 
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 
 /**
  * Cluster tactic arbitration (extracted from BattleCommander): one
@@ -16,12 +15,14 @@ import atlantis.units.select.Select;
  */
 public final class ClusterTactic {
 
+    private static int fleeStartedAt = -1;
+
     private ClusterTactic() {
     }
 
-    private static int fleeStartedAt = -1;
-
-    /** Per-game reset next to the other static resets. */
+    /**
+     * Per-game reset next to the other static resets.
+     */
     public static void reset() {
         fleeStartedAt = -1;
     }
@@ -74,6 +75,7 @@ public final class ClusterTactic {
         }
         return tactic;
     }
+
     /**
      * The UMS opening stand-ground (owner): on custom maps there is no
      * base to run to, so a retreat in the first 15 seconds is never the
@@ -83,6 +85,7 @@ public final class ClusterTactic {
     public static boolean earlyUmsStandGround() {
         return atlantis.game.A.isUms() && atlantis.game.A.now() < CombatTuning.current().getUmsNoRetreatFrames();
     }
+
     /**
      * True when the cluster sits on the main base (under 2 tiles): FLEE
      * is not an option there. Public as a seam, pinned without a game.
@@ -96,6 +99,7 @@ public final class ClusterTactic {
 
         return center.distTo(main) < 2;
     }
+
     /**
      * Who the gate listens to: the unit closest to an enemy within 15
      * tiles, else the leader. A leader at the back reads a different fight

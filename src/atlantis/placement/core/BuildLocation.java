@@ -34,10 +34,14 @@ public final class BuildLocation {
      */
     private final int framesUntilAvailable;
 
-    /** Ground distance to the neighbourhood's exit (main choke), in build tiles. */
+    /**
+     * Ground distance to the neighbourhood's exit (main choke), in build tiles.
+     */
     private final int distanceToExit;
 
-    /** True for a location a tech building should prefer (see the ranker). */
+    /**
+     * True for a location a tech building should prefer (see the ranker).
+     */
     private final boolean techLocation;
 
     /**
@@ -48,16 +52,16 @@ public final class BuildLocation {
     private final boolean hasExit;
 
     public BuildLocation(
-            int tileX, int tileY, int tileWidth, int tileHeight,
-            int builderFrames, int framesUntilAvailable, int distanceToExit, boolean techLocation) {
+        int tileX, int tileY, int tileWidth, int tileHeight,
+        int builderFrames, int framesUntilAvailable, int distanceToExit, boolean techLocation) {
         this(tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
             distanceToExit, techLocation, true);
     }
 
     public BuildLocation(
-            int tileX, int tileY, int tileWidth, int tileHeight,
-            int builderFrames, int framesUntilAvailable, int distanceToExit,
-            boolean techLocation, boolean hasExit) {
+        int tileX, int tileY, int tileWidth, int tileHeight,
+        int builderFrames, int framesUntilAvailable, int distanceToExit,
+        boolean techLocation, boolean hasExit) {
         this.tileX = tileX;
         this.tileY = tileY;
         this.tileWidth = tileWidth;
@@ -81,7 +85,9 @@ public final class BuildLocation {
         );
     }
 
-    /** The same tile with its availability frame resolved. */
+    /**
+     * The same tile with its availability frame resolved.
+     */
     public BuildLocation withFramesUntilAvailable(int framesUntilAvailable) {
         return new BuildLocation(
             tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
@@ -117,7 +123,9 @@ public final class BuildLocation {
         return framesUntilAvailable;
     }
 
-    /** False when nothing can ever make this location usable. */
+    /**
+     * False when nothing can ever make this location usable.
+     */
     public boolean everAvailable() {
         return framesUntilAvailable >= 0;
     }
@@ -137,9 +145,9 @@ public final class BuildLocation {
     @Override
     public String toString() {
         return "loc(" + tileX + "," + tileY + " " + tileWidth + "x" + tileHeight
-                + " builder=" + builderFrames
-                + " avail=" + framesUntilAvailable
-                + " exit=" + distanceToExit
-                + (techLocation ? " tech" : "") + ")";
+            + " builder=" + builderFrames
+            + " avail=" + framesUntilAvailable
+            + " exit=" + distanceToExit
+            + (techLocation ? " tech" : "") + ")";
     }
 }

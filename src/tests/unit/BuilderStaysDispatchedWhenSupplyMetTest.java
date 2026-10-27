@@ -21,12 +21,7 @@ import tests.fakes.FakeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner: once a builder sets out with supply met, it travels and waits -
@@ -42,6 +37,34 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class BuilderStaysDispatchedWhenSupplyMetTest extends AbstractTestWithWorld {
+
+    private static boolean noGatherAfter(AUnit builder, int fromIndex) {
+        List<FakeOrderSink.Record> orders = ordersOf(builder);
+        for (int i = Math.max(0, fromIndex); i < orders.size(); i++) {
+            if (orders.get(i).operation.equals("gather")) return false;
+        }
+        return true;
+    }
+
+    private static boolean startedWithBuilder(int builderId) {
+        String log = EventLog.toJsonLines();
+        int from = 0;
+        while (true) {
+            int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
+            if (key < 0) return false;
+
+            int end = log.indexOf('\n', key);
+            if (end < 0) end = log.length();
+            String row = log.substring(key, end);
+            if (row.contains("\"type\":\"Pylon\"") && row.contains("\"builder\":" + builderId)) return true;
+
+            from = end;
+        }
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(AUnit builder) {
+        return ((FakeOrderSink) builder.orderSink()).orders();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -160,33 +183,5 @@ public class BuilderStaysDispatchedWhenSupplyMetTest extends AbstractTestWithWor
         });
 
         assertNotNull(picked[0], "orderless rows still resolve a builder (old path)");
-    }
-
-    private static boolean noGatherAfter(AUnit builder, int fromIndex) {
-        List<FakeOrderSink.Record> orders = ordersOf(builder);
-        for (int i = Math.max(0, fromIndex); i < orders.size(); i++) {
-            if (orders.get(i).operation.equals("gather")) return false;
-        }
-        return true;
-    }
-
-    private static boolean startedWithBuilder(int builderId) {
-        String log = EventLog.toJsonLines();
-        int from = 0;
-        while (true) {
-            int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
-            if (key < 0) return false;
-
-            int end = log.indexOf('\n', key);
-            if (end < 0) end = log.length();
-            String row = log.substring(key, end);
-            if (row.contains("\"type\":\"Pylon\"") && row.contains("\"builder\":" + builderId)) return true;
-
-            from = end;
-        }
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(AUnit builder) {
-        return ((FakeOrderSink) ((FakeUnit) builder).orderSink()).orders();
     }
 }

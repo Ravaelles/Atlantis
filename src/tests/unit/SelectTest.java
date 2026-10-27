@@ -22,7 +22,7 @@ public class SelectTest extends WorldStubForTests {
     @Test
     public void our() {
         world(1, () -> {
-        assertEquals(22, Select.our().size());
+            assertEquals(22, Select.our().size());
         });
     }
 
@@ -46,18 +46,18 @@ public class SelectTest extends WorldStubForTests {
 //            Select.our().print("Our");
 //            Select.ourWithUnfinished().print("Our with UNF");
 
-        // The bunker on 11 has 0 hit points: a corpse. The engine drops a unit
-        // from its player's unit list the moment it dies, so no selector in a
-        // game can see one - the world harness answers with the living units for
-        // exactly that reason (AbstractWorldCreatingTest.living). Every count
-        // below is therefore over the four living units, whether or not the
-        // selector bothers to check isAlive() itself.
-        assertEquals(4, Select.ourWithUnfinished().size());
-        assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
-        assertEquals(2, Select.ourWithUnfinished().bunkers().size(), "10 and 12, the corpse on 11 is gone");
-        assertEquals(1, Select.ourOfType(AUnitType.Terran_Bunker).size(),
-            "only the completed living bunker: 12 is still under construction, 11 is dead");
-        assertEquals(1, Select.our().bunkers().size(), "same two filters, on Select.our()");
+            // The bunker on 11 has 0 hit points: a corpse. The engine drops a unit
+            // from its player's unit list the moment it dies, so no selector in a
+            // game can see one - the world harness answers with the living units for
+            // exactly that reason (AbstractWorldCreatingTest.living). Every count
+            // below is therefore over the four living units, whether or not the
+            // selector bothers to check isAlive() itself.
+            assertEquals(4, Select.ourWithUnfinished().size());
+            assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
+            assertEquals(2, Select.ourWithUnfinished().bunkers().size(), "10 and 12, the corpse on 11 is gone");
+            assertEquals(1, Select.ourOfType(AUnitType.Terran_Bunker).size(),
+                "only the completed living bunker: 12 is still under construction, 11 is dead");
+            assertEquals(1, Select.our().bunkers().size(), "same two filters, on Select.our()");
         });
     }
 
@@ -68,7 +68,7 @@ public class SelectTest extends WorldStubForTests {
 //            Select.ourRealUnits().print();
 //            Select.our().minus(Select.ourRealUnits()).print("Our units that are not real units");
 
-        assertEquals(14, Select.ourRealUnits().size());
+            assertEquals(14, Select.ourRealUnits().size());
         });
     }
 
@@ -77,55 +77,55 @@ public class SelectTest extends WorldStubForTests {
     @Test
     public void enemy() {
         world(1, () -> {
-        assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
+            assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
         });
     }
 
     @Test
     public void enemyRealUnits() {
         world(1, () -> {
-        assertEquals(enemyUnits.length, Select.enemyUnits().size());
-        assertTrue(Select.enemyUnits().size() >= 2);
+            assertEquals(enemyUnits.length, Select.enemyUnits().size());
+            assertTrue(Select.enemyUnits().size() >= 2);
 
-        assertEquals(
-            0,
-            Select.enemyRealUnits(false, false, false).size()
-        );
+            assertEquals(
+                0,
+                Select.enemyRealUnits(false, false, false).size()
+            );
 
 //            Select.enemy().print("All enemiez, while enemUnits.size()=" + Select.enemyUnits().size());
-        assertEquals(
-            GROUND_UNITS,
-            Select.enemyRealUnits(true, false, false).size()
-        );
+            assertEquals(
+                GROUND_UNITS,
+                Select.enemyRealUnits(true, false, false).size()
+            );
 
 //            Select.enemy().realUnits().print("Real units");
 //            Select.enemy().combatBuildings(true).print("COMBAT_BUILDINGS");
 //            Select.enemy().realUnitsAndCombatBuildings().print("REAL_UNITS + COMBAT_BUILDINGS");
 
-        assertEquals(
-            14,
-            Select.enemy().realUnitsAndCombatBuildings().size()
-        );
+            assertEquals(
+                14,
+                Select.enemy().realUnitsAndCombatBuildings().size()
+            );
 
-        assertEquals(
-            GROUND_UNITS + BUILDINGS,
-            Select.enemyRealUnits(true, false, true).size()
-        );
+            assertEquals(
+                GROUND_UNITS + BUILDINGS,
+                Select.enemyRealUnits(true, false, true).size()
+            );
 
-        assertEquals(
-            AIR_UNITS,
-            Select.enemyRealUnits(false, true, false).size()
-        );
+            assertEquals(
+                AIR_UNITS,
+                Select.enemyRealUnits(false, true, false).size()
+            );
 
-        assertEquals(
-            REAL_UNITS,
-            Select.enemyRealUnits(true, true, false).size()
-        );
+            assertEquals(
+                REAL_UNITS,
+                Select.enemyRealUnits(true, true, false).size()
+            );
 
-        assertEquals(
-            REAL_UNITS + BUILDINGS,
-            Select.enemyRealUnits(true, true, true).size()
-        );
+            assertEquals(
+                REAL_UNITS + BUILDINGS,
+                Select.enemyRealUnits(true, true, true).size()
+            );
         });
     }
 
@@ -136,13 +136,13 @@ public class SelectTest extends WorldStubForTests {
         neutralInWorld = mockNeutralUnits().toArray(new FakeUnit[0]);
 
         world(1, () -> {
-        assertEquals(MINERAL_COUNT, Select.minerals().size());
-        assertEquals(GEYSER_COUNT, Select.geysers().size());
+            assertEquals(MINERAL_COUNT, Select.minerals().size());
+            assertEquals(GEYSER_COUNT, Select.geysers().size());
 
-        assertEquals(neutralUnits.length, Select.neutral().size());
+            assertEquals(neutralUnits.length, Select.neutral().size());
 
-        assertEquals(MINERAL_COUNT, Select.minerals().size());
-        assertEquals(GEYSER_COUNT, Select.geysers().size());
+            assertEquals(MINERAL_COUNT, Select.minerals().size());
+            assertEquals(GEYSER_COUNT, Select.geysers().size());
         });
     }
 
@@ -151,21 +151,21 @@ public class SelectTest extends WorldStubForTests {
     @Test
     public void addsUnitsAndRemovesDuplicates() {
         world(1, () -> {
-        AUnit unit1 = Select.our().first();
-        AUnit unit2 = Select.our().last();
+            AUnit unit1 = Select.our().first();
+            AUnit unit2 = Select.our().last();
 
-        Selection selection = Select.from(new AUnit[]{unit1});
-        Selection selectionB = Select.from(new AUnit[]{unit2, unit2});
+            Selection selection = Select.from(new AUnit[]{unit1});
+            Selection selectionB = Select.from(new AUnit[]{unit2, unit2});
 
-        assertEquals(1, selection.size());
+            assertEquals(1, selection.size());
 
-        selection = selection.add(selectionB);
+            selection = selection.add(selectionB);
 
-        assertEquals(3, selection.size());
+            assertEquals(3, selection.size());
 
-        selection = selection.removeDuplicates();
+            selection = selection.removeDuplicates();
 
-        assertEquals(2, selection.size());
+            assertEquals(2, selection.size());
         });
     }
 
@@ -174,22 +174,22 @@ public class SelectTest extends WorldStubForTests {
     @Test
     public void createsCacheKeysAsExpected() {
         world(1, () -> {
-        Select.clearCache();
+            Select.clearCache();
 //            Select.cache().print("hmmm", true);
-        assertEquals(0, Select.cache().size());
+            assertEquals(0, Select.cache().size());
 
-        // Stage F: roots answer from the frame-frozen index, so no legacy
-        // key is written for them. Derived selections still key off the
-        // parent path.
-        Select.our();
+            // Stage F: roots answer from the frame-frozen index, so no legacy
+            // key is written for them. Derived selections still key off the
+            // parent path.
+            Select.our();
 
-        assertEquals(0, Select.cache().size());
+            assertEquals(0, Select.cache().size());
 
-        Select.our().melee();
+            Select.our().melee();
 //            Select.cache().printKeys();
 
-        assertEquals(1, Select.cache().size());
-        assertEquals("[our:melee]", Select.cache().rawCacheData().keySet().toString());
+            assertEquals(1, Select.cache().size());
+            assertEquals("[our:melee]", Select.cache().rawCacheData().keySet().toString());
         });
     }
 

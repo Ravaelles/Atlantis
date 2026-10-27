@@ -8,10 +8,14 @@ package atlantis.production.v2;
  */
 public final class EconomyModel {
 
-    /** ~8 minerals per trip, one trip per ~180 frames on a saturated line. */
+    /**
+     * ~8 minerals per trip, one trip per ~180 frames on a saturated line.
+     */
     public static final double MINERALS_PER_WORKER_FRAME = 0.045;
 
-    /** ~8 gas per trip on a 3-worker geyser. */
+    /**
+     * ~8 gas per trip on a 3-worker geyser.
+     */
     public static final double GAS_PER_WORKER_FRAME = 0.07;
 
     /**
@@ -19,7 +23,9 @@ public final class EconomyModel {
      */
     public static final int NEW_WORKER_FIRST_TRIP_FRAMES = 120;
 
-    /** Beyond this many mineral workers per base, extra workers add nothing. */
+    /**
+     * Beyond this many mineral workers per base, extra workers add nothing.
+     */
     public static final int SATURATED_MINERAL_WORKERS_PER_BASE = 18;
 
     private EconomyModel() {

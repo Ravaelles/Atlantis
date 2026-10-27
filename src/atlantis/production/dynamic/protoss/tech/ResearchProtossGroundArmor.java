@@ -2,12 +2,12 @@ package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
@@ -16,6 +16,20 @@ import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 public class ResearchProtossGroundArmor extends Commander {
     private static UpgradeType what() {
         return Protoss_Ground_Armor;
+    }
+
+    public static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(what());
+        if (!isResearched) return false;
+
+        int upgradeLevel = getCurrentUpgradeLevel();
+        if (upgradeLevel >= 3) return true;
+
+        return !A.canAfford(550, 300);
+    }
+
+    private static int getCurrentUpgradeLevel() {
+        return ATech.getUpgradeLevel(what());
     }
 
     @Override
@@ -72,20 +86,6 @@ public class ResearchProtossGroundArmor extends Commander {
         }
 
         return "poor";
-    }
-
-    public static boolean isResearched() {
-        boolean isResearched = ATech.isResearched(what());
-        if (!isResearched) return false;
-
-        int upgradeLevel = getCurrentUpgradeLevel();
-        if (upgradeLevel >= 3) return true;
-
-        return !A.canAfford(550, 300);
-    }
-
-    private static int getCurrentUpgradeLevel() {
-        return ATech.getUpgradeLevel(what());
     }
 
     @Override

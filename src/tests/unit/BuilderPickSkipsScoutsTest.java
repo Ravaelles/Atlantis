@@ -15,13 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A scout picked as builder never builds (it walks off exploring) and a
@@ -31,6 +25,13 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
+
+    private static FakeUnit probe(int tx, int ty, boolean scout) {
+        FakeUnit unit = fake(AUnitType.Protoss_Probe, tx, ty);
+        unit.setScout(scout);
+
+        return unit;
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -139,12 +140,5 @@ public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
                 FreeWorkers.get().list().contains(linked),
                 "the free-worker pool never serves assigned builders");
         });
-    }
-
-    private static FakeUnit probe(int tx, int ty, boolean scout) {
-        FakeUnit unit = fake(AUnitType.Protoss_Probe, tx, ty);
-        unit.setScout(scout);
-
-        return unit;
     }
 }

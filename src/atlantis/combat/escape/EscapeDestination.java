@@ -17,9 +17,6 @@ import java.util.List;
  */
 public final class EscapeDestination {
 
-    private EscapeDestination() {
-    }
-
     /**
      * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
      * glued on a Gateway): an escape step never ends within this of a
@@ -28,6 +25,18 @@ public final class EscapeDestination {
      * {@link PositionUtil}, shared with the MoveAway funnel.
      */
     public static final double BUILDING_CLEARANCE_TILES = PositionUtil.BUILDING_CLEARANCE_TILES;
+    /**
+     * Full-length escape step (NEXT #173, owner doctrine): walk straight
+     * out as far as possible - 5 tiles. Only when the straight-5 is
+     * blocked does the horizon shrink: deflect at full length first,
+     * shorten only as the last resort. Shortening first is what re-traps
+     * units (a 1-tile step into a pocket is still a step, so the caller
+     * keeps taking it instead of sliding along the wall).
+     */
+    public static final int LONG_STEP_TILES = 5;
+
+    private EscapeDestination() {
+    }
 
     /**
      * True when this destination would glue the unit onto a building.
@@ -59,10 +68,10 @@ public final class EscapeDestination {
             APosition dest = APosition.create(tx, ty);
             if (violatesBuildingClearance(dest, blockers)) continue;
             double score = EscapeScoring.staticPenalty(
-                    dest, blockers, EscapeTuning.current().getStaticRadiusTiles())
+                dest, blockers, EscapeTuning.current().getStaticRadiusTiles())
                 + EscapeScoring.cornerPenalty(EscapeRays.clearance(dest, 6, walk))
                 + EscapeScoring.enemyPressure(
-                    dest, enemies, EscapeTuning.current().getEnemyRadiusTiles());
+                dest, enemies, EscapeTuning.current().getEnemyRadiusTiles());
             double dist = dest.distTo(threat);
             if (score < bestScore - 0.001 || (Math.abs(score - bestScore) <= 0.001 && dist > bestDist)) {
                 bestScore = score;
@@ -72,16 +81,6 @@ public final class EscapeDestination {
         }
         return best;
     }
-
-    /**
-     * Full-length escape step (NEXT #173, owner doctrine): walk straight
-     * out as far as possible - 5 tiles. Only when the straight-5 is
-     * blocked does the horizon shrink: deflect at full length first,
-     * shorten only as the last resort. Shortening first is what re-traps
-     * units (a 1-tile step into a pocket is still a step, so the caller
-     * keeps taking it instead of sliding along the wall).
-     */
-    public static final int LONG_STEP_TILES = 5;
 
     /**
      * Detector-first escape pick (NEXT #173): the tactical step when the
@@ -118,7 +117,9 @@ public final class EscapeDestination {
         return shortPick;
     }
 
-    /** Every tile on the way must be walkable; wide bodies need one spare past the step. */
+    /**
+     * Every tile on the way must be walkable; wide bodies need one spare past the step.
+     */
     static boolean corridorClear(int ux, int uy, int[] dir, int stepTiles, boolean wide, EscapeRays.Walkability walk) {
         int look = stepTiles + (wide ? 1 : 0);
         for (int i = 1; i <= look; i++) {

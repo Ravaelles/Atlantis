@@ -24,9 +24,6 @@ import java.util.List;
  */
 public final class BuildGates {
 
-    private BuildGates() {
-    }
-
     private static final List<BuildGate> ALL = Collections.unmodifiableList(Arrays.asList(
         new BelowMinSupplyGate(),
         new LiveConstructionGate(),
@@ -41,9 +38,49 @@ public final class BuildGates {
         new PowerNotFundedGate()
     ));
 
-    /** Every refusal gate, evaluation order. Never null elements. */
+    private BuildGates() {
+    }
+
+    /**
+     * Every refusal gate, evaluation order. Never null elements.
+     */
     public static List<BuildGate> all() {
         return ALL;
+    }
+
+    /**
+     * What other orders genuinely have coming: sited unfinished sites
+     * and warping buildings. Siteless queue rows are NOT coming - they
+     * wait (see below).
+     */
+    private static int comingForAnotherOrder(ProductionOrder order, AUnitType type) {
+        int total = 0;
+        for (AUnit unit : Select.ourUnfinished().ofType(type).list()) {
+            if (unit.productionOrder() != order) total++;
+        }
+        for (Construction site : ConstructionRequests.notFinishedOfType(type)) {
+            if (site.productionOrder() != order) total++;
+        }
+        return total;
+    }
+
+    /**
+     * A younger siteless row waits only behind an OLDER siteless row
+     * that could fire now (readiness mirrors the min-supply gate, so a
+     * poor older row never parks a ready younger one). Two siteless
+     * rows with no seniority between them proceed in id order - never
+     * a symmetric lock.
+     */
+    private static boolean olderReadyWaiterExists(ProductionOrder order, AUnitType type) {
+        for (ProductionOrder row : Queue.get().notFinished().ofType(type).list()) {
+            if (row.construction() != null) continue;
+            if (order != null && row == order) continue;
+            if (order == null) return true;
+
+            if (row.id() < order.id()
+                && new BelowMinSupplyGate().check(type, row) == null) return true;
+        }
+        return false;
     }
 
     // Owner 2026-10-16: no building starts below its supply on a
@@ -208,8 +245,8 @@ public final class BuildGates {
             if (order != null
                 && A.canAfford(type.mineralPrice(), type.gasPrice())
                 && !A.canAfford(
-                    type.mineralPrice() + ProduceBuilding.earlierUnfinishedMinerals(order),
-                    type.gasPrice() + ProduceBuilding.earlierUnfinishedGas(order))) return name();
+                type.mineralPrice() + ProduceBuilding.earlierUnfinishedMinerals(order),
+                type.gasPrice() + ProduceBuilding.earlierUnfinishedGas(order))) return name();
 
             return null;
         }
@@ -276,40 +313,5 @@ public final class BuildGates {
 
             return null;
         }
-    }
-
-    /**
-     * What other orders genuinely have coming: sited unfinished sites
-     * and warping buildings. Siteless queue rows are NOT coming - they
-     * wait (see below).
-     */
-    private static int comingForAnotherOrder(ProductionOrder order, AUnitType type) {
-        int total = 0;
-        for (AUnit unit : Select.ourUnfinished().ofType(type).list()) {
-            if (unit.productionOrder() != order) total++;
-        }
-        for (Construction site : ConstructionRequests.notFinishedOfType(type)) {
-            if (site.productionOrder() != order) total++;
-        }
-        return total;
-    }
-
-    /**
-     * A younger siteless row waits only behind an OLDER siteless row
-     * that could fire now (readiness mirrors the min-supply gate, so a
-     * poor older row never parks a ready younger one). Two siteless
-     * rows with no seniority between them proceed in id order - never
-     * a symmetric lock.
-     */
-    private static boolean olderReadyWaiterExists(ProductionOrder order, AUnitType type) {
-        for (ProductionOrder row : Queue.get().notFinished().ofType(type).list()) {
-            if (row.construction() != null) continue;
-            if (order != null && row == order) continue;
-            if (order == null) return true;
-
-            if (row.id() < order.id()
-                && new BelowMinSupplyGate().check(type, row) == null) return true;
-        }
-        return false;
     }
 }

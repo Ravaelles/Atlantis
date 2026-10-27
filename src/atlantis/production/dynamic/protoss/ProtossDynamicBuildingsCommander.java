@@ -18,21 +18,6 @@ import atlantis.units.select.Have;
 import atlantis.util.We;
 
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
-    @Override
-    public boolean applies() {
-        ProduceFirstAssimilator.reason = "NotChecked";
-        if (!We.protoss()) return false;
-        if (!AGame.everyNthGameFrame(17)) return rejectForAssimilator("Throttle");
-        if (!(A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4))
-            return rejectForAssimilator("MineralsOrQueueSize");
-
-        if (!applyForStandardCases()) return rejectForAssimilator("StandardResourcesOrExpansion");
-        if (!ProtossCriticalStuffInQueue.hasEnoughResources())
-            return rejectForAssimilator("CriticalQueueResources");
-
-        return true;
-    }
-
     private static boolean applyForStandardCases() {
         return A.hasMinerals(500)
             || A.canAffordWithReserved(92, 0)
@@ -72,6 +57,35 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         );
     }
 
+    protected static boolean isItSafeToAddTechBuildings() {
+        if (A.s >= 500) return true;
+
+        if (EnemyStrategy.get().isRushOrCheese() && A.s <= 400) {
+            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMinerals(200)) return false;
+        }
+
+        AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
+
+        return enemyUnitInMainBase != null && !enemyUnitInMainBase.effUndetected();
+    }
+
+    @Override
+    public boolean applies() {
+        ProduceFirstAssimilator.reason = "NotChecked";
+        if (!We.protoss()) return false;
+        if (!AGame.everyNthGameFrame(17)) return rejectForAssimilator("Throttle");
+        if (!(A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4))
+            return rejectForAssimilator("MineralsOrQueueSize");
+
+        if (!applyForStandardCases()) return rejectForAssimilator("StandardResourcesOrExpansion");
+        if (!ProtossCriticalStuffInQueue.hasEnoughResources())
+            return rejectForAssimilator("CriticalQueueResources");
+
+        return true;
+    }
+
+    // =========================================================
+
     @Override
     protected boolean handle() {
         if (topPriority()) return false;
@@ -95,7 +109,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         // The commented ProduceCannon.* calls (dead since 2024, class gone
         // from the tree) were deleted rather than re-enabled.
         if (
-                ProduceShieldBatteryAtNatural.produce()
+            ProduceShieldBatteryAtNatural.produce()
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())
                 || ProducePylonNearEveryBase.produce()
@@ -109,7 +123,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (isItSafeToAddTechBuildings()) {
             if (
 //                ProduceCitadelOfAdun.produce()
-                 ProduceRoboticsSupportBay.produce()
+                ProduceRoboticsSupportBay.produce()
 //                    || ProduceTemplarArchives.produce()
                     || ProduceStargate.produce()
                     || ProduceArbiterTribunal.produce()
@@ -119,20 +133,5 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         ProduceGateway.produce();
 
         return gatewaysEarly;
-    }
-
-    // =========================================================
-
-    protected static boolean isItSafeToAddTechBuildings() {
-        if (A.s >= 500) return true;
-
-        if (EnemyStrategy.get().isRushOrCheese() && A.s <= 400) {
-            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMinerals(200)) return false;
-        }
-
-        AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
-        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effUndetected()) return false;
-
-        return true;
     }
 }

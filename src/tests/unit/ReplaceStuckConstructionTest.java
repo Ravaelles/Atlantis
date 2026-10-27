@@ -15,11 +15,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A stuck construction gets a fresh site first - and only loses the old one

@@ -1,13 +1,13 @@
 package tests.unit;
 
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
-import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -15,12 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Game 172954: a queued Gateway-2 waited 177x behind HIGH Core/Assimilator
@@ -81,7 +76,8 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void sameTypeRowsFinishExactlyOncePerStandingBuilding() {        world(5, fakeOurs(
+    public void sameTypeRowsFinishExactlyOncePerStandingBuilding() {
+        world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Gateway, 24, 20)
         ), fakeEnemies(), () -> {

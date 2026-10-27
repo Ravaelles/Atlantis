@@ -2,15 +2,12 @@ package atlantis.map.bullets;
 
 import atlantis.units.AUnit;
 import atlantis.units.attacked_by.Bullets;
-import atlantis.util.cache.Cache;
 import atlantis.units.select.CacheKey;
+import atlantis.util.cache.Cache;
 
 import java.util.List;
 
 public class DeadMan implements ClearsCache {
-    private static Cache<Boolean> cache = new Cache<>();
-    private static List<ABullet> bulletsAgainst;
-
     /**
      * Re-entrancy guard for the {@code enemiesNear()} cycle.
      *
@@ -42,6 +39,8 @@ public class DeadMan implements ClearsCache {
             return false;
         }
     };
+    private static final Cache<Boolean> cache = new Cache<>();
+    private static List<ABullet> bulletsAgainst;
 
     public static boolean isDeadMan(AUnit unit) {
         if (Boolean.TRUE.equals(CALCULATING.get())) return false;

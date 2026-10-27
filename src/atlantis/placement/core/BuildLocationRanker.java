@@ -30,28 +30,37 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
     private final boolean forTechBuilding;
 
     public BuildLocationRanker(
-            NeighbourhoodRegistry neighbourhoods, boolean preferAwayFromExit, boolean forTechBuilding) {
+        NeighbourhoodRegistry neighbourhoods, boolean preferAwayFromExit, boolean forTechBuilding) {
         this.neighbourhoods = neighbourhoods;
         this.preferAwayFromExit = preferAwayFromExit;
         this.forTechBuilding = forTechBuilding;
+    }
+
+    /**
+     * {@code -1} means "never available" and must sort after every real frame.
+     */
+    private static int normalise(int framesUntilAvailable) {
+        return framesUntilAvailable < 0 ? Integer.MAX_VALUE : framesUntilAvailable;
+    }
+
+    /**
+     * True for a building that should prefer being away from the choke.
+     */
+    public static boolean isTechBuilding(atlantis.units.AUnitType type) {
+        return type != null && type.isProtossImportantTechBuilding();
     }
 
     @Override
     public int compare(BuildLocation a, BuildLocation b) {
         // 1. Available now / sooner first. -1 (never) sorts last.
         int availability = Integer.compare(normalise(a.framesUntilAvailable()),
-                normalise(b.framesUntilAvailable()));
+            normalise(b.framesUntilAvailable()));
         if (availability != 0)
             return availability;
 
         // 2. Distance score, lower is better.
 
         return Integer.compare(score(a), score(b));
-    }
-
-    /** {@code -1} means "never available" and must sort after every real frame. */
-    private static int normalise(int framesUntilAvailable) {
-        return framesUntilAvailable < 0 ? Integer.MAX_VALUE : framesUntilAvailable;
     }
 
     /**
@@ -82,10 +91,5 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
         NeighbourhoodRegistry.Neighbourhood area = neighbourhoods.forTile(location.tileX(), location.tileY());
 
         return NeighbourhoodRegistry.distanceToExit(area, location.tileX(), location.tileY());
-    }
-
-    /** True for a building that should prefer being away from the choke. */
-    public static boolean isTechBuilding(atlantis.units.AUnitType type) {
-        return type != null && type.isProtossImportantTechBuilding();
     }
 }

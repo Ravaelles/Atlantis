@@ -11,8 +11,12 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Leg_Enhancements;
 
 public class ResearchLegEnhancements extends UpgradeResearchCommander {
-    private static boolean isResearched = false;
+    private static final boolean isResearched = false;
     private static boolean isEnqueued = false;
+
+    public static boolean isResearched() {
+        return isResearched;
+    }
 
     @Override
     public UpgradeType what() {
@@ -28,24 +32,16 @@ public class ResearchLegEnhancements extends UpgradeResearchCommander {
         if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
-        if (A.hasGas(150) && A.hasMinerals(250) && (Count.zealots() >= 7 || A.s >= 700)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isResearched() {
-        return isResearched;
-    }
-
-    @Override
-    protected void setEnqueued(boolean isEnqueued) {
-        this.isEnqueued = isEnqueued;
+        return A.hasGas(150) && A.hasMinerals(250) && (Count.zealots() >= 7 || A.s >= 700);
     }
 
     @Override
     protected boolean isEnqueued() {
         return isEnqueued;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        ResearchLegEnhancements.isEnqueued = isEnqueued;
     }
 }

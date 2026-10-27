@@ -167,9 +167,9 @@ public class CancelNotStartedBases {
     }
 
     private static void cancel(ProductionOrder order, String reason) {
-        AConsole.errPrintln(LogLevel.HIGH, 
+        AConsole.errPrintln(LogLevel.HIGH,
             A.now() + " Cancelling pending base "
-            + order + ", Reason: " + reason
+                + order + ", Reason: " + reason
         );
         order.cancel(reason);
     }

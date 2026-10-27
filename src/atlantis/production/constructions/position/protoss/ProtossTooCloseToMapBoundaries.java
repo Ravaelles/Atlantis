@@ -8,6 +8,12 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossTooCloseToMapBoundaries {
+    /**
+     * Pixels per build tile in this engine. Named because the whole point of the
+     * fix this constant carries is that it is 32 and not a hand-typed 30.
+     */
+    public static final int PX_PER_TILE = 32;
+
     public static boolean isTooClose(AUnitType building, APosition position) {
 //        if (true) return false;
 
@@ -53,12 +59,6 @@ public class ProtossTooCloseToMapBoundaries {
 
         return false;
     }
-
-    /**
-     * Pixels per build tile in this engine. Named because the whole point of the
-     * fix this constant carries is that it is 32 and not a hand-typed 30.
-     */
-    public static final int PX_PER_TILE = 32;
 
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;

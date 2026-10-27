@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.util.GameClock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.GameClock;
 import bwapi.Game;
 import org.mockito.Mockito;
 import tests.fakes.FakeUnit;
@@ -141,6 +141,14 @@ public class UnitTest {
         return game;
     }
 
+    protected static FakeUnit[] randomOurs() {
+        return AbstractTestWithUnits.fakeOurs(generateUnits(true));
+    }
+
+    protected static FakeUnit[] randomEnemies() {
+        return AbstractTestWithUnits.fakeEnemies(generateUnits(false));
+    }
+
     protected boolean valueAround(double expectedValue, double actualValue) {
         return valueAround(expectedValue, actualValue, 0.1);
     }
@@ -150,13 +158,5 @@ public class UnitTest {
 
 //        System.err.println("actualValue / expectedValue = " + (actualValue / expectedValue));
         return Math.abs(actualValue / expectedValue - 1) <= margin;
-    }
-
-    protected static FakeUnit[] randomOurs() {
-        return AbstractTestWithUnits.fakeOurs(generateUnits(true));
-    }
-
-    protected static FakeUnit[] randomEnemies() {
-        return AbstractTestWithUnits.fakeEnemies(generateUnits(false));
     }
 }

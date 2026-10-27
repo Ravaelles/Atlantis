@@ -15,6 +15,14 @@ public class WorkerTransferCommander extends Commander {
 
     private int maxAtOnceBonus = 8;
 
+    private static int onceEveryFrames() {
+        return AGame.supplyUsed() >= 90 ? 23 : 41;
+    }
+
+    private static boolean allowBigTransfer(double workerRatioDiff) {
+        return (workerRatioDiff > 2.0) || (A.ago(_lastTransfer) > 30 * 20);
+    }
+
     /**
      * Every base should have similar number of workers, more or less.
      *
@@ -43,10 +51,6 @@ public class WorkerTransferCommander extends Commander {
         if (result) maxAtOnceBonus = 1;
 
         return result;
-    }
-
-    private static int onceEveryFrames() {
-        return AGame.supplyUsed() >= 90 ? 23 : 41;
     }
 
     private boolean doTheTransferIfNeeded(Collection<AUnit> ourBases) {
@@ -127,10 +131,6 @@ public class WorkerTransferCommander extends Commander {
         }
 
         return result;
-    }
-
-    private static boolean allowBigTransfer(double workerRatioDiff) {
-        return (workerRatioDiff > 2.0) || (A.ago(_lastTransfer) > 30 * 20);
     }
 
     /**

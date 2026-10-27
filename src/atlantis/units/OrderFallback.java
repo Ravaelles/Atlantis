@@ -16,18 +16,6 @@ package atlantis.units;
  * reaches these methods outside a test.</p>
  */
 public class OrderFallback {
-    public interface Sink {
-        /**
-         * @return whether the order counts as issued.
-         */
-        boolean train(AUnitType unitToTrain);
-
-        /**
-         * @return whether the order counts as issued.
-         */
-        boolean cancelConstruction(AUnit unit);
-    }
-
     private static Sink sink = null;
 
     public static void useSink(Sink newSink) {
@@ -44,5 +32,17 @@ public class OrderFallback {
 
     public static boolean cancelConstruction(AUnit unit) {
         return sink != null && sink.cancelConstruction(unit);
+    }
+
+    public interface Sink {
+        /**
+         * @return whether the order counts as issued.
+         */
+        boolean train(AUnitType unitToTrain);
+
+        /**
+         * @return whether the order counts as issued.
+         */
+        boolean cancelConstruction(AUnit unit);
     }
 }

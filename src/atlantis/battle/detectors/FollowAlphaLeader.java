@@ -26,12 +26,9 @@ public class FollowAlphaLeader extends Manager {
 //        if (unit.isIdle()) return true;
 
         followPoint = followPoint();
-        if (followPoint != null && followPoint.hasPosition()) {
-//            AAdvancedPainter.paintCircleFilled(followPoint, 20, Color.Cyan);
-            return true;
-        }
+        //            AAdvancedPainter.paintCircleFilled(followPoint, 20, Color.Cyan);
 
-        return false;
+        return followPoint != null && followPoint.hasPosition();
     }
 
     private HasPosition followPoint() {

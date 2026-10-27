@@ -45,20 +45,6 @@ import atlantis.placement.core.Reachability;
  */
 public final class EngineReachabilityProbe {
 
-    /** Who can answer the reachability question, in the order worth trying. */
-    public enum Verdict {
-        /** The engine answered sanely: its own {@code hasPath} can be trusted. */
-        ENGINE_USABLE,
-
-        /** The engine cannot reach a tile from itself: its regions are missing. */
-        ENGINE_REGIONS_MISSING
-    }
-
-    /** The question asked, as a function: does this tile reach itself? */
-    public interface SelfReachabilityQuery {
-        boolean tileReachesItself(int tx, int ty);
-    }
-
     private EngineReachabilityProbe() {
     }
 
@@ -83,5 +69,27 @@ public final class EngineReachabilityProbe {
         boolean selfReachable = query.tileReachesItself(walkableTileX, walkableTileY);
 
         return selfReachable ? Verdict.ENGINE_USABLE : Verdict.ENGINE_REGIONS_MISSING;
+    }
+
+    /**
+     * Who can answer the reachability question, in the order worth trying.
+     */
+    public enum Verdict {
+        /**
+         * The engine answered sanely: its own {@code hasPath} can be trusted.
+         */
+        ENGINE_USABLE,
+
+        /**
+         * The engine cannot reach a tile from itself: its regions are missing.
+         */
+        ENGINE_REGIONS_MISSING
+    }
+
+    /**
+     * The question asked, as a function: does this tile reach itself?
+     */
+    public interface SelfReachabilityQuery {
+        boolean tileReachesItself(int tx, int ty);
     }
 }

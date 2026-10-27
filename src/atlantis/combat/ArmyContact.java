@@ -18,7 +18,9 @@ import atlantis.units.AUnit;
  */
 public final class ArmyContact {
 
-    /** A contact older than this is history, not a destination (10 game seconds). */
+    /**
+     * A contact older than this is history, not a destination (10 game seconds).
+     */
     public static final int FRESH_FRAMES = 240;
 
     /**
@@ -30,7 +32,9 @@ public final class ArmyContact {
      */
     public static final int ONGOING_FRAMES = 72;
 
-    /** Already fighting next to it: join nothing. */
+    /**
+     * Already fighting next to it: join nothing.
+     */
     public static final double ARRIVED_TILES = 5.0;
 
     private static APosition lastFightAt = null;

@@ -20,15 +20,15 @@ public class ProtossJfapTweaksConsiderChokesEtc {
         // runs, so it is the only place a floor is a guarantee rather than a hope.
         return CombatEvalScale.signSafe(
             eval
-            + EvalChokeTweaks.nearChokePenalty(unit)
-            + penaltyCloseToEnemyBuildings(unit)
-            + (unit.lastRetreatedAgo() <= 150 ? -0.4 : 0)
+                + EvalChokeTweaks.nearChokePenalty(unit)
+                + penaltyCloseToEnemyBuildings(unit)
+                + (unit.lastRetreatedAgo() <= 150 ? -0.4 : 0)
 //            + (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.1 : 0)
-            + (unit.distToMain() <= 8 ? +0.15 : 0)
+                + (unit.distToMain() <= 8 ? +0.15 : 0)
 //            + (unit.lastUnderAttackLessThanAgo(30 * 4) ? -0.05 : 0)
-            + cohesionPenalty(unit)
-            + enemyZerglingBonus(unit)
-            + combatBuildingPenalty(unit)
+                + cohesionPenalty(unit)
+                + enemyZerglingBonus(unit)
+                + combatBuildingPenalty(unit)
         );
     }
 

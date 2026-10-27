@@ -28,7 +28,7 @@ public class NeutralUnits {
 
     public static void addFoggedUnit(AUnit neutralUnit) {
         if (!neutralUnit.isNeutral()) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("fogged-non-neutral", 
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("fogged-non-neutral",
                 "NeutralUnits.addFoggedUnit() called for non-neutral unit: " + neutralUnit
             );
 

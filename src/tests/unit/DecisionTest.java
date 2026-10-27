@@ -4,8 +4,7 @@ import atlantis.decisions.Decision;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("infra")
 public class DecisionTest extends AbstractTestWithUnits {
@@ -84,8 +83,8 @@ public class DecisionTest extends AbstractTestWithUnits {
         Decision first = Decision.FALSE("first");
         Decision second = Decision.FALSE("second");
 
-        assertTrue("first".equals(first.reason()));
-        assertTrue("second".equals(second.reason()));
+        assertEquals("first", first.reason());
+        assertEquals("second", second.reason());
         assertTrue(Decision.FALSE.reason() == null || "".equals(Decision.FALSE.reason()),
             "the shared singleton must stay reason-free, got: " + Decision.FALSE.reason());
     }

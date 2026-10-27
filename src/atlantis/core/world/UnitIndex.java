@@ -27,7 +27,9 @@ public final class UnitIndex {
         this.units = new ArrayList<>(units);
     }
 
-    /** Frozen units of these types, in list order. */
+    /**
+     * Frozen units of these types, in list order.
+     */
     public List<AUnit> ofType(AUnitType... types) {
         List<AUnit> filtered = new ArrayList<>();
         for (AUnit unit : units) {
@@ -41,8 +43,11 @@ public final class UnitIndex {
         return filtered;
     }
 
-    /** Frozen completed units of these types, in list order. */
-    public List<AUnit> completedOfType(AUnitType... types) {        List<AUnit> filtered = new ArrayList<>();
+    /**
+     * Frozen completed units of these types, in list order.
+     */
+    public List<AUnit> completedOfType(AUnitType... types) {
+        List<AUnit> filtered = new ArrayList<>();
         for (AUnit unit : units) {
             if (!unit.isCompleted()) continue;
             for (AUnitType type : types) {
@@ -55,7 +60,9 @@ public final class UnitIndex {
         return filtered;
     }
 
-    /** Frozen units passing this filter, in list order: one generic pass for every future predicate. */
+    /**
+     * Frozen units passing this filter, in list order: one generic pass for every future predicate.
+     */
     public List<AUnit> matching(java.util.function.Predicate<AUnit> filter) {
         List<AUnit> filtered = new ArrayList<>();
         for (AUnit unit : units) {
@@ -64,7 +71,9 @@ public final class UnitIndex {
         return filtered;
     }
 
-    /** The frozen list itself (defensive copy: callers must not move the frame). */
+    /**
+     * The frozen list itself (defensive copy: callers must not move the frame).
+     */
     public List<AUnit> all() {
         return new ArrayList<>(units);
     }

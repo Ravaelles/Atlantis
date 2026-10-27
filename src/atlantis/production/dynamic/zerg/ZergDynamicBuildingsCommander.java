@@ -10,20 +10,6 @@ import static atlantis.units.AUnitType.Zerg_Creep_Colony;
 import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
 public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
-    @Override
-    public boolean applies() {
-        return We.zerg();
-    }
-
-    @Override
-    protected boolean handle() {
-        hydraDen();
-
-        return false;
-    }
-
-    // =========================================================
-
     private static void hydraDen() {
         if (Have.a(Zerg_Hydralisk_Den) || Have.existingUnfinishedOrPlanned(Zerg_Hydralisk_Den)) {
             return;
@@ -42,6 +28,20 @@ public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
         }
 
         DynamicCommanderHelpers.buildToHaveOne(Zerg_Hydralisk_Den);
+    }
+
+    @Override
+    public boolean applies() {
+        return We.zerg();
+    }
+
+    // =========================================================
+
+    @Override
+    protected boolean handle() {
+        hydraDen();
+
+        return false;
     }
 
 }

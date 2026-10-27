@@ -22,9 +22,7 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
             return true;
         }
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
-
-        return true;
+        return !shouldSkipAntiRushCombatBuilding(enemyStrategy);
     }
 
     private boolean shouldIgnoreRushBecauseWeHaveGoons() {

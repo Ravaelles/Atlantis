@@ -1,6 +1,7 @@
 package atlantis.information.decisions.terran;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
@@ -8,7 +9,6 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 public class ShouldMakeTerranBio {
 

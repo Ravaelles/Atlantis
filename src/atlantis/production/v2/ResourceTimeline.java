@@ -31,7 +31,9 @@ package atlantis.production.v2;
  */
 public final class ResourceTimeline {
 
-    /** The game's supply cap, in the same halved units as {@code A.supplyTotal()}. */
+    /**
+     * The game's supply cap, in the same halved units as {@code A.supplyTotal()}.
+     */
     public static final int MAX_SUPPLY = 200;
 
     private final int originFrame;
@@ -46,12 +48,12 @@ public final class ResourceTimeline {
     }
 
     public ResourceTimeline(int originFrame, int horizon, int startMinerals, int startGas,
-            int startSupplyAvailable, int startSupplyTotal) {
+                            int startSupplyAvailable, int startSupplyTotal) {
         if (horizon <= 0)
             throw new IllegalArgumentException("Horizon must be positive: " + horizon);
         if (startMinerals < 0 || startGas < 0 || startSupplyAvailable < 0 || startSupplyTotal < 0) {
             throw new IllegalArgumentException("Negative start stocks: "
-                    + startMinerals + "/" + startGas + "/" + startSupplyAvailable + "/" + startSupplyTotal);
+                + startMinerals + "/" + startGas + "/" + startSupplyAvailable + "/" + startSupplyTotal);
         }
 
         this.originFrame = Math.max(0, originFrame);
@@ -70,7 +72,9 @@ public final class ResourceTimeline {
         return originFrame;
     }
 
-    /** First absolute frame past the horizon. */
+    /**
+     * First absolute frame past the horizon.
+     */
     public int endFrame() {
         return originFrame + horizon;
     }
@@ -143,17 +147,20 @@ public final class ResourceTimeline {
         int candidate = -1;
         for (int frame = horizon - 1; frame >= Math.max(0, index(absoluteAfterFrame)); frame--) {
             if (minerals[frame] >= cost.minerals()
-                    && gas[frame] >= cost.gas()
-                    && supplyAvailable[frame] >= cost.supply()) {
+                && gas[frame] >= cost.gas()
+                && supplyAvailable[frame] >= cost.supply()) {
                 candidate = frame;
-            } else {
+            }
+            else {
                 break;
             }
         }
         return candidate < 0 ? -1 : candidate + originFrame;
     }
 
-    /** True when the cost is covered at this frame and at every later one. */
+    /**
+     * True when the cost is covered at this frame and at every later one.
+     */
     public boolean canAffordAt(ResourceCost cost, int absoluteFrame) {
         int frame = index(absoluteFrame);
         if (frame < 0 || frame >= horizon)
@@ -192,7 +199,7 @@ public final class ResourceTimeline {
         for (int frame = 0; frame < horizon; frame++) {
             if (minerals[frame] < 0 || gas[frame] < 0 || supplyAvailable[frame] < 0) {
                 throw new IllegalStateException("ResourceTimeline solvency violated at frame " + frame
-                        + ": " + minerals[frame] + "m/" + gas[frame] + "g/" + supplyAvailable[frame] + "s");
+                    + ": " + minerals[frame] + "m/" + gas[frame] + "g/" + supplyAvailable[frame] + "s");
             }
         }
     }

@@ -24,8 +24,19 @@ package atlantis.production.v2;
 public interface ExistingItems {
 
     int MISSING = -1;
+    /**
+     * Nothing exists: the answer for a hand-built scheduler (and for tests).
+     */
+    ExistingItems NONE = new ExistingItems() {
+        @Override
+        public int availableFrom(Producible item) {
+            return MISSING;
+        }
+    };
 
-    /** Absolute frame the item is available from, or {@link #MISSING}. */
+    /**
+     * Absolute frame the item is available from, or {@link #MISSING}.
+     */
     int availableFrom(Producible item);
 
     /**
@@ -42,12 +53,4 @@ public interface ExistingItems {
     default int inFlightFrom(Producible item) {
         return availableFrom(item);
     }
-
-    /** Nothing exists: the answer for a hand-built scheduler (and for tests). */
-    ExistingItems NONE = new ExistingItems() {
-        @Override
-        public int availableFrom(Producible item) {
-            return MISSING;
-        }
-    };
 }

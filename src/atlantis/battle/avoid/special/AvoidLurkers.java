@@ -34,11 +34,10 @@ public class AvoidLurkers extends Manager {
 
         if (avoidAsTerran()) return true;
         if (avoidAsProtoss()) return true;
-        if (meleeUnitAndNoMobileDetectorsNear()) return true;
+
+        return meleeUnitAndNoMobileDetectorsNear();
 
 //        if (beBraveWithDetectorsNearby()) return false;
-
-        return false;
 //        return lurker.distTo(unit) <= (8.3 + unit.woundPercent() / 40.0)
 //            || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
     }
@@ -152,9 +151,7 @@ public class AvoidLurkers extends Manager {
         if (unit.shields() <= 5) return false;
         if (unit.friendsNear().combatUnits().atLeast(14)) return false;
 
-        if (unit.friendsNear().observers().inRadius(13, unit).atLeast(2)) return true;
-
-        return false;
+        return unit.friendsNear().observers().inRadius(13, unit).atLeast(2);
     }
 
     private int dontEngageWhenAtMostFriendsNearby() {
@@ -224,6 +221,6 @@ public class AvoidLurkers extends Manager {
         if (unit.isReaver() && unit.shieldWound() <= 25 && unit.cooldown() <= 8) return -1.6;
 
         return (unit.shieldWound() >= 15 ? 1.2 : 0)
-               + unit.woundPercent() / 40.0;
+            + unit.woundPercent() / 40.0;
     }
 }

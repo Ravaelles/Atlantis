@@ -16,31 +16,57 @@ package atlantis.combat;
  */
 public enum Behavior {
 
-    /** Hold formation slots facing the expected enemy. */
+    /**
+     * Hold formation slots facing the expected enemy.
+     */
     HOLD_FORMATION("FormHold"),
-    /** Advance in formation toward the expected enemy. */
+    /**
+     * Advance in formation toward the expected enemy.
+     */
     ADVANCE_FORMATION("ClusterForm"),
-    /** Yield ground from a threat, shoot when ready. */
+    /**
+     * Yield ground from a threat, shoot when ready.
+     */
     KITE("ClusterKite"),
-    /** Duel standoff: yield to hold distance, never shove past it. */
+    /**
+     * Duel standoff: yield to hold distance, never shove past it.
+     */
     DUEL_YIELD("ClusterDuelYield"),
-    /** Glide to the firing position, shoot on arrival. */
+    /**
+     * Glide to the firing position, shoot on arrival.
+     */
     REENGAGE("ClusterReengage"),
-    /** March at the freshest fight instead of holding slots. */
+    /**
+     * March at the freshest fight instead of holding slots.
+     */
     REINFORCE("ClusterReinforce"),
-    /** Hunt the last remembered contact on a baseless map. */
+    /**
+     * Hunt the last remembered contact on a baseless map.
+     */
     HUNT("ClusterHunt"),
-    /** Step out of an ally's escape ray. */
+    /**
+     * Step out of an ally's escape ray.
+     */
     MAKE_WAY("ClusterMakeWay"),
-    /** STOP a wedged order queue, then start over. */
+    /**
+     * STOP a wedged order queue, then start over.
+     */
     UNSTICK("ClusterUnstick"),
-    /** Creep toward a remembered enemy after the head start. */
+    /**
+     * Creep toward a remembered enemy after the head start.
+     */
     GHOST_CREEP("ClusterGhost"),
-    /** The vanguard scout walks out ahead of the line. */
+    /**
+     * The vanguard scout walks out ahead of the line.
+     */
     GHOST_SCOUT("ClusterScout"),
-    /** Bunch on the leader when nothing else owns the unit. */
+    /**
+     * Bunch on the leader when nothing else owns the unit.
+     */
     GATHER("ClusterMove"),
-    /** Run from a lost fight toward the retreat anchor. */
+    /**
+     * Run from a lost fight toward the retreat anchor.
+     */
     FLEE("ClusterFlee"),
     /**
      * Walk home in formation when the fight is lost but nothing chases
@@ -48,13 +74,21 @@ public enum Behavior {
      * the same home rally as FLEE, shared by the whole cluster.
      */
     ORGANIZED_RETREAT("ClusterOrganizedRetreat"),
-    /** Collapse into the funnel mouth onto the bait. */
+    /**
+     * Collapse into the funnel mouth onto the bait.
+     */
     COLLAPSE("ClusterCollapse"),
-    /** Leave a breached base instead of defending it. */
+    /**
+     * Leave a breached base instead of defending it.
+     */
     BREACH_RETREAT("ClusterBreachRetreat"),
-    /** Bait the enemy into the funnel while the line holds. */
+    /**
+     * Bait the enemy into the funnel while the line holds.
+     */
     BAIT("ClusterBait"),
-    /** Hold the chokepoint standoff line. */
+    /**
+     * Hold the chokepoint standoff line.
+     */
     STANDOFF("ClusterStandoff");
 
     private final String tag;
@@ -63,7 +97,9 @@ public enum Behavior {
         this.tag = tag;
     }
 
-    /** The journal/death-log tag this behavior renders as. Frozen - do not rename. */
+    /**
+     * The journal/death-log tag this behavior renders as. Frozen - do not rename.
+     */
     public String tag() {
         return tag;
     }

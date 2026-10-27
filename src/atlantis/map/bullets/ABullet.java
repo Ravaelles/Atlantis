@@ -1,11 +1,11 @@
 package atlantis.map.bullets;
 
 import atlantis.core.world.Worlds;
-import atlantis.units.AttackState;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AttackState;
 import bwapi.Bullet;
 import bwapi.BulletType;
 
@@ -16,8 +16,8 @@ public class ABullet implements HasPosition {
     //    protected AUnit _initTarget;
 //    protected int _initTargetHp;
     private boolean consumed = false;
-    private int createdAt;
-    private boolean exists;
+    private final int createdAt;
+    private final boolean exists;
 
     // =========================================================
 

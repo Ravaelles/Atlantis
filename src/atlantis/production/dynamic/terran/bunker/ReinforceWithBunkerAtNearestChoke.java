@@ -6,7 +6,7 @@ import atlantis.map.position.HasPosition;
 
 
 public class ReinforceWithBunkerAtNearestChoke extends Commander {
-    private HasPosition initialPositionToReinforce;
+    private final HasPosition initialPositionToReinforce;
     private HasPosition position;
     private APosition natural;
 

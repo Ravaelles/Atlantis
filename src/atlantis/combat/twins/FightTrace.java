@@ -19,10 +19,13 @@ import atlantis.util.log.LogKey;
  */
 public final class FightTrace {
 
-    /** One sample per cooldown cycle keeps 8v8 games near ~500 rows. */
+    /**
+     * One sample per cooldown cycle keeps 8v8 games near ~500 rows.
+     */
     public static final int TRACE_EVERY_FRAMES = 30;
 
     private static final java.util.Map<Integer, Integer> lastSampleFrame = new java.util.HashMap<>();
+    private static final java.util.Set<Integer> reportedDeaths = new java.util.HashSet<>();
 
     private FightTrace() {
     }
@@ -45,8 +48,6 @@ public final class FightTrace {
             .param("uy", unit.y() / 32)
             .log(now, A.minSec());
     }
-
-    private static final java.util.Set<Integer> reportedDeaths = new java.util.HashSet<>();
 
     public static void died(AUnit unit) {
         if (unit == null) return;
@@ -86,8 +87,7 @@ public final class FightTrace {
         Selection enemies;
         try {
             enemies = Select.enemy();
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
         if (enemies == null) return null;

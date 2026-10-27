@@ -7,8 +7,8 @@ import java.util.Objects;
 
 public class ARegionBoundary implements HasPosition {
 
-    private ARegion region;
-    private APosition position;
+    private final ARegion region;
+    private final APosition position;
 
     private ARegionBoundary(ARegion region, APosition position) {
         this.region = region;
@@ -54,12 +54,11 @@ public class ARegionBoundary implements HasPosition {
     @Override
     public String toString() {
         return "ARegionBoundary{" +
-                "position=" + position +
-                '}';
+            "position=" + position +
+            '}';
     }
 
     // =========================================================
-
 
 
 }

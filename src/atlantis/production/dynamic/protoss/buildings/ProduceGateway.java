@@ -2,24 +2,24 @@ package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.cherryvis.CV;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.dynamic.expansion.protoss.ProtossShouldExpand;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeGatewaysVsProtoss;
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
@@ -87,9 +87,11 @@ public class ProduceGateway {
         }
 
         if (freeGateways <= 1 && existingGateways <= 4 && A.hasMinerals(150)) return produceGateway() && log("150");
-        if (freeGateways == 0 && existingGateways <= 2 && Army.strength() <= 130 && A.hasMinerals(230)) return produceGateway();
+        if (freeGateways == 0 && existingGateways <= 2 && Army.strength() <= 130 && A.hasMinerals(230))
+            return produceGateway();
 
-        if (ConstructionRequests.notFinished().size() >= (A.hasMinerals(550) ? 2 : 1) && !A.hasMinerals(600)) return false;
+        if (ConstructionRequests.notFinished().size() >= (A.hasMinerals(550) ? 2 : 1) && !A.hasMinerals(600))
+            return false;
 
         bases = Count.basesWithUnfinished();
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
@@ -194,7 +196,7 @@ public class ProduceGateway {
                 && freeGateways == 0
                 && A.hasMinerals(210)
                 && Count.basesWithUnfinished() >= 2
-        ) return true && log(" Zerg early 4");
+        ) return log(" Zerg early 4");
 
         return existingGateways <= 2
             && freeGateways == 0
@@ -211,7 +213,7 @@ public class ProduceGateway {
                 && freeGateways == 0
                 && A.hasMinerals(210)
                 && Count.basesWithUnfinished() >= 2
-        ) return true && log(" Protoss early 4");
+        ) return log(" Protoss early 4");
 
         return false;
     }

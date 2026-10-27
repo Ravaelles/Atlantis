@@ -45,13 +45,13 @@ public class RunInAnyDirectionTest extends WorldStubForTests {
         );
 
         world(1, ours, enemies, () -> {
-        RunInAnyDirection runInAnyDirection = (new RunInAnyDirection(
-            new RunToPositionFinder(
-                marine.runningManager()
-            )
-        ));
+            RunInAnyDirection runInAnyDirection = (new RunInAnyDirection(
+                new RunToPositionFinder(
+                    marine.runningManager()
+                )
+            ));
 
-        AConsole.println(runInAnyDirection.runInAnyDirection(zergling));
+            AConsole.println(runInAnyDirection.runInAnyDirection(zergling));
 
 //            assertContainsAll(
 //                new FakeUnit[]{drone, zergling, hydra, sunken},

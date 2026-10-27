@@ -12,9 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The position conditions that decide "can a building stand here", tested one
@@ -64,7 +62,7 @@ public class PositionConditionsTest extends WorldStubForTests {
     // AbstractTestWithUnits (`Select.minerals()` reads the neutral set, so a mineral
     // passed as "ours" would be invisible to the very rule under test).
     private void withMineralsAt(int tx, int ty) {
-        neutralInWorld = new FakeUnit[]{ fake(AUnitType.Resource_Mineral_Field, tx, ty) };
+        neutralInWorld = new FakeUnit[]{fake(AUnitType.Resource_Mineral_Field, tx, ty)};
     }
 
     @BeforeEach
@@ -85,25 +83,27 @@ public class PositionConditionsTest extends WorldStubForTests {
     @Test
     public void aGatewayOnTopOfTheMainBaseIsTooClose() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertTrue(
-                            TooCloseToMainBase.isTooCloseToMainBase(GATEWAY, APosition.create(50, 50)),
-                            "a building on the Nexus tile is too close to the main base");
-                    assertFalse(
-                            TooCloseToMainBase.isTooCloseToMainBase(GATEWAY, APosition.create(70, 70)),
-                            "a building far from the Nexus is not too close");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertTrue(
+                TooCloseToMainBase.isTooCloseToMainBase(GATEWAY, APosition.create(50, 50)),
+                "a building on the Nexus tile is too close to the main base");
+            assertFalse(
+                TooCloseToMainBase.isTooCloseToMainBase(GATEWAY, APosition.create(70, 70)),
+                "a building far from the Nexus is not too close");
+        });
     }
 
-    /** A base is exempt: the main base cannot be too close to itself. */
+    /**
+     * A base is exempt: the main base cannot be too close to itself.
+     */
     @Test
     public void aBaseIsExemptFromTheMainBaseRule() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertFalse(
-                            TooCloseToMainBase.isTooCloseToMainBase(NEXUS, APosition.create(50, 50)),
-                            "the base rule must not apply to a base");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertFalse(
+                TooCloseToMainBase.isTooCloseToMainBase(NEXUS, APosition.create(50, 50)),
+                "the base rule must not apply to a base");
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -118,42 +118,46 @@ public class PositionConditionsTest extends WorldStubForTests {
     @Test
     public void aPylonWithAFree2x2FootprintIsPlaceable() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 20, 20),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    APosition free = APosition.create(30, 30);
+            main = fake(NEXUS, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            APosition free = APosition.create(30, 30);
 
-                    assertTrue(
-                            CanPhysicallyBuildHere.check(main, PYLON, free),
-                            "a Pylon on a free, walkable footprint must be placeable");
-                });
+            assertTrue(
+                CanPhysicallyBuildHere.check(main, PYLON, free),
+                "a Pylon on a free, walkable footprint must be placeable");
+        });
     }
 
-    /** A missing builder is refused with a reason rather than an NPE. */
+    /**
+     * A missing builder is refused with a reason rather than an NPE.
+     */
     @Test
     public void aNullBuilderIsRefusedWithAReason() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
-                    assertFalse(
-                            CanPhysicallyBuildHere.check(null, PYLON, APosition.create(30, 30)),
-                            "no builder means no placement");
-                    assertTrue(
-                            AbstractPositionFinder._STATUS.contains("BUILDER"),
-                            "the refusal must name the missing builder, got: " + AbstractPositionFinder._STATUS);
-                });
+            main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
+            assertFalse(
+                CanPhysicallyBuildHere.check(null, PYLON, APosition.create(30, 30)),
+                "no builder means no placement");
+            assertTrue(
+                AbstractPositionFinder._STATUS.contains("BUILDER"),
+                "the refusal must name the missing builder, got: " + AbstractPositionFinder._STATUS);
+        });
     }
 
-    /** A null position is refused with a reason, not an exception. */
+    /**
+     * A null position is refused with a reason, not an exception.
+     */
     @Test
     public void aNullPositionIsRefusedWithAReason() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
-                    assertFalse(
-                            CanPhysicallyBuildHere.check(main, PYLON, null),
-                            "no position means no placement");
-                    assertTrue(
-                            AbstractPositionFinder._STATUS.contains("POSITION"),
-                            "the refusal must name the missing position, got: " + AbstractPositionFinder._STATUS);
-                });
+            main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
+            assertFalse(
+                CanPhysicallyBuildHere.check(main, PYLON, null),
+                "no position means no placement");
+            assertTrue(
+                AbstractPositionFinder._STATUS.contains("POSITION"),
+                "the refusal must name the missing position, got: " + AbstractPositionFinder._STATUS);
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -255,14 +259,16 @@ public class PositionConditionsTest extends WorldStubForTests {
     // TooCloseToUnwalkable through the world (the source is the stub's)
     // ---------------------------------------------------------------------------
 
-    /** The stub world reports everything walkable, so nothing is boxed in there. */
+    /**
+     * The stub world reports everything walkable, so nothing is boxed in there.
+     */
     @Test
     public void aGatewayOnTheStubWorldsOpenGroundIsNotBoxedIn() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertFalse(
-                            TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(60, 60)),
-                            "the stub world is open ground, so nothing is closed in");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertFalse(
+                TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(60, 60)),
+                "the stub world is open ground, so nothing is closed in");
+        });
     }
 }

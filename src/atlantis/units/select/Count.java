@@ -20,7 +20,7 @@ import static atlantis.units.AUnitType.*;
  * Quick auxiliary class for counting our units.
  */
 public class Count {
-    private static Cache<Integer> cache = new Cache<>();
+    private static final Cache<Integer> cache = new Cache<>();
 
     public static boolean clearCache() {
         cache.clear();

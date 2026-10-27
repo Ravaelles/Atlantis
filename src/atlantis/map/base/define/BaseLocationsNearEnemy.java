@@ -7,7 +7,7 @@ import atlantis.map.position.Positions;
 import atlantis.util.cache.Cache;
 
 public class BaseLocationsNearEnemy {
-    private static Cache<Positions<ABaseLocation>> cache = new Cache<>();
+    private static final Cache<Positions<ABaseLocation>> cache = new Cache<>();
 
     public static Positions<ABaseLocation> get() {
         return cache.getIfValid(

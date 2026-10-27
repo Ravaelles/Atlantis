@@ -38,78 +38,78 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("production")
 public class TrainOrderGuardTest {
 
-        private static final Path SINK = Paths.get("src/atlantis/units/BwapiOrderSink.java");
-        private static final Path ZEALOT = Paths
-                        .get("src/atlantis/production/dynamic/protoss/units/ProduceZealot.java");
-        private static final Path GATEWAY = Paths
-                        .get("src/atlantis/production/dynamic/protoss/units/GatewayClosestToEnemy.java");
-        private static final Path V2_DIRECTOR = Paths
-                        .get("src/atlantis/production/v2/execution/GameOrderDirector.java");
+    private static final Path SINK = Paths.get("src/atlantis/units/BwapiOrderSink.java");
+    private static final Path ZEALOT = Paths
+        .get("src/atlantis/production/dynamic/protoss/units/ProduceZealot.java");
+    private static final Path GATEWAY = Paths
+        .get("src/atlantis/production/dynamic/protoss/units/GatewayClosestToEnemy.java");
+    private static final Path V2_DIRECTOR = Paths
+        .get("src/atlantis/production/v2/execution/GameOrderDirector.java");
 
-        @Test
-        public void theV2DirectorNeverAsksAFacilityThatCannotTakeWork() throws Exception {
-                // The same guard as the legacy call sites, at the v2 door: the
-                // engine throws (not returns false) when a building is asked for
-                // work it cannot take, so the director checks first.
-                String director = read(V2_DIRECTOR);
+    private static String read(Path path) throws Exception {
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    }
 
-                assertTrue(director.contains("!producer.isCompleted()"),
-                                "GameOrderDirector.trainFacility must refuse an unfinished facility");
-                assertTrue(director.contains("!facility.isCompleted()"),
-                                "and so must researchOrUpgrade");
-                assertTrue(director.contains("commandsThisFrame"),
-                                "and one facility must not take two commands in one frame");
-        }
+    @Test
+    public void theV2DirectorNeverAsksAFacilityThatCannotTakeWork() throws Exception {
+        // The same guard as the legacy call sites, at the v2 door: the
+        // engine throws (not returns false) when a building is asked for
+        // work it cannot take, so the director checks first.
+        String director = read(V2_DIRECTOR);
 
-        @Test
-        public void theSinkRefusesToTrainOnAUnitThatIsNotCompleted() throws Exception {
-                String sink = read(SINK);
+        assertTrue(director.contains("!producer.isCompleted()"),
+            "GameOrderDirector.trainFacility must refuse an unfinished facility");
+        assertTrue(director.contains("!facility.isCompleted()"),
+            "and so must researchOrUpgrade");
+        assertTrue(director.contains("commandsThisFrame"),
+            "and one facility must not take two commands in one frame");
+    }
 
-                assertTrue(sink.contains("!actor.isCompleted()"),
-                                "BwapiOrderSink.train must refuse a unit that is not completed - the"
-                                                + " engine throws ArrayIndexOutOfBoundsException from its training"
-                                                + " queue for one that is still being built");
-                assertTrue(sink.contains("!actor.isAlive()"),
-                                "and one that is already dead");
-        }
+    @Test
+    public void theSinkRefusesToTrainOnAUnitThatIsNotCompleted() throws Exception {
+        String sink = read(SINK);
 
-        @Test
-        public void theZealotProducerChecksThatItsGatewayIsFree() throws Exception {
-                String zealot = read(ZEALOT);
+        assertTrue(sink.contains("!actor.isCompleted()"),
+            "BwapiOrderSink.train must refuse a unit that is not completed - the"
+                + " engine throws ArrayIndexOutOfBoundsException from its training"
+                + " queue for one that is still being built");
+        assertTrue(sink.contains("!actor.isAlive()"),
+            "and one that is already dead");
+    }
 
-                assertTrue(zealot.contains("isTrainingAnyUnit()"),
-                                "produceZealot must not ask a busy Gateway to train; the engine throws"
-                                                + " rather than returning false, and the order is lost");
-        }
+    @Test
+    public void theZealotProducerChecksThatItsGatewayIsFree() throws Exception {
+        String zealot = read(ZEALOT);
 
-        @Test
-        public void theGatewaySelectorReturnsOnlyACompletedOne() throws Exception {
-                String gateway = read(GATEWAY);
+        assertTrue(zealot.contains("isTrainingAnyUnit()"),
+            "produceZealot must not ask a busy Gateway to train; the engine throws"
+                + " rather than returning false, and the order is lost");
+    }
 
-                // Select filters completeness by contract, but the selector must not
-                // reach for a raw list that bypasses it: the fallback used to return
-                // whatever Gateway existed, busy or not.
-                assertTrue(gateway.contains("ourOneNotTrainingUnits(Protoss_Gateway)"),
-                                "the no-free-Gateway fallback must ask for a completed, non-training"
-                                                + " Gateway - 'ourOfType' alone does not check whether it is busy");
-        }
+    @Test
+    public void theGatewaySelectorReturnsOnlyACompletedOne() throws Exception {
+        String gateway = read(GATEWAY);
 
-        @Test
-        public void theTrainingQueueIsNeverWalkedBlindly() throws Exception {
-                // trainingQueue() is the call that throws on an empty queue, so any code
-                // reaching for it on a possibly-busy building is a latent version of the
-                // same crash. isFree()/isTrainingAnyUnit()/hasNothingInQueue() are the
-                // safe questions, and they are what the code should ask.
-                String unit = read(Paths.get("src/atlantis/units/AUnit.java"));
+        // Select filters completeness by contract, but the selector must not
+        // reach for a raw list that bypasses it: the fallback used to return
+        // whatever Gateway existed, busy or not.
+        assertTrue(gateway.contains("ourOneNotTrainingUnits(Protoss_Gateway)"),
+            "the no-free-Gateway fallback must ask for a completed, non-training"
+                + " Gateway - 'ourOfType' alone does not check whether it is busy");
+    }
 
-                assertTrue(unit.contains("public boolean isTrainingAnyUnit()"),
-                                "AUnit.isTrainingAnyUnit() is the safe question and must keep existing");
-                assertTrue(unit.contains("isFree() && trainingQueue().isEmpty()"),
-                                "hasNothingInQueue() must keep isFree() FIRST: it short-circuits before"
-                                                + " touching the queue that throws");
-        }
+    @Test
+    public void theTrainingQueueIsNeverWalkedBlindly() throws Exception {
+        // trainingQueue() is the call that throws on an empty queue, so any code
+        // reaching for it on a possibly-busy building is a latent version of the
+        // same crash. isFree()/isTrainingAnyUnit()/hasNothingInQueue() are the
+        // safe questions, and they are what the code should ask.
+        String unit = read(Paths.get("src/atlantis/units/AUnit.java"));
 
-        private static String read(Path path) throws Exception {
-                return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-        }
+        assertTrue(unit.contains("public boolean isTrainingAnyUnit()"),
+            "AUnit.isTrainingAnyUnit() is the safe question and must keep existing");
+        assertTrue(unit.contains("isFree() && trainingQueue().isEmpty()"),
+            "hasNothingInQueue() must keep isFree() FIRST: it short-circuits before"
+                + " touching the queue that throws");
+    }
 }

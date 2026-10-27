@@ -10,7 +10,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The gate listens to the hottest point of the cluster, not the leader

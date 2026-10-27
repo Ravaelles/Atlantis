@@ -70,7 +70,9 @@ public final class CompletedUnitsHistory {
      */
     private static final Map<AUnitType, Integer> completed = new LinkedHashMap<>();
 
-    /** The frame each type was first completed on; the report's sort key. */
+    /**
+     * The frame each type was first completed on; the report's sort key.
+     */
     private static final Map<AUnitType, Integer> firstCompletedAt = new LinkedHashMap<>();
 
     /**
@@ -109,7 +111,9 @@ public final class CompletedUnitsHistory {
         firstRecordedSequence.putIfAbsent(type, recordCounter++);
     }
 
-    /** How many of this type were completed in total; 0 when none ever were. */
+    /**
+     * How many of this type were completed in total; 0 when none ever were.
+     */
     public static int completedCount(AUnitType type) {
         if (type == null)
             return 0;
@@ -143,19 +147,21 @@ public final class CompletedUnitsHistory {
 
         types.sort((a, b) -> {
             int byFrame = Integer.compare(
-                    firstCompletedAt.getOrDefault(a, Integer.MAX_VALUE),
-                    firstCompletedAt.getOrDefault(b, Integer.MAX_VALUE));
+                firstCompletedAt.getOrDefault(a, Integer.MAX_VALUE),
+                firstCompletedAt.getOrDefault(b, Integer.MAX_VALUE));
             if (byFrame != 0) return byFrame;
 
             return Integer.compare(
-                    firstRecordedSequence.getOrDefault(a, Integer.MAX_VALUE),
-                    firstRecordedSequence.getOrDefault(b, Integer.MAX_VALUE));
+                firstRecordedSequence.getOrDefault(a, Integer.MAX_VALUE),
+                firstRecordedSequence.getOrDefault(b, Integer.MAX_VALUE));
         });
 
         return types;
     }
 
-    /** Per-game reset, like {@code UnitsArchive.reset()}. */
+    /**
+     * Per-game reset, like {@code UnitsArchive.reset()}.
+     */
     public static void reset() {
         completed.clear();
         firstRecordedSequence.clear();

@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.protoss.prioritize;
 
-import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -8,6 +7,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.util.We;
@@ -37,7 +37,8 @@ public class ProtossCriticalStuffInQueue {
             // 92->8->88->4 while capped 25/25). Pausing here protects the bank
             // until the building exists; linked warps (entity present) and rich
             // banks (no protection needed) are unaffected by the 250 gate above.
-            if (hasUnconfirmedWarp()) return false;
+
+            return !hasUnconfirmedWarp();
         }
 
         return true;
@@ -48,6 +49,7 @@ public class ProtossCriticalStuffInQueue {
      * next (its supply gate met). The queue is pre-seeded with the whole build
      * order at frame 0 ({@code QueueInitializer}), so mere presence must not
      * pause anything: measured on Wine (last-wine.log) as `CriticalStuff` from
+     *
      * @0 at 50 minerals with an empty future, first worker only once the bank
      * touched 250. Same predicate as the PrioritizeCore rule in
      * {@code EarlyGameProduceWorkers}.
@@ -87,10 +89,6 @@ public class ProtossCriticalStuffInQueue {
             return false;
         }
 
-        if (!A.hasGas(210) && CountInQueue.countNotStarted(AUnitType.Protoss_Observatory) > 0 && Have.factoryWithUnfinished()) {
-            return false;
-        }
-
-        return true;
+        return A.hasGas(210) || CountInQueue.countNotStarted(AUnitType.Protoss_Observatory) <= 0 || !Have.factoryWithUnfinished();
     }
 }

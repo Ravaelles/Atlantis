@@ -1,10 +1,9 @@
 package atlantis.combat.cluster;
-import atlantis.battle.cluster.Alpha;
 
-import atlantis.combat.formation.FormationSlots;
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.formation.FormationSlots;
 import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -20,10 +19,14 @@ import atlantis.units.select.Selection;
  */
 public final class ClusterRally {
 
-    private ClusterRally() {
-    }
-
-    /** Tiles behind the leader before a unit turns back to rejoin. */
+    /**
+     * An anchor this close to the main still counts as home: the
+     * no-contact hold owns the unit instead of marching it out.
+     */
+    public static final double NO_CONTACT_HOME_TILES = 20;
+    /**
+     * Tiles behind the leader before a unit turns back to rejoin.
+     */
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
     /**
@@ -33,14 +36,36 @@ public final class ClusterRally {
      */
     private static final int EARLY_ZERG_HOLD_MAX_ARMY = 5;
 
-    /** Worker-help range of the main base (owner order: 6 tiles). */
-    private static final double EARLY_ZERG_HOLD_TILES = 6;
-
     /**
-     * An anchor this close to the main still counts as home: the
-     * no-contact hold owns the unit instead of marching it out.
+     * Worker-help range of the main base (owner order: 6 tiles).
      */
-    public static final double NO_CONTACT_HOME_TILES = 20;
+    private static final double EARLY_ZERG_HOLD_TILES = 6;
+    /**
+     * Rally scatter (Tomas Cere game, 52 Dragoons lost): on FLEE every
+     * unit shared one rally pixel, converged body-on-body, and died
+     * standing with retreat orders active. Each unit rallies onto its
+     * own standable point around the same anchor instead - a scatter,
+     * never an arc (FLEE still never forms up). Deterministic per unit
+     * id (golden-angle ring, no randomness); falls back to the anchor
+     * itself, never worse than today.
+     */
+    private static final double RALLY_SPREAD_TILES = 2.0;
+    /**
+     * True when the army stands meaningfully past its anchor, away from
+     * home: the anchor is behind, so facing it cups our own base. The
+     * 2-tile deadband is the holdsHomeGround granularity - standing on
+     * the anchor is not "past it".
+     */
+    private static final int ANCHOR_BEHIND_DEADBAND_TILES = 2;
+    /**
+     * How far past the leader the outward pivot sits: beyond contact
+     * (the 3.3-tile formation floor) and inside the 11-tile arc cap, so
+     * the crescent that forms there is a real shape.
+     */
+    private static final int OUTWARD_PIVOT_TILES = 8;
+
+    private ClusterRally() {
+    }
 
     /**
      * Where a baseless retreat rallies (owner): a point away from the
@@ -87,8 +112,7 @@ public final class ClusterRally {
             if (!point.isWalkable()) point = point.makeWalkable(6, 3, null);
 
             return point;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }
@@ -123,8 +147,7 @@ public final class ClusterRally {
             if (holdsAtMain(main, half)) return main.position();
 
             return half;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }
@@ -161,8 +184,7 @@ public final class ClusterRally {
             }
 
             return anchor.distTo(main) <= NO_CONTACT_HOME_TILES;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return false;
         }
     }
@@ -185,17 +207,6 @@ public final class ClusterRally {
         return anchor;
     }
 
-    /**
-     * Rally scatter (Tomas Cere game, 52 Dragoons lost): on FLEE every
-     * unit shared one rally pixel, converged body-on-body, and died
-     * standing with retreat orders active. Each unit rallies onto its
-     * own standable point around the same anchor instead - a scatter,
-     * never an arc (FLEE still never forms up). Deterministic per unit
-     * id (golden-angle ring, no randomness); falls back to the anchor
-     * itself, never worse than today.
-     */
-    private static final double RALLY_SPREAD_TILES = 2.0;
-
     private static HasPosition spreadRallyPoint(AUnit unit, HasPosition anchor) {
         if (anchor == null) return null;
 
@@ -206,10 +217,9 @@ public final class ClusterRally {
                 APosition p = APosition.create(
                     (int) (anchor.tx() + Math.cos(angle) * r),
                     (int) (anchor.ty() + Math.sin(angle) * r));
-                if (p != null && FormationSlots.isStandable(p)) return p;
+                if (FormationSlots.isStandable(p)) return p;
             }
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
         }
         return anchor;
     }
@@ -343,21 +353,6 @@ public final class ClusterRally {
 
         return anchor;
     }
-
-    /**
-     * True when the army stands meaningfully past its anchor, away from
-     * home: the anchor is behind, so facing it cups our own base. The
-     * 2-tile deadband is the holdsHomeGround granularity - standing on
-     * the anchor is not "past it".
-     */
-    private static final int ANCHOR_BEHIND_DEADBAND_TILES = 2;
-
-    /**
-     * How far past the leader the outward pivot sits: beyond contact
-     * (the 3.3-tile formation floor) and inside the 11-tile arc cap, so
-     * the crescent that forms there is a real shape.
-     */
-    private static final int OUTWARD_PIVOT_TILES = 8;
 
     private static boolean anchorBehindArmy(AUnit leader, HasPosition anchor) {
         if (leader == null || anchor == null) return false;

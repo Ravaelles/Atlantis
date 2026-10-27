@@ -8,31 +8,49 @@ import org.junit.jupiter.api.Test;
 
 
 public class ProtossStreetGridTest extends WorldStubForTests {
+    private static String gatewayPositionToString(APosition position) {
+        boolean isOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+            null, AUnitType.Protoss_Gateway, position
+        );
+        String string = isOk ? "▒" : "◦"; //"▓"
+
+        return string;
+    }
+
+    private static String pylonPositionToString(APosition position) {
+        boolean isOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+            null, AUnitType.Protoss_Pylon, position
+        );
+        String string = isOk ? "█" : "◦";
+
+        return string;
+    }
+
     @Test
     public void testGatewayAndPylonPlacement() {
         world(1, () -> {
-        int xRadius = 20;
-        int yRadius = 20;
+            int xRadius = 20;
+            int yRadius = 20;
 
-        for (int ty = 1; ty < yRadius * 2; ty++) {
-            for (int tx = 1; tx < xRadius * 2; tx++) {
-                APosition position = APosition.create(tx, ty);
+            for (int ty = 1; ty < yRadius * 2; ty++) {
+                for (int tx = 1; tx < xRadius * 2; tx++) {
+                    APosition position = APosition.create(tx, ty);
 
-                boolean isOkForPylon = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-                    null, AUnitType.Protoss_Pylon, position
-                );
+                    boolean isOkForPylon = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+                        null, AUnitType.Protoss_Pylon, position
+                    );
 
-                //                if (isOkForPylon) AConsole.print("█");
-                //                else {
-                //                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-                //                        null, AUnitType.Protoss_Gateway, position
-                //                    );
-                //                    if (isOkForGateway) AConsole.print("░"); // ░ ▒
-                //                    else AConsole.print("◦");
-                //                }
+                    //                if (isOkForPylon) AConsole.print("█");
+                    //                else {
+                    //                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+                    //                        null, AUnitType.Protoss_Gateway, position
+                    //                    );
+                    //                    if (isOkForGateway) AConsole.print("░"); // ░ ▒
+                    //                    else AConsole.print("◦");
+                    //                }
+                }
+                AConsole.println();
             }
-            AConsole.println();
-        }
         });
     }
 
@@ -108,24 +126,6 @@ public class ProtossStreetGridTest extends WorldStubForTests {
         else if (isGatewayOk && isPylonOk) {
             string = "X";
         }
-
-        return string;
-    }
-
-    private static String gatewayPositionToString(APosition position) {
-        boolean isOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-            null, AUnitType.Protoss_Gateway, position
-        );
-        String string = isOk ? "▒" : "◦"; //"▓"
-
-        return string;
-    }
-
-    private static String pylonPositionToString(APosition position) {
-        boolean isOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-            null, AUnitType.Protoss_Pylon, position
-        );
-        String string = isOk ? "█" : "◦";
 
         return string;
     }

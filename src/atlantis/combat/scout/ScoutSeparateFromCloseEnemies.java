@@ -2,13 +2,13 @@ package atlantis.combat.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.avoid.DoAvoidEnemies;
-import atlantis.map.scout.ScoutCommander;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
+import atlantis.map.scout.ScoutCommander;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.game.player.Enemy;
-import atlantis.units.select.Selection;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class ScoutSeparateFromCloseEnemies extends Manager {
     private HasPosition center;
@@ -18,6 +18,29 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         super(unit);
     }
 
+    private static boolean isOnSegment(
+        atlantis.map.position.APosition point,
+        atlantis.map.position.APosition from,
+        atlantis.map.position.APosition to,
+        double corridorTiles
+    ) {
+        double fx = from.getX(), fy = from.getY();
+        double tx = to.getX(), ty = to.getY();
+        double px = point.getX(), py = point.getY();
+
+        double dx = tx - fx, dy = ty - fy;
+        double lenSq = dx * dx + dy * dy;
+        if (lenSq < 1) return false;
+
+        double t = ((px - fx) * dx + (py - fy) * dy) / lenSq;
+        if (t < 0.05 || t > 0.95) return false;
+
+        double cx = fx + t * dx, cy = fy + t * dy;
+        double distPx = Math.hypot(px - cx, py - cy);
+
+        return distPx <= corridorTiles * 32;
+    }
+
     @Override
     public boolean applies() {
         enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin());
@@ -25,7 +48,6 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 
         return enemies.notEmpty();
     }
-
 
     /**
      * Chase band (owner 2026-10-23, NEXT #187): an enemy chases us while it
@@ -162,28 +184,5 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         }
 
         return false;
-    }
-
-    private static boolean isOnSegment(
-        atlantis.map.position.APosition point,
-        atlantis.map.position.APosition from,
-        atlantis.map.position.APosition to,
-        double corridorTiles
-    ) {
-        double fx = from.getX(), fy = from.getY();
-        double tx = to.getX(), ty = to.getY();
-        double px = point.getX(), py = point.getY();
-
-        double dx = tx - fx, dy = ty - fy;
-        double lenSq = dx * dx + dy * dy;
-        if (lenSq < 1) return false;
-
-        double t = ((px - fx) * dx + (py - fy) * dy) / lenSq;
-        if (t < 0.05 || t > 0.95) return false;
-
-        double cx = fx + t * dx, cy = fy + t * dy;
-        double distPx = Math.hypot(px - cx, py - cy);
-
-        return distPx <= corridorTiles * 32;
     }
 }

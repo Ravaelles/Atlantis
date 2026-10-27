@@ -33,10 +33,9 @@ public class MutablePair<K, V> {
 
         MutablePair<?, ?> mutablePair = (MutablePair<?, ?>) o;
 
-        if (first != null ? !first.equals(mutablePair.first) : mutablePair.first != null) return false;
-        if (second != null ? !second.equals(mutablePair.second) : mutablePair.second != null) return false;
+        if (!Objects.equals(first, mutablePair.first)) return false;
 
-        return true;
+        return Objects.equals(second, mutablePair.second);
     }
 
     @Override

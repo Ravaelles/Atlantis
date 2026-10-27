@@ -54,8 +54,7 @@ public class KeyboardPauseReleaseTest {
                 GameSpeed.isPaused(),
                 "pause must lift even when the speed change itself throws"
             );
-        }
-        finally {
+        } finally {
             MapSpecificCommander.initialSpeed = initialSpeedFlag;
             GameSpeed.unpauseGame();
         }

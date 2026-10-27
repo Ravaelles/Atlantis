@@ -1,10 +1,10 @@
 package atlantis.production.v2.goals;
 
-import atlantis.production.v2.UnitProducible;
-import atlantis.units.AUnitType;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.TargetPlacement;
+import atlantis.production.v2.UnitProducible;
+import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -34,158 +34,12 @@ import java.util.List;
 public final class DynamicGoals {
 
     /**
-     * The few facts a goal decision needs. Deliberately primitive: this is the
-     * seam that keeps the goal layer testable, and it is intentionally not a
-     * window onto {@code Select}/{@code Count} - if a decision needs more than
-     * these numbers, it does not belong in this layer.
+     * Free supply below which a provider is wanted at all.
      */
-    public static final class GameSnapshot {
-        public final int workers;
-        public final int bases;
-        /** Bases finished, under construction and pending - what counts as "we have one". */
-        public final int basesExisting;
-        public final int supplyUsed;
-        public final int supplyFree;
-        public final int supplyTotal;
-        public final int minerals;
-        /** Gas bank: Dragoons, tech and the second gas all read it. */
-        public final int gas;
-        public final int armySize;
-        public final boolean inEarlyGame;
-
-        /**
-         * Advanced army unlocked (Protoss: Cybernetics Core standing; zeros
-         * for other races until their policies fill equivalents). Gates the
-         * Zealot-to-Dragoon advancement and the Singularity want.
-         */
-        public final boolean hasCore;
-        /** Dragoons standing (Protoss; 0 elsewhere). Sizes the tech want. */
-        public final int dragoons;
-        /** Gas buildings standing (Protoss: Assimilators; 0 elsewhere). */
-        public final int gasBuildings;
-        /** Singularity Charge researched (Protoss; false elsewhere). */
-        public final boolean singularity;
-        /** Army strength for tech/economy gates. */
-        public final int armyStrength;
-
-        /** Cannon count already standing at the main base. */
-        public final int cannonsAtMain;
-        /** Enemy race facts the fortification policy reads. */
-        public final boolean enemyIsZerg;
-        public final boolean enemyIsProtoss;
-        public final int enemyMutalisks;
-
-        /** The base the fortification goals are anchored to; -1 when unknown. */
-        public final int mainBaseTileX;
-        public final int mainBaseTileY;
-
-        /**
-         * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
-         * finished. Counting them is what stops the supply goal being re-emitted
-         * every frame until one completes.
-         */
-        public int supplyProvidersComing;
-
-        /**
-         * A Forge already standing (Protoss; other races leave it true so the
-         * gate below stays a Protoss rule). Legacy never secured a base with
-         * cannons before a Forge stood ({@code ProtossSecureBasesCommander}
-         * gates on {@code Have.forge()}), and the V2 fortification port
-         * dropped that gate - so a Cannon goal from frame 0 pulled an orphan
-         * Forge ahead of the Gateway in openings whose build order has no
-         * Forge (measured LIVE: Forge f2112-2746 before Gateway in three
-         * Zealot-into-Goon games, zero Cannons ever completing). Set
-         * post-construction like {@link #supplyProvidersComing}.
-         */
-        public boolean hasForge;
-
-        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
-                int supplyTotal, int minerals, boolean inEarlyGame) {
-            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
-        }
-
-        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
-                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting) {
-            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
-                basesExisting, 0, false, false, 0);
-        }
-
-        /**
-         * The full snapshot, including the fortification inputs. Kept as one
-         * constructor rather than a builder: the goal layer is deliberately fed a
-         * handful of numbers, and a test that needs to say "zerg, twelve mutas"
-         * should be able to say exactly that.
-         */
-        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
-                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
-                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
-            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
-                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
-                0, false, 0, 0, false, 0);
-        }
-
-        /**
-         * The full snapshot plus tech/army inputs. The 13-argument form fills
-         * zeros: a test that only cares about workers or supply keeps saying
-         * exactly that, and tech goals stay silent on it.
-         */
-        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
-                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
-                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
-                int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
-                int armyStrength) {
-            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
-                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
-                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength, -1, -1);
-        }
-
-        /**
-         * The same snapshot anchored to a base, for the fortification policy. The
-         * 13-argument form leaves the anchor unknown, which is what a test that only
-         * cares about workers or supply wants - and what makes fortification emit
-         * nothing rather than guess a location.
-         */
-        public GameSnapshot atBase(int tileX, int tileY) {
-            return new GameSnapshot(
-                workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame,
-                armySize, basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
-                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength,
-                tileX, tileY
-            );
-        }
-
-        private GameSnapshot(
-                int workers, int bases, int supplyUsed, int supplyFree,
-                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
-                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
-                int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
-                int armyStrength,
-                int mainBaseTileX, int mainBaseTileY) {
-            this.workers = workers;
-            this.bases = bases;
-            this.basesExisting = basesExisting;
-            this.supplyUsed = supplyUsed;
-            this.supplyFree = supplyFree;
-            this.supplyTotal = supplyTotal;
-            this.minerals = minerals;
-            this.gas = gas;
-            this.armySize = armySize;
-            this.hasCore = hasCore;
-            this.dragoons = dragoons;
-            this.gasBuildings = gasBuildings;
-            this.singularity = singularity;
-            this.armyStrength = armyStrength;
-            this.inEarlyGame = inEarlyGame;
-            this.cannonsAtMain = cannonsAtMain;
-            this.enemyIsZerg = enemyIsZerg;
-            this.enemyIsProtoss = enemyIsProtoss;
-            this.enemyMutalisks = enemyMutalisks;
-            this.mainBaseTileX = mainBaseTileX;
-            this.mainBaseTileY = mainBaseTileY;
-        }
-    }
-
-    /** Workers target per base before the generator stops asking for more. */
+    public static final int SUPPLY_WORRY_LEVEL = 4;
+    /**
+     * Workers target per base before the generator stops asking for more.
+     */
     private static final int WORKERS_PER_BASE = 25;
     private static final int ABSOLUTE_WORKER_CAP = 80;
 
@@ -206,7 +60,7 @@ public final class DynamicGoals {
      *                               defers to it (emergency still fires).
      */
     public static List<ProductionGoal> contribute(
-            GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
+        GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
         List<ProductionGoal> goals = new ArrayList<>();
 
         addWorkerGoal(goals, state, race);
@@ -281,11 +135,11 @@ public final class DynamicGoals {
             return;
 
         goals.add(new ProductionGoal(
-                UnitProducible.of(worker),
-                ProductionGoal.PRIORITY_WORKERS,
-                1,
-                0,
-                TargetPlacement.anywhere()));
+            UnitProducible.of(worker),
+            ProductionGoal.PRIORITY_WORKERS,
+            1,
+            0,
+            TargetPlacement.anywhere()));
     }
 
     /**
@@ -306,7 +160,7 @@ public final class DynamicGoals {
     }
 
     public static ProductionGoal supplyGoal(
-            GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
+        GameSnapshot state, ProductionRacePolicy race, boolean buildOrderOwnsProvider) {
         AUnitType supplyProvider = race.supplyProviderType();
         if (supplyProvider == null)
             return null;
@@ -328,24 +182,21 @@ public final class DynamicGoals {
             return null;
 
         int priority = state.supplyFree <= 0
-                ? ProductionGoal.PRIORITY_EMERGENCY
-                : state.supplyUsed <= BuildOrderGoals.OPENING_SUPPLY_THRESHOLD
-                    ? ProductionGoal.PRIORITY_OPENING_SUPPLY
-                    : ProductionGoal.PRIORITY_DEPOTS;
+            ? ProductionGoal.PRIORITY_EMERGENCY
+            : state.supplyUsed <= BuildOrderGoals.OPENING_SUPPLY_THRESHOLD
+              ? ProductionGoal.PRIORITY_OPENING_SUPPLY
+              : ProductionGoal.PRIORITY_DEPOTS;
 
         return new ProductionGoal(UnitProducible.of(supplyProvider), priority, 1, 0, TargetPlacement.anywhere());
     }
-
-    /** Free supply below which a provider is wanted at all. */
-    public static final int SUPPLY_WORRY_LEVEL = 4;
 
     private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
         addSupplyGoal(goals, state, race, false);
     }
 
     private static void addSupplyGoal(
-            List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race,
-            boolean buildOrderOwnsProvider) {
+        List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race,
+        boolean buildOrderOwnsProvider) {
         ProductionGoal goal = supplyGoal(state, race, buildOrderOwnsProvider);
         if (goal != null) goals.add(goal);
     }
@@ -392,11 +243,11 @@ public final class DynamicGoals {
             return;
 
         goals.add(new ProductionGoal(
-                UnitProducible.of(army),
-                ProductionGoal.PRIORITY_MAINARMYBASE,
-                missing,
-                0,
-                TargetPlacement.anywhere()));
+            UnitProducible.of(army),
+            ProductionGoal.PRIORITY_MAINARMYBASE,
+            missing,
+            0,
+            TargetPlacement.anywhere()));
     }
 
     /**
@@ -414,16 +265,16 @@ public final class DynamicGoals {
         boolean want = state.dragoons >= 4
             || (state.gas >= 80 && (state.gas >= 180 || state.dragoons >= 6))
             || (state.dragoons >= 2 && state.supplyUsed >= 38
-                && state.armyStrength >= 120 && state.minerals >= 240);
+            && state.armyStrength >= 120 && state.minerals >= 240);
         if (!want)
             return;
 
         goals.add(new ProductionGoal(
-                atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge),
-                ProductionGoal.PRIORITY_NORMAL,
-                1,
-                0,
-                TargetPlacement.anywhere()));
+            atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge),
+            ProductionGoal.PRIORITY_NORMAL,
+            1,
+            0,
+            TargetPlacement.anywhere()));
     }
 
     /**
@@ -457,11 +308,11 @@ public final class DynamicGoals {
             return;
 
         goals.add(new ProductionGoal(
-                UnitProducible.of(gas),
-                ProductionGoal.PRIORITY_GAS,
-                1,
-                0,
-                TargetPlacement.anywhere()));
+            UnitProducible.of(gas),
+            ProductionGoal.PRIORITY_GAS,
+            1,
+            0,
+            TargetPlacement.anywhere()));
     }
 
     /**
@@ -489,11 +340,181 @@ public final class DynamicGoals {
             return;
 
         goals.add(new ProductionGoal(
-                UnitProducible.of(base),
-                ProductionGoal.PRIORITY_NORMAL,
-                1,
-                0,
-                TargetPlacement.anywhere()));
+            UnitProducible.of(base),
+            ProductionGoal.PRIORITY_NORMAL,
+            1,
+            0,
+            TargetPlacement.anywhere()));
+    }
+
+    /**
+     * The few facts a goal decision needs. Deliberately primitive: this is the
+     * seam that keeps the goal layer testable, and it is intentionally not a
+     * window onto {@code Select}/{@code Count} - if a decision needs more than
+     * these numbers, it does not belong in this layer.
+     */
+    public static final class GameSnapshot {
+        public final int workers;
+        public final int bases;
+        /**
+         * Bases finished, under construction and pending - what counts as "we have one".
+         */
+        public final int basesExisting;
+        public final int supplyUsed;
+        public final int supplyFree;
+        public final int supplyTotal;
+        public final int minerals;
+        /**
+         * Gas bank: Dragoons, tech and the second gas all read it.
+         */
+        public final int gas;
+        public final int armySize;
+        public final boolean inEarlyGame;
+
+        /**
+         * Advanced army unlocked (Protoss: Cybernetics Core standing; zeros
+         * for other races until their policies fill equivalents). Gates the
+         * Zealot-to-Dragoon advancement and the Singularity want.
+         */
+        public final boolean hasCore;
+        /**
+         * Dragoons standing (Protoss; 0 elsewhere). Sizes the tech want.
+         */
+        public final int dragoons;
+        /**
+         * Gas buildings standing (Protoss: Assimilators; 0 elsewhere).
+         */
+        public final int gasBuildings;
+        /**
+         * Singularity Charge researched (Protoss; false elsewhere).
+         */
+        public final boolean singularity;
+        /**
+         * Army strength for tech/economy gates.
+         */
+        public final int armyStrength;
+
+        /**
+         * Cannon count already standing at the main base.
+         */
+        public final int cannonsAtMain;
+        /**
+         * Enemy race facts the fortification policy reads.
+         */
+        public final boolean enemyIsZerg;
+        public final boolean enemyIsProtoss;
+        public final int enemyMutalisks;
+
+        /**
+         * The base the fortification goals are anchored to; -1 when unknown.
+         */
+        public final int mainBaseTileX;
+        public final int mainBaseTileY;
+
+        /**
+         * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
+         * finished. Counting them is what stops the supply goal being re-emitted
+         * every frame until one completes.
+         */
+        public int supplyProvidersComing;
+
+        /**
+         * A Forge already standing (Protoss; other races leave it true so the
+         * gate below stays a Protoss rule). Legacy never secured a base with
+         * cannons before a Forge stood ({@code ProtossSecureBasesCommander}
+         * gates on {@code Have.forge()}), and the V2 fortification port
+         * dropped that gate - so a Cannon goal from frame 0 pulled an orphan
+         * Forge ahead of the Gateway in openings whose build order has no
+         * Forge (measured LIVE: Forge f2112-2746 before Gateway in three
+         * Zealot-into-Goon games, zero Cannons ever completing). Set
+         * post-construction like {@link #supplyProvidersComing}.
+         */
+        public boolean hasForge;
+
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                            int supplyTotal, int minerals, boolean inEarlyGame) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
+        }
+
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                            int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, 0, false, false, 0);
+        }
+
+        /**
+         * The full snapshot, including the fortification inputs. Kept as one
+         * constructor rather than a builder: the goal layer is deliberately fed a
+         * handful of numbers, and a test that needs to say "zerg, twelve mutas"
+         * should be able to say exactly that.
+         */
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                            int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+                            int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                0, false, 0, 0, false, 0);
+        }
+
+        /**
+         * The full snapshot plus tech/army inputs. The 13-argument form fills
+         * zeros: a test that only cares about workers or supply keeps saying
+         * exactly that, and tech goals stay silent on it.
+         */
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                            int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+                            int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
+                            int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
+                            int armyStrength) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength, -1, -1);
+        }
+
+        private GameSnapshot(
+            int workers, int bases, int supplyUsed, int supplyFree,
+            int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+            int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
+            int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
+            int armyStrength,
+            int mainBaseTileX, int mainBaseTileY) {
+            this.workers = workers;
+            this.bases = bases;
+            this.basesExisting = basesExisting;
+            this.supplyUsed = supplyUsed;
+            this.supplyFree = supplyFree;
+            this.supplyTotal = supplyTotal;
+            this.minerals = minerals;
+            this.gas = gas;
+            this.armySize = armySize;
+            this.hasCore = hasCore;
+            this.dragoons = dragoons;
+            this.gasBuildings = gasBuildings;
+            this.singularity = singularity;
+            this.armyStrength = armyStrength;
+            this.inEarlyGame = inEarlyGame;
+            this.cannonsAtMain = cannonsAtMain;
+            this.enemyIsZerg = enemyIsZerg;
+            this.enemyIsProtoss = enemyIsProtoss;
+            this.enemyMutalisks = enemyMutalisks;
+            this.mainBaseTileX = mainBaseTileX;
+            this.mainBaseTileY = mainBaseTileY;
+        }
+
+        /**
+         * The same snapshot anchored to a base, for the fortification policy. The
+         * 13-argument form leaves the anchor unknown, which is what a test that only
+         * cares about workers or supply wants - and what makes fortification emit
+         * nothing rather than guess a location.
+         */
+        public GameSnapshot atBase(int tileX, int tileY) {
+            return new GameSnapshot(
+                workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame,
+                armySize, basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength,
+                tileX, tileY
+            );
+        }
     }
 
 }

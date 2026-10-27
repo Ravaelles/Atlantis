@@ -1,21 +1,19 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Map-duration proxy for Drag_v_LingsUpg2 (owner: the map must finish
@@ -26,6 +24,36 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class PostFightPursuitDurationSimTest extends AbstractTestWithUnits {
+
+    /**
+     * Sight comes back when the line closes in - the live re-acquisition.
+     */
+    private static void reacquire(List<FakeUnit> ours, List<FakeUnit> foes) {
+        for (FakeUnit ling : foes) {
+            if (ling.hp <= 0 || ling.isVisibleUnitOnMap) continue;
+            for (FakeUnit d : ours) {
+                if (d.hp <= 0) continue;
+                try {
+                    if (d.distTo(ling) <= 10) ling.isVisibleUnitOnMap = true;
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    private static boolean anyVisible(List<FakeUnit> foes) {
+        for (FakeUnit f : foes) {
+            if (f.hp > 0 && f.isVisibleUnitOnMap) return true;
+        }
+        return false;
+    }
+
+    private static int liveCount(List<FakeUnit> foes) {
+        int n = 0;
+        for (FakeUnit f : foes) if (f.hp > 0) n++;
+
+        return n;
+    }
 
     @Test
     public void twoWavesClearFast() {
@@ -83,8 +111,9 @@ public class PostFightPursuitDurationSimTest extends AbstractTestWithUnits {
                 }
                 if (i % 200 == 0) {
                     StringBuilder sb = new StringBuilder("PURSUIT t=" + i);
-                    for (FakeUnit d : ours) sb.append(" d").append(d.id()).append("@(")
-                        .append(d.x() / 32).append(",").append(d.y() / 32).append(")hp").append(d.hp);
+                    for (FakeUnit d : ours)
+                        sb.append(" d").append(d.id()).append("@(")
+                            .append(d.x() / 32).append(",").append(d.y() / 32).append(")hp").append(d.hp);
                     System.out.println(sb);
                 }
             }
@@ -97,39 +126,10 @@ public class PostFightPursuitDurationSimTest extends AbstractTestWithUnits {
             assertTrue(clearTick >= 0 && clearTick < 520,
                 "both waves must fall fast (measured 336, pre-fix never clears"
                     + " in 1500): clearTick=" + clearTick);
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
-    }
-
-    /** Sight comes back when the line closes in - the live re-acquisition. */
-    private static void reacquire(List<FakeUnit> ours, List<FakeUnit> foes) {
-        for (FakeUnit ling : foes) {
-            if (ling.hp <= 0 || ling.isVisibleUnitOnMap) continue;
-            for (FakeUnit d : ours) {
-                if (d.hp <= 0) continue;
-                try {
-                    if (d.distTo(ling) <= 10) ling.isVisibleUnitOnMap = true;
-                } catch (Exception ignored) {
-                }
-            }
-        }
-    }
-
-    private static boolean anyVisible(List<FakeUnit> foes) {
-        for (FakeUnit f : foes) {
-            if (f.hp > 0 && f.isVisibleUnitOnMap) return true;
-        }
-        return false;
-    }
-
-    private static int liveCount(List<FakeUnit> foes) {
-        int n = 0;
-        for (FakeUnit f : foes) if (f.hp > 0) n++;
-
-        return n;
     }
 }

@@ -16,10 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * R1: placement declares support, it never performs it. A race strategy
@@ -30,6 +27,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("placement")
 public class PlacementSupportTest {
+
+    @Test
+    public void strategyDeclaresSupportAsData() {
+        SupportRequest request =
+            new ProtossPlacementStrategy(null).requestAvailabilitySupport(10, 20, "Protoss_Gateway");
+
+        assertNotNull(request, "a Pylon makes the spot usable - declared, not ordered");
+        assertEquals(AUnitType.Protoss_Pylon, request.unitType());
+        assertEquals(10, request.tileX());
+        assertEquals(20, request.tileY());
+    }
+
+    @Test
+    public void plannerCollectsAndDrainsOnce() {
+        CataloguePlacementPlanner planner = new CataloguePlacementPlanner(
+            new TileAvailabilityGrid(new FlatTerrain()), new AlwaysUnpowered());
+        planner.startPass();
+
+        PlacementReservation result = planner.reservePlacement(
+            UnitProducible.of(AUnitType.Protoss_Pylon), TargetPlacement.anywhere(), 0);
+
+        assertFalse(result.isSuccessful(), "unpowered tile: no reservation, support instead");
+        List<SupportRequest> drained = planner.drainSupportRequests();
+        assertEquals(1, drained.size(), "one declared support per unpowered answer");
+        assertEquals(AUnitType.Protoss_Pylon, drained.get(0).unitType());
+        assertTrue(
+            planner.drainSupportRequests().isEmpty(),
+            "drain consumes: the next pass re-decides instead of double-ordering");
+    }
 
     private static final class FlatTerrain implements TileAvailabilityGrid.TerrainSource {
         @Override
@@ -88,34 +114,5 @@ public class PlacementSupportTest {
         public SupportRequest requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
             return new SupportRequest(AUnitType.Protoss_Pylon, tx, ty);
         }
-    }
-
-    @Test
-    public void strategyDeclaresSupportAsData() {
-        SupportRequest request =
-            new ProtossPlacementStrategy(null).requestAvailabilitySupport(10, 20, "Protoss_Gateway");
-
-        assertNotNull(request, "a Pylon makes the spot usable - declared, not ordered");
-        assertEquals(AUnitType.Protoss_Pylon, request.unitType());
-        assertEquals(10, request.tileX());
-        assertEquals(20, request.tileY());
-    }
-
-    @Test
-    public void plannerCollectsAndDrainsOnce() {
-        CataloguePlacementPlanner planner = new CataloguePlacementPlanner(
-            new TileAvailabilityGrid(new FlatTerrain()), new AlwaysUnpowered());
-        planner.startPass();
-
-        PlacementReservation result = planner.reservePlacement(
-            UnitProducible.of(AUnitType.Protoss_Pylon), TargetPlacement.anywhere(), 0);
-
-        assertFalse(result.isSuccessful(), "unpowered tile: no reservation, support instead");
-        List<SupportRequest> drained = planner.drainSupportRequests();
-        assertEquals(1, drained.size(), "one declared support per unpowered answer");
-        assertEquals(AUnitType.Protoss_Pylon, drained.get(0).unitType());
-        assertTrue(
-            planner.drainSupportRequests().isEmpty(),
-            "drain consumes: the next pass re-decides instead of double-ordering");
     }
 }

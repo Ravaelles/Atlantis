@@ -1,13 +1,13 @@
 package atlantis.game.listeners;
 
 import atlantis.Atlantis;
+import atlantis.cherryvis.ACherryVis;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.cherryvis.ACherryVis;
 
 public class OnEveryFrame {
     public static void update() {

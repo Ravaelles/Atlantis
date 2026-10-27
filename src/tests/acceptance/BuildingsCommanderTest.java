@@ -9,7 +9,7 @@ public class BuildingsCommanderTest extends AbstractTestWithWorld {
     @Test
     public void iteratesOverBuildings() {
         world(1, () -> {
-        (new BuildingsCommander()).invokedCommander();
+            (new BuildingsCommander()).invokedCommander();
         });
     }
 

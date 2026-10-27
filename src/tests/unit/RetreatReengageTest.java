@@ -6,7 +6,6 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import bwapi.Race;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,9 +13,10 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Anti-flap: a just-issued retreat move must execute instead of being
@@ -25,6 +25,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class RetreatReengageTest extends WorldStubForTests {
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+
+        return false;
+    }
 
     @Override
     public Race initRace() {
@@ -130,17 +142,5 @@ public class RetreatReengageTest extends WorldStubForTests {
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
                 "winning eval re-attacks despite the fresh retreat: " + ordersOf(dragoon));
         });
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-
-        return false;
     }
 }

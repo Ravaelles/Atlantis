@@ -36,6 +36,22 @@ public class CommittedConstructionsTest {
 
     private static final AUnitType GATEWAY = AUnitType.Protoss_Gateway;
 
+    private static Construction pending(AUnitType type, int tx, int ty) {
+        Construction construction = new Construction(type);
+        construction.setPositionToBuild(APosition.create(tx, ty));
+
+        return construction;
+    }
+
+    private static int gatewaysIn(ProductionPlan plan) {
+        int count = 0;
+        for (ProductionItem item : plan.items()) {
+            if (item.item().id().equals(GATEWAY.name()))
+                count++;
+        }
+        return count;
+    }
+
     @BeforeEach
     public void clearQueue() {
         ConstructionRequests.constructions.clear();
@@ -46,13 +62,6 @@ public class CommittedConstructionsTest {
         ConstructionRequests.constructions.clear();
     }
 
-    private static Construction pending(AUnitType type, int tx, int ty) {
-        Construction construction = new Construction(type);
-        construction.setPositionToBuild(APosition.create(tx, ty));
-
-        return construction;
-    }
-
     @Test
     public void twoRequestsOfOneTypeAtDifferentTilesAreBothKept() {
         ConstructionRequests.constructions.add(pending(GATEWAY, 20, 20));
@@ -61,7 +70,7 @@ public class CommittedConstructionsTest {
         ProductionPlan merged = CommittedConstructions.mergeInto(new ProductionPlan(), 100);
 
         assertEquals(2, merged.size(),
-                "two Gateways at distinct tiles are two constructions, not one duplicate");
+            "two Gateways at distinct tiles are two constructions, not one duplicate");
         assertEquals(2, gatewaysIn(merged));
     }
 
@@ -71,13 +80,13 @@ public class CommittedConstructionsTest {
 
         ProductionPlan alreadyPlanning = new ProductionPlan();
         alreadyPlanning.add(new ProductionItem(
-                UnitProducible.of(GATEWAY), 0, false,
-                PlacementReservation.success(20, 20, 0).committedAt(0)));
+            UnitProducible.of(GATEWAY), 0, false,
+            PlacementReservation.success(20, 20, 0).committedAt(0)));
 
         ProductionPlan merged = CommittedConstructions.mergeInto(alreadyPlanning, 100);
 
         assertEquals(1, merged.size(),
-                "the same building at the same tile is already in the plan and must not be added twice");
+            "the same building at the same tile is already in the plan and must not be added twice");
     }
 
     @Test
@@ -88,13 +97,13 @@ public class CommittedConstructionsTest {
 
         ProductionPlan plan = new ProductionPlan();
         plan.add(new ProductionItem(
-                UnitProducible.of(GATEWAY), 0, false,
-                PlacementReservation.success(20, 20, 0)));
+            UnitProducible.of(GATEWAY), 0, false,
+            PlacementReservation.success(20, 20, 0)));
 
         ProductionPlan merged = CommittedConstructions.mergeInto(plan, 100);
 
         assertEquals(2, merged.size(),
-                "the request at 30:30 is a second building and must survive the merge");
+            "the request at 30:30 is a second building and must survive the merge");
     }
 
     @Test
@@ -102,15 +111,6 @@ public class CommittedConstructionsTest {
         ConstructionRequests.constructions.add(new Construction(GATEWAY)); // no position yet
 
         assertTrue(CommittedConstructions.mergeInto(new ProductionPlan(), 100).isEmpty(),
-                "a construction with no chosen tile cannot be dispatched to a builder");
-    }
-
-    private static int gatewaysIn(ProductionPlan plan) {
-        int count = 0;
-        for (ProductionItem item : plan.items()) {
-            if (item.item().id().equals(GATEWAY.name()))
-                count++;
-        }
-        return count;
+            "a construction with no chosen tile cannot be dispatched to a builder");
     }
 }

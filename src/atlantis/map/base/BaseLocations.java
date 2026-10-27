@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BaseLocations {
-    private static Cache<Object> cache = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
 
     // =========================================================
 

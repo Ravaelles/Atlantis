@@ -1,12 +1,10 @@
 package tests.acceptance;
 
-import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossDefineNearTo;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -16,9 +14,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #192: a non-Pylon building must stand in a psi field, so its
@@ -79,7 +74,7 @@ public class GatewayNearToPrefersPylonByChokeTest extends WorldStubForTests {
                 if (atlantis.game.A.now() != 2) return;
 
                 assertSame(choke, ProtossDefineNearTo.forProtoss(
-                    AUnitType.Protoss_Gateway, null),
+                        AUnitType.Protoss_Gateway, null),
                     "no Pylon anywhere: legacy choke center stands in");
             });
         }

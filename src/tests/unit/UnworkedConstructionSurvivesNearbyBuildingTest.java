@@ -13,12 +13,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner 2026-10-15 (NEXT #57): a freshly accepted construction whose

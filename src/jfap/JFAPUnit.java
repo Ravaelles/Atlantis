@@ -72,7 +72,7 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
         flying = auxType.ut().isFlyer();
         groundDamage = auxType.groundWeapon().damageAmount();
         groundCooldown = auxType.groundWeapon().damageFactor() > 0 && auxType.ut().maxGroundHits() > 0 ? auxType.groundWeapon().damageCooldown() /
-            (auxType.groundWeapon().damageFactor() * auxType.ut().maxGroundHits()) : 0;
+                                                                                                         (auxType.groundWeapon().damageFactor() * auxType.ut().maxGroundHits()) : 0;
         groundMaxRange = auxType.groundWeapon().maxRange();
         groundMinRange = auxType.groundWeapon().minRange();
         groundDamageType = auxType.groundWeapon().damageType();

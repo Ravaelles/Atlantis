@@ -8,7 +8,7 @@ import java.util.Collection;
 
 /**
  * Console writers used across the bot, extracted from the {@code A} god utility
- *(Stage H).
+ * (Stage H).
  *
  * <p>Output formatting is infrastructure, not game state, so it no longer
  * belongs next to the resource and clock facades. What gets written goes

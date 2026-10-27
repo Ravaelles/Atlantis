@@ -29,7 +29,9 @@ import java.util.List;
  */
 public final class FortificationGoals {
 
-    /** Priority band for defensive structures - between workers and the army. */
+    /**
+     * Priority band for defensive structures - between workers and the army.
+     */
     public static final int PRIORITY_BASEDEFENSE = 40;
 
     private FortificationGoals() {
@@ -44,9 +46,9 @@ public final class FortificationGoals {
      *                   neighbourhood centre - a constraint, not a tile
      */
     public static List<ProductionGoal> forBase(
-            CannonFortificationPolicy.Context context,
-            atlantis.production.v2.Producible cannon,
-            int nearBaseX, int nearBaseY) {
+        CannonFortificationPolicy.Context context,
+        atlantis.production.v2.Producible cannon,
+        int nearBaseX, int nearBaseY) {
         List<ProductionGoal> goals = new ArrayList<>();
         int missing = CannonFortificationPolicy.missingCannons(context);
         if (missing <= 0)

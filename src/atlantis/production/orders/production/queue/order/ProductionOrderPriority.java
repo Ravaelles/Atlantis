@@ -9,7 +9,7 @@ public enum ProductionOrderPriority implements Comparable<ProductionOrderPriorit
 
     // =========================================================
 
-    private int number;
+    private final int number;
 
     ProductionOrderPriority(int number) {
         this.number = number;

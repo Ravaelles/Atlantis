@@ -37,17 +37,19 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
     private static FakeUnit main;
     private static FakeUnit enemy;
 
-    @Override
-    public Race initRace() {
-        return Race.Protoss;
-    }
-
-    /** A pending construction at a tile, created where the game exists. */
+    /**
+     * A pending construction at a tile, created where the game exists.
+     */
     private static Construction pending(AUnitType type, int tx, int ty) {
         Construction construction = new Construction(type);
         construction.setPositionToBuild(APosition.create(tx, ty));
 
         return construction;
+    }
+
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
     }
 
     @BeforeEach
@@ -66,14 +68,16 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
     // OtherConstructionTooClose: our own pending buildings
     // ---------------------------------------------------------------------------
 
-    /** A base is exempt - it defines its own surroundings. */
+    /**
+     * A base is exempt - it defines its own surroundings.
+     */
     @Test
     public void aBaseIsExemptFromTheOtherConstructionRule() {
         world(1, fakeOurs(main = fake(AUnitType.Protoss_Nexus, 50, 50)), fakeEnemies(), () -> {
             assertFalse(
-                    OtherConstructionTooClose.isOtherConstructionTooClose(
-                            main, AUnitType.Protoss_Nexus, APosition.create(50, 50)),
-                    "a base is not judged against other constructions");
+                OtherConstructionTooClose.isOtherConstructionTooClose(
+                    main, AUnitType.Protoss_Nexus, APosition.create(50, 50)),
+                "a base is not judged against other constructions");
         });
     }
 
@@ -86,50 +90,54 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
     @Test
     public void aTileAlreadyClaimedByAPendingConstructionIsRefused() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    Construction pending = new Construction(PYLON);
-                    pending.setPositionToBuild(APosition.create(55, 55));
-                    ConstructionRequests.constructions.add(pending);
+            main = fake(AUnitType.Protoss_Nexus, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            Construction pending = new Construction(PYLON);
+            pending.setPositionToBuild(APosition.create(55, 55));
+            ConstructionRequests.constructions.add(pending);
 
-                    assertTrue(
-                            OtherConstructionTooClose.isOtherConstructionTooClose(
-                                    main, GATEWAY, APosition.create(55, 55)),
-                            "the tile a pending Pylon already claims must be refused");
-                });
+            assertTrue(
+                OtherConstructionTooClose.isOtherConstructionTooClose(
+                    main, GATEWAY, APosition.create(55, 55)),
+                "the tile a pending Pylon already claims must be refused");
+        });
     }
 
-    /** A tile far from every pending construction is accepted. */
+    /**
+     * A tile far from every pending construction is accepted.
+     */
     @Test
     public void aTileFarFromPendingConstructionsIsAccepted() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    Construction pending = new Construction(PYLON);
-                    pending.setPositionToBuild(APosition.create(55, 55));
-                    ConstructionRequests.constructions.add(pending);
+            main = fake(AUnitType.Protoss_Nexus, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            Construction pending = new Construction(PYLON);
+            pending.setPositionToBuild(APosition.create(55, 55));
+            ConstructionRequests.constructions.add(pending);
 
-                    assertFalse(
-                            OtherConstructionTooClose.isOtherConstructionTooClose(
-                                    main, GATEWAY, APosition.create(80, 80)),
-                            "a tile well clear of the pending Pylon is accepted");
-                });
+            assertFalse(
+                OtherConstructionTooClose.isOtherConstructionTooClose(
+                    main, GATEWAY, APosition.create(80, 80)),
+                "a tile well clear of the pending Pylon is accepted");
+        });
     }
 
     // ---------------------------------------------------------------------------
     // EnemiesTooClose / EnemyTooCloseToUnstartedConstruction
     // ---------------------------------------------------------------------------
 
-    /** With no enemy on the map, nothing is too close to an enemy. */
+    /**
+     * With no enemy on the map, nothing is too close to an enemy.
+     */
     @Test
     public void withNoEnemiesNothingIsTooClose() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    assertFalse(
-                            EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
-                            "no enemy means no enemy proximity refusal");
-                });
+            main = fake(AUnitType.Protoss_Nexus, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            assertFalse(
+                EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
+                "no enemy means no enemy proximity refusal");
+        });
     }
 
     /**
@@ -142,17 +150,17 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
         world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 50, 50),
                 fake(AUnitType.Protoss_Probe, 51, 51)),
-                fakeEnemies(
-                        enemy = fake(AUnitType.Zerg_Zergling, 56, 55)),
-                () -> {
-                    assertTrue(
-                            EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
-                            "a Zergling next to the candidate tile must refuse it");
-                    assertTrue(
-                            AbstractPositionFinder._STATUS.contains("TooCloseEnemy"),
-                            "the refusal must be attributed to an enemy, got: "
-                                    + AbstractPositionFinder._STATUS);
-                });
+            fakeEnemies(
+                enemy = fake(AUnitType.Zerg_Zergling, 56, 55)),
+            () -> {
+                assertTrue(
+                    EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
+                    "a Zergling next to the candidate tile must refuse it");
+                assertTrue(
+                    AbstractPositionFinder._STATUS.contains("TooCloseEnemy"),
+                    "the refusal must be attributed to an enemy, got: "
+                        + AbstractPositionFinder._STATUS);
+            });
     }
 
     /**
@@ -166,12 +174,12 @@ public class EnemyProximityConditionsTest extends WorldStubForTests {
         world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 50, 50),
                 fake(AUnitType.Protoss_Probe, 51, 51)),
-                fakeEnemies(
-                        enemy = fake(AUnitType.Zerg_Zergling, 120, 120)),
-                () -> {
-                    assertFalse(
-                            EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
-                            "an enemy far across the map must not block a build position");
-                });
+            fakeEnemies(
+                enemy = fake(AUnitType.Zerg_Zergling, 120, 120)),
+            () -> {
+                assertFalse(
+                    EnemiesTooClose.check(main, PYLON, APosition.create(55, 55)),
+                    "an enemy far across the map must not block a build position");
+            });
     }
 }

@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Expansion must actually happen: rich decisions have to say yes, and an
@@ -99,9 +96,7 @@ public class SecondAndThirdNexusTest extends AbstractTestWithWorld {
 
             ShouldExpand.reason = "LimitedBases";
 
-            assertTrue(
-                AddToQueue.withTopPriority(AUnitType.Protoss_Nexus) != null,
-                "an approved Nexus order must be accepted");
+            assertNotNull(AddToQueue.withTopPriority(AUnitType.Protoss_Nexus), "an approved Nexus order must be accepted");
             assertTrue(
                 CountInQueue.bases() >= 1,
                 "and visible in the queue - approval without an order"

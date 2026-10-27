@@ -38,8 +38,7 @@ public class ConstructionUnderAttack extends Commander {
         if (!We.protoss()) return false;
 
         if (building.isCannon() && building.hp() >= 82) return true;
-        if (A.s <= 60 * 5 && building.hpPercent() >= 40) return true;
 
-        return false;
+        return A.s <= 60 * 5 && building.hpPercent() >= 40;
     }
 }

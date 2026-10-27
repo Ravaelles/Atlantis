@@ -28,6 +28,19 @@ public final class UnitProducible implements Producible {
         return new UnitProducible(type);
     }
 
+    /**
+     * BWAPI counts supply doubled (Zergling = 1); A.supplyUsed() halves it.
+     */
+    static int halvedSupply(int raw) {
+        return Math.max(0, (raw + 1) / 2);
+    }
+
+    private static boolean containsId(List<Producible> list, String id) {
+        for (Producible p : list) if (p.id().equals(id)) return true;
+
+        return false;
+    }
+
     public AUnitType type() {
         return type;
     }
@@ -72,7 +85,9 @@ public final class UnitProducible implements Producible {
         return producer != null ? producer.name() : "Unknown";
     }
 
-    /** Only a building a worker builds needs a tile; addons and morphs do not. */
+    /**
+     * Only a building a worker builds needs a tile; addons and morphs do not.
+     */
     @Override
     public boolean requiresPlacement() {
         if (!type.isABuilding()) return false;
@@ -97,17 +112,6 @@ public final class UnitProducible implements Producible {
     @Override
     public int supplyProvided() {
         return halvedSupply(type.ut().supplyProvided());
-    }
-
-    /** BWAPI counts supply doubled (Zergling = 1); A.supplyUsed() halves it. */
-    static int halvedSupply(int raw) {
-        return Math.max(0, (raw + 1) / 2);
-    }
-
-    private static boolean containsId(List<Producible> list, String id) {
-        for (Producible p : list) if (p.id().equals(id)) return true;
-
-        return false;
     }
 
     @Override

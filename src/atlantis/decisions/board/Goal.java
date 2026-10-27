@@ -9,10 +9,14 @@ package atlantis.decisions.board;
  */
 public interface Goal {
 
-    /** Stable identity, also used for the in-flight commitment set. */
+    /**
+     * Stable identity, also used for the in-flight commitment set.
+     */
     String id();
 
-    /** True when this goal wants work in the given state. */
+    /**
+     * True when this goal wants work in the given state.
+     */
     boolean active(BoardState state);
 
     /**
@@ -29,7 +33,9 @@ public interface Goal {
      */
     int priceMinerals();
 
-    /** Gas half of {@link #priceMinerals()}. */
+    /**
+     * Gas half of {@link #priceMinerals()}.
+     */
     int priceGas();
 
     /**

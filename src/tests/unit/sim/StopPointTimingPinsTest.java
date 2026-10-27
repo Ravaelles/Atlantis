@@ -9,9 +9,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #186: the stop-point rule consumes three timing numbers - order
@@ -68,8 +65,7 @@ public class StopPointTimingPinsTest extends WorldStubForTests {
                     + "PurpleWave-derived - not engine data; a changed value fails loudly here)");
             assertEquals(dragoon.damageAgainst(zealot), before - (zealot.hp + zealot.shields),
                 "one windup cycle deals exactly one damage packet");
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
@@ -84,8 +80,9 @@ public class StopPointTimingPinsTest extends WorldStubForTests {
         SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{}, arena);
         try {
             double pxPerTile = 32.0;
-            for (int i = 0; i < 40; i++) world.tick(() -> {
-            });
+            for (int i = 0; i < 40; i++)
+                world.tick(() -> {
+                });
             double[] before = world.precisePosition(dragoon);
             world.tick(() -> {
             });
@@ -118,8 +115,7 @@ public class StopPointTimingPinsTest extends WorldStubForTests {
                     + "a stop within the standoff band: " + brakingPx + "px");
             assertTrue(brakingPx > 0,
                 "braking covers ground - a stop ordered at full speed is not in place");
-        }
-        finally {
+        } finally {
             world.close();
         }
     }

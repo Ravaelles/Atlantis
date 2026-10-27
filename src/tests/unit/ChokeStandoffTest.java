@@ -2,17 +2,19 @@ package tests.unit;
 
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.BattleStrategies;
+import atlantis.combat.strategy.BattleStrategy;
+import atlantis.combat.strategy.SquadScout;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Choke doctrine wiring (NEXT #170): with no contact, a BASED line near a
@@ -39,7 +41,7 @@ public class ChokeStandoffTest extends WorldStubForTests {
             for (int i = 0; i < 5; i++) {
                 BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
             }
-            APosition choke = ((atlantis.map.position.HasPosition) dragoon).nearestChoke().center();
+            APosition choke = dragoon.nearestChoke().center();
             APosition dest = dragoon.targetPosition;
             assertNotNull(dest, "holds somewhere instead of idling: " + dragoon.lastCommand);
             assertTrue(dest.distTo(choke) >= 7 && dest.distTo(choke) <= 12,
@@ -61,15 +63,12 @@ public class ChokeStandoffTest extends WorldStubForTests {
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
             // 3 vs 1 at the choke is crushing: no hold, no lone bait -
             // the decider sends the whole line to the funnel mouth.
-            assertTrue(
-                atlantis.combat.strategy.BattleStrategies.pick(a, null)
-                    == atlantis.combat.strategy.BattleStrategy.COLLAPSE,
-                "crushing superiority collapses instead of holding");
+            assertSame(BattleStrategies.pick(a, null), BattleStrategy.COLLAPSE, "crushing superiority collapses instead of holding");
             BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
             assertNotNull(a.targetPosition, "engages instead of idling");
             assertTrue(a.targetPosition.distTo(zealot.position()) < a.distTo(zealot),
                 "closing toward the zealot (out of range, so a move, not a standoff hold): "
-                + a.targetPosition);
+                    + a.targetPosition);
         });
     }
 
@@ -85,15 +84,12 @@ public class ChokeStandoffTest extends WorldStubForTests {
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
             // 3 vs 1 at the contested choke is crushing with contact:
             // the decider sends the line to the funnel mouth, not the standoff.
-            assertTrue(
-                atlantis.combat.strategy.BattleStrategies.pick(a, null)
-                    == atlantis.combat.strategy.BattleStrategy.COLLAPSE,
-                "crushing + contested: collapse onto the bait");
-            for (AUnit u : new AUnit[] { a, b, c }) {
-                BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
+            assertSame(BattleStrategies.pick(a, null), BattleStrategy.COLLAPSE, "crushing + contested: collapse onto the bait");
+            for (AUnit u : new AUnit[]{a, b, c}) {
+                BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, u);
             }
-            APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
-            for (AUnit u : new AUnit[] { a, b, c }) {
+            APosition choke = a.nearestChoke().center();
+            for (AUnit u : new AUnit[]{a, b, c}) {
                 APosition dest = ((FakeUnit) u).targetPosition;
                 assertNotNull(dest, "the whole line joins the bait, nobody holds");
                 assertTrue(dest.distTo(choke) < 5,
@@ -115,15 +111,15 @@ public class ChokeStandoffTest extends WorldStubForTests {
             AUnit bait = atlantis.combat.strategy.SquadScout
                 .pickBait(atlantis.units.select.Select.ourCombatUnits());
             assertNotNull(bait, "someone volunteers");
-            for (AUnit u : new AUnit[] { a, b, c }) {
-                BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
+            for (AUnit u : new AUnit[]{a, b, c}) {
+                BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, u);
             }
-            APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
+            APosition choke = a.nearestChoke().center();
             APosition baitDest = ((FakeUnit) bait).targetPosition;
             assertNotNull(baitDest, "bait walks into the funnel mouth");
             assertTrue(baitDest.distTo(choke) < 5,
                 "bait at the mouth, not wandering: " + baitDest + " vs " + choke);
-            for (AUnit u : new AUnit[] { a, b, c }) {
+            for (AUnit u : new AUnit[]{a, b, c}) {
                 if (u.id() == bait.id()) continue;
                 APosition hold = ((FakeUnit) u).targetPosition;
                 assertNotNull(hold, "holders take the standoff, not the bunch");
@@ -161,26 +157,25 @@ public class ChokeStandoffTest extends WorldStubForTests {
                 z1.position = APosition.createFromPixels(30 * 32, 16 * 32);
                 z2.position = APosition.createFromPixels(31 * 32, 15 * 32);
             }
-            for (AUnit u : new AUnit[] { a, b, c }) {
-                BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
+            for (AUnit u : new AUnit[]{a, b, c}) {
+                BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, u);
             }
             if (now != 55 && now != 150) return;
 
-            APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
+            APosition choke = a.nearestChoke().center();
             if (now == 55) {
-                assertTrue(atlantis.combat.strategy.SquadScout.pickBait(
-                        atlantis.units.select.Select.ourCombatUnits()).id() == a.id(),
-                    "lowest id scouts while the line holds");
+                assertEquals(SquadScout.pickBait(
+                    Select.ourCombatUnits()).id(), a.id(), "lowest id scouts while the line holds");
                 assertTrue(a.position().distTo(aStart[0]) >= 2.0,
                     "the scout walked out toward the funnel: " + a.position());
-                for (FakeUnit u : new FakeUnit[] { b, c }) {
+                for (FakeUnit u : new FakeUnit[]{b, c}) {
                     double hold = u.position().distTo(choke);
                     assertTrue(hold >= 6 && hold <= 13,
                         "holders keep the standoff while the bait walks out: " + u.position());
                 }
                 return;
             }
-            for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                 assertTrue(u.position().distTo(choke) < 7,
                     "the line joined the bait at the funnel mouth after the commit: "
                         + u.position());

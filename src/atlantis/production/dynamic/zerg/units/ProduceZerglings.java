@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Zerg_Zergling;
 
 public class ProduceZerglings {
     public static boolean zerglings() {

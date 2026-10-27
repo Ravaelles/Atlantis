@@ -3,7 +3,6 @@ package tests.unit;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Selection;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
@@ -12,9 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The commander never orders a foreign unit (NEXT #199, live 1a2a3a
@@ -28,6 +24,10 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("combat")
 public class ForeignUnitSkippedTest extends WorldStubForTests {
+
+    private static java.util.List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Test
     public void rosteredFlipGetsNoOrders() {
@@ -76,9 +76,5 @@ public class ForeignUnitSkippedTest extends WorldStubForTests {
                 ordersOf(zealot).isEmpty(),
                 "an enemy unit in our commander gets nothing: " + ordersOf(zealot));
         });
-    }
-
-    private static java.util.List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
     }
 }

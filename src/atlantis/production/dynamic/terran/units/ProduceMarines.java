@@ -1,11 +1,12 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.Strategy;
@@ -18,7 +19,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;

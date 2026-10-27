@@ -2,6 +2,7 @@ package atlantis.information.strategy.response.terran;
 
 import atlantis.game.A;
 import atlantis.information.strategy.response.StrategyResponse;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
@@ -10,7 +11,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.map.choke.AChoke;
 
 public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
     private int howManyAllowed = 3;

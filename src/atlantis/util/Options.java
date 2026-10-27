@@ -7,7 +7,7 @@ import java.util.TreeMap;
  * Auxiliary class for storing options that acts like a JSON object.
  */
 public class Options {
-    private Map<String, Object> options = new TreeMap<>();
+    private final Map<String, Object> options = new TreeMap<>();
 
     public static Options create() {
         return new Options();

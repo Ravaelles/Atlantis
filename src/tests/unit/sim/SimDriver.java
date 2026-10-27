@@ -2,8 +2,6 @@ package tests.unit.sim;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -13,12 +11,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The economy half of StarEngine: owns the sim universe, ticks the
@@ -38,52 +31,15 @@ import java.util.Set;
  */
 public final class SimDriver {
 
-    /** Frames a fresh miner walks before the first payout. */
+    /**
+     * Frames a fresh miner walks before the first payout.
+     */
     static final int FIRST_TRIP_FRAMES = 120;
 
-    /** Builder arrival radius, in pixels. */
+    /**
+     * Builder arrival radius, in pixels.
+     */
     private static final double ARRIVE_PX = 48.0;
-
-    /** Warp/complete log entry, in Wine BUILDINGS.json spirit. */
-    public static final class WarpRecord {
-        public final int frame;
-        public final String kind;
-        public final String type;
-        public final int tx;
-        public final int ty;
-        public final int bank;
-        public final int supplyUsed;
-        public final int supplyTotal;
-
-        WarpRecord(int frame, String kind, String type, int tx, int ty,
-                int bank, int supplyUsed, int supplyTotal) {
-            this.frame = frame;
-            this.kind = kind;
-            this.type = type;
-            this.tx = tx;
-            this.ty = ty;
-            this.bank = bank;
-            this.supplyUsed = supplyUsed;
-            this.supplyTotal = supplyTotal;
-        }
-
-        @Override
-        public String toString() {
-            return "f" + frame + " " + kind + " " + type
-                + " [" + tx + "," + ty + "] bank=" + bank
-                + " supply=" + supplyUsed + "/" + supplyTotal;
-        }
-    }
-
-    /** Test-side number feeds (the harness fields behind A.minerals() etc). */
-    public interface SimFields {
-        void setMinerals(int minerals);
-
-        void setGas(int gas);
-
-        void setSupply(int used, int total);
-    }
-
     private final SimMap map;
     private final SimGround ground;
     private final SimConfig config;
@@ -95,14 +51,12 @@ public final class SimDriver {
     private final ProductionEngine engine = new ProductionEngine();
     private final SimMovement movement;
     private final SimTechSource techSource = new SimTechSource();
-
     private final Map<Integer, Integer> sinkCursor = new HashMap<>();
-    private int trainSeen;
     private final List<WarpRecord> warpLog = new ArrayList<>();
     private final List<SimOrder> rejectedOrders = new ArrayList<>();
     private final List<String> cancels = new ArrayList<>();
+    private int trainSeen;
     private int fundingRefusals;
-
     private int frame;
     private boolean gasAssigned;
 
@@ -128,8 +82,55 @@ public final class SimDriver {
         atlantis.information.tech.ATech.useSource(techSource);
     }
 
+    private static bwapi.UpgradeType upgradeOf(String typeName) {
+        try {
+            return bwapi.UpgradeType.valueOf(typeName);
+        } catch (RuntimeException | Error ignored) {
+            return null;
+        }
+    }
+
+    private static bwapi.TechType techOf(String typeName) {
+        try {
+            return bwapi.TechType.valueOf(typeName);
+        } catch (RuntimeException | Error ignored) {
+            return null;
+        }
+    }
+
     // =========================================================
     // Universe setup (scenario use).
+
+    private static List<AUnit> living(List<FakeUnit> list) {
+        List<AUnit> alive = new ArrayList<>();
+        if (list == null) return alive;
+
+        for (FakeUnit unit : list) {
+            if (unit == null || unit.hp <= 0) continue;
+            if (!unit.isAlive()) continue;
+            alive.add(unit);
+        }
+
+        return alive;
+    }
+
+    private static SimArena tileArena(atlantis.map.snapshot.MapSnapshot snap) {
+        SimArena arena = new SimArena(snap.w * 32, snap.h * 32);
+        for (int ty = 0; ty < snap.h; ty++) {
+            String row = snap.tiles.get(ty);
+            int runStart = -1;
+            for (int tx = 0; tx <= snap.w; tx++) {
+                boolean blocked = tx < snap.w && tx < row.length() && row.charAt(tx) == 'x';
+                if (blocked && runStart < 0) runStart = tx;
+                if (!blocked && runStart >= 0) {
+                    arena.block(runStart * 32, ty * 32, (tx - runStart) * 32, 32);
+                    runStart = -1;
+                }
+            }
+        }
+
+        return arena;
+    }
 
     public SimUnitRegistry units() {
         return units;
@@ -151,7 +152,12 @@ public final class SimDriver {
         return map;
     }
 
-    /** Spawns the opening: Nexus on the base tile, workers on the line. */
+    // =========================================================
+    // One frame.
+
+    /**
+     * Spawns the opening: Nexus on the base tile, workers on the line.
+     */
     public FakeUnit spawnBase(int baseIndex, int workers) {
         MapSnapshotRef base = baseRef(baseIndex);
         FakeUnit nexus = units.spawn(AUnitType.Protoss_Nexus, base.x, base.y);
@@ -166,14 +172,13 @@ public final class SimDriver {
         return nexus;
     }
 
-    /** Neutral minerals + geysers, exactly as the snapshot stores them. */
+    /**
+     * Neutral minerals + geysers, exactly as the snapshot stores them.
+     */
     public void spawnResources() {
         for (FakeUnit mineral : map.minerals()) units.addNeutral(mineral);
         for (FakeUnit geyser : map.geysers()) units.addNeutral(geyser);
     }
-
-    // =========================================================
-    // One frame.
 
     public void step() {
         frame++;
@@ -202,7 +207,9 @@ public final class SimDriver {
         return new ArrayList<>(rejectedOrders);
     }
 
-    /** Proximity-finish cancels (execution, not validation - cf. live twin rows). */
+    /**
+     * Proximity-finish cancels (execution, not validation - cf. live twin rows).
+     */
     public List<String> cancels() {
         return new ArrayList<>(cancels);
     }
@@ -212,7 +219,9 @@ public final class SimDriver {
             + " [" + tile.tx() + "," + tile.ty() + "] " + reason);
     }
 
-    /** Rejections that are NOT funding (those are the real findings). */
+    /**
+     * Rejections that are NOT funding (those are the real findings).
+     */
     public List<SimOrder> invalidOrders() {
         List<SimOrder> out = new ArrayList<>();
         for (SimOrder order : rejectedOrders) {
@@ -221,6 +230,9 @@ public final class SimDriver {
 
         return out;
     }
+
+    // =========================================================
+    // Driver hooks used by the engines.
 
     public int fundingRefusals() {
         return fundingRefusals;
@@ -234,11 +246,8 @@ public final class SimDriver {
         tests.fakes.FakeUnitData.TRAIN.clear();
         tests.fakes.FakeUnitData.CANCEL.clear();
         atlantis.information.tech.ATech.useEngine();
-        map.uninstall();
+        SimMap.uninstall();
     }
-
-    // =========================================================
-    // Driver hooks used by the engines.
 
     FakeUnit unitById(int id) {
         return units.byId(id);
@@ -346,6 +355,8 @@ public final class SimDriver {
         }
     }
 
+    // =========================================================
+
     void completeResearch(int facilityId, boolean isUpgrade, String name) {
         FakeUnit facility = unitById(facilityId);
         if (facility != null) {
@@ -364,8 +375,6 @@ public final class SimDriver {
             }
         }
     }
-
-    // =========================================================
 
     private void syncFields() {
         fields.setMinerals(bank.minerals());
@@ -468,22 +477,6 @@ public final class SimDriver {
         constructions.startResearch(facility.id(), isUpgrade, typeName, frames);
     }
 
-    private static bwapi.UpgradeType upgradeOf(String typeName) {
-        try {
-            return bwapi.UpgradeType.valueOf(typeName);
-        } catch (RuntimeException | Error ignored) {
-            return null;
-        }
-    }
-
-    private static bwapi.TechType techOf(String typeName) {
-        try {
-            return bwapi.TechType.valueOf(typeName);
-        } catch (RuntimeException | Error ignored) {
-            return null;
-        }
-    }
-
     private void stepToward(FakeUnit unit, APosition dest) {
         double speed;
         try {
@@ -524,24 +517,6 @@ public final class SimDriver {
         });
     }
 
-    private static List<AUnit> living(List<FakeUnit> list) {
-        List<AUnit> alive = new ArrayList<>();
-        if (list == null) return alive;
-
-        for (FakeUnit unit : list) {
-            if (unit == null || unit.hp <= 0) continue;
-            if (!unit.isAlive()) continue;
-            alive.add(unit);
-        }
-
-        return alive;
-    }
-
-    private static final class MapSnapshotRef {
-        int x;
-        int y;
-    }
-
     private MapSnapshotRef baseRef(int baseIndex) {
         atlantis.map.snapshot.MapSnapshot.Base base = map.snap.bases.get(baseIndex);
         MapSnapshotRef ref = new MapSnapshotRef();
@@ -556,32 +531,65 @@ public final class SimDriver {
         List<int[]> slots = new ArrayList<>();
         for (int id : base.mineralIds) {
             atlantis.map.snapshot.MapSnapshot.Res res = map.snap.resources.get(id);
-            slots.add(new int[] { res.x, res.y });
+            slots.add(new int[]{res.x, res.y});
         }
-        if (slots.isEmpty()) slots.add(new int[] { base.x + 3, base.y });
+        if (slots.isEmpty()) slots.add(new int[]{base.x + 3, base.y});
 
         return slots;
     }
 
-    private static SimArena tileArena(atlantis.map.snapshot.MapSnapshot snap) {
-        SimArena arena = new SimArena(snap.w * 32, snap.h * 32);
-        for (int ty = 0; ty < snap.h; ty++) {
-            String row = snap.tiles.get(ty);
-            int runStart = -1;
-            for (int tx = 0; tx <= snap.w; tx++) {
-                boolean blocked = tx < snap.w && tx < row.length() && row.charAt(tx) == 'x';
-                if (blocked && runStart < 0) runStart = tx;
-                if (!blocked && runStart >= 0) {
-                    arena.block(runStart * 32, ty * 32, (tx - runStart) * 32, 32);
-                    runStart = -1;
-                }
-            }
-        }
+    /**
+     * Test-side number feeds (the harness fields behind A.minerals() etc).
+     */
+    public interface SimFields {
+        void setMinerals(int minerals);
 
-        return arena;
+        void setGas(int gas);
+
+        void setSupply(int used, int total);
     }
 
-    /** ATech answers from sim completions, not the engine. */
+    /**
+     * Warp/complete log entry, in Wine BUILDINGS.json spirit.
+     */
+    public static final class WarpRecord {
+        public final int frame;
+        public final String kind;
+        public final String type;
+        public final int tx;
+        public final int ty;
+        public final int bank;
+        public final int supplyUsed;
+        public final int supplyTotal;
+
+        WarpRecord(int frame, String kind, String type, int tx, int ty,
+                   int bank, int supplyUsed, int supplyTotal) {
+            this.frame = frame;
+            this.kind = kind;
+            this.type = type;
+            this.tx = tx;
+            this.ty = ty;
+            this.bank = bank;
+            this.supplyUsed = supplyUsed;
+            this.supplyTotal = supplyTotal;
+        }
+
+        @Override
+        public String toString() {
+            return "f" + frame + " " + kind + " " + type
+                + " [" + tx + "," + ty + "] bank=" + bank
+                + " supply=" + supplyUsed + "/" + supplyTotal;
+        }
+    }
+
+    private static final class MapSnapshotRef {
+        int x;
+        int y;
+    }
+
+    /**
+     * ATech answers from sim completions, not the engine.
+     */
     private static final class SimTechSource implements atlantis.information.tech.ATech.Source {
         private final Set<String> done = new HashSet<>();
 

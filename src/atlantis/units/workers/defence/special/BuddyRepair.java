@@ -11,19 +11,6 @@ public class BuddyRepair extends Manager {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        return We.terran() && A.canAfford(20, 0);
-    }
-
-    @Override
-    public Manager handle() {
-        if (handleRepairNear(unit)) return usedManager(this);
-
-        return null;
-    }
-
-
     private static boolean handleRepairNear(AUnit worker) {
         if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) return false;
 
@@ -46,5 +33,17 @@ public class BuddyRepair extends Manager {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean applies() {
+        return We.terran() && A.canAfford(20, 0);
+    }
+
+    @Override
+    public Manager handle() {
+        if (handleRepairNear(unit)) return usedManager(this);
+
+        return null;
     }
 }

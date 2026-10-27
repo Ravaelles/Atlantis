@@ -1,7 +1,6 @@
 package atlantis.production;
 
 
-import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.decisions.board.BoardState;
@@ -13,6 +12,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
@@ -35,49 +35,6 @@ import java.util.List;
  * is matchup-blind (legacy keeps all matchup gates).</p>
  */
 public class GoalBoardAdvisor extends Commander {
-
-    @Override
-    public boolean applies() {
-        return We.protoss() && A.everyNthGameFrame(1500);
-    }
-
-    @Override
-    protected CommanderFactory[] subcommanders() {
-        return new CommanderFactory[0];
-    }
-
-    @Override
-    protected boolean handle() {
-        BoardState state = snapshot();
-        List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
-        Goal top = GoalBoard.top(state, ProtossOpening.goals(), GoalBoardFeeder.inFlightIds());
-
-        StringBuilder active = new StringBuilder();
-        for (Goal goal : ranked) {
-            if (active.length() > 0) active.append(",");
-            active.append(goal.id());
-        }
-
-        // JSON-only since 2026-10-15 (owner: no red spam in the game
-        // log): the opinion lands in EVENTS.jsonl under BOARD. Funded
-        // rides along since the wallet: which wants the bank covers.
-        StringBuilder funded = new StringBuilder();
-        for (String id : GoalBoardFeeder.fundedIds(state, ranked)) {
-            if (funded.length() > 0) funded.append(",");
-            funded.append(id);
-        }
-        EventLog.key(LogKey.BOARD)
-            .param("top", top == null ? "-" : top.id())
-            .param("active", active.toString())
-            .param("funded", funded.toString())
-            .param("minerals", state.minerals)
-            .param("supplyUsed", state.supplyUsed)
-            .param("supplyTotal", state.supplyTotal)
-            .param("workers", state.workerCount)
-            .log(A.now(), A.minSec());
-
-        return false;
-    }
 
     /**
      * The single seam where engine reads become board data. Every field the
@@ -187,5 +144,48 @@ public class GoalBoardAdvisor extends Commander {
         ProductionOrder order = Queue.get().notFinished().ofType(AUnitType.Protoss_Cybernetics_Core).first();
 
         return order != null && ReadyToProduceOrder.supplyAllows(order);
+    }
+
+    @Override
+    public boolean applies() {
+        return We.protoss() && A.everyNthGameFrame(1500);
+    }
+
+    @Override
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[0];
+    }
+
+    @Override
+    protected boolean handle() {
+        BoardState state = snapshot();
+        List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
+        Goal top = GoalBoard.top(state, ProtossOpening.goals(), GoalBoardFeeder.inFlightIds());
+
+        StringBuilder active = new StringBuilder();
+        for (Goal goal : ranked) {
+            if (active.length() > 0) active.append(",");
+            active.append(goal.id());
+        }
+
+        // JSON-only since 2026-10-15 (owner: no red spam in the game
+        // log): the opinion lands in EVENTS.jsonl under BOARD. Funded
+        // rides along since the wallet: which wants the bank covers.
+        StringBuilder funded = new StringBuilder();
+        for (String id : GoalBoardFeeder.fundedIds(state, ranked)) {
+            if (funded.length() > 0) funded.append(",");
+            funded.append(id);
+        }
+        EventLog.key(LogKey.BOARD)
+            .param("top", top == null ? "-" : top.id())
+            .param("active", active.toString())
+            .param("funded", funded.toString())
+            .param("minerals", state.minerals)
+            .param("supplyUsed", state.supplyUsed)
+            .param("supplyTotal", state.supplyTotal)
+            .param("workers", state.workerCount)
+            .log(A.now(), A.minSec());
+
+        return false;
     }
 }

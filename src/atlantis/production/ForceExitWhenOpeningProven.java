@@ -57,6 +57,22 @@ import atlantis.util.log.ErrorLog;
  */
 public class ForceExitWhenOpeningProven extends Commander {
 
+    /**
+     * Completed Dragoons on the board.
+     *
+     * <p>
+     * {@code Count.existing} is the right number here rather than
+     * {@code existingOrInProduction}:
+     * a Dragoon still warping in is not yet proof that the tech chain works - the
+     * next event
+     * could be a cancel - whereas a finished one is the fact this gate is named
+     * after.
+     * </p>
+     */
+    private static int completedDragoons() {
+        return Count.existing(AUnitType.Protoss_Dragoon);
+    }
+
     @Override
     public boolean applies() {
         if (!Env.coreAndDragoonGate()) return false;
@@ -82,28 +98,12 @@ public class ForceExitWhenOpeningProven extends Commander {
 
         AGame.sendMessage("ForceExitWhenOpeningProven");
         ErrorLog.printErrorOnce(
-                "Opening proven at " + AGame.timeSeconds() + " in-game seconds: CyberneticsCore="
-                        + Count.existingOrInProduction(AUnitType.Protoss_Cybernetics_Core)
-                        + " Dragoons=" + completedDragoons());
+            "Opening proven at " + AGame.timeSeconds() + " in-game seconds: CyberneticsCore="
+                + Count.existingOrInProduction(AUnitType.Protoss_Cybernetics_Core)
+                + " Dragoons=" + completedDragoons());
 
         Atlantis.getInstance().onEnd(true);
 
         return false;
-    }
-
-    /**
-     * Completed Dragoons on the board.
-     *
-     * <p>
-     * {@code Count.existing} is the right number here rather than
-     * {@code existingOrInProduction}:
-     * a Dragoon still warping in is not yet proof that the tech chain works - the
-     * next event
-     * could be a cancel - whereas a finished one is the fact this gate is named
-     * after.
-     * </p>
-     */
-    private static int completedDragoons() {
-        return Count.existing(AUnitType.Protoss_Dragoon);
     }
 }

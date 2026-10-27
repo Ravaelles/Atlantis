@@ -83,13 +83,13 @@ public class BuildingTileHelperTest {
     @Test
     public void theTilesAccessorsTruncateAndLosePrecision() {
         assertEquals(1, GATEWAY.dimensionRightTiles(),
-                "48/32 truncates to 1: the tiles accessor loses 16 px of a Gateway's extent");
+            "48/32 truncates to 1: the tiles accessor loses 16 px of a Gateway's extent");
         assertEquals(1, GATEWAY.dimensionDownTiles(),
-                "40/32 truncates to 1: the down extent loses 8 px");
+            "40/32 truncates to 1: the down extent loses 8 px");
 
         assertTrue(
-                GATEWAY.dimensionRightTiles() * PX_PER_TILE != GATEWAY.dimensionRightPixels(),
-                "the two accessors disagree for a Gateway - code must not mix them");
+            GATEWAY.dimensionRightTiles() * PX_PER_TILE != GATEWAY.dimensionRightPixels(),
+            "the two accessors disagree for a Gateway - code must not mix them");
     }
 
     /**
@@ -108,23 +108,25 @@ public class BuildingTileHelperTest {
         assertEquals(origin.y(), left.y(), "a leftward step does not move y");
     }
 
-    /** The general form agrees with the specific one it duplicates. */
+    /**
+     * The general form agrees with the specific one it duplicates.
+     */
     @Test
     public void theGeneralAndSpecificLeftFormsAgree() {
         APosition origin = at(50, 50);
 
         assertEquals(
-                BuildingTileHelper.tileLeftFrom(GATEWAY, origin).x(),
-                BuildingTileHelper.tilesLeftFrom(GATEWAY, origin, 1).x(),
-                "tileLeftFrom must equal tilesLeftFrom(..., 1) - they are the same operation");
+            BuildingTileHelper.tileLeftFrom(GATEWAY, origin).x(),
+            BuildingTileHelper.tilesLeftFrom(GATEWAY, origin, 1).x(),
+            "tileLeftFrom must equal tilesLeftFrom(..., 1) - they are the same operation");
         assertEquals(
-                BuildingTileHelper.tiles2LeftFrom(GATEWAY, origin).x(),
-                BuildingTileHelper.tilesLeftFrom(GATEWAY, origin, 2).x(),
-                "the 2-tile form must equal the general form with 2");
+            BuildingTileHelper.tiles2LeftFrom(GATEWAY, origin).x(),
+            BuildingTileHelper.tilesLeftFrom(GATEWAY, origin, 2).x(),
+            "the 2-tile form must equal the general form with 2");
         assertEquals(
-                BuildingTileHelper.tiles4RightFrom(GATEWAY, origin).x(),
-                BuildingTileHelper.tilesRightFrom(GATEWAY, origin, 4).x(),
-                "the 4-tile form must equal the general form with 4");
+            BuildingTileHelper.tiles4RightFrom(GATEWAY, origin).x(),
+            BuildingTileHelper.tilesRightFrom(GATEWAY, origin, 4).x(),
+            "the 4-tile form must equal the general form with 4");
     }
 
     /**
@@ -144,7 +146,9 @@ public class BuildingTileHelperTest {
         assertEquals(PX_PER_TILE, three - two, "the third step is one tile beyond the second");
     }
 
-    /** Down and up scale the same way, on the y axis, and never touch x. */
+    /**
+     * Down and up scale the same way, on the y axis, and never touch x.
+     */
     @Test
     public void verticalStepsScaleOnYAndLeaveXAlone() {
         APosition origin = at(50, 50);

@@ -14,10 +14,14 @@ import atlantis.util.AFile;
  */
 public final class OpenBWConfig {
 
-    /** The harness build tree (BWAPILauncher, libs, maps). */
+    /**
+     * The harness build tree (BWAPILauncher, libs, maps).
+     */
     public static final String DEFAULT_HARNESS_DIR = "/sc-ai/StardustDevEnvironment";
 
-    /** The working directory the harness resolves maps and MPQs from. */
+    /**
+     * The working directory the harness resolves maps and MPQs from.
+     */
     public static final String DEFAULT_GAME_DIR = DEFAULT_HARNESS_DIR + "/build/test";
 
     /**
@@ -25,7 +29,9 @@ public final class OpenBWConfig {
      */
     public static final String DEFAULT_SERVER_SCRIPT = DEFAULT_HARNESS_DIR + "/scripts/run-openbw-server.sh";
 
-    /** The owner's map; the harness ships it under maps/cog/. */
+    /**
+     * The owner's map; the harness ships it under maps/cog/.
+     */
     public static final String DEFAULT_MAP = "maps/cog/(3)TauCross1.1.scx";
 
     public static final String DEFAULT_OUR_RACE = "Protoss";
@@ -41,7 +47,9 @@ public final class OpenBWConfig {
 
     public static final int DEFAULT_GAME_TIMEOUT_SECONDS = TIMEOUT_SECONDS;
 
-    /** Hard upper bound for every OpenBW simulation, independent of caller timeout. */
+    /**
+     * Hard upper bound for every OpenBW simulation, independent of caller timeout.
+     */
     public static final int MAX_GAME_TIMEOUT_SECONDS = TIMEOUT_SECONDS;
 
     /**
@@ -71,7 +79,9 @@ public final class OpenBWConfig {
         this.hostWaitSeconds = builder.hostWaitSeconds;
     }
 
-    /** Defaults for this machine; the common case is a map (and maybe races). */
+    /**
+     * Defaults for this machine; the common case is a map (and maybe races).
+     */
     public static OpenBWConfig defaults() {
         return builder().build();
     }
@@ -124,7 +134,9 @@ public final class OpenBWConfig {
         return harnessDir + "/build/bin/BWAPILauncher";
     }
 
-    /** The files the harness needs to host a game at all. */
+    /**
+     * The files the harness needs to host a game at all.
+     */
     public String missingRequirement() {
         if (!AFile.directoryExists(harnessDir))
             return "harness dir missing: " + harnessDir;
@@ -138,7 +150,7 @@ public final class OpenBWConfig {
         if (!AFile.fileExists(launcherBinary())) {
             return "BWAPILauncher not built: " + launcherBinary() + " (cmake --build " + harnessDir + "/build)";
         }
-        for (String mpq : new String[] { "StarDat.mpq", "BrooDat.mpq", "Patch_rt.mpq" }) {
+        for (String mpq : new String[]{"StarDat.mpq", "BrooDat.mpq", "Patch_rt.mpq"}) {
             if (!AFile.fileExists(gameDir + "/" + mpq))
                 return "missing " + mpq + " in " + gameDir;
         }
@@ -147,6 +159,12 @@ public final class OpenBWConfig {
 
     public boolean isRunnable() {
         return missingRequirement() == null;
+    }
+
+    @Override
+    public String toString() {
+        return "OpenBWConfig{map=" + map + " " + ourRace + "v" + enemyRace
+            + " harness=" + harnessDir + " logs=" + logDir + "}";
     }
 
     public static final class Builder {
@@ -217,11 +235,5 @@ public final class OpenBWConfig {
         public OpenBWConfig build() {
             return new OpenBWConfig(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "OpenBWConfig{map=" + map + " " + ourRace + "v" + enemyRace
-                + " harness=" + harnessDir + " logs=" + logDir + "}";
     }
 }

@@ -12,7 +12,9 @@ package atlantis.production.v2;
  */
 public final class ProductionGoal implements Comparable<ProductionGoal> {
 
-    /** Priority bands from 01_PRODUCTION.md §5B. */
+    /**
+     * Priority bands from 01_PRODUCTION.md §5B.
+     */
     public static final int PRIORITY_EMERGENCY = 10;
 
     /**
@@ -53,10 +55,14 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     public static final int PRIORITY_MAINARMY = 90;
     public static final int PRIORITY_LOWEST = 100;
 
-    /** Keep every allowed producer busy for the whole horizon. */
+    /**
+     * Keep every allowed producer busy for the whole horizon.
+     */
     public static final int COUNT_CONTINUOUS = -1;
 
-    /** No limit on how many facilities a goal may use at once. */
+    /**
+     * No limit on how many facilities a goal may use at once.
+     */
     public static final int NO_PRODUCER_LIMIT = Integer.MAX_VALUE;
 
     private final Producible item;
@@ -85,7 +91,7 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     }
 
     public ProductionGoal(Producible item, int priority, int count, int targetStartFrame,
-            TargetPlacement placement, int producerLimit) {
+                          TargetPlacement placement, int producerLimit) {
         this.item = item;
         this.priority = priority;
         this.count = count;
@@ -105,27 +111,33 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
         this.source = source;
     }
 
-    /** Same goal, attributed to its emitting list. Lists tag, never hand-edit. */
+    public static ProductionGoal emergency(Producible item) {
+        return new ProductionGoal(item, PRIORITY_EMERGENCY, 1, 0, TargetPlacement.anywhere());
+    }
+
+    /**
+     * Same goal, attributed to its emitting list. Lists tag, never hand-edit.
+     */
     public ProductionGoal withSource(String source) {
         return new ProductionGoal(this, source);
     }
 
-    /** Which generator declared this goal - "unknown" for direct constructions. */
+    /**
+     * Which generator declared this goal - "unknown" for direct constructions.
+     */
     public String source() {
         return source;
     }
 
-    /** How many distinct facilities this goal may occupy. */
+    /**
+     * How many distinct facilities this goal may occupy.
+     */
     public int producerLimit() {
         return producerLimit;
     }
 
     public boolean isContinuous() {
         return count == COUNT_CONTINUOUS;
-    }
-
-    public static ProductionGoal emergency(Producible item) {
-        return new ProductionGoal(item, PRIORITY_EMERGENCY, 1, 0, TargetPlacement.anywhere());
     }
 
     public Producible item() {
@@ -156,6 +168,6 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     @Override
     public String toString() {
         return "Goal{" + item.id() + " x" + (isContinuous() ? "inf" : String.valueOf(count)) + " p" + priority
-                + (targetStartFrame > 0 ? " @" + targetStartFrame : "") + "}";
+            + (targetStartFrame > 0 ? " @" + targetStartFrame : "") + "}";
     }
 }

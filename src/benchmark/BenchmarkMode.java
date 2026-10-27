@@ -4,6 +4,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.GameSpeed;
 
 import atlantis.util.AFile;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ public class BenchmarkMode {
         for (String arg : args) {
             if (arg.equals("--benchmark")) {
                 isBenchmarkMode = true;
+                break;
             }
         }
 

@@ -1,6 +1,7 @@
 package atlantis.game.listeners;
 
 import atlantis.Atlantis;
+import atlantis.cherryvis.ACherryVis;
 import atlantis.config.env.Env;
 import atlantis.debug.tweaker.ParamTweakerEvaluator;
 import atlantis.game.A;
@@ -11,7 +12,6 @@ import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 import benchmark.BenchmarkMode;
-import atlantis.cherryvis.ACherryVis;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,7 +27,9 @@ public class OnGameEnd {
      */
     private static boolean _executed = false;
 
-    /** Called from the per-game initialisation so the latch starts fresh. */
+    /**
+     * Called from the per-game initialisation so the latch starts fresh.
+     */
     public static void reset() {
         _executed = false;
     }

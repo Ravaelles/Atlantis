@@ -16,7 +16,17 @@ public abstract class BaseCommander {
         initChildren(subcommanders());
     }
 
+    protected static CommanderFactory[] mergeCommanders(CommanderFactory[] raceSpecific, CommanderFactory[] generic) {
+        CommanderFactory[] merged = new CommanderFactory[raceSpecific.length + generic.length];
+        System.arraycopy(raceSpecific, 0, merged, 0, raceSpecific.length);
+        System.arraycopy(generic, 0, merged, raceSpecific.length, generic.length);
+
+        return merged;
+    }
+
     protected abstract CommanderFactory[] subcommanders();
+
+    // =========================================================
 
     /**
      * Stage C: builds child commanders from explicit constructor references,
@@ -44,16 +54,6 @@ public abstract class BaseCommander {
         }
 
         commanderObjects = created;
-    }
-
-    // =========================================================
-
-    protected static CommanderFactory[] mergeCommanders(CommanderFactory[] raceSpecific, CommanderFactory[] generic) {
-        CommanderFactory[] merged = new CommanderFactory[raceSpecific.length + generic.length];
-        System.arraycopy(raceSpecific, 0, merged, 0, raceSpecific.length);
-        System.arraycopy(generic, 0, merged, raceSpecific.length, generic.length);
-
-        return merged;
     }
 
     public boolean shouldProfile() {

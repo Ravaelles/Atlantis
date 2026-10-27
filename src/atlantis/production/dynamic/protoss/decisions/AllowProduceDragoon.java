@@ -18,7 +18,8 @@ public class AllowProduceDragoon {
 
         if (Strategy.get().isGoingHiddenUnits()) {
             if (Select.ourWithUnfinishedOfType(Protoss_Templar_Archives).notEmpty()) return false;
-            if (Select.ourWithUnfinishedOfType(Protoss_Citadel_of_Adun).notEmpty()) return false;
+
+            return !Select.ourWithUnfinishedOfType(Protoss_Citadel_of_Adun).notEmpty();
         }
 
         return true;

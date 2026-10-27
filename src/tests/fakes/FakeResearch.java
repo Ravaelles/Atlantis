@@ -4,10 +4,7 @@ import atlantis.information.tech.ATech;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * What the stub world's player has researched: nothing, unless a test says
@@ -45,9 +42,8 @@ public class FakeResearch implements ATech.Source {
     // =========================================================
 
     public static FakeResearch withResearched(TechType... techs) {
-        for (TechType tech : techs) {
-            current.researched.add(tech);
-        }
+        Collections.addAll(current.researched, techs);
+
         return current;
     }
 

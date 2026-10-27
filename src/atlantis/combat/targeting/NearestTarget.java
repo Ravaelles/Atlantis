@@ -12,7 +12,9 @@ import atlantis.units.AUnit;
  */
 public final class NearestTarget {
 
-    /** Engagement envelope: farther foes do not stop the march. */
+    /**
+     * Engagement envelope: farther foes do not stop the march.
+     */
     public static final double NEAREST_TILES = 9;
 
     private NearestTarget() {

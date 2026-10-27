@@ -57,36 +57,25 @@ import java.util.Set;
  */
 public class LegacyPlacementPlanner implements PlacementPlanner {
 
-    /**
-     * Ranking seam for candidates: the legacy finder returns one validated tile,
-     * so today there is nothing to choose between (see the NOTE in
-     * {@link #reservePlacement}). When a finder exposes several validated
-     * candidates, only this resolver is replaced - the scheduler does not
-     * change.
-     */
-    public interface CandidateResolver {
-        int choose(List<APosition> candidates, Producible building);
-    }
-
     private static final CandidateResolver FIRST_CANDIDATE = new CandidateResolver() {
         @Override
         public int choose(List<APosition> candidates, Producible building) {
             return candidates.isEmpty() ? -1 : 0;
         }
     };
-
-    private CandidateResolver candidateResolver = FIRST_CANDIDATE;
-
-    public void useCandidateResolver(CandidateResolver resolver) {
-        this.candidateResolver = resolver != null ? resolver : FIRST_CANDIDATE;
-    }
-
-    /** Build tiles already claimed in the current pass: "x:y". */
+    /**
+     * Ring alternatives around the finder's first answer, each validated by
+     * the same full chain, ranked by unlocked unpowered room. Frame cost is
+     * one sweep per offset plus tile reads in a 7-tile box - no pathing;
+     * V2 runs this only while its Pylon row is unbuilt, same cadence as
+     * the single sweep it replaces. Watch the frame budget on the next
+     * V2 LIVE run; the fallback is the first tile (delete the call).
+     */
+    private static final int[][] POWER_RING = {{4, 0}, {-4, 0}, {0, 4}, {0, -4}};
+    /**
+     * Build tiles already claimed in the current pass: "x:y".
+     */
     private final Set<String> reservedTilesThisPass = new HashSet<>();
-
-    /** Chosen once per pass: every building in a frame is served by one builder. */
-    private AUnit passBuilder;
-
     /**
      * Reservations of the last pass, replayed to the dispatcher: a building
      * whose builder is already walking keeps reporting its committed frame, so
@@ -94,35 +83,21 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
      * dies (01_PRODUCTION.md §5A).
      */
     private final List<PlacementReservation> lastPassReservations = new ArrayList<>();
-
-    @Override
-    public void startPass() {
-        reservedTilesThisPass.clear();
-        lastPassReservations.clear();
-        passBuilder = null;
-    }
-
-    /** Refusal reasons already twinned this game: a planner that fails every
+    /**
+     * Refusal reasons already twinned this game: a planner that fails every
      * frame must say so once, not 22,000 times (measured: Core refused from
-     * frame 4587 to game end with zero rows anywhere). */
+     * frame 4587 to game end with zero rows anywhere).
+     */
     private final Set<String> reportedRefusals = new HashSet<>();
+    private CandidateResolver candidateResolver = FIRST_CANDIDATE;
+    /**
+     * Chosen once per pass: every building in a frame is served by one builder.
+     */
+    private AUnit passBuilder;
 
-    private void twinRefusal(AUnitType unitType, String reason) {
-        String key = unitType.name() + ":" + reason;
-        if (!reportedRefusals.add(key)) return;
-        // CATALOGUE_SITE, not PLACEMENT_FAILED: a speculative probe with no
-        // pylons yet (Forge at frame 2) is an expected refusal, not a defect,
-        // and PLACEMENT_FAILED trips scenario gates. Same row shape as the
-        // adapter so one key filters the whole site search.
-        EventLog.key(LogKey.CATALOGUE_SITE)
-            .param("type", unitType.name())
-            .param("result", "declined")
-            .param("reason", reason)
-            .param("via", "v2-legacy")
-            .log(AGame.now(), A.minSec());
-    }
-
-    /** Most refused term of the last search, or the last status when the sweep never ran (cache hit). */
+    /**
+     * Most refused term of the last search, or the last status when the sweep never ran (cache hit).
+     */
     private static String topRefusal() {
         // The race finder counts every refused tile per term (power included);
         // the shared chain only sees tiles that pass power. Read the race map
@@ -148,6 +123,52 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         if (top == null) return AbstractPositionFinder._STATUS;
 
         return top;
+    }
+
+    private static boolean sameTile(APosition a, APosition b) {
+        return a.tx() == b.tx() && a.ty() == b.ty();
+    }
+
+    private static boolean containsTile(List<APosition> tiles, APosition tile) {
+        for (APosition existing : tiles) {
+            if (existing != null && sameTile(existing, tile)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isPoweredBy(APosition tile, List<AUnit> pylons) {
+        for (AUnit pylon : pylons) {
+            if (pylon == null || !pylon.isAlive()) continue;
+            if (Math.abs(pylon.tx() - tile.tx()) <= PylonPlacementScore.POWER_RADIUS_TILES
+                && Math.abs(pylon.ty() - tile.ty()) <= PylonPlacementScore.POWER_RADIUS_TILES) return true;
+        }
+        return false;
+    }
+
+    public void useCandidateResolver(CandidateResolver resolver) {
+        this.candidateResolver = resolver != null ? resolver : FIRST_CANDIDATE;
+    }
+
+    @Override
+    public void startPass() {
+        reservedTilesThisPass.clear();
+        lastPassReservations.clear();
+        passBuilder = null;
+    }
+
+    private void twinRefusal(AUnitType unitType, String reason) {
+        String key = unitType.name() + ":" + reason;
+        if (!reportedRefusals.add(key)) return;
+        // CATALOGUE_SITE, not PLACEMENT_FAILED: a speculative probe with no
+        // pylons yet (Forge at frame 2) is an expected refusal, not a defect,
+        // and PLACEMENT_FAILED trips scenario gates. Same row shape as the
+        // adapter so one key filters the whole site search.
+        EventLog.key(LogKey.CATALOGUE_SITE)
+            .param("type", unitType.name())
+            .param("result", "declined")
+            .param("reason", reason)
+            .param("via", "v2-legacy")
+            .log(AGame.now(), A.minSec());
     }
 
     @Override
@@ -229,16 +250,6 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         return reservation;
     }
 
-    /**
-     * Ring alternatives around the finder's first answer, each validated by
-     * the same full chain, ranked by unlocked unpowered room. Frame cost is
-     * one sweep per offset plus tile reads in a 7-tile box - no pathing;
-     * V2 runs this only while its Pylon row is unbuilt, same cadence as
-     * the single sweep it replaces. Watch the frame budget on the next
-     * V2 LIVE run; the fallback is the first tile (delete the call).
-     */
-    private static final int[][] POWER_RING = {{4, 0}, {-4, 0}, {0, 4}, {0, -4}};
-
     private APosition bestPoweredSite(AUnit builder, AUnitType unitType, APosition first) {
         List<APosition> validated = new ArrayList<>();
         validated.add(first);
@@ -273,25 +284,6 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         return best != null ? best : first;
     }
 
-    private static boolean sameTile(APosition a, APosition b) {
-        return a.tx() == b.tx() && a.ty() == b.ty();
-    }
-
-    private static boolean containsTile(List<APosition> tiles, APosition tile) {
-        for (APosition existing : tiles) {
-            if (existing != null && sameTile(existing, tile)) return true;
-        }
-        return false;
-    }
-
-    private static boolean isPoweredBy(APosition tile, List<AUnit> pylons) {
-        for (AUnit pylon : pylons) {
-            if (pylon == null || !pylon.isAlive()) continue;
-            if (Math.abs(pylon.tx() - tile.tx()) <= PylonPlacementScore.POWER_RADIUS_TILES
-                && Math.abs(pylon.ty() - tile.ty()) <= PylonPlacementScore.POWER_RADIUS_TILES) return true;
-        }
-        return false;
-    }
     /**
      * Reservation carried over from the previous pass for this item, already
      * marked as committed, or null when the item is new or was never started.
@@ -303,9 +295,8 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction.buildingType() != unitType || construction.buildPosition() == null) continue;
             return PlacementReservation
-                    .success(construction.buildPosition().tx(), construction.buildPosition().ty()
-                            + 0, now)
-                    .committedAt(now);
+                .success(construction.buildPosition().tx(), construction.buildPosition().ty(), now)
+                .committedAt(now);
         }
         return null;
     }
@@ -363,5 +354,16 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         AUnit base = Select.ourBases().first();
 
         return base != null ? base : Select.ourBuildings().first();
+    }
+
+    /**
+     * Ranking seam for candidates: the legacy finder returns one validated tile,
+     * so today there is nothing to choose between (see the NOTE in
+     * {@link #reservePlacement}). When a finder exposes several validated
+     * candidates, only this resolver is replaced - the scheduler does not
+     * change.
+     */
+    public interface CandidateResolver {
+        int choose(List<APosition> candidates, Producible building);
     }
 }

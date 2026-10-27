@@ -13,8 +13,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #214c: the unit log names the active behavior, not just the
@@ -24,6 +22,10 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("infra")
 public class UnitBehaviorTagTest extends WorldStubForTests {
+
+    private static atlantis.cherryvis.simple.ACherryVisUnitLogger unitLogger() {
+        return ((ACherryVisLogger) ACherryVis.logger()).getUnitLogger();
+    }
 
     @Override
     public bwapi.Race initRace() {
@@ -52,16 +54,12 @@ public class UnitBehaviorTagTest extends WorldStubForTests {
         Env.setCherryVisEnabledForTest(false);
     }
 
-    private static atlantis.cherryvis.simple.ACherryVisUnitLogger unitLogger() {
-        return ((ACherryVisLogger) ACherryVis.logger()).getUnitLogger();
-    }
-
     @Test
     public void behaviorTagRidesTheManagerLine() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
 
-        world(20, fakeOurs(nexus, probe), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus, probe), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             probe.setManagerUsed(new GatherResources(probe), "ClusterFlee");
@@ -77,7 +75,7 @@ public class UnitBehaviorTagTest extends WorldStubForTests {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
 
-        world(20, fakeOurs(nexus, probe), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus, probe), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             probe.setManagerUsed(new GatherResources(probe), null);

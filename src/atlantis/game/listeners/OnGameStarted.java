@@ -1,39 +1,38 @@
 package atlantis.game.listeners;
 
 
-
 import atlantis.Atlantis;
+import atlantis.cherryvis.ACherryVis;
 import atlantis.combat.BattleCommander;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.profiler.RealTime;
 import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
+import atlantis.game.init.AInitialActions;
 import atlantis.game.init.DetectInitialTechs;
 import atlantis.game.race.EnemyRace;
-import atlantis.information.strategy.protoss.ProtossStrategies;
+import atlantis.information.generic.InitialMainPosition;
 import atlantis.information.strategy.Strategy;
 import atlantis.information.strategy.StrategyChooser;
-import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
-import atlantis.game.init.AInitialActions;
+import atlantis.information.strategy.protoss.ProtossStrategies;
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.map.AMap;
-import atlantis.information.generic.InitialMainPosition;
 import atlantis.map.scout.ScoutState;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.ErrorLog;
 import atlantis.util.log.LogLevel;
+import benchmark.BenchmarkMode;
 import bwapi.Race;
 import main.Main;
-import atlantis.util.log.ErrorLog;
-import benchmark.BenchmarkMode;
-import atlantis.cherryvis.ACherryVis;
 
 public class OnGameStarted {
 
@@ -143,8 +142,7 @@ public class OnGameStarted {
         if (atlantis.config.env.Env.isMapSnapshot()) {
             try {
                 atlantis.map.snapshot.MapSnapshotDumper.dumpOnce();
-            }
-            catch (Throwable ignored) {
+            } catch (Throwable ignored) {
             }
         }
 
@@ -236,43 +234,43 @@ public class OnGameStarted {
         }
     }
 
-                /**
-                 * Warns when the race the game put us in differs from the one the client
-                 * asked for. This mismatch is silent and expensive: every race branch
-                 * ({@code We.protoss()} and friends) reads the game's race, so the bot runs
-                 * the wrong race's code and simply does nothing instead of failing.
-                 *
-                 * <p>Measured cause (owner report, 2026-10-07): {@code Main.ourRace()} said
-                 * Protoss while {@code bwapi.ini} still said {@code race=Terran}, so
-                 * StarCraft started us as Terran, {@code We.protoss()} was false all game,
-                 * and {@code ProtossDynamicUnitProductionCommander.applies()} never ran -
-                 * one Zealot, one Dragoon, then no units ever again with minerals banked.
-                 * The fix for the config is in the launcher (it now writes the client's
-                 * race into bwapi.ini); this warning is what makes a future recurrence
-                 * visible in the log instead of in a lost game.</p>
-                 */
-                private static void warnIfRequestedRaceDiffersFromTheGame() {
-                    try {
-                        String requested = Main.ourRace();
-                        Race inGame = Atlantis.game().self().getRace();
-                        if (requested == null || inGame == null) return;
+    /**
+     * Warns when the race the game put us in differs from the one the client
+     * asked for. This mismatch is silent and expensive: every race branch
+     * ({@code We.protoss()} and friends) reads the game's race, so the bot runs
+     * the wrong race's code and simply does nothing instead of failing.
+     *
+     * <p>Measured cause (owner report, 2026-10-07): {@code Main.ourRace()} said
+     * Protoss while {@code bwapi.ini} still said {@code race=Terran}, so
+     * StarCraft started us as Terran, {@code We.protoss()} was false all game,
+     * and {@code ProtossDynamicUnitProductionCommander.applies()} never ran -
+     * one Zealot, one Dragoon, then no units ever again with minerals banked.
+     * The fix for the config is in the launcher (it now writes the client's
+     * race into bwapi.ini); this warning is what makes a future recurrence
+     * visible in the log instead of in a lost game.</p>
+     */
+    private static void warnIfRequestedRaceDiffersFromTheGame() {
+        try {
+            String requested = Main.ourRace();
+            Race inGame = Atlantis.game().self().getRace();
+            if (requested == null || inGame == null) return;
 
-                        String inGameName = inGame.toString();
-                        if (!requested.equalsIgnoreCase(inGameName)) {
-                            AConsole.errPrintln(LogLevel.HIGH, "");
-                            AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
-                            AConsole.errPrintln(LogLevel.HIGH, "RACE MISMATCH: the game started us as " + inGameName
-                                    + " but Main.ourRace() asks for " + requested + ".");
-                            AConsole.errPrintln(LogLevel.HIGH, "Every race-specific branch follows the GAME's race, so "
-                                    + requested + " code will not run at all");
-                            AConsole.errPrintln(LogLevel.HIGH, "(no units will be produced). Fix bwapi.ini's race= to match"
-                                    + " - the launcher scripts now do this automatically.");
-                            AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
-                            AConsole.errPrintln(LogLevel.HIGH, "");
-                        }
-                    } catch (Exception e) {
-                        // A diagnostic must never break the game.
-                        AConsole.errPrintln(LogLevel.HIGH, "Could not compare the requested race with the game's: " + e);
-                    }
-                }
+            String inGameName = inGame.toString();
+            if (!requested.equalsIgnoreCase(inGameName)) {
+                AConsole.errPrintln(LogLevel.HIGH, "");
+                AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
+                AConsole.errPrintln(LogLevel.HIGH, "RACE MISMATCH: the game started us as " + inGameName
+                    + " but Main.ourRace() asks for " + requested + ".");
+                AConsole.errPrintln(LogLevel.HIGH, "Every race-specific branch follows the GAME's race, so "
+                    + requested + " code will not run at all");
+                AConsole.errPrintln(LogLevel.HIGH, "(no units will be produced). Fix bwapi.ini's race= to match"
+                    + " - the launcher scripts now do this automatically.");
+                AConsole.errPrintln(LogLevel.HIGH, "#######################################################");
+                AConsole.errPrintln(LogLevel.HIGH, "");
             }
+        } catch (Exception e) {
+            // A diagnostic must never break the game.
+            AConsole.errPrintln(LogLevel.HIGH, "Could not compare the requested race with the game's: " + e);
+        }
+    }
+}

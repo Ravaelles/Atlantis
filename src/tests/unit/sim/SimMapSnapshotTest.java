@@ -1,18 +1,14 @@
 package tests.unit.sim;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.map.position.APosition;
 import atlantis.map.region.Regions;
 import atlantis.map.snapshot.MapSnapshot;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * StarEngine map snapshots (NEXT #191): the map library reads a stored
@@ -66,6 +62,36 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
             + "\"bases\":[{\"x\":2,\"y\":2,\"startIndex\":0,"
             + "\"mineralIds\":[0,1],\"gasIds\":[2]}],"
             + "\"regionReach\":[1,1,1,1]}";
+    }
+
+    private static String regionName(APosition pos) {
+        atlantis.map.region.ARegion region = Regions.getRegion(pos);
+        assertNotNull(region, "every tile answers a region");
+        assertInstanceOf(SimRectRegion.class, region, "the snapshot map answers: " + region.getClass());
+
+        return ((tests.unit.sim.SimRectRegion) region).name();
+    }
+
+    private static APosition firstTileOf(MapSnapshot snap, char tile) {
+        for (int ty = 0; ty < snap.h; ty++) {
+            String row = snap.tiles.get(ty);
+            for (int tx = 0; tx < row.length(); tx++) {
+                if (row.charAt(tx) == tile) return APosition.create(tx, ty);
+            }
+        }
+
+        throw new IllegalStateException("no '" + tile + "' tile in the snapshot");
+    }
+
+    private static int countChar(MapSnapshot snap, char c, boolean buildable) {
+        int count = 0;
+        for (String row : snap.tiles) {
+            for (int i = 0; i < row.length(); i++) {
+                if (buildable ? row.charAt(i) == '.' : row.charAt(i) == 'x') count++;
+            }
+        }
+
+        return count;
     }
 
     @Test
@@ -134,8 +160,7 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
                 "the snapshot graph agrees through the choke");
             assertFalse(map.hasPathBetween(APosition.create(2, 2), APosition.create(2, 12)),
                 "outside the map the snapshot answers no path");
-        }
-        finally {
+        } finally {
             SimMap.uninstall();
         }
     }
@@ -159,18 +184,9 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
             assertEquals(1, map.geysers().size());
             assertEquals(1, map.preplaced().size());
             assertEquals(AUnitType.Resource_Mineral_Field, map.minerals().get(0).type());
-        }
-        finally {
+        } finally {
             SimMap.uninstall();
         }
-    }
-
-    private static String regionName(APosition pos) {
-        atlantis.map.region.ARegion region = Regions.getRegion(pos);
-        assertNotNull(region, "every tile answers a region");
-        assertTrue(region instanceof tests.unit.sim.SimRectRegion, "the snapshot map answers: " + region.getClass());
-
-        return ((tests.unit.sim.SimRectRegion) region).name();
     }
 
     /**
@@ -215,31 +231,8 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
             assertEquals(21, map.chokes.size());
             assertFalse(map.minerals().isEmpty(), "mineral lines spawn");
             assertFalse(map.geysers().isEmpty(), "geysers spawn");
-        }
-        finally {
+        } finally {
             SimMap.uninstall();
         }
-    }
-
-    private static APosition firstTileOf(MapSnapshot snap, char tile) {
-        for (int ty = 0; ty < snap.h; ty++) {
-            String row = snap.tiles.get(ty);
-            for (int tx = 0; tx < row.length(); tx++) {
-                if (row.charAt(tx) == tile) return APosition.create(tx, ty);
-            }
-        }
-
-        throw new IllegalStateException("no '" + tile + "' tile in the snapshot");
-    }
-
-    private static int countChar(MapSnapshot snap, char c, boolean buildable) {
-        int count = 0;
-        for (String row : snap.tiles) {
-            for (int i = 0; i < row.length(); i++) {
-                if (buildable ? row.charAt(i) == '.' : row.charAt(i) == 'x') count++;
-            }
-        }
-
-        return count;
     }
 }

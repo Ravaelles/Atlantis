@@ -34,11 +34,13 @@ import java.util.List;
  */
 public final class BuildLocationCatalogue {
 
-    /** Footprints the fallback scan answers for: the sizes a building uses here. */
+    /**
+     * Footprints the fallback scan answers for: the sizes a building uses here.
+     */
     private static final int[][] SIZES = {
-            { 2, 2 }, // Pylon, Cannon, Supply Depot
-            { 3, 2 }, // Gateway, Cybernetics Core, Forge, Barracks
-            { 4, 3 }, // Nexus, Robotics Facility, Stargate
+        {2, 2}, // Pylon, Cannon, Supply Depot
+        {3, 2}, // Gateway, Cybernetics Core, Forge, Barracks
+        {4, 3}, // Nexus, Robotics Facility, Stargate
     };
 
     private final TileAvailabilityGrid grid;
@@ -51,22 +53,19 @@ public final class BuildLocationCatalogue {
      */
     private final StartBlockFinder startBlockFinder;
 
-    /** Base centres to anchor, in tile coordinates. */
+    /**
+     * Base centres to anchor, in tile coordinates.
+     */
     private final List<int[]> basePositions;
 
     private final List<StartBlockFinder.Anchor> startBlockAnchors = new ArrayList<>();
-
-    /** How a block is instantiated at a map position. */
-    public interface BlockFactory {
-        BuildBlock at(int left, int top);
-    }
 
     public BuildLocationCatalogue(TileAvailabilityGrid grid) {
         this(grid, defaultBlockFactories());
     }
 
     public BuildLocationCatalogue(TileAvailabilityGrid grid, List<BlockFactory> blockFactories) {
-        this(grid, blockFactories, null, Collections.<int[]>emptyList());
+        this(grid, blockFactories, null, Collections.emptyList());
     }
 
     /**
@@ -87,7 +86,9 @@ public final class BuildLocationCatalogue {
         rebuild();
     }
 
-    /** The templates this build ships (S2: all 24 normal + 4 start variants). */
+    /**
+     * The templates this build ships (S2: all 24 normal + 4 start variants).
+     */
     public static List<BlockFactory> defaultBlockFactories() {
         List<BlockFactory> factories = new ArrayList<>();
 
@@ -112,12 +113,16 @@ public final class BuildLocationCatalogue {
         return factories;
     }
 
-    /** Everything found, unordered. */
+    /**
+     * Everything found, unordered.
+     */
     public List<BuildLocation> all() {
         return Collections.unmodifiableList(all);
     }
 
-    /** Candidates of an exact footprint, best first. */
+    /**
+     * Candidates of an exact footprint, best first.
+     */
     public List<BuildLocation> candidates(int tileWidth, int tileHeight, LocationScorer scorer) {
         List<BuildLocation> matching = new ArrayList<>();
         for (BuildLocation location : all) {
@@ -210,11 +215,11 @@ public final class BuildLocationCatalogue {
                         continue;
 
                     all.add(new BuildLocation(
-                            x, y, w, h,
-                            0, // builderFrames: the planner computes it (needs workers)
-                            0, // available now: the grid already excluded used tiles
-                            0, // distanceToExit: the planner fills it from the neighbourhood
-                            false // tech-location: a block concern
+                        x, y, w, h,
+                        0, // builderFrames: the planner computes it (needs workers)
+                        0, // available now: the grid already excluded used tiles
+                        0, // distanceToExit: the planner fills it from the neighbourhood
+                        false // tech-location: a block concern
                     ));
                 }
             }
@@ -228,6 +233,13 @@ public final class BuildLocationCatalogue {
      */
     public void reserve(BuildLocation location) {
         grid.markUsed(location.tileX(), location.tileY(), location.tileWidth(), location.tileHeight());
+    }
+
+    /**
+     * How a block is instantiated at a map position.
+     */
+    public interface BlockFactory {
+        BuildBlock at(int left, int top);
     }
 
     /**

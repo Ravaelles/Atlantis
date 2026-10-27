@@ -26,62 +26,6 @@ import atlantis.units.AUnitType;
  * has seen.</p>
  */
 public class MapTiles {
-    public interface Source {
-        boolean isWalkable(HasPosition at);
-
-        boolean isExplored(HasPosition at);
-
-        boolean isVisible(HasPosition at);
-
-        /**
-         * @param alsoCheckBuildings whether buildings on the tile count as blocking,
-         *                           like {@code Game.isBuildable(int, int, boolean)}.
-         */
-        boolean isBuildable(HasPosition at, boolean alsoCheckBuildings);
-
-        /**
-         * "Can a building of this type stand on this tile?" The engine answers in
-         * a game; the harness answers from its own rules. A <b>refusal that is
-         * neither an engine answer nor a harness rule</b> is what the default
-         * below is for - see the note in {@code canBuildHere}.
-         */
-        default boolean spawnsFromMapData() {
-            return true;
-        }
-
-        /**
-         * Is there a walkable path from one tile to the other? The stub world has
-         * no pathing graph, so it answers yes - which is what lets a test place two
-         * bases 40 tiles apart without building a map for them.
-         */
-        boolean hasPathBetween(HasPosition from, HasPosition to);
-
-        /**
-         * Can {@code builder} put {@code building} down on this tile? A game asks
-         * the engine, which knows about power, terrain and the buildings already
-         * standing there. The stub world has no engine answer, so it approximates
-         * one from the units it does have ({@code tests.fakes.FakeMapTiles}).
-         *
-         * @param builder may be a double, which has no engine object; the harness's
-         *                 answer does not need one.
-         */
-        boolean canBuildHere(AUnit builder, AUnitType building, APosition at);
-    }
-
-    private static Source source = null;
-
-    public static void useSource(Source newSource) {
-        source = newSource;
-    }
-
-    public static void useEngine() {
-        source = null;
-    }
-
-    private static Source source() {
-        return source != null ? source : EngineSource;
-    }
-
     private static final Source EngineSource = new Source() {
         @Override
         public boolean isWalkable(HasPosition at) {
@@ -115,12 +59,25 @@ public class MapTiles {
             return Atlantis.game().canBuildHere(at.toTilePosition(), building.ut(), builder.u());
         }
     };
+    private static Source source = null;
 
-    // =========================================================
+    public static void useSource(Source newSource) {
+        source = newSource;
+    }
+
+    public static void useEngine() {
+        source = null;
+    }
+
+    private static Source source() {
+        return source != null ? source : EngineSource;
+    }
 
     public static boolean isWalkable(HasPosition at) {
         return source().isWalkable(at);
     }
+
+    // =========================================================
 
     public static boolean isExplored(HasPosition at) {
         return source().isExplored(at);
@@ -201,5 +158,47 @@ public class MapTiles {
         }
 
         return true;
+    }
+
+    public interface Source {
+        boolean isWalkable(HasPosition at);
+
+        boolean isExplored(HasPosition at);
+
+        boolean isVisible(HasPosition at);
+
+        /**
+         * @param alsoCheckBuildings whether buildings on the tile count as blocking,
+         *                           like {@code Game.isBuildable(int, int, boolean)}.
+         */
+        boolean isBuildable(HasPosition at, boolean alsoCheckBuildings);
+
+        /**
+         * "Can a building of this type stand on this tile?" The engine answers in
+         * a game; the harness answers from its own rules. A <b>refusal that is
+         * neither an engine answer nor a harness rule</b> is what the default
+         * below is for - see the note in {@code canBuildHere}.
+         */
+        default boolean spawnsFromMapData() {
+            return true;
+        }
+
+        /**
+         * Is there a walkable path from one tile to the other? The stub world has
+         * no pathing graph, so it answers yes - which is what lets a test place two
+         * bases 40 tiles apart without building a map for them.
+         */
+        boolean hasPathBetween(HasPosition from, HasPosition to);
+
+        /**
+         * Can {@code builder} put {@code building} down on this tile? A game asks
+         * the engine, which knows about power, terrain and the buildings already
+         * standing there. The stub world has no engine answer, so it approximates
+         * one from the units it does have ({@code tests.fakes.FakeMapTiles}).
+         *
+         * @param builder may be a double, which has no engine object; the harness's
+         *                answer does not need one.
+         */
+        boolean canBuildHere(AUnit builder, AUnitType building, APosition at);
     }
 }

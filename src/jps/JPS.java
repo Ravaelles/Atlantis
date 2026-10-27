@@ -89,6 +89,7 @@ public abstract class JPS<T extends Node> {
     /**
      * Identify successors for the given node. Runs a JPS in direction of each available neighbor, adding any open
      * nodes found to the open list.
+     *
      * @return All the nodes we have found jumpable from the current node
      */
     private void identifySuccessors(T node, T goal, Set<T> goals, Queue<T> open, Set<T> closed, Map<T, T> parentMap,

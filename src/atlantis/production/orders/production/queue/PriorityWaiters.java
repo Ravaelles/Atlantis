@@ -161,9 +161,8 @@ public class PriorityWaiters {
         // for a whole game (152437). Owner's may-outrank set for tech is
         // detection-necessity only.
         AUnitType type = order.unitType();
-        if (type != null && (type.isPylon() || type.isSupplyDepot() || type.isOverlord())) return false;
 
-        return true;
+        return type == null || (!type.isPylon() && !type.isSupplyDepot() && !type.isOverlord());
     }
 
     /**
@@ -178,9 +177,8 @@ public class PriorityWaiters {
     public static boolean coreOutranksPylons() {
         if (A.supplyTotal() < 17) return false;
         if (A.minerals() > 284) return false;
-        if (A.supplyFree() < 2) return false;
 
-        return true;
+        return A.supplyFree() >= 2;
     }
 
     /**

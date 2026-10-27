@@ -7,8 +7,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Pin-first for the NEXT #10 dispatch slice: combatBuildingsAnti routes

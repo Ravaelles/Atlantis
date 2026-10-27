@@ -15,19 +15,29 @@ package atlantis.debug.tweaker;
  */
 public abstract class TuningEngine {
 
-    /** CLI name, e.g. {@code wine}. */
+    /**
+     * CLI name, e.g. {@code wine}.
+     */
     public abstract String name();
 
-    /** Batch script playing N games into an OUTDIR, wine-batch-shaped. */
+    /**
+     * Batch script playing N games into an OUTDIR, wine-batch-shaped.
+     */
     public abstract String batchScript();
 
-    /** Base env file the batch copies per game. */
+    /**
+     * Base env file the batch copies per game.
+     */
     public abstract String defaultEnv();
 
-    /** Wall-clock seconds a single game may take on this engine. */
+    /**
+     * Wall-clock seconds a single game may take on this engine.
+     */
     public abstract int gameTimeoutSeconds();
 
-    /** False when the engine cannot play a game at all right now. */
+    /**
+     * False when the engine cannot play a game at all right now.
+     */
     public abstract boolean isLive();
 
     /**

@@ -52,7 +52,7 @@ public class TileMapSource implements MapTiles.Source {
 
     private boolean defaultWalkable = true;
     private boolean defaultBuildable = true;
-    private boolean defaultExplored = true;
+    private final boolean defaultExplored = true;
 
     public static TileMapSource everythingFine() {
         return new TileMapSource();
@@ -60,16 +60,24 @@ public class TileMapSource implements MapTiles.Source {
 
     // ---- setup ----------------------------------------------------------------
 
-    /** Convenience: the fakes install themselves as the tile source. */
+    /**
+     * Restores the stub world's own answers.
+     */
+    public static void uninstall() {
+        FakeMapTiles.installAsSource();
+    }
+
+    private static long key(int tx, int ty) {
+        return ((long) tx << 32) | (ty & 0xffffffffL);
+    }
+
+    /**
+     * Convenience: the fakes install themselves as the tile source.
+     */
     public TileMapSource install() {
         MapTiles.useSource(this);
 
         return this;
-    }
-
-    /** Restores the stub world's own answers. */
-    public static void uninstall() {
-        FakeMapTiles.installAsSource();
     }
 
     public TileMapSource blockTile(int tx, int ty) {
@@ -90,7 +98,9 @@ public class TileMapSource implements MapTiles.Source {
         return this;
     }
 
-    /** Every tile in the rectangle (inclusive of both corners) is unwalkable. */
+    /**
+     * Every tile in the rectangle (inclusive of both corners) is unwalkable.
+     */
     public TileMapSource blockRect(int x1, int y1, int x2, int y2) {
         for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
             for (int y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
@@ -110,10 +120,6 @@ public class TileMapSource implements MapTiles.Source {
         this.defaultBuildable = value;
 
         return this;
-    }
-
-    private static long key(int tx, int ty) {
-        return ((long) tx << 32) | (ty & 0xffffffffL);
     }
 
     // ---- MapTiles.Source ------------------------------------------------------

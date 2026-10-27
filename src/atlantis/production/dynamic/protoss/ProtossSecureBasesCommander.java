@@ -2,22 +2,38 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.dynamic.protoss.reinforce.ShouldSecureProtossBase;
 import atlantis.production.dynamic.protoss.reinforce.ProtossSecureBaseWithCannons;
+import atlantis.production.dynamic.protoss.reinforce.ShouldSecureProtossBase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ProtossSecureBasesCommander extends Commander {
     private static boolean hasMutas = false;
+
+    private static boolean notTooManyStarted() {
+        int maxNotStartedAtOnce = (hasMutas ? 3 : 0)
+            + (A.hasMinerals(450) ? 2 : 1)
+            + (A.hasMinerals(650) ? 2 : 0);
+
+        return ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) <= maxNotStartedAtOnce;
+    }
+
+    public static boolean hasMutas() {
+        if (hasMutas) return true;
+
+        return hasMutas = (Enemy.zerg() && EnemyUnits.mutas() > 0);
+    }
+
+    // =========================================================
 
     @Override
     public boolean applies() {
@@ -38,16 +54,6 @@ public class ProtossSecureBasesCommander extends Commander {
         return false;
     }
 
-    // =========================================================
-
-    private static boolean notTooManyStarted() {
-        int maxNotStartedAtOnce = (hasMutas ? 3 : 0)
-            + (A.hasMinerals(450) ? 2 : 1)
-            + (A.hasMinerals(650) ? 2 : 0);
-
-        return ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) <= maxNotStartedAtOnce;
-    }
-
     private boolean forgeFE() {
         if (!Strategy.get().isExpansion()) return false;
 
@@ -56,15 +62,9 @@ public class ProtossSecureBasesCommander extends Commander {
         }
 
         if (Enemy.zerg()) {
-            if (EnemyUnits.zerglings() >= 12 && Count.cannonsWithUnfinished() < 3) return true;
+            return EnemyUnits.zerglings() >= 12 && Count.cannonsWithUnfinished() < 3;
         }
 
         return false;
-    }
-
-    public static boolean hasMutas() {
-        if (hasMutas) return true;
-
-        return hasMutas = (Enemy.zerg() && EnemyUnits.mutas() > 0);
     }
 }

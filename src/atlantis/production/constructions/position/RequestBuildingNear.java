@@ -18,12 +18,12 @@ import atlantis.units.workers.FreeWorkers;
 public class RequestBuildingNear {
     public static String lastError = null;
 
-    private AUnitType type;
+    private final AUnitType type;
     private HasPosition near = null;
     private int maxDistance = MaxBuildingDist.MAX_DIST;
     private boolean specialGridExclusionPermission = false;
     private int maxOtherUnfinishedNearby = 1;
-    private ProductionOrderPriority priority;
+    private final ProductionOrderPriority priority;
 
     // =========================================================
 
@@ -42,6 +42,22 @@ public class RequestBuildingNear {
 
     // =========================================================
 
+    /**
+     * The sited door bypasses the spiral checklist
+     * ({@code PositionFulfillsAllConditions}), so it asks the two overlap
+     * questions itself. A tile an unfinished or a standing same-type
+     * building covers dies downstream and the caller re-fires blindly -
+     * refuse it here, like the tooManyNear guard above. Public as a seam:
+     * the pick itself needs a game, the overlap question pins in
+     * milliseconds.
+     */
+    public static boolean isSiteBlockedByKnownBuilding(APosition site, AUnitType type) {
+        return atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+            .check(site, type)
+            || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+            .check(site, type);
+    }
+
     public RequestBuildingNear near(HasPosition near) {
         this.near = near;
 
@@ -59,6 +75,8 @@ public class RequestBuildingNear {
 
         return this;
     }
+
+    // =========================================================
 
     public RequestBuildingNear specialGridExclusionPermission() {
         this.specialGridExclusionPermission = true;
@@ -106,9 +124,9 @@ public class RequestBuildingNear {
         // id as the join key (same oid groups one demand's retries).
         atlantis.decisions.board.DecisionLog.record(
             atlantis.decisions.board.ADecision.decide(
-                atlantis.decisions.board.ADecision.Kind.BUILD, type.name(),
-                "sited:[" + exact.tx() + "," + exact.ty() + "]",
-                atlantis.decisions.board.ADecision.Source.DYNAMIC)
+                    atlantis.decisions.board.ADecision.Kind.BUILD, type.name(),
+                    "sited:[" + exact.tx() + "," + exact.ty() + "]",
+                    atlantis.decisions.board.ADecision.Source.DYNAMIC)
                 .frame(A.now())
                 .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
                 .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
@@ -119,8 +137,6 @@ public class RequestBuildingNear {
 
         return order;
     }
-
-    // =========================================================
 
     private APosition findExactPosition() {
         AUnit builder = FreeWorkers.get().nearestTo(near);
@@ -148,15 +164,9 @@ public class RequestBuildingNear {
     private boolean preventTooManyOfTheSameTypeInOnePlace(APosition position) {
         if (position == null) return false;
 
-        if (
-            type.isCannon()
-                && Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).countInRadius(8, position) >= 6
-        ) {
-//            ErrorLog.printMaxOncePerMinute(A.minSec() + " - Prevent excessive cannons at " + position);
-            return true;
-        }
-
-        return false;
+        //            ErrorLog.printMaxOncePerMinute(A.minSec() + " - Prevent excessive cannons at " + position);
+        return type.isCannon()
+            && Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).countInRadius(8, position) >= 6;
     }
 
     private boolean tooManyNear(AUnitType type, HasPosition near) {
@@ -167,21 +177,5 @@ public class RequestBuildingNear {
         lastError = error;
 
         return null;
-    }
-
-    /**
-     * The sited door bypasses the spiral checklist
-     * ({@code PositionFulfillsAllConditions}), so it asks the two overlap
-     * questions itself. A tile an unfinished or a standing same-type
-     * building covers dies downstream and the caller re-fires blindly -
-     * refuse it here, like the tooManyNear guard above. Public as a seam:
-     * the pick itself needs a game, the overlap question pins in
-     * milliseconds.
-     */
-    public static boolean isSiteBlockedByKnownBuilding(APosition site, AUnitType type) {
-        return atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
-            .check(site, type)
-            || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
-                .check(site, type);
     }
 }

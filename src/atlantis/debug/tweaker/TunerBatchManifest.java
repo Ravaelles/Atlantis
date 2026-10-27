@@ -2,12 +2,7 @@ package atlantis.debug.tweaker;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Batch-level manifest for the tuner (NEXT #160, step 5): one file per
@@ -22,19 +17,6 @@ import java.util.TreeMap;
 public final class TunerBatchManifest {
 
     private TunerBatchManifest() {
-    }
-
-    /** One archived game: its directory, objective row and param vector. */
-    public static final class Game {
-        public final String dir;
-        public final TunerObjective.Row row;
-        public final Map<String, Double> vector;
-
-        public Game(String dir, TunerObjective.Row row, Map<String, Double> vector) {
-            this.dir = dir;
-            this.row = row;
-            this.vector = Collections.unmodifiableMap(new LinkedHashMap<>(vector));
-        }
     }
 
     /**
@@ -88,7 +70,9 @@ public final class TunerBatchManifest {
         return games;
     }
 
-    /** The played map from the manifest header, or null when absent. */
+    /**
+     * The played map from the manifest header, or null when absent.
+     */
     public static String parseMap(String manifest) {
         if (manifest == null) return null;
 
@@ -98,7 +82,9 @@ public final class TunerBatchManifest {
         return null;
     }
 
-    /** Deterministic digest of a param vector (sorted keys, full precision). */
+    /**
+     * Deterministic digest of a param vector (sorted keys, full precision).
+     */
     public static String digest(Map<String, Double> vector) {
         try {
             StringBuilder raw = new StringBuilder();
@@ -116,7 +102,9 @@ public final class TunerBatchManifest {
         }
     }
 
-    /** The whole manifest as text, deterministic in games and in params. */
+    /**
+     * The whole manifest as text, deterministic in games and in params.
+     */
     public static String render(String map, String jarFingerprint, List<Game> games) {
         StringBuilder out = new StringBuilder();
         out.append("map=").append(map == null ? "?" : map).append('\n');
@@ -141,7 +129,9 @@ public final class TunerBatchManifest {
         return out.toString();
     }
 
-    /** Parses back the game dirs (header lines carry no pipe). */
+    /**
+     * Parses back the game dirs (header lines carry no pipe).
+     */
     public static List<String> gameDirs(String manifest) {
         List<String> dirs = new ArrayList<>();
         if (manifest == null) return dirs;
@@ -151,5 +141,20 @@ public final class TunerBatchManifest {
             dirs.add(line.substring(0, line.indexOf('|')));
         }
         return dirs;
+    }
+
+    /**
+     * One archived game: its directory, objective row and param vector.
+     */
+    public static final class Game {
+        public final String dir;
+        public final TunerObjective.Row row;
+        public final Map<String, Double> vector;
+
+        public Game(String dir, TunerObjective.Row row, Map<String, Double> vector) {
+            this.dir = dir;
+            this.row = row;
+            this.vector = Collections.unmodifiableMap(new LinkedHashMap<>(vector));
+        }
     }
 }

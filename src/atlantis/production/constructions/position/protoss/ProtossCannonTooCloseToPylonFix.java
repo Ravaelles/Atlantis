@@ -8,8 +8,6 @@ public class ProtossCannonTooCloseToPylonFix {
     public static boolean isTooClose(AUnitType building, APosition position) {
         if (!building.isCannon()) return false;
 
-        if (Select.ourBasesWithUnfinished().inRadius(3.4, position).count() >= 1) return true;
-
-        return false;
+        return Select.ourBasesWithUnfinished().inRadius(3.4, position).count() >= 1;
     }
 }

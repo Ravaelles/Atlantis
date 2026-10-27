@@ -6,13 +6,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #160 step 1: the batch winner is computed, not eyeballed.
@@ -80,7 +78,7 @@ public class TunerObjectiveTest {
 
     @Test
     public void emptyBatchHasNoWinner() {
-        Optional<Row> winner = TunerObjective.best(Arrays.asList());
+        Optional<Row> winner = TunerObjective.best(Collections.emptyList());
 
         assertFalse(winner.isPresent(), "no rows means no winner, never a crash");
     }

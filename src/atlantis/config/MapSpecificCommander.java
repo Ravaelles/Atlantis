@@ -5,19 +5,32 @@ import atlantis.architecture.Commander;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
+import atlantis.debug.tools.CenterCamera;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.debug.tools.CenterCamera;
 
 import java.util.Arrays;
 
 public class MapSpecificCommander extends Commander {
     public static boolean initialSpeed = true;
     private static boolean _firstSettings = true;
+
+    private static AUnit ourUnitNearestToEnemy() {
+        return Select.ourCombatUnits().nearestTo(Select.enemy().first());
+    }
+
+    public static boolean shouldTreatAsNormalMap() {
+        String[] umsMapsTreatedAsNormal = new String[]{
+            "ums/vsGosuComputer.scx",
+            "ums/rav/vsGosuRav.scx"
+        };
+
+        return Arrays.asList(umsMapsTreatedAsNormal).contains(ActiveMap.name());
+    }
 
     @Override
     protected boolean handle() {
@@ -309,18 +322,5 @@ public class MapSpecificCommander extends Commander {
             }
         }
         return false;
-    }
-
-    private static AUnit ourUnitNearestToEnemy() {
-        return Select.ourCombatUnits().nearestTo(Select.enemy().first());
-    }
-
-    public static boolean shouldTreatAsNormalMap() {
-        String[] umsMapsTreatedAsNormal = new String[]{
-            "ums/vsGosuComputer.scx",
-            "ums/rav/vsGosuRav.scx"
-        };
-
-        return Arrays.asList(umsMapsTreatedAsNormal).contains(ActiveMap.name());
     }
 }

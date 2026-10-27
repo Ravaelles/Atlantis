@@ -30,11 +30,35 @@ public class AtlantisIgniter {
         return bwapiDataPath;
     }
 
+    public static void setBwapiDataPath(String bwapiIniPath) {
+        if (bwapiIniPath == null) {
+            AtlantisIgniter.bwapiDataPath = null;
+
+            return;
+        }
+
+        // Both "/x/bwapi-data" and "/x/bwapi-data/" must work: everything
+        // downstream concatenates ("... + AI/build_orders/"), and a missing
+        // separator silently produced "/x/bwapi-dataread/build_orders" - the bot
+        // then played a whole game with no build order (measured 2026-10-08).
+        String trimmed = bwapiIniPath.trim();
+        if (!trimmed.isEmpty() && !trimmed.endsWith("/") && !trimmed.endsWith("\\")) {
+            trimmed = trimmed + "/";
+        }
+        AtlantisIgniter.bwapiDataPath = trimmed;
+    }
+
+    // =========================================================
+
     public static String getChaosLauncherPath() {
         return chaosLauncherPath;
     }
 
     // =========================================================
+
+    public static void setChaosLauncherPath(String chaosLauncherPath) {
+        AtlantisIgniter.chaosLauncherPath = chaosLauncherPath;
+    }
 
     public static void modifyBwapiFileIfNeeded() {
 
@@ -84,8 +108,6 @@ public class AtlantisIgniter {
             writeToBwapiIni();
         }
     }
-
-    // =========================================================
 
     private static void updateOurRace() {
         for (int i = 0; i < fileContent.length; i++) {
@@ -182,6 +204,8 @@ public class AtlantisIgniter {
         }
     }
 
+    // =========================================================
+
     private static String[] enforceGameTypeToUseMapSettings() {
         String[] newFileContent = new String[fileContent.length + 1];
         System.arraycopy(fileContent, 0, newFileContent, 0, fileContent.length);
@@ -198,29 +222,5 @@ public class AtlantisIgniter {
         }
 
         AFile.saveToFile(bwapiDataPath + "bwapi.ini", finalContent, true);
-    }
-
-    // =========================================================
-
-    public static void setBwapiDataPath(String bwapiIniPath) {
-        if (bwapiIniPath == null) {
-            AtlantisIgniter.bwapiDataPath = null;
-
-            return;
-        }
-
-        // Both "/x/bwapi-data" and "/x/bwapi-data/" must work: everything
-        // downstream concatenates ("... + AI/build_orders/"), and a missing
-        // separator silently produced "/x/bwapi-dataread/build_orders" - the bot
-        // then played a whole game with no build order (measured 2026-10-08).
-        String trimmed = bwapiIniPath.trim();
-        if (!trimmed.isEmpty() && !trimmed.endsWith("/") && !trimmed.endsWith("\\")) {
-            trimmed = trimmed + "/";
-        }
-        AtlantisIgniter.bwapiDataPath = trimmed;
-    }
-
-    public static void setChaosLauncherPath(String chaosLauncherPath) {
-        AtlantisIgniter.chaosLauncherPath = chaosLauncherPath;
     }
 }

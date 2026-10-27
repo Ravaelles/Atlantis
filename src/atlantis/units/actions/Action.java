@@ -2,14 +2,15 @@ package atlantis.units.actions;
 
 /**
  * Specific unit action.
+ *
  * @see Actions
  */
 public class Action {
 
+    private final boolean attack;
     private String name;
     private String toString;
-    private final boolean attack;
-    private boolean run;
+    private final boolean run;
 
     // =========================================================
 

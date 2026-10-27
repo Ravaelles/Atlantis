@@ -1,9 +1,9 @@
 package tests.unit;
 
 import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.ClusterTactic;
-import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
@@ -17,11 +17,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * UMS retreat discipline (owner): on custom maps there is no base to
@@ -33,6 +29,17 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class UmsRetreatRulesTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -60,7 +67,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
         ), fakeEnemies(
             fake(AUnitType.Protoss_Zealot, 33, 20)
         ), () -> {
-                assertTrue(
+            assertTrue(
                 ClusterTactic.earlyUmsStandGround(),
                 "UMS frame 1: stand and fight, there is nowhere to run to");
         });
@@ -116,9 +123,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
         FakeUnit far = fake(AUnitType.Protoss_Zealot, 90, 20);
 
         world(1, fakeOurs(dragoon), fakeEnemies(far), () -> {
-            assertTrue(
-                ClusterRally.regroupRallyPoint(dragoon) == null,
-                "nothing pressing: hold and fight in place");
+            assertNull(ClusterRally.regroupRallyPoint(dragoon), "nothing pressing: hold and fight in place");
         });
     }
 
@@ -201,16 +206,5 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
             ClusterMission.Posture.DEFEND,
             ClusterMission.postureFor(3, false),
             "clear base, small army: defend as before");
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
     }
 }

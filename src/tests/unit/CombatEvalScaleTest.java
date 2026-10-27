@@ -3,10 +3,7 @@ package tests.unit;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static atlantis.units.CombatEvalScale.FLOOR;
-import static atlantis.units.CombatEvalScale.OUR_SIDE_HEDGE;
-import static atlantis.units.CombatEvalScale.hedgedForOurSide;
-import static atlantis.units.CombatEvalScale.signSafe;
+import static atlantis.units.CombatEvalScale.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

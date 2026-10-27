@@ -4,16 +4,17 @@ import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
-import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.DynamicMockOurUnits;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Queue1Test extends WorldStubForTests {
-    private ArrayList<ProductionOrder> allOrders = null;
+    private final ArrayList<ProductionOrder> allOrders = null;
 
     @Test
     public void queueIsInitializedWithOrdersComingFromBuildOrder() {
@@ -34,7 +35,7 @@ public class Queue1Test extends WorldStubForTests {
             assertEquals(0, queue.inProgressOrders().size());
 //                assertEquals(0, queue.readyToProduceOrders().size());
             assertEquals(0, queue.finishedOrders().size());
-            assertEquals(true, !queue.notFinished().isEmpty());
+            assertTrue(!queue.notFinished().isEmpty());
         });
     }
 

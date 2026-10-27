@@ -1,11 +1,6 @@
 package atlantis.production.v2.execution;
 
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.TechProducible;
-import atlantis.production.v2.UpgradeProducible;
+import atlantis.production.v2.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,7 +98,7 @@ public final class ProductionDispatcher {
         // committed on (-1 while the builder is still walking).
         PlacementReservation placement = item.placement();
         if (placement != null && placement.committedAtFrame() >= 0
-                && placement.committedAtFrame() <= currentFrame) {
+            && placement.committedAtFrame() <= currentFrame) {
             return true;
         }
 

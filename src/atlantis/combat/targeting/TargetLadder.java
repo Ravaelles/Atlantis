@@ -1,9 +1,9 @@
 package atlantis.combat.targeting;
 
+import atlantis.units.AUnit;
+
 import java.util.Arrays;
 import java.util.List;
-
-import atlantis.units.AUnit;
 
 /**
  * Targeting as an explicit ordered behavior list (owner direction):
@@ -30,7 +30,9 @@ public final class TargetLadder {
     private TargetLadder() {
     }
 
-    /** The rules in execution order. Read it as the behavior. */
+    /**
+     * The rules in execution order. Read it as the behavior.
+     */
     public static List<String> order() {
         return Arrays.asList(
             "chewer",

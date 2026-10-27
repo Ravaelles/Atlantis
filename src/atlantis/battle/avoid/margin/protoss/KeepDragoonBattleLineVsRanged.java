@@ -13,9 +13,7 @@ public class KeepDragoonBattleLineVsRanged extends HasUnit {
     }
 
     public boolean dontSeparateVsRanged() {
-        if (vsProtoss()) return true;
-
-        return false;
+        return vsProtoss();
     }
 
     private boolean vsProtoss() {

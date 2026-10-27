@@ -23,6 +23,23 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
 
     private static final int STARTING_WORKERS = 4;
 
+    /**
+     * The game hands each race one base and four workers (Zerg: one Overlord too).
+     */
+    static int startingCount(AUnitType type) {
+        if (type.isWorker())
+            return STARTING_WORKERS;
+
+        if (type.equals(AUnitType.Protoss_Nexus) || type.equals(AUnitType.Terran_Command_Center)
+            || type.equals(AUnitType.Zerg_Hatchery))
+            return 1;
+
+        if (type.equals(AUnitType.Zerg_Overlord))
+            return 1;
+
+        return 0;
+    }
+
     @Override
     public int supplyUsed() {
         return A.supplyUsed();
@@ -44,9 +61,9 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
 
     private int producedUnits(AUnitType type) {
         int count = Select.ourOfType(type).count()
-                + Select.ourUnfinished().ofType(type).count()
-                + ConstructionRequests.countNotStartedOfType(type)
-                + inTrainingQueues(type);
+            + Select.ourUnfinished().ofType(type).count()
+            + ConstructionRequests.countNotStartedOfType(type)
+            + inTrainingQueues(type);
 
         return Math.max(0, count - startingCount(type));
     }
@@ -63,23 +80,6 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
             }
         }
         return total;
-    }
-
-    /**
-     * The game hands each race one base and four workers (Zerg: one Overlord too).
-     */
-    static int startingCount(AUnitType type) {
-        if (type.isWorker())
-            return STARTING_WORKERS;
-
-        if (type.equals(AUnitType.Protoss_Nexus) || type.equals(AUnitType.Terran_Command_Center)
-                || type.equals(AUnitType.Zerg_Hatchery))
-            return 1;
-
-        if (type.equals(AUnitType.Zerg_Overlord))
-            return 1;
-
-        return 0;
     }
 
     private int producedTech(TechType tech) {

@@ -1,8 +1,8 @@
 package atlantis.battle.avoid.terran.avoid;
 
 import atlantis.battle.avoid.terran.fight.MarineCanAttackNearEnemy;
-import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
+import atlantis.units.AUnit;
 
 public class AlwaysAvoidAsTerranInfantry {
     private static AUnit unit;

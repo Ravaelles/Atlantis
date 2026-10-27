@@ -2,7 +2,7 @@ package atlantis.production.constructions.position.modifier;
 
 import atlantis.combat.siting.BunkerEstimatePositionAtNatural;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.*;
+import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;

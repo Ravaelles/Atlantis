@@ -1,19 +1,16 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The zombie-policy library pins here: each policy answers a fixed
@@ -36,7 +33,7 @@ public class ZombiePoliciesTest extends tests.unit.AbstractTestWithUnits {
         FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 20);
         FakeUnit b = fake(AUnitType.Protoss_Zealot, 40, 20);
         FakeUnit f = ling(31, 20, 35);
-        List<FakeUnit> foes = new ArrayList<>(Arrays.asList(f));
+        List<FakeUnit> foes = new ArrayList<>(Collections.singletonList(f));
         List<FakeUnit> ours = new ArrayList<>(Arrays.asList(a, b));
 
         ZombiePolicies.chaseNearest(foes, ours);
@@ -52,7 +49,7 @@ public class ZombiePoliciesTest extends tests.unit.AbstractTestWithUnits {
         FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 20);
         FakeUnit b = fake(AUnitType.Protoss_Zealot, 40, 20);
         FakeUnit f = ling(31, 20, 35);
-        List<FakeUnit> foes = new ArrayList<>(Arrays.asList(f));
+        List<FakeUnit> foes = new ArrayList<>(Collections.singletonList(f));
         List<FakeUnit> ours = new ArrayList<>(Arrays.asList(a, b));
 
         ZombiePolicies.standAndTrade(foes, ours);
@@ -86,14 +83,14 @@ public class ZombiePoliciesTest extends tests.unit.AbstractTestWithUnits {
         d.hp = 120;
         FakeUnit close = ling(31, 20, 35);
         FakeUnit far = ling(45, 20, 35);
-        List<FakeUnit> ours = new ArrayList<>(Arrays.asList(d));
+        List<FakeUnit> ours = new ArrayList<>(Collections.singletonList(d));
 
-        ZombiePolicies.kiteBack(new ArrayList<>(Arrays.asList(close)), ours, 4);
+        ZombiePolicies.kiteBack(new ArrayList<>(Collections.singletonList(close)), ours, 4);
         assertEquals("Move", close.lastCommand, "inside hold range: walk away, no shot");
         assertTrue(close.targetPosition.distTo(d) > close.distTo(d),
             "the step opens distance instead of closing it");
 
-        ZombiePolicies.kiteBack(new ArrayList<>(Arrays.asList(far)), ours, 4);
+        ZombiePolicies.kiteBack(new ArrayList<>(Collections.singletonList(far)), ours, 4);
         assertEquals("AttackUnit", far.lastCommand, "outside hold range: stand and trade");
         assertEquals(d.id(), far.target.id(), "trades with the mark");
     }
@@ -102,9 +99,9 @@ public class ZombiePoliciesTest extends tests.unit.AbstractTestWithUnits {
     public void holdStillIsInert() {
         FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit f = ling(31, 20, 35);
-        List<FakeUnit> foes = new ArrayList<>(Arrays.asList(f));
+        List<FakeUnit> foes = new ArrayList<>(Collections.singletonList(f));
 
-        ZombiePolicies.holdStill(foes, new ArrayList<>(Arrays.asList(d)));
+        ZombiePolicies.holdStill(foes, new ArrayList<>(Collections.singletonList(d)));
         assertEquals("Stop", f.lastCommand, "no orders issued");
         assertNull(f.target, "no target acquired");
     }

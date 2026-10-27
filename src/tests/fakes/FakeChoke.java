@@ -5,8 +5,8 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 
 public class FakeChoke extends AChoke {
-    private APosition position;
-    private int width;
+    private final APosition position;
+    private final int width;
 
     public FakeChoke(APosition position, int width) {
         this.position = position;

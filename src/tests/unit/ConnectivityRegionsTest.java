@@ -5,10 +5,7 @@ import atlantis.placement.core.WalkabilityGrid;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Reachability computed from terrain, with no engine involved.
@@ -84,12 +81,14 @@ public class ConnectivityRegionsTest {
         ConnectivityRegions regions = new ConnectivityRegions(grid(10, 10));
 
         assertTrue(
-                regions.areConnected(5, 5, 5, 5),
-                "a tile must reach itself - the engine's region-based answer does not, and that "
-                        + "is exactly why the builder could not build where it stood");
+            regions.areConnected(5, 5, 5, 5),
+            "a tile must reach itself - the engine's region-based answer does not, and that "
+                + "is exactly why the builder could not build where it stood");
     }
 
-    /** An empty map is one connected region. */
+    /**
+     * An empty map is one connected region.
+     */
     @Test
     public void anOpenMapIsASingleRegion() {
         ConnectivityRegions regions = new ConnectivityRegions(grid(16, 16));
@@ -108,14 +107,14 @@ public class ConnectivityRegionsTest {
     @Test
     public void aWallSplitsTheMapIntoTwoUnconnectedRegions() {
         ConnectivityRegions regions = new ConnectivityRegions(
-                grid(10, 10, "5,0", "5,1", "5,2", "5,3", "5,4", "5,5", "5,6", "5,7", "5,8", "5,9"));
+            grid(10, 10, "5,0", "5,1", "5,2", "5,3", "5,4", "5,5", "5,6", "5,7", "5,8", "5,9"));
 
         assertEquals(2, regions.regionCount(), "the wall separates left from right");
 
         assertTrue(regions.areConnected(1, 5, 4, 5), "both of these are left of the wall");
         assertFalse(
-                regions.areConnected(1, 5, 8, 5),
-                "a solid wall is not crossable - this is the answer hasPath was supposed to give");
+            regions.areConnected(1, 5, 8, 5),
+            "a solid wall is not crossable - this is the answer hasPath was supposed to give");
     }
 
     /**
@@ -143,11 +142,11 @@ public class ConnectivityRegionsTest {
         // A diagonal line of blocked tiles with a single-tile break, so the two sides
         // meet only corner to corner at (5,4)/(6,5).
         ConnectivityRegions regions = new ConnectivityRegions(
-                grid(12, 12, "5,0", "5,1", "5,2", "5,3", "5,4", "5,6", "5,7", "5,8", "5,9", "5,10", "5,11"));
+            grid(12, 12, "5,0", "5,1", "5,2", "5,3", "5,4", "5,6", "5,7", "5,8", "5,9", "5,10", "5,11"));
 
         assertEquals(
-                1, regions.regionCount(),
-                "the gap at (5,5) connects the two halves, so there is one region");
+            1, regions.regionCount(),
+            "the gap at (5,5) connects the two halves, so there is one region");
     }
 
     /**
@@ -158,18 +157,18 @@ public class ConnectivityRegionsTest {
     @Test
     public void anEnclosedPocketIsItsOwnRegionAndUnreachable() {
         ConnectivityRegions regions = new ConnectivityRegions(
-                grid(10, 10,
-                        // A 1-tile pocket at (3,3) walled in on all eight sides.
-                        "2,2", "3,2", "4,2",
-                        "2,3", "4,3",
-                        "2,4", "3,4", "4,4"));
+            grid(10, 10,
+                // A 1-tile pocket at (3,3) walled in on all eight sides.
+                "2,2", "3,2", "4,2",
+                "2,3", "4,3",
+                "2,4", "3,4", "4,4"));
 
         assertNotEquals(
-                ConnectivityRegions.NO_REGION, regions.regionAt(3, 3),
-                "the pocket is walkable, so it is a region - not merely unreachable");
+            ConnectivityRegions.NO_REGION, regions.regionAt(3, 3),
+            "the pocket is walkable, so it is a region - not merely unreachable");
         assertFalse(
-                regions.areConnected(3, 3, 0, 0),
-                "an enclosed pocket cannot be reached from outside");
+            regions.areConnected(3, 3, 0, 0),
+            "an enclosed pocket cannot be reached from outside");
     }
 
     /**
@@ -180,11 +179,13 @@ public class ConnectivityRegionsTest {
         ConnectivityRegions regions = new ConnectivityRegions(grid(5, 5, "2,2"));
 
         assertEquals(
-                ConnectivityRegions.NO_REGION, regions.regionAt(2, 2),
-                "an unwalkable tile is in no region, not in a region of its own");
+            ConnectivityRegions.NO_REGION, regions.regionAt(2, 2),
+            "an unwalkable tile is in no region, not in a region of its own");
     }
 
-    /** Off-map coordinates answer "no region" rather than throwing or wrapping. */
+    /**
+     * Off-map coordinates answer "no region" rather than throwing or wrapping.
+     */
     @Test
     public void offMapCoordinatesHaveNoRegion() {
         ConnectivityRegions regions = new ConnectivityRegions(grid(5, 5));
@@ -195,8 +196,8 @@ public class ConnectivityRegionsTest {
         assertEquals(ConnectivityRegions.NO_REGION, regions.regionAt(0, 5), "below the map");
 
         assertFalse(
-                regions.areConnected(-1, 0, 0, 0),
-                "an off-map tile is not connected to anything, not even its neighbour");
+            regions.areConnected(-1, 0, 0, 0),
+            "an off-map tile is not connected to anything, not even its neighbour");
     }
 
     /**
@@ -218,8 +219,8 @@ public class ConnectivityRegionsTest {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 assertEquals(
-                        first.regionAt(x, y), second.regionAt(x, y),
-                        "same map must give the same region id at " + x + "," + y);
+                    first.regionAt(x, y), second.regionAt(x, y),
+                    "same map must give the same region id at " + x + "," + y);
             }
         }
     }
@@ -238,10 +239,10 @@ public class ConnectivityRegionsTest {
 
         assertEquals(1, regions.regionCount(), "one open area");
         assertNotEquals(
-                ConnectivityRegions.NO_REGION, regions.regionAt(19, 3),
-                "the far corner of a wide map is on the map");
+            ConnectivityRegions.NO_REGION, regions.regionAt(19, 3),
+            "the far corner of a wide map is on the map");
         assertEquals(
-                ConnectivityRegions.NO_REGION, regions.regionAt(3, 19),
-                "the transposed corner is off this map - a transposed grid would wrongly accept it");
+            ConnectivityRegions.NO_REGION, regions.regionAt(3, 19),
+            "the transposed corner is off this map - a transposed grid would wrongly accept it");
     }
 }

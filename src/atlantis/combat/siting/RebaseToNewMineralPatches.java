@@ -19,6 +19,10 @@ public class RebaseToNewMineralPatches extends Manager {
         super(unit);
     }
 
+    public static boolean isBaseMinedOut(AUnit unit) {
+        return Select.minerals().inRadius(10, unit).isEmpty();
+    }
+
     @Override
     public boolean applies() {
         if (AGame.notNthGameFrame(47)) return false;
@@ -48,9 +52,7 @@ public class RebaseToNewMineralPatches extends Manager {
             return false;
         }
 
-        if (flyAndRebase(rebaseTo)) return true;
-
-        return false;
+        return flyAndRebase(rebaseTo);
     }
 
     private boolean newBaseIsDefinedAndFree() {
@@ -113,9 +115,5 @@ public class RebaseToNewMineralPatches extends Manager {
             return true;
         }
         return false;
-    }
-
-    public static boolean isBaseMinedOut(AUnit unit) {
-        return Select.minerals().inRadius(10, unit).isEmpty();
     }
 }

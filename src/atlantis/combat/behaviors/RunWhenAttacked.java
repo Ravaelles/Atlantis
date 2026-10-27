@@ -23,7 +23,9 @@ public final class RunWhenAttacked {
     private RunWhenAttacked() {
     }
 
-    /** Only hurt Dark Templar with something nearby that can hit them. */
+    /**
+     * Only hurt Dark Templar with something nearby that can hit them.
+     */
     public static boolean applies(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
         if (!unit.isDarkTemplar()) return false;
@@ -45,7 +47,9 @@ public final class RunWhenAttacked {
         return unit.moveAwayFrom(threat, 6, Actions.RUN_ENEMY, "BreakContact");
     }
 
-    /** Enemies close enough to hit this unit - the only run worth taking. */
+    /**
+     * Enemies close enough to hit this unit - the only run worth taking.
+     */
     static Selection threats(AUnit unit) {
         return unit.enemiesThatCanAttackMe(THREAT_RADIUS);
     }

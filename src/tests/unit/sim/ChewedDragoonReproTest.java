@@ -1,19 +1,17 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
-import static tests.unit.AbstractTestWithUnits.fake;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Reproduction scenario (owner order): 4 dragoons + 3 zealots vs 8 enemy
@@ -31,38 +29,161 @@ import static tests.unit.AbstractTestWithUnits.fake;
 public class ChewedDragoonReproTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 
-    /** Inside this the dragoon is being hit, per the sim's edge-to-edge reach. */
+    /**
+     * Inside this the dragoon is being hit, per the sim's edge-to-edge reach.
+     */
     private static final double CHEW_TILES = 0.5;
+
+    /**
+     * Names which stand doctrine owned a chewed-but-not-kiting frame:
+     * the surrounded pocket rule, the meat-screen rule, the low-hp
+     * fire discipline, or the plain margin gate.
+     */
+    private static void classifyStand(atlantis.units.AUnit d,
+                                      atlantis.units.AUnit threat, int[] surrounded,
+                                      int[] lowHp, int[] margin) {
+        try {
+            if (d.hp() + d.shields() < 45
+                && d.cooldown() <= atlantis.battle.kite.CombatTuning.current()
+                .getDragoonLowHpFireCooldown()) {
+                lowHp[0]++;
+
+                return;
+            }
+            int near = 0;
+            try {
+                near = d.enemiesNear().melee().inRadius(3, d).size();
+            } catch (Exception ignored) {
+            }
+            if (near >= 3) {
+                surrounded[0]++;
+
+                return;
+            }
+            margin[0]++;
+        } catch (Exception e) {
+            margin[0]++;
+        }
+    }
+
+    private static String holdKiteTimeline(FakeUnit[] dragoons) {
+        java.util.Set<Integer> ids = new java.util.HashSet<Integer>();
+        for (FakeUnit d : dragoons) ids.add(d.id());
+        StringBuilder sb = new StringBuilder();
+        try {
+            String all = atlantis.util.log.EventLog.toJsonLines();
+            for (String line : all.split("\n")) {
+                if (!line.contains("\"key\":\"HOLD\"") && !line.contains("\"key\":\"KITE\"")) continue;
+                boolean mine = false;
+                for (Integer id : ids) {
+                    if (line.contains("\"unit\":" + id)) {
+                        mine = true;
+                        break;
+                    }
+                }
+                if (mine) sb.append(line).append("\n");
+            }
+        } catch (Exception e) {
+            sb.append("timeline-read-failed");
+        }
+
+        return sb.toString();
+    }
+
+    private static int ourShots(SimWorld world) {
+        try {
+            java.lang.reflect.Field f = SimWorld.class.getDeclaredField("ourShotsFired");
+            f.setAccessible(true);
+
+            return (Integer) f.get(world);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private static FakeUnit mk(double tx, double ty) {
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, tx, ty);
+        d.hp = 180;
+        d.shields = 80;
+        d.cooldown = 0;
+
+        return d;
+    }
+
+    private static FakeUnit mkz(double tx, double ty) {
+        FakeUnit z = fake(AUnitType.Protoss_Zealot, tx, ty);
+        z.hp = 160;
+        z.shields = 60;
+        z.cooldown = 0;
+
+        return z;
+    }
+
+    private static FakeUnit me(double tx, double ty) {
+        FakeUnit z = fake(AUnitType.Protoss_Zealot, tx, ty);
+        z.setEnemy();
+        z.hp = 160;
+        z.shields = 60;
+        z.cooldown = 0;
+
+        return z;
+    }
+
+    /**
+     * Scripted pressers: nearest live unit, move into range, then trade.
+     */
+    private static void scriptFoes(FakeUnit[] foes, List<FakeUnit> ours) {
+        for (FakeUnit f : foes) {
+            if (f.hp <= 0) continue;
+            FakeUnit n = null;
+            double best = Double.MAX_VALUE;
+            for (FakeUnit u : ours) {
+                if (u.hp <= 0) continue;
+                double d = f.distTo(u);
+                if (d < best) {
+                    best = d;
+                    n = u;
+                }
+            }
+            if (n == null) {
+                f.lastCommand = "Stop";
+                continue;
+            }
+            f.lastCommand = best <= SimWorld.reachTiles(f, n) ? "AttackUnit" : "Move";
+            f.target = n;
+            f.targetPosition = n.position;
+        }
+    }
 
     @Test
     public void zealotsMustNeverReachDragoons() {
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             mk(20, 19), mk(21, 20), mk(22, 20), mk(23, 19),
         };
-        FakeUnit[] zealots = new FakeUnit[] {
+        FakeUnit[] zealots = new FakeUnit[]{
             mkz(20, 22), mkz(21, 22), mkz(22, 22),
         };
-        FakeUnit[] foes = new FakeUnit[] {
+        FakeUnit[] foes = new FakeUnit[]{
             me(30, 18), me(31, 19), me(30, 20), me(31, 21),
             me(30, 22), me(31, 23), me(32, 20), me(32, 21),
         };
         List<FakeUnit> ours = new ArrayList<FakeUnit>();
-        for (FakeUnit u : dragoons) ours.add(u);
-        for (FakeUnit u : zealots) ours.add(u);
+        Collections.addAll(ours, dragoons);
+        Collections.addAll(ours, zealots);
 
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
             ours.toArray(new FakeUnit[0]), foes, arena);
 
-        int[] chewedFrames = new int[] { 0 };
-        int[] maxConsecutive = new int[] { 0 };
-        int[] curConsecutive = new int[] { 0 };
-        int[] minHp = new int[] { Integer.MAX_VALUE };
-        int[] kiteTrueWhileChewed = new int[] { 0 };
-        int[] kiteFalseWhileChewed = new int[] { 0 };
-        int[] standSurrounded = new int[] { 0 };
-        int[] standLowHp = new int[] { 0 };
-        int[] standMargin = new int[] { 0 };
+        int[] chewedFrames = new int[]{0};
+        int[] maxConsecutive = new int[]{0};
+        int[] curConsecutive = new int[]{0};
+        int[] minHp = new int[]{Integer.MAX_VALUE};
+        int[] kiteTrueWhileChewed = new int[]{0};
+        int[] kiteFalseWhileChewed = new int[]{0};
+        int[] standSurrounded = new int[]{0};
+        int[] standLowHp = new int[]{0};
+        int[] standMargin = new int[]{0};
         int ticks = 700;
         try {
             BattleCommander.clearForTests();
@@ -93,7 +214,8 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                         }
                     }
                     if (anyChewed) break;
-                }                if (anyChewed) {
+                }
+                if (anyChewed) {
                     chewedFrames[0]++;
                     curConsecutive[0]++;
                     if (curConsecutive[0] > maxConsecutive[0]) {
@@ -133,7 +255,11 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                 }
 
                 boolean allDead = true;
-                for (FakeUnit u : ours) if (u.hp > 0) allDead = false;
+                for (FakeUnit u : ours)
+                    if (u.hp > 0) {
+                        allDead = false;
+                        break;
+                    }
                 if (allDead) break;
             }
 
@@ -159,132 +285,14 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
 
             org.junit.jupiter.api.Assertions.assertEquals(0, kiteFalseWhileChewed[0],
                 "owner doctrine: a chewed dragoon ALWAYS wants to kite - no stand rule"
-                + " (screen, surrounded, low-hp) may hold it. " + kiteFalseWhileChewed[0]
-                + " chewed frames stood by doctrine, max consecutive chew "
-                + maxConsecutive[0] + " frames.");
-        }
-        finally {
+                    + " (screen, surrounded, low-hp) may hold it. " + kiteFalseWhileChewed[0]
+                    + " chewed frames stood by doctrine, max consecutive chew "
+                    + maxConsecutive[0] + " frames.");
+        } finally {
             for (FakeUnit u : ours) Alpha.get().removeUnit(u);
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
-        }
-    }
-
-    /**
-     * Names which stand doctrine owned a chewed-but-not-kiting frame:
-     * the surrounded pocket rule, the meat-screen rule, the low-hp
-     * fire discipline, or the plain margin gate.
-     */
-    private static void classifyStand(atlantis.units.AUnit d,
-        atlantis.units.AUnit threat, int[] surrounded,
-        int[] lowHp, int[] margin) {
-        try {
-            if (d.hp() + d.shields() < 45
-                && d.cooldown() <= atlantis.battle.kite.CombatTuning.current()
-                    .getDragoonLowHpFireCooldown()) {
-                lowHp[0]++;
-
-                return;
-            }
-            int near = 0;
-            try {
-                near = d.enemiesNear().melee().inRadius(3, d).size();
-            } catch (Exception ignored) {
-            }
-            if (near >= 3) {
-                surrounded[0]++;
-
-                return;
-            }
-            margin[0]++;
-        } catch (Exception e) {
-            margin[0]++;
-        }
-    }
-
-    private static String holdKiteTimeline(FakeUnit[] dragoons) {        java.util.Set<Integer> ids = new java.util.HashSet<Integer>();
-        for (FakeUnit d : dragoons) ids.add(d.id());
-        StringBuilder sb = new StringBuilder();
-        try {
-            String all = atlantis.util.log.EventLog.toJsonLines();
-            for (String line : all.split("\n")) {
-                if (!line.contains("\"key\":\"HOLD\"") && !line.contains("\"key\":\"KITE\"")) continue;
-                boolean mine = false;
-                for (Integer id : ids) {
-                    if (line.contains("\"unit\":" + id)) {
-                        mine = true;
-                        break;
-                    }
-                }
-                if (mine) sb.append(line).append("\n");
-            }
-        } catch (Exception e) {
-            sb.append("timeline-read-failed");
-        }
-
-        return sb.toString();
-    }
-
-    private static int ourShots(SimWorld world) {        try {
-            java.lang.reflect.Field f = SimWorld.class.getDeclaredField("ourShotsFired");
-            f.setAccessible(true);
-
-            return (Integer) f.get(world);
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    private static FakeUnit mk(double tx, double ty) {
-        FakeUnit d = fake(AUnitType.Protoss_Dragoon, tx, ty);
-        d.hp = 180;
-        d.shields = 80;
-        d.cooldown = 0;
-
-        return d;
-    }
-
-    private static FakeUnit mkz(double tx, double ty) {
-        FakeUnit z = fake(AUnitType.Protoss_Zealot, tx, ty);
-        z.hp = 160;
-        z.shields = 60;
-        z.cooldown = 0;
-
-        return z;
-    }
-
-    private static FakeUnit me(double tx, double ty) {
-        FakeUnit z = fake(AUnitType.Protoss_Zealot, tx, ty);
-        z.setEnemy();
-        z.hp = 160;
-        z.shields = 60;
-        z.cooldown = 0;
-
-        return z;
-    }
-
-    /** Scripted pressers: nearest live unit, move into range, then trade. */
-    private static void scriptFoes(FakeUnit[] foes, List<FakeUnit> ours) {
-        for (FakeUnit f : foes) {
-            if (f.hp <= 0) continue;
-            FakeUnit n = null;
-            double best = Double.MAX_VALUE;
-            for (FakeUnit u : ours) {
-                if (u.hp <= 0) continue;
-                double d = f.distTo(u);
-                if (d < best) {
-                    best = d;
-                    n = u;
-                }
-            }
-            if (n == null) {
-                f.lastCommand = "Stop";
-                continue;
-            }
-            f.lastCommand = best <= SimWorld.reachTiles(f, n) ? "AttackUnit" : "Move";
-            f.target = n;
-            f.targetPosition = n.position;
         }
     }
 }

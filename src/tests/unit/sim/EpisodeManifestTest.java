@@ -1,20 +1,19 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The episode manifest pins here: header shape, one row per tick with
@@ -36,7 +35,7 @@ public class EpisodeManifestTest extends tests.acceptance.WorldStubForTests {
 
         SimArena arena = new SimArena(70 * 32, 40 * 32);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, d }, new FakeUnit[] { ling }, arena);
+            new FakeUnit[]{nexus, d}, new FakeUnit[]{ling}, arena);
         try {
             BattleCommander.clearForTests();
             Alpha.gather();
@@ -47,8 +46,8 @@ public class EpisodeManifestTest extends tests.acceptance.WorldStubForTests {
                 world.tick(() -> {
                     if (d.hp > 0) BattleCommander.act(d, FightOrFlight.Tactic.FIGHT, null, d);
                     ZombiePolicies.chaseNearest(
-                        new ArrayList<>(java.util.Arrays.asList(ling)),
-                        new ArrayList<>(java.util.Arrays.asList(d)));
+                        new ArrayList<>(Collections.singletonList(ling)),
+                        new ArrayList<>(Collections.singletonList(d)));
                     rows.add(EpisodeManifest.render(frame, d));
                 });
             }
@@ -61,8 +60,7 @@ public class EpisodeManifestTest extends tests.acceptance.WorldStubForTests {
                 assertEquals(9, lines[i].split(",").length,
                     "every row has 9 fields: " + lines[i]);
             }
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
         }

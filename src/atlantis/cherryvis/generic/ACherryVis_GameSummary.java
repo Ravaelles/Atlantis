@@ -1,14 +1,14 @@
 package atlantis.cherryvis.generic;
 
+import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
 import atlantis.map.AMap;
-import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.util.AFile;
 
 public class ACherryVis_GameSummary {
-    private ACherryVisConfig config;
+    private final ACherryVisConfig config;
 
     public ACherryVis_GameSummary(ACherryVisConfig config) {
         this.config = config;
@@ -26,10 +26,10 @@ public class ACherryVis_GameSummary {
             "  \"map\": \"" + AMap.getMapName() + "\",\n" +
             "  \"p0_name\": \"" + playerUs.name() + "\",\n" +
             "  \"p0_race\": \"" + playerUs.getRace().name() + "\",\n" +
-            "  \"p0_win\": " + (AGame.won() ? "true" : "false") + ",\n" +
+            "  \"p0_win\": " + (Boolean.toString(AGame.won())) + ",\n" +
             "  \"p1_name\": \"" + playerEnemy.name() + "\",\n" +
             "  \"p1_race\": \"" + playerEnemy.getRace().name() + "\",\n" +
-            "  \"p1_win\": " + (AGame.lost() ? "true" : "false") + "\n" +
+            "  \"p1_win\": " + (Boolean.toString(AGame.lost())) + "\n" +
             "}";
 
         String cherryVisDirPath = config.cherryVisDirReplayPath();

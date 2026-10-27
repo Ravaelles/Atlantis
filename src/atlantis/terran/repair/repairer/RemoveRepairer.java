@@ -23,9 +23,8 @@ public class RemoveRepairer extends Manager {
         if (unit.looksIdle() || (!unit.isRepairing() && !unit.isMoving())) return true;
         if (unit.lastActionMoreThanAgo(10, Actions.REPAIR)) return true;
         if (ShouldNotRepairUnit.shouldNotRepairUnit(unit, target)) return true;
-        if (unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR)) return true;
 
-        return false;
+        return unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR);
     }
 
     @Override

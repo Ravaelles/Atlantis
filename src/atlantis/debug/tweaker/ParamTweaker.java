@@ -2,16 +2,28 @@ package atlantis.debug.tweaker;
 
 
 import atlantis.util.AConsole;
+
 import java.util.ArrayList;
 
 public class ParamTweaker {
 
     protected static ParamTweaker tweaker = null;
-    private ArrayList<Param> params = new ArrayList<>();
+    private final ArrayList<Param> params = new ArrayList<>();
 
     // =========================================================
 
-    protected ParamTweaker() { }
+    protected ParamTweaker() {
+    }
+
+    // =========================================================
+
+    public static ParamTweaker get() {
+        if (tweaker == null) {
+            throw new RuntimeException("ParamTweaker has not been initialized.");
+        }
+
+        return tweaker;
+    }
 
     // =========================================================
 
@@ -24,16 +36,6 @@ public class ParamTweaker {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    // =========================================================
-
-    public static ParamTweaker get() {
-        if (tweaker == null) {
-            throw new RuntimeException("ParamTweaker has not been initialized.");
-        }
-
-        return tweaker;
     }
 
     public void addParam(Param param) {

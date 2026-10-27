@@ -19,7 +19,9 @@ public final class ScoutWatch {
     private ScoutWatch() {
     }
 
-    /** Row per live scout on the sample frames, nothing in between. */
+    /**
+     * Row per live scout on the sample frames, nothing in between.
+     */
     public static void sample() {
         if (!A.everyNthGameFrame(31)) return;
 

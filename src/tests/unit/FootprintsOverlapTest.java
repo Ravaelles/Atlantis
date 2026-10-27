@@ -33,8 +33,8 @@ public class FootprintsOverlapTest {
     @Test
     public void touchingEdgesStayLegal() {
         assertFalse(PrepareConstructionSite.footprintsOverlap(
-            16, 46, 2, 2,
-            18, 46, 2, 2),
+                16, 46, 2, 2,
+                18, 46, 2, 2),
             "adjacent Pylons share an edge, no tile - packed bases need this");
     }
 

@@ -14,9 +14,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * A refresh pass must never cancel + re-request a refinery site that is
@@ -43,6 +40,17 @@ public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
     private static final int GY = 118;
 
     private boolean fired = false;
+
+    private static int assimilatorOrdersInQueue() {
+        int total = 0;
+        for (ProductionOrder order : Queue.get().allOrders().list()) {
+            if (order.unitType() != null
+                && order.unitType().equals(AUnitType.Protoss_Assimilator)) {
+                total++;
+            }
+        }
+        return total;
+    }
 
     @Override
     public Race initRace() {
@@ -95,17 +103,6 @@ public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
         });
 
         assertTrue(fired, "the occupancy-tick frame was reached - else this test proves nothing");
-    }
-
-    private static int assimilatorOrdersInQueue() {
-        int total = 0;
-        for (ProductionOrder order : Queue.get().allOrders().list()) {
-            if (order.unitType() != null
-                && order.unitType().equals(AUnitType.Protoss_Assimilator)) {
-                total++;
-            }
-        }
-        return total;
     }
 
     @Override

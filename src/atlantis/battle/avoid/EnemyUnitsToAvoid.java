@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EnemyUnitsToAvoid extends HasUnit {
-    private static Cache<Units> cache = new Cache<>();
+    private static final Cache<Units> cache = new Cache<>();
 
     private Units enemies;
 

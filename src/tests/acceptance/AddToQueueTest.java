@@ -8,20 +8,21 @@ import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AddToQueueTest extends WorldStubForTests {
     @Test
     public void marinesAreNotAddedMultipleTimesToTheQueue() {
         options = Options.create().set("supplyUsed", 33).set("supplyTotal", 44);
         world(1, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Supply_Depot, 7),
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Supply_Depot, 7),
+                fake(Terran_Barracks, 4),
+                fake(Terran_Academy, 33)
+            )
+        ), fakeExampleEnemies(), () -> {
             queue = initQueue();
 
             ProductionOrder added;

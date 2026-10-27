@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.retreating.FleeReason;
 import atlantis.combat.retreating.RetreatFromLostFight;
@@ -13,12 +13,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #195: every flee branch owns a named reason; one method

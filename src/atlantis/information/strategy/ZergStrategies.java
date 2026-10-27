@@ -1,9 +1,9 @@
 package atlantis.information.strategy;
 
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
-import atlantis.game.player.Enemy;
 
 public class ZergStrategies extends AStrategy {
     // Rush

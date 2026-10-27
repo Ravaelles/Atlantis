@@ -50,8 +50,7 @@ public class GameClockAgreementTest extends WorldStubForTests {
             assertEquals(4, A.s);
             assertEquals(123, GameClock.frames(), "the kernel view moved with the fields");
             assertEquals(4, GameClock.seconds(), "the kernel view moved with the fields");
-        }
-        finally {
+        } finally {
             A.setNow(framesBefore, secondsBefore);
         }
     }

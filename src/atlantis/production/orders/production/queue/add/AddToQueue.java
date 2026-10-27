@@ -15,7 +15,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -32,7 +31,9 @@ public class AddToQueue {
 
     private static int lastNexusQueueFrame = -100000;
 
-    /** Test seam: the throttle is wall-clock state, never game state. */
+    /**
+     * Test seam: the throttle is wall-clock state, never game state.
+     */
     public static void clearForTests() {
         lastNexusQueueFrame = -100000;
     }
@@ -284,7 +285,9 @@ public class AddToQueue {
     }
 
     private static boolean canPreventExcessiveOrders(AUnitType type, ProductionOrderPriority priority) {
-        if (type.isPylon() && (A.supplyFree() >= 3 || CountInQueue.countNotStarted(AUnitType.Protoss_Pylon) >= 3)) return true;
+        if (type.isPylon() && (A.supplyFree() >= 3 || CountInQueue.countNotStarted(AUnitType.Protoss_Pylon) >= 3))
+            return true;
+
         if (type.isAssimilator()) return true;
 
         return priority != ProductionOrderPriority.TOP;

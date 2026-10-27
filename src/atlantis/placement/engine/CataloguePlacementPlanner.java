@@ -3,23 +3,8 @@ package atlantis.placement.engine;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.placement.core.BuildBlock;
-import atlantis.placement.core.BuildLocation;
-import atlantis.placement.core.BuildLocationCatalogue;
-import atlantis.placement.core.CoverageVerdict;
-import atlantis.placement.core.BuildLocationRanker;
-import atlantis.placement.core.NeighbourhoodRegistry;
-import atlantis.placement.core.PsiGating;
-import atlantis.placement.core.RacePlacementStrategy;
-import atlantis.placement.core.StartBlockFinder;
-import atlantis.placement.core.SupportRequest;
-import atlantis.placement.core.TileAvailabilityGrid;
-import atlantis.production.v2.LegacyPlacementPlanner;
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.PlacementPlanner;
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
+import atlantis.placement.core.*;
+import atlantis.production.v2.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.UnitStats;
@@ -59,40 +44,23 @@ import java.util.Set;
  */
 public final class CataloguePlacementPlanner implements PlacementPlanner {
 
-    /**
-     * Whether this planner is running against a live game. A seam so the planner's
-     * own rules (blocks, tiles, reservations) can be exercised with no game at all,
-     * instead of the core asking {@code atlantis.Atlantis} statically (DIP; the same
-     * shape as every other port in {@code placement.core}).
-     */
-    public interface GameContext {
-        boolean inGame();
-    }
-
     private static final GameContext LIVE_GAME = new GameContext() {
         @Override
         public boolean inGame() {
             return atlantis.Atlantis.game() != null;
         }
     };
-
     private static final GameContext NO_GAME = new GameContext() {
         @Override
         public boolean inGame() {
             return false;
         }
     };
-
     private final TileAvailabilityGrid.TerrainSource terrain;
-    private TileAvailabilityGrid grid;
     private final RacePlacementStrategy strategy;
     private final NeighbourhoodRegistry neighbourhoods;
     private final boolean withBlocks;
     private final GameContext gameContext;
-
-    /** Rebuilt per pass, so reservations do not survive a frame. */
-    private BuildLocationCatalogue catalogue;
-
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
      * plan is stateless per frame), so a reservation is applied to the grid as
@@ -100,17 +68,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private final Set<String> reservedThisPass = new HashSet<>();
     private final List<SupportRequest> supportThisPass = new ArrayList<>();
-
-    /** Support declared by this pass; drained by the composition root, cleared by startPass. */
-    @Override
-    public List<SupportRequest> drainSupportRequests() {
-        List<SupportRequest> drained = new ArrayList<>(supportThisPass);
-        supportThisPass.clear();
-
-        return drained;
-    }
-
-    /** The worker this pass measures travel from; chosen once, reset by startPass. */
+    private TileAvailabilityGrid grid;
+    /**
+     * Rebuilt per pass, so reservations do not survive a frame.
+     */
+    private BuildLocationCatalogue catalogue;
+    /**
+     * The worker this pass measures travel from; chosen once, reset by startPass.
+     */
     private AUnit passBuilder;
 
     public CataloguePlacementPlanner() {
@@ -123,12 +88,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         );
     }
 
-    /** Test seam: terrain over a synthetic map, no strategy, no neighbourhood ranking. */
+    /**
+     * Test seam: terrain over a synthetic map, no strategy, no neighbourhood ranking.
+     */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
-        this(grid, (RacePlacementStrategy) null, null, true, NO_GAME);
+        this(grid, null, null, true, NO_GAME);
     }
 
-    /** Test seam with a strategy: a null strategy disables the availability check. */
+    /**
+     * Test seam with a strategy: a null strategy disables the availability check.
+     */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid, RacePlacementStrategy strategy) {
         this(grid, strategy, null, true, NO_GAME);
     }
@@ -139,7 +108,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this(grid, strategy, neighbourhoods, true, NO_GAME);
     }
 
-    /** Production constructor: the terrain source is enough; pass 1 builds the grid. */
+    /**
+     * Production constructor: the terrain source is enough; pass 1 builds the grid.
+     */
     public CataloguePlacementPlanner(
         TileAvailabilityGrid.TerrainSource terrain,
         RacePlacementStrategy strategy,
@@ -167,7 +138,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this(grid, strategy, neighbourhoods, withBlocks, LIVE_GAME);
     }
 
-    /** The full constructor with an explicit game context (the last test seam). */
+    /**
+     * The full constructor with an explicit game context (the last test seam).
+     */
     public CataloguePlacementPlanner(
         TileAvailabilityGrid grid, RacePlacementStrategy strategy,
         NeighbourhoodRegistry neighbourhoods, boolean withBlocks, GameContext gameContext
@@ -179,20 +152,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this.withBlocks = withBlocks;
         this.gameContext = gameContext != null ? gameContext : LIVE_GAME;
         this.catalogue = buildCatalogue();
-    }
-
-    /**
-     * Builds the catalogue for the current pass. Called once at construction and
-     * again at every {@link #startPass()}, which is what makes the planner
-     * stateless per frame: reservations made in one pass are gone in the next, so a
-     * building that was skipped can be offered the same tile again tomorrow.
-     */
-    private BuildLocationCatalogue buildCatalogue() {
-        return withBlocks
-            ? new BuildLocationCatalogue(grid, factoriesFor(strategy),
-                startBlockFinderFor(grid, strategy), ourBasePositions())
-            : new BuildLocationCatalogue(grid, java.util.Collections
-                .<BuildLocationCatalogue.BlockFactory>emptyList());
     }
 
     /**
@@ -233,6 +192,51 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return starts.isEmpty() ? null : new StartBlockFinder(grid, starts);
     }
 
+    private static AUnit nearestBaseUnit() {
+        AUnit base = Select.main();
+
+        return base != null ? base : Select.ourBases().first();
+    }
+
+    private static double squaredDistance(BuildLocation location, APosition centre) {
+        double dx = location.tileX() - centre.tx();
+        double dy = location.tileY() - centre.ty();
+
+        return dx * dx + dy * dy;
+    }
+
+    private static AUnitType resolveUnitType(Producible producible) {
+        if (producible instanceof UnitProducible) {
+            return ((UnitProducible) producible).type();
+        }
+        return null;
+    }
+
+    /**
+     * Support declared by this pass; drained by the composition root, cleared by startPass.
+     */
+    @Override
+    public List<SupportRequest> drainSupportRequests() {
+        List<SupportRequest> drained = new ArrayList<>(supportThisPass);
+        supportThisPass.clear();
+
+        return drained;
+    }
+
+    /**
+     * Builds the catalogue for the current pass. Called once at construction and
+     * again at every {@link #startPass()}, which is what makes the planner
+     * stateless per frame: reservations made in one pass are gone in the next, so a
+     * building that was skipped can be offered the same tile again tomorrow.
+     */
+    private BuildLocationCatalogue buildCatalogue() {
+        return withBlocks
+            ? new BuildLocationCatalogue(grid, factoriesFor(strategy),
+            startBlockFinderFor(grid, strategy), ourBasePositions())
+            : new BuildLocationCatalogue(grid, java.util.Collections
+            .emptyList());
+    }
+
     /**
      * Our bases as tile centres, so each gets a start-block anchor. Answers an
      * empty list when there is no game attached (a pure planner test) - anchoring
@@ -249,7 +253,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (!gameContext.inGame()) return bases;
 
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-            if (base.position() != null) bases.add(new int[] { base.tx(), base.ty() });
+            if (base.position() != null) bases.add(new int[]{base.tx(), base.ty()});
         }
         return bases;
     }
@@ -303,12 +307,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 : FreeWorkers.get().first();
         }
         return passBuilder;
-    }
-
-    private static AUnit nearestBaseUnit() {
-        AUnit base = Select.main();
-
-        return base != null ? base : Select.ourBases().first();
     }
 
     @Override
@@ -372,7 +370,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             reservedThisPass.add(tile);
             grid.markUsed(candidate.tileX(), candidate.tileY(),
-                    candidate.tileWidth(), candidate.tileHeight());
+                candidate.tileWidth(), candidate.tileHeight());
 
             PlacementReservation reservation =
                 PlacementReservation.success(candidate.tileX(), candidate.tileY(), targetFrame);
@@ -459,7 +457,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private PlacementReservation carriedOver(AUnitType unitType, int targetFrame) {
         for (atlantis.production.constructions.Construction construction
-                : atlantis.production.constructions.ConstructionRequests.constructions) {
+            : atlantis.production.constructions.ConstructionRequests.constructions) {
             if (construction.buildingType() != unitType) continue;
             if (construction.hasStarted()) continue;
             if (construction.buildPosition() == null) continue;
@@ -476,9 +474,11 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return null;
     }
 
-    /** Race-neutral availability seam; each strategy owns its own support policy. */
+    /**
+     * Race-neutral availability seam; each strategy owns its own support policy.
+     */
     private RacePlacementStrategy.AvailabilityVerdict availabilityVerdict(
-            AUnitType unitType, BuildLocation candidate) {
+        AUnitType unitType, BuildLocation candidate) {
         if (strategy == null || !strategy.requiresAvailability(unitType.name())) {
             return RacePlacementStrategy.AvailabilityVerdict.AVAILABLE;
         }
@@ -531,7 +531,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         );
     }
 
-    /** Coverage scoring needs the choke segment; anything unresolvable keeps the distance ranker. */
+    /**
+     * Coverage scoring needs the choke segment; anything unresolvable keeps the distance ranker.
+     */
     private BuildLocationCatalogue.LocationScorer coverageRankerFor(AUnitType unitType, final APosition centre) {
         try {
             if (centre == null) return null;
@@ -546,14 +548,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             return new CoverageCannonRanker(choke.firstPoint(), choke.lastPoint(), anchor, rangeTiles);
         } catch (Exception e) {
-            atlantis.util.log.ErrorLog.printMaxOncePerMinute("coverage-cannon-ranker", 
+            atlantis.util.log.ErrorLog.printMaxOncePerMinute("coverage-cannon-ranker",
                 "CoverageCannonRanker resolution failed, distance ranker keeps the tile: " + e);
 
             return null;
         }
     }
 
-    /** Ordering: closer to the requested neighbourhood first. */
+    /**
+     * Ordering: closer to the requested neighbourhood first.
+     */
     private BuildLocationCatalogue.LocationScorer nearestTo(final APosition centre) {
         return new BuildLocationCatalogue.LocationScorer() {
             @Override
@@ -564,13 +568,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 return Double.compare(da, db);
             }
         };
-    }
-
-    private static double squaredDistance(BuildLocation location, APosition centre) {
-        double dx = location.tileX() - centre.tx();
-        double dy = location.tileY() - centre.ty();
-
-        return dx * dx + dy * dy;
     }
 
     /**
@@ -626,10 +623,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return APosition.create(grid.width() / 2, grid.height() / 2);
     }
 
-    private static AUnitType resolveUnitType(Producible producible) {
-        if (producible instanceof UnitProducible) {
-            return ((UnitProducible) producible).type();
-        }
-        return null;
+    /**
+     * Whether this planner is running against a live game. A seam so the planner's
+     * own rules (blocks, tiles, reservations) can be exercised with no game at all,
+     * instead of the core asking {@code atlantis.Atlantis} statically (DIP; the same
+     * shape as every other port in {@code placement.core}).
+     */
+    public interface GameContext {
+        boolean inGame();
     }
 }

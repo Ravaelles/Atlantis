@@ -1,12 +1,5 @@
 package tests.unit;
 
-import java.lang.reflect.Field;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.scout.ScoutUnitManagers;
 import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.scout.ScoutCommander;
@@ -14,13 +7,17 @@ import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.EventLog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import java.lang.reflect.Field;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #187: the scout watch must be witnessed, not inferred. No
@@ -102,7 +99,6 @@ public class ScoutWatchTest extends WorldStubForTests {
         });
 
         String rows = EventLog.toJsonLines();
-        assertTrue(!rows.contains("\"key\":\"SCOUT_WATCH\""),
-            "no scout, no watch rows: " + rows);
+        assertFalse(rows.contains("\"key\":\"SCOUT_WATCH\""), "no scout, no watch rows: " + rows);
     }
 }

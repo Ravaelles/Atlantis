@@ -6,9 +6,7 @@ import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Escape slice 2 (NEXT #174): 8-direction walkable clearance is pure
@@ -32,8 +30,8 @@ public class EscapeRaysTest {
         assertEquals(1.0, clear[0], 0.001, "east");
         assertEquals(1.0, clear[1], 0.001, "south-east clips on the corner");
         assertEquals(1.0, clear[7], 0.001, "north-east clips on the corner");
-        assertTrue(clear[4] == 12.0, "west runs full");
-        assertTrue(clear[2] == 12.0, "south runs full");
+        assertEquals(12.0, clear[4], "west runs full");
+        assertEquals(12.0, clear[2], "south runs full");
     }
 
     @Test
@@ -53,7 +51,7 @@ public class EscapeRaysTest {
     @Test
     public void largeUnitsNeedWideCorridors() {
         assertTrue(EscapeRays.passable(1, false), "small slips through one tile");
-        assertTrue(EscapeRays.passable(1, true) == false, "large wedges in one tile");
+        assertFalse(EscapeRays.passable(1, true), "large wedges in one tile");
         assertTrue(EscapeRays.passable(2, true), "large turns in two tiles");
     }
 

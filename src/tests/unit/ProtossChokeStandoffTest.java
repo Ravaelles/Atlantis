@@ -17,7 +17,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Owner doctrine (vs Protoss): with 4+ combat units the army never
@@ -65,8 +64,7 @@ public class ProtossChokeStandoffTest extends WorldStubForTests {
                         + " (rally scatter: own standable point within 2 tiles)");
                 assertTrue(standoff.distTo(ClusterBreach.breachRallyPoint()) >= 1,
                     "standoff and breach-rally are different answers: " + standoff);
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);

@@ -1,8 +1,8 @@
 package tests.unit.sim;
 
-import java.util.List;
-
 import atlantis.units.AUnit;
+
+import java.util.List;
 
 /**
  * In-memory episode manifest (NEXT #185): per-tick feature rows for
@@ -12,10 +12,10 @@ import atlantis.units.AUnit;
  */
 public final class EpisodeManifest {
 
+    public static final String HEADER = "frame,unit," + "hpFrac,shieldFrac,cooldownFrac,nearestFoeDist,foesMelee2,foesNear9,friendsNear";
+
     private EpisodeManifest() {
     }
-
-    public static final String HEADER = "frame,unit," + "hpFrac,shieldFrac,cooldownFrac,nearestFoeDist,foesMelee2,foesNear9,friendsNear";
 
     public static String render(int frame, AUnit unit) {
         return frame + "," + (unit == null ? -1 : unit.id()) + ","

@@ -23,10 +23,14 @@ import java.util.Map;
  */
 public final class FrozenWatch {
 
-    /** No displacement this long with an order riding: frozen, not holding. */
+    /**
+     * No displacement this long with an order riding: frozen, not holding.
+     */
     public static final int FROZEN_FRAMES = 40;
 
-    /** Position jitter below this still counts as standing still. */
+    /**
+     * Position jitter below this still counts as standing still.
+     */
     public static final double STILL_TILES = 0.3;
 
     /**
@@ -38,7 +42,9 @@ public final class FrozenWatch {
      */
     public static final double DEPLOYED_TILES = 3.0;
 
-    /** How often one unit may log its frozen state (the painter has no throttle). */
+    /**
+     * How often one unit may log its frozen state (the painter has no throttle).
+     */
     private static final int LOG_EVERY_FRAMES = 150;
 
     private static final Map<Integer, APosition> lastPos = new HashMap<>();
@@ -60,7 +66,9 @@ public final class FrozenWatch {
         lastErrorFrame.clear();
     }
 
-    /** Per-frame sample, next to the other per-unit twins in the battle hook. */
+    /**
+     * Per-frame sample, next to the other per-unit twins in the battle hook.
+     */
     public static void note(AUnit unit) {
         if (unit == null || !unit.isAlive() || unit.position() == null) return;
 
@@ -104,14 +112,18 @@ public final class FrozenWatch {
         }
     }
 
-    /** Consecutive frozen notes; the error fires when this reaches 2. */
+    /**
+     * Consecutive frozen notes; the error fires when this reaches 2.
+     */
     public static int frozenStreak(AUnit unit) {
         if (unit == null) return 0;
 
         return frozenStreak.getOrDefault(unit.id(), 0);
     }
 
-    /** Frame of the last frozen error for this unit, or null when never filed. */
+    /**
+     * Frame of the last frozen error for this unit, or null when never filed.
+     */
     public static Integer frozenErrorFrame(AUnit unit) {
         if (unit == null) return null;
 
@@ -131,7 +143,9 @@ public final class FrozenWatch {
         }
     }
 
-    /** Standing still with a live target inside weapon range: fighting, not frozen. */
+    /**
+     * Standing still with a live target inside weapon range: fighting, not frozen.
+     */
     private static boolean trading(AUnit unit) {
         try {
             AUnit target = unit.target();

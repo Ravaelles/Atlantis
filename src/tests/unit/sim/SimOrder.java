@@ -17,29 +17,14 @@ import tests.fakes.FakeUnit;
  */
 public final class SimOrder {
 
-    public enum Verb {
-        BUILD,
-        MOVE,
-        TRAIN,
-        RESEARCH,
-        UPGRADE,
-        GATHER
-    }
-
-    public enum Verdict {
-        ACCEPTED,
-        REJECTED
-    }
-
     public final Verb verb;
     public final FakeUnit actor;
     public final AUnitType subject;
     public final APosition tile;
     public final Verdict verdict;
     public final String reason;
-
     private SimOrder(Verb verb, FakeUnit actor, AUnitType subject, APosition tile,
-            Verdict verdict, String reason) {
+                     Verdict verdict, String reason) {
         this.verb = verb;
         this.actor = actor;
         this.subject = subject;
@@ -53,7 +38,7 @@ public final class SimOrder {
     }
 
     public static SimOrder rejected(Verb verb, FakeUnit actor, AUnitType subject, APosition tile,
-            String reason) {
+                                    String reason) {
         return new SimOrder(verb, actor, subject, tile, Verdict.REJECTED, reason);
     }
 
@@ -66,5 +51,19 @@ public final class SimOrder {
         return verb + " " + (subject == null ? "-" : subject.name())
             + " @" + (tile == null ? "-" : "[" + tile.tx() + "," + tile.ty() + "]")
             + " -> " + verdict + (accepted() ? "" : " (" + reason + ")");
+    }
+
+    public enum Verb {
+        BUILD,
+        MOVE,
+        TRAIN,
+        RESEARCH,
+        UPGRADE,
+        GATHER
+    }
+
+    public enum Verdict {
+        ACCEPTED,
+        REJECTED
     }
 }

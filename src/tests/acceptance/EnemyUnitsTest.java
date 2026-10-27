@@ -39,29 +39,29 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
         world(5, generateOur(), generateEnemies(), () -> {
 //            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
-        if (A.now() == 1) {
-            drone4 = fakeEnemy(AUnitType.Zerg_Drone, 23);
-            drone5 = fakeEnemy(AUnitType.Zerg_Drone, 24);
-            drone6 = fakeEnemy(AUnitType.Zerg_Drone, 25);
-            lurkerEgg = fakeEnemy(AUnitType.Zerg_Lurker_Egg, 26);
-            hydra = fakeEnemy(AUnitType.Zerg_Hydralisk, 27);
+            if (A.now() == 1) {
+                drone4 = fakeEnemy(AUnitType.Zerg_Drone, 23);
+                drone5 = fakeEnemy(AUnitType.Zerg_Drone, 24);
+                drone6 = fakeEnemy(AUnitType.Zerg_Drone, 25);
+                lurkerEgg = fakeEnemy(AUnitType.Zerg_Lurker_Egg, 26);
+                hydra = fakeEnemy(AUnitType.Zerg_Hydralisk, 27);
 
-            firstFrame();
-        }
-        else if (A.now() == 2) {
-            secondFrame();
-        }
-        else if (A.now() == 3) {
-            thirdFrame();
-        }
-        else if (A.now() == 4) {
-            forthFrame();
-        }
-        else if (A.now() == 5) {
-            fifthFrame();
-        }
+                firstFrame();
+            }
+            else if (A.now() == 2) {
+                secondFrame();
+            }
+            else if (A.now() == 3) {
+                thirdFrame();
+            }
+            else if (A.now() == 4) {
+                forthFrame();
+            }
+            else if (A.now() == 5) {
+                fifthFrame();
+            }
 
-        gameCommander.invokedCommander();
+            gameCommander.invokedCommander();
         });
     }
 

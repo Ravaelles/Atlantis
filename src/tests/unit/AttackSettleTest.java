@@ -9,7 +9,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Post-swing settle (PurpleWave AttackDelay, owner 2026-10-26): a move

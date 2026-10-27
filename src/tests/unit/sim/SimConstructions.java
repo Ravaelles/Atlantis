@@ -27,43 +27,17 @@ import java.util.Map;
  */
 public final class SimConstructions {
 
-    /** Arrival radius: the builder warps from next to the site. */
+    /**
+     * Arrival radius: the builder warps from next to the site.
+     */
     static final double ARRIVE_TILES = 2.0;
-
-    private static final class Site {
-        FakeUnit builder;
-        boolean validated;
-        int warpFramesLeft;
-        FakeUnit warpUnit;
-    }
-
-    private static final class TrainingJob {
-        final AUnitType type;
-        int framesLeft;
-
-        TrainingJob(AUnitType type, int framesLeft) {
-            this.type = type;
-            this.framesLeft = framesLeft;
-        }
-    }
-
-    private static final class ResearchJob {
-        final boolean isUpgrade;
-        final String name;
-        int framesLeft;
-
-        ResearchJob(boolean isUpgrade, String name, int framesLeft) {
-            this.isUpgrade = isUpgrade;
-            this.name = name;
-            this.framesLeft = framesLeft;
-        }
-    }
-
     private final Map<Construction, Site> sites = new HashMap<>();
     private final Map<Integer, TrainingJob> training = new HashMap<>();
     private final Map<Integer, ResearchJob> research = new HashMap<>();
 
-    /** Training already running on this facility (engine dedup mirror). */
+    /**
+     * Training already running on this facility (engine dedup mirror).
+     */
     public boolean isTraining(int facilityId) {
         return training.containsKey(facilityId);
     }
@@ -103,8 +77,6 @@ public final class SimConstructions {
 
         return false;
     }
-
-    // =========================================================
 
     private void advanceConstruction(SimFrame frame, Construction construction) {
         if (construction == null || construction.buildingType() == null) return;
@@ -212,13 +184,15 @@ public final class SimConstructions {
         return false;
     }
 
+    // =========================================================
+
     private boolean coveredByStanding(SimFrame frame, AUnitType type, Construction construction) {
         APosition tile = construction.buildPosition();
         if (tile == null) return false;
 
         for (FakeUnit other : frame.driver().completedBuildings()) {
             if (other != null && other.isAlive()
-                    && SimGround.footprintsOverlap(type, tile.tx(), tile.ty(), other)) {
+                && SimGround.footprintsOverlap(type, tile.tx(), tile.ty(), other)) {
                 return true;
             }
         }
@@ -257,6 +231,35 @@ public final class SimConstructions {
             if (job.framesLeft > 0) continue;
             research.remove(entry.getKey());
             frame.driver().completeResearch(entry.getKey(), job.isUpgrade, job.name);
+        }
+    }
+
+    private static final class Site {
+        FakeUnit builder;
+        boolean validated;
+        int warpFramesLeft;
+        FakeUnit warpUnit;
+    }
+
+    private static final class TrainingJob {
+        final AUnitType type;
+        int framesLeft;
+
+        TrainingJob(AUnitType type, int framesLeft) {
+            this.type = type;
+            this.framesLeft = framesLeft;
+        }
+    }
+
+    private static final class ResearchJob {
+        final boolean isUpgrade;
+        final String name;
+        int framesLeft;
+
+        ResearchJob(boolean isUpgrade, String name, int framesLeft) {
+            this.isUpgrade = isUpgrade;
+            this.name = name;
+            this.framesLeft = framesLeft;
         }
     }
 }

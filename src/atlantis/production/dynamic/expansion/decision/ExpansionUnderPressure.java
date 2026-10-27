@@ -15,11 +15,15 @@ import atlantis.map.position.APosition;
  * workers (a lone scout is not pressure). No position, no measurable pressure.</p>
  */
 public class ExpansionUnderPressure {
-    /** Matches the "near the expansion" radius the DT exception in
-     * ProtossCancelExpansionCommander already uses. */
+    /**
+     * Matches the "near the expansion" radius the DT exception in
+     * ProtossCancelExpansionCommander already uses.
+     */
     private static final double PRESSURE_RADIUS = 12;
 
-    /** Fewer enemy workers than this is a scout, not pressure. */
+    /**
+     * Fewer enemy workers than this is a scout, not pressure.
+     */
     private static final int WORKERS_TO_COUNT_AS_PRESSURE = 3;
 
     public static boolean check(APosition at) {

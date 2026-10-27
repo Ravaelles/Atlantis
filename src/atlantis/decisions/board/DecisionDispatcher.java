@@ -13,7 +13,9 @@ public class DecisionDispatcher {
     private DecisionDispatcher() {
     }
 
-    /** Wired once by the game root (domain owns the implementation). */
+    /**
+     * Wired once by the game root (domain owns the implementation).
+     */
     public static void register(DecisionExecutor implementation) {
         executor = implementation;
     }
@@ -29,7 +31,9 @@ public class DecisionDispatcher {
         return issue(decision);
     }
 
-    /** Issue an already-made decision through the single door. */
+    /**
+     * Issue an already-made decision through the single door.
+     */
     public static boolean issue(ADecision decision) {
         if (decision == null) return false;
         // Logged only when the act lands: DECISIONS.log answers "what did

@@ -10,7 +10,7 @@ public class ProduceArbiters {
     public static void arbiters() {
         if (Count.ofType(AUnitType.Protoss_Arbiter_Tribunal) == 0) return;
 
-        int existing  = Count.ourWithUnfinished(AUnitType.Protoss_Arbiter);
+        int existing = Count.ourWithUnfinished(AUnitType.Protoss_Arbiter);
         if (existing >= A.whenEnemyProtossTerranZerg(2, 5, 2)) return;
 
         trainNowIfHaveWhatsRequired(AUnitType.Protoss_Arbiter, true);

@@ -1,7 +1,7 @@
 package atlantis.combat.twins;
 
-import atlantis.combat.IdleWatch;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.IdleWatch;
 import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
@@ -32,10 +32,20 @@ import atlantis.util.log.LogKey;
  */
 public final class ClusterTwin {
 
+    /**
+     * The all-units freeze (owner, Drag_v_LingsUpg2): every combat unit
+     * banked ten idle seconds with no enemy near the center - the
+     * per-unit IDLE rows share one cause, and it deserves one HIGH row.
+     * Throttled: at most one row per 240 frames while it persists.
+     */
+    private static int lastStallLogFrame = -1000000;
+
     private ClusterTwin() {
     }
 
-    /** Sample the cluster state; only every 31st frame writes a row. */
+    /**
+     * Sample the cluster state; only every 31st frame writes a row.
+     */
     public static void sample(
         ClusterMission.Posture posture, FightOrFlight.Tactic tactic, HasPosition anchor
     ) {
@@ -202,14 +212,6 @@ public final class ClusterTwin {
 
         return best == null ? "-" : best;
     }
-
-    /**
-     * The all-units freeze (owner, Drag_v_LingsUpg2): every combat unit
-     * banked ten idle seconds with no enemy near the center - the
-     * per-unit IDLE rows share one cause, and it deserves one HIGH row.
-     * Throttled: at most one row per 240 frames while it persists.
-     */
-    private static int lastStallLogFrame = -1000000;
 
     public static void clearForTests() {
         lastStallLogFrame = -1000000;

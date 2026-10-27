@@ -50,6 +50,15 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * </p>
      */
     /**
+     * True only during the Pylon fallback sweep (see the javadoc above) - it is what
+     * {@code ProtossTooCloseToMapBoundaries} reads to relax its 7-tile margin to 4.
+     * Thread-local not needed: the finder is single-threaded per frame.
+     */
+    public static boolean relaxedBoundaryMargin = false;
+    private static APosition lastFound;
+    private static java.util.Map<String, Integer> lastRefusals = new java.util.HashMap<>();
+
+    /**
      * Does this Protoss building need to stand inside a finished Pylon's power
      * field?
      *
@@ -290,24 +299,14 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             APosition found = findStandardPositionFor(builder, building, nearTo, maxDistance);
 
             return found != null;
-        }
-        finally {
+        } finally {
             relaxedBoundaryMargin = false;
         }
     }
 
-    /**
-     * True only during the Pylon fallback sweep (see the javadoc above) - it is what
-     * {@code ProtossTooCloseToMapBoundaries} reads to relax its 7-tile margin to 4.
-     * Thread-local not needed: the finder is single-threaded per frame.
-     */
-    public static boolean relaxedBoundaryMargin = false;
-
     private static APosition lastFoundPosition() {
         return lastFound;
     }
-
-    private static APosition lastFound;
 
     /**
      * Per-rule refusal counts of the last Pylon search (a copy - mutating it
@@ -318,6 +317,4 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     public static java.util.Map<String, Integer> lastRefusalBreakdown() {
         return new java.util.HashMap<>(lastRefusals);
     }
-
-    private static java.util.Map<String, Integer> lastRefusals = new java.util.HashMap<>();
 }

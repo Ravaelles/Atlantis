@@ -16,6 +16,41 @@ import bwapi.Color;
 import java.util.List;
 
 public class NewRepairsCommander extends Commander {
+    public static int optimalNumOfRepairersFor(AUnit unit) {
+        int alreadyAssigned = RepairAssignments.countRepairersForUnit(unit) + RepairAssignments.countProtectorsFor(unit);
+        int repairersNeeded = 1;
+
+        // === Bunker - very special case ========================================
+
+        if (unit.isBunker()) {
+            int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.forBunker(unit);
+            if (shouldHaveThisManyRepairers > 0) {
+                AAdvancedPainter.paintTextCentered(unit, shouldHaveThisManyRepairers + "", Color.Orange);
+                unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
+                ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
+
+                return shouldHaveThisManyRepairers;
+            }
+            else {
+                unit.removeTooltip();
+            }
+        }
+        else if (unit.isMissileTurret()) {
+            int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
+
+            if (Have.main() && Select.main().distToLessThan(unit, 14)) {
+                return AMath.inRange(3, enemies, 5);
+            }
+
+            return AMath.inRange(2, (int) (enemies / 1.5), 5);
+        }
+        else if (unit.isTank()) {
+            return 3;
+        }
+
+        return Math.max(0, repairersNeeded - alreadyAssigned);
+    }
+
     @Override
     public boolean applies() {
         return We.terran();
@@ -72,41 +107,6 @@ public class NewRepairsCommander extends Commander {
         }
 
         return false;
-    }
-
-    public static int optimalNumOfRepairersFor(AUnit unit) {
-        int alreadyAssigned = RepairAssignments.countRepairersForUnit(unit) + RepairAssignments.countProtectorsFor(unit);
-        int repairersNeeded = 1;
-
-        // === Bunker - very special case ========================================
-
-        if (unit.isBunker()) {
-            int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.forBunker(unit);
-            if (shouldHaveThisManyRepairers > 0) {
-                AAdvancedPainter.paintTextCentered(unit, shouldHaveThisManyRepairers + "", Color.Orange);
-                unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
-                ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
-
-                return shouldHaveThisManyRepairers;
-            }
-            else {
-                unit.removeTooltip();
-            }
-        }
-        else if (unit.isMissileTurret()) {
-            int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
-
-            if (Have.main() && Select.main().distToLessThan(unit, 14)) {
-                return AMath.inRange(3, enemies, 5);
-            }
-
-            return AMath.inRange(2, (int) (enemies / 1.5), 5);
-        }
-        else if (unit.isTank()) {
-            return 3;
-        }
-
-        return Math.max(0, repairersNeeded - alreadyAssigned);
     }
 
     protected boolean assignRepairersToWoundedUnits(AUnit unitToRepair, int numberOfRepairersToAssign) {

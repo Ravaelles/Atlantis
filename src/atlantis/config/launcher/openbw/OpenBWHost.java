@@ -37,39 +37,20 @@ import java.util.List;
 public final class OpenBWHost {
 
     /**
-     * A started process, reduced to what this class needs. Deliberately not
-     * {@code java.lang.ProcessHandle}: that type is Java 9+, and this project
-     * targets Java 8 (CONVENTIONS 16) - the release-8 jar build fails on it,
-     * which is exactly the trap that compile exists to catch.
+     * Test seam: swap the OS adapter.
      */
-    public interface HostProcess {
-        long pid();
-
-        boolean isAlive();
-    }
-
-    /**
-     * The single door to the operating system; a test installs a recording fake.
-     */
-    public interface ProcessRunner {
-        /** Runs a detached command, returning a handle to it. */
-        HostProcess startDetached(List<String> command, File workingDir, File outputLog) throws IOException;
-
-        /** Runs a command to completion and returns its exit code. */
-        int run(List<String> command);
-
-        String readFileIfExists(String path);
-    }
-
-    /** Test seam: swap the OS adapter. */
     private static ProcessRunner runner = new SystemProcessRunner();
-
     /**
      * Test seam: when false, {@link #host()} refuses to start a game. Without
      * this, a unit test drove a real 30-second host before the fake could be
      * installed - a test must never launch a game (CONVENTIONS 12).
      */
     private static boolean hostingEnabled = true;
+    private final OpenBWConfig config;
+
+    public OpenBWHost(OpenBWConfig config) {
+        this.config = config != null ? config : OpenBWConfig.defaults();
+    }
 
     public static void useProcessRunner(ProcessRunner custom) {
         runner = custom != null ? custom : new SystemProcessRunner();
@@ -79,10 +60,64 @@ public final class OpenBWHost {
         hostingEnabled = enabled;
     }
 
-    private final OpenBWConfig config;
+    /**
+     * The registry slot layout: int pid at +0, byte isConnected at +4.
+     */
+    public static int readHostPid(String registryPath) {
+        byte[] bytes = readBytes(registryPath, 24);
+        if (bytes == null || bytes.length < 8)
+            return -1;
 
-    public OpenBWHost(OpenBWConfig config) {
-        this.config = config != null ? config : OpenBWConfig.defaults();
+        int pid = (bytes[0] & 0xff) | ((bytes[1] & 0xff) << 8)
+            | ((bytes[2] & 0xff) << 16) | ((bytes[3] & 0xff) << 24);
+
+        return pid;
+    }
+
+    private static byte[] readBytes(String path, int count) {
+        try {
+            byte[] all = Files.readAllBytes(Paths.get(path));
+            if (all.length == 0)
+                return null;
+
+            int length = Math.min(count, all.length);
+            byte[] slice = new byte[length];
+            System.arraycopy(all, 0, slice, 0, length);
+
+            return slice;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * The two namespaces, both named after the hosting PID.
+     */
+    public static List<String> listStaleTransportFiles() {
+        List<String> files = new ArrayList<>();
+        addMatching(files, new File("/dev/shm"), "bwapi_shared_memory_");
+        addMatching(files, new File("/tmp"), "bwapi_socket_");
+
+        return files;
+    }
+
+    private static void addMatching(List<String> files, File dir, String prefix) {
+        String[] names = dir.list();
+        if (names == null)
+            return;
+
+        for (String name : names) {
+            if (name.startsWith(prefix))
+                files.add(new File(dir, name).getAbsolutePath());
+        }
+    }
+
+    private static void sleepQuietly(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -121,7 +156,7 @@ public final class OpenBWHost {
         int pid = waitForHost(handle);
         if (pid < 0) {
             ErrorLog.printPlusToFile("OpenBW: host published no game registry entry within "
-                    + config.hostWaitSeconds() + " s; server log tail:\n" + tail(serverLog));
+                + config.hostWaitSeconds() + " s; server log tail:\n" + tail(serverLog));
         }
         return pid;
     }
@@ -181,34 +216,6 @@ public final class OpenBWHost {
         return -1;
     }
 
-    /** The registry slot layout: int pid at +0, byte isConnected at +4. */
-    public static int readHostPid(String registryPath) {
-        byte[] bytes = readBytes(registryPath, 24);
-        if (bytes == null || bytes.length < 8)
-            return -1;
-
-        int pid = (bytes[0] & 0xff) | ((bytes[1] & 0xff) << 8)
-                | ((bytes[2] & 0xff) << 16) | ((bytes[3] & 0xff) << 24);
-
-        return pid;
-    }
-
-    private static byte[] readBytes(String path, int count) {
-        try {
-            byte[] all = Files.readAllBytes(Paths.get(path));
-            if (all.length == 0)
-                return null;
-
-            int length = Math.min(count, all.length);
-            byte[] slice = new byte[length];
-            System.arraycopy(all, 0, slice, 0, length);
-
-            return slice;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     private boolean isAlive(int pid) {
         return runner.run(java.util.Arrays.asList("kill", "-0", String.valueOf(pid))) == 0;
     }
@@ -229,26 +236,6 @@ public final class OpenBWHost {
         }
     }
 
-    /** The two namespaces, both named after the hosting PID. */
-    public static List<String> listStaleTransportFiles() {
-        List<String> files = new ArrayList<>();
-        addMatching(files, new File("/dev/shm"), "bwapi_shared_memory_");
-        addMatching(files, new File("/tmp"), "bwapi_socket_");
-
-        return files;
-    }
-
-    private static void addMatching(List<String> files, File dir, String prefix) {
-        String[] names = dir.list();
-        if (names == null)
-            return;
-
-        for (String name : names) {
-            if (name.startsWith(prefix))
-                files.add(new File(dir, name).getAbsolutePath());
-        }
-    }
-
     private String tail(File log) {
         try {
             List<String> lines = Files.readAllLines(log.toPath());
@@ -263,16 +250,53 @@ public final class OpenBWHost {
         }
     }
 
-    private static void sleepQuietly(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    /**
+     * A started process, reduced to what this class needs. Deliberately not
+     * {@code java.lang.ProcessHandle}: that type is Java 9+, and this project
+     * targets Java 8 (CONVENTIONS 16) - the release-8 jar build fails on it,
+     * which is exactly the trap that compile exists to catch.
+     */
+    public interface HostProcess {
+        long pid();
+
+        boolean isAlive();
     }
 
-    /** The real adapter: everything the class needs from the OS. */
+    /**
+     * The single door to the operating system; a test installs a recording fake.
+     */
+    public interface ProcessRunner {
+        /**
+         * Runs a detached command, returning a handle to it.
+         */
+        HostProcess startDetached(List<String> command, File workingDir, File outputLog) throws IOException;
+
+        /**
+         * Runs a command to completion and returns its exit code.
+         */
+        int run(List<String> command);
+
+        String readFileIfExists(String path);
+    }
+
+    /**
+     * The real adapter: everything the class needs from the OS.
+     */
     static final class SystemProcessRunner implements ProcessRunner {
+
+        /**
+         * The OS pid of a started process, or -1. Reflection because
+         * {@code Process.pid()} is Java 9+ and this project targets Java 8; on 8
+         * the field is private, but liveness is what matters and {@code isAlive()}
+         * covers it.
+         */
+        private static long processPid(Process process) {
+            try {
+                return (long) (Long) Process.class.getMethod("pid").invoke(process);
+            } catch (Exception e) {
+                return -1;
+            }
+        }
 
         @Override
         public HostProcess startDetached(List<String> command, File workingDir, File outputLog) throws IOException {
@@ -293,20 +317,6 @@ public final class OpenBWHost {
                     return process.isAlive();
                 }
             };
-        }
-
-        /**
-         * The OS pid of a started process, or -1. Reflection because
-         * {@code Process.pid()} is Java 9+ and this project targets Java 8; on 8
-         * the field is private, but liveness is what matters and {@code isAlive()}
-         * covers it.
-         */
-        private static long processPid(Process process) {
-            try {
-                return (long) (Long) Process.class.getMethod("pid").invoke(process);
-            } catch (Exception e) {
-                return -1;
-            }
         }
 
         @Override

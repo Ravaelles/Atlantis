@@ -2,7 +2,9 @@ package atlantis.production.v2;
 
 import atlantis.units.AUnitType;
 
-/** Immutable Terran identities for {@link ProductionRacePolicy}. */
+/**
+ * Immutable Terran identities for {@link ProductionRacePolicy}.
+ */
 public final class TerranProductionRacePolicy implements ProductionRacePolicy {
 
     public static final TerranProductionRacePolicy INSTANCE = new TerranProductionRacePolicy();

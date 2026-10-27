@@ -16,6 +16,15 @@ import bwapi.Unit;
 public class PositionUtil {
 
     public static final int DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION = 989;
+    /**
+     * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
+     * glued on a Gateway): an escape step never ends within this of a
+     * building's edge. Maneuver room is survival - a step that hugs a
+     * wall slides, re-issues and never fires.
+     */
+    public static final double BUILDING_CLEARANCE_TILES = 1.5;
+
+    // =========================================================
 
     /**
      * Returns distance from one position to other in build tiles. One build tile equals to 32 pixels. Usage
@@ -200,16 +209,6 @@ public class PositionUtil {
         }
 
     }
-
-    // =========================================================
-
-    /**
-     * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
-     * glued on a Gateway): an escape step never ends within this of a
-     * building's edge. Maneuver room is survival - a step that hugs a
-     * wall slides, re-issues and never fires.
-     */
-    public static final double BUILDING_CLEARANCE_TILES = 1.5;
 
     /**
      * True when this destination would glue the unit onto a building:

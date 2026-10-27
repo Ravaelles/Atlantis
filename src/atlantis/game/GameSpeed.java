@@ -13,32 +13,25 @@ public class GameSpeed {
     public static final int NORMAL_SPEED = 20;
     public static final int FASTER_SPEED = 1;
     private static final int FASTEST_SPEED = 0;
-
-    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
-
+    // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
+    private static final int NORMAL_FRAME_SKIP = 0;
+    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
+    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
     /**
      * Game speed. Lower is faster. 0 is fastest, 20 is about normal game speed.
      * In game you can use buttons -/+ to change the game speed.
      */
     public static int gameSpeed;
-
     /**
      * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
      * Value 3 means we render every 3rd game frame, skipping 67% of total rendering.
      */
     public static int frameSkip;
-
-    // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
-    private static final int NORMAL_FRAME_SKIP = 0;
-
-    private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
-    private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
-
+    public static boolean oneTimeSlowdownUsed = false;
+    private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
     // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisRaceConfig
     private static boolean dynamicSlowdownIsAllowed = false;
     private static boolean dynamicSlowdownIsActive = false;
-
-    public static boolean oneTimeSlowdownUsed = false;
 
     // Last time unit has died; when unit dies, game slows down
 //    private static int dynamicSlowdown_lastTimeUnitDestroyed = 0;
@@ -95,7 +88,7 @@ public class GameSpeed {
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
                 && EnemyInfo.hasDiscoveredEnemyBase()
-                // BATTLE CUTOVER: scout-wound slowdown (deleted squads) - base discovery alone slows once.
+            // BATTLE CUTOVER: scout-wound slowdown (deleted squads) - base discovery alone slows once.
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;

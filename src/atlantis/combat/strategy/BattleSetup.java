@@ -28,7 +28,9 @@ public final class BattleSetup {
         return ours + theirs;
     }
 
-    /** The choke on this unit's way, or null when there is none (or no map data). */
+    /**
+     * The choke on this unit's way, or null when there is none (or no map data).
+     */
     public static AChoke chokeNear(AUnit unit) {
         if (unit == null) return null;
 

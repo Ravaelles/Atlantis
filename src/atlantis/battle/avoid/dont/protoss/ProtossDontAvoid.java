@@ -28,13 +28,10 @@ public class ProtossDontAvoid extends HasUnit {
         if (dontAvoidWhenCannonsNear(unit)) return true;
         if (ZealotDontAvoidEnemy.dontAvoid(unit)) return true;
 
-        if (unit.isShuttle() && unit.hp() >= 42 && unit.isAction(Actions.LOAD)) {
-//        if (unit.isShuttle()) {
-//            unit.addLog("ShuttleLoadNoAvoid");
-            return true;
-        }
+        //        if (unit.isShuttle()) {
+        //            unit.addLog("ShuttleLoadNoAvoid");
 
-        return false;
+        return unit.isShuttle() && unit.hp() >= 42 && unit.isAction(Actions.LOAD);
     }
 
     private boolean noEnemyDetectorsNearby() {

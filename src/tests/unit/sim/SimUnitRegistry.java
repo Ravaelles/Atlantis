@@ -25,7 +25,9 @@ public final class SimUnitRegistry {
     private final List<FakeUnit> neutral = new ArrayList<>();
     private final Map<Integer, FakeUnit> byId = new HashMap<>();
 
-    /** Supply locked by training queues (engine counts units in production). */
+    /**
+     * Supply locked by training queues (engine counts units in production).
+     */
     private int reservedSupply;
 
     public List<FakeUnit> ours() {
@@ -54,7 +56,9 @@ public final class SimUnitRegistry {
         return byId.get(id);
     }
 
-    /** Spawns a finished unit on a tile and registers it. */
+    /**
+     * Spawns a finished unit on a tile and registers it.
+     */
     public FakeUnit spawn(AUnitType type, int tx, int ty) {
         FakeUnit unit = new FakeUnit(type, tx, ty);
         unit.setCompleted(true);
@@ -71,7 +75,9 @@ public final class SimUnitRegistry {
         reservedSupply = Math.max(0, reservedSupply - raw);
     }
 
-    /** Raw used supply, in BWAPI units: live units plus training reservations. */
+    /**
+     * Raw used supply, in BWAPI units: live units plus training reservations.
+     */
     public int supplyUsedRaw() {
         int used = reservedSupply;
         for (FakeUnit unit : ours) {
@@ -93,7 +99,9 @@ public final class SimUnitRegistry {
         return supplyUsedRaw() / 2;
     }
 
-    /** Raw total supply: completed providers only, exactly like the engine. */
+    /**
+     * Raw total supply: completed providers only, exactly like the engine.
+     */
     public int supplyTotalRaw() {
         int total = 0;
         for (FakeUnit unit : ours) {
@@ -104,7 +112,9 @@ public final class SimUnitRegistry {
         return total;
     }
 
-    /** Total supply the way the bot reads it: halved, like {@code AGame}. */
+    /**
+     * Total supply the way the bot reads it: halved, like {@code AGame}.
+     */
     public int supplyTotal() {
         return supplyTotalRaw() / 2;
     }

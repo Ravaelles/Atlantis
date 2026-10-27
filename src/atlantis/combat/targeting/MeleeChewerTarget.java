@@ -20,12 +20,10 @@ import atlantis.units.select.Selection;
  */
 public final class MeleeChewerTarget {
 
-    private MeleeChewerTarget() {
-    }
-
-    /** Shot ready now: 5 frames or less on the weapon. */
+    /**
+     * Shot ready now: 5 frames or less on the weapon.
+     */
     public static final int READY_COOLDOWN_FRAMES = 5;
-
     /**
      * Melee hitting reach in tiles, engine-measured (claws reach 15px;
      * tile truncation rounds melee bodies to zero, so the nominal
@@ -34,6 +32,9 @@ public final class MeleeChewerTarget {
      * table: the table cannot express contact.
      */
     public static final double MELEE_HIT_TILES = 0.5;
+
+    private MeleeChewerTarget() {
+    }
 
     /**
      * Weakest damageable enemy inside this melee unit's weapon range, or
@@ -47,8 +48,7 @@ public final class MeleeChewerTarget {
         Selection enemies;
         try {
             enemies = unit.enemiesNear();
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
         if (enemies == null) return null;

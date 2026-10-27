@@ -11,18 +11,20 @@ import atlantis.map.position.HasPosition;
  */
 public final class EscapeRays {
 
+    /**
+     * 8 compass deltas: E, SE, S, SW, W, NW, N, NE.
+     */
+    public static final int[][] DIRS = {
+        {1, 0}, {1, 1}, {0, 1}, {-1, 1},
+        {-1, 0}, {-1, -1}, {0, -1}, {1, -1},
+    };
+    /**
+     * Corridor a large unit (Dragoon body 31px) still turns in.
+     */
+    public static final int WIDE_CORRIDOR_TILES = 2;
+
     private EscapeRays() {
     }
-
-    public interface Walkability {
-        boolean isWalkable(int tx, int ty);
-    }
-
-    /** 8 compass deltas: E, SE, S, SW, W, NW, N, NE. */
-    public static final int[][] DIRS = {
-        { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 },
-        { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 },
-    };
 
     /**
      * Index into {@link #DIRS} closest to the away-vector (from threat
@@ -55,9 +57,6 @@ public final class EscapeRays {
         return best;
     }
 
-    /** Corridor a large unit (Dragoon body 31px) still turns in. */
-    public static final int WIDE_CORRIDOR_TILES = 2;
-
     /**
      * Whether a ray of this clearance fits the unit: small and medium
      * slip through single tiles, large units need a two-tile corridor
@@ -89,5 +88,9 @@ public final class EscapeRays {
             out[d] = clear;
         }
         return out;
+    }
+
+    public interface Walkability {
+        boolean isWalkable(int tx, int ty);
     }
 }

@@ -9,14 +9,38 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 public class WorkerHandlerCommander extends Commander {
-    @Override
-    protected boolean handle() {
-        for (AUnit worker : Select.ourWorkers().list()) {
-            (new WorkerManager(worker)).invokeFrom(this);
+    /**
+     * Test seam: the exemption rule (steady gathering is work, not stuck)
+     * pins without running the frame loop.
+     */
+    public static void reportStuckWorker(AUnit worker) {
+        if (!Env.builderLog()) return;
+        if (!A.everyNthGameFrame(30)) return;
+        if (worker.lastPositionChangedAgo() < 10) return;
 
-            reportStuckWorker(worker);
-        }
-        return false;
+        // A worker that IS gathering stands still as its job: miners hold
+        // position while the engine transfers resources (measured on Wine:
+        // 1637 of 2088 STUCK_WORKER rows named healthy GatherResources
+        // miners, drowning the real stalls). Only a worker that is NOT
+        // gathering while standing still is stuck - en-route movers,
+        // idle workers and unclaimed ones still report below.
+        if (worker.isGatheringResources()) return;
+
+        EventLog.key(LogKey.STUCK_WORKER)
+            .param("unit", worker.id())
+            .param("type", worker.type().name())
+            .param("tx", worker.tx())
+            .param("ty", worker.ty())
+            .param("stoodStillForF", worker.lastPositionChangedAgo())
+            .param("manager", worker.manager() == null ? "-" : worker.manager().getClass().getSimpleName())
+            .param("lastCommand", worker.lastCommandName())
+            .param("lastCommandIssuedAgo", worker.lastCommandIssuedAgo())
+            .param("action", worker.action().name())
+            .param("idle", worker.isIdle())
+            .param("stopped", worker.isStopped())
+            .param("gathering", worker.isGatheringResources())
+            .param("builder", worker.isBuilder())
+            .log(A.now(), A.minSec());
     }
 
     /**
@@ -73,37 +97,14 @@ public class WorkerHandlerCommander extends Commander {
      * game), so a row means NOT gathering while standing still.
      * </p>
      */
-    /**
-     * Test seam: the exemption rule (steady gathering is work, not stuck)
-     * pins without running the frame loop.
-     */
-    public static void reportStuckWorker(AUnit worker) {
-        if (!Env.builderLog()) return;
-        if (!A.everyNthGameFrame(30)) return;
-        if (worker.lastPositionChangedAgo() < 10) return;
 
-        // A worker that IS gathering stands still as its job: miners hold
-        // position while the engine transfers resources (measured on Wine:
-        // 1637 of 2088 STUCK_WORKER rows named healthy GatherResources
-        // miners, drowning the real stalls). Only a worker that is NOT
-        // gathering while standing still is stuck - en-route movers,
-        // idle workers and unclaimed ones still report below.
-        if (worker.isGatheringResources()) return;
+    @Override
+    protected boolean handle() {
+        for (AUnit worker : Select.ourWorkers().list()) {
+            (new WorkerManager(worker)).invokeFrom(this);
 
-        EventLog.key(LogKey.STUCK_WORKER)
-            .param("unit", worker.id())
-            .param("type", worker.type().name())
-            .param("tx", worker.tx())
-            .param("ty", worker.ty())
-            .param("stoodStillForF", worker.lastPositionChangedAgo())
-            .param("manager", worker.manager() == null ? "-" : worker.manager().getClass().getSimpleName())
-            .param("lastCommand", worker.lastCommandName())
-            .param("lastCommandIssuedAgo", worker.lastCommandIssuedAgo())
-            .param("action", worker.action().name())
-            .param("idle", worker.isIdle())
-            .param("stopped", worker.isStopped())
-            .param("gathering", worker.isGatheringResources())
-            .param("builder", worker.isBuilder())
-            .log(A.now(), A.minSec());
+            reportStuckWorker(worker);
+        }
+        return false;
     }
 }

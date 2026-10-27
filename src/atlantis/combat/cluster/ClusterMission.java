@@ -1,12 +1,10 @@
 package atlantis.combat.cluster;
+
 import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Missions;
-
 import atlantis.combat.focus.PostureLatch;
 import atlantis.combat.focus.PostureReasons;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.select.Count;
 
 /**
  * Where the one cluster belongs: home while small, at the enemy once it
@@ -15,13 +13,10 @@ import atlantis.units.select.Count;
  */
 public class ClusterMission {
 
-    /** Army size at which the posture flips from DEFEND to ATTACK. */
+    /**
+     * Army size at which the posture flips from DEFEND to ATTACK.
+     */
     public static final int ATTACK_ARMY_SIZE = 8;
-
-    public enum Posture {
-        DEFEND,
-        ATTACK
-    }
 
     public static Posture decide(int combatUnits) {
         return combatUnits >= ATTACK_ARMY_SIZE ? Posture.ATTACK : Posture.DEFEND;
@@ -57,19 +52,25 @@ public class ClusterMission {
             Posture latched = PostureLatch.hold(verdict.posture, combatUnits, A.now());
 
             return new PostureReasons.Verdict(verdict.reason, latched, verdict.text);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return new PostureReasons.Verdict(
                 atlantis.combat.focus.PostureReason.HOLD_GROUND, decide(combatUnits), "Hold ground (fallback)");
         }
     }
 
-    /** Test seam: the latch is per-game state, never cross-test. */
+    /**
+     * Test seam: the latch is per-game state, never cross-test.
+     */
     public static void resetForTests() {
         PostureLatch.resetForTests();
     }
 
     public static Mission toMission(Posture posture) {
         return posture == Posture.ATTACK ? Missions.ATTACK : Missions.DEFEND;
+    }
+
+    public enum Posture {
+        DEFEND,
+        ATTACK
     }
 }

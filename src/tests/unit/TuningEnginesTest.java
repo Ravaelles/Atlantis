@@ -5,8 +5,7 @@ import atlantis.debug.tweaker.TuningEngines;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #160, step 6: the loop addresses engines by name and asks them
@@ -22,8 +21,8 @@ public class TuningEnginesTest {
         assertTrue(TuningEngines.fromName("wine").isPresent());
         assertTrue(TuningEngines.fromName("openbw").isPresent());
         assertTrue(TuningEngines.fromName("sim").isPresent());
-        assertTrue(!TuningEngines.fromName("toaster").isPresent());
-        assertTrue(!TuningEngines.fromName(null).isPresent());
+        assertFalse(TuningEngines.fromName("toaster").isPresent());
+        assertFalse(TuningEngines.fromName(null).isPresent());
     }
 
     @Test
@@ -42,15 +41,14 @@ public class TuningEnginesTest {
 
         assertEquals("scripts/run-openbw-ums.sh", openbw.batchScript());
         assertTrue(openbw.isLive(), "it plays, just not duels");
-        assertTrue(!openbw.supportsTuning(),
-            "no tweaker rows (killed before OnGameEnd) and no ticking duel map");
+        assertFalse(openbw.supportsTuning(), "no tweaker rows (killed before OnGameEnd) and no ticking duel map");
     }
 
     @Test
     public void simIsWired() {
         TuningEngine sim = TuningEngines.fromName("sim").get();
 
-        assertTrue(!sim.isLive(), "no game process at all");
+        assertFalse(sim.isLive(), "no game process at all");
         assertTrue(sim.supportsTuning(), "sim batch runner plays duels in-JVM (SimTunerBatch)");
         assertEquals("scripts/run-sim-batch.sh", sim.batchScript());
         assertEquals("", sim.defaultEnv(), "no env files where there is no game");

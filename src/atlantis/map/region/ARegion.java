@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ARegion implements HasPosition {
-    private static HashMap<Area, ARegion> instances = new HashMap<>();
-    private Cache<ArrayList<ARegionBoundary>> cachePolygons = new Cache<>();
+    private static final HashMap<Area, ARegion> instances = new HashMap<>();
+    private final Cache<ArrayList<ARegionBoundary>> cachePolygons = new Cache<>();
 
 //    private Region region;
 //
@@ -124,7 +124,7 @@ public class ARegion implements HasPosition {
             int h = area.getBottomRight().y - area.getTopLeft().y;
             if (w <= 0 || h <= 0) return null;
 
-            return new double[] { w, h };
+            return new double[]{w, h};
         } catch (Exception ignored) {
             return null;
         }
@@ -138,16 +138,16 @@ public class ARegion implements HasPosition {
 //                System.err.println("area.getBottomRight().x = " + area.getBottomRight().x);
 //                System.err.println("area.getTopLeft().y = " + area.getTopLeft().y);
 //                System.err.println("area.getBottomRight().y = " + area.getBottomRight().y);
-                center = APosition.create(
-                    (area.getTopLeft().x + area.getBottomRight().x) * 32 / 2,
-                    (area.getTopLeft().y + area.getBottomRight().y) * 32 / 2
-                );
+                    center = APosition.create(
+                        (area.getTopLeft().x + area.getBottomRight().x) * 32 / 2,
+                        (area.getTopLeft().y + area.getBottomRight().y) * 32 / 2
+                    );
 //                System.err.println("center CALC = " + center);
 
-                if (!center.isWalkable()) {
-                    center = center.makeWalkable(8, 2, this);
+                    if (!center.isWalkable()) {
+                        center = center.makeWalkable(8, 2, this);
 //                    System.err.println("WALKABLE center = " + center);
-                }
+                    }
                 }
             } catch (Exception ignored) {
                 center = null;

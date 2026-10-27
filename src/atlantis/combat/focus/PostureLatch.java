@@ -17,20 +17,22 @@ import atlantis.combat.cluster.ClusterMission;
  */
 public final class PostureLatch {
 
-    private PostureLatch() {
-    }
-
-    /** A fresh ATTACK holds this long before a retreat is allowed. */
+    /**
+     * A fresh ATTACK holds this long before a retreat is allowed.
+     */
     public static final int ATTACK_HOLD_FRAMES = 96;
-
-    /** A fresh DEFEND holds this long for a big army before marching. */
+    /**
+     * A fresh DEFEND holds this long for a big army before marching.
+     */
     public static final int DEFEND_HOLD_STRONG_FRAMES = 120;
-
-    /** Small armies flicker most: hold their DEFEND longer. */
+    /**
+     * Small armies flicker most: hold their DEFEND longer.
+     */
     public static final int DEFEND_HOLD_WEAK_FRAMES = 192;
-
     private static ClusterMission.Posture last = null;
     private static int changedAt = 0;
+    private PostureLatch() {
+    }
 
     /**
      * The latched posture for this frame. Pure except the recorded flip:
@@ -52,7 +54,9 @@ public final class PostureLatch {
         return now - recordedAt < hold ? recorded : fresh;
     }
 
-    /** Frame-entry point: holds the flip, records it only when it lands. */
+    /**
+     * Frame-entry point: holds the flip, records it only when it lands.
+     */
     public static ClusterMission.Posture hold(ClusterMission.Posture fresh, int ours, int now) {
         if (last == null || now < changedAt) {
             last = fresh;

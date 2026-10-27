@@ -8,7 +8,8 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Terran_Science_Facility;
+import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
 public class ProduceScienceVessels {
     public static boolean scienceVessels() {

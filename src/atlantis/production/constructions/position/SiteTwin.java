@@ -19,15 +19,16 @@ import java.util.function.Supplier;
  */
 final class SiteTwin {
 
-    private SiteTwin() {
-    }
-
     private static long reserveNanosTotal = 0;
     private static int reserveCalls = 0;
     private static int rebuilds = 0;
     private static int lastPerfSample = -1;
+    private SiteTwin() {
+    }
 
-    /** Times one catalogue proposal for the perf rows. */
+    /**
+     * Times one catalogue proposal for the perf rows.
+     */
     static PlacementReservation timed(Supplier<PlacementReservation> proposal) {
         long start = System.nanoTime();
         try {

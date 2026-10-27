@@ -12,6 +12,10 @@ import bwapi.UpgradeType;
 
 public class BuildOrderRowParser {
 
+    protected static boolean _isCommentMode = false;
+
+    // =========================================================
+
     /**
      * Analyzes CSV row, where each array element is one column.
      */
@@ -146,10 +150,6 @@ public class BuildOrderRowParser {
 
         return order;
     }
-
-    // =========================================================
-
-    protected static boolean _isCommentMode = false;
 
     /**
      * Converts names like "tank" into "Siege Tank Tank Mode".

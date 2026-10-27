@@ -7,12 +7,12 @@ import atlantis.map.AMap;
 
 public class BenchmarkResult {
     public String map;
-    private boolean winner;
     public int score;
     public int killed;
     public int lost;
     public int resourcesBalance;
     public String time;
+    private final boolean winner;
 
     public BenchmarkResult(boolean winner) {
         int score = AGameScore.scoreCurrentGame(winner);

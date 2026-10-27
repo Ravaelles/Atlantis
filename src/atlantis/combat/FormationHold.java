@@ -1,10 +1,10 @@
 package atlantis.combat;
-import atlantis.battle.DuelMemory;
 
+import atlantis.battle.DuelMemory;
+import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
-import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.kite.Kite;
 import atlantis.combat.targeting.ASquadTargeting;
 import atlantis.combat.twins.HoldTwin;
@@ -35,7 +35,9 @@ import atlantis.units.actions.Actions;
  */
 public final class FormationHold {
 
-    /** Contact breaks the hold: this close the phalanx becomes the fight. */
+    /**
+     * Contact breaks the hold: this close the phalanx becomes the fight.
+     */
     public static final double CONTACT_TILES = 2.5;
 
     /**
@@ -46,7 +48,9 @@ public final class FormationHold {
      */
     public static final double WEDGE_ARRIVED_TILES = 1.0;
 
-    /** Frames without displacement before a far-from-slot holder is declared wedged. */
+    /**
+     * Frames without displacement before a far-from-slot holder is declared wedged.
+     */
     public static final int WEDGE_STILL_FRAMES = 48;
 
     /**
@@ -68,6 +72,9 @@ public final class FormationHold {
      */
     public static final double SCOUT_THREAT_TILES = 3.2;
 
+    private FormationHold() {
+    }
+
     /**
      * True when a listed melee enemy stands within {@link #CLOSE_MELEE_TILES}
      * of the unit. The only formation question that matters up close.
@@ -85,45 +92,6 @@ public final class FormationHold {
         return false;
     }
 
-    private FormationHold() {
-    }
-
-    /**
-     * Why the hold was kept or broken - one value per decision, logged
-     * by the HOLD twin instead of guessed from logs after the fact.
-     */
-    public enum HoldVerdict {
-        /** March at the formation slot. */
-        HOLD,
-        /** Melee enemy within {@link #CLOSE_MELEE_TILES} - never stand into chews. */
-        VETO,
-        /** Any enemy within {@link #CONTACT_TILES} - the phalanx becomes the fight. */
-        CONTACT,
-        /** Hp dropped since the last battle frame (battle-hook latch, NEXT #183). */
-        DAMAGE,
-        /** A close enemy can hit this unit - kite outranks holding, unconditionally. */
-        KITE,
-        /**
-         * Ghost contact and nothing can hit this unit: formation holds
-         * nothing, the hunt owns it. Recalling to a slot on a fogged
-         * memory parks the army while the enemy hides (live: a dragoon
-         * marched at slots for 500f on a ghost 8 tiles out, UNSTICK x5).
-         * Threatened units fall through to the normal gates below -
-         * falling back to the cluster under pressure stays allowed.
-         */
-        GHOST,
-        /** Anything else that declines the hold (tactic, ranged enemy, ...). */
-        OTHER,
-        /** Raiders in our base: no forming up, everybody attacks (owner doctrine). */
-        BREACH,
-        /** Hold decided, but no formation slot exists (duels fall through). */
-        NO_SLOT,
-        /** Hold decided, but the move order was refused. */
-        MOVE_FAILED,
-        /** Hold decided, but the unit never displaces: STOP once, fresh queue next frame. */
-        UNSTICK
-    }
-
     /**
      * Hold the line instead of engaging this target: true while the
      * enemy is melee-only, the tactic is FIGHT, and none of the contact
@@ -137,7 +105,9 @@ public final class FormationHold {
         return decide(unit, target, tactic) == HoldVerdict.HOLD;
     }
 
-    /** The ordered gate chain behind {@link #shouldHold}, naming the deciding gate. */
+    /**
+     * The ordered gate chain behind {@link #shouldHold}, naming the deciding gate.
+     */
     static HoldVerdict decide(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
         if (unit == null || target == null || !unit.isAlive()) return HoldVerdict.OTHER;
         if (hasCloseMeleeEnemy(unit)) return HoldVerdict.VETO;
@@ -316,5 +286,61 @@ public final class FormationHold {
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    /**
+     * Why the hold was kept or broken - one value per decision, logged
+     * by the HOLD twin instead of guessed from logs after the fact.
+     */
+    public enum HoldVerdict {
+        /**
+         * March at the formation slot.
+         */
+        HOLD,
+        /**
+         * Melee enemy within {@link #CLOSE_MELEE_TILES} - never stand into chews.
+         */
+        VETO,
+        /**
+         * Any enemy within {@link #CONTACT_TILES} - the phalanx becomes the fight.
+         */
+        CONTACT,
+        /**
+         * Hp dropped since the last battle frame (battle-hook latch, NEXT #183).
+         */
+        DAMAGE,
+        /**
+         * A close enemy can hit this unit - kite outranks holding, unconditionally.
+         */
+        KITE,
+        /**
+         * Ghost contact and nothing can hit this unit: formation holds
+         * nothing, the hunt owns it. Recalling to a slot on a fogged
+         * memory parks the army while the enemy hides (live: a dragoon
+         * marched at slots for 500f on a ghost 8 tiles out, UNSTICK x5).
+         * Threatened units fall through to the normal gates below -
+         * falling back to the cluster under pressure stays allowed.
+         */
+        GHOST,
+        /**
+         * Anything else that declines the hold (tactic, ranged enemy, ...).
+         */
+        OTHER,
+        /**
+         * Raiders in our base: no forming up, everybody attacks (owner doctrine).
+         */
+        BREACH,
+        /**
+         * Hold decided, but no formation slot exists (duels fall through).
+         */
+        NO_SLOT,
+        /**
+         * Hold decided, but the move order was refused.
+         */
+        MOVE_FAILED,
+        /**
+         * Hold decided, but the unit never displaces: STOP once, fresh queue next frame.
+         */
+        UNSTICK
     }
 }

@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Unseen enemy with no answer in place: preempts everything urgent. */
+/**
+ * Unseen enemy with no answer in place: preempts everything urgent.
+ */
 public final class DetectionGoal implements Goal {
 
     @Override
@@ -27,7 +29,9 @@ public final class DetectionGoal implements Goal {
         return true;
     }
 
-    /** mobile answer; emergencies fund regardless. */
+    /**
+     * mobile answer; emergencies fund regardless.
+     */
     @Override
     public int priceMinerals() {
         return AUnitType.Protoss_Observer.mineralPrice();

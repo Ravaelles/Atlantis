@@ -27,9 +27,7 @@ public class ZergStrategyResponse extends RaceStrategyResponse {
             }
         }
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
-
-        return true;
+        return !shouldSkipAntiRushCombatBuilding(enemyStrategy);
     }
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {

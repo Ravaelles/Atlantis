@@ -38,6 +38,7 @@ public class ACherryVis_UnitLogs {
 
         return result.toString();
     }
+
     /**
      * "units_updates": {
      * "123": {
@@ -72,9 +73,9 @@ public class ACherryVis_UnitLogs {
 
                 String commaForFrames = counterForFrames == 0 ? "" : ",";
                 String frameString = commaForFrames
-                        + "\"" + frame + "\":"
+                    + "\"" + frame + "\":"
 //                        + "{\"manager\":" + managerId + ",\"tooltip\":" + tooltipId + "}";
-                        + "{\"manager\":" + managerId + "}";
+                    + "{\"manager\":" + managerId + "}";
                 unitString.append(frameString);
 
                 counterForFrames++;

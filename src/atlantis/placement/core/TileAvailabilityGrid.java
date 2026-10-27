@@ -32,36 +32,9 @@ public final class TileAvailabilityGrid {
     public static final int ADJACENT = 2;
     public static final int USED = 4;
     public static final int BORDER = 8;
-
-    /** The raw terrain questions the grid needs; production supplies the engine. */
-    public interface TerrainSource {
-        int mapWidth();
-
-        int mapHeight();
-
-        /** Terrain can carry a building here at all (not water, not cliff). */
-        boolean isBuildable(int tx, int ty);
-
-        /** Walkable terrain; a buildable-but-unwalkable tile is a wall/cliff face. */
-        boolean isWalkable(int tx, int ty);
-
-        /**
-         * True when a resource (mineral field or geyser) occupies this tile - the
-         * grid blocks these and, for geysers, the collection path beside them.
-         */
-        boolean isResource(int tx, int ty);
-
-        /**
-         * True when a depot (Nexus/Command Center/Hatchery) footprint starts here,
-         * so no Block may overlap a base.
-         */
-        boolean isDepotOrigin(int tx, int ty);
-    }
-
     private final int width;
     private final int height;
     private final byte[] flags;
-
     public TileAvailabilityGrid(TerrainSource terrain) {
         this.width = terrain.mapWidth();
         this.height = terrain.mapHeight();
@@ -81,14 +54,16 @@ public final class TileAvailabilityGrid {
      */
     private void markTerrain(TerrainSource terrain, int x, int y) {
         if (!terrain.isBuildable(x, y)
-                || !terrain.isWalkable(x, y)
-                || terrain.isResource(x, y)
-                || terrain.isDepotOrigin(x, y)) {
+            || !terrain.isWalkable(x, y)
+            || terrain.isResource(x, y)
+            || terrain.isDepotOrigin(x, y)) {
             block(x, y);
         }
     }
 
-    /** Marks a tile blocked and its neighbours adjacent. */
+    /**
+     * Marks a tile blocked and its neighbours adjacent.
+     */
     public void block(int tx, int ty) {
         if (!inBounds(tx, ty))
             return;
@@ -107,7 +82,9 @@ public final class TileAvailabilityGrid {
         }
     }
 
-    /** Marks a rectangle used, and its surrounding ring as border. */
+    /**
+     * Marks a rectangle used, and its surrounding ring as border.
+     */
     public void markUsed(int left, int top, int tileWidth, int tileHeight) {
         for (int x = left; x < left + tileWidth; x++) {
             for (int y = top; y < top + tileHeight; y++) {
@@ -126,7 +103,9 @@ public final class TileAvailabilityGrid {
         }
     }
 
-    /** Frees a rectangle again (a building was cancelled or destroyed). */
+    /**
+     * Frees a rectangle again (a building was cancelled or destroyed).
+     */
     public void markFreed(int left, int top, int tileWidth, int tileHeight) {
         for (int x = left; x < left + tileWidth; x++) {
             for (int y = top; y < top + tileHeight; y++) {
@@ -196,5 +175,36 @@ public final class TileAvailabilityGrid {
 
     private int index(int tx, int ty) {
         return ty * width + tx;
+    }
+
+    /**
+     * The raw terrain questions the grid needs; production supplies the engine.
+     */
+    public interface TerrainSource {
+        int mapWidth();
+
+        int mapHeight();
+
+        /**
+         * Terrain can carry a building here at all (not water, not cliff).
+         */
+        boolean isBuildable(int tx, int ty);
+
+        /**
+         * Walkable terrain; a buildable-but-unwalkable tile is a wall/cliff face.
+         */
+        boolean isWalkable(int tx, int ty);
+
+        /**
+         * True when a resource (mineral field or geyser) occupies this tile - the
+         * grid blocks these and, for geysers, the collection path beside them.
+         */
+        boolean isResource(int tx, int ty);
+
+        /**
+         * True when a depot (Nexus/Command Center/Hatchery) footprint starts here,
+         * so no Block may overlap a base.
+         */
+        boolean isDepotOrigin(int tx, int ty);
     }
 }

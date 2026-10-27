@@ -3,9 +3,9 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Vectors;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
-import atlantis.map.position.Vectors;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -56,6 +56,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AUnitTest extends AbstractTestWithWorld {
 
+    private static double angleDifference(double a, double b) {
+        double difference = Math.abs(a - b);
+
+        return Math.min(difference, 2 * Math.PI - difference);
+    }
+
     /**
      * Only {@code world(1, eachFrame)} asks the harness for
      * these. Every test below that needs units passes them explicitly, because
@@ -68,13 +74,13 @@ public class AUnitTest extends AbstractTestWithWorld {
         return fakeOurs(fake(AUnitType.Terran_Marine, 10));
     }
 
+    // =========================================================
+    // Type predicates: no world, no mocks
+
     @Override
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(fake(AUnitType.Zerg_Zergling, 15));
     }
-
-    // =========================================================
-    // Type predicates: no world, no mocks
 
     @Test
     public void meleeOrRanged() {
@@ -241,6 +247,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(fake(AUnitType.Terran_Marine).isMissionDefendOrSparta());
     }
 
+    // =========================================================
+    // Weapon ranges
+
     @Test
     public void comparisonLogic() {
         FakeUnit vulture = fake(AUnitType.Terran_Vulture);
@@ -253,9 +262,6 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(tank.hasBiggerWeaponRangeThan(marine));
         assertFalse(marine.hasBiggerWeaponRangeThan(tank));
     }
-
-    // =========================================================
-    // Weapon ranges
 
     @Test
     public void combatCapabilities() {
@@ -323,6 +329,9 @@ public class AUnitTest extends AbstractTestWithWorld {
             "a negative margin shrinks the range");
     }
 
+    // =========================================================
+    // Health, wounds, shields, energy
+
     @Test
     public void weaponRangeFollowsTheTargetType() {
         FakeUnit wraith = fake(AUnitType.Terran_Wraith, 10);
@@ -338,9 +347,6 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(wraith.hasWeaponRangeToAttack(farAway, 1));
         assertTrue(wraith.canAttackTarget(farAway, true, true, true, 1));
     }
-
-    // =========================================================
-    // Health, wounds, shields, energy
 
     @Test
     public void healthAndWoundCalculations() {
@@ -433,6 +439,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(vessel.energy(101));
     }
 
+    // =========================================================
+    // Status flags, activity, targeting
+
     @Test
     public void cooldownBlocksAttackingOnlyWhenAsked() {
         FakeUnit marine = fake(AUnitType.Terran_Marine);
@@ -468,9 +477,6 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(marine.noCooldown());
         assertTrue(marine.hasCooldown());
     }
-
-    // =========================================================
-    // Status flags, activity, targeting
 
     @Test
     public void statusFlags() {
@@ -636,6 +642,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertEquals("NO_COMMAND", unit.lastCommandName());
     }
 
+    // =========================================================
+    // Facing geometry
+
     @Test
     public void miscProperties() {
         FakeUnit cc = fake(AUnitType.Terran_Command_Center, 10);
@@ -684,9 +693,6 @@ public class AUnitTest extends AbstractTestWithWorld {
         cc.completed = false;
         assertFalse(cc.isCompleted());
     }
-
-    // =========================================================
-    // Facing geometry
 
     @Test
     public void facingUsesTheTolerancesOfTheEngine() {
@@ -755,6 +761,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(ours.isOtherShowingBackToUs(theirs), "60 degrees off is outside 0.95 rad");
     }
 
+    // =========================================================
+    // "How long ago" timestamps
+
     @Test
     public void facingHelperAgreesWithTheRawVector() {
         FakeUnit ours = fake(AUnitType.Terran_Marine, 10);
@@ -779,9 +788,6 @@ public class AUnitTest extends AbstractTestWithWorld {
                 "showing-back window (0.95 rad) at " + angle + " rad");
         }
     }
-
-    // =========================================================
-    // "How long ago" timestamps
 
     @Test
     public void everyTimestampAccessorComparesTheSameWay() {
@@ -818,6 +824,9 @@ public class AUnitTest extends AbstractTestWithWorld {
             unit::lastStoppedRunningLessThanAgo, unit::lastStoppedRunningMoreThanAgo);
     }
 
+    // =========================================================
+    // Queries that need a world
+
     @Test
     public void combatTimingHistory() {
         FakeUnit unit = fake(AUnitType.Terran_Marine);
@@ -847,9 +856,6 @@ public class AUnitTest extends AbstractTestWithWorld {
         unit.unitState().setLastPositionChanged(now - 5);
         assertEquals(5, unit.lastPositionChangedAgo());
     }
-
-    // =========================================================
-    // Queries that need a world
 
     @Test
     public void nearbyCountsSeeOnlyTheStubs() {
@@ -899,8 +905,8 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(Protoss_Zealot, 10);
 
         world(1, units(zealot), fakeEnemies(fake(AUnitType.Zerg_Zergling, 16)), () -> {
-        assertEquals(0, zealot.meleeEnemiesNearCount(3.0), "6 tiles is outside 3");
-        assertTrue(zealot.isSafeFromMelee());
+            assertEquals(0, zealot.meleeEnemiesNearCount(3.0), "6 tiles is outside 3");
+            assertTrue(zealot.isSafeFromMelee());
         });
     }
 
@@ -915,26 +921,8 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(Protoss_Zealot, 10);
 
         world(1, units(zealot), fakeEnemies(fake(AUnitType.Zerg_Zergling, 11)), () -> {
-        assertEquals(1, zealot.meleeEnemiesNearCount(1.6), "1 tile is inside 1.6");
-        assertFalse(zealot.isSafeFromMelee());
-        });
-    }
-
-    @Test
-    public void meleeSafetyMarginGrowsWithWounds() {
-        FakeUnit zealot = fake(Protoss_Zealot, 10);
-        FakeUnit zergling = fake(AUnitType.Zerg_Zergling, 11);
-
-        world(1, units(zealot), fakeEnemies(zergling), () -> {
-        zealot.setHp(zealot.maxHp());
-        assertEquals(0.0, zealot.woundPercent(), 0.001);
-        assertFalse(zealot.isSafeFromMelee(), "at full hp the margin is 1.6 tiles");
-
-        // Half hp means half wounded: 1.8 + 50 > 1.6, and the zergling is
-        // only 1 tile away, so the wider margin does not save us here.
-        zealot.setHp(zealot.maxHp() / 2);
-        assertEquals(50.0, zealot.woundPercent(), 0.001);
-        assertFalse(zealot.isSafeFromMelee());
+            assertEquals(1, zealot.meleeEnemiesNearCount(1.6), "1 tile is inside 1.6");
+            assertFalse(zealot.isSafeFromMelee());
         });
     }
 
@@ -943,18 +931,39 @@ public class AUnitTest extends AbstractTestWithWorld {
     // first one into the second.
 
     @Test
+    public void meleeSafetyMarginGrowsWithWounds() {
+        FakeUnit zealot = fake(Protoss_Zealot, 10);
+        FakeUnit zergling = fake(AUnitType.Zerg_Zergling, 11);
+
+        world(1, units(zealot), fakeEnemies(zergling), () -> {
+            zealot.setHp(zealot.maxHp());
+            assertEquals(0.0, zealot.woundPercent(), 0.001);
+            assertFalse(zealot.isSafeFromMelee(), "at full hp the margin is 1.6 tiles");
+
+            // Half hp means half wounded: 1.8 + 50 > 1.6, and the zergling is
+            // only 1 tile away, so the wider margin does not save us here.
+            zealot.setHp(zealot.maxHp() / 2);
+            assertEquals(50.0, zealot.woundPercent(), 0.001);
+            assertFalse(zealot.isSafeFromMelee());
+        });
+    }
+
+    @Test
     public void ourAndEnemyFlagsFollowTheTeam() {
         FakeUnit our = fake(AUnitType.Terran_Marine);
         FakeUnit enemy = fakeEnemy(AUnitType.Protoss_Zealot, 16);
 
         world(1, units(our), new FakeUnit[]{enemy}, () -> {
-        assertTrue(our.isOur());
-        assertFalse(our.isEnemy());
+            assertTrue(our.isOur());
+            assertFalse(our.isEnemy());
 
-        assertFalse(enemy.isOur());
-        assertTrue(enemy.isEnemy());
+            assertFalse(enemy.isOur());
+            assertTrue(enemy.isEnemy());
         });
     }
+
+    // =========================================================
+    // Helpers
 
     @Test
     public void nearCollectionsSeeTheStubsOnly() {
@@ -963,27 +972,24 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit enemy = fake(AUnitType.Protoss_Zealot, 12);
 
         world(1, fakeOurs(our, friend), fakeEnemies(enemy), () -> {
-        assertEquals(1, our.enemiesNear().count(), "the zealot is our only enemy");
-        assertEquals(1, our.friendsNear().count(), "the medic is our only friend, we are excluded");
+            assertEquals(1, our.enemiesNear().count(), "the zealot is our only enemy");
+            assertEquals(1, our.friendsNear().count(), "the medic is our only friend, we are excluded");
 
-        // Seen from the other side: our two units are "its" enemies, and it
-        // has no friends here because nothing was ever discovered.
-        assertEquals(2, enemy.enemiesNear().count());
-        assertEquals(0, enemy.friendsNear().count());
+            // Seen from the other side: our two units are "its" enemies, and it
+            // has no friends here because nothing was ever discovered.
+            assertEquals(2, enemy.enemiesNear().count());
+            assertEquals(0, enemy.friendsNear().count());
         });
     }
-
-    // =========================================================
-    // Helpers
 
     /**
      * Asserts the shared contract of all eight timestamp accessors: they take
      * the *value* passed to the setter and compare it against "now".
      *
-     * @param name       accessor family, for the failure message
-     * @param set        writes the timestamp (frames ago)
-     * @param lessThanA  {@code x < N} predicate
-     * @param moreThanA  {@code x >= N} predicate
+     * @param name      accessor family, for the failure message
+     * @param set       writes the timestamp (frames ago)
+     * @param lessThanA {@code x < N} predicate
+     * @param moreThanA {@code x >= N} predicate
      */
     private void assertTimestampContract(
         String name,
@@ -998,11 +1004,5 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(moreThanA.test(4), name + ": 5 ago is more than 4 ago");
         assertTrue(moreThanA.test(5), name + ": 5 ago is more than 5 ago");
         assertFalse(moreThanA.test(6), name + ": 5 ago is not more than 6 ago");
-    }
-
-    private static double angleDifference(double a, double b) {
-        double difference = Math.abs(a - b);
-
-        return Math.min(difference, 2 * Math.PI - difference);
     }
 }

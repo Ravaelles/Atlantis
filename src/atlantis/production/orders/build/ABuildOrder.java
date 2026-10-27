@@ -15,17 +15,15 @@ public abstract class ABuildOrder {
      * Relative path to build order file as seen from project root.
      */
     private final String name;
-
-    /**
-     * Sequence of units/buildings/techs to be produced in this build.
-     */
-    private ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
-
     /**
      * Special settings associated with this build order e.g. change mission to attack
      * or auto produce workers if have more than N workers.
      */
     protected TreeMap<String, BuildOrderSetting> settings = new TreeMap<>();
+    /**
+     * Sequence of units/buildings/techs to be produced in this build.
+     */
+    private ArrayList<ProductionOrder> productionOrders = new ArrayList<>();
 
     // === Constructor =========================================
 

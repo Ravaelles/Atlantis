@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.TileMapSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the "a production building may not be boxed in by unwalkable terrain"
@@ -67,8 +65,8 @@ public class TooCloseToUnwalkableTest {
     @Test
     public void aGatewayOnOpenGroundIsAccepted() {
         assertFalse(
-                TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 50)),
-                "open ground is not too close to unwalkable terrain");
+            TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 50)),
+            "open ground is not too close to unwalkable terrain");
     }
 
     /**
@@ -87,11 +85,11 @@ public class TooCloseToUnwalkableTest {
         map.blockRect(20, 48, 46, 80);
 
         assertTrue(
-                TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 50)),
-                "unwalkable on both the left and the down side must be refused");
+            TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 50)),
+            "unwalkable on both the left and the down side must be refused");
         assertTrue(
-                AbstractPositionFinder._STATUS.contains("unwalkable"),
-                "the refusal must name unwalkable terrain, got: " + AbstractPositionFinder._STATUS);
+            AbstractPositionFinder._STATUS.contains("unwalkable"),
+            "the refusal must name unwalkable terrain, got: " + AbstractPositionFinder._STATUS);
     }
 
     /**
@@ -106,18 +104,20 @@ public class TooCloseToUnwalkableTest {
         map.blockRect(20, 48, 46, 52); // left only
 
         assertFalse(
-                TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 60)),
-                "one blocked side is not being boxed in - the rule needs a pair of sides");
+            TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 60)),
+            "one blocked side is not being boxed in - the rule needs a pair of sides");
     }
 
-    /** A base is never judged: it defines the terrain it sits on. */
+    /**
+     * A base is never judged: it defines the terrain it sits on.
+     */
     @Test
     public void aBaseIsNeverJudged() {
         map.defaultWalkable(false);
 
         assertFalse(
-                TooCloseToUnwalkable.isTooCloseToUnwalkable(NEXUS, APosition.create(50, 50)),
-                "a Nexus is the base itself and is exempt from this rule");
+            TooCloseToUnwalkable.isTooCloseToUnwalkable(NEXUS, APosition.create(50, 50)),
+            "a Nexus is the base itself and is exempt from this rule");
     }
 
     /**
@@ -132,8 +132,8 @@ public class TooCloseToUnwalkableTest {
         map.defaultWalkable(false);
 
         assertFalse(
-                TooCloseToUnwalkable.isTooCloseToUnwalkable(PYLON, APosition.create(50, 50)),
-                "a Pylon produces no land units and is out of this rule's scope");
+            TooCloseToUnwalkable.isTooCloseToUnwalkable(PYLON, APosition.create(50, 50)),
+            "a Pylon produces no land units and is out of this rule's scope");
     }
 
     /**
@@ -147,6 +147,6 @@ public class TooCloseToUnwalkableTest {
         TooCloseToUnwalkable.isTooCloseToUnwalkable(GATEWAY, APosition.create(50, 50));
 
         assertEquals("Untouched", AbstractPositionFinder._STATUS,
-                "an accepted position must not claim a status of its own");
+            "an accepted position must not claim a status of its own");
     }
 }

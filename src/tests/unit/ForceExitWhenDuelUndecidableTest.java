@@ -15,9 +15,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * 1Drag_v_1Zeal on OpenBW, 2026-10-21 (four live runs): the slot-3
@@ -33,6 +30,14 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
+
+    /**
+     * The dragoon the world built for us. Worlds rebuild the roster per
+     * run, so it is looked up, not stored.
+     */
+    private static FakeUnit dragoon() {
+        return (FakeUnit) atlantis.units.select.Select.ourCombatUnits().first();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -187,13 +192,5 @@ public class ForceExitWhenDuelUndecidableTest extends AbstractTestWithWorld {
                 new ForceExitWhenDuelUndecidable().applies(),
                 "melee hides armies in fog all the time - this exit is UMS-only");
         });
-    }
-
-    /**
-     * The dragoon the world built for us. Worlds rebuild the roster per
-     * run, so it is looked up, not stored.
-     */
-    private static FakeUnit dragoon() {
-        return (FakeUnit) atlantis.units.select.Select.ourCombatUnits().first();
     }
 }

@@ -62,4 +62,5 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.MEDIUM, LogKey.QUEUE_BASE.level());
         assertEquals(LogLevel.MEDIUM, LogKey.BOARD_FED.level());
         assertEquals(LogLevel.MEDIUM, LogKey.IDLE.level());
-    }}
+    }
+}

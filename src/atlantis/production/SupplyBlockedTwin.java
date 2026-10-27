@@ -69,7 +69,7 @@ public final class SupplyBlockedTwin {
                 .param("status", String.valueOf(construction.status()))
                 .param("tile", construction.buildPosition() == null ? "-"
                     : "[" + construction.buildPosition().tx() + ","
-                    + construction.buildPosition().ty() + "]")
+                      + construction.buildPosition().ty() + "]")
                 .log(AGame.now(), A.minSec());
         }
     }
@@ -87,7 +87,9 @@ public final class SupplyBlockedTwin {
         return null;
     }
 
-    /** Coming providers from engine state alone (no V2 snapshot needed). */
+    /**
+     * Coming providers from engine state alone (no V2 snapshot needed).
+     */
     public static int legacyComing(AUnitType provider) {
         return GameStateSnapshot.supplyProvidersComing(provider);
     }

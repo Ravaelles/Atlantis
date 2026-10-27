@@ -18,51 +18,51 @@ public class SelectionTest extends WorldStubForTests {
     @Test
     public void chainingSubsequentCallsWorksAsExpected() {
         world(1, () -> {
-        int total = 22;
-        Selection selection = Select.our();
-        FakeUnit first = (FakeUnit) Select.our().first();
+            int total = 22;
+            Selection selection = Select.our();
+            FakeUnit first = (FakeUnit) Select.our().first();
 
-        assertEquals(total, selection.size());
+            assertEquals(total, selection.size());
 
-        selection.ranged();
+            selection.ranged();
 
-        assertEquals(total, selection.size());
+            assertEquals(total, selection.size());
 
-        selection.ranged().inRadius(1, first);
+            selection.ranged().inRadius(1, first);
 
-        assertEquals(total, selection.size());
+            assertEquals(total, selection.size());
         });
     }
 
     @Test
     public void cloneByRemovingIf() {
         world(1, () -> {
-        Selection our = Select.our();
+            Selection our = Select.our();
 //            Select.our().print();
 
-        assertEquals(22, our.size());
+            assertEquals(22, our.size());
 
 //            our.print("Pre");
 
-        assertEquals(19, our.cloneByRemovingIf(AUnit::isMelee, "isMelee").size());
+            assertEquals(19, our.cloneByRemovingIf(AUnit::isMelee, "isMelee").size());
 
 //            our.print("Post");
 
-        assertEquals(22, our.size());
+            assertEquals(22, our.size());
         });
     }
 
     @Test
     public void ranged() {
         world(1, () -> {
-        assertEquals(9, Select.our().ranged().size());
+            assertEquals(9, Select.our().ranged().size());
         });
     }
 
     @Test
     public void melee() {
         world(1, () -> {
-        assertEquals(3, Select.our().melee().size());
+            assertEquals(3, Select.our().melee().size());
         });
     }
 
@@ -72,38 +72,38 @@ public class SelectionTest extends WorldStubForTests {
 
         world(1, () -> {
 //            Select.our().print();
-        Selection our = Select.our();
+            Selection our = Select.our();
 
-        assertEquals(22, our.size());
+            assertEquals(22, our.size());
 //            Select.our().print("our");
 //            Select.ourWithUnfinished().print("Unfinished");
-        assertEquals(2, our.ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
-        ).count());
-        assertEquals(2, Select.ourWithUnfinished().ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
-        ).count());
+            assertEquals(2, our.ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
+            assertEquals(2, Select.ourWithUnfinished().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
 
 //            our.realUnitsAndCombatBuildings().print("Real units and combat buildings");
 //            System.err.println("our.realUnitsAndCombatBuildings().size() = " + our.realUnitsAndCombatBuildings().size());
-        assertEquals(22, our.size());
-        assertEquals(2, our.tanks().size());
-        if (Count.tanks() != 2) {
-            Select.ourTanks().print("Tanks");
-        }
-        assertEquals(2, Count.tanks());
-        assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode));
-        assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode));
-        assertEquals(1, Select.our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).count());
-        assertEquals(2, Select.ourTanks().count());
-        assertEquals(2, Select.ourTanks().notDeadMan().count());
-        assertEquals(2, Select.ourTanks().count());
-        assertEquals(2, Select.our().ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
-        ).count());
-        assertEquals(2, Select.ourWithUnfinished().ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
-        ).count());
+            assertEquals(22, our.size());
+            assertEquals(2, our.tanks().size());
+            if (Count.tanks() != 2) {
+                Select.ourTanks().print("Tanks");
+            }
+            assertEquals(2, Count.tanks());
+            assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode));
+            assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode));
+            assertEquals(1, Select.our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).count());
+            assertEquals(2, Select.ourTanks().count());
+            assertEquals(2, Select.ourTanks().notDeadMan().count());
+            assertEquals(2, Select.ourTanks().count());
+            assertEquals(2, Select.our().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
+            assertEquals(2, Select.ourWithUnfinished().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
         });
     }
 
@@ -132,9 +132,9 @@ public class SelectionTest extends WorldStubForTests {
 //            Select.our().print();
 //            Select.enemy().print();
 
-        Selection our = Select.our();
-        AUnit zealot = our.first();
-        AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
+            Selection our = Select.our();
+            AUnit zealot = our.first();
+            AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
 
 //            our.print("OUR units");
 //            our.realUnits().print("OUR REAL units");
@@ -142,62 +142,62 @@ public class SelectionTest extends WorldStubForTests {
 //            our.combatUnits().print("Combat units");
 //            our.exclude(our.combatUnits()).print("OUR MINUS combatUnits");
 
-        assertEquals(22, our.size());
+            assertEquals(22, our.size());
 
-        assertEquals(5, our.buildings().size());
-        assertEquals(2, our.combatBuildings(false).size());
-        assertEquals(3, our.combatBuildings(true).size());
-        assertEquals(11, our.combatUnits().size());
-        assertEquals(14, our.realUnits().size());
+            assertEquals(5, our.buildings().size());
+            assertEquals(2, our.combatBuildings(false).size());
+            assertEquals(3, our.combatBuildings(true).size());
+            assertEquals(11, our.combatUnits().size());
+            assertEquals(14, our.realUnits().size());
 
-        assertTrue(our.realUnits().cannons().notEmpty());
+            assertTrue(our.realUnits().cannons().notEmpty());
 
 //            our.exclude(our.combatUnits()).print();
 //            our.inShootRangeOf().print();
 //            AConsole.println("zealot = " + zealot);
 
-        assertNotEquals(0, our.combatUnits().sunkens().size());
-        assertNotEquals(0, our.combatUnits().cannons().size());
+            assertNotEquals(0, our.combatUnits().sunkens().size());
+            assertNotEquals(0, our.combatUnits().cannons().size());
 
-        assertEquals(5, our.havingAntiAirWeapon().size());
-        assertEquals(17, our.notHavingAntiAirWeapon().size());
+            assertEquals(5, our.havingAntiAirWeapon().size());
+            assertEquals(17, our.notHavingAntiAirWeapon().size());
 
-        assertEquals(11, our.havingAntiGroundWeapon().size());
+            assertEquals(11, our.havingAntiGroundWeapon().size());
 
-        assertEquals(0, zealot.friendsInRadius(4.9).size());
-        assertEquals(0, our.inRadius(4.9, zealot).exclude(zealot).size());
-        assertEquals(1, our.inRadius(4.9, zealot).size());
+            assertEquals(0, zealot.friendsInRadius(4.9).size());
+            assertEquals(0, our.inRadius(4.9, zealot).exclude(zealot).size());
+            assertEquals(1, our.inRadius(4.9, zealot).size());
 
 //            Select.from(our.sortDataByDistanceTo(zealot, true), "foo").print("Closest to zealot");
 //            zealot.friendsInRadius(5.5).print("Friends in radius");
 //            our.inRadius(5.3, zealot).print("In radius 5.3 of Zealot");
 //            our.inRadius(5.2, zealot).print("In radius 5.2 of Zealot");
-        assertEquals(2, zealot.friendsInRadius(5.2).size()); // Muta is 5.2 away, Overlord 5.3
-        Select.clearCache();
-        assertEquals(2, zealot.friendsInRadius(5.2).size());
+            assertEquals(2, zealot.friendsInRadius(5.2).size()); // Muta is 5.2 away, Overlord 5.3
+            Select.clearCache();
+            assertEquals(2, zealot.friendsInRadius(5.2).size());
 //            our.inRadius(5.3, zealot).print("Friend in radius 5.3 of Zealot");
-        assertEquals(4, our.inRadius(5.3, zealot).size());
+            assertEquals(4, our.inRadius(5.3, zealot).size());
 
-        assertEquals(1, zealot.friendsNear().canAttack(zealot, 0).size());
-        // The Mutalisk and both Siege Tanks. Tanks shoot 7 tiles
-        // unsieged and 12 sieged, so from 10.3 tiles away with a 4-tile margin
-        // both reach. Everything else nearby either has no weapon against a
-        // ground target (Scourge, Overlord, Carrier) or is further than its
-        // own range.
-        assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
+            assertEquals(1, zealot.friendsNear().canAttack(zealot, 0).size());
+            // The Mutalisk and both Siege Tanks. Tanks shoot 7 tiles
+            // unsieged and 12 sieged, so from 10.3 tiles away with a 4-tile margin
+            // both reach. Everything else nearby either has no weapon against a
+            // ground target (Scourge, Overlord, Carrier) or is further than its
+            // own range.
+            assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
 
 //            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
-        // A Mutalisk shoots 3 tiles (Glave Wurm, 96 px) at ground and air
-        // alike. Four friends-near are inside that reach here, a margin of 1
-        // adds nobody, a margin of 2 two more.
-        assertEquals(4, muta.friendsNear().inShootRangeOf(muta).size());
-        assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
+            // A Mutalisk shoots 3 tiles (Glave Wurm, 96 px) at ground and air
+            // alike. Four friends-near are inside that reach here, a margin of 1
+            // adds nobody, a margin of 2 two more.
+            assertEquals(4, muta.friendsNear().inShootRangeOf(muta).size());
+            assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
 //        muta.friendsNear().inRadius(5, muta).print("Muta targets");
-        assertEquals(6, muta.friendsNear().canBeAttackedBy(muta, 2).size());
-        assertEquals(1, our.combatBuildingsAntiAir().size());
-        assertEquals(2, our.combatBuildingsAntiLand().size());
-        assertEquals(2, our.combatBuildings(false).size());
-        assertEquals(3, our.combatBuildings(true).size());
+            assertEquals(6, muta.friendsNear().canBeAttackedBy(muta, 2).size());
+            assertEquals(1, our.combatBuildingsAntiAir().size());
+            assertEquals(2, our.combatBuildingsAntiLand().size());
+            assertEquals(2, our.combatBuildings(false).size());
+            assertEquals(3, our.combatBuildings(true).size());
         });
     }
 

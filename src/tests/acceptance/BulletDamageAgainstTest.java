@@ -20,14 +20,14 @@ public class BulletDamageAgainstTest extends AbstractTestWithWorld {
     @Test
     public void unitDamages() {
         world(1, fakeOurs(
-                dragoon = fake(Protoss_Dragoon, 10),
-                marine = fake(AUnitType.Terran_Marine, 11.5),
-                vulture = fake(AUnitType.Terran_Vulture, 11.7)
-            ), fakeEnemies(
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
-                hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
-                zergling = fake(AUnitType.Zerg_Zergling, 13.4)
-            ), () -> {
+            dragoon = fake(Protoss_Dragoon, 10),
+            marine = fake(AUnitType.Terran_Marine, 11.5),
+            vulture = fake(AUnitType.Terran_Vulture, 11.7)
+        ), fakeEnemies(
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
+            zergling = fake(AUnitType.Zerg_Zergling, 13.4)
+        ), () -> {
             // A Phase Disruptor round does 20 damage and is Explosive, so what it
             // does depends on the size of what it hits: full against a large
             // unit, three quarters against a medium one, half against a small

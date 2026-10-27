@@ -26,8 +26,8 @@ public class FortificationForgeGateTest {
 
     private static DynamicGoals.GameSnapshot snapshot() {
         return new DynamicGoals.GameSnapshot(
-                20, 1, 20, 4, 20, 300, false,
-                0, 1, 0, false, false, 0).atBase(30, 30);
+            20, 1, 20, 4, 20, 300, false,
+            0, 1, 0, false, false, 0).atBase(30, 30);
     }
 
     private static boolean wantsCannons(DynamicGoals.GameSnapshot state) {

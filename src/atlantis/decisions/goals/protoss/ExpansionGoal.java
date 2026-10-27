@@ -21,31 +21,6 @@ public final class ExpansionGoal implements Goal {
 
     public static final int EXPANSION_MIN_WORKERS = 12;
 
-    @Override
-    public String id() {
-        return "expansion";
-    }
-
-    @Override
-    public boolean active(BoardState state) {
-        return wanted(state);
-    }
-
-    @Override
-    public int rank() {
-        return GoalRanks.EXPANSION;
-    }
-
-    @Override
-    public int priceMinerals() {
-        return AUnitType.Protoss_Nexus.mineralPrice();
-    }
-
-    @Override
-    public int priceGas() {
-        return AUnitType.Protoss_Nexus.gasPrice();
-    }
-
     /**
      * The legacy top-level matrix, in legacy order. Stub states decide
      * in milliseconds; the numbers are the legacy's, never re-tuned.
@@ -61,9 +36,7 @@ public final class ExpansionGoal implements Goal {
 
         if (state.baseCount >= 7) return false;
 
-        if (state.baseCount <= 1 && state.basesUnfinished == 0) return true;
-
-        return false;
+        return state.baseCount <= 1 && state.basesUnfinished == 0;
     }
 
     /**
@@ -99,5 +72,30 @@ public final class ExpansionGoal implements Goal {
         if (state.basesUnfinished == 0) return false;
 
         return (double) (state.minerals / (400 * state.basesUnfinished)) <= 1.15;
+    }
+
+    @Override
+    public String id() {
+        return "expansion";
+    }
+
+    @Override
+    public boolean active(BoardState state) {
+        return wanted(state);
+    }
+
+    @Override
+    public int rank() {
+        return GoalRanks.EXPANSION;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Nexus.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Nexus.gasPrice();
     }
 }

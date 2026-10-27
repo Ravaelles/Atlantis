@@ -1,14 +1,12 @@
 package tests.unit;
 
-import atlantis.production.constructions.position.BuildSiteDistance;
 import atlantis.map.position.APosition;
+import atlantis.production.constructions.position.BuildSiteDistance;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner 2026-10-23 (NEXT #145), corrected 2026-10-24: the legacy chain

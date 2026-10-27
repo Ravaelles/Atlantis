@@ -13,7 +13,9 @@ import atlantis.units.AUnitType;
  */
 public interface BuildGate {
 
-    /** The twin-visible refusal reason, e.g. {@code "pylon-cap"}. */
+    /**
+     * The twin-visible refusal reason, e.g. {@code "pylon-cap"}.
+     */
     String name();
 
     /**

@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The Terran twin of the Protoss orphan adoption (NEXT.md #56): a building
@@ -80,23 +78,24 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
             TerranNewBuilding.linkBuildingToConstruction(builtElsewhere);
 
             assertEquals(8.0, construction.buildPosition().distTo(builtElsewhere), 0.01,
-                    "the fixture must really be outside the positional lookup radius");
+                "the fixture must really be outside the positional lookup radius");
 
             assertTrue(
-                    ConstructionRequests.constructions.contains(construction),
-                    "the adopted construction stays tracked (IN_PROGRESS), not finished");
+                ConstructionRequests.constructions.contains(construction),
+                "the adopted construction stays tracked (IN_PROGRESS), not finished");
             assertEquals(
-                    ConstructionOrderStatus.IN_PROGRESS, construction.status(),
-                    "a Terran building that just appeared has just STARTED - FINISHED"
-                            + " would evict the tracking while the SCV is mid-build");
+                ConstructionOrderStatus.IN_PROGRESS, construction.status(),
+                "a Terran building that just appeared has just STARTED - FINISHED"
+                    + " would evict the tracking while the SCV is mid-build");
             assertSame(
-                    scv, construction.builder(),
-                    "the live builder stays attached (Protoss releases; Terran must not)");
+                scv, construction.builder(),
+                "the live builder stays attached (Protoss releases; Terran must not)");
         });
     }
 
     @Test
-    public void aBarracksOnItsReservationIsAdoptedTheSameWay() {        FakeUnit commandCenter = fake(AUnitType.Terran_Command_Center, 10);
+    public void aBarracksOnItsReservationIsAdoptedTheSameWay() {
+        FakeUnit commandCenter = fake(AUnitType.Terran_Command_Center, 10);
         FakeUnit scv = fake(AUnitType.Terran_SCV, 11);
 
         world(30, units(commandCenter, scv), new FakeUnit[0], () -> {
@@ -115,14 +114,14 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
             TerranNewBuilding.linkBuildingToConstruction(onItsTile);
 
             assertTrue(
-                    ConstructionRequests.constructions.contains(construction),
-                    "positional hit adopts without the fallback, same outcome");
+                ConstructionRequests.constructions.contains(construction),
+                "positional hit adopts without the fallback, same outcome");
             assertEquals(
-                    ConstructionOrderStatus.IN_PROGRESS, construction.status(),
-                    "started, not finished - completion belongs downstream");
+                ConstructionOrderStatus.IN_PROGRESS, construction.status(),
+                "started, not finished - completion belongs downstream");
             assertSame(
-                    scv, construction.builder(),
-                    "the live builder stays attached");
+                scv, construction.builder(),
+                "the live builder stays attached");
         });
     }
 
@@ -154,22 +153,22 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
 
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"key\":\"ADOPTED_CONSTRUCTION\""),
-                    "the Terran fallback adopts through the same twin, got: " + rows);
+                "the Terran fallback adopts through the same twin, got: " + rows);
             assertTrue(rows.contains("[70,70]"),
-                    "the twin must name the warp tile, got: " + rows);
+                "the twin must name the warp tile, got: " + rows);
             assertTrue(rows.contains("[10,10]"),
-                    "the twin must name the adopted site, got: " + rows);
+                "the twin must name the adopted site, got: " + rows);
             assertTrue(rows.contains("\"candidates\":2"),
-                    "the twin must name how many constructions lost, got: " + rows);
+                "the twin must name how many constructions lost, got: " + rows);
             assertEquals(
-                    ConstructionOrderStatus.IN_PROGRESS, older.status(),
-                    "a Terran building that just appeared has just STARTED");
+                ConstructionOrderStatus.IN_PROGRESS, older.status(),
+                "a Terran building that just appeared has just STARTED");
             assertSame(
-                    scv, older.builder(),
-                    "the live SCV stays attached");
+                scv, older.builder(),
+                "the live SCV stays attached");
             assertTrue(
-                    ConstructionRequests.constructions.contains(newer),
-                    "the losing sibling stays tracked");
+                ConstructionRequests.constructions.contains(newer),
+                "the losing sibling stays tracked");
         });
     }
 }

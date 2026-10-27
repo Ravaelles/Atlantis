@@ -8,11 +8,8 @@ import org.mockito.Mockito;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Pins the forced unpause (owner report, twice, 2026-10-07: "the game starts
@@ -37,6 +34,24 @@ import static org.mockito.Mockito.when;
  */
 @Tag("infra")
 public class GameUnpauseTest {
+
+    /**
+     * Calls the private {@code Atlantis.unpauseIfPaused(String)} with the game
+     * installed on the singleton, which is how the real call path sees it.
+     */
+    private static void invokeUnpauseIfPaused(Game game) throws Exception {
+        Atlantis atlantis = Atlantis.getInstance();
+        atlantis.setGame(game);
+
+        Method method = Atlantis.class.getDeclaredMethod("unpauseIfPaused", String.class);
+        method.setAccessible(true);
+
+        try {
+            method.invoke(atlantis, "test");
+        } finally {
+            atlantis.setGame(null);
+        }
+    }
 
     @Test
     public void pausedGameIsResumed() throws Exception {
@@ -78,24 +93,6 @@ public class GameUnpauseTest {
         invokeUnpauseIfPaused(null);
     }
 
-    /**
-     * Calls the private {@code Atlantis.unpauseIfPaused(String)} with the game
-     * installed on the singleton, which is how the real call path sees it.
-     */
-    private static void invokeUnpauseIfPaused(Game game) throws Exception {
-        Atlantis atlantis = Atlantis.getInstance();
-        atlantis.setGame(game);
-
-        Method method = Atlantis.class.getDeclaredMethod("unpauseIfPaused", String.class);
-        method.setAccessible(true);
-
-        try {
-            method.invoke(atlantis, "test");
-        } finally {
-            atlantis.setGame(null);
-        }
-    }
-
     @Test
     public void theResumeCallIsTheOnlyOneBwapiOffers() throws Exception {
         // Guard against a future "fix" that reaches for setPaused(false):
@@ -111,8 +108,7 @@ public class GameUnpauseTest {
                 hasSetPaused = true;
         }
 
-        assertEquals(true, hasResume, "Game.resumeGame() must exist - the unpause depends on it");
-        assertEquals(false, hasSetPaused,
-                "Game.setPaused appears in the jar; re-read how pause is lifted before changing this path");
+        assertTrue(hasResume, "Game.resumeGame() must exist - the unpause depends on it");
+        assertFalse(hasSetPaused, "Game.setPaused appears in the jar; re-read how pause is lifted before changing this path");
     }
 }

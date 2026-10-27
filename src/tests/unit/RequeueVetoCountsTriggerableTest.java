@@ -11,9 +11,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Game 201239: after a legitimate 48 s cancel the requeue vetoed on four

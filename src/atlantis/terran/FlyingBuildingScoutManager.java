@@ -1,8 +1,8 @@
 package atlantis.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
@@ -46,9 +46,7 @@ public class FlyingBuildingScoutManager extends Manager {
 
         if (woundedAndAntiAirUnitsNear()) return true;
 
-        if (goToFocusPoint()) return true;
-
-        return false;
+        return goToFocusPoint();
     }
 
     private boolean actWhenUnderFire() {
@@ -138,9 +136,9 @@ public class FlyingBuildingScoutManager extends Manager {
 //        }
 //
 //        return containFocusPoint;
-////        return Select.ourTanks().first().position();
-//    }
 
+    /// /        return Select.ourTanks().first().position();
+//    }
     private APosition flyingBuildingFocusPoint() {
         APosition focusPoint = Alpha.get().median();
         if (focusPoint != null) {

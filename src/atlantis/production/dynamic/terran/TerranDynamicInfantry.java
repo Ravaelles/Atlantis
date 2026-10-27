@@ -11,9 +11,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
 
     public static boolean needToSaveForFactory() {
         if (!A.hasMinerals(200)) {
-            if (Count.existingOrInProductionOrInQueue(AUnitType.Terran_Factory) > 0) {
-                return true;
-            }
+            return Count.existingOrInProductionOrInQueue(AUnitType.Terran_Factory) > 0;
         }
 
         return false;

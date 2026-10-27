@@ -62,9 +62,9 @@ public class CacheKey {
         if (object instanceof AUnitType) return ((AUnitType) object).name();
         if (object instanceof APosition) return ((APosition) object).toStringPixels();
         if (object instanceof Selection) return ((Selection) object).unitIds();
-        if (object instanceof BaseLocation) return ((BaseLocation) object).toString();
-        if (object instanceof AChoke) return ((AChoke) object).toString();
-        if (object instanceof TechType) return ((TechType) object).toString();
+        if (object instanceof BaseLocation) return object.toString();
+        if (object instanceof AChoke) return object.toString();
+        if (object instanceof TechType) return object.toString();
         if (object instanceof UpgradeType) return ((UpgradeType) object).name();
 //        if (object instanceof UpgradeType) return ((UpgradeType) object).name()
 //            + "(" + AGame.getPlayerUs().getUpgradeLevel((UpgradeType) object) + ")";
@@ -77,7 +77,7 @@ public class CacheKey {
             );
         }
 
-        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unknown-cachekey", 
+        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unknown-cachekey",
             "Unknown object to CacheKey: " + object.getClass().getName()
                 + "\nReturning object.toString(), but this should get whitelisted."
         );

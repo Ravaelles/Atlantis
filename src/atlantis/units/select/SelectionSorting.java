@@ -234,7 +234,7 @@ final class SelectionSorting {
 
         selection.sortDataByDistanceTo(position, false);
 
-        return data.isEmpty() ? null : (AUnit) data.get(0);
+        return data.isEmpty() ? null : data.get(0);
     }
 
     static AUnit nearestToOrNull(Selection selection, HasPosition position, double maxLength) {
@@ -253,7 +253,7 @@ final class SelectionSorting {
 //        }
 
         selection.sortDataByDistanceTo(position, true);
-        AUnit nearestUnit = (AUnit) data.get(0);
+        AUnit nearestUnit = data.get(0);
 
         if (nearestUnit != null && nearestUnit.distTo(position) < maxLength) {
             return nearestUnit;

@@ -136,7 +136,7 @@ public class FirstPylonTimingTest extends AbstractTestWithWorld {
                     adoptedFrame = frame;
                 }
                 if (c.builder() != null) {
-                    new WorkerManager((AUnit) c.builder()).forceHandle();
+                    new WorkerManager(c.builder()).forceHandle();
                     // Materialise arrival: the stub records move orders but
                     // never walks, so a dispatched builder would never reach
                     // its site. Five frames after adoption so a missing

@@ -9,9 +9,9 @@ import atlantis.units.select.Select;
 import atlantis.util.Options;
 import bwapi.TechType;
 import org.junit.jupiter.api.Test;
-import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.DynamicMockOurUnits;
 
 import java.util.ArrayList;
 
@@ -64,7 +64,7 @@ public class Queue2Test extends WorldStubForTests {
 
     private void assertPartition(Queue queue, int allOrders) {
         assertTrue(queue.readyToProduceOrders().size()
-                    + queue.inProgressOrders().size() + queue.finishedOrders().size() <= allOrders,
+                + queue.inProgressOrders().size() + queue.finishedOrders().size() <= allOrders,
             "no order can be in two states at once; the rest are still waiting for "
                 + "their prerequisites");
     }

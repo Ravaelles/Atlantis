@@ -2,16 +2,7 @@ package atlantis.map.analysis;
 
 import atlantis.map.position.APosition;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The map as areas linked by chokes: ground connectivity and backdoors.
@@ -27,67 +18,6 @@ import java.util.Set;
  * </p>
  */
 public final class AreaGraph {
-
-    /** One BWEM area as the graph sees it. */
-    public static final class AreaNode {
-        private final int id;
-        private final APosition center;
-        private final boolean hasDepot;
-        private final int minerals;
-
-        public AreaNode(int id, APosition center, boolean hasDepot, int minerals) {
-            this.id = id;
-            this.center = center;
-            this.hasDepot = hasDepot;
-            this.minerals = minerals;
-        }
-
-        public int id() {
-            return id;
-        }
-
-        public APosition center() {
-            return center;
-        }
-    }
-
-    /** One choke between two areas, with its width in pixels. */
-    public static final class ChokeEdge {
-        private final int left;
-        private final int right;
-        private final int widthPx;
-
-        public ChokeEdge(int left, int right, int widthPx) {
-            this.left = left;
-            this.right = right;
-            this.widthPx = widthPx;
-        }
-    }
-
-    /** An enemy area reachable by air but not by ground: a drop target. */
-    public static final class DropCandidate {
-        private final int areaId;
-        private final APosition center;
-        private final double flightTiles;
-
-        DropCandidate(int areaId, APosition center, double flightTiles) {
-            this.areaId = areaId;
-            this.center = center;
-            this.flightTiles = flightTiles;
-        }
-
-        public int areaId() {
-            return areaId;
-        }
-
-        public APosition center() {
-            return center;
-        }
-
-        public double flightTiles() {
-            return flightTiles;
-        }
-    }
 
     private final Map<Integer, AreaNode> nodes;
     private final Map<Integer, Set<Integer>> links;
@@ -112,7 +42,9 @@ public final class AreaGraph {
         return new AreaGraph(byId, links);
     }
 
-    /** Ground path between two areas (BFS over choke links). Unknown ids are unconnected. */
+    /**
+     * Ground path between two areas (BFS over choke links). Unknown ids are unconnected.
+     */
     public boolean groundConnected(int fromId, int toId) {
         if (fromId == toId) return nodes.containsKey(fromId);
         if (!nodes.containsKey(fromId) || !nodes.containsKey(toId)) return false;
@@ -162,5 +94,72 @@ public final class AreaGraph {
         });
 
         return candidates;
+    }
+
+    /**
+     * One BWEM area as the graph sees it.
+     */
+    public static final class AreaNode {
+        private final int id;
+        private final APosition center;
+        private final boolean hasDepot;
+        private final int minerals;
+
+        public AreaNode(int id, APosition center, boolean hasDepot, int minerals) {
+            this.id = id;
+            this.center = center;
+            this.hasDepot = hasDepot;
+            this.minerals = minerals;
+        }
+
+        public int id() {
+            return id;
+        }
+
+        public APosition center() {
+            return center;
+        }
+    }
+
+    /**
+     * One choke between two areas, with its width in pixels.
+     */
+    public static final class ChokeEdge {
+        private final int left;
+        private final int right;
+        private final int widthPx;
+
+        public ChokeEdge(int left, int right, int widthPx) {
+            this.left = left;
+            this.right = right;
+            this.widthPx = widthPx;
+        }
+    }
+
+    /**
+     * An enemy area reachable by air but not by ground: a drop target.
+     */
+    public static final class DropCandidate {
+        private final int areaId;
+        private final APosition center;
+        private final double flightTiles;
+
+        DropCandidate(int areaId, APosition center, double flightTiles) {
+            this.areaId = areaId;
+            this.center = center;
+            this.flightTiles = flightTiles;
+        }
+
+        public int areaId() {
+            return areaId;
+        }
+
+        public APosition center() {
+            return center;
+        }
+
+        public double flightTiles() {
+            return flightTiles;
+        }
     }
 }

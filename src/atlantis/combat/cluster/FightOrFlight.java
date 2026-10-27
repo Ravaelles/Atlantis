@@ -13,21 +13,25 @@ package atlantis.combat.cluster;
  */
 public class FightOrFlight {
 
-    /** Eval at or above this means fight. Below means flee. */
+    /**
+     * Eval at or above this means fight. Below means flee.
+     */
     public static final double FIGHT_EVAL = 1.0;
 
-    /** A retreat lasts at least this long before re-evaluation. */
+    /**
+     * A retreat lasts at least this long before re-evaluation.
+     */
     public static final int RETREAT_LATCH_FRAMES = 240;
-
-    public enum Tactic {
-        FIGHT,
-        FLEE
-    }
 
     public static Tactic decide(double eval, int now, int fleeStartedAt) {
         if (fleeStartedAt >= 0 && now - fleeStartedAt < RETREAT_LATCH_FRAMES) {
             return Tactic.FLEE;
         }
         return eval >= FIGHT_EVAL ? Tactic.FIGHT : Tactic.FLEE;
+    }
+
+    public enum Tactic {
+        FIGHT,
+        FLEE
     }
 }

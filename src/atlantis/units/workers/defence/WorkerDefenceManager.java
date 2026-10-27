@@ -11,12 +11,15 @@ import atlantis.units.workers.defence.fight.WorkerDefenceStopFighting;
 import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import atlantis.units.workers.defence.special.BuddyRepair;
 import atlantis.util.We;
+
 public class WorkerDefenceManager extends Manager {
     public WorkerDefenceManager(AUnit unit) {
         super(unit);
     }
 
-    /** Construction owns assigned workers; the defence chain never takes them over. */
+    /**
+     * Construction owns assigned workers; the defence chain never takes them over.
+     */
     @Override
     public boolean applies() {
         if (!unit.isWorker()) return false;

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class SpellCoordinator {
 
-    private static Cache<APosition> recentSpellsPosition = new Cache<>();
-    private static Cache<String> recentSpellsPositionToName = new Cache<>();
+    private static final Cache<APosition> recentSpellsPosition = new Cache<>();
+    private static final Cache<String> recentSpellsPositionToName = new Cache<>();
 
     public static boolean noOtherSpellAssignedHere(APosition targetPosition, TechType newSpell) {
 //        recentSpellsAt.print("Recent spells", false);

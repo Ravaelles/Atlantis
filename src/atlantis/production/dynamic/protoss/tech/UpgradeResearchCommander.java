@@ -15,9 +15,23 @@ import bwapi.UpgradeType;
 import java.util.List;
 
 public abstract class UpgradeResearchCommander extends Commander {
+    public static boolean isBeingResearched(UpgradeType upgrade) {
+        List<AUnit> upgraders = Select.ourOfType(AUnitType.from(upgrade.whatUpgrades())).list();
+
+        for (AUnit building : upgraders) {
+            if (building.isUpgrading() && building.whatIsUpgrading() == upgrade) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public abstract UpgradeType what();
-    protected abstract void setEnqueued(boolean isEnqueued);
+
     protected abstract boolean isEnqueued();
+
+    protected abstract void setEnqueued(boolean isEnqueued);
 
     /**
      * Queue priority of the research order (D3): STANDARD unless a researcher
@@ -58,18 +72,6 @@ public abstract class UpgradeResearchCommander extends Commander {
         else if (!isEnqueued() && AddToQueue.upgrade(what())) {
             setEnqueued(true);
         }
-        return false;
-    }
-
-    public static boolean isBeingResearched(UpgradeType upgrade) {
-        List<AUnit> upgraders = Select.ourOfType(AUnitType.from(upgrade.whatUpgrades())).list();
-
-        for (AUnit building : upgraders) {
-            if (building.isUpgrading() && building.whatIsUpgrading() == upgrade) {
-                return true;
-            }
-        }
-
         return false;
     }
 }

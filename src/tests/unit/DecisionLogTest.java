@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,6 +30,17 @@ public class DecisionLogTest {
     private byte[] backup;
     private boolean hadFile;
 
+    private static ADecision build(String subject, int frame) {
+        return ADecision.decide(
+                ADecision.Kind.BUILD, subject, "At 8 Pylon", ADecision.Source.BUILD_ORDER)
+            .frame(frame).supply(8, 9).bank(50, 0)
+            .build();
+    }
+
+    private static String content() throws Exception {
+        return new String(Files.readAllBytes(new File(DecisionLog.OUTPUT_PATH).toPath()), StandardCharsets.UTF_8);
+    }
+
     @BeforeEach
     public void backupAndClean() throws Exception {
         File out = new File(DecisionLog.OUTPUT_PATH);
@@ -49,22 +61,11 @@ public class DecisionLogTest {
         }
     }
 
-    private static ADecision build(String subject, int frame) {
-        return ADecision.decide(
-                ADecision.Kind.BUILD, subject, "At 8 Pylon", ADecision.Source.BUILD_ORDER)
-            .frame(frame).supply(8, 9).bank(50, 0)
-            .build();
-    }
-
-    private static String content() throws Exception {
-        return new String(Files.readAllBytes(new File(DecisionLog.OUTPUT_PATH).toPath()), "UTF-8");
-    }
-
     @Test
     public void firstFlushTruncatesStaleRunSecondAppends() throws Exception {
         File out = new File(DecisionLog.OUTPUT_PATH);
         if (out.getParentFile() != null) out.getParentFile().mkdirs();
-        Files.write(out.toPath(), "STALE ROW FROM A PREVIOUS GAME\n".getBytes("UTF-8"));
+        Files.write(out.toPath(), "STALE ROW FROM A PREVIOUS GAME\n".getBytes(StandardCharsets.UTF_8));
 
         DecisionLog.record(build("Pylon", 100));
         assertTrue(content().contains("\"subject\":\"Pylon\""));

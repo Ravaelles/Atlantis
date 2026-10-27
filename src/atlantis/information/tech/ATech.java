@@ -2,9 +2,9 @@ package atlantis.information.tech;
 
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.select.CacheKey;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -15,25 +15,17 @@ public class ATech {
     private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
     private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
     private static final Cache<Boolean> cacheBoolean = new Cache<>();
+    private static final Source EngineSource = new Source() {
+        @Override
+        public boolean hasResearched(TechType tech) {
+            return AGame.playerUs().hasResearched(tech);
+        }
 
-    /**
-     * What our own player has researched and upgraded.
-     *
-     * <p>In a game the engine knows: {@code AGame.playerUs()}. The stub world has
-     * no player with a tech tree, and the harness used to solve that by mocking
-     * this whole class statically - which meant every test ran against a facade
-     * whose unstubbed methods returned null and 0, including
-     * {@code getCurrentlyResearching()} and {@code costOf(...)}. Two questions
-     * were enough to answer with a port instead, and the rest of the facade runs
-     * for real again ({@code tests.fakes.FakeResearch}).</p>
-     */
-    public interface Source {
-        boolean hasResearched(TechType tech);
-
-        /** 0 initially, up to 3 for most upgrades. */
-        int upgradeLevel(UpgradeType upgrade);
-    }
-
+        @Override
+        public int upgradeLevel(UpgradeType upgrade) {
+            return AGame.playerUs().getUpgradeLevel(upgrade);
+        }
+    };
     private static Source source = null;
 
     public static void useSource(Source newSource) {
@@ -48,20 +40,6 @@ public class ATech {
     private static Source source() {
         return source != null ? source : EngineSource;
     }
-
-    private static final Source EngineSource = new Source() {
-        @Override
-        public boolean hasResearched(TechType tech) {
-            return AGame.playerUs().hasResearched(tech);
-        }
-
-        @Override
-        public int upgradeLevel(UpgradeType upgrade) {
-            return AGame.playerUs().getUpgradeLevel(upgrade);
-        }
-    };
-
-    // =========================================================
 
     public static boolean isResearched(Object techOrUpgrade) {
         return cacheBoolean.get(
@@ -87,6 +65,8 @@ public class ATech {
             }
         );
     }
+
+    // =========================================================
 
     public static boolean isNotResearchedOrPlanned(Object techOrUpgrade) {
         return cacheBoolean.get(
@@ -136,14 +116,14 @@ public class ATech {
         }
     }
 
-    // =========================================================
-
     /**
      * Returns level of given upgrade. 0 is initially, it can raise up to 3.
      */
     public static int getUpgradeLevel(UpgradeType upgrade) {
         return source().upgradeLevel(upgrade);
     }
+
+    // =========================================================
 
     public static Integer[] costOf(Object techOrUpgrade) {
         if (techOrUpgrade instanceof TechType) {
@@ -158,23 +138,23 @@ public class ATech {
         }
     }
 
-    // =========================================================
-
     public static void markAsBeingResearched(TechType tech) {
         currentlyResearching.add(tech);
         cacheBoolean.clear();
     }
+
+    // =========================================================
 
     public static void markAsBeingUpgraded(UpgradeType upgrade) {
         currentlyUpgrading.add(upgrade);
         cacheBoolean.clear();
     }
 
-    // =========================================================
-
     private static boolean isResearchedTech(TechType tech) {
         return source().hasResearched(tech);
     }
+
+    // =========================================================
 
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {
         return getUpgradeLevel(upgrade) >= Math.min(expectedUpgradeLevel, 3);
@@ -190,5 +170,25 @@ public class ATech {
 
     public static boolean isOffensiveSpell(TechType tech) {
         return !tech.name().contains("Warp_") && !tech.name().contains("Meld_");
+    }
+
+    /**
+     * What our own player has researched and upgraded.
+     *
+     * <p>In a game the engine knows: {@code AGame.playerUs()}. The stub world has
+     * no player with a tech tree, and the harness used to solve that by mocking
+     * this whole class statically - which meant every test ran against a facade
+     * whose unstubbed methods returned null and 0, including
+     * {@code getCurrentlyResearching()} and {@code costOf(...)}. Two questions
+     * were enough to answer with a port instead, and the rest of the facade runs
+     * for real again ({@code tests.fakes.FakeResearch}).</p>
+     */
+    public interface Source {
+        boolean hasResearched(TechType tech);
+
+        /**
+         * 0 initially, up to 3 for most upgrades.
+         */
+        int upgradeLevel(UpgradeType upgrade);
     }
 }

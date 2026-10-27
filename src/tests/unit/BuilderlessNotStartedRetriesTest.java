@@ -1,11 +1,11 @@
 package tests.unit;
 
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.GoalBoardFeeder;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.PrepareConstructionSite;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -19,12 +19,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Silent-death half of the fresh-request path (measured Wine 7th_rav:
@@ -36,6 +31,19 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
+
+    private static int countRows(String reason) {
+        String log = EventLog.toJsonLines();
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = log.indexOf(reason, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + 1;
+        }
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -198,18 +206,5 @@ public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
                     + " rotting silently: "
                     + EventLog.toJsonLines());
         });
-    }
-
-    private static int countRows(String reason) {
-        String log = EventLog.toJsonLines();
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = log.indexOf(reason, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + 1;
-        }
     }
 }

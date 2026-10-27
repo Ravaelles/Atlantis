@@ -2,7 +2,9 @@ package atlantis.production.v2;
 
 import atlantis.units.AUnitType;
 
-/** Immutable Protoss identities for {@link ProductionRacePolicy}. */
+/**
+ * Immutable Protoss identities for {@link ProductionRacePolicy}.
+ */
 public final class ProtossProductionRacePolicy implements ProductionRacePolicy {
 
     public static final ProtossProductionRacePolicy INSTANCE = new ProtossProductionRacePolicy();

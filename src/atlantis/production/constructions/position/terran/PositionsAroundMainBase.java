@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
 public class PositionsAroundMainBase {
-    private static Cache<Positions<APosition>> cache = new Cache<>();
+    private static final Cache<Positions<APosition>> cache = new Cache<>();
 
     public static Positions<APosition> get() {
         return cache.get(

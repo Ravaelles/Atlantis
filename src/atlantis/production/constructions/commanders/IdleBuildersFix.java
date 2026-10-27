@@ -14,9 +14,8 @@ public class IdleBuildersFix extends Commander {
     @Override
     public boolean applies() {
         if (!We.terran()) return false;
-        if (A.everyFrameExceptNthFrame(27)) return false;
 
-        return true;
+        return !A.everyFrameExceptNthFrame(27);
     }
 
     @Override

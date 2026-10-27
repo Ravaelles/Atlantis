@@ -1,10 +1,9 @@
 package tests.unit;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.production.constructions.Construction;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

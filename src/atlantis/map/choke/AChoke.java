@@ -3,11 +3,11 @@ package atlantis.map.choke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.Vectors;
 import atlantis.map.region.ARegion;
 import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import atlantis.util.Vector;
-import atlantis.map.position.Vectors;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;
@@ -20,11 +20,10 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class AChoke implements HasPosition {
-    private static TreeMap<Integer, AChoke> all = new TreeMap<>();
-
+    private static final TreeMap<Integer, AChoke> all = new TreeMap<>();
+    protected APosition center;
     private ChokePoint choke;
     private Position[] sides;
-    protected APosition center;
     private APosition pointA;
     private APosition pointB;
     private double width;
@@ -102,7 +101,7 @@ public class AChoke implements HasPosition {
     public String toString() {
         return "Choke{"
             + (center() == null ? "null" : ("[" + center().tx() + "," + center().ty() + "]"))
-            + ", width=" + ((int) width())
+            + ", width=" + width()
             + "}";
     }
 

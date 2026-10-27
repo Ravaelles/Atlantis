@@ -41,9 +41,8 @@ public class EvalChokeTweaks {
     private static boolean applyHugePenaltyVsZergEarly(AUnit unit, AUnit enemy, AChoke choke, double distToChoke) {
         if (!Enemy.zerg()) return false;
         if (Count.ourCombatUnits() >= 12) return false;
-        if (Army.strengthWithoutCB() >= 350) return false;
 
-        return true;
+        return Army.strengthWithoutCB() < 350;
     }
 
     public static double chokePenalty(AUnit unit, AChoke choke, double distToChoke) {

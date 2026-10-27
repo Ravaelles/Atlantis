@@ -1,9 +1,9 @@
 package atlantis.information.strategy.terran;
 
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.strategy.AStrategy;
 import atlantis.units.AUnitType;
-import atlantis.game.player.Enemy;
 
 public class TerranStrategies extends AStrategy {
 

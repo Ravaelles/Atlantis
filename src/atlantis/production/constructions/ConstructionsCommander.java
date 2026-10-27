@@ -12,17 +12,6 @@ import atlantis.units.AUnit;
 import java.util.ArrayList;
 
 public class ConstructionsCommander extends Commander {
-    @Override
-    protected CommanderFactory[] subcommanders() {
-        return new CommanderFactory[]{
-            TerranKilledBuilderCommander::new,
-            ConstructionStatusChanger::new,
-            ConstructionUnderAttack::new,
-            ConstructionThatLooksBugged::new,
-            IdleBuildersFix::new,
-        };
-    }
-
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
@@ -33,5 +22,16 @@ public class ConstructionsCommander extends Commander {
         }
 
         return units;
+    }
+
+    @Override
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            TerranKilledBuilderCommander::new,
+            ConstructionStatusChanger::new,
+            ConstructionUnderAttack::new,
+            ConstructionThatLooksBugged::new,
+            IdleBuildersFix::new,
+        };
     }
 }

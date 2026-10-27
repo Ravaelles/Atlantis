@@ -61,11 +61,7 @@ public class ProduceObserver {
             return true;
         }
 
-        if (Enemy.protoss() && Army.strengthWithoutCB() <= 180 && A.supplyUsed() <= 80) {
-            return true;
-        }
-
-        return false;
+        return Enemy.protoss() && Army.strengthWithoutCB() <= 180 && A.supplyUsed() <= 80;
     }
 
     public static boolean earlyGamePressureDontInvest() {
@@ -100,7 +96,7 @@ public class ProduceObserver {
     }
 
     private static boolean shouldPrepareForObserver() {
-        int minSupply = (Have.cannon() ? 65 : 65)
+        int minSupply = (65)
             + (Count.cannons() >= 2 ? 20 : 0)
             + (Count.ourCombatUnits() <= 7 ? 10 : 0)
             + (Have.forge() ? 20 : 0)
@@ -130,7 +126,6 @@ public class ProduceObserver {
             if (Have.notEvenPlanned(AUnitType.Protoss_Observatory)) {
                 AddToQueue.toHave(AUnitType.Protoss_Observatory, 1, ProductionOrderPriority.HIGH);
             }
-            return;
         }
 
         else if (Have.notEvenPlanned(AUnitType.Protoss_Observatory)) {
@@ -138,7 +133,6 @@ public class ProduceObserver {
 //                if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
 //                    AddToQueue.toHave(AUnitType.Protoss_Observer, 1, ProductionOrderPriority.HIGH);
 //                }
-            return;
         }
 
         else if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
@@ -150,7 +144,6 @@ public class ProduceObserver {
 //            if (building != null) {
 //                building.pro
 //            }
-            return;
         }
     }
 

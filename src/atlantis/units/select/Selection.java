@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
-import atlantis.battle.eval.estimate.Estimate;
 import atlantis.battle.cluster.Squad;
+import atlantis.battle.eval.estimate.Estimate;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.path.ClosestToEnemyBase;
 import atlantis.map.position.APosition;
@@ -12,7 +12,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.actions.Action;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public class Selection extends BaseSelection {
     protected Selection(Collection<? extends AUnit> unitsData, String initCachePath) {
@@ -21,7 +22,7 @@ public class Selection extends BaseSelection {
 
     // =========================================================
 
-    public Selection ofType(AUnitType... types)  {
+    public Selection ofType(AUnitType... types) {
         return SelectionMembership.ofType(this, types);
     }
 
@@ -111,31 +112,31 @@ public class Selection extends BaseSelection {
         return SelectionViews.limit(this, limit);
     }
 
-    public Selection visibleOnMap()  {
+    public Selection visibleOnMap() {
         return SelectionMembership.visibleOnMap(this);
     }
 
-    public Selection visibleOnMapOrCombatBuilding()  {
+    public Selection visibleOnMapOrCombatBuilding() {
         return SelectionMembership.visibleOnMapOrCombatBuilding(this);
     }
 
-    public Selection underAttackLessThanAgo(int framesAgo)  {
+    public Selection underAttackLessThanAgo(int framesAgo) {
         return SelectionMembership.underAttackLessThanAgo(this, framesAgo);
     }
 
-    public Selection lastSeenRecently()  {
+    public Selection lastSeenRecently() {
         return SelectionMembership.lastSeenRecently(this);
     }
 
-    public Selection lastActionLessThanAgo(int framesAgo, Action action)  {
+    public Selection lastActionLessThanAgo(int framesAgo, Action action) {
         return SelectionMembership.lastActionLessThanAgo(this, framesAgo, action);
     }
 
-    public Selection lastActionMoreThanAgo(int framesAgo, Action action)  {
+    public Selection lastActionMoreThanAgo(int framesAgo, Action action) {
         return SelectionMembership.lastActionMoreThanAgo(this, framesAgo, action);
     }
 
-    public Selection lastSeenAtLeastMinuteAgo()  {
+    public Selection lastSeenAtLeastMinuteAgo() {
         return SelectionMembership.lastSeenAtLeastMinuteAgo(this);
     }
 
@@ -143,311 +144,311 @@ public class Selection extends BaseSelection {
         return SelectionMembership.regionsMatch(this, position);
     }
 
-    public Selection effVisible()  {
+    public Selection effVisible() {
         return SelectionMembership.effVisible(this);
     }
 
-    public Selection effVisibleOrFoggedWithKnownPosition()  {
+    public Selection effVisibleOrFoggedWithKnownPosition() {
         return SelectionMembership.effVisibleOrFoggedWithKnownPosition(this);
     }
 
-    public Selection effUndetected()  {
+    public Selection effUndetected() {
         return SelectionMembership.effUndetected(this);
     }
 
-    public Selection mobileDetectors()  {
+    public Selection mobileDetectors() {
         return SelectionMembership.mobileDetectors(this);
     }
 
-    public Selection detectors()  {
+    public Selection detectors() {
         return SelectionMembership.detectors(this);
     }
 
-    public Selection tanksSieged()  {
+    public Selection tanksSieged() {
         return SelectionMembership.tanksSieged(this);
     }
 
-    public Selection tanksUnsieged()  {
+    public Selection tanksUnsieged() {
         return SelectionMembership.tanksUnsieged(this);
     }
 
-    public Selection guardians()  {
+    public Selection guardians() {
         return SelectionMembership.guardians(this);
     }
 
-    public Selection mutalisks()  {
+    public Selection mutalisks() {
         return SelectionMembership.mutalisks(this);
     }
 
-    public Selection carriers()  {
+    public Selection carriers() {
         return SelectionMembership.carriers(this);
     }
 
-    public Selection marines()  {
+    public Selection marines() {
         return SelectionMembership.marines(this);
     }
 
-    public Selection hydras()  {
+    public Selection hydras() {
         return SelectionMembership.hydras(this);
     }
 
-    public Selection minerals()  {
+    public Selection minerals() {
         return SelectionMembership.minerals(this);
     }
 
-    public Selection dragoons()  {
+    public Selection dragoons() {
         return SelectionMembership.dragoons(this);
     }
 
-    public Selection turrets()  {
+    public Selection turrets() {
         return SelectionMembership.turrets(this);
     }
 
-    public Selection vultures()  {
+    public Selection vultures() {
         return SelectionMembership.vultures(this);
     }
 
-    public Selection zealots()  {
+    public Selection zealots() {
         return SelectionMembership.zealots(this);
     }
 
-    public Selection firebats()  {
+    public Selection firebats() {
         return SelectionMembership.firebats(this);
     }
 
-    public Selection overlords()  {
+    public Selection overlords() {
         return SelectionMembership.overlords(this);
     }
 
-    public Selection scienceVessels()  {
+    public Selection scienceVessels() {
         return SelectionMembership.scienceVessels(this);
     }
 
-    public Selection zerglings()  {
+    public Selection zerglings() {
         return SelectionMembership.zerglings(this);
     }
 
-    public Selection sunkens()  {
+    public Selection sunkens() {
         return SelectionMembership.sunkens(this);
     }
 
-    public Selection sporeColonies()  {
+    public Selection sporeColonies() {
         return SelectionMembership.sporeColonies(this);
     }
 
-    public Selection creepColonies()  {
+    public Selection creepColonies() {
         return SelectionMembership.creepColonies(this);
     }
 
-    public Selection tanks()  {
+    public Selection tanks() {
         return SelectionMembership.tanks(this);
     }
 
-    public Selection nonTanks()  {
+    public Selection nonTanks() {
         return SelectionMembership.nonTanks(this);
     }
 
-    public Selection nonReavers()  {
+    public Selection nonReavers() {
         return SelectionMembership.nonReavers(this);
     }
 
-    public Selection groundUnits()  {
+    public Selection groundUnits() {
         return SelectionMembership.groundUnits(this);
     }
 
-    public Selection nonBuildings()  {
+    public Selection nonBuildings() {
         return SelectionMembership.nonBuildings(this);
     }
 
-    public Selection nonBuildingsButAllowCombatBuildings()  {
+    public Selection nonBuildingsButAllowCombatBuildings() {
         return SelectionMembership.nonBuildingsButAllowCombatBuildings(this);
     }
 
-    public Selection nonWorkers()  {
+    public Selection nonWorkers() {
         return SelectionMembership.nonWorkers(this);
     }
 
-    public Selection gatheringMinerals(boolean onlyNotCarryingMinerals)  {
+    public Selection gatheringMinerals(boolean onlyNotCarryingMinerals) {
         return SelectionMembership.gatheringMinerals(this, onlyNotCarryingMinerals);
     }
 
-    public Selection notGathering()  {
+    public Selection notGathering() {
         return SelectionMembership.notGathering(this);
     }
 
-    public Selection notGatheringGas()  {
+    public Selection notGatheringGas() {
         return SelectionMembership.notGatheringGas(this);
     }
 
-    public Selection notSpecialAction()  {
+    public Selection notSpecialAction() {
         return SelectionMembership.notSpecialAction(this);
     }
 
-    public Selection notStuck()  {
+    public Selection notStuck() {
         return SelectionMembership.notStuck(this);
     }
 
-    public Selection havingActiveManager(Class... activeManagers)  {
+    public Selection havingActiveManager(Class... activeManagers) {
         return SelectionMembership.havingActiveManager(this, activeManagers);
     }
 
-    public Selection specialAction()  {
+    public Selection specialAction() {
         return SelectionMembership.specialAction(this);
     }
 
-    public Selection organic()  {
+    public Selection organic() {
         return SelectionMembership.organic(this);
     }
 
-    public Selection transports(boolean excludeOverlords)  {
+    public Selection transports(boolean excludeOverlords) {
         return SelectionMembership.transports(this, excludeOverlords);
     }
 
-    public Selection bases()  {
+    public Selection bases() {
         return SelectionMembership.bases(this);
     }
 
-    public Selection workers()  {
+    public Selection workers() {
         return SelectionMembership.workers(this);
     }
 
-    public Selection realUnits()  {
+    public Selection realUnits() {
         return SelectionMembership.realUnits(this);
     }
 
-    public Selection realUnitsAndBuildings()  {
+    public Selection realUnitsAndBuildings() {
         return SelectionMembership.realUnitsAndBuildings(this);
     }
 
-    public Selection realUnitsAndCombatBuildings()  {
+    public Selection realUnitsAndCombatBuildings() {
         return SelectionMembership.realUnitsAndCombatBuildings(this);
     }
 
-    public Selection air()  {
+    public Selection air() {
         return SelectionMembership.air(this);
     }
 
-    public Selection notLifted()  {
+    public Selection notLifted() {
         return SelectionMembership.notLifted(this);
     }
 
-    public Selection notUnpowered()  {
+    public Selection notUnpowered() {
         return SelectionMembership.notUnpowered(this);
     }
 
-    public Selection lifted()  {
+    public Selection lifted() {
         return SelectionMembership.lifted(this);
     }
 
-    public Selection melee()  {
+    public Selection melee() {
         return SelectionMembership.melee(this);
     }
 
-    public Selection nonRanged()  {
+    public Selection nonRanged() {
         return SelectionMembership.nonRanged(this);
     }
 
-    public Selection ranged()  {
+    public Selection ranged() {
         return SelectionMembership.ranged(this);
     }
 
-    public Selection wounded()  {
+    public Selection wounded() {
         return SelectionMembership.wounded(this);
     }
 
-    public Selection crucialUnits()  {
+    public Selection crucialUnits() {
         return SelectionMembership.crucialUnits(this);
     }
 
-    public Selection criticallyWounded()  {
+    public Selection criticallyWounded() {
         return SelectionMembership.criticallyWounded(this);
     }
 
-    public Selection havingSeriousShieldWound()  {
+    public Selection havingSeriousShieldWound() {
         return SelectionMembership.havingSeriousShieldWound(this);
     }
 
-    public Selection notAttacking()  {
+    public Selection notAttacking() {
         return SelectionMembership.notAttacking(this);
     }
 
-    public Selection attacking()  {
+    public Selection attacking() {
         return SelectionMembership.attacking(this);
     }
 
-    public Selection terranInfantryWithoutMedics()  {
+    public Selection terranInfantryWithoutMedics() {
         return SelectionMembership.terranInfantryWithoutMedics(this);
     }
 
-    public Selection tankSupport()  {
+    public Selection tankSupport() {
         return SelectionMembership.tankSupport(this);
     }
 
-    public Selection attackStatePending()  {
+    public Selection attackStatePending() {
         return SelectionMembership.attackStatePending(this);
     }
 
-    public Selection havingTargeted(AUnit targetUnit)  {
+    public Selection havingTargeted(AUnit targetUnit) {
         return SelectionMembership.havingTargeted(this, targetUnit);
     }
 
-    public Selection havingTargetedBuildings()  {
+    public Selection havingTargetedBuildings() {
         return SelectionMembership.havingTargetedBuildings(this);
     }
 
-    public Selection havingAnyTarget()  {
+    public Selection havingAnyTarget() {
         return SelectionMembership.havingAnyTarget(this);
     }
 
-    public Selection buildings()  {
+    public Selection buildings() {
         return SelectionMembership.buildings(this);
     }
 
-    public Selection havingPosition()  {
+    public Selection havingPosition() {
         return SelectionMembership.havingPosition(this);
     }
 
-    public Selection beingVisibleUnitOrNotVisibleFoggedUnit()  {
+    public Selection beingVisibleUnitOrNotVisibleFoggedUnit() {
         return SelectionMembership.beingVisibleUnitOrNotVisibleFoggedUnit(this);
     }
 
-    public int countRunning(int maxStartedRunningAgo)  {
+    public int countRunning(int maxStartedRunningAgo) {
         return SelectionMembership.countRunning(this, maxStartedRunningAgo);
     }
 
-    public int countRetreating()  {
+    public int countRetreating() {
         return SelectionMembership.countRetreating(this);
     }
 
-    public Selection cloakable()  {
+    public Selection cloakable() {
         return SelectionMembership.cloakable(this);
     }
 
-    public Selection notDeadMan()  {
+    public Selection notDeadMan() {
         return SelectionMembership.notDeadMan(this);
     }
 
-    public Selection havingWeapon()  {
+    public Selection havingWeapon() {
         return SelectionMembership.havingWeapon(this);
     }
 
-    public Selection havingAntiGroundWeapon()  {
+    public Selection havingAntiGroundWeapon() {
         return SelectionMembership.havingAntiGroundWeapon(this);
     }
 
-    public Selection notHavingAntiAirWeapon()  {
+    public Selection notHavingAntiAirWeapon() {
         return SelectionMembership.notHavingAntiAirWeapon(this);
     }
 
-    public Selection havingAntiAirWeapon()  {
+    public Selection havingAntiAirWeapon() {
         return SelectionMembership.havingAntiAirWeapon(this);
     }
 
-    public Selection havingSmallerRange(AUnit than)  {
+    public Selection havingSmallerRange(AUnit than) {
         return SelectionMembership.havingSmallerRange(this, than);
     }
 
-    public Selection notPurelyAntiAir()  {
+    public Selection notPurelyAntiAir() {
         return SelectionMembership.notPurelyAntiAir(this);
     }
 
@@ -463,23 +464,23 @@ public class Selection extends BaseSelection {
         return SelectionViews.totalKills(this);
     }
 
-    public Selection inSquad(Squad squad)  {
+    public Selection inSquad(Squad squad) {
         return SelectionMembership.inSquad(this, squad);
     }
 
-    public Selection combatUnits()  {
+    public Selection combatUnits() {
         return SelectionMembership.combatUnits(this);
     }
 
-    public Selection combatBuildings(boolean includeCreepColonies)  {
+    public Selection combatBuildings(boolean includeCreepColonies) {
         return SelectionMembership.combatBuildings(this, includeCreepColonies);
     }
 
-    public Selection combatBuildingsAntiLand()  {
+    public Selection combatBuildingsAntiLand() {
         return SelectionMembership.combatBuildingsAntiLand(this);
     }
 
-    public Selection combatBuildingsAntiAir()  {
+    public Selection combatBuildingsAntiAir() {
         return SelectionMembership.combatBuildingsAntiAir(this);
     }
 
@@ -487,19 +488,19 @@ public class Selection extends BaseSelection {
         return SelectionMembership.combatBuildingsAnti(this, unit);
     }
 
-    public Selection onlyCompleted()  {
+    public Selection onlyCompleted() {
         return SelectionMembership.onlyCompleted(this);
     }
 
-    public Selection onlyCompletedOrAlmost()  {
+    public Selection onlyCompletedOrAlmost() {
         return SelectionMembership.onlyCompletedOrAlmost(this);
     }
 
-    public Selection notCompleted()  {
+    public Selection notCompleted() {
         return SelectionMembership.notCompleted(this);
     }
 
-    public Selection repairable(boolean checkIfWounded)  {
+    public Selection repairable(boolean checkIfWounded) {
         return SelectionMembership.repairable(this, checkIfWounded);
     }
 
@@ -531,23 +532,23 @@ public class Selection extends BaseSelection {
         return count() > 0 && (count() * percentThreshold >= countOfType(type) * 100);
     }
 
-    public Selection burrowed()  {
+    public Selection burrowed() {
         return SelectionMembership.burrowed(this);
     }
 
-    public Selection burrowing()  {
+    public Selection burrowing() {
         return SelectionMembership.burrowing(this);
     }
 
-    public Selection loaded()  {
+    public Selection loaded() {
         return SelectionMembership.loaded(this);
     }
 
-    public Selection notLoaded()  {
+    public Selection notLoaded() {
         return SelectionMembership.notLoaded(this);
     }
 
-/**
+    /**
      * Selects these units (makes sense only for workers) who aren't assigned to repair any other unit.
      */
     public Selection notRepairing() {
@@ -567,27 +568,27 @@ public class Selection extends BaseSelection {
     }
 
 
-    public Selection builders()  {
+    public Selection builders() {
         return SelectionMembership.builders(this);
     }
 
-    public Selection nonBuilders()  {
+    public Selection nonBuilders() {
         return SelectionMembership.nonBuilders(this);
     }
 
-    public Selection notProtectors()  {
+    public Selection notProtectors() {
         return SelectionMembership.notProtectors(this);
     }
 
-    public Selection protectors()  {
+    public Selection protectors() {
         return SelectionMembership.protectors(this);
     }
 
-    public Selection producing(AUnitType producingThisUnit)  {
+    public Selection producing(AUnitType producingThisUnit) {
         return SelectionMembership.producing(this, producingThisUnit);
     }
 
-    public Selection healthy()  {
+    public Selection healthy() {
         return SelectionMembership.healthy(this);
     }
 
@@ -595,143 +596,143 @@ public class Selection extends BaseSelection {
         return SelectionViews.averageShields(this);
     }
 
-    public Selection havingSpaceFree(int spaceRequired)  {
+    public Selection havingSpaceFree(int spaceRequired) {
         return SelectionMembership.havingSpaceFree(this, spaceRequired);
     }
 
-    public Selection havingCooldownMin(int minCooldown)  {
+    public Selection havingCooldownMin(int minCooldown) {
         return SelectionMembership.havingCooldownMin(this, minCooldown);
     }
 
-    public Selection havingCooldownMax(int maxCooldown)  {
+    public Selection havingCooldownMax(int maxCooldown) {
         return SelectionMembership.havingCooldownMax(this, maxCooldown);
     }
 
-    public Selection havingEnergy(int minEnergy)  {
+    public Selection havingEnergy(int minEnergy) {
         return SelectionMembership.havingEnergy(this, minEnergy);
     }
 
-    public Selection notHavingHp(int maxHp)  {
+    public Selection notHavingHp(int maxHp) {
         return SelectionMembership.notHavingHp(this, maxHp);
     }
 
-    public Selection notBeingHealed()  {
+    public Selection notBeingHealed() {
         return SelectionMembership.notBeingHealed(this);
     }
 
-    public Selection havingAtLeastHp(int minHp)  {
+    public Selection havingAtLeastHp(int minHp) {
         return SelectionMembership.havingAtLeastHp(this, minHp);
     }
 
-    public Selection nonStasisedOrLockedDown()  {
+    public Selection nonStasisedOrLockedDown() {
         return SelectionMembership.nonStasisedOrLockedDown(this);
     }
 
-    public Selection mechanical()  {
+    public Selection mechanical() {
         return SelectionMembership.mechanical(this);
     }
 
-    public Selection medics()  {
+    public Selection medics() {
         return SelectionMembership.medics(this);
     }
 
-    public Selection observers()  {
+    public Selection observers() {
         return SelectionMembership.observers(this);
     }
 
-    public Selection observatories()  {
+    public Selection observatories() {
         return SelectionMembership.observatories(this);
     }
 
-    public Selection bunkers()  {
+    public Selection bunkers() {
         return SelectionMembership.bunkers(this);
     }
 
-    public Selection cannons()  {
+    public Selection cannons() {
         return SelectionMembership.cannons(this);
     }
 
-    public Selection forge()  {
+    public Selection forge() {
         return SelectionMembership.forge(this);
     }
 
-    public Selection dts()  {
+    public Selection dts() {
         return SelectionMembership.dts(this);
     }
 
-    public Selection scarabs()  {
+    public Selection scarabs() {
         return SelectionMembership.scarabs(this);
     }
 
-    public Selection lurkers()  {
+    public Selection lurkers() {
         return SelectionMembership.lurkers(this);
     }
 
-    public Selection reavers()  {
+    public Selection reavers() {
         return SelectionMembership.reavers(this);
     }
 
-    public Selection notConstructing()  {
+    public Selection notConstructing() {
         return SelectionMembership.notConstructing(this);
     }
 
-    public Selection notBuilder()  {
+    public Selection notBuilder() {
         return SelectionMembership.notBuilder(this);
     }
 
-    public Selection free()  {
+    public Selection free() {
         return SelectionMembership.free(this);
     }
 
-    public Selection withAddon()  {
+    public Selection withAddon() {
         return SelectionMembership.withAddon(this);
     }
 
-    public Selection withoutAddon()  {
+    public Selection withoutAddon() {
         return SelectionMembership.withoutAddon(this);
     }
 
-    public Selection notScout()  {
+    public Selection notScout() {
         return SelectionMembership.notScout(this);
     }
 
-    public Selection notCarrying()  {
+    public Selection notCarrying() {
         return SelectionMembership.notCarrying(this);
     }
 
-    public Selection notImmobilized()  {
+    public Selection notImmobilized() {
         return SelectionMembership.notImmobilized(this);
     }
 
-    public Selection excludeTypes(AUnitType... types)  {
+    public Selection excludeTypes(AUnitType... types) {
         return SelectionMembership.excludeTypes(this, types);
     }
 
-    public Selection excludeMedics()  {
+    public Selection excludeMedics() {
         return SelectionMembership.excludeMedics(this);
     }
 
-    public Selection excludeOverlords()  {
+    public Selection excludeOverlords() {
         return SelectionMembership.excludeOverlords(this);
     }
 
-    public Selection excludeMarines()  {
+    public Selection excludeMarines() {
         return SelectionMembership.excludeMarines(this);
     }
 
-    public Selection excludeTanks()  {
+    public Selection excludeTanks() {
         return SelectionMembership.excludeTanks(this);
     }
 
-    public Selection excludeEggsAndLarvae()  {
+    public Selection excludeEggsAndLarvae() {
         return SelectionMembership.excludeEggsAndLarvae(this);
     }
 
-    public Selection notRunning()  {
+    public Selection notRunning() {
         return SelectionMembership.notRunning(this);
     }
 
-    public Selection notRetreating()  {
+    public Selection notRetreating() {
         return SelectionMembership.notRetreating(this);
     }
 
@@ -752,15 +753,15 @@ public class Selection extends BaseSelection {
         return SelectionMembership.hasPathFromUs(this);
     }
 
-    public Selection canBeAttackedBy(AUnit attacker, double extraMargin)  {
+    public Selection canBeAttackedBy(AUnit attacker, double extraMargin) {
         return SelectionMembership.canBeAttackedBy(this, attacker, extraMargin);
     }
 
-    public Selection canAttack(AUnit target, boolean checkShootingRange, boolean checkVisibility, double safetyMargin)  {
+    public Selection canAttack(AUnit target, boolean checkShootingRange, boolean checkVisibility, double safetyMargin) {
         return SelectionMembership.canAttack(this, target, checkShootingRange, checkVisibility, safetyMargin);
     }
 
-    public Selection canAttack(AUnit target, double safetyMargin)  {
+    public Selection canAttack(AUnit target, double safetyMargin) {
         return SelectionMembership.canAttack(this, target, safetyMargin);
     }
 
@@ -772,19 +773,19 @@ public class Selection extends BaseSelection {
         return SelectionMembership.inShootRangeOf(this, shootingRangeBonus, attacker);
     }
 
-    public Selection facingThisUnit(AUnit subject)  {
+    public Selection facingThisUnit(AUnit subject) {
         return SelectionMembership.facingThisUnit(this, subject);
     }
 
-    public Selection notShowingBackToUs(AUnit subject)  {
+    public Selection notShowingBackToUs(AUnit subject) {
         return SelectionMembership.notShowingBackToUs(this, subject);
     }
 
-    public Selection notMoving()  {
+    public Selection notMoving() {
         return SelectionMembership.notMoving(this);
     }
 
-    public Selection moving()  {
+    public Selection moving() {
         return SelectionMembership.moving(this);
     }
 

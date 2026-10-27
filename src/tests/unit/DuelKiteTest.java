@@ -1,26 +1,18 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.kite.CombatTuning;
-import atlantis.combat.strategy.BattleStrategies;
-import atlantis.combat.strategy.BattleStrategy;
-import atlantis.combat.strategy.ChokeStandoff;
-import atlantis.combat.strategy.DuelKite;
-import atlantis.combat.strategy.SquadScout;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.strategy.*;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Duel kiting (NEXT #169): while the weapon cools, a Dragoon steps off
@@ -30,6 +22,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class DuelKiteTest extends WorldStubForTests {
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     public Race initRace() {
@@ -172,8 +176,7 @@ public class DuelKiteTest extends WorldStubForTests {
         zealot.setEnemy();
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(BattleStrategies.pick(dragoon, null) == BattleStrategy.DUEL_KITE,
-                "baseless 1v1 is a duel");
+            assertSame(BattleStrategies.pick(dragoon, null), BattleStrategy.DUEL_KITE, "baseless 1v1 is a duel");
         });
     }
 
@@ -184,8 +187,7 @@ public class DuelKiteTest extends WorldStubForTests {
         zealot.setEnemy();
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(BattleStrategies.pick(dragoon, null) == BattleStrategy.CHOKE_HOLD,
-                "based 1v1 at a contested choke without superiority: hold the standoff, don't push");
+            assertSame(BattleStrategies.pick(dragoon, null), BattleStrategy.CHOKE_HOLD, "based 1v1 at a contested choke without superiority: hold the standoff, don't push");
         });
     }
 
@@ -224,8 +226,7 @@ public class DuelKiteTest extends WorldStubForTests {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 60);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(), () -> {
-            assertTrue(BattleStrategies.pick(dragoon, null) == BattleStrategy.OPEN_FIELD,
-                "no enemy anywhere near a choke: the standing fight");
+            assertSame(BattleStrategies.pick(dragoon, null), BattleStrategy.OPEN_FIELD, "no enemy anywhere near a choke: the standing fight");
         });
     }
 
@@ -259,8 +260,7 @@ public class DuelKiteTest extends WorldStubForTests {
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 29, 19);
 
         world(1, fakeOurs(a, b, c), fakeEnemies(), () -> {
-            assertTrue(SquadScout.pickBait(atlantis.units.select.Select.ourCombatUnits()) == a,
-                "the whole line must agree on one bait: the lowest id");
+            assertSame(SquadScout.pickBait(Select.ourCombatUnits()), a, "the whole line must agree on one bait: the lowest id");
         });
     }
 
@@ -292,22 +292,9 @@ public class DuelKiteTest extends WorldStubForTests {
                     atlantis.util.log.EventLog.toJsonLines().contains("duel-yield"),
                     "the yield path twins itself: " + atlantis.util.log.EventLog.toJsonLines());
             });
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
-    }
-
-    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
-                                    int unitId, String operation) {
-        for (tests.fakes.FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
 
     @Test
@@ -320,8 +307,7 @@ public class DuelKiteTest extends WorldStubForTests {
             try {
                 assertEquals(dragoon.groundWeaponRange() - 0.15, DuelKite.holdDistance(dragoon), 0.001,
                     "the standoff is tunable (NEXT #186), not a hard-coded 0.4");
-            }
-            finally {
+            } finally {
                 CombatTuning.install(before);
             }
         });

@@ -5,7 +5,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;
 
 public class UnexploredBaseLocationNearEnemy {
-    private static Cache<HasPosition> cache = new Cache<>();
+    private static final Cache<HasPosition> cache = new Cache<>();
 
     public static HasPosition get() {
         return cache.getIfValid(

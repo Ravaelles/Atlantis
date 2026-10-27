@@ -10,9 +10,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The 2-Nexus goal: with the bank covering the Nexus (400+), an army

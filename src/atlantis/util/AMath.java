@@ -128,9 +128,8 @@ public class AMath {
 
     public static boolean isInRange(int min, int value, int max) {
         if (value < min) return false;
-        if (value > max) return false;
 
-        return true;
+        return value <= max;
     }
 
     /**

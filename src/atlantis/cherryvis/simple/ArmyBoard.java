@@ -16,7 +16,9 @@ import atlantis.map.position.HasPosition;
  */
 public final class ArmyBoard {
 
-    /** Graph sampling cadence (frames); the board keys are on-change. */
+    /**
+     * Graph sampling cadence (frames); the board keys are on-change.
+     */
     public static final int VALUES_EVERY_FRAMES = 31;
 
     private static String lastAlphaMission = null;
@@ -86,7 +88,9 @@ public final class ArmyBoard {
         }
     }
 
-    /** Test seam: the last-value cache is per-game state, never cross-test. */
+    /**
+     * Test seam: the last-value cache is per-game state, never cross-test.
+     */
     public static void clearForTests() {
         lastAlphaMission = null;
         lastAlphaTactic = null;

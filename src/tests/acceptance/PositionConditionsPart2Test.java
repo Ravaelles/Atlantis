@@ -2,11 +2,7 @@ package tests.acceptance;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
-import atlantis.production.constructions.position.conditions.IsProbablyInAnotherRegion;
-import atlantis.production.constructions.position.conditions.TerranHasEnoughSidesFreeFromOtherBuildings;
-import atlantis.production.constructions.position.conditions.TooCloseToBaseLocation;
-import atlantis.production.constructions.position.conditions.TooCloseToChoke;
-import atlantis.production.constructions.position.conditions.TooCloseToTerranBase;
+import atlantis.production.constructions.position.conditions.*;
 import atlantis.production.constructions.position.conditions.can_build_here.ProtossAllowHereEarlyEvenWithoutRequirements;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -52,37 +48,37 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void aGatewayRightAtChokeIsRefused() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 67, 110),
-                fake(AUnitType.Protoss_Probe, 67, 111)), fakeEnemies(), () -> {
-                    // FakeChokes has a choke at (67, 114)
-                    APosition nearChoke = APosition.create(67, 114);
-                    assertTrue(
-                            TooCloseToChoke.isTooCloseToChoke(GATEWAY, nearChoke),
-                            "a Gateway right on a choke must be refused");
-                });
+            main = fake(NEXUS, 67, 110),
+            fake(AUnitType.Protoss_Probe, 67, 111)), fakeEnemies(), () -> {
+            // FakeChokes has a choke at (67, 114)
+            APosition nearChoke = APosition.create(67, 114);
+            assertTrue(
+                TooCloseToChoke.isTooCloseToChoke(GATEWAY, nearChoke),
+                "a Gateway right on a choke must be refused");
+        });
     }
 
     @Test
     public void aGatewayFarFromChokesIsAccepted() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    APosition farFromChoke = APosition.create(10, 10);
-                    assertFalse(
-                            TooCloseToChoke.isTooCloseToChoke(GATEWAY, farFromChoke),
-                            "a Gateway far from all chokes is accepted");
-                });
+            main = fake(NEXUS, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            APosition farFromChoke = APosition.create(10, 10);
+            assertFalse(
+                TooCloseToChoke.isTooCloseToChoke(GATEWAY, farFromChoke),
+                "a Gateway far from all chokes is accepted");
+        });
     }
 
     @Test
     public void aBaseAtChokeIsExempt() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 67, 110)), fakeEnemies(), () -> {
-                    APosition nearChoke = APosition.create(67, 114);
-                    assertFalse(
-                            TooCloseToChoke.isTooCloseToChoke(NEXUS, nearChoke),
-                            "a base is exempt from choke distance check");
-                });
+            main = fake(NEXUS, 67, 110)), fakeEnemies(), () -> {
+            APosition nearChoke = APosition.create(67, 114);
+            assertFalse(
+                TooCloseToChoke.isTooCloseToChoke(NEXUS, nearChoke),
+                "a base is exempt from choke distance check");
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -92,29 +88,29 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void aGatewayOverlappingBaseLocationIsRefused() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 20, 20),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    // FakeBaseLocations has a base location at (7, 44), for Protoss it shifts by
-                    // (2, 1) -> (9, 45). Supply past the opening window: the
-                    // early-game adjoin exemption (<= 20) does not apply here.
-                    currentSupplyUsed = 30;
-                    currentSupplyTotal = 32;
-                    APosition atBaseLoc = APosition.create(9, 45);
-                    assertTrue(
-                            TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(GATEWAY, atBaseLoc),
-                            "a Gateway overlapping an unoccupied base location is refused");
-                });
+            main = fake(NEXUS, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            // FakeBaseLocations has a base location at (7, 44), for Protoss it shifts by
+            // (2, 1) -> (9, 45). Supply past the opening window: the
+            // early-game adjoin exemption (<= 20) does not apply here.
+            currentSupplyUsed = 30;
+            currentSupplyTotal = 32;
+            APosition atBaseLoc = APosition.create(9, 45);
+            assertTrue(
+                TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(GATEWAY, atBaseLoc),
+                "a Gateway overlapping an unoccupied base location is refused");
+        });
     }
 
     @Test
     public void aGasBuildingIsExemptFromBaseLocationCheck() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
-                    APosition atBaseLoc = APosition.create(9, 45);
-                    assertFalse(
-                            TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(ASSIMILATOR, atBaseLoc),
-                            "a gas building is exempt from base location check");
-                });
+            main = fake(NEXUS, 20, 20)), fakeEnemies(), () -> {
+            APosition atBaseLoc = APosition.create(9, 45);
+            assertFalse(
+                TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(ASSIMILATOR, atBaseLoc),
+                "a gas building is exempt from base location check");
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -124,11 +120,11 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void protossIsExemptFromTooCloseToTerranBase() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertFalse(
-                            TooCloseToTerranBase.isTooCloseToBase(GATEWAY, APosition.create(50, 50)),
-                            "Protoss buildings are never judged by TooCloseToTerranBase");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertFalse(
+                TooCloseToTerranBase.isTooCloseToBase(GATEWAY, APosition.create(50, 50)),
+                "Protoss buildings are never judged by TooCloseToTerranBase");
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -138,12 +134,10 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void protossIsExemptFromTerranSidesCheck() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    assertTrue(
-                            !TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(main, GATEWAY, APosition.create(50, 50)),
-                            "isOkay returns false for non-Terran races (only applies to Terran)");
-                });
+            main = fake(NEXUS, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            assertFalse(TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(main, GATEWAY, APosition.create(50, 50)), "isOkay returns false for non-Terran races (only applies to Terran)");
+        });
     }
 
     // ---------------------------------------------------------------------------
@@ -153,11 +147,11 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void baseIsExemptFromRegionCheck() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertFalse(
-                            IsProbablyInAnotherRegion.differentRegion(main, NEXUS, APosition.create(10, 10), main),
-                            "a base is exempt from region check");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertFalse(
+                IsProbablyInAnotherRegion.differentRegion(main, NEXUS, APosition.create(10, 10), main),
+                "a base is exempt from region check");
+        });
     }
 
     /**
@@ -177,12 +171,12 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void aReachableTileIsNotAForeignRegion() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-                    assertFalse(
-                            IsProbablyInAnotherRegion.differentRegion(
-                                    main, PYLON, APosition.create(54, 54), main),
-                            "a tile beside the base is reachable, so it is not another region");
-                });
+            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+            assertFalse(
+                IsProbablyInAnotherRegion.differentRegion(
+                    main, PYLON, APosition.create(54, 54), main),
+                "a tile beside the base is reachable, so it is not another region");
+        });
     }
 
     // NOTE - deliberate gap, not an oversight: `if (building.isPylon() && A.supplyTotal()
@@ -200,11 +194,11 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
     @Test
     public void pylonDoesNotQualifyForEarlyWithoutRequirements() {
         world(1, fakeOurs(
-                main = fake(NEXUS, 50, 50),
-                fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
-                    assertFalse(
-                            ProtossAllowHereEarlyEvenWithoutRequirements.allow(main, PYLON, APosition.create(55, 55)),
-                            "Pylon is not allowed early without requirements");
-                });
+            main = fake(NEXUS, 50, 50),
+            fake(AUnitType.Protoss_Probe, 51, 51)), fakeEnemies(), () -> {
+            assertFalse(
+                ProtossAllowHereEarlyEvenWithoutRequirements.allow(main, PYLON, APosition.create(55, 55)),
+                "Pylon is not allowed early without requirements");
+        });
     }
 }

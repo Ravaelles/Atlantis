@@ -35,7 +35,9 @@ import atlantis.units.select.Select;
  */
 public final class RetreatFloor {
 
-    /** Depth answer for a world where the path names no middle choke. */
+    /**
+     * Depth answer for a world where the path names no middle choke.
+     */
     private static final double NO_MIDDLE_LINE = -1;
 
     private RetreatFloor() {
@@ -86,8 +88,7 @@ public final class RetreatFloor {
             // rally already in front of it keeps its own destination.
 
             return dest.distTo(main.position()) < target.distTo(main.position()) ? target : dest;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return dest;
         }
     }

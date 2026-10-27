@@ -29,8 +29,7 @@ public final class MiddleFocusChoke {
             if (chokes == null || chokes.isEmpty()) return null;
 
             return chokes.get(chokes.size() / 2);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }

@@ -52,8 +52,8 @@ public class AFileLoadFileTest {
         }
 
         assertEquals("/sc-ai/Atlantis/bwapi-data/", value,
-                "the trailing slash is part of the path; losing it points the loader at a"
-                        + " directory that does not exist");
+            "the trailing slash is part of the path; losing it points the loader at a"
+                + " directory that does not exist");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class AFileLoadFileTest {
         String[][] parsed = AFile.loadFile(env.getAbsolutePath(), 2, "=");
 
         assertEquals("Atlantis", parsed[0][1]);
-        assertTrue(parsed[0][1].length() == "Atlantis".length());
+        assertEquals(parsed[0][1].length(), "Atlantis".length());
     }
 
     @Test

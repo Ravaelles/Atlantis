@@ -19,6 +19,89 @@ public class BuilderManager extends Manager {
         super(unit);
     }
 
+    /**
+     * Does a Protoss builder stay assigned while its construction is
+     * IN_PROGRESS?
+     *
+     * <p>
+     * A worker is released to a building that is actually warping - that is
+     * the healthy shape (it walks away, the warp continues without it). But an
+     * IN_PROGRESS with nothing warping at the site is a refused attempt's
+     * order echo, not a warp (measured on Wine: every builder alternating
+     * BuilderManager/GatherResources while standing next to its site, nothing
+     * ever built): releasing the worker there feeds the alternation, because
+     * Gather steals it on every frame it stands still and the build never
+     * resumes. Hold it instead - demote or cancel will resolve the status,
+     * and both need the worker still assigned.
+     * </p>
+     */
+    public static boolean holdInProgressBuilder(boolean stopped, boolean warpingNearby) {
+        if (!stopped) return true;
+
+        return !warpingNearby;
+    }
+
+    private static boolean isAnyBuildingWarpingAtSite(Construction construction) {
+        if (construction.buildPosition() == null) return false;
+
+        return Select.ourUnfinished().ofType(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition()).notEmpty();
+    }
+
+    /**
+     * True when the assigned builder must be replaced. A stuck builder is the
+     * old case; an uncompleted one is the NEXT #63 case: it takes no order at
+     * all (canCommand=false), so holding the assignment only delays the build
+     * until CancelTooLong kills it. Package-visible as a seam so the rule is
+     * assertable without running a game.
+     */
+    public static boolean shouldReplaceBuilder(AUnit builder) {
+        return builder.isStuck() || !builder.isCompleted();
+    }
+
+    // =========================================================
+
+    /**
+     * Returns true if given worker has been assigned to construct new building or if the constructions is
+     * already in progress.
+     */
+    public static boolean isBuilder(AUnit worker) {
+        if (
+            worker.isConstructing()
+                || (!We.protoss() && ConstructionRequests.constructionFor(worker) != null)
+        ) return true;
+
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (worker.equals(construction.builder())) {
+                if (construction.buildPosition() == null) return false;
+
+                // A worker assigned to a construction IS a builder, even before it
+                // has any order. Measured 2026-10-09 on OpenBW with
+                // PRODUCTION_V2=LIVE: the v2 dispatcher created the Construction and
+                // assigned this worker, but the worker had no command yet, so
+                // `isStopped()` was true, this method answered false,
+                // BuilderManager.applies() never ran, TravelToConstruct was never
+                // issued - and the same Pylon was re-dispatched every frame forever
+                // (NEXT #48). The assignment is the fact; the missing order is what
+                // TravelToConstruct exists to fix.
+                if (construction.status() == ConstructionOrderStatus.NOT_STARTED) return true;
+
+                // Pending Protoss buildings allow unit to go away - but only to
+                // a building that is actually warping (see holdInProgressBuilder).
+                // Terran and Zerg need to use the worker until construction is finished.
+                if (!We.protoss()) return true;
+
+                if (ConstructionOrderStatus.IN_PROGRESS.equals(construction.status())) {
+                    return holdInProgressBuilder(worker.isStopped(), isAnyBuildingWarpingAtSite(construction));
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public boolean applies() {
         return unit.isWorker() && unit.isBuilder();
@@ -123,8 +206,6 @@ public class BuilderManager extends Manager {
         return handleSubmanagers();
     }
 
-    // =========================================================
-
     /**
      * True when the builder waits on the bank, not on its feet: the
      * construction never started, and the same forecast that holds the
@@ -136,87 +217,6 @@ public class BuilderManager extends Manager {
         return builder != null && builder.isAlive() && construction.buildPosition() != null
             && construction.status().countsAsDemand() && !builder.isConstructing()
             && ShouldNotTravelToConstructYet.check(construction, builder,
-                builder.distTo(construction.buildPosition()));
-    }
-
-    /**
-     * Does a Protoss builder stay assigned while its construction is
-     * IN_PROGRESS?
-     *
-     * <p>
-     * A worker is released to a building that is actually warping - that is
-     * the healthy shape (it walks away, the warp continues without it). But an
-     * IN_PROGRESS with nothing warping at the site is a refused attempt's
-     * order echo, not a warp (measured on Wine: every builder alternating
-     * BuilderManager/GatherResources while standing next to its site, nothing
-     * ever built): releasing the worker there feeds the alternation, because
-     * Gather steals it on every frame it stands still and the build never
-     * resumes. Hold it instead - demote or cancel will resolve the status,
-     * and both need the worker still assigned.
-     * </p>
-     */
-    public static boolean holdInProgressBuilder(boolean stopped, boolean warpingNearby) {
-        if (!stopped) return true;
-
-        return !warpingNearby;
-    }
-
-    private static boolean isAnyBuildingWarpingAtSite(Construction construction) {
-        if (construction.buildPosition() == null) return false;
-
-        return Select.ourUnfinished().ofType(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition()).notEmpty();
-    }
-
-    /**
-     * True when the assigned builder must be replaced. A stuck builder is the
-     * old case; an uncompleted one is the NEXT #63 case: it takes no order at
-     * all (canCommand=false), so holding the assignment only delays the build
-     * until CancelTooLong kills it. Package-visible as a seam so the rule is
-     * assertable without running a game.
-     */
-    public static boolean shouldReplaceBuilder(AUnit builder) {
-        return builder.isStuck() || !builder.isCompleted();
-    }
-
-    /**
-     * Returns true if given worker has been assigned to construct new building or if the constructions is
-     * already in progress.
-     */
-    public static boolean isBuilder(AUnit worker) {
-        if (
-            worker.isConstructing()
-                || (!We.protoss() && ConstructionRequests.constructionFor(worker) != null)
-        ) return true;
-
-        for (Construction construction : ConstructionRequests.constructions) {
-            if (worker.equals(construction.builder())) {
-                if (construction.buildPosition() == null) return false;
-
-                // A worker assigned to a construction IS a builder, even before it
-                // has any order. Measured 2026-10-09 on OpenBW with
-                // PRODUCTION_V2=LIVE: the v2 dispatcher created the Construction and
-                // assigned this worker, but the worker had no command yet, so
-                // `isStopped()` was true, this method answered false,
-                // BuilderManager.applies() never ran, TravelToConstruct was never
-                // issued - and the same Pylon was re-dispatched every frame forever
-                // (NEXT #48). The assignment is the fact; the missing order is what
-                // TravelToConstruct exists to fix.
-                if (construction.status() == ConstructionOrderStatus.NOT_STARTED) return true;
-
-                // Pending Protoss buildings allow unit to go away - but only to
-                // a building that is actually warping (see holdInProgressBuilder).
-                // Terran and Zerg need to use the worker until construction is finished.
-                if (!We.protoss()) return true;
-
-                if (ConstructionOrderStatus.IN_PROGRESS.equals(construction.status())) {
-                    return holdInProgressBuilder(worker.isStopped(), isAnyBuildingWarpingAtSite(construction));
-                }
-
-                return true;
-            }
-        }
-
-        return false;
+            builder.distTo(construction.buildPosition()));
     }
 }

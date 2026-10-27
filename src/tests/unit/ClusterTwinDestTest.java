@@ -16,7 +16,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Owner 2026-10-23 (Stardust-style: log the transition target, not every

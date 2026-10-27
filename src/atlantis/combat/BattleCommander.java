@@ -1,30 +1,19 @@
 package atlantis.combat;
+
+import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.battle.DuelMemory;
-
-import atlantis.combat.twins.ClusterTwin;
-
-import atlantis.combat.cluster.FightOrFlight;
-import atlantis.combat.cluster.LeaveBreachedBase;
+import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
+import atlantis.combat.cluster.*;
 import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.combat.strategy.BattleStrategies;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.HuntLastContact;
 import atlantis.combat.targeting.AcquireTarget;
 import atlantis.combat.targeting.StickyTarget;
-
-import atlantis.battle.cluster.Missions;
-
-import atlantis.combat.cluster.ClusterBreach;
-import atlantis.combat.cluster.ClusterMission;
-import atlantis.combat.cluster.ClusterTactic;
-
-import atlantis.combat.cluster.ClusterAnchor;
-
-import atlantis.battle.cluster.Alpha;
+import atlantis.combat.twins.ClusterTwin;
 import atlantis.game.A;
-
-import atlantis.architecture.Commander;
-import atlantis.architecture.CommanderFactory;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -40,37 +29,6 @@ import atlantis.units.select.Count;
  * story without opening any implementation.</p>
  */
 public class BattleCommander extends Commander {
-
-    @Override
-    protected CommanderFactory[] subcommanders() {
-        return new CommanderFactory[]{};
-    }
-
-    @Override
-    protected boolean handle() {
-        Alpha.gather();
-        if (Alpha.get().isEmpty()) return false;
-
-        atlantis.combat.focus.PostureReasons.Verdict mission =
-            ClusterMission.postureWithReasonFor(
-                Count.ourCombatUnits(), ClusterBreach.breachForcesFight()
-            );
-        ClusterMission.Posture posture = mission.posture;
-        Missions.followPosture(posture);
-
-        FightOrFlight.Tactic tactic = ClusterTactic.decide();
-        HasPosition anchor = ClusterAnchor.anchorFor(posture);
-
-        ClusterTwin.sample(posture, tactic, anchor);
-
-        atlantis.cherryvis.simple.ArmyBoard.publish(A.now(), posture, tactic, mission.text, anchor);
-
-        for (AUnit unit : Alpha.get().selection().list()) {
-            act(unit, tactic, anchor, Alpha.get().leader());
-        }
-
-        return false;
-    }
 
     /**
      * One unit's act for the frame, in reading order: observe, retreat
@@ -109,7 +67,9 @@ public class BattleCommander extends Commander {
         regroup(unit, tactic, anchor, leader, strategy);
     }
 
-    /** Twin + frozen-watch + idle-watch sampling, once per unit per frame. */
+    /**
+     * Twin + frozen-watch + idle-watch sampling, once per unit per frame.
+     */
     private static void observe(AUnit unit) {
         atlantis.combat.twins.UnitTelemetry.sample(unit);
         FrozenWatch.note(unit);
@@ -117,29 +77,39 @@ public class BattleCommander extends Commander {
         DuelMemory.noteBattleFrame(unit);
     }
 
-    /** Retreat owns routing units before anything else looks at them. */
+    /**
+     * Retreat owns routing units before anything else looks at them.
+     */
     private static boolean retreatIfBeaten(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
     ) {
         return RetreatFromLostFight.retreat(unit, tactic, anchor, leader);
     }
 
-    /** A breached base is left, never defended into a wipe. */
+    /**
+     * A breached base is left, never defended into a wipe.
+     */
     private static boolean leaveIfBreached(AUnit unit) {
         return LeaveBreachedBase.leave(unit);
     }
 
-    /** The engaged frame: swing discipline, kite, glide, re-arm. */
+    /**
+     * The engaged frame: swing discipline, kite, glide, re-arm.
+     */
     private static void fight(AUnit unit, AUnit target, BattleStrategy strategy, HasPosition anchor, AUnit leader) {
         FightTarget.fight(unit, target, strategy, anchor, leader);
     }
 
-    /** Lost contact on a baseless map marches the remembered point. */
+    /**
+     * Lost contact on a baseless map marches the remembered point.
+     */
     private static boolean huntLastContact(AUnit unit) {
         return HuntLastContact.hunt(unit);
     }
 
-    /** Nothing to fight: march the fallbacks in order. */
+    /**
+     * Nothing to fight: march the fallbacks in order.
+     */
     private static void regroup(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
     ) {
@@ -178,5 +148,36 @@ public class BattleCommander extends Commander {
         atlantis.combat.focus.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
+    }
+
+    @Override
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{};
+    }
+
+    @Override
+    protected boolean handle() {
+        Alpha.gather();
+        if (Alpha.get().isEmpty()) return false;
+
+        atlantis.combat.focus.PostureReasons.Verdict mission =
+            ClusterMission.postureWithReasonFor(
+                Count.ourCombatUnits(), ClusterBreach.breachForcesFight()
+            );
+        ClusterMission.Posture posture = mission.posture;
+        Missions.followPosture(posture);
+
+        FightOrFlight.Tactic tactic = ClusterTactic.decide();
+        HasPosition anchor = ClusterAnchor.anchorFor(posture);
+
+        ClusterTwin.sample(posture, tactic, anchor);
+
+        atlantis.cherryvis.simple.ArmyBoard.publish(A.now(), posture, tactic, mission.text, anchor);
+
+        for (AUnit unit : Alpha.get().selection().list()) {
+            act(unit, tactic, anchor, Alpha.get().leader());
+        }
+
+        return false;
     }
 }

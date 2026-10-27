@@ -5,6 +5,7 @@ import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 
 import atlantis.util.AConsole;
+
 import java.util.*;
 
 public class CodeProfiler {

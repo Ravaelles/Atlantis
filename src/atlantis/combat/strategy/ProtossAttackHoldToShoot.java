@@ -24,12 +24,12 @@ public final class ProtossAttackHoldToShoot {
     }
 
     /**
-     * @param gapPx            current gap to the chaser, pixels
-     * @param effectiveRangePx gap at which our damage lands (R* <= nominal range)
-     * @param cooldownLeft     weapon cooldown frames remaining
-     * @param latencyFrames    order-latency frames before an issued order acts
+     * @param gapPx             current gap to the chaser, pixels
+     * @param effectiveRangePx  gap at which our damage lands (R* <= nominal range)
+     * @param cooldownLeft      weapon cooldown frames remaining
+     * @param latencyFrames     order-latency frames before an issued order acts
      * @param closingPxPerFrame chaser's closing speed along the gap axis, px/frame
-     * @param holdMarginFrames extra frames of arrival lead required to stand (order-issue slop)
+     * @param holdMarginFrames  extra frames of arrival lead required to stand (order-issue slop)
      * @return true when the weapon is ready on enemy arrival: stand and wait
      */
     public static boolean shouldHoldEarly(

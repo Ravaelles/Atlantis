@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * T is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
  */
 public class Cache<T> {
-    private static ArrayList<Cache<?>> allInstances = new ArrayList<>();
+    private static final ArrayList<Cache<?>> allInstances = new ArrayList<>();
 
     protected final TreeMap<String, T> data = new TreeMap<>();
     protected final TreeMap<String, Integer> cachedUntil = new TreeMap<>();
@@ -25,6 +25,23 @@ public class Cache<T> {
     }
 
     // =========================================================
+
+    private static boolean isKnownInvalid(Object value) {
+        return value instanceof ValidityCheck && !((ValidityCheck) value).isValid();
+    }
+
+    public static void nukeAllCaches() {
+//        System.out.println("Nuking all caches...");
+        for (Cache<?> cache : allInstances) {
+            cache.clear();
+        }
+        // The registry is deliberately NOT emptied. Cache instances are static
+        // fields and register themselves once, in their constructor - so dropping
+        // them here meant that every nuke after the first one in a JVM cleared
+        // nothing at all, and stale selections, enemy lists and safety margins
+        // survived from one test into the next. That is what made tests that pass
+        // alone fail inside a package run.
+    }
 
     /**
      * Get cached value or return null.
@@ -66,7 +83,7 @@ public class Cache<T> {
 
         T result = data.get(cacheKey);
         if (result instanceof Copyable) {
-            return (T) ((Copyable<T>) result).copy();
+            return ((Copyable<T>) result).copy();
         }
         else {
             return result;
@@ -81,16 +98,12 @@ public class Cache<T> {
      */
     public T getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
         T value = get(cacheKey, cacheForFrames, callback);
-        if (value != null && isKnownInvalid(value)) {
+        if (isKnownInvalid(value)) {
             forget(cacheKey);
             value = get(cacheKey, cacheForFrames, callback);
         }
 
         return value;
-    }
-
-    private static boolean isKnownInvalid(Object value) {
-        return value instanceof ValidityCheck && !((ValidityCheck) value).isValid();
     }
 
     public List<T> allValid() {
@@ -136,11 +149,11 @@ public class Cache<T> {
         cachedUntil.clear();
     }
 
+    // =========================================================
+
     public boolean isEmpty() {
         return data.isEmpty();
     }
-
-    // =========================================================
 
     protected boolean isCacheStillValid(String cacheKey) {
         return cacheKey != null && (
@@ -150,6 +163,8 @@ public class Cache<T> {
         );
     }
 
+    // =========================================================
+
     protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
         if (cacheForFrames > -1) {
             cachedUntil.put(cacheKey, GameClock.frames() + cacheForFrames);
@@ -158,8 +173,6 @@ public class Cache<T> {
             cachedUntil.remove(cacheKey);
         }
     }
-
-    // =========================================================
 
     public void print(String message, boolean includeExpired) {
         if (message != null) {
@@ -172,14 +185,14 @@ public class Cache<T> {
         }
     }
 
+    // =========================================================
+
     public void printKeys() {
         System.out.println("--- Cache keys ---");
         for (String key : data.keySet()) {
             System.out.println(key);
         }
     }
-
-    // =========================================================
 
     public Collection<T> values() {
         return data.values();
@@ -195,18 +208,5 @@ public class Cache<T> {
 
     public TreeMap<String, Integer> rawCachedUntil() {
         return cachedUntil;
-    }
-
-    public static void nukeAllCaches() {
-//        System.out.println("Nuking all caches...");
-        for (Cache<?> cache : allInstances) {
-            cache.clear();
-        }
-        // The registry is deliberately NOT emptied. Cache instances are static
-        // fields and register themselves once, in their constructor - so dropping
-        // them here meant that every nuke after the first one in a JVM cleared
-        // nothing at all, and stale selections, enemy lists and safety margins
-        // survived from one test into the next. That is what made tests that pass
-        // alone fail inside a package run.
     }
 }

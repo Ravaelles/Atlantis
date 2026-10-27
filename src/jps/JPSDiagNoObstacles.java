@@ -1,6 +1,8 @@
 package jps;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Kevin
@@ -37,7 +39,8 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
                 if (graph.isWalkable(x, y + dy) && graph.isWalkable(x + dx, y)) {
                     neighbors.add(graph.getNode(x + dx, y + dy));
                 }
-            } else { // search horizontally/vertically
+            }
+            else { // search horizontally/vertically
                 if (dx != 0) {
                     boolean nextWalkable = graph.isWalkable(x + dx, y);
                     boolean topWalkable = graph.isWalkable(x, y + 1);
@@ -54,7 +57,8 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
                         neighbors.add(graph.getNode(x, y + 1));
                     if (bottomWalkable)
                         neighbors.add(graph.getNode(x, y - 1));
-                } else if (dy != 0) {
+                }
+                else if (dy != 0) {
                     boolean nextWalkable = graph.isWalkable(x, y + dy);
                     boolean rightWalkable = graph.isWalkable(x + 1, y);
                     boolean leftWalkable = graph.isWalkable(x - 1, y);
@@ -72,7 +76,8 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
                         neighbors.add(graph.getNode(x - 1, y));
                 }
             }
-        } else {
+        }
+        else {
             // return all neighbors
             neighbors.addAll(graph.getNeighborsOf(node, Graph.Diagonal.NO_OBSTACLES));
         }
@@ -93,18 +98,20 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
         if ((dx & dy) != 0) {
             // when moving diagonally, must check for vertical/horizontal jump points
             if (jump(graph.getNode(neighbor.x + dx, neighbor.y), neighbor, goals) != null ||
-                    jump(graph.getNode(neighbor.x, neighbor.y + dy), neighbor, goals) != null) {
+                jump(graph.getNode(neighbor.x, neighbor.y + dy), neighbor, goals) != null) {
                 return neighbor;
             }
-        } else { // check along horizontal/vertical
+        }
+        else { // check along horizontal/vertical
             if (dx != 0) {
                 if ((graph.isWalkable(neighbor.x, neighbor.y - 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y - 1)) ||
-                        (graph.isWalkable(neighbor.x, neighbor.y + 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y + 1))) {
+                    (graph.isWalkable(neighbor.x, neighbor.y + 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y + 1))) {
                     return neighbor;
                 }
-            } else if (dy != 0) {
+            }
+            else if (dy != 0) {
                 if ((graph.isWalkable(neighbor.x - 1, neighbor.y) && !graph.isWalkable(neighbor.x - 1, neighbor.y - dy)) ||
-                        (graph.isWalkable(neighbor.x + 1, neighbor.y) && !graph.isWalkable(neighbor.x + 1, neighbor.y - dy))) {
+                    (graph.isWalkable(neighbor.x + 1, neighbor.y) && !graph.isWalkable(neighbor.x + 1, neighbor.y - dy))) {
                     return neighbor;
                 }
             }
@@ -113,7 +120,8 @@ public class JPSDiagNoObstacles<T extends Node> extends JPS<T> {
         // moving diagonally must make sure both of the vertical/horizontal neighbors is open to allow the path
         if (graph.isWalkable(neighbor.x + dx, neighbor.y) && graph.isWalkable(neighbor.x, neighbor.y + dy)) {
             return jump(graph.getNode(neighbor.x + dx, neighbor.y + dy), neighbor, goals);
-        } else {
+        }
+        else {
             return null;
         }
     }

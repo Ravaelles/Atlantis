@@ -19,7 +19,7 @@ public class MoveUnitsFromConstructionPlace {
      *
      * <pre>
      *   unit=#119 Probe @[9,45]   (identical frame after frame)
-   *   distToBuild=13.2   isMoving=false (4464 frames vs 959 true)   lastCommand=Move
+     *   distToBuild=13.2   isMoving=false (4464 frames vs 959 true)   lastCommand=Move
      * </pre>
      *
      * <p>

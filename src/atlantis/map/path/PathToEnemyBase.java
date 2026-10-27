@@ -5,9 +5,9 @@ import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.select.CacheKey;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 import bwem.CPPath;
 import bwem.ChokePoint;
 
@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class PathToEnemyBase {
-    private static Cache<Object> cache = new Cache<>();
-    private static Cache<ArrayList<AChoke>> cacheChokes = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
+    private static final Cache<ArrayList<AChoke>> cacheChokes = new Cache<>();
 
     public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
         HasPosition enemy = enemy();

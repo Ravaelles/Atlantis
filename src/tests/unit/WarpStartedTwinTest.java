@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * STARTED-twin gap (NEXT #84): a legacy-minted warp proved by the ledger
@@ -62,7 +59,7 @@ public class WarpStartedTwinTest extends WorldStubForTests {
                 if (line.contains("\"key\":\"BUILDING_STARTED\"")
                     && line.contains("\"cid\":" + construction.id())) started++;
             }
-            assertTrue(started == 1, "exactly one STARTED row for the warp: " + started);
+            assertEquals(1, started, "exactly one STARTED row for the warp: " + started);
         });
     }
 }

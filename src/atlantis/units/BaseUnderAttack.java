@@ -34,7 +34,9 @@ public class BaseUnderAttack {
      */
     private static final double WORKER_NEAR_BASE = 8;
 
-    /** Attackers this close to a base count as an attack on the base. */
+    /**
+     * Attackers this close to a base count as an attack on the base.
+     */
     private static final double ATTACK_RADIUS = 8;
 
     private static int cachedFrame = -1;
@@ -59,12 +61,16 @@ public class BaseUnderAttack {
         return cachedValue;
     }
 
-    /** Test-only override; null restores the live answer. */
+    /**
+     * Test-only override; null restores the live answer.
+     */
     public static void setForcedAnswerForTests(Boolean answer) {
         forcedAnswer = answer;
     }
 
-    /** Clears the per-frame cache and any test override. */
+    /**
+     * Clears the per-frame cache and any test override.
+     */
     public static void clearForTests() {
         cachedFrame = -1;
         forcedAnswer = null;

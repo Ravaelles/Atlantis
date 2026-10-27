@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.BattleCommander;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +52,7 @@ public class TweakerDefaultsTest {
 
         BattleCommander.reset();
         assertEquals(5.0, CombatTuning.current().getKiteEnemyTiles(),
-                "per-game reset restores defaults before the tuner installs its snapshot");
+            "per-game reset restores defaults before the tuner installs its snapshot");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TweakerDefaultsTest {
         assertEquals(2.0, base.getKiteStepTiles(), "deriving must not mutate the source");
         assertEquals(2.5, derived.getKiteStepTiles());
         assertEquals(base.getKiteEnemyTiles(), derived.getKiteEnemyTiles(),
-                "a derived snapshot carries every untouched value along");
+            "a derived snapshot carries every untouched value along");
     }
 
     @Test

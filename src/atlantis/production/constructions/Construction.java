@@ -19,11 +19,21 @@ import atlantis.util.log.ErrorLog;
  * Represents construction of a building, including ones not yet started.
  */
 public class Construction implements Comparable<Construction> {
-    private static Cache<Object> cache = new Cache<>();
-
+    /**
+     * Trail pruning horizon: comfortably beyond any static window.
+     */
+    public static final int WARP_HP_TRAIL_FRAMES = 1200;
+    private static final Cache<Object> cache = new Cache<>();
     private static int _firstFreeId = 1;
     private final int ID = _firstFreeId++;
     private final int timeOrdered;
+    /**
+     * Warping-building HP trail, newest last: (frame, hp) pairs for the
+     * progress signal (NEXT #150 WO-150b). Instance state, not a cache:
+     * each construction owns its own trail, pruned to the observation
+     * horizon on every note.
+     */
+    private final java.util.ArrayDeque<int[]> warpHpTrail = new java.util.ArrayDeque<>();
     private int timeBecameInProgress;
     /**
      * Frame of the last engine build attempt for this construction. The
@@ -39,16 +49,6 @@ public class Construction implements Comparable<Construction> {
      * rest of the game; the row is a witness, not a heartbeat.
      */
     private boolean frozenWarpTwinned;
-    /**
-     * Warping-building HP trail, newest last: (frame, hp) pairs for the
-     * progress signal (NEXT #150 WO-150b). Instance state, not a cache:
-     * each construction owns its own trail, pruned to the observation
-     * horizon on every note.
-     */
-    private final java.util.ArrayDeque<int[]> warpHpTrail = new java.util.ArrayDeque<>();
-
-    /** Trail pruning horizon: comfortably beyond any static window. */
-    public static final int WARP_HP_TRAIL_FRAMES = 1200;
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
@@ -76,6 +76,18 @@ public class Construction implements Comparable<Construction> {
     }
 
     // =========================================================
+
+    /**
+     * The owner's line for the builder race: supply met means the row is
+     * due, and a due row's walking builder is never a savings account.
+     */
+    private static boolean supplyMetFor(ProductionOrder order) {
+        return order != null && A.supplyUsed() >= order.minSupply();
+    }
+
+    public static void clearCache() {
+        cache.clear();
+    }
 
     /**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
@@ -161,13 +173,7 @@ public class Construction implements Comparable<Construction> {
         return builder;
     }
 
-    /**
-     * The owner's line for the builder race: supply met means the row is
-     * due, and a due row's walking builder is never a savings account.
-     */
-    private static boolean supplyMetFor(ProductionOrder order) {
-        return order != null && A.supplyUsed() >= order.minSupply();
-    }
+    // =========================================================
 
     /**
      * Fully delete this construction, remove the building if needed by cancelling it.
@@ -175,8 +181,6 @@ public class Construction implements Comparable<Construction> {
     public void cancel(String reason) {
         CancelConstruction.cancel(this, reason);
     }
-
-    // =========================================================
 
     @Override
     public int hashCode() {
@@ -248,12 +252,12 @@ public class Construction implements Comparable<Construction> {
         return Integer.compare(ID, o.ID);
     }
 
+    // =========================================================
+
     @Override
     public String toString() {
         return "Construction{" + "#" + ID + ", " + buildingType + ", build=" + buildingUnit + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", status=" + status + '}';
     }
-
-    // =========================================================
 
     public APosition positionToBuildCenter() {
         APosition positionToBuild = buildPosition();
@@ -390,7 +394,7 @@ public class Construction implements Comparable<Construction> {
      * trail never grows past the horizon (oldest samples drop).
      */
     public void noteWarpHp(int frame, int hp) {
-        warpHpTrail.addLast(new int[] { frame, hp });
+        warpHpTrail.addLast(new int[]{frame, hp});
         while (warpHpTrail.size() > 1
             && frame - warpHpTrail.peekFirst()[0] > WARP_HP_TRAIL_FRAMES) {
             warpHpTrail.pollFirst();
@@ -451,10 +455,6 @@ public class Construction implements Comparable<Construction> {
 
     public boolean notFinished() {
         return !status.isTerminal();
-    }
-
-    public static void clearCache() {
-        cache.clear();
     }
 
     /**
@@ -523,7 +523,7 @@ public class Construction implements Comparable<Construction> {
     public int progressPercent() {
         if (buildingUnit == null) return 0;
 
-        return (int) buildingUnit.hpPercent();
+        return buildingUnit.hpPercent();
     }
 
     public void releaseReservedResources() {

@@ -16,12 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The OpenBW run API, proven without launching a game.
@@ -60,13 +55,13 @@ public class OpenBWLauncherTest {
     @Test
     public void aConfigKnowsWhenItCannotRunAndWhy() {
         OpenBWConfig broken = OpenBWConfig.builder()
-                .harnessDir("/definitely/not/here")
-                .build();
+            .harnessDir("/definitely/not/here")
+            .build();
 
         assertFalse(broken.isRunnable());
         assertNotNull(broken.missingRequirement());
         assertTrue(broken.missingRequirement().contains("/definitely/not/here"),
-                "the reason must name the path: " + broken.missingRequirement());
+            "the reason must name the path: " + broken.missingRequirement());
     }
 
     @Test
@@ -79,15 +74,15 @@ public class OpenBWLauncherTest {
         assertTrue(config.gameDir().endsWith("build/test"));
         assertEquals(120, config.gameTimeoutSeconds(), "OpenBW simulation default uses the hard two-minute cap");
         assertTrue(config.gameTimeoutSeconds() <= OpenBWConfig.MAX_GAME_TIMEOUT_SECONDS,
-                "all OpenBW simulations must fit the hard two-minute cap");
+            "all OpenBW simulations must fit the hard two-minute cap");
     }
 
     @Test
     public void gameTimeoutCannotExceedTheSimulationCap() {
         assertThrows(IllegalArgumentException.class,
-                () -> OpenBWConfig.builder().gameTimeoutSeconds(121).build());
+            () -> OpenBWConfig.builder().gameTimeoutSeconds(121).build());
         assertThrows(IllegalArgumentException.class,
-                () -> OpenBWConfig.builder().gameTimeoutSeconds(0).build());
+            () -> OpenBWConfig.builder().gameTimeoutSeconds(0).build());
         assertEquals(120, OpenBWConfig.builder().gameTimeoutSeconds(120).build().gameTimeoutSeconds());
     }
 
@@ -102,7 +97,197 @@ public class OpenBWLauncherTest {
 
     // ---- host lifecycle -----------------------------------------------------
 
-    private static final class RecordingRunner implements OpenBWHost.ProcessRunner {        final List<List<String>> started = new ArrayList<>();
+    @Test
+    public void theHostCommandCarriesTheMapRacesAndTimeout() {
+        RecordingRunner runner = new RecordingRunner();
+        OpenBWHost.useProcessRunner(runner);
+        // This test drives the HOST SEQUENCE, so hosting must be enabled here -
+        // it is the OS adapter underneath that is fake, not the lifecycle.
+        OpenBWHost.useHostingEnabled(true);
+
+        OpenBWConfig config = OpenBWConfig.builder()
+            .map("maps/cog/(3)TauCross1.1.scx")
+            .races("Protoss", "Zerg")
+            .gameTimeoutSeconds(119)
+            .hostWaitSeconds(1)
+            .logDir(tempDir().getAbsolutePath())
+            .build();
+
+        new OpenBWHost(config).host();
+
+        assertEquals(1, runner.started.size(), "exactly one host is started");
+        List<String> command = runner.started.get(0);
+        assertTrue(command.contains("setsid"), "the host must survive this JVM: " + command);
+        assertTrue(command.contains("nohup"), "and must not die with the parent shell: " + command);
+        assertTrue(command.contains("119"), "the timeout must be the configured one: " + command);
+        assertTrue(command.contains("maps/cog/(3)TauCross1.1.scx"), command.toString());
+        assertTrue(command.contains("Protoss") && command.contains("Zerg"), command.toString());
+
+        // Without this the harness publishes no game registry and the Java client
+        // never attaches (measured 2026-10-08, _AI/CHALLENGES/OpenBW.md). It is the
+        // one setting that makes the difference between "No server proc ID" forever
+        // and "Connection successful" / "HELLO_ATLANTIS", so it is pinned here.
+        assertTrue(command.contains("BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON"),
+            "the host must be told to publish the shared-memory registry: " + command);
+    }
+
+    @Test
+    public void staleStateIsClearedBeforeHosting() {
+        RecordingRunner runner = new RecordingRunner();
+        OpenBWHost.useProcessRunner(runner);
+
+        new OpenBWHost(OpenBWConfig.builder().logDir(tempDir().getAbsolutePath()).build()).teardown();
+
+        assertTrue(runner.ran.stream().anyMatch(c -> c.contains("pkill") && c.contains("-9")),
+            "a leftover host must be killed first: " + runner.ran);
+        assertTrue(runner.ran.stream().anyMatch(c -> c.contains("-x")),
+            "pkill -x, never -f (a -f pattern matches the shell running it)");
+    }
+
+    @Test
+    public void transportFilesToClearAreNamedAfterTheHostPid() {
+        List<String> files = OpenBWHost.listStaleTransportFiles();
+
+        for (String file : files) {
+            assertTrue(file.contains("bwapi_shared_memory_") || file.contains("bwapi_socket_"),
+                "unexpected stale file: " + file);
+        }
+    }
+
+    @Test
+    public void theRegistryPidIsReadLittleEndian() throws Exception {
+        File registry = File.createTempFile("game_list", ".bin");
+        registry.deleteOnExit();
+        // The registry slot layout, measured from a live host: little-endian int
+        // pid at +0, byte isConnected at +4. The value has a distinct byte in
+        // every position so an endianness swap cannot pass by accident.
+        try (java.io.FileOutputStream out = new java.io.FileOutputStream(registry)) {
+            out.write(new byte[]{0x03, 0x02, 0x01, 0x00, 1, 0, 0, 0});
+        }
+
+        assertEquals(0x00010203, OpenBWHost.readHostPid(registry.getAbsolutePath()));
+    }
+
+    @Test
+    public void anEmptyRegistryMeansNoHostYet() throws Exception {
+        File registry = File.createTempFile("game_list_empty", ".bin");
+        registry.deleteOnExit();
+
+        assertEquals(-1, OpenBWHost.readHostPid(registry.getAbsolutePath()));
+        assertEquals(-1, OpenBWHost.readHostPid("/definitely/not/here"));
+    }
+
+    private File tempDir() {
+        try {
+            File dir = File.createTempFile("openbw", "dir");
+            dir.delete();
+            dir.mkdirs();
+            dir.deleteOnExit();
+
+            return dir;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private OpenBWRunner runnerWithBotLog(String content) throws IOException {
+        File dir = tempDir();
+        File log = new File(dir, "E2E_LOG");
+        try (Writer out = new FileWriter(log)) {
+            out.write(content);
+        }
+        return new OpenBWRunner(OpenBWConfig.builder().logDir(dir.getAbsolutePath()).build());
+    }
+
+    // ---- verdict ------------------------------------------------------------
+
+    @Test
+    public void aSuccessfulRunIsRecognisedFromTheBotLog() throws Exception {
+        OpenBWRunResult result = runnerWithBotLog(
+            "Connection successful\n"
+                + "Use build order: `Zealot into Goon`\n"
+                + "HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!\n"
+                + "Frame 900\n")
+            .verdict();
+
+        assertTrue(result.attached());
+        assertTrue(result.playing());
+        assertTrue(result.isSuccess());
+        assertNull(result.failureReason());
+        assertEquals(900, result.lastFrame());
+    }
+
+    @Test
+    public void anUnattachedRunIsAFailureWithAReason() throws Exception {
+        OpenBWRunResult result = runnerWithBotLog("Unable to open communications socket\n").verdict();
+
+        assertFalse(result.attached());
+        assertFalse(result.isSuccess());
+        assertNotNull(result.failureReason());
+        // With no connection line, the reason is the connection itself.
+        assertTrue(result.failureReason().contains("never attached"), result.failureReason());
+    }
+
+    @Test
+    public void aMissingBuildOrderIsNamedAsTheReason() throws Exception {
+        OpenBWRunResult result = runnerWithBotLog(
+            "Connection successful\nCurrent BUILD ORDER is NULL\n").verdict();
+
+        assertTrue(result.attached());
+        assertFalse(result.playing(), "attaching is not playing");
+        assertNotNull(result.failureReason());
+        assertTrue(result.failureReason().contains("no build order"), result.failureReason());
+    }
+
+    @Test
+    public void aRunWithoutALogIsAFailureNotAnException() {
+        OpenBWRunner runner = new OpenBWRunner(
+            OpenBWConfig.builder().logDir("/definitely/not/here").build());
+
+        OpenBWRunResult result = runner.verdict();
+
+        assertFalse(result.isSuccess());
+        assertNotNull(result.failureReason());
+        assertTrue(result.failureReason().contains("no bot log"), result.failureReason());
+    }
+
+    @Test
+    public void aRunThatNeverStartedSaysSo() {
+        OpenBWRunResult result = OpenBWRunResult.hostDidNotStart("s.log", "b.log");
+
+        assertFalse(result.attached());
+        assertTrue(result.failureReason().contains("host"), result.failureReason());
+    }
+
+    @Test
+    public void logPathsFollowTheConfiguredDirectory() {
+        OpenBWRunner runner = new OpenBWRunner(OpenBWConfig.builder().logDir("out/openbw").build());
+
+        assertEquals("out/openbw/E2E_LOG", runner.botLogPath());
+        assertEquals("out/openbw/server.log", runner.serverLogPath());
+    }
+
+    @Test
+    public void theFluentApiReadsLikeTheRecipe() {
+        // init().useConfig(...).race(...).run() - the point of the exercise is
+        // that this line is legible in Main and in a test, so it is compiled here
+        // (not executed: run() would need a game).
+        OpenBWConfig config = OpenBWConfig.ofMap("maps/cog/(3)TauCross1.1.scx");
+
+        assertEquals("maps/cog/(3)TauCross1.1.scx", config.map());
+        assertEquals(Arrays.asList("Protoss", "Zerg"), Arrays.asList(config.ourRace(), config.enemyRace()));
+
+        OpenBWConfig customised = OpenBWConfig.builder()
+            .map("maps/sscai/(3)TauCross.scx")
+            .races("Protoss", "Protoss")
+            .gameTimeoutSeconds(120)
+            .build();
+        assertEquals("Protoss", customised.enemyRace());
+        assertEquals(120, customised.gameTimeoutSeconds());
+    }
+
+    private static final class RecordingRunner implements OpenBWHost.ProcessRunner {
+        final List<List<String>> started = new ArrayList<>();
         final List<List<String>> ran = new ArrayList<>();
         boolean hostProcessAlive = true;
 
@@ -129,7 +314,11 @@ public class OpenBWLauncherTest {
         }
     }
 
-    /** Minimal host process: only pid() and isAlive() are meaningful here. */
+    // ---- the API shape the owner asked for ---------------------------------
+
+    /**
+     * Minimal host process: only pid() and isAlive() are meaningful here.
+     */
     private static final class FakeHostProcess implements OpenBWHost.HostProcess {
         private final long pid;
         private final boolean alive;
@@ -148,196 +337,5 @@ public class OpenBWLauncherTest {
         public boolean isAlive() {
             return alive;
         }
-    }
-
-    @Test
-    public void theHostCommandCarriesTheMapRacesAndTimeout() {
-        RecordingRunner runner = new RecordingRunner();
-        OpenBWHost.useProcessRunner(runner);
-        // This test drives the HOST SEQUENCE, so hosting must be enabled here -
-        // it is the OS adapter underneath that is fake, not the lifecycle.
-        OpenBWHost.useHostingEnabled(true);
-
-        OpenBWConfig config = OpenBWConfig.builder()
-                .map("maps/cog/(3)TauCross1.1.scx")
-                .races("Protoss", "Zerg")
-                .gameTimeoutSeconds(119)
-                .hostWaitSeconds(1)
-                .logDir(tempDir().getAbsolutePath())
-                .build();
-
-        new OpenBWHost(config).host();
-
-        assertEquals(1, runner.started.size(), "exactly one host is started");
-        List<String> command = runner.started.get(0);
-        assertTrue(command.contains("setsid"), "the host must survive this JVM: " + command);
-        assertTrue(command.contains("nohup"), "and must not die with the parent shell: " + command);
-        assertTrue(command.contains("119"), "the timeout must be the configured one: " + command);
-        assertTrue(command.contains("maps/cog/(3)TauCross1.1.scx"), command.toString());
-        assertTrue(command.contains("Protoss") && command.contains("Zerg"), command.toString());
-
-        // Without this the harness publishes no game registry and the Java client
-        // never attaches (measured 2026-10-08, _AI/CHALLENGES/OpenBW.md). It is the
-        // one setting that makes the difference between "No server proc ID" forever
-        // and "Connection successful" / "HELLO_ATLANTIS", so it is pinned here.
-        assertTrue(command.contains("BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON"),
-                "the host must be told to publish the shared-memory registry: " + command);
-    }
-
-    @Test
-    public void staleStateIsClearedBeforeHosting() {
-        RecordingRunner runner = new RecordingRunner();
-        OpenBWHost.useProcessRunner(runner);
-
-        new OpenBWHost(OpenBWConfig.builder().logDir(tempDir().getAbsolutePath()).build()).teardown();
-
-        assertTrue(runner.ran.stream().anyMatch(c -> c.contains("pkill") && c.contains("-9")),
-                "a leftover host must be killed first: " + runner.ran);
-        assertTrue(runner.ran.stream().anyMatch(c -> c.contains("-x")),
-                "pkill -x, never -f (a -f pattern matches the shell running it)");
-    }
-
-    @Test
-    public void transportFilesToClearAreNamedAfterTheHostPid() {
-        List<String> files = OpenBWHost.listStaleTransportFiles();
-
-        for (String file : files) {
-            assertTrue(file.contains("bwapi_shared_memory_") || file.contains("bwapi_socket_"),
-                    "unexpected stale file: " + file);
-        }
-    }
-
-    @Test
-    public void theRegistryPidIsReadLittleEndian() throws Exception {
-        File registry = File.createTempFile("game_list", ".bin");
-        registry.deleteOnExit();
-        // The registry slot layout, measured from a live host: little-endian int
-        // pid at +0, byte isConnected at +4. The value has a distinct byte in
-        // every position so an endianness swap cannot pass by accident.
-        try (java.io.FileOutputStream out = new java.io.FileOutputStream(registry)) {
-            out.write(new byte[] {0x03, 0x02, 0x01, 0x00, 1, 0, 0, 0});
-        }
-
-        assertEquals(0x00010203, OpenBWHost.readHostPid(registry.getAbsolutePath()));
-    }
-
-    @Test
-    public void anEmptyRegistryMeansNoHostYet() throws Exception {
-        File registry = File.createTempFile("game_list_empty", ".bin");
-        registry.deleteOnExit();
-
-        assertEquals(-1, OpenBWHost.readHostPid(registry.getAbsolutePath()));
-        assertEquals(-1, OpenBWHost.readHostPid("/definitely/not/here"));
-    }
-
-    // ---- verdict ------------------------------------------------------------
-
-    private File tempDir() {
-        try {
-            File dir = File.createTempFile("openbw", "dir");
-            dir.delete();
-            dir.mkdirs();
-            dir.deleteOnExit();
-
-            return dir;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private OpenBWRunner runnerWithBotLog(String content) throws IOException {
-        File dir = tempDir();
-        File log = new File(dir, "E2E_LOG");
-        try (Writer out = new FileWriter(log)) {
-            out.write(content);
-        }
-        return new OpenBWRunner(OpenBWConfig.builder().logDir(dir.getAbsolutePath()).build());
-    }
-
-    @Test
-    public void aSuccessfulRunIsRecognisedFromTheBotLog() throws Exception {
-        OpenBWRunResult result = runnerWithBotLog(
-                "Connection successful\n"
-                        + "Use build order: `Zealot into Goon`\n"
-                        + "HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!\n"
-                        + "Frame 900\n")
-                .verdict();
-
-        assertTrue(result.attached());
-        assertTrue(result.playing());
-        assertTrue(result.isSuccess());
-        assertNull(result.failureReason());
-        assertEquals(900, result.lastFrame());
-    }
-
-    @Test
-    public void anUnattachedRunIsAFailureWithAReason() throws Exception {
-        OpenBWRunResult result = runnerWithBotLog("Unable to open communications socket\n").verdict();
-
-        assertFalse(result.attached());
-        assertFalse(result.isSuccess());
-        assertNotNull(result.failureReason());
-        // With no connection line, the reason is the connection itself.
-        assertTrue(result.failureReason().contains("never attached"), result.failureReason());
-    }
-
-    @Test
-    public void aMissingBuildOrderIsNamedAsTheReason() throws Exception {
-        OpenBWRunResult result = runnerWithBotLog(
-                "Connection successful\nCurrent BUILD ORDER is NULL\n").verdict();
-
-        assertTrue(result.attached());
-        assertFalse(result.playing(), "attaching is not playing");
-        assertNotNull(result.failureReason());
-        assertTrue(result.failureReason().contains("no build order"), result.failureReason());
-    }
-
-    @Test
-    public void aRunWithoutALogIsAFailureNotAnException() {
-        OpenBWRunner runner = new OpenBWRunner(
-                OpenBWConfig.builder().logDir("/definitely/not/here").build());
-
-        OpenBWRunResult result = runner.verdict();
-
-        assertFalse(result.isSuccess());
-        assertNotNull(result.failureReason());
-        assertTrue(result.failureReason().contains("no bot log"), result.failureReason());
-    }
-
-    @Test
-    public void aRunThatNeverStartedSaysSo() {
-        OpenBWRunResult result = OpenBWRunResult.hostDidNotStart("s.log", "b.log");
-
-        assertFalse(result.attached());
-        assertTrue(result.failureReason().contains("host"), result.failureReason());
-    }
-
-    @Test
-    public void logPathsFollowTheConfiguredDirectory() {
-        OpenBWRunner runner = new OpenBWRunner(OpenBWConfig.builder().logDir("out/openbw").build());
-
-        assertEquals("out/openbw/E2E_LOG", runner.botLogPath());
-        assertEquals("out/openbw/server.log", runner.serverLogPath());
-    }
-
-    // ---- the API shape the owner asked for ---------------------------------
-
-    @Test
-    public void theFluentApiReadsLikeTheRecipe() {
-        // init().useConfig(...).race(...).run() - the point of the exercise is
-        // that this line is legible in Main and in a test, so it is compiled here
-        // (not executed: run() would need a game).
-        OpenBWConfig config = OpenBWConfig.ofMap("maps/cog/(3)TauCross1.1.scx");
-
-        assertEquals("maps/cog/(3)TauCross1.1.scx", config.map());
-        assertEquals(Arrays.asList("Protoss", "Zerg"), Arrays.asList(config.ourRace(), config.enemyRace()));
-
-        OpenBWConfig customised = OpenBWConfig.builder()
-                .map("maps/sscai/(3)TauCross.scx")
-                .races("Protoss", "Protoss")
-                .gameTimeoutSeconds(120)
-                .build();
-        assertEquals("Protoss", customised.enemyRace());
-        assertEquals(120, customised.gameTimeoutSeconds());
     }
 }

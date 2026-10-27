@@ -2,8 +2,10 @@ package atlantis.production.dynamic.terran.turrets;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.InitialMainPosition;
 import atlantis.information.strategy.AStrategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -11,7 +13,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.ARegionBoundary;
-import atlantis.information.generic.InitialMainPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -19,23 +20,55 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TurretsForMain extends TerranMissileTurret {
+    private static AUnit main;
     private final int BORDER_TURRETS_MIN_COUNT = 1;
     private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
     //    private  final int BORDER_TURRETS_MIN_COUNT = 4;
 //    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
     private final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
     private final int BORDER_TURRETS_ALLOW_MARGIN = 4;
+    private final Cache<ArrayList<APosition>> cacheList = new Cache<>();
+    private final Cache<APosition> cachePosition = new Cache<>();
 
-    private Cache<ArrayList<APosition>> cacheList = new Cache<>();
-    private Cache<APosition> cachePosition = new Cache<>();
-    private static AUnit main;
+    // =========================================================
+
+    private static int baseNumOfTurrets() {
+        AStrategy enemyStrategy = EnemyInfo.strategy();
+
+        if (Enemy.zerg()) {
+            int base = 0;
+
+            if (enemyStrategy.isAirUnits()) {
+                base = 3;
+            }
+
+            return Math.min(6, base + (A.seconds() / 100));
+        }
+
+        else if (Enemy.protoss()) {
+            if (enemyStrategy.isAirUnits()) {
+                return 6;
+            }
+
+            return (EnemyInfo.hasHiddenUnits() || enemyStrategy.isGoingHiddenUnits())
+                ? 2
+                : (A.seconds() >= 400 ? 1 : 0);
+        }
+
+        else {
+            if (EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).notEmpty()) {
+                return 1;
+            }
+
+            return 0;
+        }
+    }
 
     // =========================================================
 
@@ -56,15 +89,8 @@ public class TurretsForMain extends TerranMissileTurret {
             return true;
         }
 
-        if (turretsForMainBase()) {
-
-            return true;
-        }
-
-        return false;
+        return turretsForMainBase();
     }
-
-    // =========================================================
 
     private boolean turretsForMainBase() {
         int turretsForMain = optimalMainBaseTurrets();
@@ -102,38 +128,6 @@ public class TurretsForMain extends TerranMissileTurret {
 
     private int optimalMainBaseTurrets() {
         return baseNumOfTurrets() + (AGame.minerals() / 700);
-    }
-
-    private static int baseNumOfTurrets() {
-        AStrategy enemyStrategy = EnemyInfo.strategy();
-
-        if (Enemy.zerg()) {
-            int base = 0;
-
-            if (enemyStrategy.isAirUnits()) {
-                base = 3;
-            }
-
-            return Math.min(6, base + (A.seconds() / 100));
-        }
-
-        else if (Enemy.protoss()) {
-            if (enemyStrategy.isAirUnits()) {
-                return 6;
-            }
-
-            return (EnemyInfo.hasHiddenUnits() || enemyStrategy.isGoingHiddenUnits())
-                ? 2
-                : (A.seconds() >= 400 ? 1 : 0);
-        }
-
-        else {
-            if (EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).notEmpty()) {
-                return 1;
-            }
-
-            return 0;
-        }
     }
 
     private boolean turretForMainChoke() {

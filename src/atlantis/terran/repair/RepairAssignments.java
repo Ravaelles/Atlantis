@@ -168,7 +168,7 @@ public class RepairAssignments {
     }
 
     public static int countTotalRepairers() {
-        return repairersToUnit.keySet().size();
+        return repairersToUnit.size();
     }
 
     public static ArrayList<AUnit> protectorsFor(AUnit unit) {

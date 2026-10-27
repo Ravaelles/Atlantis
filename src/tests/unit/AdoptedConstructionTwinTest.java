@@ -17,7 +17,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The nearest-waiting fallback adoption must name itself: when a warp lands
@@ -33,6 +32,15 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("production")
 public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
+
+    private static Construction waitingAt(AUnitType type, int x, int y) {
+        Construction construction = new Construction(type);
+        construction.setPositionToBuild(APosition.create(x, y));
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+        ConstructionRequests.constructions.add(construction);
+
+        return construction;
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -60,15 +68,6 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
         EventLog.clearForTests();
     }
 
-    private static Construction waitingAt(AUnitType type, int x, int y) {
-        Construction construction = new Construction(type);
-        construction.setPositionToBuild(APosition.create(x, y));
-        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-        ConstructionRequests.constructions.add(construction);
-
-        return construction;
-    }
-
     @Test
     public void fallbackAdoptionNamesWarpTileAdoptedTileAndCandidates() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
@@ -91,19 +90,19 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
 
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"key\":\"ADOPTED_CONSTRUCTION\""),
-                    "the fallback adoption must be named, got: " + rows);
+                "the fallback adoption must be named, got: " + rows);
             assertTrue(rows.contains("[70,70]"),
-                    "the twin must name the warp tile, got: " + rows);
+                "the twin must name the warp tile, got: " + rows);
             assertTrue(rows.contains("[50,50]"),
-                    "the twin must name the adopted site, got: " + rows);
+                "the twin must name the adopted site, got: " + rows);
             assertTrue(rows.contains("\"candidates\":2"),
-                    "the twin must name how many constructions lost, got: " + rows);
+                "the twin must name how many constructions lost, got: " + rows);
             assertFalse(
-                    ConstructionRequests.constructions.contains(newer),
-                    "the adopted construction is finished and removed, not leaked");
+                ConstructionRequests.constructions.contains(newer),
+                "the adopted construction is finished and removed, not leaked");
             assertTrue(
-                    ConstructionRequests.constructions.contains(older),
-                    "the farther sibling stays tracked");
+                ConstructionRequests.constructions.contains(older),
+                "the farther sibling stays tracked");
         });
     }
 
@@ -123,7 +122,7 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
             ProtossWarping.updateNewBuildingJustWarped(onItsTile);
 
             assertFalse(EventLog.toJsonLines().contains("ADOPTED_CONSTRUCTION"),
-                    "a positional hit is the normal path - the fallback twin must stay silent");
+                "a positional hit is the normal path - the fallback twin must stay silent");
         });
     }
 
@@ -144,10 +143,10 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
             // no fallback twin, older finished and removed.
             ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 10, 10));
             assertFalse(
-                    ConstructionRequests.constructions.contains(older),
-                    "the positionally matched construction is finished, not leaked");
+                ConstructionRequests.constructions.contains(older),
+                "the positionally matched construction is finished, not leaked");
             assertFalse(EventLog.toJsonLines().contains("ADOPTED_CONSTRUCTION"),
-                    "a positional hit must not fire the fallback twin");
+                "a positional hit must not fire the fallback twin");
 
             // Second warp on the SAME tile: the older construction is gone
             // and the newer one is 40 tiles away, so only the fallback can
@@ -156,22 +155,22 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
             ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 10, 10));
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"key\":\"ADOPTED_CONSTRUCTION\""),
-                    "the overlapping warp must be named, got: " + rows);
+                "the overlapping warp must be named, got: " + rows);
             assertTrue(rows.contains("\"candidates\":1"),
-                    "one construction lost, got: " + rows);
+                "one construction lost, got: " + rows);
             assertFalse(
-                    ConstructionRequests.constructions.contains(newer),
-                    "the fallback finishes the adopted construction");
+                ConstructionRequests.constructions.contains(newer),
+                "the fallback finishes the adopted construction");
 
             // Third warp with nothing left: the CANNOT branch exits
             // without adopting anything and without throwing.
             EventLog.clearForTests();
             ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 70, 70));
             assertTrue(
-                    ConstructionRequests.constructions.isEmpty(),
-                    "no construction may be invented for a building nobody ordered");
+                ConstructionRequests.constructions.isEmpty(),
+                "no construction may be invented for a building nobody ordered");
             assertFalse(EventLog.toJsonLines().contains("ADOPTED_CONSTRUCTION"),
-                    "with no candidates the twin must stay silent");
+                "with no candidates the twin must stay silent");
         });
     }
 }

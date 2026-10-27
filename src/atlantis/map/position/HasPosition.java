@@ -20,15 +20,25 @@ import bwapi.Position;
  * have default constructor. Instead ABaseLocation can use this interface.
  */
 public interface HasPosition {
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
+    int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
+
+    static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {
+        for (HasPosition position : points.sortByDistanceTo(nearestTo, true).list()) {
+            if (Select.our().exclude(nearestTo).inRadius(0.3, position).empty()) {
+                return position;
+            }
+        }
+
+        return null;
+    }
 
     APosition position();
 
     int x();
 
-    int y();
-
     // === High-abstraction ========================================
+
+    int y();
 
     /**
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
@@ -104,10 +114,6 @@ public interface HasPosition {
         return PositionFinder.makeWalkable(this, maxRadius, step, sameRegion);
     }
 
-    default APosition makeLandableFor(AUnit building) {
-        return PositionFinder.makeLandableFor(this, building);
-    }
-
 //    default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
 //        int currentRadius = 0;
 //        while (currentRadius <= maxRadius) {
@@ -134,11 +140,15 @@ public interface HasPosition {
 //        return null;
 //    }
 
-    default APosition makeWalkableAndFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
-        return PositionFinder.makeWalkableAndFreeOfAnyGroundUnits(this, maxRadius, step, exceptUnit);
+    default APosition makeLandableFor(AUnit building) {
+        return PositionFinder.makeLandableFor(this, building);
     }
 
     // =========================================================
+
+    default APosition makeWalkableAndFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
+        return PositionFinder.makeWalkableAndFreeOfAnyGroundUnits(this, maxRadius, step, exceptUnit);
+    }
 
     default double distTo(HasPosition position) {
         return PositionUtil.distanceTo(this, position);
@@ -229,11 +239,11 @@ public interface HasPosition {
         return position != null && position.x() > 0 && position.x() < 32000;
     }
 
+    // =========================================================
+
     default boolean noPosition() {
         return !hasPosition();
     }
-
-    // =========================================================
 
     default String toStringPixels() {
         return "(px:" + x() + ",py:" + y() + ")";
@@ -294,16 +304,6 @@ public interface HasPosition {
         if (region == null || region.position() == null || !region.hasPosition()) return false;
 
         return region.equals(other.position().region());
-    }
-
-    static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {
-        for (HasPosition position : points.sortByDistanceTo(nearestTo, true).list()) {
-            if (Select.our().exclude(nearestTo).inRadius(0.3, position).empty()) {
-                return position;
-            }
-        }
-
-        return null;
     }
 
     default void paintCircleFilled(int radius, Color color) {
@@ -421,13 +421,11 @@ public interface HasPosition {
         int mapHeightInTiles = AMap.getMapHeightInTiles();
 
         int tx = tx();
-        boolean txYes = false;
-        if (tx <= tilesToCorner) txYes = true;
+        boolean txYes = tx <= tilesToCorner;
         if (tx >= (mapWidthInTiles - tilesToCorner)) txYes = true;
 
         int ty = ty();
-        boolean tyYes = false;
-        if (ty <= tilesToCorner) tyYes = true;
+        boolean tyYes = ty <= tilesToCorner;
         if (ty >= (mapHeightInTiles - tilesToCorner)) tyYes = true;
 
         return txYes && tyYes;

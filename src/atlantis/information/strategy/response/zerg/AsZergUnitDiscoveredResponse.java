@@ -1,7 +1,6 @@
 package atlantis.information.strategy.response.zerg;
 
 
-
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -61,22 +60,17 @@ public class AsZergUnitDiscoveredResponse {
 
     private static void whenRushOrCheese(AUnit enemyUnit) {
         if (asTerranDontPushWhenEnemyHasDragoons()) return;
-        if (asTerranDontHaveBunkersAndEnemyIsStrong()) return;
+
+        if (asTerranDontHaveBunkersAndEnemyIsStrong()) {
+        }
     }
 
     private static boolean asTerranDontPushWhenEnemyHasDragoons() {
         if (!We.terran()) return false;
 
-        if (
-            EnemyUnits.has(AUnitType.Protoss_Dragoon)
-                && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1)
-        ) {
-            // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
-
-            return true;
-        }
-
-        return false;
+        // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
+        return EnemyUnits.has(AUnitType.Protoss_Dragoon)
+            && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1);
     }
 
     private static boolean asTerranDontHaveBunkersAndEnemyIsStrong() {

@@ -15,36 +15,6 @@ public class ZergNewGasBuildingCommander extends Commander {
 
     private static int numberOfGasBuildings;
 
-    @Override
-    public boolean applies() {
-        return We.zerg()
-            && A.everyNthGameFrame(23)
-            && !tooEarlyForAnotherGasBuilding()
-            && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
-            && (We.zerg() || Count.gasBuildingsWithUnfinished() < Count.basesWithUnfinished());
-//            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
-    }
-
-    @Override
-    protected boolean handle() {
-        if (numberOfGasBuildings <= 0) {
-            requestFirstBuildingIfNeeded();
-        }
-        else {
-            requestAdditionalBuildingIfNeeded();
-        }
-        return false;
-    }
-
-    private void requestFirstBuildingIfNeeded() {
-        if (A.minerals() >= 435 || Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0) {
-//            System.err.println("@ " + A.now() + " - requested first gas building @" + A.supplyUsed() + ", min:" +
-//                A.minerals() + " / res: " + A.reservedMinerals());
-            AddToQueue.withStandardPriority(AtlantisRaceConfig.GAS_BUILDING);
-        }
-    }
-
     private static boolean tooEarlyForAnotherGasBuilding() {
         return A.supplyTotal() <= 30;
 
@@ -110,5 +80,35 @@ public class ZergNewGasBuildingCommander extends Commander {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean applies() {
+        return We.zerg()
+            && A.everyNthGameFrame(23)
+            && !tooEarlyForAnotherGasBuilding()
+            && (A.gas() <= 600 || A.minerals() >= 500)
+            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
+            && (We.zerg() || Count.gasBuildingsWithUnfinished() < Count.basesWithUnfinished());
+//            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
+    }
+
+    @Override
+    protected boolean handle() {
+        if (numberOfGasBuildings <= 0) {
+            requestFirstBuildingIfNeeded();
+        }
+        else {
+            requestAdditionalBuildingIfNeeded();
+        }
+        return false;
+    }
+
+    private void requestFirstBuildingIfNeeded() {
+        if (A.minerals() >= 435 || Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0) {
+//            System.err.println("@ " + A.now() + " - requested first gas building @" + A.supplyUsed() + ", min:" +
+//                A.minerals() + " / res: " + A.reservedMinerals());
+            AddToQueue.withStandardPriority(AtlantisRaceConfig.GAS_BUILDING);
+        }
     }
 }

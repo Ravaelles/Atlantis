@@ -15,12 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner 2026-10-23, from the lost hydra fight: the retreat splits by
@@ -31,6 +26,10 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class RetreatSplitChainTest extends WorldStubForTests {
+
+    private static void clearAlpha() {
+        for (AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);
+    }
 
     @AfterEach
     public void resetTactic() {
@@ -132,8 +131,7 @@ public class RetreatSplitChainTest extends WorldStubForTests {
                     "grabbed and cut off: falls through to fight instead of marching through the pack");
                 assertNull(lone.targetPosition(),
                     "no march order issued while deciding to fight");
-            }
-            finally {
+            } finally {
                 clearAlpha();
             }
         });
@@ -164,8 +162,7 @@ public class RetreatSplitChainTest extends WorldStubForTests {
                 assertNotNull(dest, "a local escape step is issued");
                 assertTrue(dest.distTo(foe) > lone.distTo(foe),
                     "away from the pursuer, not toward home through it: foe at " + dest.distTo(foe));
-            }
-            finally {
+            } finally {
                 clearAlpha();
             }
         });
@@ -193,14 +190,9 @@ public class RetreatSplitChainTest extends WorldStubForTests {
                 assertTrue(acted, "with the army the coordinated retreat still marches home");
                 assertEquals(Actions.RUN_ENEMY, a.action(),
                     "chased with the pack: still the FLEE action, not a solo stand");
-            }
-            finally {
+            } finally {
                 clearAlpha();
             }
         });
-    }
-
-    private static void clearAlpha() {
-        for (AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);
     }
 }

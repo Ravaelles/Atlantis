@@ -1,7 +1,7 @@
 package tests.architecture;
 
-import atlantis.architecture.Commander;
 import atlantis.application.FramePipeline;
+import atlantis.architecture.Commander;
 import atlantis.game.AtlantisGameCommander;
 import org.junit.jupiter.api.Test;
 
@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Stage C: pins the top-level frame pipeline order.

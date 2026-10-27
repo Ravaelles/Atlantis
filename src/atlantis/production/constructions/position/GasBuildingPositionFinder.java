@@ -4,15 +4,15 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.CacheKey;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 import bwapi.TilePosition;
 
 public class GasBuildingPositionFinder {
-    private static Cache<APosition> cache = new Cache<>();
+    private static final Cache<APosition> cache = new Cache<>();
 
     /**
      * Returns build position for next Refinery/Assimilator/Extractor. It will be chosen for the oldest base

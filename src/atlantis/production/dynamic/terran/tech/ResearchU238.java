@@ -25,6 +25,10 @@ public class ResearchU238 extends Commander {
         isResearched = true;
     }
 
+    public static boolean isResearched() {
+        return isResearched || ATech.isResearched(what());
+    }
+
     @Override
     public boolean applies() {
         if (isResearched) return true;
@@ -45,9 +49,7 @@ public class ResearchU238 extends Commander {
                 (infantry >= 6 && A.canAffordWithReserved(100, 100))
                     || (infantry >= 10 && A.canAfford(250, 100))
             ) {
-                if (ATech.isNotResearchedOrPlanned(what())) {
-                    return true;
-                }
+                return ATech.isNotResearchedOrPlanned(what());
             }
         }
 
@@ -67,9 +69,5 @@ public class ResearchU238 extends Commander {
             }
         }
         return false;
-    }
-
-    public static boolean isResearched() {
-        return isResearched || ATech.isResearched(what());
     }
 }

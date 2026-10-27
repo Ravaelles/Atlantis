@@ -12,18 +12,13 @@ import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class MoveAway {
-    public static boolean from(AUnit unit, HasPosition from, double moveDistance, Action action, String tooltip) {
-        if (from == null || moveDistance < 0.01) return false;
-
-        // Straight back first - identical to the old single try so the
-        // common path cannot change under this refactor.
-        if (tryStep(unit, from, moveDistance, action, tooltip, from)) return true;
-
-        for (HasPosition aim : lateralAims(unit, from)) {
-            if (tryStep(unit, aim, moveDistance, action, tooltip, from)) return true;
-        }
-        return false;
-    }
+    /**
+     * Full-length escape step (NEXT #173, owner doctrine): walk straight
+     * out as far as possible - 5 tiles. Never imported from
+     * {@code battle.escape}: core must not depend on its consumers
+     * (CONVENTIONS section 5), so the constant lives here with a pointer.
+     */
+    public static final double LONG_STEP_TILES = 5.0;
 
     /**
      * Kiting escape choice (PurpleWave MicroPathing direction): evaluate
@@ -47,13 +42,19 @@ public class MoveAway {
      * has to open at least the min-step-gain beyond the current
      * distance, else there is no step and the caller fights).
      */
-    /**
-     * Full-length escape step (NEXT #173, owner doctrine): walk straight
-     * out as far as possible - 5 tiles. Never imported from
-     * {@code battle.escape}: core must not depend on its consumers
-     * (CONVENTIONS section 5), so the constant lives here with a pointer.
-     */
-    public static final double LONG_STEP_TILES = 5.0;
+
+    public static boolean from(AUnit unit, HasPosition from, double moveDistance, Action action, String tooltip) {
+        if (from == null || moveDistance < 0.01) return false;
+
+        // Straight back first - identical to the old single try so the
+        // common path cannot change under this refactor.
+        if (tryStep(unit, from, moveDistance, action, tooltip, from)) return true;
+
+        for (HasPosition aim : lateralAims(unit, from)) {
+            if (tryStep(unit, aim, moveDistance, action, tooltip, from)) return true;
+        }
+        return false;
+    }
 
     /**
      * Validate-only half of the escape choice: every aim through the
@@ -130,7 +131,8 @@ public class MoveAway {
         }
     }
 
-    private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
+    private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {
+        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
         aims.add(from);
         aims.addAll(lateralAims(unit, from));
 
@@ -154,9 +156,9 @@ public class MoveAway {
             dy = 0;
         }
         double[] rotations = {
-             0.7071, 0.7071, 0.7071, -0.7071,
-             0.0, 1.0, 0.0, -1.0,
-             -0.7071, 0.7071, -0.7071, -0.7071 };
+            0.7071, 0.7071, 0.7071, -0.7071,
+            0.0, 1.0, 0.0, -1.0,
+            -0.7071, 0.7071, -0.7071, -0.7071};
         java.util.List<HasPosition> aims = new java.util.ArrayList<>();
         for (int i = 0; i < rotations.length; i += 2) {
             double rx = dx * rotations[i] - dy * rotations[i + 1];
@@ -181,11 +183,7 @@ public class MoveAway {
         // A refused order is not a step: try the next aim instead of
         // reporting success (owner: a scout died walking into a zealot
         // while every frame reported a move that never issued).
-        if (unit.move(newPosition, action, "Move away" + unit.distToDigit(threat), false)) {
-            return true;
-        }
-
-        return false;
+        return unit.move(newPosition, action, "Move away" + unit.distToDigit(threat), false);
     }
 
     /**

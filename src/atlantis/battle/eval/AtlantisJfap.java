@@ -21,6 +21,16 @@ public class AtlantisJfap {
         this.relativeToEnemy = relativeToEnemy;
     }
 
+    public static boolean isValidUnit(AUnit unit) {
+        return unit.notImmobilized()
+            && unit.hasPosition()
+            && unit.isCompleted()
+            && !unit.isOverlord()
+            && (
+            unit.u() != null || UnitOrigin.isSimulated(unit) || unit instanceof AbstractFoggedUnit
+        );
+    }
+
     private double[] jfapEval() {
         if (noEnemiesNear()) {
             return new double[]{CombatEvalScale.NO_ENEMY_IN_REACH, -CombatEvalScale.NO_ENEMY_IN_REACH};
@@ -61,16 +71,6 @@ public class AtlantisJfap {
         double enemyScore = scores[1];
 
         return calculateToRelativeScoreIfNeeded(ourScore, enemyScore, relativeToEnemy);
-    }
-
-    public static boolean isValidUnit(AUnit unit) {
-        return unit.notImmobilized()
-            && unit.hasPosition()
-            && unit.isCompleted()
-            && !unit.isOverlord()
-            && (
-            unit.u() != null || UnitOrigin.isSimulated(unit) || unit instanceof AbstractFoggedUnit
-        );
     }
 
     /**

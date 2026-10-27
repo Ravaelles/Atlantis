@@ -3,8 +3,8 @@ package atlantis.production.dynamic;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
-import atlantis.production.dynamic.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
+import atlantis.production.dynamic.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranSpecificBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
@@ -12,6 +12,14 @@ import atlantis.production.dynamic.zerg.ZergNewGasBuildingCommander;
 import atlantis.util.We;
 
 public class DynamicBuildingsCommander extends Commander {
+    public static Commander get() {
+        if (We.terran()) return (new TerranDynamicBuildingsCommander());
+        if (We.protoss()) return (new ProtossDynamicBuildingsCommander());
+        if (We.zerg()) return (new ZergDynamicBuildingsCommander());
+
+        return null;
+    }
+
     @Override
     public boolean applies() {
         // Owner 2026-10-18 (__PLAN-DECISIONS): while the memorized opening
@@ -19,9 +27,8 @@ public class DynamicBuildingsCommander extends Commander {
         // (measured: third Gateway site at supply 12). Workers and supply
         // keep flowing - buildings don't consume supply, so gating them
         // cannot stall the script.
-        if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
 
-        return true;
+        return !atlantis.production.orders.build.BuildOrderOwnsGame.owns();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -50,13 +57,5 @@ public class DynamicBuildingsCommander extends Commander {
         };
 
         return mergeCommanders(generic, raceSpecific);
-    }
-
-    public static Commander get() {
-        if (We.terran()) return (new TerranDynamicBuildingsCommander());
-        if (We.protoss()) return (new ProtossDynamicBuildingsCommander());
-        if (We.zerg()) return (new ZergDynamicBuildingsCommander());
-
-        return null;
     }
 }

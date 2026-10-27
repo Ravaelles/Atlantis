@@ -25,10 +25,14 @@ public enum PostureReason {
      */
     BANKED_MINERALS,
 
-    /** The standing rule: a big-enough army marches, a small one holds. */
+    /**
+     * The standing rule: a big-enough army marches, a small one holds.
+     */
     HEADCOUNT,
 
-    /** No attack reason fired: hold the home ground. */
+    /**
+     * No attack reason fired: hold the home ground.
+     */
     HOLD_GROUND,
 
     /**

@@ -47,6 +47,25 @@ public class GatewayRequeueAfterCancelTest {
 
     private static final String TRAVEL =
         "src/atlantis/production/constructions/builders/TravelToConstruct.java";
+    private static final String SOURCE =
+        "src/atlantis/production/constructions/commanders/CancelTooLongConstructions.java";
+
+    private static String methodBody(String source, String signature) {
+        int start = source.indexOf(signature);
+        assertTrue(start > 0, "method not found: " + signature);
+
+        int depth = 0;
+        int i = source.indexOf('{', start);
+        for (int j = i; j < source.length(); j++) {
+            char c = source.charAt(j);
+            if (c == '{') depth++;
+            else if (c == '}') {
+                depth--;
+                if (depth == 0) return source.substring(start, j);
+            }
+        }
+        return source.substring(start);
+    }
 
     @Test
     public void theTravelThresholdComparesAPlainDistanceNotAJbwebOrCentreDistance()
@@ -64,9 +83,6 @@ public class GatewayRequeueAfterCancelTest {
                 + " center ~2.5 tiles from its origin."
                 + " Behavioural pins: GasBuildIssueDistanceTest.");
     }
-
-    private static final String SOURCE =
-        "src/atlantis/production/constructions/commanders/CancelTooLongConstructions.java";
 
     @Test
     public void theRequeueGuardRunsAfterTheCancelThatFreesTheSlot() throws Exception {
@@ -89,22 +105,5 @@ public class GatewayRequeueAfterCancelTest {
         assertTrue(veto.contains("countTriggerableNotStarted(type)"),
             "the guard counts only triggerable rows - untriggerable ones vetoed"
                 + " the rescue rebuild and deadlocked 9/9 (game 201239)");
-    }
-
-    private static String methodBody(String source, String signature) {
-        int start = source.indexOf(signature);
-        assertTrue(start > 0, "method not found: " + signature);
-
-        int depth = 0;
-        int i = source.indexOf('{', start);
-        for (int j = i; j < source.length(); j++) {
-            char c = source.charAt(j);
-            if (c == '{') depth++;
-            else if (c == '}') {
-                depth--;
-                if (depth == 0) return source.substring(start, j);
-            }
-        }
-        return source.substring(start);
     }
 }

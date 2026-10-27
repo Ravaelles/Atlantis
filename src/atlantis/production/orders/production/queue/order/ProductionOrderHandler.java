@@ -13,9 +13,9 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrderHandler extends Commander {
-    private static int TIMES_MISSION_ENFORCED = 0;
+    private static final int TIMES_MISSION_ENFORCED = 0;
 
-    private ProductionOrder order;
+    private final ProductionOrder order;
 
     public ProductionOrderHandler(ProductionOrder order) {
         this.order = order;
@@ -82,11 +82,11 @@ public class ProductionOrderHandler extends Commander {
                 // audit row lands here too.
                 atlantis.decisions.board.DecisionLog.record(
                     atlantis.decisions.board.ADecision.decide(
-                        atlantis.decisions.board.ADecision.Kind.RESEARCH, tech.name(),
-                        order.toString(),
-                        order.isDynamic()
-                            ? atlantis.decisions.board.ADecision.Source.DYNAMIC
-                            : atlantis.decisions.board.ADecision.Source.BUILD_ORDER)
+                            atlantis.decisions.board.ADecision.Kind.RESEARCH, tech.name(),
+                            order.toString(),
+                            order.isDynamic()
+                                ? atlantis.decisions.board.ADecision.Source.DYNAMIC
+                                : atlantis.decisions.board.ADecision.Source.BUILD_ORDER)
                         .frame(A.now())
                         .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
                         .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
@@ -116,16 +116,9 @@ public class ProductionOrderHandler extends Commander {
     private boolean isAlreadyConsumed() {
         if (!order.isConsumed()) return false;
 
-        if (
-            order.isBuilding() && (
-                order.construction() == null
-                    || order.construction().buildingUnit() == null
-                    || order.construction().buildingUnit().hp() <= 0
-                    || order.construction().buildingUnit().isDead()
-            )
-        ) return false;
-
-
-        return true;
+        return !order.isBuilding() || (order.construction() != null
+            && order.construction().buildingUnit() != null
+            && order.construction().buildingUnit().hp() > 0
+            && !order.construction().buildingUnit().isDead());
     }
 }

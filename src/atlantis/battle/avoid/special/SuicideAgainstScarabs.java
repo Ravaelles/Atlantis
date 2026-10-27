@@ -53,8 +53,6 @@ public class SuicideAgainstScarabs extends Manager {
     }
 
     private boolean shouldMoveTowardsScarab(AUnit scarab, Selection friendsNear) {
-        if (friendsNear.count() == 0) return false;
-
-        return true;
+        return friendsNear.count() != 0;
     }
 }

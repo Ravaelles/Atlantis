@@ -2,10 +2,10 @@ package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class WorkerDefenceHelpCannon extends Manager {

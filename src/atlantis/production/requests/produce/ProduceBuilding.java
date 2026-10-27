@@ -8,12 +8,12 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.NewConstructionRequest;
-import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
-import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.constructions.position.FindPosition;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
+import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnit;
@@ -26,14 +26,6 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 public class ProduceBuilding {
-    // See ProduceWorker: the executor registers on first wrapper load,
-    // game root or test alike.
-    static {
-        atlantis.production.ProductionDecisionExecutor.register();
-    }
-
-    public static Construction _lastConstruction = null;
-
     /**
      * Names the refusing guard when a ready building order dies before
      * siting (NEXT #148: 20 Forge wants vanished with zero diagnostics
@@ -45,6 +37,17 @@ public class ProduceBuilding {
      * always logs, so pins and hunts keep their witness.</p>
      */
     private static final java.util.Map<String, Integer> lastRefusedAt = new java.util.HashMap<>();
+    /**
+     * cids that already have a STARTED row (ids never repeat, no reset needed).
+     */
+    private static final java.util.Set<Integer> startedCids = new java.util.HashSet<>();
+    public static Construction _lastConstruction = null;
+
+    // See ProduceWorker: the executor registers on first wrapper load,
+    // game root or test alike.
+    static {
+        atlantis.production.ProductionDecisionExecutor.register();
+    }
 
     private static boolean refuse(AUnitType type, ProductionOrder order, String guard) {
         String key = guard + ":" + (order == null ? "-" : order.id());
@@ -335,7 +338,7 @@ public class ProduceBuilding {
         // Pylon) - a covered site is never adopted, only re-sited.
         if (OverlapsOurUnfinishedBuilding.check(prepared.buildPosition(), prepared.buildingType())
             || OverlapsOurStandingBuilding.check(
-                prepared.buildPosition(), prepared.buildingType())) {
+            prepared.buildPosition(), prepared.buildingType())) {
             APosition fresh = prepared.findPositionForNewBuilding();
             if (fresh == null || OverlapsOurUnfinishedBuilding.check(fresh, prepared.buildingType())) {
                 EventLog.key(LogKey.BUILD_REFUSED)
@@ -401,9 +404,6 @@ public class ProduceBuilding {
 
         return noteStarted(prepared, prepared.builder(), prepared.buildPosition(), order);
     }
-
-    /** cids that already have a STARTED row (ids never repeat, no reset needed). */
-    private static final java.util.Set<Integer> startedCids = new java.util.HashSet<>();
 
     /**
      * One STARTED row per construction, whoever observes the start: the

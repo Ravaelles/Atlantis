@@ -8,35 +8,34 @@ import atlantis.units.select.Count;
 import atlantis.util.Options;
 import bwapi.TechType;
 import org.junit.jupiter.api.Test;
-import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.DynamicMockOurUnits;
 
 import java.util.ArrayList;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
-
 import static atlantis.units.AUnitType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Queue3Test extends WorldStubForTests {
-    private ArrayList<ProductionOrder> allOrders = null;
+    private final ArrayList<ProductionOrder> allOrders = null;
 
     @Test
     public void medicsAndStimpacksAreIdentifiedAsReady() {
         options = Options.create().set("supplyUsed", 49);
         world(1, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Supply_Depot, 5),
-                    fake(Terran_Supply_Depot, 6),
-                    fake(Terran_Supply_Depot, 7),
-                    fake(Terran_Supply_Depot, 8),
-                    fake(Terran_Refinery, 29),
-                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Barracks, 4),
+                fake(Terran_Supply_Depot, 5),
+                fake(Terran_Supply_Depot, 6),
+                fake(Terran_Supply_Depot, 7),
+                fake(Terran_Supply_Depot, 8),
+                fake(Terran_Refinery, 29),
+                fake(Terran_Academy, 33)
+            )
+        ), fakeExampleEnemies(), () -> {
             queue = initQueue();
             Orders readyToProduceOrders = queue.readyToProduceOrders();
 
@@ -53,13 +52,13 @@ public class Queue3Test extends WorldStubForTests {
     public void buildingsInQueueAreCounted() {
         options = Options.create().set("supplyUsed", 49);
         world(1, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Supply_Depot, 7),
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Supply_Depot, 7),
+                fake(Terran_Barracks, 4),
+                fake(Terran_Academy, 33)
+            )
+        ), fakeExampleEnemies(), () -> {
             queue = initQueue();
             Orders readyToProduceOrders = queue.readyToProduceOrders();
 
@@ -117,13 +116,13 @@ public class Queue3Test extends WorldStubForTests {
     public void buildToHaveMultiple() {
         options = Options.create().set("supplyUsed", 49);
         world(1, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Supply_Depot, 7),
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Supply_Depot, 7),
+                fake(Terran_Barracks, 4),
+                fake(Terran_Academy, 33)
+            )
+        ), fakeExampleEnemies(), () -> {
             queue = initQueue();
             Orders readyToProduceOrders = queue.readyToProduceOrders();
 

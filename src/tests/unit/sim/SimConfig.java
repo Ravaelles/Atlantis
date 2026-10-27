@@ -10,13 +10,6 @@ package tests.unit.sim;
  */
 public final class SimConfig {
 
-    public enum Mode {
-        /** Analytic travel, flat income, full order validation. */
-        FAST,
-        /** Tile-walked travel, trip mining, full order validation. */
-        FAITHFUL
-    }
-
     private final Mode mode;
 
     private SimConfig(Mode mode) {
@@ -42,5 +35,16 @@ public final class SimConfig {
     @Override
     public String toString() {
         return "SimConfig{" + mode + '}';
+    }
+
+    public enum Mode {
+        /**
+         * Analytic travel, flat income, full order validation.
+         */
+        FAST,
+        /**
+         * Tile-walked travel, trip mining, full order validation.
+         */
+        FAITHFUL
     }
 }

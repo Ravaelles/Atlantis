@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Efficacy verdict for the #184 keepable question (sim-first by design):
@@ -38,36 +37,6 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
 
     private static final int TILE = 32;
 
-    private static final class Outcome {
-        int dragoonHpEnd;
-        int clearTick = -1;
-        int wDeathTick = -1;
-        int zDeathTick = -1;
-        int shots;
-        int targetSwitches;
-    }
-
-    @Test
-    public void holdPrimaryClearsWhileForcedFinishDonates() {
-        Outcome keep = run(false);
-        Outcome finish = run(true);
-
-        String score = "keep(hp=" + keep.dragoonHpEnd + ",clear=" + keep.clearTick
-            + ",w@" + keep.wDeathTick + ",z@" + keep.zDeathTick
-            + ",shots=" + keep.shots + ",switches=" + keep.targetSwitches
-            + ") vs finish(hp=" + finish.dragoonHpEnd + ",clear=" + finish.clearTick
-            + ",w@" + finish.wDeathTick + ",z@" + finish.zDeathTick
-            + ",shots=" + finish.shots + ",switches=" + finish.targetSwitches + ")";
-        assertTrue(keep.shots > 0 && finish.shots > 0,
-            "both arms must trade shots, a silent kite proves nothing: " + score);
-        assertTrue(keep.clearTick > 0 && keep.dragoonHpEnd > 0,
-            "holding the valid primary clears the pack with the dragoon alive: " + score);
-        assertTrue(finish.dragoonHpEnd < keep.dragoonHpEnd,
-            "forcing the target onto the wounded ling ends worse, not better: " + score);
-        assertTrue(finish.targetSwitches > keep.targetSwitches,
-            "the forcing churns against the validity gate instead of holding: " + score);
-    }
-
     private static Outcome run(boolean finishFirst) {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 20);
         dragoon.hp = 120;
@@ -86,13 +55,13 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
         Outcome out = new Outcome();
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { dragoon }, new FakeUnit[] { zealot, w }, arena);
+            new FakeUnit[]{dragoon}, new FakeUnit[]{zealot, w}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
             Alpha.gather();
 
-            final int[] lastTid = new int[] { -2 };
+            final int[] lastTid = new int[]{-2};
             for (int i = 0; i < 800; i++) {
                 final int tick = i;
                 world.tick(() -> {
@@ -117,8 +86,7 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
             out.shots = world.shotsFired();
 
             return out;
-        }
-        finally {
+        } finally {
             Alpha.get().removeUnit(dragoon);
             world.close();
             BattleCommander.clearForTests();
@@ -126,7 +94,9 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
         }
     }
 
-    /** Scripted chewer: nearest live dragoon, move into reach, then trade. */
+    /**
+     * Scripted chewer: nearest live dragoon, move into reach, then trade.
+     */
     private static void scriptChewer(FakeUnit foe, FakeUnit dragoon) {
         if (foe.hp <= 0 || dragoon.hp <= 0) {
             foe.lastCommand = "Stop";
@@ -137,5 +107,35 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
             ? "AttackUnit" : "Move";
         foe.target = dragoon;
         foe.targetPosition = dragoon.position;
+    }
+
+    @Test
+    public void holdPrimaryClearsWhileForcedFinishDonates() {
+        Outcome keep = run(false);
+        Outcome finish = run(true);
+
+        String score = "keep(hp=" + keep.dragoonHpEnd + ",clear=" + keep.clearTick
+            + ",w@" + keep.wDeathTick + ",z@" + keep.zDeathTick
+            + ",shots=" + keep.shots + ",switches=" + keep.targetSwitches
+            + ") vs finish(hp=" + finish.dragoonHpEnd + ",clear=" + finish.clearTick
+            + ",w@" + finish.wDeathTick + ",z@" + finish.zDeathTick
+            + ",shots=" + finish.shots + ",switches=" + finish.targetSwitches + ")";
+        assertTrue(keep.shots > 0 && finish.shots > 0,
+            "both arms must trade shots, a silent kite proves nothing: " + score);
+        assertTrue(keep.clearTick > 0 && keep.dragoonHpEnd > 0,
+            "holding the valid primary clears the pack with the dragoon alive: " + score);
+        assertTrue(finish.dragoonHpEnd < keep.dragoonHpEnd,
+            "forcing the target onto the wounded ling ends worse, not better: " + score);
+        assertTrue(finish.targetSwitches > keep.targetSwitches,
+            "the forcing churns against the validity gate instead of holding: " + score);
+    }
+
+    private static final class Outcome {
+        int dragoonHpEnd;
+        int clearTick = -1;
+        int wDeathTick = -1;
+        int zDeathTick = -1;
+        int shots;
+        int targetSwitches;
     }
 }

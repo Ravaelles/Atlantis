@@ -10,9 +10,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 import static tests.fakes.FakeUnitHelper.merge;
 
 /**

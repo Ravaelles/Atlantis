@@ -1,12 +1,12 @@
 package tests.unit;
 
+import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.combat.cluster.ClusterAnchor;
 import atlantis.combat.focus.MiddleFocusChoke;
 import atlantis.combat.focus.ProtossDefendFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
-import atlantis.battle.advance.focus.AFocusPoint;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Where the Protoss army stands on defend depends on the enemy (owner

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Tag("infra")
 public class HistoryTest extends AbstractTestWithUnits {
@@ -12,7 +13,7 @@ public class HistoryTest extends AbstractTestWithUnits {
     public void testLastHappenedAgo() {
         History history = new History();
 
-        assertEquals(null, history.last());
+        assertNull(history.last());
         assertEquals(99998765, history.lastHappenedAgo("eventA"));
 
         history.addNow("eventA");

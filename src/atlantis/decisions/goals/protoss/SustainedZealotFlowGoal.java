@@ -17,6 +17,10 @@ import atlantis.units.AUnitType;
  */
 public final class SustainedZealotFlowGoal implements Goal {
 
+    static boolean dragoonPosture(BoardState state) {
+        return state.hasCyberneticsCore && state.gas >= 50;
+    }
+
     @Override
     public String id() {
         return "sustained-zealot";
@@ -34,10 +38,6 @@ public final class SustainedZealotFlowGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.SUSTAINED_ARMY;
-    }
-
-    static boolean dragoonPosture(BoardState state) {
-        return state.hasCyberneticsCore && state.gas >= 50;
     }
 
     @Override

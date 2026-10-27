@@ -1,8 +1,8 @@
 package tests.acceptance;
 
 import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.ProductionRacePolicy;
+import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Acceptance tests for the join between Production V2 and the placement rewrite
@@ -35,11 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ProductionPlacementIntegrationTest {
 
-    /** A snapshot with nothing remarkable except what a test sets. */
+    /**
+     * A snapshot with nothing remarkable except what a test sets.
+     */
     private static DynamicGoals.GameSnapshot snapshot(int minerals, int supplyTotal) {
         DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
-                20, 1, supplyTotal, 4, supplyTotal, minerals, false,
-                0, 1, 0, false, false, 0).atBase(30, 30);
+            20, 1, supplyTotal, 4, supplyTotal, minerals, false,
+            0, 1, 0, false, false, 0).atBase(30, 30);
         // Fortification is a post-Forge concern (legacy gate): these pins
         // own the cannon behavior once a Forge stands, not the opening.
         snapshot.hasForge = true;
@@ -63,17 +64,17 @@ public class ProductionPlacementIntegrationTest {
         List<ProductionGoal> cannons = cannonGoals(snapshot(200, 20));
 
         assertFalse(cannons.isEmpty(),
-                "a base with no cannons must get a fortification goal from the dynamic layer");
+            "a base with no cannons must get a fortification goal from the dynamic layer");
     }
 
     @Test
     public void aBaseWithEnoughCannonsGetsNone() {
         DynamicGoals.GameSnapshot satisfied = new DynamicGoals.GameSnapshot(
-                20, 1, 20, 4, 20, 200, false,
-                0, 1, 5, false, false, 0).atBase(30, 30);
+            20, 1, 20, 4, 20, 200, false,
+            0, 1, 5, false, false, 0).atBase(30, 30);
 
         assertTrue(cannonGoals(satisfied).isEmpty(),
-                "a base at its expected cannon count must emit nothing");
+            "a base at its expected cannon count must emit nothing");
     }
 
     @Test
@@ -83,9 +84,8 @@ public class ProductionPlacementIntegrationTest {
         assertFalse(cannons.isEmpty(), "a rich base wants cannons");
 
         for (ProductionGoal goal : cannons) {
-            assertTrue(goal.placement().mode() == TargetPlacement.Mode.NEIGHBOURHOOD,
-                    "the policy says 'near this base'; where the tile is belongs to the planner, "
-                            + "not to the goal (03_PLACEMENT.md §5.3) - got " + goal.placement());
+            assertSame(goal.placement().mode(), TargetPlacement.Mode.NEIGHBOURHOOD, "the policy says 'near this base'; where the tile is belongs to the planner, "
+                + "not to the goal (03_PLACEMENT.md §5.3) - got " + goal.placement());
         }
     }
 
@@ -95,7 +95,7 @@ public class ProductionPlacementIntegrationTest {
         int rich = cannonGoals(snapshot(900, 60)).size();
 
         assertTrue(rich >= poor,
-                "a richer, larger base wants at least as many cannons: " + poor + " vs " + rich);
+            "a richer, larger base wants at least as many cannons: " + poor + " vs " + rich);
     }
 
     @Test
@@ -104,9 +104,9 @@ public class ProductionPlacementIntegrationTest {
         // caller that does not know the base position gets; fortification must then
         // stay quiet rather than guess a location.
         DynamicGoals.GameSnapshot noBase = new DynamicGoals.GameSnapshot(
-                20, 1, 20, 4, 20, 900, false, 0, 1, 0, false, false, 0);
+            20, 1, 20, 4, 20, 900, false, 0, 1, 0, false, false, 0);
 
         assertTrue(cannonGoals(noBase).isEmpty(),
-                "no base anchor means no fortification goals - a guessed location is worse than none");
+            "no base anchor means no fortification goals - a guessed location is worse than none");
     }
 }

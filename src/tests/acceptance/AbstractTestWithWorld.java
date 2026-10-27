@@ -5,14 +5,22 @@ import org.junit.jupiter.api.AfterEach;
 import tests.fakes.FakeUnit;
 
 public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
+    /**
+     * {@code units(one)} reads better than {@code new FakeUnit[]{one}} at a call
+     * site - and this is a value helper, not a third way to build a world.
+     */
+    protected static FakeUnit[] units(FakeUnit... units) {
+        return units;
+    }
+
+    // =========================================================
+
     @AfterEach
     public void tearDown() {
         super.tearDown();
 
         cleanUp();
     }
-
-    // =========================================================
 
     /**
      * Build the sample world - the 22 units of {@code mockOurUnitsArray()} and
@@ -42,14 +50,6 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
      */
     protected void world(int frames, FakeUnit[] ours, FakeUnit[] enemies, Runnable eachFrame) {
         buildWorld(frames, eachFrame, () -> ours, () -> enemies, options);
-    }
-
-    /**
-     * {@code units(one)} reads better than {@code new FakeUnit[]{one}} at a call
-     * site - and this is a value helper, not a third way to build a world.
-     */
-    protected static FakeUnit[] units(FakeUnit... units) {
-        return units;
     }
 
     // =========================================================

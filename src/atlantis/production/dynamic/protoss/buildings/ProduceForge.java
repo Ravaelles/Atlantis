@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.decisions.goals.protoss.ForgeGoal;
-import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Have;
 
 import static atlantis.units.AUnitType.Protoss_Forge;

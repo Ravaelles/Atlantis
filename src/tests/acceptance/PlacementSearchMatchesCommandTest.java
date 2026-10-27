@@ -10,8 +10,7 @@ import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The placement SEARCH and the build COMMAND must agree about a tile.
@@ -64,8 +63,8 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(probe), fakeEnemies(), () -> {
             assertFalse(
-                    MapTiles.canBuildHere(probe, PYLON, APosition.create(10, 10)),
-                    "the search must not accept a tile the engine refuses");
+                MapTiles.canBuildHere(probe, PYLON, APosition.create(10, 10)),
+                "the search must not accept a tile the engine refuses");
         });
     }
 
@@ -82,8 +81,8 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(pylonAlreadyThere), fakeEnemies(), () -> {
             assertTrue(
-                    BuildingTilesAreOccupied.check(APosition.create(20, 20), PYLON),
-                    "a Pylon already standing on the footprint is an obstacle");
+                BuildingTilesAreOccupied.check(APosition.create(20, 20), PYLON),
+                "a Pylon already standing on the footprint is an obstacle");
         });
     }
 
@@ -98,9 +97,9 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(builder), fakeEnemies(), () -> {
             assertFalse(
-                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
-                    "the builder is not an obstacle: the game places the building under it and "
-                            + "moves it onto the site. Counting it refused every mineral-line tile");
+                BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
+                "the builder is not an obstacle: the game places the building under it and "
+                    + "moves it onto the site. Counting it refused every mineral-line tile");
         });
     }
 
@@ -122,9 +121,9 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(builder, miningProbe), fakeEnemies(), () -> {
             assertTrue(
-                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
-                    "a worker that is NOT the builder is a real obstacle - this is the "
-                            + "mineral-line case the old buildings-only guard accepted");
+                BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
+                "a worker that is NOT the builder is a real obstacle - this is the "
+                    + "mineral-line case the old buildings-only guard accepted");
         });
     }
 
@@ -139,9 +138,9 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(someWorker), fakeEnemies(), () -> {
             assertTrue(
-                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, null),
-                    "before a builder is chosen there is nothing to exempt, so a unit on the "
-                            + "footprint makes the tile unusable");
+                BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, null),
+                "before a builder is chosen there is nothing to exempt, so a unit on the "
+                    + "footprint makes the tile unusable");
         });
     }
 
@@ -156,9 +155,9 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
         world(1, fakeOurs(builder, pylonAlreadyThere), fakeEnemies(), () -> {
             assertTrue(
-                    BuildingTilesAreOccupied.check(APosition.create(40, 40), PYLON, builder),
-                    "the builder exemption is for the builder UNIT, not for what already "
-                            + "stands there");
+                BuildingTilesAreOccupied.check(APosition.create(40, 40), PYLON, builder),
+                "the builder exemption is for the builder UNIT, not for what already "
+                    + "stands there");
         });
     }
 
@@ -180,9 +179,9 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
             if (viaMapTiles) {
                 assertTrue(viaGate,
-                        "the placement gate must not refuse a tile MapTiles accepted - "
-                                + "a finder that accepts and an issuer that refuses is the "
-                                + "defect this class exists to prevent");
+                    "the placement gate must not refuse a tile MapTiles accepted - "
+                        + "a finder that accepts and an issuer that refuses is the "
+                        + "defect this class exists to prevent");
             }
         });
     }
@@ -206,8 +205,7 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
             boolean first = MapTiles.canBuildHere(probe, PYLON, (APosition) farAway);
             boolean second = MapTiles.canBuildHere(probe, PYLON, (APosition) farAway);
 
-            assertTrue(first == second,
-                    "the same tile must not answer differently on two consecutive calls");
+            assertEquals(first, second, "the same tile must not answer differently on two consecutive calls");
         });
     }
 }

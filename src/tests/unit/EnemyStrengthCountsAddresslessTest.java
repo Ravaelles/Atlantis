@@ -3,8 +3,8 @@ package tests.unit;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.generic.Army;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Strength counts heads, not positions (owner live finding: 999 with a
@@ -36,7 +34,7 @@ public class EnemyStrengthCountsAddresslessTest extends WorldStubForTests {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
 
-        world(20, fakeOurs(nexus, dragoon), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             FakeUnit foe = fake(AUnitType.Protoss_Zealot, 90, 90);
@@ -63,7 +61,7 @@ public class EnemyStrengthCountsAddresslessTest extends WorldStubForTests {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
 
-        world(20, fakeOurs(nexus, dragoon), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             assertEquals(999, Army.strength(), "no intel at all reads 999");

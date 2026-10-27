@@ -11,9 +11,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-
 import atlantis.util.AMath;
-import static atlantis.units.AUnitType.*;
+
+import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
+import static atlantis.units.AUnitType.Protoss_Shuttle;
 
 public class ProduceReavers {
     private static int produced = 0;

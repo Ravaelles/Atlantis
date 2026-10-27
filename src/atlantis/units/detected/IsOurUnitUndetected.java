@@ -11,7 +11,7 @@ import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class IsOurUnitUndetected {
-    private static Cache<Boolean> cache = new Cache<>();
+    private static final Cache<Boolean> cache = new Cache<>();
 
     public static boolean check(AUnit unit) {
 //        if (unit.isDarkTemplar()) System.out.println(unit.typeWithUnitId() + ": " + unit.isCloaked() + " " + unit.isBurrowed());

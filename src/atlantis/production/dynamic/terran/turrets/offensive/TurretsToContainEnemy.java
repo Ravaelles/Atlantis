@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.terran.turrets.offensive;
 
 import atlantis.architecture.Commander;
-import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -17,11 +17,6 @@ public class TurretsToContainEnemy extends Commander {
 
     private static AChoke enemyMainChoke;
     private static HasPosition alphaCenter;
-
-    @Override
-    public boolean applies() {
-        return turretNeeded();
-    }
 
     private static boolean turretNeeded() {
         return We.terran()
@@ -44,6 +39,11 @@ public class TurretsToContainEnemy extends Commander {
 
     private static HasPosition positionForNext() {
         return alphaCenter.translateTilesTowards(enemyMainChoke, 3);
+    }
+
+    @Override
+    public boolean applies() {
+        return turretNeeded();
     }
 
     @Override

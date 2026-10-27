@@ -7,8 +7,7 @@ import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Where the search for the FIRST Pylon starts looking.
@@ -81,9 +80,9 @@ public class FirstPylonOriginTest extends WorldStubForTests {
 
             assertTrue(
                 nexus.distTo(origin) > 1.0,
-                    "the first-Pylon search must not start on the Nexus - measured 2026-10-10: "
-                            + "it returned distBase=0.84, and every candidate was therefore an "
-                            + "occupied tile, so no Pylon was ever built");
+                "the first-Pylon search must not start on the Nexus - measured 2026-10-10: "
+                    + "it returned distBase=0.84, and every candidate was therefore an "
+                    + "occupied tile, so no Pylon was ever built");
         });
     }
 
@@ -103,10 +102,8 @@ public class FirstPylonOriginTest extends WorldStubForTests {
 
             assertNotNull(origin, "precondition");
 
-            assertTrue(
-                    !origin.isOutOfBounds(),
-                    "an origin outside the map cannot be searched from - the old chain hit "
-                            + "exactly this (raw=[-36,88]) and silently degraded to the base");
+            assertFalse(origin.isOutOfBounds(), "an origin outside the map cannot be searched from - the old chain hit "
+                + "exactly this (raw=[-36,88]) and silently degraded to the base");
         });
     }
 
@@ -125,7 +122,7 @@ public class FirstPylonOriginTest extends WorldStubForTests {
             APosition origin = PylonPosition.nearToPositionForFirstPylon();
 
             assertNotNull(origin, "a corner base must not break the origin computation");
-            assertTrue(!origin.isOutOfBounds(), "the origin must stay on the map");
+            assertFalse(origin.isOutOfBounds(), "the origin must stay on the map");
         });
     }
 

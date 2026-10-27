@@ -26,6 +26,31 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
     // =========================================================
 
     /**
+     * The living units of {@code units}, the way the engine would list them.
+     */
+    private static List<AUnit> living(FakeUnit[] units) {
+        List<AUnit> alive = new ArrayList<>();
+        if (units == null) {
+            return alive;
+        }
+
+        for (FakeUnit unit : units) {
+            if (unit != null && unit.isAlive()) {
+                alive.add(unit);
+            }
+        }
+
+        return alive;
+    }
+
+    /**
+     * A static mock left registered leaks into whatever test runs next in the
+     * same thread (e.g. TestWithUnits fails with "static mocking is already
+     * registered"). tearDown only resets stubs, it does not unregister, so
+     * the world releases its mocks explicitly here.
+     */
+
+    /**
      * The one place a world is actually built and stepped. Tests never call this:
      * {@link AbstractTestWithWorld#world(int, Runnable)} and
      * {@link AbstractTestWithWorld#world(int, FakeUnit[], FakeUnit[], Runnable)}
@@ -116,30 +141,6 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
         // documents exactly this hazard and nothing was calling it - the same leak existed in
         // production until `OnGameStarted` was made to reset it.
         atlantis.information.enemy.UnitsArchive.reset();
-    }
-
-    /**
-     * A static mock left registered leaks into whatever test runs next in the
-     * same thread (e.g. TestWithUnits fails with "static mocking is already
-     * registered"). tearDown only resets stubs, it does not unregister, so
-     * the world releases its mocks explicitly here.
-     */
-    /**
-     * The living units of {@code units}, the way the engine would list them.
-     */
-    private static List<AUnit> living(FakeUnit[] units) {
-        List<AUnit> alive = new ArrayList<>();
-        if (units == null) {
-            return alive;
-        }
-
-        for (FakeUnit unit : units) {
-            if (unit != null && unit.isAlive()) {
-                alive.add(unit);
-            }
-        }
-
-        return alive;
     }
 
     private void closeStaticMocks() {

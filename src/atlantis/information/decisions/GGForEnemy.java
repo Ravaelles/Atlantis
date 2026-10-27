@@ -4,13 +4,13 @@ import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.Army;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
 
 public class GGForEnemy extends Commander {

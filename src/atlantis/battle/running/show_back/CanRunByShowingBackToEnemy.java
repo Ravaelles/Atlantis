@@ -30,9 +30,7 @@ public class CanRunByShowingBackToEnemy {
         if (!unit.isWorker() && !unit.isDragoon()) return false;
 //        if (unit.friendsNear().combatUnits().atMost(12)) return false;
 
-        if (unit.meleeEnemiesNearCount(3) >= 4) return true;
-
-        return false;
+        return unit.meleeEnemiesNearCount(3) >= 4;
     }
 
     private static Decision forWorker(AUnit unit, AUnit from) {

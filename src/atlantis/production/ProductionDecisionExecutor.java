@@ -2,8 +2,8 @@ package atlantis.production;
 
 import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.DecisionExecutor;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnit;

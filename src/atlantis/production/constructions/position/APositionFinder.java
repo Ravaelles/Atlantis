@@ -13,9 +13,9 @@ import atlantis.production.constructions.position.terran.TerranPositionFinder;
 import atlantis.production.constructions.position.zerg.ZergPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.CacheKey;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 
 public class APositionFinder {
     public static Cache<APosition> cache = new Cache<>();

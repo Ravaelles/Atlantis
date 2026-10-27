@@ -1,7 +1,10 @@
 package tests.unit.helpers;
 
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.combat.ArmyContact;
+import atlantis.core.world.Worlds;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
@@ -15,10 +18,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import tests.fakes.FakeBullets;
 import tests.fakes.FakeUnit;
-import atlantis.battle.cluster.Missions;
-import atlantis.core.world.Worlds;
-
-import atlantis.battle.cluster.Alpha;
 
 public class ClearAllCaches {
     /**

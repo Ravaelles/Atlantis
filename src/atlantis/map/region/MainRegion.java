@@ -22,7 +22,9 @@ public class MainRegion {
         return mainRegion;
     }
 
-    /** Test seam: worlds come and go, the cached answer must not outlive one. */
+    /**
+     * Test seam: worlds come and go, the cached answer must not outlive one.
+     */
     public static void clearForTests() {
         mainRegion = null;
     }

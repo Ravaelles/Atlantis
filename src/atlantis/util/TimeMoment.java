@@ -2,7 +2,7 @@ package atlantis.util;
 
 
 public class TimeMoment {
-    private int frames;
+    private final int frames;
 
     public TimeMoment(int frames) {
         this.frames = frames;

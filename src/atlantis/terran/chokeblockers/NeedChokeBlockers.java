@@ -1,24 +1,24 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.Atlantis;
-import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 import atlantis.util.Vector;
 import atlantis.util.We;
 
 public class NeedChokeBlockers {
-    private static AChoke choke;
     public static Vector translationVectorInRelationToChoke = null;
+    private static AChoke choke;
 
     public static boolean check() {
         if (We.protoss() && Enemy.zerg()) return false;

@@ -24,7 +24,9 @@ import java.util.Map;
  */
 public final class HoldTwin {
 
-    /** Heartbeat while the verdict does not change. */
+    /**
+     * Heartbeat while the verdict does not change.
+     */
     private static final int HEARTBEAT_FRAMES = 150;
 
     private static final Map<Integer, String> lastVerdict = new HashMap<>();

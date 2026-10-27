@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Blocked supply: nothing trains without it. */
+/**
+ * Blocked supply: nothing trains without it.
+ */
 public final class SupplyPylonGoal implements Goal {
 
     @Override

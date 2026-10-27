@@ -44,7 +44,9 @@ import java.util.Map;
  */
 public final class GhostAdvance {
 
-    /** Closer than this the ghost is reached: hold, never jitter on it. */
+    /**
+     * Closer than this the ghost is reached: hold, never jitter on it.
+     */
     public static final double REACHED_TILES = 2.0;
 
     /**
@@ -55,7 +57,9 @@ public final class GhostAdvance {
      */
     public static final double LOST_TILES = 12.0;
 
-    /** The scout walks ahead; the line creeps behind it. */
+    /**
+     * The scout walks ahead; the line creeps behind it.
+     */
     public static final double SCOUT_STEP_TILES = 3.0;
 
     /**
@@ -66,10 +70,14 @@ public final class GhostAdvance {
      */
     public static final double LINE_STEP_TILES = 0.5;
 
-    /** Still frames between line steps: step, stand, step. */
+    /**
+     * Still frames between line steps: step, stand, step.
+     */
     public static final int LINE_PAUSE_FRAMES = 3;
 
-    /** The line holds this long to let the scout go first, then follows. */
+    /**
+     * The line holds this long to let the scout go first, then follows.
+     */
     public static final int HEAD_START_FRAMES = 24;
 
     /**
@@ -83,7 +91,9 @@ public final class GhostAdvance {
      */
     public static final int UMS_SCOUT_RELEASE_FRAMES = 24;
 
-    /** No position change this long while creeping: give up, rally elsewhere. */
+    /**
+     * No position change this long while creeping: give up, rally elsewhere.
+     */
     public static final int STUCK_FRAMES = 100;
 
     /**
@@ -256,11 +266,8 @@ public final class GhostAdvance {
         int now = atlantis.game.A.now();
         Integer lastFrame = lastCreepFrame.get(unit.id());
         APosition lastPos = lastCreepPos.get(unit.id());
-        if (lastFrame != null && lastPos != null
-            && now - lastFrame >= STUCK_FRAMES && unit.distTo(lastPos) < 0.5) {
-            return true;
-        }
-        return false;
+        return lastFrame != null && lastPos != null
+            && now - lastFrame >= STUCK_FRAMES && unit.distTo(lastPos) < 0.5;
     }
 
     private static void noteProgress(AUnit unit) {
@@ -317,7 +324,9 @@ public final class GhostAdvance {
         }
     }
 
-    /** Move tag for the creep: the scout walks out, the line follows. */
+    /**
+     * Move tag for the creep: the scout walks out, the line follows.
+     */
     public static Behavior advanceTagFor(AUnit unit) {
         return isVanguard(unit) ? Behavior.GHOST_SCOUT : Behavior.GHOST_CREEP;
     }
@@ -460,7 +469,9 @@ public final class GhostAdvance {
         return atlantis.game.A.isUms() && atlantis.game.A.now() < UMS_SCOUT_RELEASE_FRAMES;
     }
 
-    /** Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait. */
+    /**
+     * Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait.
+     */
     public static boolean isVanguard(AUnit unit) {
         if (unit == null) return false;
 

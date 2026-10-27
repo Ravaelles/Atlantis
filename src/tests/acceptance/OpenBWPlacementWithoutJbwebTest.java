@@ -44,6 +44,68 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
         return Race.Protoss;
     }
 
+    @AfterEach
+    public void restoreHarnessTiles() {
+        FakeMapTiles.installAsSource();
+    }
+
+    @Test
+    public void aPylonCanBePlacedOnOpenBWWhenEveryTileIsWalkableAndBuildable() {
+        // walkable, buildable - the ordinary case that was refused on OpenBW.
+        // (JBWEB is not initialized in the stub world, which is exactly the OpenBW
+        // condition this path exists for.)
+        MapTiles.useSource(new EngineSourceRefusingComposite(true, true));
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            APosition free = APosition.create(26, 23);
+
+            assertTrue(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, free),
+                "a free tile whose covered tiles are walkable and buildable must be placeable - "
+                    + "this is the first Pylon the bot could not place on OpenBW");
+        });
+    }
+
+    @Test
+    public void anUnwalkableTileIsNotPlaceable() {
+        MapTiles.useSource(new EngineSourceRefusingComposite(false, true));
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
+                "a building cannot stand on unwalkable terrain");
+        });
+    }
+
+    @Test
+    public void anUnbuildableTileIsNotPlaceable() {
+        MapTiles.useSource(new EngineSourceRefusingComposite(true, false));
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
+                "a non-buildable tile is not placeable");
+        });
+    }
+
+    @Test
+    public void anOccupiedTileIsStillRefusedOnTheOpenBWPath() {
+        // The OpenBW tile-level fallback must not become a licence to build on top
+        // of a building: the occupancy guard runs before it.
+        MapTiles.useSource(new EngineSourceRefusingComposite(true, true));
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Gateway, 26, 23),
+            fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+            assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
+                "an occupied tile must stay unbuildable even on the OpenBW path");
+        });
+    }
+
     /**
      * The engine source (so the map-data fallback applies) that refuses the
      * composite query - the OpenBW symptom - and reports tile qualities from this
@@ -80,12 +142,8 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
             // The engine contract: with alsoCheckBuildings, a tile a building stands
             // on is not buildable. Without it, only the terrain is answered. Modelling
             // that is what makes the occupied case testable on this path.
-            if (alsoCheckBuildings
-                && atlantis.units.BuildingTilesAreOccupied.check(at.position(), AUnitType.Protoss_Pylon)) {
-                return false;
-            }
-
-            return true;
+            return !alsoCheckBuildings
+                || !atlantis.units.BuildingTilesAreOccupied.check(at.position(), AUnitType.Protoss_Pylon);
         }
 
         @Override
@@ -93,7 +151,9 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
             return true;
         }
 
-        /** The composite engine answer: unreliable on OpenBW, so it refuses. */
+        /**
+         * The composite engine answer: unreliable on OpenBW, so it refuses.
+         */
         @Override
         public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
             return false;
@@ -103,67 +163,5 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
         public boolean spawnsFromMapData() {
             return true;
         }
-    }
-
-    @AfterEach
-    public void restoreHarnessTiles() {
-        FakeMapTiles.installAsSource();
-    }
-
-    @Test
-    public void aPylonCanBePlacedOnOpenBWWhenEveryTileIsWalkableAndBuildable() {
-        // walkable, buildable - the ordinary case that was refused on OpenBW.
-        // (JBWEB is not initialized in the stub world, which is exactly the OpenBW
-        // condition this path exists for.)
-        MapTiles.useSource(new EngineSourceRefusingComposite(true, true));
-
-        world(1, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    APosition free = APosition.create(26, 23);
-
-                    assertTrue(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, free),
-                            "a free tile whose covered tiles are walkable and buildable must be placeable - "
-                                    + "this is the first Pylon the bot could not place on OpenBW");
-                });
-    }
-
-    @Test
-    public void anUnwalkableTileIsNotPlaceable() {
-        MapTiles.useSource(new EngineSourceRefusingComposite(false, true));
-
-        world(1, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
-                            "a building cannot stand on unwalkable terrain");
-                });
-    }
-
-    @Test
-    public void anUnbuildableTileIsNotPlaceable() {
-        MapTiles.useSource(new EngineSourceRefusingComposite(true, false));
-
-        world(1, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
-                            "a non-buildable tile is not placeable");
-                });
-    }
-
-    @Test
-    public void anOccupiedTileIsStillRefusedOnTheOpenBWPath() {
-        // The OpenBW tile-level fallback must not become a licence to build on top
-        // of a building: the occupancy guard runs before it.
-        MapTiles.useSource(new EngineSourceRefusingComposite(true, true));
-
-        world(1, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Gateway, 26, 23),
-                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
-                    assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
-                            "an occupied tile must stay unbuildable even on the OpenBW path");
-                });
     }
 }

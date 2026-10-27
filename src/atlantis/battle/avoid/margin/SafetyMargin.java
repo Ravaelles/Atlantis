@@ -1,10 +1,10 @@
 package atlantis.battle.avoid.margin;
 
 import atlantis.battle.avoid.margin.special.SafetyMarginAgainstSpecial;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 public class SafetyMargin {
 

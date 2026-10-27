@@ -48,6 +48,25 @@ public class LauncherBuildsTheJarTest {
         return Paths.get(home, ".scbw", "bots", "AtlantisP", "AI", "Atlantis.jar");
     }
 
+    private static void assertParsesAsBash(Path script, String label) throws Exception {
+        Process p = new ProcessBuilder("bash", "-n", script.toAbsolutePath().toString())
+            .redirectErrorStream(true).start();
+        // Java 8: InputStream.readAllBytes() is Java 9+. Drain the stream by
+        // hand - a Java 9+ API in a test breaks the GAME JAR build, because the
+        // whole tree is compiled in one javac invocation (CONVENTIONS §16).
+        byte[] chunk = new byte[4096];
+        while (p.getInputStream().read(chunk) != -1) {
+            // drain
+        }
+        assertEquals(0, p.waitFor(), label + " must parse as bash");
+    }
+
+    private static String read(Path path) throws IOException {
+        assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
+
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    }
+
     @Test
     public void workerCompletionCallbackClassesArePresentInProductionSources() throws IOException {
         // BATTLE CUTOVER: the onUnitComplete squad-assignment chain is
@@ -63,7 +82,7 @@ public class LauncherBuildsTheJarTest {
 
         String listener = read(Paths.get("src/atlantis/game/listeners/OnOurNewUnitCompleted.java"));
         assertTrue(listener.contains("squad assignment is deleted"),
-                "the completion listener must name the cutover, not assign silently");
+            "the completion listener must name the cutover, not assign silently");
     }
 
     @Test
@@ -71,12 +90,12 @@ public class LauncherBuildsTheJarTest {
         String script = read(WINE_FULL);
 
         assertTrue(script.contains("build-bot-jar.sh"),
-                "run-wine-full.sh must rebuild the jar it plays - a launcher that"
-                        + " starts a stale jar makes every test of new code meaningless");
+            "run-wine-full.sh must rebuild the jar it plays - a launcher that"
+                + " starts a stale jar makes every test of new code meaningless");
         assertTrue(script.contains("BUILD=0"),
-                "there must be an escape hatch for a deliberately frozen jar");
+            "there must be an escape hatch for a deliberately frozen jar");
         assertTrue(script.contains("Building the bot jar from source"),
-                "the rebuild must be visible in the log, not silent");
+            "the rebuild must be visible in the log, not silent");
     }
 
     @Test
@@ -97,8 +116,8 @@ public class LauncherBuildsTheJarTest {
         assertTrue(rebuild > 0, "no rebuild step found");
         assertTrue(launch > 0, "no game launch found");
         assertTrue(rebuild < launch,
-                "the jar must be rebuilt BEFORE StarCraft is started"
-                        + " (rebuild at char " + rebuild + ", launch at " + launch + ")");
+            "the jar must be rebuilt BEFORE StarCraft is started"
+                + " (rebuild at char " + rebuild + ", launch at " + launch + ")");
     }
 
     @Test
@@ -116,11 +135,11 @@ public class LauncherBuildsTheJarTest {
         String openbw = read(OPENBW_E2E);
 
         assertTrue(build.contains("ATLANTIS_SOURCE_FINGERPRINT"),
-                "the build must tag the jar with the source fingerprint");
+            "the build must tag the jar with the source fingerprint");
         assertTrue(check.contains("ATLANTIS_SOURCE_FINGERPRINT"),
-                "the checker must read the tag it is comparing against");
+            "the checker must read the tag it is comparing against");
         assertTrue(openbw.contains("check-jar-freshness.sh"),
-                "the OpenBW runner must check the jar before it plays");
+            "the OpenBW runner must check the jar before it plays");
     }
 
     @Test
@@ -133,13 +152,13 @@ public class LauncherBuildsTheJarTest {
 
         assertTrue(exitGuard >= 0, "the runner must fail immediately when the bot exits non-zero");
         assertTrue(preservedExit > exitGuard && preservedExit < scenarioAssertions,
-                "preserve the bot's exit code before any scenario assertion can pass a partial log");
+            "preserve the bot's exit code before any scenario assertion can pass a partial log");
         assertTrue(scenarioAssertions > exitGuard,
-                "a timeout/crash must not proceed to checks that can report a partial log as a pass");
+            "a timeout/crash must not proceed to checks that can report a partial log as a pass");
         assertTrue(passMessage > scenarioAssertions,
-                "the pass message belongs only after the scenario assertions");
+            "the pass message belongs only after the scenario assertions");
         assertTrue(preservedExit >= 0,
-                "preserve the bot's timeout/crash exit code for CI and callers");
+            "preserve the bot's timeout/crash exit code for CI and callers");
     }
 
     @Test
@@ -152,8 +171,8 @@ public class LauncherBuildsTheJarTest {
         Files.write(fakeJar, new byte[]{0x50, 0x4b, 0x03, 0x04}); // a ZIP header, no tag
 
         Process p = new ProcessBuilder("bash", "scripts/check-jar-freshness.sh",
-                fakeJar.toAbsolutePath().toString())
-                .redirectErrorStream(true).start();
+            fakeJar.toAbsolutePath().toString())
+            .redirectErrorStream(true).start();
         assertTrue(p.waitFor() != 0, "an untagged jar must not pass the freshness check");
     }
 
@@ -161,24 +180,5 @@ public class LauncherBuildsTheJarTest {
     public void scriptParses() throws Exception {
         assertParsesAsBash(WINE_FULL, "run-wine-full.sh");
         assertParsesAsBash(OPENBW_E2E, "run-openbw-e2e.sh");
-    }
-
-    private static void assertParsesAsBash(Path script, String label) throws Exception {
-        Process p = new ProcessBuilder("bash", "-n", script.toAbsolutePath().toString())
-                .redirectErrorStream(true).start();
-        // Java 8: InputStream.readAllBytes() is Java 9+. Drain the stream by
-        // hand - a Java 9+ API in a test breaks the GAME JAR build, because the
-        // whole tree is compiled in one javac invocation (CONVENTIONS §16).
-        byte[] chunk = new byte[4096];
-        while (p.getInputStream().read(chunk) != -1) {
-            // drain
-        }
-        assertEquals(0, p.waitFor(), label + " must parse as bash");
-    }
-
-    private static String read(Path path) throws IOException {
-        assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
-
-        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

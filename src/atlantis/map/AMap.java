@@ -10,8 +10,8 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.LogLevel;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
@@ -23,16 +23,28 @@ import java.util.ArrayList;
  * next base or returning important choke point near the main base.
  */
 public class AMap {
-    protected static BWEM bwem = null;
+    /**
+     * Exit code for "BWEM could not be built on OpenBW". Non-zero so the runner
+     * reports a failed run; kept distinct from 1 so a log or a CI step can tell this
+     * apart from a generic crash.
+     */
+    public static final int FAIL_EXIT_CODE_BWEM_MISSING = 42;
 //    private static final BWTA bwta = null;
-
-    private static Cache<Object> cache = new Cache<>();
+    /**
+     * Exit code for "BWEM built, but its contents are empty/unusable". Separate from
+     * {@link #FAIL_EXIT_CODE_BWEM_MISSING} because the two need different fixes: a
+     * missing BWEM means the library failed, an empty one means it ran and produced
+     * nothing (wrong map data, wrong start locations).
+     */
+    public static final int FAIL_EXIT_CODE_BWEM_EMPTY = 43;
     //    private static List<ARegion> cached_regions;
 //    private static List<AChoke> cached_chokes = null;
 //    private static AChoke cached_mainBaseChoke = null;
 //    private static Map<String, Positions> regionsToPolygonPoints = new HashMap<>();
 
     // =========================================================
+    protected static BWEM bwem = null;
+    private static final Cache<Object> cache = new Cache<>();
 
     @SuppressWarnings("deprecation")
     public static void initMapAnalysis() {
@@ -119,21 +131,6 @@ public class AMap {
 
         System.exit(FAIL_EXIT_CODE_BWEM_MISSING);
     }
-
-    /**
-     * Exit code for "BWEM could not be built on OpenBW". Non-zero so the runner
-     * reports a failed run; kept distinct from 1 so a log or a CI step can tell this
-     * apart from a generic crash.
-     */
-    public static final int FAIL_EXIT_CODE_BWEM_MISSING = 42;
-
-    /**
-     * Exit code for "BWEM built, but its contents are empty/unusable". Separate from
-     * {@link #FAIL_EXIT_CODE_BWEM_MISSING} because the two need different fixes: a
-     * missing BWEM means the library failed, an empty one means it ran and produced
-     * nothing (wrong map data, wrong start locations).
-     */
-    public static final int FAIL_EXIT_CODE_BWEM_EMPTY = 43;
 
     /**
      * Asserts that the map model is actually usable before the game relies on it.

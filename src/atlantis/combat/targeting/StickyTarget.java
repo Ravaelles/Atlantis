@@ -23,13 +23,14 @@ import atlantis.units.AUnit;
  */
 public final class StickyTarget {
 
-    private StickyTarget() {
-    }
-
+    /**
+     * Frames a vanished target is still held (fog flicker, not loss).
+     */
+    public static final int UNSEEN_GRACE_FRAMES = 48;
     private static final java.util.Map<Integer, Integer> lastSeenVisible = new java.util.HashMap<>();
 
-    /** Frames a vanished target is still held (fog flicker, not loss). */
-    public static final int UNSEEN_GRACE_FRAMES = 48;
+    private StickyTarget() {
+    }
 
     public static void clearForTests() {
         lastSeenVisible.clear();
@@ -42,7 +43,9 @@ public final class StickyTarget {
         if (current == null || !current.isAlive()) return null;
         if (!current.isDetected()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
-        if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
+
+        if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles())
+            return null;
 
         if (!current.isVisibleUnitOnMap()) {
             Integer seen = lastSeenVisible.get(current.id());

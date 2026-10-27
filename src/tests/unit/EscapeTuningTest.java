@@ -46,7 +46,7 @@ public class EscapeTuningTest {
 
         BattleCommander.reset();
         assertEquals(10.0, EscapeTuning.current().getStaticWeight(),
-                "per-game reset restores defaults before the tuner installs its snapshot");
+            "per-game reset restores defaults before the tuner installs its snapshot");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class EscapeTuningTest {
         assertEquals(5.0, base.getEnemyWeight(), "deriving must not mutate the source");
         assertEquals(6.0, derived.getEnemyWeight());
         assertEquals(base.getStaticWeight(), derived.getStaticWeight(),
-                "a derived snapshot carries every untouched value along");
+            "a derived snapshot carries every untouched value along");
     }
 
     @Test

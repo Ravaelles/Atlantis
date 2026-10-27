@@ -15,10 +15,14 @@ import atlantis.units.AUnit;
  */
 public final class ZealotWithdraw {
 
-    /** Missing hp+shields at or below this is not a wound: hold contact. */
+    /**
+     * Missing hp+shields at or below this is not a wound: hold contact.
+     */
     public static final double UNWOUND_HP = 10.0;
 
-    /** Spent weapon: stepping back costs no DPS (same bar as the kite gate). */
+    /**
+     * Spent weapon: stepping back costs no DPS (same bar as the kite gate).
+     */
     public static final int SPENT_COOLDOWN_FRAMES = 7;
 
     private ZealotWithdraw() {

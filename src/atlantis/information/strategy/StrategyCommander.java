@@ -3,11 +3,10 @@ package atlantis.information.strategy;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.response.RaceStrategyResponseFactory;
-
 import atlantis.information.strategy.terran.TerranStrategies;
-import atlantis.game.player.Enemy;
 
 public class StrategyCommander extends Commander {
 

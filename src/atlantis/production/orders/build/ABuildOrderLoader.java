@@ -11,13 +11,12 @@ import java.util.ArrayList;
 
 
 public class ABuildOrderLoader {
-    final int NUMBER_OF_COLUMNS_IN_FILE = 2;
-
     /**
      * Directory that contains build orders.
      */
     public static final String BUILD_ORDERS_PATH = "AI/build_orders/";
     public static final String BUILD_ORDERS_PATH_FALLBACK = "read/build_orders/";
+    final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
     // =========================================================
 

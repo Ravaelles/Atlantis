@@ -1,8 +1,8 @@
 package atlantis.combat.focus;
 
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.combat.cluster.ClusterRally;
 import atlantis.battle.cluster.Missions;
+import atlantis.combat.cluster.ClusterRally;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
@@ -38,17 +38,12 @@ import atlantis.util.cache.Cache;
  */
 public final class ProtossDefendFocusPoint {
 
-    private ProtossDefendFocusPoint() {
-    }
-
     private static final Cache<AFocusPoint> CACHE = new Cache<>();
-
     /**
      * The focus re-derives about twice per second; preserved verbatim
      * cadence, tune only with a measured cadence (CONVENTIONS §31).
      */
     private static final int FOCUS_TTL_FRAMES = 29;
-
     /**
      * A Protoss army of this size never holds the main choke: with room
      * to fight it stages at the middle choke instead, falling to the
@@ -56,7 +51,6 @@ public final class ProtossDefendFocusPoint {
      * stays home, within worker-help range of the main.
      */
     private static final int MIDDLE_CHOKE_MIN_ARMY = 6;
-
     /**
      * Absolute main-choke ban (owner order, repeated: an army with more
      * than this many Dragoons stages at the middle, never at the main -
@@ -65,6 +59,9 @@ public final class ProtossDefendFocusPoint {
      * floor explicitly so the ban survives refactors of the army rule.
      */
     private static final int DRAGOON_BAN_MAIN_CHOKE = 10;
+
+    private ProtossDefendFocusPoint() {
+    }
 
     /**
      * The absolute ban read for other seams: a Protoss dragoon mass this
@@ -84,7 +81,7 @@ public final class ProtossDefendFocusPoint {
 
     public static AFocusPoint focusPoint() {
         try {
-            return (AFocusPoint) CACHE.get(
+            return CACHE.get(
                 "focusPoint",
                 FOCUS_TTL_FRAMES,
                 () -> {
@@ -189,8 +186,7 @@ public final class ProtossDefendFocusPoint {
                     }
                 }
             );
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }

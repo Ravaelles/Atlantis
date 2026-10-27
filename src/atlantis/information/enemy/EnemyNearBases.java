@@ -10,7 +10,7 @@ import atlantis.util.cache.Cache;
 
 public class EnemyNearBases {
     public static final int DIST_CONSIDERED_CLOSE_TO_BASE = 8;
-    private static Cache<Object> cache = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
     private static int maxDist;
 
     public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
@@ -53,9 +53,7 @@ public class EnemyNearBases {
     }
 
     private static boolean verifyEnemy(AUnit enemy) {
-        if (enemy.isZergling() && enemy.friendsNear().countInRadius(8, enemy) == 0) return false;
-
-        return true;
+        return !enemy.isZergling() || enemy.friendsNear().countInRadius(8, enemy) != 0;
     }
 
     private static AUnit isNearBase(AUnit base) {

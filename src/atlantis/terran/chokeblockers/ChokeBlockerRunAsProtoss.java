@@ -1,10 +1,10 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class ChokeBlockerRunAsProtoss extends Manager {

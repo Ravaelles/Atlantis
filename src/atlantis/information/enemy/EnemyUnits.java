@@ -33,10 +33,12 @@ public class EnemyUnits {
         );
     }
 
-    /** Known enemies whether or not their address survived (NEXT #215):
+    /**
+     * Known enemies whether or not their address survived (NEXT #215):
      * strength counts heads, not positions - an addressless fogged unit
      * still fields an army. Targeting keeps using discovered() (it needs
-     * positions); only the sums read here. */
+     * positions); only the sums read here.
+     */
     public static Selection discoveredIncludingAddressless() {
         return Select.enemy()
             .notDeadMan()

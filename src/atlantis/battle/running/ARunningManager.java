@@ -17,15 +17,14 @@ public class ARunningManager {
 //    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
 
     protected final AUnit unit;
+    protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
+    //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
+    protected final RunToPositionFinder runPositionFinder = new RunToPositionFinder(this);
     protected HasPosition runTo = null;
     protected AUnit runningFromUnit = null;
     protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
     protected String _lastRunMode = "_none_";
-
-    protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
-    //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
-    protected final RunToPositionFinder runPositionFinder = new RunToPositionFinder(this);
 
     // =========================================================
 
@@ -146,22 +145,15 @@ public class ARunningManager {
         }
 
         AUnit friend = unit.friendsNear().groundUnits().mostDistantTo(unit);
-        if (friend != null && unit.move(friend, Actions.RUN_ENEMY, "CantRun-GoToFriend", false)) {
-            return true;
-        }
-
-        return false;
+        return friend != null && unit.move(friend, Actions.RUN_ENEMY, "CantRun-GoToFriend", false);
     }
 
     private boolean verifyRunFromPosition(HasPosition runAwayFrom) {
-        if (runAwayFrom == null || runAwayFrom.position() == null) {
-//            System.err.println("Null runAwayFrom in verifyRunFromPosition: " + runAwayFrom);
-//            stopRunning();
-//            throw new RuntimeException("Null unit to run from");
-            return false;
-        }
+        //            System.err.println("Null runAwayFrom in verifyRunFromPosition: " + runAwayFrom);
+        //            stopRunning();
+        //            throw new RuntimeException("Null unit to run from");
 
-        return true;
+        return runAwayFrom != null && runAwayFrom.position() != null;
     }
 
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
@@ -200,7 +192,8 @@ public class ARunningManager {
 
         if (unit.move(runTo, action, null, false)) {
             // Update last time run order was issued
-            if (unit.unitState().getLastStartedRunning() <= unit.unitState().getLastStoppedRunning()) unit.unitState().setLastStartedRunning(A.now());
+            if (unit.unitState().getLastStartedRunning() <= unit.unitState().getLastStoppedRunning())
+                unit.unitState().setLastStartedRunning(A.now());
 
             // Make all other units very close to it run as well
             if (allowedToNotifyNearUnitsToMakeSpace) {

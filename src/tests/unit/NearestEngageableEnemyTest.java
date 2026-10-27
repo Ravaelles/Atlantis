@@ -9,10 +9,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The cluster walked past enemies to the anchor because nothing ever set
@@ -53,7 +50,7 @@ public class NearestEngageableEnemyTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             AUnit target = ASquadTargeting.nearestEngageableEnemy(zealot, 9);
-            assertTrue(target != null, "a Zealot with enemies at 2-4 tiles must engage");
+            assertNotNull(target, "a Zealot with enemies at 2-4 tiles must engage");
             assertSame(ling, target, "nearest first - the squad-target path keeps focus order");
         });
     }

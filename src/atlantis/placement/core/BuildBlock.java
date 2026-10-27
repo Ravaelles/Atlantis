@@ -24,38 +24,9 @@ import java.util.List;
  */
 public final class BuildBlock {
 
-    /** One template's geometry. Offsets are from the block's top-left. */
-    public static final class Spec {
-        public final String name;
-        public final int width;
-        public final int height;
-        public final int pylonDx;
-        public final int pylonDy;
-        final int[][] small;
-        final int[][] medium;
-        final int[][] mediumNoExit;
-        final int[][] large;
-
-        public Spec(
-            String name, int width, int height, int pylonDx, int pylonDy,
-            int[][] small, int[][] medium, int[][] mediumNoExit, int[][] large
-        ) {
-            this.name = name;
-            this.width = width;
-            this.height = height;
-            this.pylonDx = pylonDx;
-            this.pylonDy = pylonDy;
-            this.small = small;
-            this.medium = medium;
-            this.mediumNoExit = mediumNoExit;
-            this.large = large;
-        }
-    }
-
     private final Spec spec;
     private final int left;
     private final int top;
-
     public BuildBlock(Spec spec, int left, int top) {
         this.spec = spec;
         this.left = left;
@@ -107,7 +78,9 @@ public final class BuildBlock {
         grid.markUsed(left, top, width(), height());
     }
 
-    /** Every candidate slot this template offers, as absolute tiles. */
+    /**
+     * Every candidate slot this template offers, as absolute tiles.
+     */
     public List<BuildLocation> locations() {
         List<BuildLocation> all = new ArrayList<>();
         add(all, spec.small, 2, 2, false, true);
@@ -138,5 +111,35 @@ public final class BuildBlock {
     @Override
     public String toString() {
         return spec.name + "(" + left + "," + top + ")";
+    }
+
+    /**
+     * One template's geometry. Offsets are from the block's top-left.
+     */
+    public static final class Spec {
+        public final String name;
+        public final int width;
+        public final int height;
+        public final int pylonDx;
+        public final int pylonDy;
+        final int[][] small;
+        final int[][] medium;
+        final int[][] mediumNoExit;
+        final int[][] large;
+
+        public Spec(
+            String name, int width, int height, int pylonDx, int pylonDy,
+            int[][] small, int[][] medium, int[][] mediumNoExit, int[][] large
+        ) {
+            this.name = name;
+            this.width = width;
+            this.height = height;
+            this.pylonDx = pylonDx;
+            this.pylonDy = pylonDy;
+            this.small = small;
+            this.medium = medium;
+            this.mediumNoExit = mediumNoExit;
+            this.large = large;
+        }
     }
 }

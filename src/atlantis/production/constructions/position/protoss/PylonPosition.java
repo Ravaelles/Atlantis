@@ -16,6 +16,26 @@ import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
 public class PylonPosition {
+    /**
+     * The Pylon's reserved distance from a map edge while supply is low - the same
+     * number {@code ProtossTooCloseToMapBoundaries} enforces (7 tiles), kept here so
+     * the origin and the rule that judges candidates agree.
+     */
+    public static final int PYLON_EDGE_MARGIN_TILES = 7;
+    /**
+     * How far the first Pylon's search origin sits from the Nexus. The old code was
+     * reaching for 7 tiles (`translateTilesTowards(-7, ...)`) before that step was
+     * skipped; kept as a named constant so the number is visible where it is decided.
+     */
+    public static final double FIRST_PYLON_TILES_FROM_BASE = 7;
+    /**
+     * Which nearTo branch sited the last Pylon (NEXT #214a): the board
+     * "PylonSite" key reads this, so a far-away warp names the rule that
+     * chose its origin instead of leaving tile forensics. Test seam:
+     * per-siting state, reset around each pin.
+     */
+    public static String lastReason = "-";
+
     public static HasPosition nextPosition() {
 //        return APositionFinder.findStandardPosition(
         return FindPosition.findForBuilding(
@@ -144,20 +164,6 @@ public class PylonPosition {
     }
 
     /**
-     * The Pylon's reserved distance from a map edge while supply is low - the same
-     * number {@code ProtossTooCloseToMapBoundaries} enforces (7 tiles), kept here so
-     * the origin and the rule that judges candidates agree.
-     */
-    public static final int PYLON_EDGE_MARGIN_TILES = 7;
-
-    /**
-     * How far the first Pylon's search origin sits from the Nexus. The old code was
-     * reaching for 7 tiles (`translateTilesTowards(-7, ...)`) before that step was
-     * skipped; kept as a named constant so the number is visible where it is decided.
-     */
-    public static final double FIRST_PYLON_TILES_FROM_BASE = 7;
-
-    /**
      * Opening reach (owner): the first Pylon adjoins the Nexus - at or under
      * 20 supply the builder walks as little as possible, so the search starts
      * two tiles out instead of seven. Past that the layout doctrine owns the
@@ -166,6 +172,8 @@ public class PylonPosition {
     private static double firstPylonReach() {
         return A.supplyUsed() <= 20 ? 2 : FIRST_PYLON_TILES_FROM_BASE;
     }
+
+    // =========================================================
 
     public static APosition nearToPositionForSecondPylon() {
 //        return initialNearTo;
@@ -176,8 +184,6 @@ public class PylonPosition {
 
         return base.translateTilesTowards(mainChoke, 8);
     }
-
-    // =========================================================
 
     /**
      * Fallback origin when the map cannot answer: our first building's position.
@@ -255,14 +261,6 @@ public class PylonPosition {
 
         return nearTo;
     }
-
-    /**
-     * Which nearTo branch sited the last Pylon (NEXT #214a): the board
-     * "PylonSite" key reads this, so a far-away warp names the rule that
-     * chose its origin instead of leaving tile forensics. Test seam:
-     * per-siting state, reset around each pin.
-     */
-    public static String lastReason = "-";
 
     public static void clearForTests() {
         lastReason = "-";

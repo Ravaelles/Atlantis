@@ -4,10 +4,16 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Continuous economy until saturation. */
+/**
+ * Continuous economy until saturation.
+ */
 public final class WorkersGoal implements Goal {
 
     public static final int WORKERS_PER_BASE = 22;
+
+    public static int workersWanted(BoardState state) {
+        return WORKERS_PER_BASE * Math.max(1, state.baseCount);
+    }
 
     @Override
     public String id() {
@@ -22,10 +28,6 @@ public final class WorkersGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.WORKERS;
-    }
-
-    public static int workersWanted(BoardState state) {
-        return WORKERS_PER_BASE * Math.max(1, state.baseCount);
     }
 
     @Override

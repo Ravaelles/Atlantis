@@ -1,13 +1,14 @@
 package tests.unit;
 
 import atlantis.production.v2.ProductionRacePolicy;
+import atlantis.production.v2.ProtossProductionRacePolicy;
+import atlantis.production.v2.TerranProductionRacePolicy;
+import atlantis.production.v2.ZergProductionRacePolicy;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #8 pilot: the five type identities per race (ADR 0007), pinned before
@@ -48,9 +49,9 @@ public class ProductionRacePolicyTest {
 
     @Test
     public void selectionIsCaseInsensitiveAndSingleSite() {
-        assertTrue(ProductionRacePolicy.forRace("protoss") instanceof atlantis.production.v2.ProtossProductionRacePolicy);
-        assertTrue(ProductionRacePolicy.forRace("TERRAN") instanceof atlantis.production.v2.TerranProductionRacePolicy);
-        assertTrue(ProductionRacePolicy.forRace("Zerg") instanceof atlantis.production.v2.ZergProductionRacePolicy);
+        assertInstanceOf(ProtossProductionRacePolicy.class, ProductionRacePolicy.forRace("protoss"));
+        assertInstanceOf(TerranProductionRacePolicy.class, ProductionRacePolicy.forRace("TERRAN"));
+        assertInstanceOf(ZergProductionRacePolicy.class, ProductionRacePolicy.forRace("Zerg"));
     }
 
     @Test

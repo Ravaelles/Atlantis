@@ -32,7 +32,9 @@ public final class ProducerFacility {
         return typeId;
     }
 
-    /** Absolute frame this facility can start producing something new. */
+    /**
+     * Absolute frame this facility can start producing something new.
+     */
     public int availableFromFrame() {
         return availableFromFrame;
     }

@@ -47,8 +47,7 @@ public final class CorsairCluster {
             int otherAir = Math.max(0, visibleAir - visibleWraiths);
 
             return mergeWithArmy(otherAir, EnemyUnits.count(AUnitType.Terran_Wraith));
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return false;
         }
     }

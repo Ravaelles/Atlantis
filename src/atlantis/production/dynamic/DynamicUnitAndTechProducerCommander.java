@@ -12,14 +12,21 @@ import atlantis.util.HasReason;
 import atlantis.util.We;
 
 public class DynamicUnitAndTechProducerCommander extends Commander implements HasReason {
+    public static Commander get() {
+        if (We.terran()) return (new TerranDynamicUnitsCommander());
+        if (We.protoss()) return (new ProtossDynamicUnitProductionCommander());
+        if (We.zerg()) return (new ZergDynamicUnitsCommander());
+
+        return null;
+    }
+
     @Override
     public boolean applies() {
         // Owner 2026-10-18 (__PLAN-DECISIONS): same opening-ownership as
         // dynamic buildings - no dynamic army or tech may jump the script's
         // rows. Workers and supply flow outside this commander.
-        if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
 
-        return true;
+        return !atlantis.production.orders.build.BuildOrderOwnsGame.owns();
     }
 
     @Override
@@ -50,14 +57,6 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
         };
 
         return mergeCommanders(raceSpecific, generic);
-    }
-
-    public static Commander get() {
-        if (We.terran()) return (new TerranDynamicUnitsCommander());
-        if (We.protoss()) return (new ProtossDynamicUnitProductionCommander());
-        if (We.zerg()) return (new ZergDynamicUnitsCommander());
-
-        return null;
     }
 
     @Override

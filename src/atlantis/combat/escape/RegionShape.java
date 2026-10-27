@@ -27,7 +27,9 @@ public final class RegionShape {
         return new RegionShape(widthTiles, heightTiles, center);
     }
 
-    /** Guarded adapter: null without map data, never an exception. */
+    /**
+     * Guarded adapter: null without map data, never an exception.
+     */
     public static RegionShape of(ARegion region) {
         try {
             if (region == null) return null;

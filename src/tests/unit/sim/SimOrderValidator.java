@@ -1,7 +1,6 @@
 package tests.unit.sim;
 
 import atlantis.map.position.APosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 
@@ -54,10 +53,10 @@ public final class SimOrderValidator {
      * like the engine does.</p>
      */
     public static SimOrder validateBuild(SimGround ground, FakeUnit builder, AUnitType type,
-            int tx, int ty, SimBank bank, List<FakeUnit> ourBuildings, boolean checkBank) {
+                                         int tx, int ty, SimBank bank, List<FakeUnit> ourBuildings, boolean checkBank) {
         APosition tile = APosition.create(tx, ty);
         if (!ground.inBounds(tx, ty)
-                || !ground.inBounds(tx + type.getTilesWidth() - 1, ty + type.getTilesHeights() - 1)) {
+            || !ground.inBounds(tx + type.getTilesWidth() - 1, ty + type.getTilesHeights() - 1)) {
             return SimOrder.rejected(SimOrder.Verb.BUILD, builder, type, tile,
                 "footprint off the map");
         }
@@ -87,7 +86,9 @@ public final class SimOrderValidator {
         return SimOrder.accepted(SimOrder.Verb.BUILD, builder, type, tile);
     }
 
-    /** MOVE verdict: walkable destination with a path from the actor. */
+    /**
+     * MOVE verdict: walkable destination with a path from the actor.
+     */
     public static SimOrder validateMove(SimGround ground, FakeUnit unit, APosition dest) {
         if (dest == null) {
             return SimOrder.rejected(SimOrder.Verb.MOVE, unit, null, null, "null destination");
@@ -102,7 +103,9 @@ public final class SimOrderValidator {
         return SimOrder.accepted(SimOrder.Verb.MOVE, unit, null, dest);
     }
 
-    /** TRAIN verdict: live completed facility plus the bank. */
+    /**
+     * TRAIN verdict: live completed facility plus the bank.
+     */
     public static SimOrder validateTrain(FakeUnit facility, AUnitType type, SimBank bank) {
         if (facility == null || !facility.isAlive()) {
             return SimOrder.rejected(SimOrder.Verb.TRAIN, facility, type, null, "no live facility");
@@ -119,9 +122,11 @@ public final class SimOrderValidator {
         return SimOrder.accepted(SimOrder.Verb.TRAIN, facility, type, null);
     }
 
-    /** RESEARCH/UPGRADE verdict: same shape as TRAIN. */
+    /**
+     * RESEARCH/UPGRADE verdict: same shape as TRAIN.
+     */
     public static SimOrder validateResearch(FakeUnit facility, AUnitType ignored, SimBank bank,
-            int mineralCost, int gasCost, boolean isUpgrade) {
+                                            int mineralCost, int gasCost, boolean isUpgrade) {
         SimOrder.Verb verb = isUpgrade ? SimOrder.Verb.UPGRADE : SimOrder.Verb.RESEARCH;
         if (facility == null || !facility.isAlive()) {
             return SimOrder.rejected(verb, facility, null, null, "no live facility");

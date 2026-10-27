@@ -1,10 +1,5 @@
 package atlantis.map.snapshot;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.map.AMap;
@@ -13,6 +8,11 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * One-shot map snapshot writer (NEXT #191): captures the full static
@@ -28,12 +28,22 @@ import atlantis.util.log.ErrorLog;
  */
 public final class MapSnapshotDumper {
 
+    /**
+     * One base per start: the start tile plus its mineral line and gas.
+     * Assignment is nearest-start within a main-base radius; lines beyond
+     * it are expansions and stay unassigned (documented gap, not a silent
+     * guess). Pure over snapshot data so the golden file and the loader
+     * test pin it without a game.
+     */
+    static final int BASE_LINE_RADIUS_TILES = 12;
     private static boolean done = false;
 
     private MapSnapshotDumper() {
     }
 
-    /** Captures and writes the snapshot; true when the file landed. */
+    /**
+     * Captures and writes the snapshot; true when the file landed.
+     */
     public static boolean dumpOnce() {
         if (done) return true;
 
@@ -273,15 +283,6 @@ public final class MapSnapshotDumper {
         }
     }
 
-    /**
-     * One base per start: the start tile plus its mineral line and gas.
-     * Assignment is nearest-start within a main-base radius; lines beyond
-     * it are expansions and stay unassigned (documented gap, not a silent
-     * guess). Pure over snapshot data so the golden file and the loader
-     * test pin it without a game.
-     */
-    static final int BASE_LINE_RADIUS_TILES = 12;
-
     static void computeBases(MapSnapshot snap) {
         snap.bases.clear();
         for (int s = 0; s < snap.starts.size(); s++) {
@@ -346,7 +347,9 @@ public final class MapSnapshotDumper {
         }
     }
 
-    /** ActiveMap without importing the config package into map code. */
+    /**
+     * ActiveMap without importing the config package into map code.
+     */
     private static final class ActiveMapName {
         static String name() {
             try {

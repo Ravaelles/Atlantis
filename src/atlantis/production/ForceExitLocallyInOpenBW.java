@@ -42,6 +42,16 @@ import atlantis.util.log.ErrorLog;
  */
 public class ForceExitLocallyInOpenBW extends Commander {
 
+    private static int supplyProvidersComing() {
+        return comingOf(AUnitType.Protoss_Pylon)
+            + comingOf(AUnitType.Terran_Supply_Depot)
+            + comingOf(AUnitType.Zerg_Overlord);
+    }
+
+    private static int comingOf(AUnitType provider) {
+        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
+    }
+
     @Override
     public boolean applies() {
         if (!Env.isOpenBW()) return false;
@@ -65,19 +75,8 @@ public class ForceExitLocallyInOpenBW extends Commander {
         // 40/41 with 604 banked while a Pylon warped (hp 451, game
         // 20261017_143626). Deadlock is hoard + blocked supply + nothing
         // coming.
-        if (supplyProvidersComing() > 0) return false;
 
-        return true;
-    }
-
-    private static int supplyProvidersComing() {
-        return comingOf(AUnitType.Protoss_Pylon)
-            + comingOf(AUnitType.Terran_Supply_Depot)
-            + comingOf(AUnitType.Zerg_Overlord);
-    }
-
-    private static int comingOf(AUnitType provider) {
-        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
+        return supplyProvidersComing() <= 0;
     }
 
     protected boolean handle() {
@@ -87,7 +86,7 @@ public class ForceExitLocallyInOpenBW extends Commander {
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####### ForceExitLocallyInOpenBW ###################");
         AConsole.errPrintln("####### min:" + A.minerals() + ", supply:"
-                + A.supplyUsed() + "/" + A.supplyTotal() + " ######################");
+            + A.supplyUsed() + "/" + A.supplyTotal() + " ######################");
         AConsole.errPrintln("####### At:" + A.minSec() + ", real " + RealTime.gameLengthInRealSeconds() + "s");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
@@ -96,9 +95,9 @@ public class ForceExitLocallyInOpenBW extends Commander {
 
         AGame.sendMessage("ForceExitLocallyInOpenBW");
         ErrorLog.printErrorOnce(
-                "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
-                        + " real seconds, " + AGame.timeSeconds() + " in-game seconds,"
-                        + " supply: " + A.supplyUsed() + "/" + A.supplyTotal());
+            "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
+                + " real seconds, " + AGame.timeSeconds() + " in-game seconds,"
+                + " supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
         Atlantis.getInstance().onEnd(false);
 

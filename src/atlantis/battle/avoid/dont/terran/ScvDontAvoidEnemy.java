@@ -43,14 +43,10 @@ public class ScvDontAvoidEnemy extends Manager {
     }
 
     private boolean onlyScouts(Selection enemiesNear) {
-        if (enemiesNear.onlyAir()
+        return enemiesNear.onlyAir()
             && (
             enemiesNear.onlyOfType(AUnitType.Protoss_Scout)
                 || enemiesNear.canAttack(unit, 0).atMost(2)
-        )
-        ) {
-            return true;
-        }
-        return false;
+        );
     }
 }

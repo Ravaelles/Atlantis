@@ -1,15 +1,7 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import atlantis.combat.BattleCommander;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.battle.DuelMemory;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.strategy.GhostAdvance;
 import atlantis.map.MapTiles;
@@ -17,13 +9,18 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Ghost-creep walkability (owner side observation, Steamhammer game:
@@ -34,6 +31,19 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
+
+    private static List<double[]> moveDests(FakeUnit u) {
+        List<double[]> out = new ArrayList<>();
+        Pattern p = Pattern.compile("\\[\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\]");
+        for (FakeOrderSink.Record r : ((FakeOrderSink) u.orderSink()).orders()) {
+            if (!r.operation.equals("move")) continue;
+            Matcher m = p.matcher(r.detail);
+            if (m.find())
+                out.add(new double[]{Integer.parseInt(m.group(1)) / 32.0, Integer.parseInt(m.group(2)) / 32.0});
+        }
+
+        return out;
+    }
 
     private void useArenaWalkability(final SimArena arena) {
         MapTiles.useSource(new MapTiles.Source() {
@@ -71,18 +81,6 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
         });
     }
 
-    private static List<double[]> moveDests(FakeUnit u) {
-        List<double[]> out = new ArrayList<>();
-        Pattern p = Pattern.compile("\\[\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\]");
-        for (FakeOrderSink.Record r : ((FakeOrderSink) u.orderSink()).orders()) {
-            if (!r.operation.equals("move")) continue;
-            Matcher m = p.matcher(r.detail);
-            if (m.find()) out.add(new double[]{Integer.parseInt(m.group(1)) / 32.0, Integer.parseInt(m.group(2)) / 32.0});
-        }
-
-        return out;
-    }
-
     @Test
     public void creepNeverOrdersIntoTheWall() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
@@ -95,7 +93,7 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
         APosition ghost = APosition.create(39, 20);
 
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, d }, new FakeUnit[0], arena);
+            new FakeUnit[]{nexus, d}, new FakeUnit[0], arena);
         try {
             useArenaWalkability(arena);
             BattleCommander.clearForTests();
@@ -118,8 +116,7 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
                     "every creep dest is walkable - slide along the wall, never into it: "
                         + m[0] + "," + m[1]);
             }
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             GhostAdvance.clearForTests();
@@ -141,9 +138,8 @@ public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
             APosition slid = GhostAdvance.slideOffWall(walled);
             assertTrue(slid == null || arena.isWalkablePx(slid.x(), slid.y()),
                 "an unwalkable dest slides out or declines, never into the wall");
-            assertTrue(GhostAdvance.slideOffWall(null) == null, "null never orders");
-        }
-        finally {
+            assertNull(GhostAdvance.slideOffWall(null), "null never orders");
+        } finally {
             FakeMapTiles.installAsSource();
         }
     }

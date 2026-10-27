@@ -11,8 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * When a queued building order becomes ready to produce.
@@ -48,8 +46,8 @@ public class OrderReadinessTest extends AbstractTestWithWorld {
         currentMinerals = 800;
 
         world(10, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Pylon, 22, 22)), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 22, 22)), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 5) return;
 
             ProductionOrder order = new ProductionOrder(
@@ -66,8 +64,8 @@ public class OrderReadinessTest extends AbstractTestWithWorld {
         currentMinerals = 0;
 
         world(10, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 20, 20),
-                fake(AUnitType.Protoss_Pylon, 22, 22)), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 22, 22)), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 5) return;
 
             ProductionOrder order = new ProductionOrder(

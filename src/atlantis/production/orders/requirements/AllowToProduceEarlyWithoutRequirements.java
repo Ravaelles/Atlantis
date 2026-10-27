@@ -13,9 +13,7 @@ public class AllowToProduceEarlyWithoutRequirements {
         if (!We.protoss()) return false;
         if (A.supplyUsed() >= 20) return false;
 
-        if (earlyCyberneticsCore(type)) return true;
-
-        return false;
+        return earlyCyberneticsCore(type);
     }
 
     private static boolean earlyCyberneticsCore(AUnitType type) {

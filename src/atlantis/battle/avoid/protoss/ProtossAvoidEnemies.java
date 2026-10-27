@@ -10,9 +10,9 @@ import atlantis.units.Units;
 import atlantis.util.cache.Cache;
 
 public class ProtossAvoidEnemies extends Manager {
-    private static Cache<Units> cache = new Cache<>();
-    private WantsToAvoid wantsToAvoid;
-    private EnemyUnitsToAvoid enemyUnitsToAvoid;
+    private static final Cache<Units> cache = new Cache<>();
+    private final WantsToAvoid wantsToAvoid;
+    private final EnemyUnitsToAvoid enemyUnitsToAvoid;
 
     public ProtossAvoidEnemies(AUnit unit) {
         super(unit);

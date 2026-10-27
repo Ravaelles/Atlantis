@@ -2,13 +2,12 @@ package atlantis.game;
 
 
 import atlantis.Atlantis;
-
 import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
-
 import atlantis.game.player.APlayer;
 import atlantis.util.AConsole;
-import bwapi.*;
+import bwapi.Game;
+import bwapi.Player;
 
 import java.util.ArrayList;
 import java.util.List;

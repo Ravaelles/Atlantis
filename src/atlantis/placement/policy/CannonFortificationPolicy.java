@@ -25,27 +25,6 @@ package atlantis.placement.policy;
  */
 public final class CannonFortificationPolicy {
 
-    /** What the policy needs to know; the engine adapter fills it. */
-    public static final class Context {
-        public final int supplyTotal;
-        public final int minerals;
-        public final int existingCannonsAtBase;
-        public final boolean enemyIsZerg;
-        public final boolean enemyIsProtoss;
-        public final int enemyMutalisks;
-
-        public Context(
-                int supplyTotal, int minerals, int existingCannonsAtBase,
-                boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
-            this.supplyTotal = supplyTotal;
-            this.minerals = minerals;
-            this.existingCannonsAtBase = existingCannonsAtBase;
-            this.enemyIsZerg = enemyIsZerg;
-            this.enemyIsProtoss = enemyIsProtoss;
-            this.enemyMutalisks = enemyMutalisks;
-        }
-    }
-
     private CannonFortificationPolicy() {
     }
 
@@ -97,13 +76,40 @@ public final class CannonFortificationPolicy {
         return context.enemyMutalisks / 4 + context.minerals / 500;
     }
 
-    /** True when this base needs more cannons than it has. */
+    /**
+     * True when this base needs more cannons than it has.
+     */
     public static boolean needsMoreCannons(Context context) {
         return context.existingCannonsAtBase < expectedCannons(context);
     }
 
-    /** How many more to ask for right now. */
+    /**
+     * How many more to ask for right now.
+     */
     public static int missingCannons(Context context) {
         return Math.max(0, expectedCannons(context) - context.existingCannonsAtBase);
+    }
+
+    /**
+     * What the policy needs to know; the engine adapter fills it.
+     */
+    public static final class Context {
+        public final int supplyTotal;
+        public final int minerals;
+        public final int existingCannonsAtBase;
+        public final boolean enemyIsZerg;
+        public final boolean enemyIsProtoss;
+        public final int enemyMutalisks;
+
+        public Context(
+            int supplyTotal, int minerals, int existingCannonsAtBase,
+            boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
+            this.supplyTotal = supplyTotal;
+            this.minerals = minerals;
+            this.existingCannonsAtBase = existingCannonsAtBase;
+            this.enemyIsZerg = enemyIsZerg;
+            this.enemyIsProtoss = enemyIsProtoss;
+            this.enemyMutalisks = enemyMutalisks;
+        }
     }
 }

@@ -39,7 +39,9 @@ public class ACherryVis_OrderWatcher {
         }
     }
 
-    /** Static maps leak between games in one JVM, so clear it per game. */
+    /**
+     * Static maps leak between games in one JVM, so clear it per game.
+     */
     public static void clear() {
         lastOrders.clear();
     }

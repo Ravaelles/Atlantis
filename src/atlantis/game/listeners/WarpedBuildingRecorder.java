@@ -23,8 +23,10 @@ public class WarpedBuildingRecorder {
      */
     private static final java.util.Map<String, int[]> lastWarpByType = new java.util.HashMap<>();
 
-    /** Owner 2026-10-19: Pylons land 10-15 s apart; closer warps of one
-      type name themselves here so the pair is attributable. */
+    /**
+     * Owner 2026-10-19: Pylons land 10-15 s apart; closer warps of one
+     * type name themselves here so the pair is attributable.
+     */
     private static final int CLOSE_WARP_FRAMES = 240;
 
     public static void record(AUnit unit) {
@@ -69,10 +71,10 @@ public class WarpedBuildingRecorder {
                     : "[" + tile.getX() + "," + tile.getY() + "]")
                 .log(now, A.minSec());
         }
-        lastWarpByType.put(type, new int[] {
+        lastWarpByType.put(type, new int[]{
             now,
             tile == null ? -1 : tile.getX(),
-            tile == null ? -1 : tile.getY() });
+            tile == null ? -1 : tile.getY()});
     }
 
     public static void clearForTests() {
@@ -90,8 +92,8 @@ public class WarpedBuildingRecorder {
         atlantis.units.AUnitType type = unit.type();
         if (type == null
             || (!type.equals(atlantis.units.AUnitType.Protoss_Pylon)
-                && !type.equals(atlantis.units.AUnitType.Protoss_Gateway)
-                && !type.equals(atlantis.units.AUnitType.Protoss_Photon_Cannon))) return;
+            && !type.equals(atlantis.units.AUnitType.Protoss_Gateway)
+            && !type.equals(atlantis.units.AUnitType.Protoss_Photon_Cannon))) return;
 
         java.util.List<atlantis.map.position.APosition> slots = null;
         try {
@@ -100,8 +102,7 @@ public class WarpedBuildingRecorder {
                 slots = atlantis.map.analysis.WallAnchors.slots(
                     choke.firstPoint(), choke.lastPoint()).slots();
             }
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             slots = null;
         }
 
@@ -112,8 +113,7 @@ public class WarpedBuildingRecorder {
         try {
             bwapi.TilePosition tile = unit.tilePosition();
             if (tile != null) warpTile = atlantis.map.position.APosition.create(tile.getX(), tile.getY());
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             warpTile = null;
         }
 

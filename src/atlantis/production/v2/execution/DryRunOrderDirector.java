@@ -51,7 +51,9 @@ public final class DryRunOrderDirector implements OrderDirector {
         return false;
     }
 
-    /** What the engine would have ordered, in dispatch order. */
+    /**
+     * What the engine would have ordered, in dispatch order.
+     */
     public List<String> orders() {
         return orders;
     }
@@ -60,13 +62,15 @@ public final class DryRunOrderDirector implements OrderDirector {
         orders.clear();
     }
 
-    /** Records the comparison line for the work log; no game state is touched. */
+    /**
+     * Records the comparison line for the work log; no game state is touched.
+     */
     public void logSummary(int frame, int planSize) {
         if (orders.isEmpty())
             return;
 
         ErrorLog.printMaxOncePerMinute("PRODUCTION_V2 dry-run @" + frame
-                + ": plan=" + planSize + ", would issue " + orders.size()
-                + " " + orders);
+            + ": plan=" + planSize + ", would issue " + orders.size()
+            + " " + orders);
     }
 }

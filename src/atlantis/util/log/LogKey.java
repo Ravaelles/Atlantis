@@ -7,134 +7,244 @@ package atlantis.util.log;
  * filtering one key.
  */
 public enum LogKey {
-    /** A worker was assigned to a prepared site: adoption, with the state. */
+    /**
+     * A worker was assigned to a prepared site: adoption, with the state.
+     */
     BUILDING_STARTED,
-    /** A fresh construction request was accepted: who asked, for which order. */
+    /**
+     * A fresh construction request was accepted: who asked, for which order.
+     */
     CONSTRUCTION_REQUESTED,
-    /** The goal board's opinion snapshot next to legacy's actions. */
+    /**
+     * The goal board's opinion snapshot next to legacy's actions.
+     */
     BOARD,
-    /** A queued order refused to go READY, with the refusing term. */
+    /**
+     * A queued order refused to go READY, with the refusing term.
+     */
     ORDER_NOT_READY,
-    /** Per-second builder snapshot while it owns a construction. */
+    /**
+     * Per-second builder snapshot while it owns a construction.
+     */
     BUILDER_STATE,
-    /** The issue path was reached (gates inside decide). */
+    /**
+     * The issue path was reached (gates inside decide).
+     */
     ISSUE_BUILD_REACHED,
-    /** A build order attempt with the engine preconditions. */
+    /**
+     * A build order attempt with the engine preconditions.
+     */
     BUILD_ATTEMPT,
-    /** A request refused as duplicate, with the standing count. */
+    /**
+     * A request refused as duplicate, with the standing count.
+     */
     REQUEST_REFUSED_DUPLICATE,
-    /** Power inputs at decision time for power-needing buildings. */
+    /**
+     * Power inputs at decision time for power-needing buildings.
+     */
     POWER_AT_REQUEST,
-    /** Gas tile fix path (geyser found, snapped, or missing). */
+    /**
+     * Gas tile fix path (geyser found, snapped, or missing).
+     */
     GAS_FIX,
-    /** Singularity Charge decision inputs. */
+    /**
+     * Singularity Charge decision inputs.
+     */
     SINGULARITY_APPLIES,
-    /** Singularity Charge decision vector (refusing gate included). */
+    /**
+     * Singularity Charge decision vector (refusing gate included).
+     */
     SINGULARITY_CHECK,
-    /** Dragoon pump decision inputs. */
+    /**
+     * Dragoon pump decision inputs.
+     */
     DRAGOON_TRAIN,
-    /** A refresh attempt outcome (refreshed, or cancelled + re-requested). */
+    /**
+     * A refresh attempt outcome (refreshed, or cancelled + re-requested).
+     */
     POSITION_REFRESH,
-    /** Full canBuild-term decomposition of a stalled builder's refusal. */
+    /**
+     * Full canBuild-term decomposition of a stalled builder's refusal.
+     */
     BUILD_BREAKDOWN,
-    /** Who ended the game and with what state (NEXT #149: two causeless
-      early exits - won flag, frame, supply, bank - so the next one
-      arrives attributable). */
+    /**
+     * Who ended the game and with what state (NEXT #149: two causeless
+     * early exits - won flag, frame, supply, bank - so the next one
+     * arrives attributable).
+     */
     GAME_END,
-    /** A ready building order refused before siting, with the refusing guard. */
+    /**
+     * A ready building order refused before siting, with the refusing guard.
+     */
     BUILD_REFUSED,
-    /** A picked early site (type, tile, supply row). */
+    /**
+     * A picked early site (type, tile, supply row).
+     */
     CONSTRUCTION_PREPARING,
-    /** A construction cancelled (type, reason, tile). */
+    /**
+     * A construction cancelled (type, reason, tile).
+     */
     CONSTRUCTION_CANCEL,
-    /** The finder returned no tile for a ready order. */
+    /**
+     * The finder returned no tile for a ready order.
+     */
     PLACEMENT_FAILED,
-    /** A tech decision vector (refusing gate included), any researcher. */
+    /**
+     * A tech decision vector (refusing gate included), any researcher.
+     */
     TECH_CHECK,
-    /** An upgrade level the game never had before (L1/L2/L3 proof). */
+    /**
+     * An upgrade level the game never had before (L1/L2/L3 proof).
+     */
     UPGRADE_COMPLETED,
-    /** A warp matched no reservation; oldest-waiting fallback adopted it, with candidates. */
+    /**
+     * A warp matched no reservation; oldest-waiting fallback adopted it, with candidates.
+     */
     ADOPTED_CONSTRUCTION,
-    /** An IN_PROGRESS warp older than any legal build with a dead builder
-      and a warping entity still on the site (NEXT #150, cid-331 shape):
-      the demote path is shielded by its own self-match, so without this
-      row the freeze is silent. Names only, never removes. */
+    /**
+     * An IN_PROGRESS warp older than any legal build with a dead builder
+     * and a warping entity still on the site (NEXT #150, cid-331 shape):
+     * the demote path is shielded by its own self-match, so without this
+     * row the freeze is silent. Names only, never removes.
+     */
     FROZEN_WARP,
-    /** A stalled IN_PROGRESS construction demoted back to NOT_STARTED
-      (NEXT #70 + #150 lifecycle): cid, type, tile and which demote
-      path fired (builder gone vs stood-still). Fires per demote, not
-      once per construction - a re-armed construction can stall again. */
+    /**
+     * A stalled IN_PROGRESS construction demoted back to NOT_STARTED
+     * (NEXT #70 + #150 lifecycle): cid, type, tile and which demote
+     * path fired (builder gone vs stood-still). Fires per demote, not
+     * once per construction - a re-armed construction can stall again.
+     */
     DEMOTE_STALLED,
-    /** A V2 supply-provider goal reached the scheduler, with the emitting
-      list (WO-144 open question: which goal re-fires a duplicate Pylon
-      pair - build-order re-fire, pipeline overlap, or a door hole). */
+    /**
+     * A V2 supply-provider goal reached the scheduler, with the emitting
+     * list (WO-144 open question: which goal re-fires a duplicate Pylon
+     * pair - build-order re-fire, pipeline overlap, or a door hole).
+     */
     V2_GOAL_SOURCE,
-    /** A wall-piece type warped: tile vs the natural anchor row and vs the
-      exact planned tile (#97 M4 geometry gap - did the piece land where
-      the wall planner put it). anchorDist -1 means the map offered no
-      anchor row, not missing data. */
+    /**
+     * A wall-piece type warped: tile vs the natural anchor row and vs the
+     * exact planned tile (#97 M4 geometry gap - did the piece land where
+     * the wall planner put it). anchorDist -1 means the map offered no
+     * anchor row, not missing data.
+     */
     WALL_ANCHOR_WARP,
-    /** A V2 plan item dispatched (or due but refused), with the director's
-      reason - the V2 half of the decision audit; legacy answers in
-      DECISIONS.log. Re-offers repeat while pending (idempotent builds), so
-      a long pending reads as many rows with the same tile. */
+    /**
+     * A V2 plan item dispatched (or due but refused), with the director's
+     * reason - the V2 half of the decision audit; legacy answers in
+     * DECISIONS.log. Re-offers repeat while pending (idempotent builds), so
+     * a long pending reads as many rows with the same tile.
+     */
     V2_DISPATCH,
-    /** A worker stood still past the anomaly threshold, with its state. */
+    /**
+     * A worker stood still past the anomaly threshold, with its state.
+     */
     STUCK_WORKER,
-    /** The worker pump refused, with the refusing gate. */
+    /**
+     * The worker pump refused, with the refusing gate.
+     */
     WORKER_GATE,
-    /** Cluster posture/tactic/size/anchor, throttled. */
+    /**
+     * Cluster posture/tactic/size/anchor, throttled.
+     */
     CLUSTER,
-    /** Global mission transition (from, to, reason). Rows only on change. */
+    /**
+     * Global mission transition (from, to, reason). Rows only on change.
+     */
     MISSION,
-    /** A Nexus train/queue attempt (supply, remaining, engine answer). */
+    /**
+     * A Nexus train/queue attempt (supply, remaining, engine answer).
+     */
     TRAIN_ATTEMPT,
-    /** A catalogue answer for a legacy site search: answered tile or decline reason. */
+    /**
+     * A catalogue answer for a legacy site search: answered tile or decline reason.
+     */
     CATALOGUE_SITE,
-    /** A scout's tile next to the known enemy main, throttled (NEXT #187):
-      a trail clustered at the main is watching, at far expos wandering. */
+    /**
+     * A scout's tile next to the known enemy main, throttled (NEXT #187):
+     * a trail clustered at the main is watching, at far expos wandering.
+     */
     SCOUT_WATCH,
-    /** A kiting step or a kite with nowhere to go (dist x10, cooldown, result). */
+    /**
+     * A kiting step or a kite with nowhere to go (dist x10, cooldown, result).
+     */
     KITE,
-    /** A hold decision: march, or which gate broke it (unit, target, tactic, verdict). */
+    /**
+     * A hold decision: march, or which gate broke it (unit, target, tactic, verdict).
+     */
     HOLD,
-    /** A healthy unit stepping out of a withdrawing ally's escape ray (helper, escaper, dest). */
+    /**
+     * A healthy unit stepping out of a withdrawing ally's escape ray (helper, escaper, dest).
+     */
     MAKE_WAY,
-    /** Covering the pursuer of a withdrawing ally instead of the nearest (helper, pursuer, escaper). */
+    /**
+     * Covering the pursuer of a withdrawing ally instead of the nearest (helper, pursuer, escaper).
+     */
     COVER,
-    /** Damage taken while fighting (lost HP+shields, dist x10, cooldown, moving). */
+    /**
+     * Damage taken while fighting (lost HP+shields, dist x10, cooldown, moving).
+     */
     HIT,
-    /** Attack order issued or animation hold (dist x10, cooldown, result). */
+    /**
+     * Attack order issued or animation hold (dist x10, cooldown, result).
+     */
     SHOT,
-    /** Per-unit fight trace, throttled (hp, shields, dist x10 to nearest enemy). */
+    /**
+     * Per-unit fight trace, throttled (hp, shields, dist x10 to nearest enemy).
+     */
     UNIT_TRACE,
-    /** Per-second unit telemetry (hp, shields, dist x10 to nearest foe/dragoon/zealot, foes in 2). */
+    /**
+     * Per-second unit telemetry (hp, shields, dist x10 to nearest foe/dragoon/zealot, foes in 2).
+     */
     UNIT_TELEMETRY,
-    /** Our unit died (type, frame, dist x10 to nearest enemy at death). */
+    /**
+     * Our unit died (type, frame, dist x10 to nearest enemy at death).
+     */
     UNIT_DIED,
-    /** A unit ordered to move/attack stopped displacing (unit, still frames, order). */
+    /**
+     * A unit ordered to move/attack stopped displacing (unit, still frames, order).
+     */
     FROZEN,
-    /** Engaging a target that is not visible (unit, target, dist x10): the order cannot land. */
+    /**
+     * Engaging a target that is not visible (unit, target, dist x10): the order cannot land.
+     */
     GHOST_TARGET,
-    /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
+    /**
+     * A supply provider wanted but suppressed by coming (unfinished) ones: who blocks.
+     */
     SUPPLY_BLOCKED,
-    /** A combat unit still with no enemy near and weapon ready (unit, still frames, foe dist): the post-fight freeze signature. */
+    /**
+     * A combat unit still with no enemy near and weapon ready (unit, still frames, foe dist): the post-fight freeze signature.
+     */
     IDLE,
-    /** The whole army still with no enemy near (center, count, still frames): the all-units freeze. */
+    /**
+     * The whole army still with no enemy near (center, count, still frames): the all-units freeze.
+     */
     STALL,
-    /** A base order the refresh sees (throttled): type, status, bank, supply. */
+    /**
+     * A base order the refresh sees (throttled): type, status, bank, supply.
+     */
     QUEUE_BASE,
-    /** The feeder's filled gap (throttled): which goal got its missing row. */
+    /**
+     * The feeder's filled gap (throttled): which goal got its missing row.
+     */
     BOARD_FED,
-    /** Free supply above 14 (edge-triggered): overstock, with bank and pylons coming. */
+    /**
+     * Free supply above 14 (edge-triggered): overstock, with bank and pylons coming.
+     */
     SUPPLY_OVERSTOCK,
-    /** 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two. */
+    /**
+     * 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two.
+     */
     PYLON_FLOOD,
-    /** Same-type warps landing within 240 frames (owner 2026-10-19: Pylons
-      land 10-15 s apart; closer is a duplicate signal, not proof -
-      pipeline overlap also lands close). */
+    /**
+     * Same-type warps landing within 240 frames (owner 2026-10-19: Pylons
+     * land 10-15 s apart; closer is a duplicate signal, not proof -
+     * pipeline overlap also lands close).
+     */
     CLOSE_WARPS,
-    /** Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why. */
+    /**
+     * Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why.
+     */
     BANK_HOARD;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(

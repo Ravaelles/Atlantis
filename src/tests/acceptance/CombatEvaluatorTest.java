@@ -125,7 +125,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit sunken = fake(Zerg_Sunken_Colony, 13);
 
         world(1, fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
-                marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
+            marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
             // Measured raw: 0.7000 (absolute -98) - a hair our way -
             // and eval() reads 0.3996 after the our-side hedge. The
             // marines start inside their own 4-tile reach, so the 60-frame
@@ -170,7 +170,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
-                fake(AUnitType.Terran_Marine, 11.8), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
+            fake(AUnitType.Terran_Marine, 11.8), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
             // Measured: ourEval = 7.5557, enemyEval = 0.1324. This test used to be
             // called "...Lose...", which was this file reading the scale backwards: a
             // big number means the enemy lost more than we did, and by the damage
@@ -207,7 +207,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
-                fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
+            fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
             // Measured: ourEval = 21.2513, enemyEval = 0.0500, product 1.0626 within
             // the reciprocal tolerance - the mixed group (three Marines and a Medic)
             // scores like the plain groups, from opposite sides. The name used to say

@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The construction chain twin: every row on a construction's life
@@ -83,11 +83,11 @@ public class ConstructionChainTwinTest extends AbstractTestWithWorld {
 
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"key\":\"CONSTRUCTION_CANCEL\""),
-                    "the cancel must be twinned, got: " + rows);
+                "the cancel must be twinned, got: " + rows);
             assertTrue(rows.contains("\"cid\":" + construction.id()),
-                    "the twin must name the construction, got: " + rows);
+                "the twin must name the construction, got: " + rows);
             assertTrue(rows.contains("\"oid\":" + order.id()),
-                    "the twin must name the order, got: " + rows);
+                "the twin must name the order, got: " + rows);
         });
     }
 
@@ -113,13 +113,12 @@ public class ConstructionChainTwinTest extends AbstractTestWithWorld {
 
             String dropped = EventLog.toJsonLines();
             assertTrue(dropped.contains("\"key\":\"CONSTRUCTION_CANCEL\""),
-                    "the orphan drop must be twinned, got: " + dropped);
+                "the orphan drop must be twinned, got: " + dropped);
             assertTrue(dropped.contains("\"cid\":" + construction.id()),
-                    "the twin must name the construction, got: " + dropped);
+                "the twin must name the construction, got: " + dropped);
             assertTrue(dropped.contains("orphan-drop"),
-                    "the twin must name the drop reason, got: " + dropped);
-            assertTrue(!ConstructionRequests.constructions.contains(construction),
-                    "the orphaned site is dropped, not pinned");
+                "the twin must name the drop reason, got: " + dropped);
+            assertFalse(ConstructionRequests.constructions.contains(construction), "the orphaned site is dropped, not pinned");
         });
     }
 }

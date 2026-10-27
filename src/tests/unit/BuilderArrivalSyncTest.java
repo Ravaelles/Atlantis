@@ -22,9 +22,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The builder walks so it arrives as the money lands (owner): with the
@@ -52,14 +49,8 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
     private Construction linkedConstruction;
     private int arrivalBank;
 
-    private static final class ExposedTravel extends TravelToConstruct {
-        ExposedTravel(AUnit unit) {
-            super(unit);
-        }
-
-        boolean run(Construction construction) {
-            return travelWhenReady(construction);
-        }
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit builder) {
+        return ((FakeOrderSink) builder.orderSink()).orders();
     }
 
     @Override
@@ -185,7 +176,13 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
             "waited AT the site, not midway");
     }
 
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit builder) {
-        return ((FakeOrderSink) builder.orderSink()).orders();
+    private static final class ExposedTravel extends TravelToConstruct {
+        ExposedTravel(AUnit unit) {
+            super(unit);
+        }
+
+        boolean run(Construction construction) {
+            return travelWhenReady(construction);
+        }
     }
 }

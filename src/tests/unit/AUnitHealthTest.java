@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
@@ -67,7 +65,7 @@ public class AUnitHealthTest {
         dragoon.setShields(0);
 
         assertTrue(dragoon.isWounded(),
-                "full hp with empty shields is still wounded - the shield gap counts");
+            "full hp with empty shields is still wounded - the shield gap counts");
         assertTrue(AUnitHealth.isWounded(dragoon));
     }
 

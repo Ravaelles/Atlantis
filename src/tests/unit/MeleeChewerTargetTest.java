@@ -11,7 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Seam pin for the chewed-melee rule (owner, Steamhammer loss): a melee

@@ -22,25 +22,6 @@ import java.util.Set;
  */
 public final class WallAnchors {
 
-    /** Anchors in segment order with the door suggestion. */
-    public static final class AnchorRow {
-        private final List<APosition> slots;
-        private final APosition door;
-
-        AnchorRow(List<APosition> slots, APosition door) {
-            this.slots = slots;
-            this.door = door;
-        }
-
-        public List<APosition> slots() {
-            return slots;
-        }
-
-        public APosition door() {
-            return door;
-        }
-    }
-
     private WallAnchors() {
     }
 
@@ -77,5 +58,26 @@ public final class WallAnchors {
             }
         }
         return new AnchorRow(slots, slots.get(slots.size() / 2));
+    }
+
+    /**
+     * Anchors in segment order with the door suggestion.
+     */
+    public static final class AnchorRow {
+        private final List<APosition> slots;
+        private final APosition door;
+
+        AnchorRow(List<APosition> slots, APosition door) {
+            this.slots = slots;
+            this.door = door;
+        }
+
+        public List<APosition> slots() {
+            return slots;
+        }
+
+        public APosition door() {
+            return door;
+        }
     }
 }

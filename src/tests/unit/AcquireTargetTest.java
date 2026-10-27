@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Shoot-now targeting (owner 2026-10-26): a dragoon that walks past an
@@ -134,8 +132,7 @@ public class AcquireTargetTest extends WorldStubForTests {
         world(2, fakeOurs(dragoon), fakeEnemies(far), () -> {
             if (atlantis.game.A.now() != 1) return;
 
-            assertTrue(AcquireTarget.acquire(dragoon) != null,
-                "cooling weapon closes the distance so the shot lands on time");
+            assertNotNull(AcquireTarget.acquire(dragoon), "cooling weapon closes the distance so the shot lands on time");
         });
     }
 }

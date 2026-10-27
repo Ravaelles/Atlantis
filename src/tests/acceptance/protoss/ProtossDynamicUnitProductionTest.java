@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@link ProtossDynamicUnitProductionCommander#applies()} and that a
  * forced {@code handle()} reaches the dragoon production.</li>
  * </ol>
- *
+ * <p>
  * A Dragoon (125 minerals / 50 gas) is the cheapest thing that could come out of
  * this economy, and it is the one the commander tries first, so "a Dragoon was
  * ordered" is the weakest possible claim that can still fail.
@@ -175,8 +175,8 @@ public class ProtossDynamicUnitProductionTest extends WorldStubForTests {
         currentMinerals = MINERALS;
         currentGas = GAS;
         options = Options.create()
-                .set("supplyUsed", SUPPLY_USED)
-                .set("supplyTotal", SUPPLY_TOTAL);
+            .set("supplyUsed", SUPPLY_USED)
+            .set("supplyTotal", SUPPLY_TOTAL);
     }
 
     /**

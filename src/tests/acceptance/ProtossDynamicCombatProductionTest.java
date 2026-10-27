@@ -50,13 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ProtossDynamicCombatProductionTest extends WorldStubForTests {
 
+    private final ArrayList<FakeUnit> spawned = new ArrayList<>();
+    private int trainedCombatUnits = 0;
+
     @Override
     public Race initRace() {
         return Race.Protoss;
     }
-
-    private final ArrayList<FakeUnit> spawned = new ArrayList<>();
-    private int trainedCombatUnits = 0;
 
     @Test
     public void richProtossKeepsOrderingCombatUnits() {

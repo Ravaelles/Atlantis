@@ -1,14 +1,15 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
+import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
 import atlantis.information.strategy.Strategy;
-import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.production.constructions.OutstandingBuildings;
+import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.Orders;
@@ -16,7 +17,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
@@ -41,7 +41,6 @@ public class ProduceCyberneticsCore {
 
         Orders productionOrders = Queue.get().notFinishedNext30().ofType(type());
         ProductionOrder existing = productionOrders.first();
-
 
 
         ProductionOrder order = existing != null ? existing : AddToQueue.withTopPriority(type());

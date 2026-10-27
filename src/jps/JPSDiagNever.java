@@ -1,12 +1,16 @@
 package jps;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Kevin
  */
 public class JPSDiagNever<T extends Node> extends JPS<T> {
-    public JPSDiagNever(Graph<T> graph) { super(graph); }
+    public JPSDiagNever(Graph<T> graph) {
+        super(graph);
+    }
 
     @Override
     protected Set<T> findNeighbors(T node, Map<T, T> parentMap) {
@@ -30,7 +34,8 @@ public class JPSDiagNever<T extends Node> extends JPS<T> {
                     neighbors.add(graph.getNode(x, y + 1));
                 if (graph.isWalkable(x, y - 1))
                     neighbors.add(graph.getNode(x, y - 1));
-            } else if (dy != 0) {
+            }
+            else if (dy != 0) {
                 if (graph.isWalkable(x, y + dy))
                     neighbors.add(graph.getNode(x, y + dy));
                 if (graph.isWalkable(x + 1, y))
@@ -38,7 +43,8 @@ public class JPSDiagNever<T extends Node> extends JPS<T> {
                 if (graph.isWalkable(x - 1, y))
                     neighbors.add(graph.getNode(x - 1, y));
             }
-        } else {
+        }
+        else {
             // no parent, return all neighbors
             neighbors.addAll(graph.getNeighborsOf(node, Graph.Diagonal.NEVER));
         }
@@ -58,20 +64,22 @@ public class JPSDiagNever<T extends Node> extends JPS<T> {
         // check horizontally/vertically
         if (dx != 0) {
             if ((graph.isWalkable(neighbor.x, neighbor.y + 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y + 1)) ||
-                    (graph.isWalkable(neighbor.x, neighbor.y - 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y - 1))) {
+                (graph.isWalkable(neighbor.x, neighbor.y - 1) && !graph.isWalkable(neighbor.x - dx, neighbor.y - 1))) {
                 return neighbor;
             }
-        } else if (dy != 0) {
+        }
+        else if (dy != 0) {
             if ((graph.isWalkable(neighbor.x + 1, neighbor.y) && !graph.isWalkable(neighbor.x + 1, neighbor.y - dy)) ||
-                    (graph.isWalkable(neighbor.x - 1, neighbor.y) && !graph.isWalkable(neighbor.x - 1, neighbor.y - dy))) {
+                (graph.isWalkable(neighbor.x - 1, neighbor.y) && !graph.isWalkable(neighbor.x - 1, neighbor.y - dy))) {
                 return neighbor;
             }
             // when moving vertically check for horizontal jump points
             if (jump(graph.getNode(neighbor.x + 1, neighbor.y), neighbor, goals) != null ||
-                    jump(graph.getNode(neighbor.x - 1, neighbor.y), neighbor, goals) != null) {
+                jump(graph.getNode(neighbor.x - 1, neighbor.y), neighbor, goals) != null) {
                 return neighbor;
             }
-        } else {
+        }
+        else {
             return null;
         }
 

@@ -14,8 +14,10 @@ import java.util.List;
  */
 public final class EscapeScoring {
 
-    private EscapeScoring() {
-    }
+    /**
+     * Rays shorter than this count as blocked (pocket walls, not fields).
+     */
+    public static final double BLOCKED_RAY_TILES = 3;
 
     /**
      * Tunable weights live in {@code EscapeTuning} (NEXT #172 step 5:
@@ -25,8 +27,8 @@ public final class EscapeScoring {
      * pocket wall is, not what it costs.
      */
 
-    /** Rays shorter than this count as blocked (pocket walls, not fields). */
-    public static final double BLOCKED_RAY_TILES = 3;
+    private EscapeScoring() {
+    }
 
     /**
      * Corner/peninsula penalty from the 8-dir clearance at the

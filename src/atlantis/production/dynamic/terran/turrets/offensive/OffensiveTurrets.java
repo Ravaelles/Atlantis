@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.terran.turrets.offensive;
 
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Squad;
-import atlantis.battle.cluster.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.terran.turrets.TurretsForNonMain;
 import atlantis.units.select.Have;
@@ -11,9 +11,7 @@ public class OffensiveTurrets extends TurretsForNonMain {
     public boolean buildIfNeeded() {
         if (!Have.engBay()) return false;
 
-        if (handleReinforceMissionContain()) return true;
-
-        return false;
+        return handleReinforceMissionContain();
     }
 
     // =========================================================

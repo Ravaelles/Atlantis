@@ -9,8 +9,8 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Select;
 
 public class ProtossSecureBaseWithCannons {
-    private HasPosition initialPosition;
-    private HasPosition aroundPosition;
+    private final HasPosition initialPosition;
+    private final HasPosition aroundPosition;
     private APosition natural;
 
     public ProtossSecureBaseWithCannons(HasPosition base) {

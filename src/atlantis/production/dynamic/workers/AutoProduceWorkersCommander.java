@@ -1,25 +1,20 @@
 package atlantis.production.dynamic.workers;
 
-import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.decisions.board.BoardState;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.strategy.Strategy;
-import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.GoalBoardDriver;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
-import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.PriorityWaiters;
-import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
-import atlantis.util.log.EventLog;
-import atlantis.util.log.LogKey;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.*;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
@@ -27,54 +22,21 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Pylon;
+import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
 public class AutoProduceWorkersCommander extends Commander {
-    public static String REASON = "";
-
     /**
      * Queue the next worker while the current one still trains (owner
      * 2026-10-16: 60 of ~300 Probe frames, so production never gaps).
      * Pinned by WorkerPumpEarlyGameTest.
      */
     public static final int NEXT_WORKER_WHEN_TRAINING_REMAINS = 60;
-
-    /**
-     * Selects the least worker-saturated base to build a worker.
-     *
-     * @return
-     */
-    @Override
-    protected boolean handle() {
-        if (!shouldProduceWorkers()) {
-            // PROBE (NEXT.md #53): a run ends with Probe=15 after 10 game-minutes, which is the
-            // shape of a worker-gate that never opens - and the file already carries a
-            // documented case of it (line 54's 250-mineral gate). `REASON` was written and read
-            // nowhere, so the refusing gate was invisible. One row per second under
-            // BUILDER_LOG=1 turns "the economy is slow" into a named gate.
-            // JSON-only since 2026-10-15 (owner: no red spam in the game log).
-            if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
-                EventLog.key(LogKey.WORKER_GATE)
-                    .param("reason", REASON)
-                    .param("workers", Count.workers())
-                    .param("minerals", A.minerals())
-                    .param("reserved", ReservedResources.minerals())
-                    .param("supplyUsed", A.supplyUsed())
-                    .param("supplyTotal", A.supplyTotal())
-                    .log(A.now(), A.minSec());
-            }
-            return false;
-        }
-
-        ProduceWorker.produceWorker();
-
-        return false;
-    }
-
-    // =========================================================
+    public static String REASON = "";
 
     public static boolean shouldProduceWorkers() {
         if (A.supplyFree() == 0 && A.supplyUsed() >= 11) return dont("NoSupply");
@@ -186,6 +148,8 @@ public class AutoProduceWorkersCommander extends Commander {
         return isAutoProduceWorkersActive(workers) || dont("Limit");
     }
 
+    // =========================================================
+
     /**
      * Owner 2026-10-16: automatic early worker flow. At SupplyTotal 10-20
      * a shortfall of at most 24 minerals does not stop the pump, even with
@@ -220,7 +184,8 @@ public class AutoProduceWorkersCommander extends Commander {
         return false;
     }
 
-    private static boolean prioritizeRush() {        if (!Strategy.get().isRushOrCheese()) return false;
+    private static boolean prioritizeRush() {
+        if (!Strategy.get().isRushOrCheese()) return false;
 
         return A.s <= 60 * 6 && !A.hasMinerals(92) && (
             (!We.terran() || Have.barracks())
@@ -278,9 +243,7 @@ public class AutoProduceWorkersCommander extends Commander {
 
 //        if (CountInQueue.count(AtlantisRaceConfig.WORKER) > 0) return false;
 
-        if (queueWorker()) return true;
-
-        return false;
+        return queueWorker();
     }
 
     private static boolean queueWorker() {
@@ -306,9 +269,7 @@ public class AutoProduceWorkersCommander extends Commander {
                 .param("result", queued)
                 .log(A.now(), A.minSec());
         }
-        if (queued) return true;
-
-        return false;
+        return queued;
     }
 
     /**
@@ -358,8 +319,6 @@ public class AutoProduceWorkersCommander extends Commander {
         return A.minerals() >= 200 || (ReservedResources.minerals() - A.minerals()) >= 50;
     }
 
-    // =========================================================
-
     public static boolean isAutoProduceWorkersActive(int workers) {
         int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
         if (A.supplyUsed() < autoProduceMinWorkers) return false;
@@ -369,6 +328,40 @@ public class AutoProduceWorkersCommander extends Commander {
         int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
 
         return workers < autoProduceMaxWorkers;
+    }
+
+    // =========================================================
+
+    /**
+     * Selects the least worker-saturated base to build a worker.
+     *
+     * @return
+     */
+    @Override
+    protected boolean handle() {
+        if (!shouldProduceWorkers()) {
+            // PROBE (NEXT.md #53): a run ends with Probe=15 after 10 game-minutes, which is the
+            // shape of a worker-gate that never opens - and the file already carries a
+            // documented case of it (line 54's 250-mineral gate). `REASON` was written and read
+            // nowhere, so the refusing gate was invisible. One row per second under
+            // BUILDER_LOG=1 turns "the economy is slow" into a named gate.
+            // JSON-only since 2026-10-15 (owner: no red spam in the game log).
+            if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
+                EventLog.key(LogKey.WORKER_GATE)
+                    .param("reason", REASON)
+                    .param("workers", Count.workers())
+                    .param("minerals", A.minerals())
+                    .param("reserved", ReservedResources.minerals())
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("supplyTotal", A.supplyTotal())
+                    .log(A.now(), A.minSec());
+            }
+            return false;
+        }
+
+        ProduceWorker.produceWorker();
+
+        return false;
     }
 
 }

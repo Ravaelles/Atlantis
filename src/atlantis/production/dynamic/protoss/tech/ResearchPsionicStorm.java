@@ -20,6 +20,10 @@ public class ResearchPsionicStorm extends Commander {
         return Psionic_Storm;
     }
 
+    public static boolean isResearched() {
+        return isResearched;
+    }
+
     @Override
     public boolean applies() {
         if (isResearched) return false;
@@ -57,9 +61,5 @@ public class ResearchPsionicStorm extends Commander {
 //            Queue.get().history().addNow(tech().name());
 //        }
         return false;
-    }
-
-    public static boolean isResearched() {
-        return isResearched;
     }
 }

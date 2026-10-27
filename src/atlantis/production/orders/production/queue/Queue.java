@@ -14,6 +14,18 @@ public class Queue extends AbstractQueue {
 
     // =========================================================
 
+    public static Queue get() {
+        return instance;
+    }
+
+    // =========================================================
+
+    public static void set(Queue instance) {
+        Queue.instance = instance;
+    }
+
+    // =========================================================
+
     public void refresh() {
         // Single policy in LIVE: the v2 engine is the only producer, so the
         // legacy queue must not mature rows, prepare sites or twin readiness
@@ -37,8 +49,6 @@ public class Queue extends AbstractQueue {
         clearCache();
     }
 
-    // =========================================================
-
     public boolean addNew(int index, ProductionOrder productionOrder) {
         boolean added = allOrders().add(index, productionOrder);
 
@@ -56,8 +66,6 @@ public class Queue extends AbstractQueue {
 
         return added;
     }
-
-    // =========================================================
 
     public Orders allOrders() {
         return cache.get(
@@ -115,6 +123,8 @@ public class Queue extends AbstractQueue {
         return orders.notFinished();
     }
 
+    // =========================================================
+
     public Orders notFinishedNext30() {
         return cache.get(
             "nonFinishedNext30",
@@ -123,11 +133,11 @@ public class Queue extends AbstractQueue {
         );
     }
 
+    // =========================================================
+
     public Orders finishedOrders() {
         return orders.finished();
     }
-
-    // =========================================================
 
     public void removeOrder(ProductionOrder order) {
 //        AConsole.printStackTrace("REMOVE ORDER " + order);
@@ -135,15 +145,5 @@ public class Queue extends AbstractQueue {
         orders.remove(order);
 
         clearCache();
-    }
-
-    // =========================================================
-
-    public static Queue get() {
-        return instance;
-    }
-
-    public static void set(Queue instance) {
-        Queue.instance = instance;
     }
 }

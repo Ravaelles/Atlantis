@@ -25,7 +25,9 @@ import atlantis.units.select.Select;
  */
 public final class RetreatLadder {
 
-    /** Depth answer while no squad fight has been recorded. */
+    /**
+     * Depth answer while no squad fight has been recorded.
+     */
     public static final double NO_FIGHT_RECORDED = -1;
 
     /**
@@ -34,20 +36,17 @@ public final class RetreatLadder {
      * Protoss standoff rule).
      */
     public static final int MIN_FIGHT_UNITS = 4;
-
-    /** Where the retreat may stop, from the forward side down. */
-    public enum Rung {
-        MIDDLE,
-        NATURAL
-    }
-
-    /** Depth from the main of the ground the army last fought on. */
+    /**
+     * Depth from the main of the ground the army last fought on.
+     */
     private static double lastFightDepth = NO_FIGHT_RECORDED;
 
     private RetreatLadder() {
     }
 
-    /** Per-game reset next to the other static resets (BattleCommander). */
+    /**
+     * Per-game reset next to the other static resets (BattleCommander).
+     */
     public static void reset() {
         lastFightDepth = NO_FIGHT_RECORDED;
     }
@@ -68,12 +67,13 @@ public final class RetreatLadder {
             if (depth < 0) return;
 
             lastFightDepth = depth;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
         }
     }
 
-    /** The depth of the last recorded squad fight, or {@link #NO_FIGHT_RECORDED}. */
+    /**
+     * The depth of the last recorded squad fight, or {@link #NO_FIGHT_RECORDED}.
+     */
     public static double lastFightDepth() {
         return lastFightDepth;
     }
@@ -90,5 +90,13 @@ public final class RetreatLadder {
         if (middleDepth > naturalDepth && foughtDepth > middleDepth) return Rung.MIDDLE;
 
         return Rung.NATURAL;
+    }
+
+    /**
+     * Where the retreat may stop, from the forward side down.
+     */
+    public enum Rung {
+        MIDDLE,
+        NATURAL
     }
 }

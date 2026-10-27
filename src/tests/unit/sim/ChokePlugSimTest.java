@@ -1,26 +1,25 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import atlantis.combat.BattleCommander;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Choke plug (owner, PurpleWave SquadDefendBase guard port): against a
@@ -79,7 +78,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
             atlantis.util.log.EventLog.clearForTests();
 
             try (MockedStatic<atlantis.map.choke.Chokes> chokes =
-                Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+                     Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
                 chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
                 Alpha.gather();
 
@@ -98,7 +97,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 }
 
                 APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, nexus);
-                assertTrue(plug != null, "the plug names the mouth");
+                assertNotNull(plug, "the plug names the mouth");
                 double plugX = plug.x();
 
                 // Row order, read off the assigned slots (deterministic,
@@ -106,19 +105,19 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 // foe than every dragoon slot.
                 double zealotSlotFoe = -1;
                 double dragoonSlotFoe = Double.MAX_VALUE;
-                for (FakeUnit z : new FakeUnit[] { z1, z2, z3 }) {
+                for (FakeUnit z : new FakeUnit[]{z1, z2, z3}) {
                     APosition s = atlantis.combat.formation.ChokePlug.slotFor(
                         z, atlantis.battle.cluster.Alpha.get().selection(), plug, choke.center(),
                         choke.width() / 2.0);
-                    assertTrue(s != null, "every zealot gets a plug slot");
+                    assertNotNull(s, "every zealot gets a plug slot");
                     double sd = s.distTo(choke.center());
                     zealotSlotFoe = Math.max(zealotSlotFoe, sd);
                 }
-                for (FakeUnit d : new FakeUnit[] { d1, d2, d3 }) {
+                for (FakeUnit d : new FakeUnit[]{d1, d2, d3}) {
                     APosition s = atlantis.combat.formation.ChokePlug.slotFor(
                         d, atlantis.battle.cluster.Alpha.get().selection(), plug, choke.center(),
                         choke.width() / 2.0);
-                    assertTrue(s != null, "every dragoon gets a plug slot");
+                    assertNotNull(s, "every dragoon gets a plug slot");
                     dragoonSlotFoe = Math.min(dragoonSlotFoe, s.distTo(choke.center()));
                 }
                 System.out.println("PLUG plug=(" + plug.x() / 32 + "," + plug.y() / 32 + ")"
@@ -130,10 +129,10 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 // March discipline: the line actually walks to the mouth.
                 double dragoonEast = Double.MAX_VALUE;
                 double zealotEast = -1;
-                for (FakeUnit d : new FakeUnit[] { d1, d2, d3 }) {
+                for (FakeUnit d : new FakeUnit[]{d1, d2, d3}) {
                     if (d.hp > 0) dragoonEast = Math.min(dragoonEast, d.x());
                 }
-                for (FakeUnit z : new FakeUnit[] { z1, z2, z3 }) {
+                for (FakeUnit z : new FakeUnit[]{z1, z2, z3}) {
                     if (z.hp > 0) zealotEast = Math.max(zealotEast, z.x());
                 }
                 System.out.println("PLUG staged zealotEast=" + zealotEast / TILE
@@ -144,8 +143,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 assertTrue(dragoonEast > plugX - 6 * TILE,
                     "second row stays at shooting distance, not home: " + dragoonEast / TILE);
             }
-        }
-        finally {
+        } finally {
             for (atlantis.units.AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);
             tests.fakes.FakeMapTiles.installAsSource();
             world.close();

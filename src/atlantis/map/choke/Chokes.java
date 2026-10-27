@@ -20,8 +20,15 @@ import java.util.Collection;
 import java.util.List;
 
 public class Chokes {
-    private static Cache<Object> cache = new Cache<>();
-
+    /**
+     * NEXT #193: a main/natural designation (ours or the enemy's) under
+     * this width, or it is not a choke at all. The region-null fallback
+     * used to pick the Euclidean-nearest choke with no check, so a giant
+     * area far from every base could designate as "main choke" (TauCross
+     * bottom start). Wide areas stay in chokes() for micro use - only
+     * the designations refuse them.
+     */
+    public static final int MAX_DESIGNATED_CHOKE_WIDTH_TILES = 10;
     /**
      * Map geometry never changes mid-game, so designations compute once
      * (CONVENTIONS §31: the cadence lives here, named, not as bare -1s).
@@ -32,23 +39,18 @@ public class Chokes {
 //    protected static AChoke cached_basesToChokepoints = null;
 
     // =========================================================
+    private static final Cache<Object> cache = new Cache<>();
 
     /**
-     * NEXT #193: a main/natural designation (ours or the enemy's) under
-     * this width, or it is not a choke at all. The region-null fallback
-     * used to pick the Euclidean-nearest choke with no check, so a giant
-     * area far from every base could designate as "main choke" (TauCross
-     * bottom start). Wide areas stay in chokes() for micro use - only
-     * the designations refuse them.
+     * True when this choke may designate as a main/natural choke.
      */
-    public static final int MAX_DESIGNATED_CHOKE_WIDTH_TILES = 10;
-
-    /** True when this choke may designate as a main/natural choke. */
     public static boolean isPlausibleDesignatedChoke(AChoke choke) {
         return choke != null && choke.width() < MAX_DESIGNATED_CHOKE_WIDTH_TILES;
     }
 
-    /** Nearest designation-plausible choke, or null when none qualifies. */
+    /**
+     * Nearest designation-plausible choke, or null when none qualifies.
+     */
     public static AChoke nearestNarrowChoke(HasPosition from, Collection<AChoke> chokes) {
         if (from == null || chokes == null) return null;
 

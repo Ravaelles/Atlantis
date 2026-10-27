@@ -8,7 +8,7 @@ import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
 
 public class TerranShouldExpand {
-    private static Cache<Boolean> cache = new Cache<>();
+    private static final Cache<Boolean> cache = new Cache<>();
     private static int bases;
     private static int basesInProduction;
 
@@ -37,9 +37,7 @@ public class TerranShouldExpand {
     }
 
     private static boolean forSecondBase() {
-        if (TerranShouldExpandToNatural.shouldExpandToNatural()) return true;
-
-        return false;
+        return TerranShouldExpandToNatural.shouldExpandToNatural();
     }
 
     protected static boolean returnYes(String reason) {

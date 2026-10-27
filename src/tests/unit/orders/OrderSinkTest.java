@@ -2,14 +2,13 @@ package tests.unit.orders;
 
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Stage D: every engine order issued through {@code AUnitOrders} wrappers
@@ -23,10 +22,7 @@ public class OrderSinkTest extends WorldStubForTests {
         FakeUnit marine = new FakeUnit(AUnitType.Terran_Marine, 20, 20);
 
         // FakeUnit replaces it with a recording fake in its constructor.
-        assertTrue(
-            marine.orderSink() instanceof FakeOrderSink,
-            "Fake units must record orders instead of touching the engine"
-        );
+        assertInstanceOf(FakeOrderSink.class, marine.orderSink(), "Fake units must record orders instead of touching the engine");
     }
 
     @Test
@@ -42,11 +38,11 @@ public class OrderSinkTest extends WorldStubForTests {
         FakeOrderSink sink = (FakeOrderSink) marine.orderSink();
 
         world(1, ours, enemies, () -> {
-        assertTrue(marine.holdPosition(Actions.HOLD_POSITION, "test"));
+            assertTrue(marine.holdPosition(Actions.HOLD_POSITION, "test"));
 
-        assertEquals(1, sink.orders().size());
-        assertEquals("holdPosition", sink.orders().get(0).operation);
-        assertEquals(marine.id(), sink.orders().get(0).actorId);
+            assertEquals(1, sink.orders().size());
+            assertEquals("holdPosition", sink.orders().get(0).operation);
+            assertEquals(marine.id(), sink.orders().get(0).actorId);
         });
     }
 
@@ -100,11 +96,11 @@ public class OrderSinkTest extends WorldStubForTests {
         FakeOrderSink sink = (FakeOrderSink) marine.orderSink();
 
         world(1, ours, enemies, () -> {
-        assertTrue(marine.attackUnit(zergling));
+            assertTrue(marine.attackUnit(zergling));
 
-        assertEquals(1, sink.orders().size());
-        assertEquals("attackUnit", sink.orders().get(0).operation);
-        assertEquals(marine.id(), sink.orders().get(0).actorId);
+            assertEquals(1, sink.orders().size());
+            assertEquals("attackUnit", sink.orders().get(0).operation);
+            assertEquals(marine.id(), sink.orders().get(0).actorId);
         });
     }
 }

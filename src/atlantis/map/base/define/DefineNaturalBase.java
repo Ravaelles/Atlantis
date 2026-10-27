@@ -12,7 +12,7 @@ import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
 public class DefineNaturalBase {
-    private static Cache<Object> cache = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
 
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.

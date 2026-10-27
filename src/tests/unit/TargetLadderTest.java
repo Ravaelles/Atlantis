@@ -1,20 +1,17 @@
 package tests.unit;
 
-import java.util.Arrays;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.targeting.AcquireTarget;
 import atlantis.combat.targeting.SquadTarget;
 import atlantis.combat.targeting.TargetLadder;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The targeting ladder is an explicit ordered behavior list (owner
@@ -26,6 +23,10 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class TargetLadderTest extends WorldStubForTests {
+
+    private static int idOf(atlantis.units.AUnit u) {
+        return u == null ? -1 : u.id();
+    }
 
     @Test
     public void orderIsExplicitAndStable() {
@@ -131,7 +132,8 @@ public class TargetLadderTest extends WorldStubForTests {
     }
 
     @Test
-    public void sharedFocusBeatsNearestWhenNothingIsInRange() {        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+    public void sharedFocusBeatsNearestWhenNothingIsInRange() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit d = fake(AUnitType.Protoss_Dragoon, 30, 20);
         d.hp = 100;
         d.cooldown = 0;
@@ -147,8 +149,8 @@ public class TargetLadderTest extends WorldStubForTests {
 
             assertEquals(y.id(), idOf(AcquireTarget.acquire(d)),
                 "rules 1-4 decline (not melee, nothing committed, nothing "
-                + "in range, nothing stuck), so the shared weakest-in-nine "
-                + "wins over the nearer raider - rule 5 owns the pick");
+                    + "in range, nothing stuck), so the shared weakest-in-nine "
+                    + "wins over the nearer raider - rule 5 owns the pick");
         });
     }
 
@@ -170,8 +172,8 @@ public class TargetLadderTest extends WorldStubForTests {
 
             assertEquals(ling.id(), idOf(AcquireTarget.acquire(h)),
                 "rules 1-5 decline (not melee, nothing committed, ling banned "
-                + "from focus, nothing stuck), so the cover rule owns the "
-                + "pick: the pursuer chewing the withdrawer, not the nearest");
+                    + "from focus, nothing stuck), so the cover rule owns the "
+                    + "pick: the pursuer chewing the withdrawer, not the nearest");
         });
     }
 
@@ -239,9 +241,9 @@ public class TargetLadderTest extends WorldStubForTests {
 
             assertEquals(ling.id(), idOf(AcquireTarget.acquire(d)),
                 "rules 1-7 decline (not melee, nothing committed, ling "
-                + "banned from focus and shared, nothing stuck, no squad, "
-                + "nothing withdrawing), so the nearest engageable enemy "
-                + "owns the pick - the march stops for chaff");
+                    + "banned from focus and shared, nothing stuck, no squad, "
+                    + "nothing withdrawing), so the nearest engageable enemy "
+                    + "owns the pick - the march stops for chaff");
         });
     }
 
@@ -259,12 +261,8 @@ public class TargetLadderTest extends WorldStubForTests {
 
             assertEquals(raider.id(), idOf(AcquireTarget.acquire(d)),
                 "rules 1-8 decline (nothing committed, raider out of every "
-                + "9-tile envelope, no squad, nothing withdrawing), so the "
-                + "breached-base answer owns the pick - last resort by design");
+                    + "9-tile envelope, no squad, nothing withdrawing), so the "
+                    + "breached-base answer owns the pick - last resort by design");
         });
-    }
-
-    private static int idOf(atlantis.units.AUnit u) {
-        return u == null ? -1 : u.id();
     }
 }

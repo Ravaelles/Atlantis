@@ -14,7 +14,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Sim order validation pins (StarEngine §3/§5): every bot order the sim
@@ -24,7 +23,9 @@ import static tests.unit.AbstractTestWithUnits.fake;
 @Tag("production")
 public class SimOrderValidatorTest extends AbstractTestWithUnits {
 
-    /** Two rooms, one wall between them, no link: region 1 | region 2. */
+    /**
+     * Two rooms, one wall between them, no link: region 1 | region 2.
+     */
     static String twoRoomsJson() {
         StringBuilder tiles = new StringBuilder("[");
         StringBuilder regionOf = new StringBuilder("[");
@@ -182,11 +183,11 @@ public class SimOrderValidatorTest extends AbstractTestWithUnits {
         FakeUnit unfinished = fake(AUnitType.Protoss_Gateway, 2, 2);
         unfinished.setCompleted(false);
         assertFalse(SimOrderValidator.validateTrain(
-            unfinished, AUnitType.Protoss_Zealot, rich()).accepted(),
+                unfinished, AUnitType.Protoss_Zealot, rich()).accepted(),
             "a warping Gateway trains nothing");
 
         assertFalse(SimOrderValidator.validateTrain(
-            nexus, AUnitType.Protoss_Probe, new SimBank(10, 0)).accepted(),
+                nexus, AUnitType.Protoss_Probe, new SimBank(10, 0)).accepted(),
             "10 minerals train no Probe");
 
         assertTrue(SimOrderValidator.validateTrain(

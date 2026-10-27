@@ -35,41 +35,37 @@ import atlantis.util.log.LogKey;
  */
 public class ProductionHealthWatcher extends Commander {
 
-    /** Free supply above this is overstock (a Pylon lands +8). */
+    /**
+     * Free supply above this is overstock (a Pylon lands +8).
+     */
     public static final int MAX_HEALTHY_FREE_SUPPLY = 14;
 
-    /** Unfinished Pylons at or above this is a flood (overlap allows two). */
+    /**
+     * Unfinished Pylons at or above this is a flood (overlap allows two).
+     */
     public static final int MAX_HEALTHY_PYLONS_IN_FLIGHT = 2;
 
-    /** Bank above this is a hoard (with the why-breakdown attached). */
+    /**
+     * Bank above this is a hoard (with the why-breakdown attached).
+     */
     public static final int HOARD_BANK_MINERALS = 800;
 
     private static boolean overstockActive = false;
     private static boolean floodActive = false;
     private static boolean hoardActive = false;
 
-    /** Test seam: edge memory is per-JVM, tests reset it. */
+    /**
+     * Test seam: edge memory is per-JVM, tests reset it.
+     */
     public static void clearForTests() {
         overstockActive = false;
         floodActive = false;
         hoardActive = false;
     }
 
-    @Override
-    public boolean applies() {
-        return We.protoss();
-    }
-
-    @Override
-    protected boolean handle() {
-        checkOverstock();
-        checkFlood();
-        checkHoard();
-
-        return false;
-    }
-
-    /** Public seam: the edge logic pins in stub states without running the frame. */
+    /**
+     * Public seam: the edge logic pins in stub states without running the frame.
+     */
     public static void checkOverstock() {
         boolean over = A.supplyTotal() - A.supplyUsed() > MAX_HEALTHY_FREE_SUPPLY;
         if (over && !overstockActive) {
@@ -84,7 +80,9 @@ public class ProductionHealthWatcher extends Commander {
         overstockActive = over;
     }
 
-    /** Public seam: the edge logic pins in stub states without running the frame. */
+    /**
+     * Public seam: the edge logic pins in stub states without running the frame.
+     */
     public static void checkFlood() {
         int coming = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon);
         boolean flood = coming > MAX_HEALTHY_PYLONS_IN_FLIGHT;
@@ -99,7 +97,9 @@ public class ProductionHealthWatcher extends Commander {
         floodActive = flood;
     }
 
-    /** Public seam: the edge logic pins in stub states without running the frame. */
+    /**
+     * Public seam: the edge logic pins in stub states without running the frame.
+     */
     public static void checkHoard() {
         boolean hoard = A.minerals() > HOARD_BANK_MINERALS;
         if (hoard && !hoardActive) {
@@ -114,5 +114,19 @@ public class ProductionHealthWatcher extends Commander {
                 .log(A.now(), A.minSec());
         }
         hoardActive = hoard;
+    }
+
+    @Override
+    public boolean applies() {
+        return We.protoss();
+    }
+
+    @Override
+    protected boolean handle() {
+        checkOverstock();
+        checkFlood();
+        checkHoard();
+
+        return false;
     }
 }

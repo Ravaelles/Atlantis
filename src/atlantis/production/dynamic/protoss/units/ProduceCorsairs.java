@@ -28,7 +28,7 @@ public class ProduceCorsairs {
         }
 
         if (Enemy.terran()) {
-            if (EnemyUnits.count(AUnitType.Terran_Wraith) >= 1 && produceAgainstWraiths()) return true;
+            return EnemyUnits.count(AUnitType.Terran_Wraith) >= 1 && produceAgainstWraiths();
         }
 
         return false;
@@ -62,12 +62,12 @@ public class ProduceCorsairs {
             return false;
         }
 
-        return buildToHave(AUnitType.Protoss_Corsair, (int) (mutas / 2) + 2)
+        return buildToHave(AUnitType.Protoss_Corsair, (mutas / 2) + 2)
             && increaseProduced();
     }
 
     private static boolean produceAgainstWraiths() {
-        return buildToHave(AUnitType.Protoss_Corsair, (int) (EnemyUnits.count(AUnitType.Terran_Wraith) / 4) + 1)
+        return buildToHave(AUnitType.Protoss_Corsair, (EnemyUnits.count(AUnitType.Terran_Wraith) / 4) + 1)
             && increaseProduced();
     }
 

@@ -9,7 +9,7 @@ import atlantis.units.select.Count;
 
 /**
  * Lost contact on a baseless map: march the last engaged point, or false to hold.
- *
+ * <p>
  * Extracted from BattleCommander: the 9-tile envelope, the baseless gate and
  * the contact-memory rules are one reason to change (re-acquisition policy),
  * separate from the per-unit priority chain that calls it.

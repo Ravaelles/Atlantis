@@ -22,7 +22,7 @@
 //    public boolean applies() {
 //        if (true) return false;
 //
-////        if (unit.isLeader()) return false;
+/// /        if (unit.isLeader()) return false;
 //        if (unit.isIdle() || unit.lastPositionChangedAgo() >= 60) return true;
 //
 //        followPoint = followPoint();

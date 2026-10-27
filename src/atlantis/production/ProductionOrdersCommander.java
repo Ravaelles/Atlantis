@@ -5,13 +5,12 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.constructions.ConstructionRequests;
-
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceOrdersFromQueue;
-import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.engine.GameStateSnapshot;
+import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -25,6 +24,11 @@ public class ProductionOrdersCommander extends Commander {
      */
     private final ProductionEngine v2Engine =
         new ProductionEngine(ProductionRacePolicy.ambient());
+
+    private static boolean newBaseInProgressAndCantAffordThisOrder(ProductionOrder order) {
+        return !A.hasMinerals(AtlantisRaceConfig.BASE.mineralPrice() + order.mineralPrice())
+            && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.BASE) > 0;
+    }
 
     @Override
     public boolean applies() {
@@ -72,10 +76,5 @@ public class ProductionOrdersCommander extends Commander {
             ProduceOrdersFromQueue.handleProductionOrder(order);
         }
         return false;
-    }
-
-    private static boolean newBaseInProgressAndCantAffordThisOrder(ProductionOrder order) {
-        return !A.hasMinerals(AtlantisRaceConfig.BASE.mineralPrice() + order.mineralPrice())
-            && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.BASE) > 0;
     }
 }

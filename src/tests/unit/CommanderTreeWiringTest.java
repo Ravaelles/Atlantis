@@ -16,9 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The core-structure guard the owner asked for (2026-10-07): "we have a broken
@@ -47,6 +45,44 @@ public class CommanderTreeWiringTest {
 
     private Race raceBefore;
 
+    private static Commander[] childrenOf(Commander commander) throws Exception {
+        // commanderObjects lives on BaseCommander, but the depth to it differs:
+        // some commanders extend Commander directly, others (HasReason ones)
+        // sit one level deeper. Walk up instead of assuming a fixed depth - the
+        // first version used getSuperclass() and threw NoSuchFieldException for
+        // exactly this reason.
+        Class<?> type = commander.getClass();
+        while (type != null) {
+            try {
+                Field field = type.getDeclaredField("commanderObjects");
+                field.setAccessible(true);
+
+                return (Commander[]) field.get(commander);
+            } catch (NoSuchFieldException e) {
+                type = type.getSuperclass();
+            }
+        }
+
+        throw new NoSuchFieldException("commanderObjects not found on " + commander.getClass());
+    }
+
+    private static boolean contains(Commander commander, Class<?> type) throws Exception {
+        return find(commander, type) != null;
+    }
+
+    private static <T> T find(Commander commander, Class<T> type) throws Exception {
+        for (Commander child : childrenOf(commander)) {
+            if (type.isInstance(child))
+                return type.cast(child);
+
+            T nested = find(child, type);
+            if (nested != null)
+
+                return nested;
+        }
+        return null;
+    }
+
     /**
      * The race MUST be set before any commander is constructed, because the
      * tree is built in constructors by calling {@code subcommanders()} - and a
@@ -69,134 +105,95 @@ public class CommanderTreeWiringTest {
         AtlantisRaceConfig.MY_RACE = raceBefore;
     }
 
-        @Test
-        public void protossUnitProducerIsInTheDynamicTree() throws Exception {
-                // Build the commander the way the game does.
-                DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
+    @Test
+    public void protossUnitProducerIsInTheDynamicTree() throws Exception {
+        // Build the commander the way the game does.
+        DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
 
-                assertTrue(contains(dynamic, ProtossDynamicUnitProductionCommander.class),
-                                "ProtossDynamicUnitProductionCommander is NOT in DynamicUnitAndTechProducerCommander's"
-                                                + " tree - the bot cannot produce units, and nothing reports it."
-                                                + " Built children: " + childrenOf(dynamic));
+        assertTrue(contains(dynamic, ProtossDynamicUnitProductionCommander.class),
+            "ProtossDynamicUnitProductionCommander is NOT in DynamicUnitAndTechProducerCommander's"
+                + " tree - the bot cannot produce units, and nothing reports it."
+                + " Built children: " + childrenOf(dynamic));
+    }
+
+    @Test
+    public void dynamicProducerIsInTheProductionTree() throws Exception {
+        ProductionCommander production = new ProductionCommander();
+
+        assertTrue(contains(production, DynamicProductionCommander.class),
+            "DynamicProductionCommander is missing from ProductionCommander -"
+                + " nothing would ever ask for a unit. Children: "
+                + childrenOf(production));
+    }
+
+    // ---- tree walking ------------------------------------------------------
+
+    @Test
+    public void protossProducerReachesThroughTheWholeChainFromTheTop() throws Exception {
+        // The full path the game walks every frame:
+        // AtlantisGameCommander -> ProductionCommander -> DynamicProductionCommander
+        // -> DynamicUnitAndTechProducerCommander ->
+        // ProtossDynamicUnitProductionCommander
+        // Each link is a constructor call, so a break anywhere is silent.
+        AtlantisGameCommander top = new AtlantisGameCommander();
+
+        assertTrue(contains(top, ProductionCommander.class),
+            "ProductionCommander missing from the top-level pipeline");
+
+        ProductionCommander production = find(top, ProductionCommander.class);
+        assertTrue(contains(production, DynamicProductionCommander.class),
+            "DynamicProductionCommander missing under ProductionCommander");
+
+        DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
+        assertTrue(contains(dynamic, DynamicUnitAndTechProducerCommander.class),
+            "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
+
+        DynamicUnitAndTechProducerCommander unitProducer = find(dynamic,
+            DynamicUnitAndTechProducerCommander.class);
+        assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
+            "ProtossDynamicUnitProductionCommander missing at the end of the chain -"
+                + " this is the exact break that stopped unit production");
+    }
+
+    @Test
+    public void theTreeIsNotSilentlyEmptyForOurRace() throws Exception {
+        // A race branch that matches nothing returns null from subcommanders(),
+        // and mergeCommanders would then throw on .length - or, worse, produce an
+        // empty tree. Assert the branch is populated for the race we actually
+        // play, which is the assumption the whole production chain rests on.
+        assertTrue(We.protoss() || We.terran() || We.zerg(),
+            "no race is set at construction time; every race-dependent branch is dead");
+
+        DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
+        assertTrue(childrenOf(dynamic).length > 0,
+            "the race-specific branch is EMPTY - the tree was built with no race set."
+                + " We.protoss()=" + We.protoss() + " We.terran()=" + We.terran());
+    }
+
+    @Test
+    public void appliesIsFalseOnlyWhenTheRaceIsNotOurs() throws Exception {
+        // applies() must not be the reason nothing is produced: for our race it
+        // must be true. The owner's evidence was that the print inside applies()
+        // never appeared, which means applies() was never CALLED - a missing
+        // node, not a false answer. This test separates those two cases.
+        ProtossDynamicUnitProductionCommander protoss = new ProtossDynamicUnitProductionCommander();
+
+        if (We.protoss()) {
+            assertTrue(protoss.applies(),
+                "applies() must be true for our own race - if it is false the commander"
+                    + " is in the tree but never runs");
         }
+    }
 
-        @Test
-        public void dynamicProducerIsInTheProductionTree() throws Exception {
-                ProductionCommander production = new ProductionCommander();
+    @Test
+    public void treeWalkingHelperItselfWorks() throws Exception {
+        // A guard on the guard: if reflection ever stops finding children, every
+        // assertion above would pass vacuously.
+        AtlantisGameCommander top = new AtlantisGameCommander();
+        Commander[] children = childrenOf(top);
 
-                assertTrue(contains(production, DynamicProductionCommander.class),
-                                "DynamicProductionCommander is missing from ProductionCommander -"
-                                                + " nothing would ever ask for a unit. Children: "
-                                                + childrenOf(production));
-        }
-
-        @Test
-        public void protossProducerReachesThroughTheWholeChainFromTheTop() throws Exception {
-                // The full path the game walks every frame:
-                // AtlantisGameCommander -> ProductionCommander -> DynamicProductionCommander
-                // -> DynamicUnitAndTechProducerCommander ->
-                // ProtossDynamicUnitProductionCommander
-                // Each link is a constructor call, so a break anywhere is silent.
-                AtlantisGameCommander top = new AtlantisGameCommander();
-
-                assertTrue(contains(top, ProductionCommander.class),
-                                "ProductionCommander missing from the top-level pipeline");
-
-                ProductionCommander production = find(top, ProductionCommander.class);
-                assertTrue(contains(production, DynamicProductionCommander.class),
-                                "DynamicProductionCommander missing under ProductionCommander");
-
-                DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
-                assertTrue(contains(dynamic, DynamicUnitAndTechProducerCommander.class),
-                                "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
-
-                DynamicUnitAndTechProducerCommander unitProducer = find(dynamic,
-                                DynamicUnitAndTechProducerCommander.class);
-                assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
-                                "ProtossDynamicUnitProductionCommander missing at the end of the chain -"
-                                                + " this is the exact break that stopped unit production");
-        }
-
-        @Test
-        public void theTreeIsNotSilentlyEmptyForOurRace() throws Exception {
-                // A race branch that matches nothing returns null from subcommanders(),
-                // and mergeCommanders would then throw on .length - or, worse, produce an
-                // empty tree. Assert the branch is populated for the race we actually
-                // play, which is the assumption the whole production chain rests on.
-                assertTrue(We.protoss() || We.terran() || We.zerg(),
-                                "no race is set at construction time; every race-dependent branch is dead");
-
-                DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
-                assertTrue(childrenOf(dynamic).length > 0,
-                                "the race-specific branch is EMPTY - the tree was built with no race set."
-                                                + " We.protoss()=" + We.protoss() + " We.terran()=" + We.terran());
-        }
-
-        @Test
-        public void appliesIsFalseOnlyWhenTheRaceIsNotOurs() throws Exception {
-                // applies() must not be the reason nothing is produced: for our race it
-                // must be true. The owner's evidence was that the print inside applies()
-                // never appeared, which means applies() was never CALLED - a missing
-                // node, not a false answer. This test separates those two cases.
-                ProtossDynamicUnitProductionCommander protoss = new ProtossDynamicUnitProductionCommander();
-
-                if (We.protoss()) {
-                        assertTrue(protoss.applies(),
-                                        "applies() must be true for our own race - if it is false the commander"
-                                                        + " is in the tree but never runs");
-                }
-        }
-
-        // ---- tree walking ------------------------------------------------------
-
-        private static Commander[] childrenOf(Commander commander) throws Exception {
-            // commanderObjects lives on BaseCommander, but the depth to it differs:
-            // some commanders extend Commander directly, others (HasReason ones)
-            // sit one level deeper. Walk up instead of assuming a fixed depth - the
-            // first version used getSuperclass() and threw NoSuchFieldException for
-            // exactly this reason.
-            Class<?> type = commander.getClass();
-            while (type != null) {
-                try {
-                    Field field = type.getDeclaredField("commanderObjects");
-                    field.setAccessible(true);
-
-                    return (Commander[]) field.get(commander);
-                } catch (NoSuchFieldException e) {
-                    type = type.getSuperclass();
-                }
-            }
-
-            throw new NoSuchFieldException("commanderObjects not found on " + commander.getClass());
-        }
-
-        private static boolean contains(Commander commander, Class<?> type) throws Exception {
-                return find(commander, type) != null;
-        }
-
-        private static <T> T find(Commander commander, Class<T> type) throws Exception {
-                for (Commander child : childrenOf(commander)) {
-                        if (type.isInstance(child))
-                                return type.cast(child);
-
-                        T nested = find(child, type);
-                        if (nested != null)
-
-                                return nested;
-                }
-                return null;
-        }
-
-        @Test
-        public void treeWalkingHelperItselfWorks() throws Exception {
-                // A guard on the guard: if reflection ever stops finding children, every
-                // assertion above would pass vacuously.
-                AtlantisGameCommander top = new AtlantisGameCommander();
-                Commander[] children = childrenOf(top);
-
-                assertNotNull(children, "children must never be null - initChildren always assigns");
-                assertEquals(true, children.length > 0,
-                                "the top-level commander must have children, or every containment"
-                                                + " assertion in this class is vacuous");
-        }
+        assertNotNull(children, "children must never be null - initChildren always assigns");
+        assertTrue(children.length > 0, "the top-level commander must have children, or every containment"
+            + " assertion in this class is vacuous");
+    }
 }

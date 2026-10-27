@@ -19,12 +19,6 @@ import atlantis.util.We;
 public class ProtossDynamicUnitProductionCommander extends Commander implements HasReason {
     public static String reason = "-";
 
-    @Override
-    public boolean applies() {
-        return We.protoss();
-//            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
-    }
-
     private static boolean freeToSpendResources() {
         if (!ProtossCriticalStuffInQueue.hasEnoughResources()) return decision(false, "CriticalStuff");
         if (!A.hasMinerals(408) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
@@ -66,11 +60,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     }
 
     private static boolean investInEarlyGoons() {
-        if (A.hasMinerals(175) && (Army.strength() <= 150 || Missions.isGlobalMissionDefendOrSparta()) && Count.dragoons() <= 7) {
-            return true;
-        }
-
-        return false;
+        return A.hasMinerals(175) && (Army.strength() <= 150 || Missions.isGlobalMissionDefendOrSparta()) && Count.dragoons() <= 7;
     }
 
     private static boolean manyBasesAndHasMinerals() {
@@ -83,9 +73,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         if (A.seconds() >= 700 && combatUnits <= 30) return true;
         if (A.seconds() >= 600 && combatUnits <= 27) return true;
         if (A.seconds() >= 500 && combatUnits <= 23) return true;
-        if (A.seconds() >= 400 && combatUnits <= 18) return true;
 
-        return false;
+        return A.seconds() >= 400 && combatUnits <= 18;
     }
 
     private static boolean decision(boolean b, String reason) {
@@ -107,6 +96,12 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ) return true;
 
         return !A.hasMinerals(320) && A.seconds() > 320;
+    }
+
+    @Override
+    public boolean applies() {
+        return We.protoss();
+//            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }
 
     protected boolean handle() {

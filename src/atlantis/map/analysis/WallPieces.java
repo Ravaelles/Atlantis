@@ -24,36 +24,17 @@ import java.util.List;
  */
 public final class WallPieces {
 
-    /** One piece order: what, top-left where. */
-    public static final class Piece {
-        private final AUnitType type;
-        private final APosition tile;
-
-        Piece(AUnitType type, APosition tile) {
-            this.type = type;
-            this.tile = tile;
-        }
-
-        public AUnitType type() {
-            return type;
-        }
-
-        public APosition tile() {
-            return tile;
-        }
-    }
-
     private WallPieces() {
     }
 
     /**
-     * @param slots anchor tiles in segment order (either direction; oriented
-     * inside so the power piece sits base-side)
-     * @param door the tile our units pass; never takes a piece, may be null
-     * @param baseSide our base behind the choke; orients the row
+     * @param slots           anchor tiles in segment order (either direction; oriented
+     *                        inside so the power piece sits base-side)
+     * @param door            the tile our units pass; never takes a piece, may be null
+     * @param baseSide        our base behind the choke; orients the row
      * @param chokeWidthTiles choke width in tiles ({@code AChoke.width()})
-     * @param cannonsWanted guns the wall may spend (charter: 1-2)
-     * @param kit the race's wall vocabulary (Protoss wall-in today)
+     * @param cannonsWanted   guns the wall may spend (charter: 1-2)
+     * @param kit             the race's wall vocabulary (Protoss wall-in today)
      * @return piece orders, or empty when the choke is too wide to plug
      */
     public static List<Piece> plan(
@@ -97,5 +78,26 @@ public final class WallPieces {
         if (plug <= have) return 0;
 
         return (int) Math.ceil((plug - have) / kit.gunWidth());
+    }
+
+    /**
+     * One piece order: what, top-left where.
+     */
+    public static final class Piece {
+        private final AUnitType type;
+        private final APosition tile;
+
+        Piece(AUnitType type, APosition tile) {
+            this.type = type;
+            this.tile = tile;
+        }
+
+        public AUnitType type() {
+            return type;
+        }
+
+        public APosition tile() {
+            return tile;
+        }
     }
 }

@@ -11,8 +11,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #214a: every nearTo branch owns a code, so a far-away Pylon warp
@@ -52,7 +50,7 @@ public class PylonNearToReasonTest extends WorldStubForTests {
     public void firstPylonNamesItsBranch() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
 
-        world(20, fakeOurs(nexus), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             PylonPosition.nearToForPylon(null);
@@ -67,7 +65,7 @@ public class PylonNearToReasonTest extends WorldStubForTests {
         FakeUnit p1 = fake(AUnitType.Protoss_Pylon, 22, 22);
         FakeUnit p2 = fake(AUnitType.Protoss_Pylon, 24, 22);
 
-        world(20, fakeOurs(nexus, p1, p2), new FakeUnit[] {}, () -> {
+        world(20, fakeOurs(nexus, p1, p2), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             PylonPosition.nearToForPylon(APosition.create(40, 40));
@@ -89,7 +87,7 @@ public class PylonNearToReasonTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Pylon, 25, 22),
             fake(AUnitType.Protoss_Pylon, 26, 22),
             fake(AUnitType.Protoss_Pylon, 27, 22)
-        ), new FakeUnit[] {}, () -> {
+        ), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             initSupply(10, 11);

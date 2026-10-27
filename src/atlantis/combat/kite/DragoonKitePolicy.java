@@ -1,10 +1,10 @@
 package atlantis.combat.kite;
-import atlantis.battle.kite.CombatTuning;
 
+import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.escape.PinchRoom;
 import atlantis.map.position.APosition;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.AUnit;
+import atlantis.units.range.OurDragoonRange;
 
 /**
  * When a Dragoon steps back and when it holds, in decision order.
@@ -78,14 +78,14 @@ public final class DragoonKitePolicy {
     private static boolean pocketClosing(AUnit unit) {
         return unit.hp() + unit.shields() < CombatTuning.current().getDragoonPinchHp()
             && unit.enemiesNear().melee().inRadius(CombatTuning.current().getDragoonPinchMeleeTiles(), unit).size()
-                >= CombatTuning.current().getDragoonPinchMeleeCount()
+            >= CombatTuning.current().getDragoonPinchMeleeCount()
             && PinchRoom.hasRoom(unit.position(), (x, y) -> {
-                try {
-                    return APosition.create(x, y).isWalkable();
-                } catch (Exception | Error ignored) {
-                    return true;
-                }
-            });
+            try {
+                return APosition.create(x, y).isWalkable();
+            } catch (Exception | Error ignored) {
+                return true;
+            }
+        });
     }
 
     // Surrounded: three or more melee enemies on top of the Dragoon
@@ -99,7 +99,7 @@ public final class DragoonKitePolicy {
         return !Kite.isBeingChewed(unit)
             && unit.enemiesNear().melee().inRadius(3, unit).size() >= CombatTuning.current().getDragoonSurroundedMeleeCount()
             && (unit.cooldown() <= CombatTuning.current().getDragoonSurroundedStandCooldown()
-                || unit.distTo(threat) >= CombatTuning.current().getDragoonSurroundedStandDistTiles());
+            || unit.distTo(threat) >= CombatTuning.current().getDragoonSurroundedStandDistTiles());
     }
 
     // Low-HP Dragoon holds fire unless the shot is safe: at least

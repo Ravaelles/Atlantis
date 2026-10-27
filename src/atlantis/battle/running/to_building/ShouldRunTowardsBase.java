@@ -1,7 +1,8 @@
 package atlantis.battle.running.to_building;
 
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
+import atlantis.game.A;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
@@ -9,9 +10,8 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.game.player.Enemy;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ShouldRunTowardsBase {
@@ -173,12 +173,8 @@ public class ShouldRunTowardsBase {
             return false;
 
         if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
-            if (unit.meleeEnemiesNearCount(3) == 0) {
-                return true;
-            }
+            return unit.meleeEnemiesNearCount(3) == 0;
         }
-
-        return false;
 
 //        AUnit mainOrAnyBuilding = Select.mainOrAnyBuilding();
 //        if (mainOrAnyBuilding == null) return false;
@@ -191,7 +187,7 @@ public class ShouldRunTowardsBase {
         if (!Enemy.zerg()) return false;
 
         if (A.s <= 60 * 8) {
-            if (distToMain >= 12) return true;
+            return distToMain >= 12;
 //            if (unit.hp() <= 40) return false;
         }
 
@@ -245,9 +241,7 @@ public class ShouldRunTowardsBase {
         int minEnemiesToForbid = unit.hp() <= 80 ? 2 : 4;
         double radius = 1.5 + unit.woundPercent() / 25.0;
 
-        if (unit.enemiesNear().canAttack(unit, radius).count() >= minEnemiesToForbid) return true;
-
-        return false;
+        return unit.enemiesNear().canAttack(unit, radius).count() >= minEnemiesToForbid;
     }
 
     public static AUnit position() {

@@ -3,13 +3,11 @@ package tests.unit.world;
 import atlantis.core.world.UnitRegistry;
 import atlantis.core.world.Worlds;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Stage E: unit identity lives in an explicit registry, not in statics.

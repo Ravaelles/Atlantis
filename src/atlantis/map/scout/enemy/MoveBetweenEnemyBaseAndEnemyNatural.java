@@ -9,6 +9,11 @@ import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
+enum CurrentlyGoTo {
+    ENEMY_MAIN,
+    ENEMY_NATURAL
+}
+
 public class MoveBetweenEnemyBaseAndEnemyNatural extends Manager {
     private static CurrentlyGoTo currentlyGoTo = CurrentlyGoTo.ENEMY_MAIN;
     private APosition enemyMain;
@@ -80,9 +85,4 @@ public class MoveBetweenEnemyBaseAndEnemyNatural extends Manager {
     private boolean goToNatural() {
         return unit.move(enemyNatural, Actions.MOVE_SCOUT);
     }
-}
-
-enum CurrentlyGoTo {
-    ENEMY_MAIN,
-    ENEMY_NATURAL
 }

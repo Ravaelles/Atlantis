@@ -16,9 +16,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner 2026-10-26 (Zealot Hell run-by corridor; tightened to 10 on the
@@ -51,8 +48,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
             AUnit worker = Select.ourWorkers().first();
             assertTrue(new WorkerDefenceFightCombatUnits(worker).applies(),
                 "the setup must reach the shared gate, not die in applies()");
-            assertTrue(!new WorkerDefenceFightCombatUnits(worker).forceHandled(),
-                "a raider 16 tiles from base is not ours to chase, swarm or not");
+            assertFalse(new WorkerDefenceFightCombatUnits(worker).forceHandled(), "a raider 16 tiles from base is not ours to chase, swarm or not");
         });
     }
 
@@ -93,8 +89,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
             if (A.now() != 12) return;
 
             AUnit worker = Select.ourWorkers().first();
-            assertTrue(!new WorkerDefenceFightCombatUnits(worker).forceHandled(),
-                "a raider 12 tiles from base is past the 10-tile line, swarm or not");
+            assertFalse(new WorkerDefenceFightCombatUnits(worker).forceHandled(), "a raider 12 tiles from base is past the 10-tile line, swarm or not");
         });
     }
 
@@ -139,8 +134,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
             if (A.now() != 12) return;
 
             AUnit worker = Select.ourWorkers().first();
-            assertTrue(!new WorkerDefenceHelpCannon(worker).applies(),
-                "no worker walks 40 tiles to a forward cannon's fight");
+            assertFalse(new WorkerDefenceHelpCannon(worker).applies(), "no worker walks 40 tiles to a forward cannon's fight");
         });
     }
 
@@ -163,8 +157,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
             if (A.now() != 12) return;
 
             AUnit worker = Select.ourWorkers().first();
-            assertTrue(!atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits(worker),
-                "a swarm 16 tiles from the main does not fight at the natural, Nexus or not");
+            assertFalse(WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits(worker), "a swarm 16 tiles from the main does not fight at the natural, Nexus or not");
         });
     }
 
@@ -211,8 +204,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
             if (A.now() != 12) return;
 
             AUnit worker = Select.ourWorkers().first();
-            assertTrue(!new WorkerDefenceHelpCannon(worker).applies(),
-                "no worker walks 15 tiles to a natural cannon's fight");
+            assertFalse(new WorkerDefenceHelpCannon(worker).applies(), "no worker walks 15 tiles to a natural cannon's fight");
         });
     }
 
@@ -258,8 +250,8 @@ public class WorkerFarFightTest extends WorldStubForTests {
 
             assertTrue(new WorkerDefenceStopFighting(worker).applies(),
                 "a healthy worker pursuing 12 tiles from base, 12 from any "
-                + "building, with no combat support, withdraws instead of "
-                + "donating - pursuit without support is the reported death");
+                    + "building, with no combat support, withdraws instead of "
+                    + "donating - pursuit without support is the reported death");
             assertTrue(new WorkerDefenceStopFighting(worker).forceHandled(),
                 "the withdraw executes instead of letting the pursuit continue");
         });
@@ -285,7 +277,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
 
             assertFalse(new WorkerDefenceStopFighting(worker).applies(),
                 "a pursuing worker with a building at 2 and a Dragoon at 1 "
-                + "is supported - the withdraw rule must not fire at home");
+                    + "is supported - the withdraw rule must not fire at home");
         });
     }
 

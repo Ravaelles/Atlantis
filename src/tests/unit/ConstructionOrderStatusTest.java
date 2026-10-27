@@ -4,11 +4,7 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static atlantis.production.constructions.ConstructionOrderStatus.FINISHED;
-import static atlantis.production.constructions.ConstructionOrderStatus.IN_PROGRESS;
-import static atlantis.production.constructions.ConstructionOrderStatus.NOT_STARTED;
-import static atlantis.production.constructions.ConstructionOrderStatus.PREPARING;
-import static atlantis.production.constructions.ConstructionOrderStatus.STARTING;
+import static atlantis.production.constructions.ConstructionOrderStatus.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,9 +22,9 @@ public class ConstructionOrderStatusTest {
     @Test
     public void preparingWaitsByDesignAndCountsAsNoDemand() {
         assertTrue(PREPARING.isWaiting(),
-                "PREPARING is the aimed future: site picked, no builder, waiting by design");
+            "PREPARING is the aimed future: site picked, no builder, waiting by design");
         assertFalse(PREPARING.countsAsDemand(),
-                "a waiting site must not suppress other orders (pylon door parks otherwise)");
+            "a waiting site must not suppress other orders (pylon door parks otherwise)");
         assertFalse(PREPARING.isTerminal(), "waiting sites stay on the list");
     }
 
@@ -40,7 +36,7 @@ public class ConstructionOrderStatusTest {
 
         assertFalse(STARTING.isWaiting(), "a travelling builder is not waiting");
         assertTrue(STARTING.countsAsDemand(),
-                "a travelling builder is committed demand, never mistaken for none");
+            "a travelling builder is committed demand, never mistaken for none");
         assertFalse(STARTING.isTerminal(), "travelling builders stay on the list");
     }
 
@@ -48,7 +44,7 @@ public class ConstructionOrderStatusTest {
     public void inProgressIsWorkingNeitherWaitingNorDemandNorTerminal() {
         assertFalse(IN_PROGRESS.isWaiting(), "work in progress is not waiting");
         assertFalse(IN_PROGRESS.countsAsDemand(),
-                "a warping building is arriving supply; the echo-without-unit case stays a door-level rule");
+            "a warping building is arriving supply; the echo-without-unit case stays a door-level rule");
         assertFalse(IN_PROGRESS.isTerminal(), "work in progress stays on the list");
     }
 
@@ -61,7 +57,7 @@ public class ConstructionOrderStatusTest {
         for (ConstructionOrderStatus status : ConstructionOrderStatus.values()) {
             if (status != FINISHED) {
                 assertFalse(status.isTerminal(),
-                        status + " must stay on the list; no tombstone states exist");
+                    status + " must stay on the list; no tombstone states exist");
             }
         }
     }

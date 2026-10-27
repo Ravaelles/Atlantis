@@ -12,14 +12,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
-import tests.fakes.FakeUnit;
 import tests.fakes.FakeOrderSink;
+import tests.fakes.FakeUnit;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.fakes.FakePositionFinder.installAsSource;
 
 /**
@@ -30,6 +29,17 @@ import static tests.fakes.FakePositionFinder.installAsSource;
  */
 @Tag("combat")
 public class MapEdgeGlideTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -103,21 +113,9 @@ public class MapEdgeGlideTest extends AbstractTestWithWorld {
                 assertFalse(
                     hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                     "no glide move without a destination: " + ordersOf(dragoon));
-            }
-            finally {
+            } finally {
                 installAsSource();
             }
         });
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
     }
 }

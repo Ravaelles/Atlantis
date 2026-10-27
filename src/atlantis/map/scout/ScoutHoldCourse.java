@@ -20,17 +20,35 @@ import atlantis.units.actions.Actions;
  */
 public class ScoutHoldCourse extends Manager {
 
-    /** A fresh order needs frames to land before progress can be read. */
+    /**
+     * A fresh order needs frames to land before progress can be read.
+     */
     public static final int SETTLE_FRAMES = 30;
 
-    /** No position change this long while moving = pushing a wall, re-pick. */
+    /**
+     * No position change this long while moving = pushing a wall, re-pick.
+     */
     public static final int STUCK_FRAMES = 100;
 
-    /** Older than this the course is stale even with progress: re-evaluate. */
+    /**
+     * Older than this the course is stale even with progress: re-evaluate.
+     */
     public static final int RIDE_MAX_FRAMES = 480;
 
     public ScoutHoldCourse(AUnit unit) {
         super(unit);
+    }
+
+    /**
+     * The ride rule, clock-free: fresh orders land untouched, then only
+     * a moving scout with progress and a fresh-enough course rides.
+     */
+    public static boolean shouldRide(boolean scoutAction, boolean moving, int orderAgo, int changedAgo) {
+        if (!scoutAction || !moving) return false;
+        if (orderAgo <= SETTLE_FRAMES) return true;
+        if (changedAgo > STUCK_FRAMES) return false;
+
+        return orderAgo <= RIDE_MAX_FRAMES;
     }
 
     @Override
@@ -43,19 +61,6 @@ public class ScoutHoldCourse extends Manager {
             unit.lastOrderWasFramesAgo(),
             unit.lastPositionChangedAgo()
         );
-    }
-
-    /**
-     * The ride rule, clock-free: fresh orders land untouched, then only
-     * a moving scout with progress and a fresh-enough course rides.
-     */
-    public static boolean shouldRide(boolean scoutAction, boolean moving, int orderAgo, int changedAgo) {
-        if (!scoutAction || !moving) return false;
-        if (orderAgo <= SETTLE_FRAMES) return true;
-        if (changedAgo > STUCK_FRAMES) return false;
-        if (orderAgo > RIDE_MAX_FRAMES) return false;
-
-        return true;
     }
 
     @Override

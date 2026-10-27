@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
  * the base relocates to another location. Let's remember the initial position of our main.
  */
 public class InitialMainPosition {
-    private static InitialMainPosition instance = null;
+    private static final InitialMainPosition instance = null;
     private static APosition initialMainPosition = null;
 
     // =========================================================

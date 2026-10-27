@@ -7,12 +7,8 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeResearch;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Terran_Barracks;
-import static atlantis.units.AUnitType.Terran_Command_Center;
-import static atlantis.units.AUnitType.Terran_Marine;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static atlantis.units.AUnitType.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * What our player has researched is a property of the world, and a test has to be

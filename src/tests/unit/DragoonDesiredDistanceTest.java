@@ -13,10 +13,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Stardust desired-distance rule (see `_AI/CHALLENGES/MicroKiting.md`):
@@ -33,6 +30,17 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     public Race initRace() {
@@ -172,16 +180,5 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             // 2026-10-26) - 3.6, in range yet safe, not the old close.
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
         });
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
     }
 }

@@ -1,10 +1,6 @@
 package atlantis.debug.tweaker;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The engines the tuner loop can address, by CLI name. The loop asks
@@ -17,11 +13,13 @@ public final class TuningEngines {
     }
 
     public static List<TuningEngine> all() {
-        return Collections.unmodifiableList(Arrays.<TuningEngine>asList(
+        return Collections.unmodifiableList(Arrays.asList(
             new WineEngine(), new OpenBWEngine(), new SimEngine()));
     }
 
-    /** The engine for a CLI name, or empty when nothing matches. */
+    /**
+     * The engine for a CLI name, or empty when nothing matches.
+     */
     public static java.util.Optional<TuningEngine> fromName(String name) {
         if (name == null) return java.util.Optional.empty();
 
@@ -31,7 +29,9 @@ public final class TuningEngines {
         return java.util.Optional.empty();
     }
 
-    /** name -> batch script, for the loop. Unknown names are absent, never null. */
+    /**
+     * name -> batch script, for the loop. Unknown names are absent, never null.
+     */
     public static Map<String, String> batchScripts() {
         Map<String, String> scripts = new LinkedHashMap<>();
         for (TuningEngine engine : all()) scripts.put(engine.name(), engine.batchScript());

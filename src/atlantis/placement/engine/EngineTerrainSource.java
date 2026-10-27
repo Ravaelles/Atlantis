@@ -21,6 +21,35 @@ import atlantis.units.select.Select;
  */
 public final class EngineTerrainSource implements TileAvailabilityGrid.TerrainSource {
 
+    private static boolean resourceAt(int tx, int ty) {
+        for (AUnit resource : Select.mineralsAndGeysers().list()) {
+            if (covers(resource, tx, ty))
+
+                return true;
+        }
+        return false;
+    }
+
+    private static AUnit depotAt(int tx, int ty) {
+        for (AUnit base : Select.all().bases().list()) {
+            if (covers(base, tx, ty)) return base;
+        }
+        return null;
+    }
+
+    /**
+     * Tile-rectangle containment, our side and the enemy's alike.
+     */
+    private static boolean covers(AUnit unit, int tx, int ty) {
+        if (unit == null || unit.position() == null)
+            return false;
+
+        int left = unit.tx();
+        int top = unit.ty();
+        return tx >= left && tx < left + unit.type().getTilesWidth()
+            && ty >= top && ty < top + unit.type().getTilesHeights();
+    }
+
     @Override
     public int mapWidth() {
         return atlantis.map.AMap.getMapWidthInTiles();
@@ -56,32 +85,5 @@ public final class EngineTerrainSource implements TileAvailabilityGrid.TerrainSo
     @Override
     public boolean isDepotOrigin(int tx, int ty) {
         return depotAt(tx, ty) != null;
-    }
-
-    private static boolean resourceAt(int tx, int ty) {
-        for (AUnit resource : Select.mineralsAndGeysers().list()) {
-            if (covers(resource, tx, ty))
-
-                return true;
-        }
-        return false;
-    }
-
-    private static AUnit depotAt(int tx, int ty) {
-        for (AUnit base : Select.all().bases().list()) {
-            if (covers(base, tx, ty)) return base;
-        }
-        return null;
-    }
-
-    /** Tile-rectangle containment, our side and the enemy's alike. */
-    private static boolean covers(AUnit unit, int tx, int ty) {
-        if (unit == null || unit.position() == null)
-            return false;
-
-        int left = unit.tx();
-        int top = unit.ty();
-        return tx >= left && tx < left + unit.type().getTilesWidth()
-                && ty >= top && ty < top + unit.type().getTilesHeights();
     }
 }

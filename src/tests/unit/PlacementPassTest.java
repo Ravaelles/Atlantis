@@ -1,25 +1,10 @@
 package tests.unit;
 
-import atlantis.production.v2.PlacementPlanner;
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.ProducerFacility;
-import atlantis.production.v2.ProducerFacilityRegistry;
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.ProductionScheduler;
-import atlantis.production.v2.ResourceCost;
-import atlantis.production.v2.ResourceTimeline;
-import atlantis.production.v2.TargetPlacement;
+import atlantis.production.v2.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,6 +24,69 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Tag("placement")
 public class PlacementPassTest {
+
+    @Test
+    public void everySchedulePassStartsAndEndsThePlanner() {
+        FakeRegistry registry = new FakeRegistry();
+        registry.add("Probe", 0);
+
+        TilingPlanner planner = new TilingPlanner();
+        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
+
+        scheduler.schedule(Collections.emptyList(),
+            new ResourceTimeline(100, 500, 0, 10));
+        scheduler.schedule(Collections.emptyList(),
+            new ResourceTimeline(100, 500, 0, 10));
+
+        assertEquals(2, planner.passesStarted, "one reset per pass");
+        assertEquals(2, planner.passesEnded, "the pass is closed too");
+    }
+
+    @Test
+    public void twoIdenticalBuildingsInOnePassGetDifferentTiles() {
+        FakeRegistry registry = new FakeRegistry();
+        registry.add("Probe", 0);
+
+        FakeProducible pylon = new FakeProducible("Pylon", true);
+
+        TilingPlanner planner = new TilingPlanner();
+        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
+
+        ProductionPlan plan = scheduler.schedule(Collections.singletonList(
+                new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 2, 0, TargetPlacement.anywhere())),
+            new ResourceTimeline(1000, 1000, 0, 40));
+
+        long pylons = plan.items().stream().filter(i -> i.item().id().equals("Pylon")).count();
+        assertEquals(2, pylons, "the goal asked for two Pylons");
+        assertEquals(2, planner.tilesTakenThisPass.size(), "two tiles were reserved");
+        assertEquals("0:7", planner.tilesTakenThisPass.get(0));
+        assertEquals("1:7", planner.tilesTakenThisPass.get(1),
+            "the second Pylon of the same pass must not reuse the first tile");
+    }
+
+    @Test
+    public void reservationsOfOnePassDoNotLeakIntoTheNext() {
+        FakeRegistry registry = new FakeRegistry();
+        registry.add("Probe", 0);
+
+        FakeProducible pylon = new FakeProducible("Pylon", true);
+
+        TilingPlanner planner = new TilingPlanner();
+        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
+
+        List<ProductionGoal> goals = Collections.singletonList(
+            new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 1, 0, TargetPlacement.anywhere()));
+
+        scheduler.schedule(goals, new ResourceTimeline(1000, 1000, 0, 40));
+
+        // Next pass: the plan is recomputed from scratch, so the same tile is
+        // offered again rather than being permanently blacklisted.
+        ProductionPlan second = scheduler.schedule(goals, new ResourceTimeline(1000, 1000, 0, 40));
+
+        assertEquals(1, second.size(), "the next pass plans the Pylon again");
+        assertEquals("0:7", planner.tilesTakenThisPass.get(0),
+            "the tile of the previous pass is available again");
+    }
 
     private static final class FakeProducible implements Producible {
         private final String id;
@@ -87,7 +135,7 @@ public class PlacementPassTest {
 
         void add(String typeId, int availableFromFrame) {
             byType.computeIfAbsent(typeId, k -> new ArrayList<>())
-                    .add(new ProducerFacility(nextId++, typeId, availableFromFrame));
+                .add(new ProducerFacility(nextId++, typeId, availableFromFrame));
         }
 
         @Override
@@ -102,10 +150,10 @@ public class PlacementPassTest {
      * pass.
      */
     private static final class TilingPlanner implements PlacementPlanner {
+        final List<String> tilesTakenThisPass = new ArrayList<>();
         int passesStarted;
         int passesEnded;
         private int nextTile;
-        final List<String> tilesTakenThisPass = new ArrayList<>();
 
         @Override
         public void startPass() {
@@ -121,7 +169,7 @@ public class PlacementPassTest {
 
         @Override
         public PlacementReservation reservePlacement(
-                Producible building, TargetPlacement constraint, int targetFrame) {
+            Producible building, TargetPlacement constraint, int targetFrame) {
             int x = nextTile++;
             String tile = x + ":7";
             if (tilesTakenThisPass.contains(tile)) return PlacementReservation.failure();
@@ -130,68 +178,5 @@ public class PlacementPassTest {
 
             return PlacementReservation.success(x, 7, targetFrame);
         }
-    }
-
-    @Test
-    public void everySchedulePassStartsAndEndsThePlanner() {
-        FakeRegistry registry = new FakeRegistry();
-        registry.add("Probe", 0);
-
-        TilingPlanner planner = new TilingPlanner();
-        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
-
-        scheduler.schedule(Collections.<ProductionGoal>emptyList(),
-                new ResourceTimeline(100, 500, 0, 10));
-        scheduler.schedule(Collections.<ProductionGoal>emptyList(),
-                new ResourceTimeline(100, 500, 0, 10));
-
-        assertEquals(2, planner.passesStarted, "one reset per pass");
-        assertEquals(2, planner.passesEnded, "the pass is closed too");
-    }
-
-    @Test
-    public void twoIdenticalBuildingsInOnePassGetDifferentTiles() {
-        FakeRegistry registry = new FakeRegistry();
-        registry.add("Probe", 0);
-
-        FakeProducible pylon = new FakeProducible("Pylon", true);
-
-        TilingPlanner planner = new TilingPlanner();
-        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
-
-        ProductionPlan plan = scheduler.schedule(Arrays.asList(
-                new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 2, 0, TargetPlacement.anywhere())),
-                new ResourceTimeline(1000, 1000, 0, 40));
-
-        long pylons = plan.items().stream().filter(i -> i.item().id().equals("Pylon")).count();
-        assertEquals(2, pylons, "the goal asked for two Pylons");
-        assertEquals(2, planner.tilesTakenThisPass.size(), "two tiles were reserved");
-        assertEquals("0:7", planner.tilesTakenThisPass.get(0));
-        assertEquals("1:7", planner.tilesTakenThisPass.get(1),
-                "the second Pylon of the same pass must not reuse the first tile");
-    }
-
-    @Test
-    public void reservationsOfOnePassDoNotLeakIntoTheNext() {
-        FakeRegistry registry = new FakeRegistry();
-        registry.add("Probe", 0);
-
-        FakeProducible pylon = new FakeProducible("Pylon", true);
-
-        TilingPlanner planner = new TilingPlanner();
-        ProductionScheduler scheduler = new ProductionScheduler(registry, planner);
-
-        List<ProductionGoal> goals = Arrays.asList(
-                new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 1, 0, TargetPlacement.anywhere()));
-
-        scheduler.schedule(goals, new ResourceTimeline(1000, 1000, 0, 40));
-
-        // Next pass: the plan is recomputed from scratch, so the same tile is
-        // offered again rather than being permanently blacklisted.
-        ProductionPlan second = scheduler.schedule(goals, new ResourceTimeline(1000, 1000, 0, 40));
-
-        assertEquals(1, second.size(), "the next pass plans the Pylon again");
-        assertEquals("0:7", planner.tilesTakenThisPass.get(0),
-                "the tile of the previous pass is available again");
     }
 }

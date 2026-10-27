@@ -1,12 +1,6 @@
 package atlantis.debug.tweaker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Proposal step of the gradient loop (NEXT #160, step 6): from the hall
@@ -26,7 +20,9 @@ public final class TunerProposer {
     private TunerProposer() {
     }
 
-    /** Best-first by scenario fitness, then game name. The loss penalty inside the scalar already orders every loss below every win. */
+    /**
+     * Best-first by scenario fitness, then game name. The loss penalty inside the scalar already orders every loss below every win.
+     */
     public static List<TunerHallOfFame.Entry> rank(TuningScenario scenario, List<TunerHallOfFame.Entry> entries) {
         ArrayList<TunerHallOfFame.Entry> ranked = new ArrayList<>();
         if (entries != null) ranked.addAll(entries);

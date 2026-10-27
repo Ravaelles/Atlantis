@@ -19,7 +19,9 @@ import atlantis.map.position.APosition;
  */
 public final class EscapeArc {
 
-    /** Beyond this the squad pull stops: far units flee straight, never across the map. */
+    /**
+     * Beyond this the squad pull stops: far units flee straight, never across the map.
+     */
     public static final double SQUAD_RADIUS_TILES = 15.0;
 
     private EscapeArc() {

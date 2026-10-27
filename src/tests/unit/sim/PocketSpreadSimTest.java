@@ -6,20 +6,18 @@ import atlantis.combat.FormationHold;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #209: blocked units deep in our own base occupy the same ground
@@ -39,7 +37,9 @@ public class PocketSpreadSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;
 
-    /** Test-geometry wall, co-located with the pylon below (tiles). */
+    /**
+     * Test-geometry wall, co-located with the pylon below (tiles).
+     */
     private static final int WALL_X = 19;
     private static final int WALL_Y = 20;
     private static final int WALL_W = 2;
@@ -53,7 +53,7 @@ public class PocketSpreadSimTest extends AbstractTestWithUnits {
     @Test
     public void lineMarchesAroundBuildingsInsteadOfWedgingOnThem() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 20);
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             fake(AUnitType.Protoss_Dragoon, 18, 20),
             fake(AUnitType.Protoss_Dragoon, 19, 21),
             fake(AUnitType.Protoss_Dragoon, 19, 19),
@@ -69,11 +69,11 @@ public class PocketSpreadSimTest extends AbstractTestWithUnits {
         foe.setEnemy();
         foe.hp = 100;
 
-        FakeUnit[] ours = new FakeUnit[] { nexus, dragoons[0], dragoons[1], dragoons[2], pylon };
+        FakeUnit[] ours = new FakeUnit[]{nexus, dragoons[0], dragoons[1], dragoons[2], pylon};
         SimArena arena = new SimArena(70 * TILE, 40 * TILE)
             .block(WALL_X * TILE, WALL_Y * TILE, WALL_W * TILE, WALL_H * TILE);
         SimWorld world = new SimWorld(
-            ours, new FakeUnit[] { foe }, arena);
+            ours, new FakeUnit[]{foe}, arena);
         try {
             BattleCommander.clearForTests();
             EventLog.clearForTests();
@@ -97,22 +97,20 @@ public class PocketSpreadSimTest extends AbstractTestWithUnits {
                 trails.add("id=" + d.id() + " pos=" + d.position + " slot=" + slot);
                 if (slot == null) continue;
                 assigned++;
-                assertTrue(!insideWall((APosition) slot),
-                    "no assigned slot sits inside the walled tiles: " + slot);
+                assertFalse(insideWall((APosition) slot), "no assigned slot sits inside the walled tiles: " + slot);
                 if (d.position.distTo(slot) <= 2.0) displaced++;
             }
             System.out.println("POCKET " + trails);
 
             assertTrue(assigned >= 2,
                 "open ground around the wall still hosts the crescent: "
-                + assigned + " slots assigned");
+                    + assigned + " slots assigned");
             assertTrue(displaced >= 2,
                 "assigned units march at standable slots instead of freezing "
-                + "on the wall: " + displaced + " of " + assigned + " placed");
+                    + "on the wall: " + displaced + " of " + assigned + " placed");
             assertTrue(EventLog.toJsonLines().contains("\"verdict\":\"HOLD\""),
                 "the line marches in formation, it does not fall through");
-        }
-        finally {
+        } finally {
             for (FakeUnit d : dragoons) Alpha.get().removeUnit(d);
             world.close();
             BattleCommander.clearForTests();

@@ -12,11 +12,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the shared escape direction (formation Phase A): one direction
@@ -56,7 +52,7 @@ public class SharedEscapeTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(a, b), fakeEnemies(threat), () -> {
             assertNull(SharedEscape.rallyFor(b, a, Select.our(), 6.0, 15.0),
-                    "two units share nothing - the frozen per-unit escape owns them");
+                "two units share nothing - the frozen per-unit escape owns them");
         });
     }
 
@@ -75,12 +71,12 @@ public class SharedEscapeTest extends AbstractTestWithWorld {
             assertNotNull(rallyTail);
 
             assertTrue(rallyMid.distTo(threat) > mid.distTo(threat),
-                    "the shared rally leads away from the threat, not toward it");
+                "the shared rally leads away from the threat, not toward it");
 
             double dirMidX = rallyMid.tx() - mid.tx();
             double dirTailX = rallyTail.tx() - tail.tx();
             assertTrue(dirMidX < 0 && dirTailX < 0,
-                    "threat sits east, both followers rally west along the one direction");
+                "threat sits east, both followers rally west along the one direction");
 
             assertEquals(
                 Math.signum(rallyMid.ty() - mid.ty()),
@@ -106,6 +102,6 @@ public class SharedEscapeTest extends AbstractTestWithWorld {
         assertNotNull(seen[3]);
         assertNotNull(seen[14]);
         assertEquals(seen[3], seen[14],
-                "static threat and leader mean a static direction - no jitter across the 10f cadence");
+            "static threat and leader mean a static direction - no jitter across the 10f cadence");
     }
 }

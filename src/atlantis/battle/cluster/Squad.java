@@ -25,10 +25,14 @@ public class Squad {
     private int lastUnderAttack = -99999;
     private int lastShot = -99999;
     private int lastAttacked = -99999;
-    private SquadTargeting targeting = new SquadTargeting();
+    private final SquadTargeting targeting = new SquadTargeting();
 
     public Squad(String name) {
         this.name = name;
+    }
+
+    public static HasPosition alphaCenter() {
+        return Alpha.alphaCenter();
     }
 
     public String name() {
@@ -95,10 +99,6 @@ public class Squad {
 
     public boolean isMissionDefendOrSparta() {
         return isMissionDefend();
-    }
-
-    public static HasPosition alphaCenter() {
-        return Alpha.alphaCenter();
     }
 
     public AUnit squadScout() {

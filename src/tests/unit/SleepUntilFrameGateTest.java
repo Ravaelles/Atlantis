@@ -45,7 +45,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
         FakeUnit probeFake = fake(AUnitType.Protoss_Probe, 8.3);
         FakeUnit zealotFake = fake(AUnitType.Protoss_Zealot, 12);
 
-        return new FakeUnit[]{ nexus, probeFake, zealotFake };
+        return new FakeUnit[]{nexus, probeFake, zealotFake};
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
         FakeUnit probeFake = fake(AUnitType.Protoss_Probe, 8.3);
         FakeUnit zealotFake = fake(AUnitType.Protoss_Zealot, 12);
 
-        return new FakeUnit[]{ nexus, probeFake, zealotFake };
+        return new FakeUnit[]{nexus, probeFake, zealotFake};
     }
 
     private void captureUnits() {
@@ -71,7 +71,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void unitIsNotAsleepBeforeAnyOrder() {
-        world(FRAME, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             if (A.now() == 1) captureUnits();
 
             useFakeTime(2);
@@ -82,7 +82,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void afterOrderUnitSleepsThroughTheLatencyWindow() {
-        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             if (A.now() == 1) captureUnits();
 
             // The order was issued on FRAME. Frames FRAME..FRAME+HOLD-1: asleep.
@@ -108,7 +108,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void holdAppliesToCombatUnitsToo() {
-        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             if (A.now() == 1) captureUnits();
 
             if (A.now() == FRAME) {
@@ -128,7 +128,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void holdsArePerUnit() {
-        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME + HOLD + 2, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             if (A.now() == 1) captureUnits();
 
             if (A.now() == FRAME) {
@@ -145,7 +145,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void repeatedHoldsReArmTheWindow() {
-        world(FRAME + HOLD + 4, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME + HOLD + 4, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             if (A.now() == 1) captureUnits();
 
             // First hold on FRAME (expiry FRAME+HOLD). A re-issue on FRAME+2 re-arms the
@@ -168,7 +168,7 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     @Test
     public void stubWorldReportsFallbackLatency() {
-        world(FRAME, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+        world(FRAME, fakeOurs(worldUnits()), fakeEnemies(), () -> {
             assertEquals(3, SleepUntilFrameGate.latencyFrames(),
                 "no engine in the stub world - the documented fallback of 3 applies, "
                     + "and the kite math (NEXT #154) depends on exactly this value here");

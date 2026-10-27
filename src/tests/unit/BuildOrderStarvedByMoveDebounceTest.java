@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -75,14 +76,13 @@ public class BuildOrderStarvedByMoveDebounceTest {
 
         boolean gatedOnSelfRefreshingAction = source.contains("if (unit.lastActionMoreThanAgo(20)) {");
 
-        assertTrue(!gatedOnSelfRefreshingAction,
-                "the build attempt must not be gated on `unit.lastActionMoreThanAgo(20)`: `move()`"
-                        + " calls setLastActionReceivedNow().setAction(...) on every invocation, so for a"
-                        + " worker whose last command is MOVE_BUILD that age resets to 0 and the gate is"
-                        + " false on nearly every frame - measured as a soak at distToSite=1.3 with"
-                        + " lastActionAgo sawtoothing 2,5,8,11,14,17,20 and only one build attempt in the"
-                        + " whole run. Gate on something the move does not touch (e.g. the command age,"
-                        + " `lastCommandIssuedAgo`, which is only updated when a command is actually"
-                        + " ISSUED).");
+        assertFalse(gatedOnSelfRefreshingAction, "the build attempt must not be gated on `unit.lastActionMoreThanAgo(20)`: `move()`"
+            + " calls setLastActionReceivedNow().setAction(...) on every invocation, so for a"
+            + " worker whose last command is MOVE_BUILD that age resets to 0 and the gate is"
+            + " false on nearly every frame - measured as a soak at distToSite=1.3 with"
+            + " lastActionAgo sawtoothing 2,5,8,11,14,17,20 and only one build attempt in the"
+            + " whole run. Gate on something the move does not touch (e.g. the command age,"
+            + " `lastCommandIssuedAgo`, which is only updated when a command is actually"
+            + " ISSUED).");
     }
 }

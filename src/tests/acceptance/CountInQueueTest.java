@@ -9,9 +9,9 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
-import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.DynamicMockOurUnits;
 
 import java.util.ArrayList;
 
@@ -19,20 +19,20 @@ import static atlantis.units.AUnitType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CountInQueueTest extends WorldStubForTests {
-    private ArrayList<ProductionOrder> allOrders = null;
+    private final ArrayList<ProductionOrder> allOrders = null;
     private FakeUnit newBunker = null;
 
     @Test
     public void bunkersInQueue() {
         options = Options.create().set("supplyUsed", 49);
         world(2, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Supply_Depot, 20),
-                    fake(Terran_Barracks, 21),
-                    fake(Terran_Academy, 22)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Supply_Depot, 20),
+                fake(Terran_Barracks, 21),
+                fake(Terran_Academy, 22)
+            )
+        ), fakeExampleEnemies(), () -> {
             if (A.now() == 1) frame1();
             else if (A.now() == 2) frame2();
         });

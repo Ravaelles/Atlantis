@@ -53,7 +53,7 @@ public class WallAnchorWarpTwinTest {
     @Test
     public void noRowReadsSentinel() {
         assertEquals(-1.0, WallAnchorWarpTwin.nearestSlotDist(
-            new ArrayList<APosition>(), APosition.create(10, 10)),
+                new ArrayList<APosition>(), APosition.create(10, 10)),
             "no anchor row is -1, not missing data");
         assertEquals(-1.0, WallAnchorWarpTwin.nearestSlotDist(row(), null),
             "no tile is -1, never an exception");

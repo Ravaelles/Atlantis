@@ -42,7 +42,7 @@ public class AtlantisConfigChanger {
 
             default:
                 throw new IllegalStateException(
-                        "Main.ourRace() must name a race, got: " + Main.ourRace());
+                    "Main.ourRace() must name a race, got: " + Main.ourRace());
         }
     }
 

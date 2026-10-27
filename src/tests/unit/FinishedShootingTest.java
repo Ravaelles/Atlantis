@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.DuelMemory;
+import atlantis.combat.BattleCommander;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -12,7 +12,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Finished shooting (owner): one of our observed projectiles is 1-2
@@ -23,6 +22,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class FinishedShootingTest extends WorldStubForTests {
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Test
     public void noBulletMeansNotFinished() {
@@ -121,8 +132,7 @@ public class FinishedShootingTest extends WorldStubForTests {
                             + atlantis.util.log.EventLog.toJsonLines());
                 }
             });
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
     }
@@ -151,21 +161,8 @@ public class FinishedShootingTest extends WorldStubForTests {
                     "mid-swing with no confirmed projectile: hold, do not step: "
                         + ordersOf(dragoon));
             });
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
-    }
-
-    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
-                                    int unitId, String operation) {
-        for (tests.fakes.FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
 }

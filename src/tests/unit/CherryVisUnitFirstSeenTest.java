@@ -45,7 +45,8 @@ public class CherryVisUnitFirstSeenTest {
     }
 
     @Test
-    public void sameUnitRecordedTwiceAppearsOnce() {        ACherryVis_UnitFirstSeen.clear();
+    public void sameUnitRecordedTwiceAppearsOnce() {
+        ACherryVis_UnitFirstSeen.clear();
         ACherryVis_UnitFirstSeen.record(10, 246, 37, 3744, 3795);
         ACherryVis_UnitFirstSeen.record(11, 246, 37, 3744, 3795);
 

@@ -18,12 +18,12 @@ import java.util.TreeMap;
  */
 public class AbstractFoggedUnit extends AUnit {
     protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
-
+    private static FoggedUnitFactory factory = FoggedUnit::from;
     protected AUnit _lastAUnit = null;
     protected int _id;
-//    protected int _hp;
+    //    protected int _hp;
     protected int _energy;
-//    protected int _shields;
+    //    protected int _shields;
 //    protected boolean _isEnemy;
     protected boolean _isStimmed;
     protected APosition _lastPosition;
@@ -31,9 +31,9 @@ public class AbstractFoggedUnit extends AUnit {
     protected boolean _isCompleted;
     protected boolean _isCloaked = false;
     protected boolean _isDetected;
-    protected Cache<Integer> cacheInt = new Cache<>();
 
     // =========================================================
+    protected Cache<Integer> cacheInt = new Cache<>();
 
     protected AbstractFoggedUnit(AUnit unit) {
         super(AbstractFoggedUnit.class);
@@ -45,24 +45,6 @@ public class AbstractFoggedUnit extends AUnit {
         }
     }
 
-    /**
-     * How a unit that went behind the fog is wrapped.
-     *
-     * <p>In a game it is {@link FoggedUnit#from(AUnit)}, built from the engine
-     * object. A unit
-     * that has no engine object behind it - a test double - cannot be, which is
-     * why this used to be an {@code instanceof FakeUnit} branch here, with the
-     * fake subclass living in the production tree. Now the wrapping is a port:
-     * production installs nothing and gets {@code FoggedUnit}, the harness
-     * installs a factory that answers with its own subclass, and the production
-     * tree stops knowing what a fake is.</p>
-     */
-    public interface FoggedUnitFactory {
-        AbstractFoggedUnit wrap(AUnit unit);
-    }
-
-    private static FoggedUnitFactory factory = FoggedUnit::from;
-
     public static void useFactory(FoggedUnitFactory newFactory) {
         factory = newFactory;
     }
@@ -73,6 +55,10 @@ public class AbstractFoggedUnit extends AUnit {
 
     public static AbstractFoggedUnit from(AUnit enemyUnit) {
         return factory.wrap(enemyUnit);
+    }
+
+    public static void clearCache() {
+        all.clear();
     }
 
     // =========================================================
@@ -164,10 +150,6 @@ public class AbstractFoggedUnit extends AUnit {
 
     // =========================================================
 
-    public static void clearCache() {
-        all.clear();
-    }
-
     @Override
     public int id() {
         return _id;
@@ -186,6 +168,19 @@ public class AbstractFoggedUnit extends AUnit {
         return _lastPosition != null && _lastPosition.x() < 32000;
     }
 
+    public void foggedUnitNoLongerWhereItWasBefore() {
+//        if (_lastType != null && _lastType.isABuilding()) return;
+
+        // The tile is visible and empty: the address is dead, not moved
+        // (owner 2026-10-26). Do NOT re-snapshot from the live unit here -
+        // it is invisible by construction of the caller, so its engine
+        // coordinates are not a position. Clear the address instead: the
+        // unit stays known (id, type) but addressless, and the ghost
+        // chain skips it toward unexplored ground.
+        _lastPosition = null;
+        cacheInt.set("lastPositionUpdated", -1, A.now());
+    }
+
 //    public void positionUnknown() {
 //        _lastPosition = null;
 //        cacheInt.set("lastPositionUpdated", -1, A.now());
@@ -202,19 +197,6 @@ public class AbstractFoggedUnit extends AUnit {
 //        }
 //    }
 
-    public void foggedUnitNoLongerWhereItWasBefore() {
-//        if (_lastType != null && _lastType.isABuilding()) return;
-
-        // The tile is visible and empty: the address is dead, not moved
-        // (owner 2026-10-26). Do NOT re-snapshot from the live unit here -
-        // it is invisible by construction of the caller, so its engine
-        // coordinates are not a position. Clear the address instead: the
-        // unit stays known (id, type) but addressless, and the ghost
-        // chain skips it toward unexplored ground.
-        _lastPosition = null;
-        cacheInt.set("lastPositionUpdated", -1, A.now());
-    }
-
     public int lastPositionUpdated() {
         return cacheInt.get("lastPositionUpdated");
     }
@@ -228,6 +210,10 @@ public class AbstractFoggedUnit extends AUnit {
         return A.ago(cacheInt.get("lastPositionUpdated"));
     }
 
+    public void forceSetPositionNull() {
+        _lastPosition = null;
+    }
+
 //    public boolean isAccessible() {
 //        return !AUnitType.Unknown.equals(_lastAUnit.type());
 //    }
@@ -235,12 +221,6 @@ public class AbstractFoggedUnit extends AUnit {
 //    public AUnit innerAUnit() {
 //        return _lastAUnit;
 //    }
-
-    public void forceSetPositionNull() {
-        _lastPosition = null;
-    }
-
-    // =========================================================
 
     @Override
     public String toString() {
@@ -251,15 +231,17 @@ public class AbstractFoggedUnit extends AUnit {
 
     // =========================================================
 
-//    @Override
-//    public boolean exists() {
-//        return true;
-//    }
-
     @Override
     public APosition position() {
         return _lastPosition;
     }
+
+    // =========================================================
+
+//    @Override
+//    public boolean exists() {
+//        return true;
+//    }
 
     @Override
     public int energy() {
@@ -363,5 +345,21 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int y() {
         return _lastPosition.y();
+    }
+
+    /**
+     * How a unit that went behind the fog is wrapped.
+     *
+     * <p>In a game it is {@link FoggedUnit#from(AUnit)}, built from the engine
+     * object. A unit
+     * that has no engine object behind it - a test double - cannot be, which is
+     * why this used to be an {@code instanceof FakeUnit} branch here, with the
+     * fake subclass living in the production tree. Now the wrapping is a port:
+     * production installs nothing and gets {@code FoggedUnit}, the harness
+     * installs a factory that answers with its own subclass, and the production
+     * tree stops knowing what a fake is.</p>
+     */
+    public interface FoggedUnitFactory {
+        AbstractFoggedUnit wrap(AUnit unit);
     }
 }

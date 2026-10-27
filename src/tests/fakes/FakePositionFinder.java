@@ -17,6 +17,16 @@ public class FakePositionFinder implements PositionFinder.Source {
         PositionFinder.useSource(new FakePositionFinder());
     }
 
+    private static boolean regionMatches(ARegion sameRegion, APosition position) {
+        if (sameRegion == null) return true;
+
+        try {
+            return sameRegion.equals(position.region());
+        } catch (Exception | Error ignored) {
+            return true;
+        }
+    }
+
     @Override
     public APosition makeBuildable(HasPosition origin, int maxRadius) {
         return origin.position();
@@ -72,16 +82,6 @@ public class FakePositionFinder implements PositionFinder.Source {
         }
 
         return null;
-    }
-
-    private static boolean regionMatches(ARegion sameRegion, APosition position) {
-        if (sameRegion == null) return true;
-
-        try {
-            return sameRegion.equals(position.region());
-        } catch (Exception | Error ignored) {
-            return true;
-        }
     }
 
     @Override

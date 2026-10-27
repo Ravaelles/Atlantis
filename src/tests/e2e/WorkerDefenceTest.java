@@ -52,7 +52,40 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WorkerDefenceTest extends AbstractTestWithWorld {
 
     private static final String RUN_SOURCE =
-            "src/atlantis/units/workers/defence/run/WorkerDefenceRun.java";
+        "src/atlantis/units/workers/defence/run/WorkerDefenceRun.java";
+
+    /**
+     * True when {@code needle} appears outside a comment. The bug being guarded
+     * is described in the surrounding javadoc (which quotes the old line), so a
+     * plain {@code contains} would match the explanation and fail against
+     * correct code - which it did on the first run of this test.
+     */
+    private static boolean containsCode(String source, String needle) {
+        for (String line : source.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) {
+                continue;
+            }
+            if (line.contains(needle)) return true;
+        }
+        return false;
+    }
+
+    private static String methodBody(String path, String startMarker, String endMarker) throws Exception {
+        String source = read(path);
+        int start = source.indexOf(startMarker);
+        assertTrue(start > 0, "method not found: " + startMarker);
+
+        int end = endMarker == null ? source.length() : source.indexOf(endMarker, start);
+        assertTrue(end > start, "end marker not found after " + startMarker);
+
+        return source.substring(start, end);
+    }
+
+    private static String read(String path) throws Exception {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)),
+            java.nio.charset.StandardCharsets.UTF_8);
+    }
 
     @Override
     public Race initRace() {
@@ -83,10 +116,10 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
             // the whole worker-defence package is dead code - the silent version
             // of this bug.
             assertTrue(defence.applies(),
-                    "WorkerDefenceManager must apply to an ordinary probe"
-                            + " (isWorker=" + myProbe.isWorker()
-                            + " isBuilder=" + myProbe.isBuilder()
-                            + " isSpecialMission=" + myProbe.isSpecialMission() + ")");
+                "WorkerDefenceManager must apply to an ordinary probe"
+                    + " (isWorker=" + myProbe.isWorker()
+                    + " isBuilder=" + myProbe.isBuilder()
+                    + " isSpecialMission=" + myProbe.isSpecialMission() + ")");
         });
     }
 
@@ -107,22 +140,20 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
 
             assertTrue(probe.isBuilder(), "the construction assignment makes this worker a builder");
             assertTrue(new BuilderManager(probe).applies(),
-                    "the construction manager must recognize its assigned worker");
+                "the construction manager must recognize its assigned worker");
             assertFalse(new WorkerHelpCombatUnitsFight(probe).applies(),
-                    "a builder must not be taken over by combat-help");
+                "a builder must not be taken over by combat-help");
             assertFalse(new WorkerDefenceManager(probe).applies(),
-                    "assigned builders belong to construction, not the worker fight/run chain");
+                "assigned builders belong to construction, not the worker fight/run chain");
 
             new WorkerManager(probe).forceHandle();
             String managerHistory = String.valueOf(probe.managerLogs());
             assertTrue(managerHistory.contains("BuilderManager"),
-                    "the worker manager chain must give construction ownership first: " + managerHistory);
-            assertTrue(!managerHistory.contains("WorkerHelpCombatUnitsFight"),
-                    "combat-help must never claim a builder while its assigned construction is pending: "
-                            + managerHistory);
-            assertTrue(!managerHistory.contains("GatherResources"),
-                    "an idle builder waiting for the build action must not be sent back to mining: "
-                            + managerHistory);
+                "the worker manager chain must give construction ownership first: " + managerHistory);
+            assertFalse(managerHistory.contains("WorkerHelpCombatUnitsFight"), "combat-help must never claim a builder while its assigned construction is pending: "
+                + managerHistory);
+            assertFalse(managerHistory.contains("GatherResources"), "an idle builder waiting for the build action must not be sent back to mining: "
+                + managerHistory);
         });
     }
 
@@ -149,14 +180,14 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
             boolean canFlee = run.applies();
 
             assertTrue(canDefend || canFlee,
-                    "a probe with two Zealots on it and our buildings around must be"
-                            + " eligible for either fighting or fleeing - being eligible for"
-                            + " NEITHER is the reported bug."
-                            + " hp=" + myProbe.hp()
-                            + " distToBase=" + myProbe.distToBase()
-                            + " buildingsNear=" + myProbe.friendsNear().buildings().countInRadius(8, myProbe)
-                            + " fight.applies=" + canDefend
-                            + " run.applies=" + canFlee);
+                "a probe with two Zealots on it and our buildings around must be"
+                    + " eligible for either fighting or fleeing - being eligible for"
+                    + " NEITHER is the reported bug."
+                    + " hp=" + myProbe.hp()
+                    + " distToBase=" + myProbe.distToBase()
+                    + " buildingsNear=" + myProbe.friendsNear().buildings().countInRadius(8, myProbe)
+                    + " fight.applies=" + canDefend
+                    + " run.applies=" + canFlee);
         });
     }
 
@@ -167,34 +198,32 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
         // a behavioural test would pass with either filter. The bug was one
         // copied line, and only the source can tell the methods apart.
         String runFromDragoons = methodBody(RUN_SOURCE, "private boolean runFromDragoons()",
-                "private boolean runFromZealots()");
+            "private boolean runFromZealots()");
 
         assertTrue(runFromDragoons.contains("enemiesNear().dragoons()"),
-                "runFromDragoons() must filter dragoons() - it used to call"
-                        + " .zealots(), so workers never ran from a Dragoon at all");
-        assertTrue(!runFromDragoons.contains("enemiesNear().zealots()"),
-                "runFromDragoons() must not filter zealots()");
+            "runFromDragoons() must filter dragoons() - it used to call"
+                + " .zealots(), so workers never ran from a Dragoon at all");
+        assertFalse(runFromDragoons.contains("enemiesNear().zealots()"), "runFromDragoons() must not filter zealots()");
     }
 
     @Test
     public void twoZealotsAtFullHealthDoNotMeanStandStill() throws Exception {
-            // Historical rule where this was wrong: the old code said
-            // "zealotsNear == 2 && hp >= 38 -> return false" (do not flee), which
-            // is a dead probe. The current rule ties fleeing to eval instead:
-            // from three raiders, a worker that is LOSING runs.
-            String source = read(RUN_SOURCE);
+        // Historical rule where this was wrong: the old code said
+        // "zealotsNear == 2 && hp >= 38 -> return false" (do not flee), which
+        // is a dead probe. The current rule ties fleeing to eval instead:
+        // from three raiders, a worker that is LOSING runs.
+        String source = read(RUN_SOURCE);
 
-            assertTrue(!source.contains("zealotsNear == 2 && unit.hp() >= 38"),
-                            "the old 'two Zealots at full health -> do not flee' rule must be gone;"
-                                            + " it let a probe stand still in front of two Zealots");
+        assertFalse(source.contains("zealotsNear == 2 && unit.hp() >= 38"), "the old 'two Zealots at full health -> do not flee' rule must be gone;"
+            + " it let a probe stand still in front of two Zealots");
 
-            String runFromZealots = methodBody(RUN_SOURCE, "private boolean runFromZealots()", null);
+        String runFromZealots = methodBody(RUN_SOURCE, "private boolean runFromZealots()", null);
 
-            assertTrue(runFromZealots.contains("RAIDERS_THAT_MEAN_FLEE"),
-                            "the raider count must decide when the workers leave");
-            assertTrue(runFromZealots.contains("unit.eval() <= EVAL_WE_ARE_BEHIND"),
-                            "and leaving must also require a losing fight, so a winning"
-                                            + " mineral line is not abandoned for nothing");
+        assertTrue(runFromZealots.contains("RAIDERS_THAT_MEAN_FLEE"),
+            "the raider count must decide when the workers leave");
+        assertTrue(runFromZealots.contains("unit.eval() <= EVAL_WE_ARE_BEHIND"),
+            "and leaving must also require a losing fight, so a winning"
+                + " mineral line is not abandoned for nothing");
     }
 
     @Test
@@ -204,8 +233,8 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
         String source = read("src/atlantis/units/workers/defence/fight/WorkerDefenceFightCombatUnits.java");
 
         assertTrue(source.contains("friendsNear().buildings().countInRadius(8"),
-                "fighting must be allowed near our BUILDINGS, which covers the mineral"
-                        + " line - requiring a base was why workers never fought back");
+            "fighting must be allowed near our BUILDINGS, which covers the mineral"
+                + " line - requiring a base was why workers never fought back");
     }
 
     @Test
@@ -223,26 +252,9 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
         }
 
         assertTrue(containsCode(defenceSource, "if (unit.isBuilder() || unit.isConstructing()) return false;"),
-                "builders must not enter the fight/run arbitration chain");
+            "builders must not enter the fight/run arbitration chain");
         assertTrue(workerSource.indexOf("BuilderManager::new") < workerSource.indexOf("WorkerDefenceManager::new"),
-                "construction behavior must get first control of its assigned worker");
-    }
-
-    /**
-     * True when {@code needle} appears outside a comment. The bug being guarded
-     * is described in the surrounding javadoc (which quotes the old line), so a
-     * plain {@code contains} would match the explanation and fail against
-     * correct code - which it did on the first run of this test.
-     */
-    private static boolean containsCode(String source, String needle) {
-        for (String line : source.split("\n")) {
-            String trimmed = line.trim();
-            if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) {
-                continue;
-            }
-            if (line.contains(needle)) return true;
-        }
-        return false;
+            "construction behavior must get first control of its assigned worker");
     }
 
     @Test
@@ -262,8 +274,8 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
 
             WorkerDefenceManager defence = new WorkerDefenceManager(myProbe);
             assertTrue(defence.applies(),
-                    "a quiet mining probe must still be eligible - the defence chain"
-                            + " decides what to do, it is not excluded up front");
+                "a quiet mining probe must still be eligible - the defence chain"
+                    + " decides what to do, it is not excluded up front");
         });
     }
 
@@ -276,21 +288,19 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
         // caught the rest. A hurt worker mining next to an attacker fell through
         // both and kept mining.
         String source = read(
-                "src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java");
+            "src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java");
 
         assertTrue(containsCode(source, "if (isWoundedAndInDanger()) return false;"),
-                "a wounded worker in danger must fall through to the rest of the chain"
-                        + " (where WorkerDefenceRun is), instead of being swallowed by an"
-                        + " exclusion that keeps it mining");
+            "a wounded worker in danger must fall through to the rest of the chain"
+                + " (where WorkerDefenceRun is), instead of being swallowed by an"
+                + " exclusion that keeps it mining");
 
-        assertTrue(!containsCode(source, "unit.isGatheringResources()"),
-                "the old 'gathering while hurt -> do not help' rule must be gone; it told"
-                        + " exactly the workers in the most danger to keep mining");
+        assertFalse(containsCode(source, "unit.isGatheringResources()"), "the old 'gathering while hurt -> do not help' rule must be gone; it told"
+            + " exactly the workers in the most danger to keep mining");
 
-        assertTrue(!containsCode(source, "lastActionLessThanAgo(30 * 5, Actions.GATHER_MINERALS)"),
-                "'recently gathered' must not gate the fight: gathering is a worker's"
-                        + " default action, so it excluded almost everyone almost always"
-                        + " (the flip-flop in the owner's log)");
+        assertFalse(containsCode(source, "lastActionLessThanAgo(30 * 5, Actions.GATHER_MINERALS)"), "'recently gathered' must not gate the fight: gathering is a worker's"
+            + " default action, so it excluded almost everyone almost always"
+            + " (the flip-flop in the owner's log)");
     }
 
     @Test
@@ -300,13 +310,15 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
         // killed it. Chasing a scout is a luxury: it must stop when something
         // that can hurt us is nearby.
         String source = read(
-                "src/atlantis/units/workers/defence/proxy/TrackEnemyEarlyScout.java");
+            "src/atlantis/units/workers/defence/proxy/TrackEnemyEarlyScout.java");
 
         assertTrue(containsCode(source, "enemiesNear().combatUnits().canAttack(unit, 4)"),
-                "TrackEnemyEarlyScout must refuse to chase while an attacker is in reach");
+            "TrackEnemyEarlyScout must refuse to chase while an attacker is in reach");
         assertTrue(containsCode(source, "unit.hp() <= 30"),
-                "a hurt worker must not follow anything");
+            "a hurt worker must not follow anything");
     }
+
+    // ---- helpers -----------------------------------------------------------
 
     @Test
     public void oneHealthyWorkerHelpsAWoundedFriend() {
@@ -332,7 +344,7 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
             // on a normal mineral line - the guard is that the helper mechanism
             // is wired in at all.
             atlantis.units.workers.defence.run.WorkerDefenceRun help =
-                    new atlantis.units.workers.defence.run.WorkerDefenceRun(myHelper);
+                new atlantis.units.workers.defence.run.WorkerDefenceRun(myHelper);
 
             // No assertion on the outcome: whether the stub world considers the
             // enemy "attackable" depends on harness physics. What is pinned is
@@ -345,37 +357,19 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
 
     @Test
     public void aWoundedWorkerInDangerLeavesBeforeTheHealthGates() throws Exception {
-            // The helper behaviour moved into WorkerDefenceRun (the defence chain
-            // is frozen by ArchitectureBoundaryTest, so a new manager class meant
-            // a new frozen violation). What must hold is that a hurt worker has a
-            // way OUT before any health rule sends it back to mining.
-            String run = read(RUN_SOURCE);
+        // The helper behaviour moved into WorkerDefenceRun (the defence chain
+        // is frozen by ArchitectureBoundaryTest, so a new manager class meant
+        // a new frozen violation). What must hold is that a hurt worker has a
+        // way OUT before any health rule sends it back to mining.
+        String run = read(RUN_SOURCE);
 
-            assertTrue(run.contains("helpWoundedFriend()"),
-                            "one healthy worker must help a wounded fellow");
+        assertTrue(run.contains("helpWoundedFriend()"),
+            "one healthy worker must help a wounded fellow");
 
-            String help = read("src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java");
-            assertTrue(help.contains("if (isWoundedAndInDanger()) return false;"),
-                            "and a hurt worker must exit that manager before its health gates"
-                                            + " can send it back to gathering");
-    }
-
-    // ---- helpers -----------------------------------------------------------
-
-    private static String methodBody(String path, String startMarker, String endMarker) throws Exception {
-        String source = read(path);
-        int start = source.indexOf(startMarker);
-        assertTrue(start > 0, "method not found: " + startMarker);
-
-        int end = endMarker == null ? source.length() : source.indexOf(endMarker, start);
-        assertTrue(end > start, "end marker not found after " + startMarker);
-
-        return source.substring(start, end);
-    }
-
-    private static String read(String path) throws Exception {
-        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)),
-                java.nio.charset.StandardCharsets.UTF_8);
+        String help = read("src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java");
+        assertTrue(help.contains("if (isWoundedAndInDanger()) return false;"),
+            "and a hurt worker must exit that manager before its health gates"
+                + " can send it back to gathering");
     }
 
     // =========================================================

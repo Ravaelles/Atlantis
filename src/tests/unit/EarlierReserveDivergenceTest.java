@@ -18,7 +18,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Pins the current disagreement between the earlier-demand models
@@ -39,6 +38,14 @@ import static tests.unit.AbstractTestWithUnits.fake;
 public class EarlierReserveDivergenceTest extends AbstractTestWithWorld {
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;
+
+    private static void linkNotStartedSite(ProductionOrder order) {
+        Construction construction = new Construction(PYLON);
+        construction.setPositionToBuild(APosition.create(30, 30));
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+        construction.setProductionOrder(order);
+        ConstructionRequests.constructions.add(construction);
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -80,9 +87,9 @@ public class EarlierReserveDivergenceTest extends AbstractTestWithWorld {
 
             int price = PYLON.mineralPrice();
             assertEquals(price, ProduceBuilding.earlierUnfinishedMinerals(later),
-                    "door model: the earlier id's unfinished site counts");
+                "door model: the earlier id's unfinished site counts");
             assertEquals(price, ShouldNotTravelToConstructYet.earlierUnpaidForTests(later)[0],
-                    "forecast model: the row ahead in the queue counts the same");
+                "forecast model: the row ahead in the queue counts the same");
         });
     }
 
@@ -104,17 +111,9 @@ public class EarlierReserveDivergenceTest extends AbstractTestWithWorld {
 
             int price = PYLON.mineralPrice();
             assertEquals(price, ProduceBuilding.earlierUnfinishedMinerals(later),
-                    "door model still counts the earlier id - it reads ids, not positions");
+                "door model still counts the earlier id - it reads ids, not positions");
             assertEquals(0, ShouldNotTravelToConstructYet.earlierUnpaidForTests(later)[0],
-                    "forecast model counts nothing - the evaluated row is first in the queue");
+                "forecast model counts nothing - the evaluated row is first in the queue");
         });
-    }
-
-    private static void linkNotStartedSite(ProductionOrder order) {
-        Construction construction = new Construction(PYLON);
-        construction.setPositionToBuild(APosition.create(30, 30));
-        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-        construction.setProductionOrder(order);
-        ConstructionRequests.constructions.add(construction);
     }
 }

@@ -2,11 +2,11 @@ package atlantis.combat;
 
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.strategy.BattleStrategy;
+import atlantis.combat.strategy.GhostAdvance;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.combat.strategy.BattleStrategy;
-import atlantis.combat.strategy.GhostAdvance;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 

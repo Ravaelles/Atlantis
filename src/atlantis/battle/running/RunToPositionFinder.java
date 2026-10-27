@@ -75,7 +75,7 @@ public class RunToPositionFinder {
 //                    color
 //                );
 
-                if (running.runTo() != null && unit.distTo(running.runTo()) > 0.1)  {
+                if (running.runTo() != null && unit.distTo(running.runTo()) > 0.1) {
                     running._lastRunMode = "ShowBack";
 
                     return running.runTo();

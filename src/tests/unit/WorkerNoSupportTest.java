@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner 2026-10-26 (live 7th_rav game): a worker that is both losing badly
@@ -32,6 +30,11 @@ public class WorkerNoSupportTest extends WorldStubForTests {
         "src/atlantis/units/workers/defence/fight/WorkerDefenceFightCombatUnits.java";
     private static final String WORKERS_SOURCE =
         "src/atlantis/units/workers/defence/fight/WorkerDefenceFightWorkers.java";
+
+    private static String read(String path) throws Exception {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)),
+            java.nio.charset.StandardCharsets.UTF_8);
+    }
 
     @Test
     public void loneProbeLosingBadlyAndAloneDoesNotFight() {
@@ -55,8 +58,7 @@ public class WorkerNoSupportTest extends WorldStubForTests {
 
             WorkerDefenceFightCombatUnits fight = new WorkerDefenceFightCombatUnits(worker);
             assertTrue(fight.applies(), "the setup must reach the shared gate, not die in applies()");
-            assertTrue(!fight.forceHandled(),
-                "a lone losing probe must not attack with no support (eval=" + eval + ")");
+            assertFalse(fight.forceHandled(), "a lone losing probe must not attack with no support (eval=" + eval + ")");
         });
     }
 
@@ -76,8 +78,7 @@ public class WorkerNoSupportTest extends WorldStubForTests {
             if (A.now() != 12) return;
 
             AUnit worker = Select.ourWorkers().first();
-            assertTrue(!new WorkerDefenceFightWorkers(worker).applies(),
-                "a worker at 15 hp fights nothing, even enemy workers");
+            assertFalse(new WorkerDefenceFightWorkers(worker).applies(), "a worker at 15 hp fights nothing, even enemy workers");
 
             probe.hp = 20;
             assertTrue(new WorkerDefenceFightWorkers(worker).applies(),
@@ -103,10 +104,5 @@ public class WorkerNoSupportTest extends WorldStubForTests {
         String workers = read(WORKERS_SOURCE);
         assertTrue(workers.contains("hp() > 16"),
             "the 16-hp floor must hold even against enemy workers");
-    }
-
-    private static String read(String path) throws Exception {
-        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)),
-            java.nio.charset.StandardCharsets.UTF_8);
     }
 }

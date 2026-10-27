@@ -12,11 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A refresh pass cancels only dead sites, never transient traffic.
@@ -36,6 +32,17 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
 
     private boolean fired = false;
 
+    private static int coreOrdersInQueue() {
+        int total = 0;
+        for (ProductionOrder order : Queue.get().allOrders().list()) {
+            if (order.unitType() != null
+                && order.unitType().equals(AUnitType.Protoss_Cybernetics_Core)) {
+                total++;
+            }
+        }
+        return total;
+    }
+
     @Override
     public Race initRace() {
         return Race.Protoss;
@@ -53,17 +60,6 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
         Queue.get().clearCache();
         currentMinerals = 300;
         currentGas = 100;
-    }
-
-    private static int coreOrdersInQueue() {
-        int total = 0;
-        for (ProductionOrder order : Queue.get().allOrders().list()) {
-            if (order.unitType() != null
-                && order.unitType().equals(AUnitType.Protoss_Cybernetics_Core)) {
-                total++;
-            }
-        }
-        return total;
     }
 
     @Test
@@ -92,9 +88,7 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
                 ConstructionRequests.constructions.contains(waiting),
                 "a miner crossing the site is traffic, not a verdict - "
                     + "the builder issues when the tile is free");
-            assertTrue(
-                coreOrdersInQueue() == 0,
-                "no cancel, no duplicate reservation");
+            assertEquals(0, coreOrdersInQueue(), "no cancel, no duplicate reservation");
         });
 
         assertTrue(fired, "the occupancy-tick frame was reached - else this test proves nothing");
@@ -142,10 +136,8 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             assertTrue(
                 reRequested != null && reRequested.aroundPosition() == null,
                 "the re-request re-picks elsewhere - same dead tile spun 10x");
-            assertTrue(
-                reRequested.minSupply() == 8,
-                "same demand, same timing - a tail-derived minSupply parks "
-                    + "replacements above supply until they mature as duplicates");
+            assertEquals(8, reRequested.minSupply(), "same demand, same timing - a tail-derived minSupply parks "
+                + "replacements above supply until they mature as duplicates");
         });
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");

@@ -11,9 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Pinning the radius family semantics before its extraction out of
@@ -40,7 +37,7 @@ public class SelectionRadiusTest extends WorldStubForTests {
             assertEquals(2, ours.inRadius(5, a).size());
             assertEquals(2, ours.inRadius(5, APosition.create(10, 10)).size());
             assertEquals(1, ours.inRadius(1, a).size());
-            assertTrue(ours.inRadius(30, a).size() == 3);
+            assertEquals(3, ours.inRadius(30, a).size());
         });
     }
 

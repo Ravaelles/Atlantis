@@ -1,10 +1,10 @@
 package tests.unit;
 
+import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.PrepareConstructionSite;
-import atlantis.map.position.APosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
@@ -16,12 +16,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #148 probe: a ready building order that dies before siting must
@@ -31,6 +26,20 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class BuildRefusedTwinTest extends AbstractTestWithWorld {
+
+    private static ProductionOrder refusedOrder;
+
+    private static int countOccurrences(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + needle.length();
+        }
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -181,19 +190,5 @@ public class BuildRefusedTwinTest extends AbstractTestWithWorld {
             2, rows,
             "one stuck demand names itself once per 300 frames, not once per evaluation - got: "
                 + EventLog.toJsonLines());
-    }
-
-    private static ProductionOrder refusedOrder;
-
-    private static int countOccurrences(String text, String needle) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = text.indexOf(needle, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + needle.length();
-        }
     }
 }

@@ -15,7 +15,9 @@ public final class ProduceScarabs {
     private ProduceScarabs() {
     }
 
-    /** Full magazines and non-Reavers are not this behavior's business. */
+    /**
+     * Full magazines and non-Reavers are not this behavior's business.
+     */
     public static boolean applies(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
         if (!unit.isReaver()) return false;

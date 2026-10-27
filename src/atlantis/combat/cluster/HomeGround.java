@@ -30,17 +30,20 @@ public final class HomeGround {
         this.mainChoke = mainChoke;
     }
 
-    /** The live pair, null-safe: an unreadable game is incomplete ground. */
+    /**
+     * The live pair, null-safe: an unreadable game is incomplete ground.
+     */
     public static HomeGround resolve() {
         try {
             return resolve(Select.main(), Chokes.mainChoke());
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return new HomeGround(null, null);
         }
     }
 
-    /** The same question for given values - the pinnable seam. */
+    /**
+     * The same question for given values - the pinnable seam.
+     */
     public static HomeGround resolve(AUnit main, AChoke mainChoke) {
         return new HomeGround(main, mainChoke);
     }

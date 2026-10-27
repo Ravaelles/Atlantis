@@ -16,9 +16,7 @@ import tests.unit.DynamicMockOurUnits;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static atlantis.units.AUnitType.Terran_Barracks;
-import static atlantis.units.AUnitType.Terran_Command_Center;
-import static atlantis.units.AUnitType.Terran_SCV;
+import static atlantis.units.AUnitType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

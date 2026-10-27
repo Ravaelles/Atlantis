@@ -26,7 +26,7 @@ public class AMineralGathering {
         // =========================================================
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = (List<AUnit>) Select.minerals()
+        List<AUnit> minerals = Select.minerals()
             .inRadius(10, mainBase)
             .sortDataByDistanceTo(mainBase, true);
 
@@ -61,7 +61,8 @@ public class AMineralGathering {
                     unit.gather(mineralField);
                 }
                 return true;
-            } else {
+            }
+            else {
                 unit.move(mineralField, Actions.MOVE_REVEAL, "ToFoggedMineral");
 
                 return true;

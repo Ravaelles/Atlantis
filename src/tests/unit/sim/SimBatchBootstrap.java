@@ -15,6 +15,10 @@ public final class SimBatchBootstrap extends AbstractTestWithUnits {
     private SimBatchBootstrap() {
     }
 
+    public static void install() {
+        new SimBatchBootstrap().setUp();
+    }
+
     @Override
     public Race initRace() {
         return Race.Protoss;
@@ -23,9 +27,5 @@ public final class SimBatchBootstrap extends AbstractTestWithUnits {
     @Override
     public Race initEnemyRace() {
         return Race.Protoss;
-    }
-
-    public static void install() {
-        new SimBatchBootstrap().setUp();
     }
 }

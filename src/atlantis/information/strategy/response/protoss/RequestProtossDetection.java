@@ -1,20 +1,16 @@
 package atlantis.information.strategy.response.protoss;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.production.orders.production.queue.add.AddToQueueToHave;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 public class RequestProtossDetection {
     public static boolean needDetectionAgainst(AUnit enemy) {
-        if (requestCannons() && requestAtLeastOneObserver()) {
-            return true;
-        }
-
-        return false;
+        return requestCannons() && requestAtLeastOneObserver();
     }
 
     private static boolean requestAtLeastOneObserver() {

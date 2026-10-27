@@ -10,7 +10,8 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
+import static atlantis.units.AUnitType.Protoss_Shuttle;
 
 public class ProduceShuttle {
     public static final AUnitType type = Protoss_Shuttle;

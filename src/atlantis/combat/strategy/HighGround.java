@@ -11,14 +11,17 @@ import atlantis.map.position.APosition;
  */
 public final class HighGround {
 
+    /**
+     * How much one tile of height advantage is worth, in score units.
+     */
+    public static final double HEIGHT_WEIGHT = 10;
+    /**
+     * How much one tile of funnel width costs, in the same units.
+     */
+    public static final double WIDTH_PENALTY = 1;
+
     private HighGround() {
     }
-
-    /** How much one tile of height advantage is worth, in score units. */
-    public static final double HEIGHT_WEIGHT = 10;
-
-    /** How much one tile of funnel width costs, in the same units. */
-    public static final double WIDTH_PENALTY = 1;
 
     /**
      * Defensive value of holding one side: height advantage over the
@@ -40,7 +43,9 @@ public final class HighGround {
         return foeHeight > ourHeight;
     }
 
-    /** Ground height at a tile, or -1 without a live map. Guarded. */
+    /**
+     * Ground height at a tile, or -1 without a live map. Guarded.
+     */
     public static int groundHeightOf(APosition tile) {
         try {
             if (tile == null) return -1;

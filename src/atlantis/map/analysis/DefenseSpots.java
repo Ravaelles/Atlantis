@@ -22,52 +22,12 @@ import java.util.List;
  */
 public final class DefenseSpots {
 
-    /** Tile grid the scan reads: free means a footprint may stand here. */
-    public interface TileGrid {
-        int width();
-
-        int height();
-
-        boolean isFree(int tx, int ty);
-    }
-
-    /** One ranked candidate tile (top-left) with what it covers. */
-    public static final class Spot {
-        private final int tx;
-        private final int ty;
-        private final boolean coversChoke;
-        private final boolean coversAnchor;
-        private final double distToChokePx;
-
-        Spot(int tx, int ty, boolean coversChoke, boolean coversAnchor, double distToChokePx) {
-            this.tx = tx;
-            this.ty = ty;
-            this.coversChoke = coversChoke;
-            this.coversAnchor = coversAnchor;
-            this.distToChokePx = distToChokePx;
-        }
-
-        public int tx() {
-            return tx;
-        }
-
-        public int ty() {
-            return ty;
-        }
-
-        public boolean coversChoke() {
-            return coversChoke;
-        }
-
-        public boolean coversAnchor() {
-            return coversAnchor;
-        }
-    }
-
     private DefenseSpots() {
     }
 
-    /** Center of a footprint in pixels: the point coverage is measured from. */
+    /**
+     * Center of a footprint in pixels: the point coverage is measured from.
+     */
     public static APosition tileCenter(int tx, int ty, int footW, int footH) {
         return APosition.createFromPixels(tx * 32 + footW * 16, ty * 32 + footH * 16);
     }
@@ -129,7 +89,9 @@ public final class DefenseSpots {
         return true;
     }
 
-    /** Distance from a point to a segment, pixels. Public as a seam: rankers score coverage with it. */
+    /**
+     * Distance from a point to a segment, pixels. Public as a seam: rankers score coverage with it.
+     */
     public static double distPointToSegmentPx(APosition p, APosition a, APosition b) {
         double ax = a.getX();
         double ay = a.getY();
@@ -144,5 +106,51 @@ public final class DefenseSpots {
         t = Math.max(0, Math.min(1, t));
 
         return Math.hypot(p.getX() - (ax + t * dx), p.getY() - (ay + t * dy));
+    }
+
+    /**
+     * Tile grid the scan reads: free means a footprint may stand here.
+     */
+    public interface TileGrid {
+        int width();
+
+        int height();
+
+        boolean isFree(int tx, int ty);
+    }
+
+    /**
+     * One ranked candidate tile (top-left) with what it covers.
+     */
+    public static final class Spot {
+        private final int tx;
+        private final int ty;
+        private final boolean coversChoke;
+        private final boolean coversAnchor;
+        private final double distToChokePx;
+
+        Spot(int tx, int ty, boolean coversChoke, boolean coversAnchor, double distToChokePx) {
+            this.tx = tx;
+            this.ty = ty;
+            this.coversChoke = coversChoke;
+            this.coversAnchor = coversAnchor;
+            this.distToChokePx = distToChokePx;
+        }
+
+        public int tx() {
+            return tx;
+        }
+
+        public int ty() {
+            return ty;
+        }
+
+        public boolean coversChoke() {
+            return coversChoke;
+        }
+
+        public boolean coversAnchor() {
+            return coversAnchor;
+        }
     }
 }

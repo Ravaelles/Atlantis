@@ -6,6 +6,7 @@ import atlantis.placement.engine.CoverageCannonRanker;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -34,7 +35,7 @@ public class CoverageCannonRankerTest {
         BuildLocation nearer = at(5, 14);
 
         assertTrue(ranker.compare(covering, nearer) < 0,
-                "a tile covering the choke outranks a nearer tile that cannot shoot it");
+            "a tile covering the choke outranks a nearer tile that cannot shoot it");
         assertTrue(ranker.compare(nearer, covering) > 0);
     }
 
@@ -48,11 +49,12 @@ public class CoverageCannonRankerTest {
         atlantis.placement.core.CoverageVerdict distant = ranker.coverageOf(at(5, 14));
 
         assertTrue(covering.choke(), "the twin must see what the ranking decided");
-        assertTrue(!distant.choke());
+        assertFalse(distant.choke());
     }
 
     @Test
-    public void availabilityStillOrdersFirst() {        APosition endA = APosition.createFromPixels(0, 320);
+    public void availabilityStillOrdersFirst() {
+        APosition endA = APosition.createFromPixels(0, 320);
         APosition endB = APosition.createFromPixels(320, 320);
         CoverageCannonRanker ranker = new CoverageCannonRanker(endA, endB, null, 7);
 
@@ -60,6 +62,6 @@ public class CoverageCannonRankerTest {
         BuildLocation waiting = new BuildLocation(5, 11, 2, 2, 0, 500, 0, false);
 
         assertTrue(ranker.compare(powered, waiting) < 0,
-                "a tile powered now beats the same tile waiting for power");
+            "a tile powered now beats the same tile waiting for power");
     }
 }

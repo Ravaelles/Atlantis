@@ -18,9 +18,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Early pylons stay home (owner, lost game vs early aggression: the
@@ -72,7 +69,7 @@ public class PylonHomeRegionTest extends WorldStubForTests {
             assertTrue(
                 verdict,
                 "a default-anchored pylon search must refuse the natural "
-                + "below 60 supply - that walk lost the game");
+                    + "below 60 supply - that walk lost the game");
         });
     }
 
@@ -94,7 +91,7 @@ public class PylonHomeRegionTest extends WorldStubForTests {
                 IsProbablyInAnotherRegion.defaultPylonMustStayHome(
                     builder, AUnitType.Protoss_Pylon, site, origin),
                 "the home half of the rule: a main-region site from a "
-                + "main-anchored search is untouched");
+                    + "main-anchored search is untouched");
         });
     }
 
@@ -116,7 +113,7 @@ public class PylonHomeRegionTest extends WorldStubForTests {
                 IsProbablyInAnotherRegion.defaultPylonMustStayHome(
                     builder, AUnitType.Protoss_Pylon, site, origin),
                 "an explicitly requested natural pylon is not the default "
-                + "search - the rule owns null-nearTo only");
+                    + "search - the rule owns null-nearTo only");
         });
     }
 

@@ -1,7 +1,7 @@
 package atlantis.production.constructions.cancelling;
 
-import atlantis.map.position.APosition;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
@@ -11,7 +11,7 @@ import atlantis.util.log.Log;
 import atlantis.util.log.LogKey;
 
 public class CancelConstruction {
-    private static Log cancelLog = new Log(100, 30 * 300);
+    private static final Log cancelLog = new Log(100, 30 * 300);
 
     public static void cancel(Construction construction, String reason) {
         AUnitType type = construction.buildingType();

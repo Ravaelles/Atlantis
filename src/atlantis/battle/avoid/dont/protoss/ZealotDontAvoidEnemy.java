@@ -31,9 +31,7 @@ public class ZealotDontAvoidEnemy {
         if ((decision = whenGoonsFightingNearby(unit)).notIndifferent()) return decision.toBoolean();
         if ((decision = whenMissionDefendDontAvoid(unit)).notIndifferent()) return decision.toBoolean();
 
-        if (healthyOrNotAttackedLong(unit)) return true;
-
-        return false;
+        return healthyOrNotAttackedLong(unit);
     }
 
     private static Decision vsZerg(AUnit unit) {
@@ -50,9 +48,7 @@ public class ZealotDontAvoidEnemy {
         Selection workers = unit.enemiesNear().workers();
         if (workers.empty()) return false;
 
-        if (workers.countInRadius(1.2, unit) > 0 && unit.hp() >= 42 && unit.eval() >= 0.7) return true;
-
-        return false;
+        return workers.countInRadius(1.2, unit) > 0 && unit.hp() >= 42 && unit.eval() >= 0.7;
     }
 
     private static Decision whenEnemyGoonNearby(AUnit unit) {

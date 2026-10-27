@@ -45,9 +45,7 @@ public class ProduceWraiths {
     }
 
     private static boolean prioritizeScienceFacility() {
-        if (!A.canAfford(650, 350) && Have.notEvenPlanned(AUnitType.Terran_Science_Facility)) return true;
-
-        return false;
+        return !A.canAfford(650, 350) && Have.notEvenPlanned(AUnitType.Terran_Science_Facility);
     }
 
     private static boolean produce() {

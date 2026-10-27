@@ -1,13 +1,13 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * One rectangle of the sim fake map (NEXT #191): a fixed center and a

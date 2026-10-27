@@ -12,6 +12,14 @@ import atlantis.production.orders.production.queue.Queue;
 public class ExpansionCommander extends Commander {
     private static int _lastExpandedAt = -1;
 
+    public static void justExpanded() {
+        _lastExpandedAt = A.now();
+    }
+
+    public static boolean lastExpandedLessThanSecondsAgo(int seconds) {
+        return (A.now() - _lastExpandedAt) <= 30 * seconds;
+    }
+
     @Override
     public boolean applies() {
         return A.hasMinerals(320) || Queue.get().notStarted().buildings().size() <= 4;
@@ -27,13 +35,5 @@ public class ExpansionCommander extends Commander {
 
             ZergExpansionCommander::new,
         };
-    }
-
-    public static void justExpanded() {
-        _lastExpandedAt = A.now();
-    }
-
-    public static boolean lastExpandedLessThanSecondsAgo(int seconds) {
-        return (A.now() - _lastExpandedAt) <= 30 * seconds;
     }
 }

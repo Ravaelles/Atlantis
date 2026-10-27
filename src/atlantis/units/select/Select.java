@@ -1,14 +1,17 @@
 package atlantis.units.select;
 
-import atlantis.map.position.APosition;
 import atlantis.core.world.UnitIndex;
 import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.cache.Cache;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you

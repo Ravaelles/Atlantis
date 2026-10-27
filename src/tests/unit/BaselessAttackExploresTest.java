@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.ClusterAnchor;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
@@ -9,6 +9,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -17,9 +18,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static tests.unit.AbstractTestWithUnits.fake;
-
-import org.junit.jupiter.api.Tag;
 
 /**
  * Baseless ATTACK must explore instead of idling (owner: on UMS duel
@@ -61,15 +59,15 @@ public class BaselessAttackExploresTest extends AbstractTestWithWorld {
 
             try (MockedStatic<BaseLocations> map = Mockito.mockStatic(BaseLocations.class)) {
                 map.when(() -> BaseLocations.nearestUnexploredStartingLocation(
-                        org.mockito.ArgumentMatchers.any())).thenReturn(unexploredStart);
+                    org.mockito.ArgumentMatchers.any())).thenReturn(unexploredStart);
 
                 HasPosition anchor = ClusterAnchor.attackAnchor();
 
                 assertNotNull(anchor,
-                        "no main, no known enemy - the anchor must still exist "
-                            + "(the old code returned null and the cluster idled)");
+                    "no main, no known enemy - the anchor must still exist "
+                        + "(the old code returned null and the cluster idled)");
                 assertEquals(unexploredStart, anchor,
-                        "the army marches on the nearest unexplored start");
+                    "the army marches on the nearest unexplored start");
             }
         });
     }
@@ -94,9 +92,9 @@ public class BaselessAttackExploresTest extends AbstractTestWithWorld {
 
                 assertNotNull(ClusterAnchor.attackAnchor());
                 assertNotNull(askedFrom[0],
-                        "with a base the reference stays the main");
+                    "with a base the reference stays the main");
                 assertEquals(nexus.position(), askedFrom[0],
-                        "based games keep the old reference exactly");
+                    "based games keep the old reference exactly");
             }
         });
     }

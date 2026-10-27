@@ -12,9 +12,9 @@ public class OurWorkerWasKilled {
 
         if (!unit.isWorker()) return;
         if (A.seconds() >= 400) return;
-        if (unit.lastActionLessThanAgo(30 * 2, Actions.REPAIR)) return;
 
-
+        if (unit.lastActionLessThanAgo(30 * 2, Actions.REPAIR)) {
+        }
 
 
 //        CameraCommander.centerCameraOn(unit.lastPosition());

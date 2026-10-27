@@ -3,9 +3,7 @@ package tests.unit;
 import atlantis.combat.strategy.ProtossAttackHoldToShoot;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #186: the hold-early race, pinned without a game. Given the

@@ -39,7 +39,9 @@ import atlantis.units.AUnit;
  */
 public class SleepUntilFrameGate {
 
-    /** The frame until which the unit must not be touched; -1 = no hold. */
+    /**
+     * The frame until which the unit must not be touched; -1 = no hold.
+     */
     private static final java.util.Map<Integer, Integer> sleepUntil = new java.util.HashMap<>();
 
     /**
@@ -91,7 +93,9 @@ public class SleepUntilFrameGate {
         }
     }
 
-    /** Test seam. */
+    /**
+     * Test seam.
+     */
     public static void clear() {
         sleepUntil.clear();
     }

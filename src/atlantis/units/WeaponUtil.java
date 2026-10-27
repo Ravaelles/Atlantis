@@ -13,8 +13,8 @@ import bwapi.WeaponType;
  */
 public class WeaponUtil {
 
-    private static Cache<Double> cacheDouble = new Cache<>();
-    private static Cache<Integer> cacheInt = new Cache<>();
+    private static final Cache<Double> cacheDouble = new Cache<>();
+    private static final Cache<Integer> cacheInt = new Cache<>();
 
     public static int damageNormalized(WeaponType weapon) {
         return cacheInt.get(

@@ -9,11 +9,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pinning the distance-answer family before its extraction out of
@@ -35,7 +31,7 @@ public class SelectionDistancesTest extends WorldStubForTests {
             assertEquals(6.0, ours.distToNearest(probe), 0.001);
             assertEquals(6.0, ours.nearestToDist(probe), 0.001);
             assertTrue(ours.nearestToDistLess(probe, 7));
-            assertTrue(!ours.nearestToDistLess(probe, 5));
+            assertFalse(ours.nearestToDistLess(probe, 5));
         });
     }
 
@@ -46,7 +42,7 @@ public class SelectionDistancesTest extends WorldStubForTests {
 
             assertEquals(9999.0, ours.distToNearest(APosition.create(20, 10)), 0.001);
             assertEquals(9999.0, ours.nearestToDist(APosition.create(20, 10)), 0.001);
-            assertTrue(!ours.nearestToDistLess(APosition.create(20, 10), 100000));
+            assertFalse(ours.nearestToDistLess(APosition.create(20, 10), 100000));
         });
     }
 }

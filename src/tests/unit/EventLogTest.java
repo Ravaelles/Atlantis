@@ -8,10 +8,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The structured event log pins its JSON-lines rendering exactly: one row
@@ -62,7 +61,7 @@ public class EventLogTest {
         EventLog.key(LogKey.WORKER_GATE).param("reason", "NoSupply").log(30, "0:01");
         EventLog.flushTo(tmp.getAbsolutePath());
 
-        String content = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+        String content = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), StandardCharsets.UTF_8);
         assertEquals(
             "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n",
             content
@@ -82,12 +81,12 @@ public class EventLogTest {
         File tmp = File.createTempFile("events-stale", ".jsonl");
         tmp.deleteOnExit();
         java.nio.file.Files.write(
-            tmp.toPath(), "STALE ROW FROM A PREVIOUS GAME\n".getBytes("UTF-8"));
+            tmp.toPath(), "STALE ROW FROM A PREVIOUS GAME\n".getBytes(StandardCharsets.UTF_8));
 
         EventLog.key(LogKey.WORKER_GATE).param("reason", "NoSupply").log(30, "0:01");
         EventLog.flushTo(tmp.getAbsolutePath());
 
-        String afterFirst = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+        String afterFirst = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), StandardCharsets.UTF_8);
         assertEquals(
             "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n",
             afterFirst);
@@ -95,7 +94,7 @@ public class EventLogTest {
         EventLog.key(LogKey.BOARD).param("top", "workers").log(60, "0:02");
         EventLog.flushTo(tmp.getAbsolutePath());
 
-        String afterSecond = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+        String afterSecond = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), StandardCharsets.UTF_8);
         assertTrue(afterSecond.startsWith(
             "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"lvl\":\"MED\",\"reason\":\"NoSupply\"}\n"));
         assertTrue(afterSecond.contains("\"key\":\"BOARD\""));

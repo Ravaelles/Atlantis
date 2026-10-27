@@ -4,8 +4,7 @@ import atlantis.combat.strategy.HighGround;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Escape-adjacent formation slice (NEXT #181): holding the high side of a
@@ -53,9 +52,9 @@ public class HighGroundTest {
 
     @Test
     public void unknownGroundKeepsOurSide() {
-        assertTrue(!HighGround.preferFoeSide(-1, 2), "blind: hold ours, never guess");
-        assertTrue(!HighGround.preferFoeSide(2, -1), "blind: hold ours, never guess");
-        assertTrue(!HighGround.preferFoeSide(-1, -1), "blind: hold ours, never guess");
+        assertFalse(HighGround.preferFoeSide(-1, 2), "blind: hold ours, never guess");
+        assertFalse(HighGround.preferFoeSide(2, -1), "blind: hold ours, never guess");
+        assertFalse(HighGround.preferFoeSide(-1, -1), "blind: hold ours, never guess");
     }
 
     @Test
@@ -65,8 +64,8 @@ public class HighGroundTest {
 
     @Test
     public void tiesAndHigherOursKeepOurSide() {
-        assertTrue(!HighGround.preferFoeSide(2, 2), "flat: the 10-tile rule stands");
-        assertTrue(!HighGround.preferFoeSide(2, 0), "already high: stay");
+        assertFalse(HighGround.preferFoeSide(2, 2), "flat: the 10-tile rule stands");
+        assertFalse(HighGround.preferFoeSide(2, 0), "already high: stay");
     }
 
     @Test

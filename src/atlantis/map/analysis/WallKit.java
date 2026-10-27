@@ -11,7 +11,9 @@ import atlantis.units.AUnitType;
  */
 public final class WallKit {
 
-    /** Protoss wall-in: Pylon (power) + Gateway (plug) + Photon Cannons. */
+    /**
+     * Protoss wall-in: Pylon (power) + Gateway (plug) + Photon Cannons.
+     */
     public static final WallKit PROTOSS = new WallKit(
         AUnitType.Protoss_Pylon, 2,
         AUnitType.Protoss_Gateway, 4,

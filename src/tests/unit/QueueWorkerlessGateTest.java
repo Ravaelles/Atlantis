@@ -11,8 +11,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Without a single worker on a baseless map every building row is
@@ -62,7 +60,7 @@ public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
             assertFalse(
                 EventLog.toJsonLines().contains("\"key\":\"ORDER_NOT_READY\""),
                 "zero workers: refuse silently, no twin rows for rows that"
-                + " can never build");
+                    + " can never build");
         });
     }
 }

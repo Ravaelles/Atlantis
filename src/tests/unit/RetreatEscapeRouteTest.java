@@ -22,12 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The retreat owns an escape route (owner 2026-10-26, tested loss vs
@@ -48,7 +43,7 @@ public class RetreatEscapeRouteTest extends WorldStubForTests {
 
         assertFalse(
             RetreatEscapeRoute.pathCrossesThreat(
-                dragoon, home, Collections.singletonList((AUnit) foe),
+                dragoon, home, Collections.singletonList(foe),
                 RetreatEscapeRoute.BLOCKED_CORRIDOR_TILES),
             "a foe far off the road is not a blockade: " + foe);
     }
@@ -62,7 +57,7 @@ public class RetreatEscapeRouteTest extends WorldStubForTests {
 
         assertTrue(
             RetreatEscapeRoute.pathCrossesThreat(
-                dragoon, home, Collections.singletonList((AUnit) foe),
+                dragoon, home, Collections.singletonList(foe),
                 RetreatEscapeRoute.BLOCKED_CORRIDOR_TILES),
             "a foe sitting on the segment blocks the march home");
     }
@@ -75,7 +70,7 @@ public class RetreatEscapeRouteTest extends WorldStubForTests {
         APosition home = APosition.create(23, 20);
         AChoke near = new FakeChoke(APosition.create(52, 30), 8);
         AChoke far = new FakeChoke(APosition.create(110, 100), 8);
-        List<AUnit> foes = Collections.singletonList((AUnit) foe);
+        List<AUnit> foes = Collections.singletonList(foe);
 
         HasPosition escape = RetreatEscapeRoute.bestEscape(
             dragoon, home, Arrays.asList(near, far), foes, null);
@@ -92,7 +87,7 @@ public class RetreatEscapeRouteTest extends WorldStubForTests {
         glued.setEnemy();
         APosition home = APosition.create(23, 20);
         AChoke far = new FakeChoke(APosition.create(110, 100), 8);
-        List<AUnit> foes = Collections.singletonList((AUnit) glued);
+        List<AUnit> foes = Collections.singletonList(glued);
 
         HasPosition escape = RetreatEscapeRoute.bestEscape(
             dragoon, home, Collections.singletonList(far), foes, null);

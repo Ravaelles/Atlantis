@@ -6,9 +6,9 @@ import atlantis.util.cache.Cache;
 import java.util.ArrayList;
 
 public class History {
-    private Cache<Integer> cacheInt = new Cache<>();
-    private ArrayList<String> allEvents = new ArrayList<>();
-    private ArrayList<Integer> allEventsTimestamps = new ArrayList<>();
+    private final Cache<Integer> cacheInt = new Cache<>();
+    private final ArrayList<String> allEvents = new ArrayList<>();
+    private final ArrayList<Integer> allEventsTimestamps = new ArrayList<>();
 
     public void addNow(String event) {
         cacheInt.set(event, -1, A.now());

@@ -13,6 +13,12 @@ import java.util.Collection;
 public class FlyingBuildingScoutCommander extends Commander {
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
 
+    public static boolean isFlyingBuilding(AUnit unit) {
+        return flyingBuildings.contains(unit);
+    }
+
+    // =========================================================
+
     @Override
     protected boolean handle() {
         if (AGame.isUms()) {
@@ -35,8 +41,6 @@ public class FlyingBuildingScoutCommander extends Commander {
         return false;
     }
 
-    // =========================================================
-
     private boolean needNewFlyingBuilding() {
         if (A.seconds() <= 460) return false;
         if (!flyingBuildings.isEmpty()) return false;
@@ -50,10 +54,6 @@ public class FlyingBuildingScoutCommander extends Commander {
             flying.lift();
             flyingBuildings.add(flying);
         }
-    }
-
-    public static boolean isFlyingBuilding(AUnit unit) {
-        return flyingBuildings.contains(unit);
     }
 
 }

@@ -18,7 +18,9 @@ import atlantis.units.AUnitType;
  */
 public class PylonNeedsRoomAround {
 
-    /** How far out the four diagonal probes reach (tiles). */
+    /**
+     * How far out the four diagonal probes reach (tiles).
+     */
     public static final int ROOM_TILES = 4;
 
     public static boolean isTooTight(AUnit builder, AUnitType building, APosition position) {

@@ -1,10 +1,6 @@
 package atlantis.debug.tweaker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The tuner-batch winner objective, written down instead of eyeballed
@@ -22,51 +18,7 @@ import java.util.Optional;
  */
 public final class TunerObjective {
 
-    private TunerObjective() { }
-
-    /** One {@code batch.csv} row: {@code game,result,seconds,killed,lost,hits,shots,score}. */
-    public static final class Row {
-        private final String game;
-        private final boolean win;
-        private final int hitsTaken;
-        private final int seconds;
-        private final boolean hitsKnown;
-        private final boolean secondsKnown;
-
-        public Row(String game, boolean win, int hitsTaken, int seconds) {
-            this.game = game;
-            this.win = win;
-            this.hitsTaken = hitsTaken;
-            this.seconds = seconds;
-            this.hitsKnown = true;
-            this.secondsKnown = true;
-        }
-
-        private Row(String game, boolean win, int hitsTaken, boolean hitsKnown,
-                int seconds, boolean secondsKnown) {
-            this.game = game;
-            this.win = win;
-            this.hitsTaken = hitsTaken;
-            this.hitsKnown = hitsKnown;
-            this.seconds = seconds;
-            this.secondsKnown = secondsKnown;
-        }
-
-        public String game() {
-            return game;
-        }
-
-        public boolean win() {
-            return win;
-        }
-
-        public int hitsTaken() {
-            return hitsTaken;
-        }
-
-        public int seconds() {
-            return seconds;
-        }
+    private TunerObjective() {
     }
 
     /**
@@ -104,7 +56,9 @@ public final class TunerObjective {
         }
     }
 
-    /** Negative when {@code a} is the better game. Win, then hits, then seconds, then name. */
+    /**
+     * Negative when {@code a} is the better game. Win, then hits, then seconds, then name.
+     */
     public static int compare(Row a, Row b) {
         if (a.win != b.win) return a.win ? -1 : 1;
         if (a.hitsTaken != b.hitsTaken) return Integer.compare(a.hitsTaken, b.hitsTaken);
@@ -113,7 +67,9 @@ public final class TunerObjective {
         return a.game.compareTo(b.game);
     }
 
-    /** Ranks best-first. The input list is not modified. */
+    /**
+     * Ranks best-first. The input list is not modified.
+     */
     public static List<Row> rank(List<Row> rows) {
         ArrayList<Row> ranked = new ArrayList<>(rows);
         Collections.sort(ranked, new Comparator<Row>() {
@@ -126,10 +82,59 @@ public final class TunerObjective {
         return ranked;
     }
 
-    /** The single winner, or empty when there are no rows. */
+    /**
+     * The single winner, or empty when there are no rows.
+     */
     public static Optional<Row> best(List<Row> rows) {
         if (rows == null || rows.isEmpty()) return Optional.empty();
 
         return Optional.of(rank(rows).get(0));
+    }
+
+    /**
+     * One {@code batch.csv} row: {@code game,result,seconds,killed,lost,hits,shots,score}.
+     */
+    public static final class Row {
+        private final String game;
+        private final boolean win;
+        private final int hitsTaken;
+        private final int seconds;
+        private final boolean hitsKnown;
+        private final boolean secondsKnown;
+
+        public Row(String game, boolean win, int hitsTaken, int seconds) {
+            this.game = game;
+            this.win = win;
+            this.hitsTaken = hitsTaken;
+            this.seconds = seconds;
+            this.hitsKnown = true;
+            this.secondsKnown = true;
+        }
+
+        private Row(String game, boolean win, int hitsTaken, boolean hitsKnown,
+                    int seconds, boolean secondsKnown) {
+            this.game = game;
+            this.win = win;
+            this.hitsTaken = hitsTaken;
+            this.hitsKnown = hitsKnown;
+            this.seconds = seconds;
+            this.secondsKnown = secondsKnown;
+        }
+
+        public String game() {
+            return game;
+        }
+
+        public boolean win() {
+            return win;
+        }
+
+        public int hitsTaken() {
+            return hitsTaken;
+        }
+
+        public int seconds() {
+            return seconds;
+        }
     }
 }

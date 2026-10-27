@@ -1,9 +1,9 @@
 package tests.acceptance;
 
-import atlantis.units.AttackState;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnitType;
+import atlantis.units.AttackState;
 import atlantis.units.attacked_by.PendingAttacksAgainstEnemyUnit;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
@@ -24,18 +24,18 @@ public class PendingAttacksAgainstEnemyUnitTest extends WorldStubForTests {
     @Test
     public void dragoonNotStartedAttacksAreAccountedAsBullets() {
         world(1, fakeOurs(
-                dragoon = fake(Protoss_Dragoon, 10),
-                marine = fake(AUnitType.Terran_Marine, 11.5),
-                vulture = fake(AUnitType.Terran_Vulture, 11.7)
-            ), fakeEnemies(
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
+            dragoon = fake(Protoss_Dragoon, 10),
+            marine = fake(AUnitType.Terran_Marine, 11.5),
+            vulture = fake(AUnitType.Terran_Vulture, 11.7)
+        ), fakeEnemies(
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
 //                hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
-                // 9 of a Zergling's 35 hit points. One Phase Disruptor round does
-                // 10 against something this small (20 damage, Explosive,
-                // halved), and DeadMan counts the point of armour a non-Terran
-                // gets, so 10 >= 9 + 1: the bullet in flight kills it.
-                zergling = fake(AUnitType.Zerg_Zergling, 13.4).setHp(9)
-            ), () -> {
+            // 9 of a Zergling's 35 hit points. One Phase Disruptor round does
+            // 10 against something this small (20 damage, Explosive,
+            // halved), and DeadMan counts the point of armour a non-Terran
+            // gets, so 10 >= 9 + 1: the bullet in flight kills it.
+            zergling = fake(AUnitType.Zerg_Zergling, 13.4).setHp(9)
+        ), () -> {
             assertFalse(zergling.isDeadMan());
             assertEquals(0, PendingAttacksAgainstEnemyUnit.against(zergling).size());
 

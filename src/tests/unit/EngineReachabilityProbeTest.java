@@ -29,15 +29,17 @@ public class EngineReachabilityProbeTest {
     private static final int TILE_X = 40;
     private static final int TILE_Y = 40;
 
-    /** A healthy engine: regions exist, so a tile trivially reaches itself. */
+    /**
+     * A healthy engine: regions exist, so a tile trivially reaches itself.
+     */
     @Test
     public void aSaneEngineIsReportedUsable() {
         EngineReachabilityProbe.Verdict verdict = EngineReachabilityProbe.verdictFor(
-                (tx, ty) -> true, TILE_X, TILE_Y);
+            (tx, ty) -> true, TILE_X, TILE_Y);
 
         assertEquals(
-                EngineReachabilityProbe.Verdict.ENGINE_USABLE, verdict,
-                "an engine that answers 'a tile reaches itself' is usable");
+            EngineReachabilityProbe.Verdict.ENGINE_USABLE, verdict,
+            "an engine that answers 'a tile reaches itself' is usable");
     }
 
     /**
@@ -50,12 +52,12 @@ public class EngineReachabilityProbeTest {
     @Test
     public void aRegionLessEngineIsReportedMissingRegions() {
         EngineReachabilityProbe.Verdict verdict = EngineReachabilityProbe.verdictFor(
-                (tx, ty) -> false, TILE_X, TILE_Y);
+            (tx, ty) -> false, TILE_X, TILE_Y);
 
         assertEquals(
-                EngineReachabilityProbe.Verdict.ENGINE_REGIONS_MISSING, verdict,
-                "false for a tile against itself is the region-less signature - the engine's "
-                        + "answers must not be trusted, including the one inside canBuild");
+            EngineReachabilityProbe.Verdict.ENGINE_REGIONS_MISSING, verdict,
+            "false for a tile against itself is the region-less signature - the engine's "
+                + "answers must not be trusted, including the one inside canBuild");
     }
 
     /**
@@ -67,28 +69,30 @@ public class EngineReachabilityProbeTest {
      */
     @Test
     public void theProbeAsksAboutTheTileItWasGiven() {
-        int[] asked = { -1, -1 };
+        int[] asked = {-1, -1};
 
         EngineReachabilityProbe.verdictFor(
-                (tx, ty) -> {
-                    asked[0] = tx;
-                    asked[1] = ty;
+            (tx, ty) -> {
+                asked[0] = tx;
+                asked[1] = ty;
 
-                    return true;
-                },
-                TILE_X, TILE_Y);
+                return true;
+            },
+            TILE_X, TILE_Y);
 
         assertEquals(TILE_X, asked[0], "the probe must ask about the walkable tile it was given");
         assertEquals(TILE_Y, asked[1], "on both axes");
     }
 
-    /** A missing query is treated as "cannot be trusted", not as "assume fine". */
+    /**
+     * A missing query is treated as "cannot be trusted", not as "assume fine".
+     */
     @Test
     public void aMissingQueryIsNotAssumedUsable() {
         assertEquals(
-                EngineReachabilityProbe.Verdict.ENGINE_REGIONS_MISSING,
-                EngineReachabilityProbe.verdictFor(null, TILE_X, TILE_Y),
-                "an absent answer must fail safe: assuming usable is what puts the broken "
-                        + "region query back in charge");
+            EngineReachabilityProbe.Verdict.ENGINE_REGIONS_MISSING,
+            EngineReachabilityProbe.verdictFor(null, TILE_X, TILE_Y),
+            "an absent answer must fail safe: assuming usable is what puts the broken "
+                + "region query back in charge");
     }
 }

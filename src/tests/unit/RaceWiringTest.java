@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the single source of truth for the race (owner's ruling, 2026-10-07:
@@ -42,6 +40,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("infra")
 public class RaceWiringTest {
 
+    private static atlantis.architecture.Commander[] children(Object commander) throws Exception {
+        Class<?> type = commander.getClass();
+        while (type != null) {
+            try {
+                Field field = type.getDeclaredField("commanderObjects");
+                field.setAccessible(true);
+
+                return (atlantis.architecture.Commander[]) field.get(commander);
+            } catch (NoSuchFieldException e) {
+                type = type.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("commanderObjects on " + commander.getClass());
+    }
+
     @AfterEach
     public void restoreRace() {
         AtlantisRaceConfig.MY_RACE = null;
@@ -54,12 +67,10 @@ public class RaceWiringTest {
         AtlantisRaceConfig.MY_RACE = Race.Terran;
 
         assertEquals("Protoss", Main.ourRace(),
-                "this test is only meaningful while Main asks for Protoss");
-        assertEquals(true, We.protoss(),
-                "We.protoss() must follow Main.ourRace(), not MY_RACE - the mismatch"
-                        + " between them is what silently disabled all Protoss code");
-        assertEquals(false, We.terran(),
-                "and it must not report the other race either");
+            "this test is only meaningful while Main asks for Protoss");
+        assertTrue(We.protoss(), "We.protoss() must follow Main.ourRace(), not MY_RACE - the mismatch"
+            + " between them is what silently disabled all Protoss code");
+        assertFalse(We.terran(), "and it must not report the other race either");
     }
 
     @Test
@@ -68,11 +79,11 @@ public class RaceWiringTest {
         assertNotNull(requested);
 
         boolean matchesRequest = requested.equalsIgnoreCase("Protoss") ? We.protoss()
-                : requested.equalsIgnoreCase("Terran") ? We.terran()
-                : We.zerg();
+            : requested.equalsIgnoreCase("Terran") ? We.terran()
+              : We.zerg();
 
         assertTrue(matchesRequest,
-                "We.protoss()/terran()/zerg() must agree with Main.ourRace() = " + requested);
+            "We.protoss()/terran()/zerg() must agree with Main.ourRace() = " + requested);
 
         // And exactly one of them is true - never zero (no race) and never two.
         int howMany = (We.protoss() ? 1 : 0) + (We.terran() ? 1 : 0) + (We.zerg() ? 1 : 0);
@@ -85,7 +96,7 @@ public class RaceWiringTest {
 
         if (We.protoss()) {
             assertEquals(Race.Protoss, AtlantisRaceConfig.MY_RACE,
-                    "MY_RACE must be set from Main.ourRace(), not from the game");
+                "MY_RACE must be set from Main.ourRace(), not from the game");
             assertNotNull(AtlantisRaceConfig.BASE, "BASE must be configured for the race");
             assertNotNull(AtlantisRaceConfig.WORKER, "WORKER must be configured for the race");
         }
@@ -103,8 +114,10 @@ public class RaceWiringTest {
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
 
         assertNotNull(AtlantisRaceConfig.MY_RACE,
-                "the race config must be settable without a game object");
+            "the race config must be settable without a game object");
     }
+
+    // ---- helpers -----------------------------------------------------------
 
     @Test
     public void protossUnitProducerIsConstructedForTheRequestedRace() throws Exception {
@@ -115,36 +128,22 @@ public class RaceWiringTest {
         DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
         boolean found = false;
         for (atlantis.architecture.Commander child : children(dynamic)) {
-            if (child instanceof ProtossDynamicUnitProductionCommander) found = true;
+            if (child instanceof ProtossDynamicUnitProductionCommander) {
+                found = true;
+                break;
+            }
         }
 
         assertTrue(found,
-                "ProtossDynamicUnitProductionCommander must be built when Main asks for Protoss -"
-                        + " its absence is the 'no units after the opening' symptom");
+            "ProtossDynamicUnitProductionCommander must be built when Main asks for Protoss -"
+                + " its absence is the 'no units after the opening' symptom");
 
         if (We.protoss()) {
             ProtossDynamicUnitProductionCommander producer =
-                    new ProtossDynamicUnitProductionCommander();
+                new ProtossDynamicUnitProductionCommander();
             assertTrue(producer.applies(),
-                    "applies() must be true for our own race, or the node is in the tree"
-                            + " but never runs");
+                "applies() must be true for our own race, or the node is in the tree"
+                    + " but never runs");
         }
-    }
-
-    // ---- helpers -----------------------------------------------------------
-
-    private static atlantis.architecture.Commander[] children(Object commander) throws Exception {
-        Class<?> type = commander.getClass();
-        while (type != null) {
-            try {
-                Field field = type.getDeclaredField("commanderObjects");
-                field.setAccessible(true);
-
-                return (atlantis.architecture.Commander[]) field.get(commander);
-            } catch (NoSuchFieldException e) {
-                type = type.getSuperclass();
-            }
-        }
-        throw new NoSuchFieldException("commanderObjects on " + commander.getClass());
     }
 }

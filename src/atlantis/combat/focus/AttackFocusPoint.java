@@ -1,11 +1,11 @@
 package atlantis.combat.focus;
 
 import atlantis.battle.cluster.Alpha;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.information.enemy.EnemyUnits;
 
 /**
  * Where the army goes on ATTACK (NEXT #194, 02_COMBAT Squad target).
@@ -28,7 +28,9 @@ public final class AttackFocusPoint {
     private AttackFocusPoint() {
     }
 
-    /** The attack ground, or null when nothing qualifies. */
+    /**
+     * The attack ground, or null when nothing qualifies.
+     */
     public static HasPosition focusPoint() {
         AUnit base = EnemyUnits.enemyBase();
         if (base != null) return base.position();

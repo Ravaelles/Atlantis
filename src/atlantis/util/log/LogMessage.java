@@ -25,7 +25,7 @@ public class LogMessage {
 
     private String message;
     private int expireAfterFrames;
-    private boolean expireAfterRealSeconds;
+    private final boolean expireAfterRealSeconds;
     private int createdAtFrames;
     private long createdAtRealTime;
 

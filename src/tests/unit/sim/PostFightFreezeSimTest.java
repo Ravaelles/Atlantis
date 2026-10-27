@@ -1,21 +1,19 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Post-fight freeze (owner report, Drag_v_LingsUpg2): after killing part
@@ -29,6 +27,20 @@ import static tests.unit.AbstractTestWithUnits.fake;
 public class PostFightFreezeSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;
+
+    private static int liveCount(List<FakeUnit> foes) {
+        int n = 0;
+        for (FakeUnit f : foes) if (f.hp > 0) n++;
+
+        return n;
+    }
+
+    private static List<FakeUnit> liveFoes(List<FakeUnit> foes) {
+        List<FakeUnit> live = new ArrayList<>();
+        for (FakeUnit f : foes) if (f.hp > 0) live.add(f);
+
+        return live;
+    }
 
     @Test
     public void lineMarchesAtRememberedEnemyAfterPartialKill() {
@@ -82,8 +94,8 @@ public class PostFightFreezeSimTest extends AbstractTestWithUnits {
                 world.teleport(survivors.get(i), APosition.create(38 + i, 20));
                 survivors.get(i).isVisibleUnitOnMap = false;
             }
-            double[] kx = new double[] { d1.x(), d2.x(), d3.x() };
-            double[] ky = new double[] { d1.y(), d2.y(), d3.y() };
+            double[] kx = new double[]{d1.x(), d2.x(), d3.x()};
+            double[] ky = new double[]{d1.y(), d2.y(), d3.y()};
 
             // Phase 3: the line must march at the remembered enemy -
             // standing the 240f stale window on the kill site is the bug.
@@ -97,7 +109,7 @@ public class PostFightFreezeSimTest extends AbstractTestWithUnits {
                     ZombiePolicies.holdStill(foesNow, oursNow);
                 });
                 if (i == 120) {
-                    FakeUnit[] ds = new FakeUnit[] { d1, d2, d3 };
+                    FakeUnit[] ds = new FakeUnit[]{d1, d2, d3};
                     for (int u = 0; u < ds.length; u++) {
                         if (ds[u].hp <= 0) continue;
                         double moved = Math.hypot(ds[u].x() - kx[u], ds[u].y() - ky[u]) / TILE;
@@ -107,25 +119,10 @@ public class PostFightFreezeSimTest extends AbstractTestWithUnits {
                     }
                 }
             }
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
-    }
-
-    private static int liveCount(List<FakeUnit> foes) {
-        int n = 0;
-        for (FakeUnit f : foes) if (f.hp > 0) n++;
-
-        return n;
-    }
-
-    private static List<FakeUnit> liveFoes(List<FakeUnit> foes) {
-        List<FakeUnit> live = new ArrayList<>();
-        for (FakeUnit f : foes) if (f.hp > 0) live.add(f);
-
-        return live;
     }
 }

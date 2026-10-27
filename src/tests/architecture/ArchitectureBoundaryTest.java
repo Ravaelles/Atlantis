@@ -25,7 +25,9 @@ public class ArchitectureBoundaryTest {
     private static final JavaClasses ATLANTIS =
         new ClassFileImporter().importPackages("atlantis");
 
-    /** core must not depend on its consumers (Combat, Production, Intelligence, Scouting, Economy). */
+    /**
+     * core must not depend on its consumers (Combat, Production, Intelligence, Scouting, Economy).
+     */
     @Test
     void coreMustNotDependOnOtherContexts() {
         ArchRule rule = noClasses()
@@ -50,7 +52,9 @@ public class ArchitectureBoundaryTest {
         FreezingArchRule.freeze(rule).check(ATLANTIS);
     }
 
-    /** the architecture package must stay a base, not depend on feature code. */
+    /**
+     * the architecture package must stay a base, not depend on feature code.
+     */
     @Test
     void architectureMustNotDependOnFeatures() {
         ArchRule rule = noClasses()
@@ -68,7 +72,9 @@ public class ArchitectureBoundaryTest {
         FreezingArchRule.freeze(rule).check(ATLANTIS);
     }
 
-    /** util must not depend on higher layers; it is a shared kernel, not a service. */
+    /**
+     * util must not depend on higher layers; it is a shared kernel, not a service.
+     */
     @Test
     void utilMustNotDependOnHigherLayers() {
         ArchRule rule = noClasses()
@@ -87,7 +93,9 @@ public class ArchitectureBoundaryTest {
         FreezingArchRule.freeze(rule).check(ATLANTIS);
     }
 
-    /** Map geometry must not know about combat or production. */
+    /**
+     * Map geometry must not know about combat or production.
+     */
     @Test
     void mapGeometryMustNotDependOnCombatOrProduction() {
         ArchRule rule = noClasses()
@@ -109,7 +117,9 @@ public class ArchitectureBoundaryTest {
         FreezingArchRule.freeze(rule).check(ATLANTIS);
     }
 
-    /** Scouting feeds Intelligence and Map; it must not depend on Combat or Production. */
+    /**
+     * Scouting feeds Intelligence and Map; it must not depend on Combat or Production.
+     */
     @Test
     void scoutingMustNotDependOnCombatOrProduction() {
         ArchRule rule = noClasses()

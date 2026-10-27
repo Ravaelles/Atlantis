@@ -1,8 +1,8 @@
 package tests.unit.sim;
 
-import java.util.List;
-
 import tests.fakes.FakeUnit;
+
+import java.util.List;
 
 /**
  * Scripted enemy policies for behavior scenarios (NEXT #185 Stage B:
@@ -19,7 +19,9 @@ public final class ZombiePolicies {
     private ZombiePolicies() {
     }
 
-    /** Relentless: every zombie re-targets the nearest live unit each tick. */
+    /**
+     * Relentless: every zombie re-targets the nearest live unit each tick.
+     */
     public static void chaseNearest(List<FakeUnit> foes, List<FakeUnit> ours) {
         for (FakeUnit f : foes) {
             if (f.hp <= 0) continue;
@@ -52,7 +54,9 @@ public final class ZombiePolicies {
         }
     }
 
-    /** Pack focus: every zombie answers the lowest-hp live unit. */
+    /**
+     * Pack focus: every zombie answers the lowest-hp live unit.
+     */
     public static void focusWeakest(List<FakeUnit> foes, List<FakeUnit> ours) {
         FakeUnit weak = null;
         for (FakeUnit u : ours) {
@@ -102,7 +106,9 @@ public final class ZombiePolicies {
         }
     }
 
-    /** Inert control: no orders, no retaliation - tests our targeting alone. */
+    /**
+     * Inert control: no orders, no retaliation - tests our targeting alone.
+     */
     public static void holdStill(List<FakeUnit> foes, List<FakeUnit> ours) {
         for (FakeUnit f : foes) {
             f.lastCommand = "Stop";

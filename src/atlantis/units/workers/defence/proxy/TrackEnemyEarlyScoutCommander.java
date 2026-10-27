@@ -3,9 +3,9 @@ package atlantis.units.workers.defence.proxy;
 import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 /**
  * Tracks an early enemy worker scout and sends one of our own probes to deal
@@ -48,9 +48,19 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
     private static AUnit enemyScout = null;
     private static AUnit ourDefender = null;
 
-    /** Reset the per-game assignment. Called on game start. */
+    /**
+     * Reset the per-game assignment. Called on game start.
+     */
     public static void clear() {
         enemyScout = null;
+        ourDefender = null;
+    }
+
+    private static void noDefenderNeeded() {
+        if (ourDefender != null) {
+            ourDefender.gatherBestResources();
+        }
+
         ourDefender = null;
     }
 
@@ -66,7 +76,8 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
             if (ourDefender != null && ourDefender.isAlive()) {
                 sendDefenderToFight();
             }
-        } else
+        }
+        else
             noDefenderNeeded();
 
         return false;
@@ -91,14 +102,6 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
         return (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invokeFrom(this);
     }
 
-    private static void noDefenderNeeded() {
-        if (ourDefender != null) {
-            ourDefender.gatherBestResources();
-        }
-
-        ourDefender = null;
-    }
-
     /**
      * Picks a healthy free worker as the defender, or replaces a dead or wounded
      * one. Replace-on-wounded is what stops a wound becoming a death: a Probe at
@@ -111,9 +114,9 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
         // atlantis.units.workers, which this rule treats as a consumer package, and
         // a commander in the core package must not reach into one.
         ourDefender = Select.ourWorkers()
-                .exclude(ourDefender)
-                .havingAtLeastHp(DEFENDER_MIN_HP)
-                .nearestTo(enemyScout);
+            .exclude(ourDefender)
+            .havingAtLeastHp(DEFENDER_MIN_HP)
+            .nearestTo(enemyScout);
     }
 
     private boolean detectEnemyScout() {

@@ -1,11 +1,7 @@
 package atlantis.units;
 
 import atlantis.util.log.ErrorLog;
-import bwapi.Position;
-import bwapi.TechType;
-import bwapi.TilePosition;
-import bwapi.UnitType;
-import bwapi.UpgradeType;
+import bwapi.*;
 
 /**
  * Stage D: {@link OrderSink}wired to the live engine.
@@ -24,6 +20,45 @@ public final class BwapiOrderSink implements OrderSink {
 
     public static BwapiOrderSink instance() {
         return INSTANCE;
+    }
+
+    private static boolean isResource(AUnit target) {
+        return target != null
+            && (target.type().isMineralField() || target.type().isGasBuilding());
+    }
+
+    /**
+     * Sink-method names to engine-command names for the unit narrative
+     * (owner ask: ATTACK, MOVE, ...). Only the commands the game emits at
+     * volume are mapped; anything else uppercases predictably.
+     */
+    private static String engineCommandName(String operation) {
+        switch (operation) {
+            case "attackUnit":
+                return "ATTACK";
+            case "move":
+                return "MOVE";
+            case "gather":
+                return "GATHER";
+            case "patrol":
+                return "PATROL";
+            case "holdPosition":
+                return "HOLD";
+            case "stop":
+                return "STOP";
+            case "follow":
+                return "FOLLOW";
+            case "repair":
+                return "REPAIR";
+            case "build":
+                return "BUILD";
+            case "train":
+                return "TRAIN";
+            case "rightClick":
+                return "RIGHTCLICK";
+            default:
+                return operation.toUpperCase();
+        }
     }
 
     @Override
@@ -111,11 +146,6 @@ public final class BwapiOrderSink implements OrderSink {
             return issue("gather/rightClick", actor, () -> actor.u().rightClick(target.u()));
         }
         return issued;
-    }
-
-    private static boolean isResource(AUnit target) {
-        return target != null
-            && (target.type().isMineralField() || target.type().isGasBuilding());
     }
 
     @Override
@@ -243,16 +273,12 @@ public final class BwapiOrderSink implements OrderSink {
         return issue("useTechOn", actor, () -> actor.u().useTech(tech, target.u()));
     }
 
-    private interface EngineCall {
-        boolean call();
-    }
-
     private boolean issue(String operation, AUnit actor, EngineCall call) {
         boolean result;
         try {
             result = call.call();
         } catch (Exception e) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("ordersink-failed", 
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("ordersink-failed",
                 "OrderSink." + operation + " failed for " + actor + ": " + e.getMessage()
             );
             result = false;
@@ -273,25 +299,7 @@ public final class BwapiOrderSink implements OrderSink {
         return result;
     }
 
-    /**
-     * Sink-method names to engine-command names for the unit narrative
-     * (owner ask: ATTACK, MOVE, ...). Only the commands the game emits at
-     * volume are mapped; anything else uppercases predictably.
-     */
-    private static String engineCommandName(String operation) {
-        switch (operation) {
-            case "attackUnit": return "ATTACK";
-            case "move": return "MOVE";
-            case "gather": return "GATHER";
-            case "patrol": return "PATROL";
-            case "holdPosition": return "HOLD";
-            case "stop": return "STOP";
-            case "follow": return "FOLLOW";
-            case "repair": return "REPAIR";
-            case "build": return "BUILD";
-            case "train": return "TRAIN";
-            case "rightClick": return "RIGHTCLICK";
-            default: return operation.toUpperCase();
-        }
+    private interface EngineCall {
+        boolean call();
     }
 }

@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Gas income, Core-first. */
+/**
+ * Gas income, Core-first.
+ */
 public final class AssimilatorGoal implements Goal {
 
     @Override

@@ -4,10 +4,10 @@ import atlantis.combat.siting.TerranBunker;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
@@ -22,13 +22,70 @@ import static atlantis.units.AUnitType.Protoss_Forge;
 public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander {
     protected static AntiLandBuildingCommander instance = null;
 
-    private Cache<APosition> cache = new Cache<>();
+    private final Cache<APosition> cache = new Cache<>();
+
+    // =========================================================
+
+    /// /                        nearTo = naturalChoke.position();
+    /// /                        return naturalChoke.translatePercentTowards(10, naturalBase);
+//                                double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
+//                                if (nearTo == null)
+//                                    nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+//                            }
+//
+//                            return findPositionNear(nearTo);
+//                        }
+//                    }
+//                }
+//
+//                // =========================================================
+//
+//                AUnitType building = type();
+//
+//                AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
+//                if (We.zerg() && previousBuilding != null) {
+//                    nearTo = previousBuilding.position();
+//                }
+//
+//                if (nearTo == null) {
+//
+//                    // Place near the base
+//                    nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
+//                }
+//
+//                // Move towards nearest choke
+//                if (nearTo != null) {
+//                    AChoke choke = Chokes.nearestChoke(nearTo);
+//                    if (choke != null) {
+//                        nearTo = nearTo.translateTilesTowards(choke, 7);
+//                    }
+//                }
+//
+//                return nearTo;
+//            }
+//        );
+//    }
+
+    // =========================================================
+    public static AntiLandBuildingCommander get() {
+        if (instance == null) {
+            if (We.zerg()) {
+                return instance = new ZergSunkenColony();
+            }
+            else if (We.protoss()) {
+                return instance = new ProtossPhotonCannonAntiLand();
+            }
+            else if (We.terran()) {
+                return instance = new TerranBunker();
+            }
+        }
+
+        return instance;
+    }
 
     // =========================================================
 
     public abstract int expected();
-
-    // =========================================================
 
     @Override
     public boolean shouldBuildNew() {
@@ -43,7 +100,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
             if (((ZergSunkenColony) instance).handleExistingCreepColonyIfNeeded()) return true;
         }
 
-        return shouldBuildNew() ? requestOne(nextPosition()) : false;
+        return shouldBuildNew() && requestOne(nextPosition());
     }
 
     //    public boolean requestOne(HasPosition at, ProductionOrder order) {
@@ -94,19 +151,6 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
             AddToQueue.withTopPriority(buildType, at);
 
             return true;
-        }
-
-        return false;
-    }
-
-    private boolean addRequirement(AUnitType buildType) {
-        if (buildType.isCannon()) {
-            if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
-                Queue.get().notFinished().ofType(Protoss_Forge).cancelAll("Cancel other Forges");
-                AddToQueue.withTopPriority(Protoss_Forge);
-
-                return true;
-            }
         }
 
         return false;
@@ -167,62 +211,18 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
 //                        if (naturalBase != null) {
 //                            AChoke naturalChoke = Chokes.natural();
 //                            if (naturalChoke != null) {
-////                        nearTo = naturalChoke.position();
-////                        return naturalChoke.translatePercentTowards(10, naturalBase);
-//                                double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
-//                                if (nearTo == null)
-//                                    nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
-//                            }
-//
-//                            return findPositionNear(nearTo);
-//                        }
-//                    }
-//                }
-//
-//                // =========================================================
-//
-//                AUnitType building = type();
-//
-//                AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
-//                if (We.zerg() && previousBuilding != null) {
-//                    nearTo = previousBuilding.position();
-//                }
-//
-//                if (nearTo == null) {
-//
-//                    // Place near the base
-//                    nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
-//                }
-//
-//                // Move towards nearest choke
-//                if (nearTo != null) {
-//                    AChoke choke = Chokes.nearestChoke(nearTo);
-//                    if (choke != null) {
-//                        nearTo = nearTo.translateTilesTowards(choke, 7);
-//                    }
-//                }
-//
-//                return nearTo;
-//            }
-//        );
-//    }
 
-    // =========================================================
+    private boolean addRequirement(AUnitType buildType) {
+        if (buildType.isCannon()) {
+            if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
+                Queue.get().notFinished().ofType(Protoss_Forge).cancelAll("Cancel other Forges");
+                AddToQueue.withTopPriority(Protoss_Forge);
 
-    public static AntiLandBuildingCommander get() {
-        if (instance == null) {
-            if (We.zerg()) {
-                return instance = new ZergSunkenColony();
-            }
-            else if (We.protoss()) {
-                return instance = new ProtossPhotonCannonAntiLand();
-            }
-            else if (We.terran()) {
-                return instance = new TerranBunker();
+                return true;
             }
         }
 
-        return instance;
+        return false;
     }
 
 }

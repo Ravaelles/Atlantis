@@ -13,8 +13,8 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.OrderIssuance;
 import atlantis.units.fogged.FoggedUnit;
-import atlantis.util.AConsole;
 import atlantis.units.special.SleepUntilFrameGate;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
 
@@ -261,7 +261,7 @@ public interface AUnitOrders {
         }
 
         if (unit.isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unwalkable-move", 
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("unwalkable-move",
                 "Trying to move to unwalkable position for " + unit + " / a:" + unitAction + " / t:" + target
             );
 
@@ -286,7 +286,8 @@ public interface AUnitOrders {
             }
 
             unit.setLastActionReceivedNow().setAction(unitAction);
-            if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? OrderIssuance.commandMinDelayWhenMoving(unit) : 1)) return true;
+            if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? OrderIssuance.commandMinDelayWhenMoving(unit) : 1))
+                return true;
 
             else unit.lastCommandIssuedNow(UnitCommandType.Move);
 
@@ -297,12 +298,12 @@ public interface AUnitOrders {
             if (shouldPrint()) {
                 AConsole.println(
                     "@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE (" + unitAction + ") / to:" + target
-                    + " / " + unit.manager()
+                        + " / " + unit.manager()
                 );
             }
 
             if (target.position() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target", 
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target",
                     "Null move target.position() for " + unit.typeWithHash() + " / " + target
                 );
 
@@ -310,7 +311,7 @@ public interface AUnitOrders {
             }
 
             if (target.position().p() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target-p", 
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-move-target-p",
                     "Null move target.position().p() for " + unit.typeWithHash() + " / " + target
                 );
 
@@ -318,7 +319,7 @@ public interface AUnitOrders {
             }
 
             if (u() == null) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-unit-u", 
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("null-unit-u",
                     "Null unit.u() for " + unit.typeWithHash() + " / " + target
                 );
 

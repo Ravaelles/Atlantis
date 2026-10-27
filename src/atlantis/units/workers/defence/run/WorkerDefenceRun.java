@@ -2,14 +2,14 @@ package atlantis.units.workers.defence.run;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.BaseUnderAttack;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 import java.util.List;
@@ -25,13 +25,19 @@ public class WorkerDefenceRun extends Manager {
     public static final String STAND_AND_TRADE_AT_HOME = "StandAndTradeAtHome";
 
 
-    /** From this many raiders the workers flee, if the fight is also going badly. */
+    /**
+     * From this many raiders the workers flee, if the fight is also going badly.
+     */
     private static final int RAIDERS_THAT_MEAN_FLEE = 3;
 
-    /** Above this local combat eval we are winning; below it we are behind. */
+    /**
+     * Above this local combat eval we are winning; below it we are behind.
+     */
     private static final double EVAL_WE_ARE_BEHIND = 1.5;
 
-    /** Early game: a worker at least this healthy stands and fights. */
+    /**
+     * Early game: a worker at least this healthy stands and fights.
+     */
     private static final int EARLY_GAME_HP_ENOUGH = 38;
 
     /**
@@ -40,17 +46,38 @@ public class WorkerDefenceRun extends Manager {
      */
     private static final int HOLD_GROUND_MIN_HP = 30;
 
-    /** How far a helper will travel to answer a wounded fellow worker. */
+    /**
+     * How far a helper will travel to answer a wounded fellow worker.
+     */
     private static final double HELP_RADIUS = 2.2;
 
-    /** The helper must be this healthy, or it is just another victim. */
+    /**
+     * The helper must be this healthy, or it is just another victim.
+     */
     private static final int HELPER_MIN_HP = 35;
 
-    /** The victim must be at most this healthy to be worth helping. */
+    /**
+     * The victim must be at most this healthy to be worth helping.
+     */
     private static final int VICTIM_MAX_HP = 25;
 
     public WorkerDefenceRun(AUnit unit) {
         super(unit);
+    }
+
+    /**
+     * Who may answer a victim's call: not the victim itself, healthy enough
+     * to trade, not mid-construction - and never an assigned builder
+     * (owner: a builder has a building to raise; drafting it is the same
+     * hijack as scouting or repairing with it). Public as a seam: the
+     * rule pins without running the frame.
+     */
+    public static boolean isEligibleHelper(AUnit candidate, AUnit victim) {
+        if (candidate.equals(victim)) return false;
+        if (candidate.hp() < HELPER_MIN_HP) return false;
+        if (candidate.isConstructing()) return false;
+
+        return !candidate.isBuilder();
     }
 
     @Override
@@ -156,11 +183,7 @@ public class WorkerDefenceRun extends Manager {
 
         // Could not reach it this frame (range, pathing): step towards the fight
         // rather than ignoring it, so the helper arrives while the victim lives.
-        if (unit.move(attacker, Actions.MOVE_ATTACK, "HelpFriendMove")) {
-            return true;
-        }
-
-        return false;
+        return unit.move(attacker, Actions.MOVE_ATTACK, "HelpFriendMove");
     }
 
     /**
@@ -180,31 +203,16 @@ public class WorkerDefenceRun extends Manager {
         return null;
     }
 
-    private boolean isInTrouble(AUnit friend) {
-        if (friend.hp() <= VICTIM_MAX_HP) return true;
-
-        return friend.lastUnderAttackLessThanAgo(30 * 2);
-    }
-
     /**
      * True when this unit is the closest eligible helper for {@code victim}.
      * Ties are broken by id so the decision is stable frame to frame - a helper
      * that flickers between victims helps neither.
      */
-    /**
-     * Who may answer a victim's call: not the victim itself, healthy enough
-     * to trade, not mid-construction - and never an assigned builder
-     * (owner: a builder has a building to raise; drafting it is the same
-     * hijack as scouting or repairing with it). Public as a seam: the
-     * rule pins without running the frame.
-     */
-    public static boolean isEligibleHelper(AUnit candidate, AUnit victim) {
-        if (candidate.equals(victim)) return false;
-        if (candidate.hp() < HELPER_MIN_HP) return false;
-        if (candidate.isConstructing()) return false;
-        if (candidate.isBuilder()) return false;
 
-        return true;
+    private boolean isInTrouble(AUnit friend) {
+        if (friend.hp() <= VICTIM_MAX_HP) return true;
+
+        return friend.lastUnderAttackLessThanAgo(30 * 2);
     }
 
     private boolean isTheChosenHelper(AUnit victim) {
@@ -279,11 +287,7 @@ public class WorkerDefenceRun extends Manager {
             return false;
         }
 
-        if (unit.runOrMoveAway(lings.nearestTo(unit), 5)) {
-            return true;
-        }
-
-        return false;
+        return unit.runOrMoveAway(lings.nearestTo(unit), 5);
     }
 
 
@@ -304,7 +308,8 @@ public class WorkerDefenceRun extends Manager {
         // 4.5 tiles is already inside the danger zone).
         if (dragoonsNear >= 1 && unit.hp() <= 40) {
             AUnit dragoon = dragoons.nearestTo(unit);
-            if (dragoon != null && unit.runOrMoveAway(dragoon, 5)) return true;
+
+            return dragoon != null && unit.runOrMoveAway(dragoon, 5);
         }
 
         return false;
@@ -333,9 +338,7 @@ public class WorkerDefenceRun extends Manager {
 
         if (unit.eval() <= EVAL_WE_ARE_BEHIND) {
             AUnit zealot = zealots.nearestTo(unit);
-            if (zealot != null && unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot")) {
-                return true;
-            }
+            return zealot != null && unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot");
         }
 
         return false;

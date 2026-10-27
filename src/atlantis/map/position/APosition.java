@@ -2,8 +2,8 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.ARandom;
-import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
+import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
@@ -33,16 +33,16 @@ import java.io.Serializable;
 //public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
 public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>>, Serializable {
     //    private transient Position p;
-    private Position p;
+    private final Position p;
 
     // =========================================================
 
 //    public APosition() {
 //        // For serialization only!
 //        this(0, 0);
-////        this.p = new Position(0, 0);
-//    }
 
+    /// /        this.p = new Position(0, 0);
+//    }
     public APosition(APosition position) {
         this(position.x(), position.y());
     }
@@ -58,15 +58,6 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     public APosition(int pixelX, int pixelY) {
         super(pixelX, pixelY, 1);
         this.p = new Position(pixelX, pixelY);
-    }
-
-    // =========================================================
-
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        System.out.println("Hahaha!");
-
-        ois.defaultReadObject();
-        Integer houseNumber = (Integer) ois.readObject();
     }
 
     // =========================================================
@@ -115,6 +106,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 //        }
     }
 
+    // =========================================================
+
     /**
      * <b>Notice:</b> whenever possible, use APosition instead of Position.
      * <p>
@@ -130,6 +123,13 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     public static APosition createFromPixels(int px, int py) {
         return new APosition(px, py);
+    }
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        System.out.println("Hahaha!");
+
+        ois.defaultReadObject();
+        Integer houseNumber = (Integer) ois.readObject();
     }
 
     // =========================================================

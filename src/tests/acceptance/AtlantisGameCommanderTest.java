@@ -12,11 +12,11 @@ public class AtlantisGameCommanderTest extends AbstractTestWithWorld {
     @Test
     public void mainGameLoopWorksAsExpected() {
         world(1, () -> {
-        (new AtlantisGameCommander()).invokedCommander();
+            (new AtlantisGameCommander()).invokedCommander();
 
-        CodeProfiler.printSummary();
+            CodeProfiler.printSummary();
 
-        assertTrue(true);
+            assertTrue(true);
         });
     }
 

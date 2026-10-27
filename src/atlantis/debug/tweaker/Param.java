@@ -4,9 +4,9 @@ import java.util.concurrent.Callable;
 
 public class Param {
 
-    private String name;
-    private Callable getter;
-    private Callable setter;
+    private final String name;
+    private final Callable getter;
+    private final Callable setter;
 
     protected Param(String name, Callable getter, Callable setter) {
         this.name = name;

@@ -39,7 +39,7 @@ public class BuildingLedger {
      *                       was created at), null when no order is linked.
      * @param constructionId the construction this building finished, null
      *                       when the warp matched nothing (the chain twin).
-     * @param orderId the linked order's id, null when orderless.
+     * @param orderId        the linked order's id, null when orderless.
      */
     public static void recordBuilding(int unitId, String type, int tx, int ty, int frame, String time,
                                       int supplyUsed, int supplyTotal, int minerals, int gas,
@@ -89,7 +89,7 @@ public class BuildingLedger {
      * OnGameEnd only decides the moment.
      */
     public static void printTailToStderr() {
-        System.err.println("");
+        System.err.println();
         System.err.println("===== BUILDINGS.json (ledger at game end) =====");
         System.err.print(toJson());
     }

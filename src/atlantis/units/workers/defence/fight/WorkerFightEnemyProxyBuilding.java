@@ -17,9 +17,8 @@ public class WorkerFightEnemyProxyBuilding extends Manager {
     @Override
     public boolean applies() {
         if (A.s >= 500) return false;
-        if (A.isUms() || Count.ourCombatUnits() >= 7) return false;
 
-        return true;
+        return !A.isUms() && Count.ourCombatUnits() < 7;
     }
 
     @Override

@@ -1,21 +1,16 @@
 package tests.unit;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * A refused order is not a step (NEXT #173 lesson, Wine 1Drag_v_1Zeal:

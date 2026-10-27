@@ -16,8 +16,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * A building order is FINISHED when its building stands completed.
@@ -102,7 +100,7 @@ public class BuildingOrderCompletionTest extends AbstractTestWithWorld {
             assertNotEquals(
                 OrderStatus.FINISHED, order.status(),
                 "a warping Pylon is not a built Pylon - completion is the"
-                + " standing building, not the warp start");
+                    + " standing building, not the warp start");
         });
     }
 }

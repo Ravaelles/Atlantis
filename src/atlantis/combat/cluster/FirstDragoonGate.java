@@ -21,23 +21,31 @@ import atlantis.units.select.Count;
  */
 public final class FirstDragoonGate {
 
-    /** Whether the active build order trains Dragoons (game root's answer). */
+    /**
+     * Whether the active build order trains Dragoons (game root's answer).
+     */
     private static boolean buildPlansDragoons = false;
 
     private FirstDragoonGate() {
     }
 
-    /** Game root, at game start: the active build order's intent. */
+    /**
+     * Game root, at game start: the active build order's intent.
+     */
     public static void setBuildPlansDragoons(boolean value) {
         buildPlansDragoons = value;
     }
 
-    /** Per-game reset next to the other statics (BattleCommander). */
+    /**
+     * Per-game reset next to the other statics (BattleCommander).
+     */
     public static void clearForTests() {
         buildPlansDragoons = false;
     }
 
-    /** The build intent the game root wrote - read as a seam, no orders. */
+    /**
+     * The build intent the game root wrote - read as a seam, no orders.
+     */
     public static boolean buildPlansDragoons() {
         return buildPlansDragoons;
     }
@@ -49,8 +57,7 @@ public final class FirstDragoonGate {
     public static boolean holdsAtMain() {
         try {
             return holds(Enemy.zerg(), Count.dragoons(), buildPlansDragoons);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return false;
         }
     }

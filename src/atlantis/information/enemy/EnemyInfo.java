@@ -1,14 +1,15 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.base.ABaseLocation;
-import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
@@ -17,15 +18,14 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 public class EnemyInfo {
     public static boolean startedWithCombatBuilding = false;
     public static boolean _hasRanged = false;
 
-    private static Cache<Object> cache = new Cache<>();
-    private static Cache<Boolean> cacheBoolean = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
+    private static final Cache<Boolean> cacheBoolean = new Cache<>();
 
     // =========================================================
 
@@ -288,9 +288,8 @@ public class EnemyInfo {
 
     public static boolean goesOrHasHiddenUnits() {
         if (EnemyInfo.hasHiddenUnits()) return true;
-        if (EnemyStrategy.get().isGoingHiddenUnits()) return true;
 
-        return false;
+        return EnemyStrategy.get().isGoingHiddenUnits();
     }
 
     public static int dangerousAirUnitsThatRequireAntiAirBuilding() {

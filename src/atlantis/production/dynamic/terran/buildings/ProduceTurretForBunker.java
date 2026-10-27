@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -13,7 +14,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

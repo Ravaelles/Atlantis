@@ -2,11 +2,7 @@ package tests.fakes;
 
 import atlantis.units.AUnit;
 import atlantis.units.OrderSink;
-import bwapi.Position;
-import bwapi.TechType;
-import bwapi.TilePosition;
-import bwapi.UnitType;
-import bwapi.UpgradeType;
+import bwapi.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +13,6 @@ import java.util.List;
  * assert on issued orders without a running game.
  */
 public class FakeOrderSink implements OrderSink {
-
-    public static class Record {
-        public final String operation;
-        public final int actorId;
-        public final String detail;
-
-        public Record(String operation, int actorId, String detail) {
-            this.operation = operation;
-            this.actorId = actorId;
-            this.detail = detail;
-        }
-
-        @Override
-        public String toString() {
-            return operation + " by " + actorId + (detail.isEmpty() ? "" : " " + detail);
-        }
-    }
 
     private final List<Record> records = new ArrayList<>();
     private boolean resultToReturn = true;
@@ -248,5 +227,22 @@ public class FakeOrderSink implements OrderSink {
     @Override
     public boolean useTechOn(AUnit actor, TechType tech, AUnit target) {
         return record("useTechOn", actor, tech + " @ " + target.id());
+    }
+
+    public static class Record {
+        public final String operation;
+        public final int actorId;
+        public final String detail;
+
+        public Record(String operation, int actorId, String detail) {
+            this.operation = operation;
+            this.actorId = actorId;
+            this.detail = detail;
+        }
+
+        @Override
+        public String toString() {
+            return operation + " by " + actorId + (detail.isEmpty() ? "" : " " + detail);
+        }
     }
 }

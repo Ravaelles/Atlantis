@@ -42,22 +42,61 @@ public class WineRaceSettingTest {
     private static final Path SCRIPT = Paths.get("scripts/run-wine-full.sh");
     private static final Path MAIN = Paths.get("src/main/Main.java");
 
-    /** The extraction as the script performs it, run against the real source. */
+    /**
+     * The extraction as the script performs it, run against the real source.
+     */
     private static final String EXTRACT = "sed -n '/public static String ourRace/,/^    }/p' " + MAIN + " " +
-            "| grep -vE '^\\s*//' " +
-            "| grep -oE 'return \"(Protoss|Terran|Zerg)\"' | head -1 " +
-            "| sed -E 's/.*\"(.*)\".*/\\1/'";
+        "| grep -vE '^\\s*//' " +
+        "| grep -oE 'return \"(Protoss|Terran|Zerg)\"' | head -1 " +
+        "| sed -E 's/.*\"(.*)\".*/\\1/'";
+
+    private static int runExitCode(String command) throws Exception {
+        Process p = new ProcessBuilder("bash", "-c", command)
+            .redirectErrorStream(true)
+            .start();
+        readAll(p);
+
+        return p.waitFor();
+    }
+
+    private static String run(String command) throws Exception {
+        Process p = new ProcessBuilder("bash", "-c", command)
+            .redirectErrorStream(false)
+            .start();
+        String out = new String(readAll(p), StandardCharsets.UTF_8).trim();
+        p.waitFor();
+
+        return out;
+    }
+
+    private static byte[] readAll(Process p) throws IOException {
+        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[4096];
+        int read;
+        while ((read = p.getInputStream().read(chunk)) != -1) {
+            buffer.write(chunk, 0, read);
+        }
+        return buffer.toByteArray();
+    }
+
+    // ---- helpers -----------------------------------------------------------
+
+    private static String read(Path path) throws IOException {
+        assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
+
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    }
 
     @Test
     public void raceIsReadFromTheClientNotHardcodedInTheScript() throws IOException, InterruptedException {
         String script = read(SCRIPT);
 
         assertTrue(script.contains("CLIENT_RACE="),
-                "run-wine-full.sh must read the race from the client");
+            "run-wine-full.sh must read the race from the client");
         assertTrue(script.contains("Setting race to $CLIENT_RACE"),
-                "the race must actually be written into bwapi.ini");
+            "the race must actually be written into bwapi.ini");
         assertTrue(script.contains("Main.java"),
-                "the race must come from Main.ourRace(), the client's source of truth");
+            "the race must come from Main.ourRace(), the client's source of truth");
     }
 
     @Test
@@ -84,8 +123,8 @@ public class WineRaceSettingTest {
         }
 
         assertEquals(expected, detected,
-                "the race must be the first UNCOMMENTED return in ourRace();"
-                        + " matching a commented line would silently pick a different race");
+            "the race must be the first UNCOMMENTED return in ourRace();"
+                + " matching a commented line would silently pick a different race");
     }
 
     @Test
@@ -93,43 +132,6 @@ public class WineRaceSettingTest {
         // The working directory of the JUnit run is the repo root (run-tests.sh
         // cds there), which is also how the other script-reading tests work.
         assertEquals(0, runExitCode("bash -n " + SCRIPT.toAbsolutePath()),
-                "a broken README-adjacent edit here would only show up as a failed launch");
-    }
-
-    // ---- helpers -----------------------------------------------------------
-
-    private static int runExitCode(String command) throws Exception {
-        Process p = new ProcessBuilder("bash", "-c", command)
-                .redirectErrorStream(true)
-                .start();
-        readAll(p);
-
-        return p.waitFor();
-    }
-
-    private static String run(String command) throws Exception {
-        Process p = new ProcessBuilder("bash", "-c", command)
-                .redirectErrorStream(false)
-                .start();
-        String out = new String(readAll(p), StandardCharsets.UTF_8).trim();
-        p.waitFor();
-
-        return out;
-    }
-
-    private static byte[] readAll(Process p) throws IOException {
-        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
-        byte[] chunk = new byte[4096];
-        int read;
-        while ((read = p.getInputStream().read(chunk)) != -1) {
-            buffer.write(chunk, 0, read);
-        }
-        return buffer.toByteArray();
-    }
-
-    private static String read(Path path) throws IOException {
-        assertTrue(Files.exists(path), "missing file: " + path.toAbsolutePath());
-
-        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            "a broken README-adjacent edit here would only show up as a failed launch");
     }
 }

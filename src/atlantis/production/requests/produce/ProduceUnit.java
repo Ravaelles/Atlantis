@@ -1,8 +1,8 @@
 package atlantis.production.requests.produce;
 
 import atlantis.decisions.board.ADecision;
-import atlantis.decisions.goals.protoss.ArmyQuestion;
 import atlantis.decisions.board.DecisionDispatcher;
+import atlantis.decisions.goals.protoss.ArmyQuestion;
 import atlantis.game.A;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.orders.build.CurrentBuildOrder;

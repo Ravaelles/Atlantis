@@ -13,12 +13,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Ghost advance (owner: dragoons stood in formation against remembered-but-
@@ -52,7 +47,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             // Later frames: the enemy is gone (teleported out of sight),
             // the squad remembers where the fight was.
             if (now == 1) {
-                for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                     BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, a);
                 }
                 assertNotNull(
@@ -72,7 +67,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
 
                 return;
             }
-            for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                 BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, nexus);
             }
             if (now == 2) {
@@ -93,7 +88,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
 
             APosition ghost = FightTarget.lastContact(a);
             assertNotNull(ghost, "the squad remembers the fight");
-            for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                 assertTrue(
                     u.position().distTo(ghost) < 3.0,
                     "converged on the remembered contact instead of standing or bunching to the base: "
@@ -164,7 +159,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         world(31, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
-                for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                     BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, a);
                 }
                 zealot.position = APosition.createFromPixels(28 * 32, 45 * 32);
@@ -182,7 +177,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
             assertFalse(GhostAdvance.isVanguard(b), "one scout, not two");
             assertFalse(GhostAdvance.isVanguard(c), "one scout, not three");
 
-            for (FakeUnit u : new FakeUnit[] { a, b, c }) {
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) {
                 BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, nexus);
             }
             if (now == 2) {
@@ -354,7 +349,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
         org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(region);
 
@@ -377,7 +372,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
         org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(region);
 
@@ -403,7 +398,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
         org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(region);
 
@@ -510,7 +505,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
         org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(region);
 
@@ -540,7 +535,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         java.util.List<atlantis.map.region.ARegion> all =
             java.util.Arrays.asList(here, far);
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(atlantis.map.region.Regions::regions).thenReturn(all);
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(null);
@@ -569,7 +564,7 @@ public class GhostAdvanceTest extends WorldStubForTests {
         java.util.List<atlantis.map.region.ARegion> all =
             java.util.Arrays.asList(here, far);
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(atlantis.map.region.Regions::regions).thenReturn(all);
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(null);

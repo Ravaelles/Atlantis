@@ -18,11 +18,13 @@ package atlantis.production.constructions.position;
  */
 public final class BuildSiteDistance {
 
+    /**
+     * User cap on final build distance (tiles, ground).
+     */
+    public static final double MAX_SITE_GROUND_TILES = 30;
+
     private BuildSiteDistance() {
     }
-
-    /** User cap on final build distance (tiles, ground). */
-    public static final double MAX_SITE_GROUND_TILES = 30;
 
     /**
      * Cap for this search: the wider of the user cap and the order's
@@ -49,8 +51,7 @@ public final class BuildSiteDistance {
 
         try {
             return site.groundDist(nearTo) > capTiles;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return false;
         }
     }

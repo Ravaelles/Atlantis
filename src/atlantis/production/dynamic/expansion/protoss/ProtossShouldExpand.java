@@ -2,13 +2,13 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 public class ProtossShouldExpand {

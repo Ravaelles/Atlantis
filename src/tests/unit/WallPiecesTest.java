@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * M4 planner slice: wall pieces are fit-checked demand from an anchor row -
@@ -38,7 +37,7 @@ public class WallPiecesTest {
         assertEquals(AUnitType.Protoss_Pylon, pieces.get(0).type());
         assertEquals(AUnitType.Protoss_Gateway, pieces.get(1).type());
         for (WallPieces.Piece piece : pieces) {
-            assertTrue(!(piece.tile().tx() == 13 && piece.tile().ty() == 20), "door never takes a piece");
+            assertFalse(piece.tile().tx() == 13 && piece.tile().ty() == 20, "door never takes a piece");
         }
     }
 

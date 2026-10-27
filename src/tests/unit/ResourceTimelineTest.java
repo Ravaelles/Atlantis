@@ -5,10 +5,7 @@ import atlantis.production.v2.ResourceTimeline;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the timeline math of the production-v2 core (M1 of
@@ -136,9 +133,9 @@ public class ResourceTimelineTest {
     @Test
     public void negativeStartStocksAreRejected() {
         assertThrows(IllegalArgumentException.class,
-                () -> new ResourceTimeline(100, -1, 0, 10));
+            () -> new ResourceTimeline(100, -1, 0, 10));
         assertThrows(IllegalArgumentException.class,
-                () -> new ResourceTimeline(0, 100, 0, 10));
+            () -> new ResourceTimeline(0, 100, 0, 10));
     }
 
     @Test
@@ -148,7 +145,7 @@ public class ResourceTimelineTest {
         // 500 minerals is never available; allocating must throw rather than
         // silently produce a plan the economy cannot pay for.
         assertThrows(IllegalStateException.class,
-                () -> timeline.allocate(ResourceCost.of(500, 0, 0), 0));
+            () -> timeline.allocate(ResourceCost.of(500, 0, 0), 0));
     }
 
     @Test

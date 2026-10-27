@@ -8,15 +8,15 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.CacheKey;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
-import atlantis.units.select.CacheKey;
 
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class SupplyDepotPositionFinder {
-    private static Cache<APosition> cache = new Cache<>();
+    private static final Cache<APosition> cache = new Cache<>();
 
     public static APosition findPosition(AUnit builder, Construction construction, HasPosition nearTo) {
 //        if (Count.ofType(Terran_Supply_Depot) <= 3) return null;

@@ -30,6 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("combat")
 public class FirstDragoonGateTest {
 
+    private static ABuildOrder buildOrderPlanning(ProductionOrder... rows) {
+        ABuildOrder buildOrder = Mockito.mock(ABuildOrder.class);
+        Mockito.when(buildOrder.productionOrders())
+            .thenReturn(new ArrayList<>(Arrays.asList(rows)));
+
+        return buildOrder;
+    }
+
     @Test
     public void zergDragoonBuildWithNoDragoonYetHoldsTheMain() {
         assertTrue(
@@ -101,8 +109,7 @@ public class FirstDragoonGateTest {
                 CurrentBuildOrder.plansDragoon(),
                 "no Dragoon row = not a dragoon build, the gate must stay open"
             );
-        }
-        finally {
+        } finally {
             if (previous != null) CurrentBuildOrder.set(previous);
             else CurrentBuildOrder.clear();
         }
@@ -118,17 +125,8 @@ public class FirstDragoonGateTest {
                 CurrentBuildOrder.plansDragoon(),
                 "no build loaded answers false - an unknown build holds nothing back"
             );
-        }
-        finally {
+        } finally {
             if (previous != null) CurrentBuildOrder.set(previous);
         }
-    }
-
-    private static ABuildOrder buildOrderPlanning(ProductionOrder... rows) {
-        ABuildOrder buildOrder = Mockito.mock(ABuildOrder.class);
-        Mockito.when(buildOrder.productionOrders())
-            .thenReturn(new ArrayList<>(Arrays.asList(rows)));
-
-        return buildOrder;
     }
 }

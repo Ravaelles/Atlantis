@@ -47,35 +47,35 @@ public class QuickEconomySmokeTest extends AbstractTestWithWorld {
     public void commanderRunsAndEconomyStartsMoving() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit[] probes = {
-                fake(AUnitType.Protoss_Probe, 8.3),
-                fake(AUnitType.Protoss_Probe, 9.1),
-                fake(AUnitType.Protoss_Probe, 10.6),
-                fake(AUnitType.Protoss_Probe, 11.4),
+            fake(AUnitType.Protoss_Probe, 8.3),
+            fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 10.6),
+            fake(AUnitType.Protoss_Probe, 11.4),
         };
         FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 12);
         FakeUnit gateway = fake(AUnitType.Protoss_Gateway, 13);
 
         FakeUnit[] ours = concat(
-                new FakeUnit[] { nexus }, probes, new FakeUnit[] { pylon, gateway });
+            new FakeUnit[]{nexus}, probes, new FakeUnit[]{pylon, gateway});
 
         // Short horizon: the point is "the machinery starts", not "a game plays
         // out". 120 frames is enough for the commander to run, the production
         // queue to fill, and any NPE to surface.
-        world(120, fakeOurs(ours), fakeEnemies(new FakeUnit[0]), () -> {
+        world(120, fakeOurs(ours), fakeEnemies(), () -> {
             (new AtlantisGameCommander()).invokedCommander();
 
             if (A.now() == 1) {
                 // The queue starts empty in a fresh world; after the commander
                 // has run, the build-order book must have produced something.
                 assertFalse(Queue.get().allOrders().isEmpty(),
-                        "Production queue should be populated by the commander"
-                                + " within the first frames, but is empty at frame 1");
+                    "Production queue should be populated by the commander"
+                        + " within the first frames, but is empty at frame 1");
             }
         });
 
         assertTrue(nexus.isAlive(), "Nexus must survive a quiet 120 frames");
         assertTrue(Count.workers() >= 3,
-                "Workers must survive a quiet 120 frames, got " + Count.workers());
+            "Workers must survive a quiet 120 frames, got " + Count.workers());
         assertTrue(A.now() >= 120, "World must run the full short horizon");
     }
 
@@ -84,6 +84,7 @@ public class QuickEconomySmokeTest extends AbstractTestWithWorld {
     protected FakeUnit[] generateOur() {
         return null;
     }
+
     @Override
     protected FakeUnit[] generateEnemies() {
         return null;

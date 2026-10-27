@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The per-unit fight trace (owner 2026-10-20): samples carry health and
@@ -73,7 +70,7 @@ public class FightTraceTest extends WorldStubForTests {
             if (now == 34) {
                 FightTrace.sample(dragoon, zealot);
                 int traces = EventLog.toJsonLines().split("\"key\":\"UNIT_TRACE\"", -1).length - 1;
-                assertTrue(traces == 2, "one row at frame 3, one at frame 34, got: " + traces);
+                assertEquals(2, traces, "one row at frame 3, one at frame 34, got: " + traces);
             }
         });
     }
@@ -132,7 +129,7 @@ public class FightTraceTest extends WorldStubForTests {
             assertTrue(rows.contains("\"key\":\"UNIT_DIED\""), "got: " + rows);
             assertTrue(rows.contains("\"dist\":"), "nearest-enemy distance at death: " + rows);
             assertTrue(rows.contains("\"killer\":"), "suspect id at death: " + rows);
-        assertTrue(rows.contains("\"killerType\":"), "suspect type at death: " + rows);
+            assertTrue(rows.contains("\"killerType\":"), "suspect type at death: " + rows);
         });
     }
 }

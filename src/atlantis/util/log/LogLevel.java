@@ -21,7 +21,9 @@ public enum LogLevel {
     HIGH,
     CRITICAL;
 
-    /** Console tag: {@code [LOW]} / {@code [MED]} / {@code [HIGH]} / {@code [CRIT]}. */
+    /**
+     * Console tag: {@code [LOW]} / {@code [MED]} / {@code [HIGH]} / {@code [CRIT]}.
+     */
     public String tag() {
         switch (this) {
             case LOW:
@@ -35,7 +37,9 @@ public enum LogLevel {
         }
     }
 
-    /** Short {@code "lvl"} value rendered in EVENTS.jsonl. */
+    /**
+     * Short {@code "lvl"} value rendered in EVENTS.jsonl.
+     */
     public String code() {
         switch (this) {
             case LOW:

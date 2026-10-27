@@ -19,9 +19,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The unit-production path, from the top of the commander tree down to the
@@ -41,105 +39,6 @@ public class UnitProductionPathTest {
 
     private Race raceBefore;
     private atlantis.config.env.ProductionV2Mode modeBefore;
-
-    @BeforeEach
-    public void setOurRace() {
-        raceBefore = AtlantisRaceConfig.MY_RACE;
-        // The tree is built in constructors, so the race must be set first -
-        // the same ordering the game has (MY_RACE is assigned on game start).
-        AtlantisRaceConfig.MY_RACE = Race.Protoss;
-        modeBefore = Env.productionV2();
-    }
-
-    @AfterEach
-    public void restoreRace() {
-        AtlantisRaceConfig.MY_RACE = raceBefore;
-        Env.setProductionV2ForTest(modeBefore);
-    }
-
-    @Test
-    public void productionCommanderHasTheDynamicProducerInTheModeWeActuallyRun() throws Exception {
-        // The mode matters: ProductionCommander builds a DIFFERENT list when
-        // PRODUCTION_V2=LIVE (the v2 cutover drops the legacy dynamic
-        // commanders). Assert the expectation for the current configuration,
-        // whatever it is, so a mode switch cannot silently remove unit
-        // production from the tree.
-        ProductionCommander production = new ProductionCommander();
-        boolean live = Env.productionV2().isLive();
-
-        boolean hasDynamic = contains(production, DynamicProductionCommander.class);
-
-        if (live) {
-            assertFalse(hasDynamic,
-                    "in LIVE the legacy dynamic producer is dropped on purpose");
-            assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
-                    "in LIVE the v2 engine must be the one running production");
-        } else {
-            assertTrue(hasDynamic,
-                    "in OFF/DRY_RUN the legacy dynamic producer must be present -"
-                            + " without it nothing asks for units. Mode was " + Env.productionV2());
-        }
-    }
-
-    @Test
-    public void theLegacyChainIsIntactFromProductionDownToTheProtossProducer() throws Exception {
-        // Pins the legacy chain, so it runs in legacy mode whatever the
-        // default is (the mode-aware test above owns the LIVE shape).
-        Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.OFF);
-        ProductionCommander production = new ProductionCommander();
-        DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
-        assertNotNull(dynamic, "DynamicProductionCommander missing under ProductionCommander");
-
-        DynamicUnitAndTechProducerCommander unitProducer = find(dynamic, DynamicUnitAndTechProducerCommander.class);
-        assertNotNull(unitProducer,
-                "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
-
-        assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
-                "ProtossDynamicUnitProductionCommander missing - this is the node whose"
-                        + " applies() the owner never sees fire");
-    }
-
-    @Test
-    public void everyParentGateOnTheWayIsOpen() {
-        // applies() of each link, evaluated as the game would evaluate it. A
-        // false here means the child is never invoked no matter how correct it
-        // is - the exact shape of "applies() never prints".
-        assertTrue(We.protoss(), "the race branch must be Protoss for this test to mean anything");
-
-        ProductionCommander production = new ProductionCommander();
-        DynamicProductionCommander dynamic = new DynamicProductionCommander();
-        DynamicUnitAndTechProducerCommander unitProducer = new DynamicUnitAndTechProducerCommander();
-
-        // DynamicUnitAndTechProducerCommander inherits the default applies()
-        // (true), so it is never the gate. Assert that explicitly: if someone
-        // adds a gate there, this test should be updated deliberately, not
-        // discover it in a game.
-        assertTrue(unitProducer.applies(),
-                "DynamicUnitAndTechProducerCommander must not gate itself - its children are"
-                        + " the race-specific producers");
-
-        // The Protoss producer's own gate is the one the owner watches.
-        ProtossDynamicUnitProductionCommander protoss = new ProtossDynamicUnitProductionCommander();
-        assertTrue(protoss.applies(),
-                "applies() must be true for our own race; if this is false the commander"
-                        + " is in the tree but never runs");
-
-        // Record the parents for the failure message, so a future break says
-        // where it happened.
-        assertNotNull(production);
-        assertNotNull(dynamic);
-    }
-
-    @Test
-    public void theTopLevelPipelineInvokesProductionCommander() throws Exception {
-        AtlantisGameCommander top = new AtlantisGameCommander();
-        ProductionCommander production = find(top, ProductionCommander.class);
-        assertNotNull(production,
-                "ProductionCommander is not reachable from AtlantisGameCommander -"
-                        + " nothing below it can ever be invoked. Children: " + names(top));
-    }
-
-    // ---- helpers -----------------------------------------------------------
 
     private static String names(Commander commander) throws Exception {
         List<String> out = new ArrayList<>();
@@ -179,5 +78,105 @@ public class UnitProductionPathTest {
             }
         }
         throw new NoSuchFieldException("commanderObjects on " + commander.getClass());
+    }
+
+    @BeforeEach
+    public void setOurRace() {
+        raceBefore = AtlantisRaceConfig.MY_RACE;
+        // The tree is built in constructors, so the race must be set first -
+        // the same ordering the game has (MY_RACE is assigned on game start).
+        AtlantisRaceConfig.MY_RACE = Race.Protoss;
+        modeBefore = Env.productionV2();
+    }
+
+    @AfterEach
+    public void restoreRace() {
+        AtlantisRaceConfig.MY_RACE = raceBefore;
+        Env.setProductionV2ForTest(modeBefore);
+    }
+
+    // ---- helpers -----------------------------------------------------------
+
+    @Test
+    public void productionCommanderHasTheDynamicProducerInTheModeWeActuallyRun() throws Exception {
+        // The mode matters: ProductionCommander builds a DIFFERENT list when
+        // PRODUCTION_V2=LIVE (the v2 cutover drops the legacy dynamic
+        // commanders). Assert the expectation for the current configuration,
+        // whatever it is, so a mode switch cannot silently remove unit
+        // production from the tree.
+        ProductionCommander production = new ProductionCommander();
+        boolean live = Env.productionV2().isLive();
+
+        boolean hasDynamic = contains(production, DynamicProductionCommander.class);
+
+        if (live) {
+            assertFalse(hasDynamic,
+                "in LIVE the legacy dynamic producer is dropped on purpose");
+            assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+                "in LIVE the v2 engine must be the one running production");
+        }
+        else {
+            assertTrue(hasDynamic,
+                "in OFF/DRY_RUN the legacy dynamic producer must be present -"
+                    + " without it nothing asks for units. Mode was " + Env.productionV2());
+        }
+    }
+
+    @Test
+    public void theLegacyChainIsIntactFromProductionDownToTheProtossProducer() throws Exception {
+        // Pins the legacy chain, so it runs in legacy mode whatever the
+        // default is (the mode-aware test above owns the LIVE shape).
+        Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.OFF);
+        ProductionCommander production = new ProductionCommander();
+        DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
+        assertNotNull(dynamic, "DynamicProductionCommander missing under ProductionCommander");
+
+        DynamicUnitAndTechProducerCommander unitProducer = find(dynamic, DynamicUnitAndTechProducerCommander.class);
+        assertNotNull(unitProducer,
+            "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
+
+        assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
+            "ProtossDynamicUnitProductionCommander missing - this is the node whose"
+                + " applies() the owner never sees fire");
+    }
+
+    @Test
+    public void everyParentGateOnTheWayIsOpen() {
+        // applies() of each link, evaluated as the game would evaluate it. A
+        // false here means the child is never invoked no matter how correct it
+        // is - the exact shape of "applies() never prints".
+        assertTrue(We.protoss(), "the race branch must be Protoss for this test to mean anything");
+
+        ProductionCommander production = new ProductionCommander();
+        DynamicProductionCommander dynamic = new DynamicProductionCommander();
+        DynamicUnitAndTechProducerCommander unitProducer = new DynamicUnitAndTechProducerCommander();
+
+        // DynamicUnitAndTechProducerCommander inherits the default applies()
+        // (true), so it is never the gate. Assert that explicitly: if someone
+        // adds a gate there, this test should be updated deliberately, not
+        // discover it in a game.
+        assertTrue(unitProducer.applies(),
+            "DynamicUnitAndTechProducerCommander must not gate itself - its children are"
+                + " the race-specific producers");
+
+        // The Protoss producer's own gate is the one the owner watches.
+        ProtossDynamicUnitProductionCommander protoss = new ProtossDynamicUnitProductionCommander();
+        assertTrue(protoss.applies(),
+            "applies() must be true for our own race; if this is false the commander"
+                + " is in the tree but never runs");
+
+        // Record the parents for the failure message, so a future break says
+        // where it happened.
+        assertNotNull(production);
+        assertNotNull(dynamic);
+    }
+
+    @Test
+    public void theTopLevelPipelineInvokesProductionCommander() throws Exception {
+        AtlantisGameCommander top = new AtlantisGameCommander();
+        ProductionCommander production = find(top, ProductionCommander.class);
+        assertNotNull(production,
+            "ProductionCommander is not reachable from AtlantisGameCommander -"
+                + " nothing below it can ever be invoked. Children: " + names(top));
     }
 }

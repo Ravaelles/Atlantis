@@ -1,8 +1,8 @@
 package atlantis.combat.strategy;
 
+import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.escape.EscapeDestination;
 import atlantis.combat.escape.EscapeRays;
-import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -24,16 +24,24 @@ import java.util.List;
  */
 public final class DuelKite {
 
-    /** Duel scale: baseless fights at or below this headcount kite, bigger ones hold the line. */
+    /**
+     * Duel scale: baseless fights at or below this headcount kite, bigger ones hold the line.
+     */
     public static final int MAX_DUEL_COMBATANTS = 4;
 
-    /** Live-measured dragoon windup (DuelMemory: damage lands ~cd 22 on a 30f cooldown). The sim runs 6 (dead WINDUP keys, #186 slice 3). */
+    /**
+     * Live-measured dragoon windup (DuelMemory: damage lands ~cd 22 on a 30f cooldown). The sim runs 6 (dead WINDUP keys, #186 slice 3).
+     */
     private static final int WINDUP_FRAMES = 8;
 
-    /** Measured full-speed braking glide (#186 slice 3 pins: 6.0px over 7 ticks). Conservative below full speed. */
+    /**
+     * Measured full-speed braking glide (#186 slice 3 pins: 6.0px over 7 ticks). Conservative below full speed.
+     */
     private static final double BRAKING_PX = 6.0;
 
-    /** Hold margin for order-issue slop: the same 2f cover as the imminent-shot gate above (measured re-issue refusal at 1-2f). */
+    /**
+     * Hold margin for order-issue slop: the same 2f cover as the imminent-shot gate above (measured re-issue refusal at 1-2f).
+     */
     private static final int HOLD_MARGIN_FRAMES = 2;
 
     /**
@@ -95,7 +103,9 @@ public final class DuelKite {
         return unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
     }
 
-    /** Step toward the hold point: escape-scored first, MoveAway when nothing scores. */
+    /**
+     * Step toward the hold point: escape-scored first, MoveAway when nothing scores.
+     */
     public static APosition yieldStep(AUnit unit, AUnit threat) {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
@@ -110,7 +120,9 @@ public final class DuelKite {
         return fallbackStep(unit, threat, stepLen);
     }
 
-    /** Same decision with caller-supplied context: the unit-testable seam. */
+    /**
+     * Same decision with caller-supplied context: the unit-testable seam.
+     */
     public static APosition yieldStep(
         AUnit unit, AUnit threat, EscapeRays.Walkability walk,
         List<? extends HasPosition> blockers, List<? extends AUnit> foes
@@ -126,7 +138,7 @@ public final class DuelKite {
         if (dest != null) return dest;
 
         APosition fallback = MoveAway.bestDestination(unit, threat, stepLen, true);
-        if (fallback != null && EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
+        if (EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
             return null;
         }
 
@@ -147,7 +159,9 @@ public final class DuelKite {
         return Math.min(CombatTuning.current().getKiteStepTiles(), gap);
     }
 
-    /** Swamped: 3+ melee enemies inside 2.5 tiles of this Dragoon. */
+    /**
+     * Swamped: 3+ melee enemies inside 2.5 tiles of this Dragoon.
+     */
     public static boolean isSwamped(AUnit unit) {
         if (unit == null || !unit.isDragoon()) return false;
 
@@ -167,7 +181,7 @@ public final class DuelKite {
         }
 
         APosition fallback = MoveAway.bestDestination(unit, threat, stepLen, true);
-        if (fallback != null && EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
+        if (EscapeDestination.violatesBuildingClearance(fallback, blockers)) {
             return null;
         }
 
@@ -175,7 +189,9 @@ public final class DuelKite {
     }
 
 
-    /** Shared cadence with every other step: re-issues at most every 10 frames, rides between. */
+    /**
+     * Shared cadence with every other step: re-issues at most every 10 frames, rides between.
+     */
     public static boolean yieldNow(int now, Integer lastStep) {
         return lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames();
     }

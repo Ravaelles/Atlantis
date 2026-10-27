@@ -2,24 +2,19 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.ProducerFacilityRegistry;
+import atlantis.game.player.Enemy;
+import atlantis.information.tech.ATech;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.v2.CommittedWork;
-import atlantis.production.v2.EconomyModel;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.ResourceTimeline;
+import atlantis.production.v2.*;
 import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
-import atlantis.information.tech.ATech;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 import java.util.List;
@@ -73,7 +68,9 @@ public final class GameStateSnapshot {
     private final int horizon;
     private final ProductionRacePolicy racePolicy;
 
-    /** Ambient race (tests, legacy callers): same source the old selectors read. */
+    /**
+     * Ambient race (tests, legacy callers): same source the old selectors read.
+     */
     public GameStateSnapshot() {
         this(ProductionRacePolicy.ambient());
     }
@@ -85,166 +82,14 @@ public final class GameStateSnapshot {
     }
 
     /**
-     * A fresh timeline for this frame, in absolute frames from now: current
-     * stocks, income of the workers mining now, plus the work already committed
-     * (unpaid constructions, providers and workers being built).
+     * Photon Cannons already standing at the main base.
      */
-    public ResourceTimeline buildTimeline() {
-        int supplyTotal = A.supplyTotal();
-        int supplyFree = Math.max(0, supplyTotal - A.supplyUsed());
-        ResourceTimeline timeline = new ResourceTimeline(frame, horizon, Math.max(0, A.minerals()),
-                Math.max(0, A.gas()), supplyFree, supplyTotal);
-
-        int mineralWorkers = Select.ourWorkersMiningMinerals(false).count();
-        int gasWorkers = 0;
-        for (AUnit worker : Select.ourWorkers().list()) {
-            if (worker.isGatheringGas() || worker.isCarryingGas()) gasWorkers++;
-        }
-        timeline.addMiningIncome(frame,
-                EconomyModel.mineralRate(mineralWorkers, Math.max(1, Count.bases())),
-                gasWorkers * EconomyModel.GAS_PER_WORKER_FRAME);
-
-        applyCommittedWork(timeline);
-
-        return timeline;
-    }
-
-    private void applyCommittedWork(ResourceTimeline timeline) {
-        for (Construction construction : ConstructionRequests.constructions) {
-            AUnitType type = construction.buildingType();
-            if (type == null || construction.hasStarted()) continue;
-            int paidAt = CommittedWork.reserveUnpaid(timeline, UnitProducible.of(type).cost());
-            if (paidAt >= 0)
-                CommittedWork.providerCompletesAt(timeline, paidAt + type.totalTrainTime(),
-                        UnitProducible.of(type).supplyProvided());
-        }
-
-        for (AUnit unit : Select.ourWithUnfinished().list()) {
-            if (!unit.isCompleted()) {
-                CommittedWork.providerCompletesAt(timeline, frame + Math.max(0, unit.getRemainingBuildTime()),
-                        UnitProducible.of(unit.type()).supplyProvided());
-                if (unit.type().isWorker())
-                    CommittedWork.workerCompletesAt(timeline, frame + Math.max(0, unit.getRemainingBuildTime()));
-            }
-            if (unit.isCompleted() && unit.type().isBase() && !unit.hasNothingInQueue()) {
-                CommittedWork.workerCompletesAt(timeline, frame + Math.max(0, unit.remainingTrainTime()));
-            }
-        }
-    }
-
-    public ProducerFacilityRegistry facilityRegistry() {
-        return new LiveFacilityRegistry(frame);
-    }
-
-    public atlantis.production.v2.ExistingItems existingItems() {
-        return new LiveExistingItems(frame);
-    }
-
-    /** The dynamic goal generators for this frame. */
-    public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
-        return dynamicGoals(false);
-    }
-
-    /**
-     * @param buildOrderOwnsProvider the build order still holds an unproduced
-     *                               provider row: the preventive supply fire
-     *                               defers to it (emergency still fires).
-     */
-    public List<atlantis.production.v2.ProductionGoal> dynamicGoals(boolean buildOrderOwnsProvider) {
-        // Workers EXISTING PLUS those already in production. Using the existing
-        // count alone is what made the worker goal ask for another Probe every
-        // frame: the goal layer asked "do we have fewer than the cap", the answer
-        // stayed yes until the Probe hatched, and the scheduler issued one per
-        // frame (measured 2026-10-08: Probe@2, @332, @635, ... on the OpenBW run,
-        // and 2800+ Pylon issues before that). With the unfinished count the demand
-        // disappears the moment the first one is ordered - which is what "we have
-        // enough workers" actually means.
-        int workers = Count.workers();
-        int workersWithUnfinished = Count.ofTypeWithUnfinished(workerType());
-
-        DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
-                workersWithUnfinished,
-                Math.max(1, Count.bases()),
-                A.supplyUsed(),
-                Math.max(0, A.supplyTotal() - A.supplyUsed()),
-                A.supplyTotal(),
-                A.minerals(),
-                workers < 12,
-                Count.ofTypeWithUnfinished(armyType()),
-                Count.basesWithUnfinished(),
-                cannonsAtMain(),
-                Enemy.zerg(),
-                Enemy.protoss(),
-                Count.ofType(AUnitType.Zerg_Mutalisk),
-                A.gas(),
-                We.protoss() && Have.cyberneticsCore(),
-                We.protoss() ? Count.dragoons() : 0,
-                Count.ofType(racePolicy.gasBuildingType()),
-                We.protoss() && ATech.isResearched(bwapi.UpgradeType.Singularity_Charge),
-                atlantis.information.generic.Army.strength());
-
-        // Anchor the fortification goals to the main base. -1 (no base yet) leaves
-        // them off, which is right: there is nothing to fortify before a Nexus.
-        AUnit main = Select.main();
-        if (main != null) snapshot = snapshot.atBase(main.tx(), main.ty());
-
-        // Supply providers already on the way, so the supply goal is not re-emitted
-        // every frame (see DynamicGoals.supplyGoal).
-        snapshot.supplyProvidersComing = supplyProvidersComing();
-        // Fortification cannons need a standing Forge (legacy gate,
-        // ProtossSecureBasesCommander): without it a Cannon goal from frame
-        // 0 plans an orphan Forge ahead of the Gateway.
-        snapshot.hasForge = We.protoss() && Have.forge();
-        twinSuppressedSupply(snapshot);
-
-        return DynamicGoals.contribute(snapshot, racePolicy, buildOrderOwnsProvider);
-    }
-
-    /**
-     * Names the providers a tight supply goal is waiting on: id, tile, hp and
-     * whether the engine still calls them uncompleted. A provider coming for
-     * minutes (cancelled warp, phantom entry) suppresses the supply goal
-     * forever with zero rows anywhere - this is the row that names it.
-     * Throttled: suppression is a state, not an event.
-     */
-    private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
-        atlantis.production.SupplyBlockedTwin.sample(
-            racePolicy.supplyProviderType(), snapshot.supplyFree, snapshot.supplyProvidersComing);
-    }
-
-    /** Photon Cannons already standing at the main base. */
     private static int cannonsAtMain() {
         AUnit main = Select.main();
         if (main == null) return 0;
 
         return Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon)
-                .inRadius(20, main).count();
-    }
-
-    private AUnitType armyType() {
-        return racePolicy.armyUnitType();
-    }
-
-    /**
-     * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
-     * finished - existing plus in production plus in queue, minus what is done.
-     * A Pylon adds supply only at completion, so this is the count that says "we
-     * have enough supply coming".
-     *
-     * <p>Units alone are not enough: a NOT_STARTED or STARTING construction
-     * has no unit yet (builder finding the site, or walking to it), so a
-     * unit-only count reads zero and the goal re-fires every frame until
-     * the first warp - the scheduler then issues a second Pylon behind
-     * the walking builder (measured V2 LIVE: Pylon@4234 + Pylon@4341 107f
-     * apart into the same block). Constructions without a finished unit
-     * count here; overdue cancels clear the stuck ones, so a genuinely
-     * dead site unblocks by itself instead of suppressing forever.
-     * PREPARING picks stay out (someone's aimed future, not live demand).</p>
-     */
-    private int supplyProvidersComing() {
-        AUnitType provider = supplyProviderType();
-
-        return supplyProvidersComing(provider);
+            .inRadius(20, main).count();
     }
 
     /**
@@ -299,11 +144,169 @@ public final class GameStateSnapshot {
         return total;
     }
 
+    /**
+     * A fresh timeline for this frame, in absolute frames from now: current
+     * stocks, income of the workers mining now, plus the work already committed
+     * (unpaid constructions, providers and workers being built).
+     */
+    public ResourceTimeline buildTimeline() {
+        int supplyTotal = A.supplyTotal();
+        int supplyFree = Math.max(0, supplyTotal - A.supplyUsed());
+        ResourceTimeline timeline = new ResourceTimeline(frame, horizon, Math.max(0, A.minerals()),
+            Math.max(0, A.gas()), supplyFree, supplyTotal);
+
+        int mineralWorkers = Select.ourWorkersMiningMinerals(false).count();
+        int gasWorkers = 0;
+        for (AUnit worker : Select.ourWorkers().list()) {
+            if (worker.isGatheringGas() || worker.isCarryingGas()) gasWorkers++;
+        }
+        timeline.addMiningIncome(frame,
+            EconomyModel.mineralRate(mineralWorkers, Math.max(1, Count.bases())),
+            gasWorkers * EconomyModel.GAS_PER_WORKER_FRAME);
+
+        applyCommittedWork(timeline);
+
+        return timeline;
+    }
+
+    private void applyCommittedWork(ResourceTimeline timeline) {
+        for (Construction construction : ConstructionRequests.constructions) {
+            AUnitType type = construction.buildingType();
+            if (type == null || construction.hasStarted()) continue;
+            int paidAt = CommittedWork.reserveUnpaid(timeline, UnitProducible.of(type).cost());
+            if (paidAt >= 0)
+                CommittedWork.providerCompletesAt(timeline, paidAt + type.totalTrainTime(),
+                    UnitProducible.of(type).supplyProvided());
+        }
+
+        for (AUnit unit : Select.ourWithUnfinished().list()) {
+            if (!unit.isCompleted()) {
+                CommittedWork.providerCompletesAt(timeline, frame + Math.max(0, unit.getRemainingBuildTime()),
+                    UnitProducible.of(unit.type()).supplyProvided());
+                if (unit.type().isWorker())
+                    CommittedWork.workerCompletesAt(timeline, frame + Math.max(0, unit.getRemainingBuildTime()));
+            }
+            if (unit.isCompleted() && unit.type().isBase() && !unit.hasNothingInQueue()) {
+                CommittedWork.workerCompletesAt(timeline, frame + Math.max(0, unit.remainingTrainTime()));
+            }
+        }
+    }
+
+    public ProducerFacilityRegistry facilityRegistry() {
+        return new LiveFacilityRegistry(frame);
+    }
+
+    public atlantis.production.v2.ExistingItems existingItems() {
+        return new LiveExistingItems(frame);
+    }
+
+    /**
+     * The dynamic goal generators for this frame.
+     */
+    public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
+        return dynamicGoals(false);
+    }
+
+    /**
+     * @param buildOrderOwnsProvider the build order still holds an unproduced
+     *                               provider row: the preventive supply fire
+     *                               defers to it (emergency still fires).
+     */
+    public List<atlantis.production.v2.ProductionGoal> dynamicGoals(boolean buildOrderOwnsProvider) {
+        // Workers EXISTING PLUS those already in production. Using the existing
+        // count alone is what made the worker goal ask for another Probe every
+        // frame: the goal layer asked "do we have fewer than the cap", the answer
+        // stayed yes until the Probe hatched, and the scheduler issued one per
+        // frame (measured 2026-10-08: Probe@2, @332, @635, ... on the OpenBW run,
+        // and 2800+ Pylon issues before that). With the unfinished count the demand
+        // disappears the moment the first one is ordered - which is what "we have
+        // enough workers" actually means.
+        int workers = Count.workers();
+        int workersWithUnfinished = Count.ofTypeWithUnfinished(workerType());
+
+        DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
+            workersWithUnfinished,
+            Math.max(1, Count.bases()),
+            A.supplyUsed(),
+            Math.max(0, A.supplyTotal() - A.supplyUsed()),
+            A.supplyTotal(),
+            A.minerals(),
+            workers < 12,
+            Count.ofTypeWithUnfinished(armyType()),
+            Count.basesWithUnfinished(),
+            cannonsAtMain(),
+            Enemy.zerg(),
+            Enemy.protoss(),
+            Count.ofType(AUnitType.Zerg_Mutalisk),
+            A.gas(),
+            We.protoss() && Have.cyberneticsCore(),
+            We.protoss() ? Count.dragoons() : 0,
+            Count.ofType(racePolicy.gasBuildingType()),
+            We.protoss() && ATech.isResearched(bwapi.UpgradeType.Singularity_Charge),
+            atlantis.information.generic.Army.strength());
+
+        // Anchor the fortification goals to the main base. -1 (no base yet) leaves
+        // them off, which is right: there is nothing to fortify before a Nexus.
+        AUnit main = Select.main();
+        if (main != null) snapshot = snapshot.atBase(main.tx(), main.ty());
+
+        // Supply providers already on the way, so the supply goal is not re-emitted
+        // every frame (see DynamicGoals.supplyGoal).
+        snapshot.supplyProvidersComing = supplyProvidersComing();
+        // Fortification cannons need a standing Forge (legacy gate,
+        // ProtossSecureBasesCommander): without it a Cannon goal from frame
+        // 0 plans an orphan Forge ahead of the Gateway.
+        snapshot.hasForge = We.protoss() && Have.forge();
+        twinSuppressedSupply(snapshot);
+
+        return DynamicGoals.contribute(snapshot, racePolicy, buildOrderOwnsProvider);
+    }
+
+    /**
+     * Names the providers a tight supply goal is waiting on: id, tile, hp and
+     * whether the engine still calls them uncompleted. A provider coming for
+     * minutes (cancelled warp, phantom entry) suppresses the supply goal
+     * forever with zero rows anywhere - this is the row that names it.
+     * Throttled: suppression is a state, not an event.
+     */
+    private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
+        atlantis.production.SupplyBlockedTwin.sample(
+            racePolicy.supplyProviderType(), snapshot.supplyFree, snapshot.supplyProvidersComing);
+    }
+
+    private AUnitType armyType() {
+        return racePolicy.armyUnitType();
+    }
+
+    /**
+     * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
+     * finished - existing plus in production plus in queue, minus what is done.
+     * A Pylon adds supply only at completion, so this is the count that says "we
+     * have enough supply coming".
+     *
+     * <p>Units alone are not enough: a NOT_STARTED or STARTING construction
+     * has no unit yet (builder finding the site, or walking to it), so a
+     * unit-only count reads zero and the goal re-fires every frame until
+     * the first warp - the scheduler then issues a second Pylon behind
+     * the walking builder (measured V2 LIVE: Pylon@4234 + Pylon@4341 107f
+     * apart into the same block). Constructions without a finished unit
+     * count here; overdue cancels clear the stuck ones, so a genuinely
+     * dead site unblocks by itself instead of suppressing forever.
+     * PREPARING picks stay out (someone's aimed future, not live demand).</p>
+     */
+    private int supplyProvidersComing() {
+        AUnitType provider = supplyProviderType();
+
+        return supplyProvidersComing(provider);
+    }
+
     private AUnitType supplyProviderType() {
         return racePolicy.supplyProviderType();
     }
 
-    /** The worker type for this race, for the "workers we have or will have" count. */
+    /**
+     * The worker type for this race, for the "workers we have or will have" count.
+     */
     private AUnitType workerType() {
         return racePolicy.workerType();
     }
@@ -314,7 +317,7 @@ public final class GameStateSnapshot {
      * economy could have supported the next step.
      */
     public List<atlantis.production.v2.ProductionGoal> pullForwardGoals(
-            atlantis.production.v2.ResourceTimeline timeline) {
+        atlantis.production.v2.ResourceTimeline timeline) {
         int desiredRefineries = Math.max(1, Math.min(2, Count.bases()));
 
         return atlantis.production.v2.goals.PullForwardGoals.contribute(
@@ -329,9 +332,11 @@ public final class GameStateSnapshot {
             racePolicy);
     }
 
-    /** The build-order goals for this frame: only rows the game has not produced yet. */
+    /**
+     * The build-order goals for this frame: only rows the game has not produced yet.
+     */
     public List<atlantis.production.v2.ProductionGoal> buildOrderGoals(
-            List<atlantis.production.v2.goals.BuildOrderRow> rows) {
+        List<atlantis.production.v2.goals.BuildOrderRow> rows) {
         return BuildOrderGoals.from(rows, new LiveBuildOrderProgress());
     }
 

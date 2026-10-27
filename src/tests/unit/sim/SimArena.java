@@ -1,6 +1,6 @@
 package tests.unit.sim;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,9 @@ public class SimArena {
         this.heightPx = heightPx;
     }
 
-    /** Adds an impassable block, in pixels. Returns this for chaining. */
+    /**
+     * Adds an impassable block, in pixels. Returns this for chaining.
+     */
     public SimArena block(int x, int y, int w, int h) {
         obstacles.add(new Rectangle(x, y, w, h));
 

@@ -9,8 +9,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Every class on the run classpath must be Java 8 bytecode (class-file major
@@ -49,7 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class Java8BytecodeTest {
 
-    /** Class-file major version 52 == Java 8. */
+    /**
+     * Class-file major version 52 == Java 8.
+     */
     private static final int JAVA_8_MAJOR = 52;
 
     /**
@@ -58,11 +59,27 @@ public class Java8BytecodeTest {
      * touches on the Java 8 runtimes, so they are the ones this test reads.
      */
     private static final Class<?>[] MUST_BE_JAVA_8 = {
-            KeyRelay.class,
-            atlantis.keyboard.AKeyboard.class,
-            atlantis.Atlantis.class,
-            main.Main.class,
+        KeyRelay.class,
+        atlantis.keyboard.AKeyboard.class,
+        atlantis.Atlantis.class,
+        main.Main.class,
     };
+
+    /**
+     * Reads bytes 6-7 of the class file, which are the major version, without
+     * loading the class into this (possibly newer) JVM.
+     */
+    private static int classFileMajorVersionOf(Class<?> type) throws IOException {
+        String resource = "/" + type.getName().replace('.', '/') + ".class";
+        try (InputStream in = type.getResourceAsStream(resource)) {
+            assertNotNull(in, "class file not found on the classpath: " + resource);
+            try (DataInputStream data = new DataInputStream(in)) {
+                assertEquals(0xCAFEBABE, data.readInt(), "not a class file: " + resource);
+                data.readUnsignedShort(); // minor version
+                return data.readUnsignedShort(); // major version
+            }
+        }
+    }
 
     @Test
     public void classesTheJava8RuntimesLoadAreJava8Bytecode() throws IOException {
@@ -76,23 +93,7 @@ public class Java8BytecodeTest {
         }
 
         assertTrue(tooNew.isEmpty(),
-                "these classes are not Java 8 bytecode, so the Wine/IDE Java 8 JVMs cannot load them "
-                        + "(a compile that forgot --release 8 is the usual cause): " + tooNew);
-    }
-
-    /**
-     * Reads bytes 6-7 of the class file, which are the major version, without
-     * loading the class into this (possibly newer) JVM.
-     */
-    private static int classFileMajorVersionOf(Class<?> type) throws IOException {
-        String resource = "/" + type.getName().replace('.', '/') + ".class";
-        try (InputStream in = type.getResourceAsStream(resource)) {
-            assertTrue(in != null, "class file not found on the classpath: " + resource);
-            try (DataInputStream data = new DataInputStream(in)) {
-                assertEquals(0xCAFEBABE, data.readInt(), "not a class file: " + resource);
-                data.readUnsignedShort(); // minor version
-                return data.readUnsignedShort(); // major version
-            }
-        }
+            "these classes are not Java 8 bytecode, so the Wine/IDE Java 8 JVMs cannot load them "
+                + "(a compile that forgot --release 8 is the usual cause): " + tooNew);
     }
 }

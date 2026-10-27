@@ -13,9 +13,10 @@ import tests.fakes.FakeUnitData;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TerranDynamicUnitsCommanderTest extends WorldStubForTests {
-    private ArrayList<ProductionOrder> allOrders = null;
+    private final ArrayList<ProductionOrder> allOrders = null;
 
     @Test
     public void letsSee() {
@@ -53,7 +54,7 @@ public class TerranDynamicUnitsCommanderTest extends WorldStubForTests {
 
             int newTrainUnits = FakeUnitData.TRAIN.size();
 
-            assertEquals(true, newTrainUnits > oldTrainUnits);
+            assertTrue(newTrainUnits > oldTrainUnits);
 //                assertEquals(true, dynamicUnitOrders.get(0).unitType().isTerranInfantry());
         });
     }

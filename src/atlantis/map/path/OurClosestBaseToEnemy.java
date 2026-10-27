@@ -9,7 +9,7 @@ import atlantis.util.cache.Cache;
 import bwem.CPPath;
 
 public class OurClosestBaseToEnemy {
-    private static Cache<AUnit> cache = new Cache<>();
+    private static final Cache<AUnit> cache = new Cache<>();
 
     public static AUnit get() {
         return cache.get(

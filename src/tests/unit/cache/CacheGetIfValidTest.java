@@ -2,15 +2,13 @@ package tests.unit.cache;
 
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Deferred defect #1: {@code getIfValid} used to
@@ -52,7 +50,7 @@ public class CacheGetIfValidTest {
         cache.set("key", 100, marine);
 
         marine.hp = -1;
-        assertTrue(!marine.isValid(), "test setup needs an invalidated unit");
+        assertFalse(marine.isValid(), "test setup needs an invalidated unit");
 
         FakeUnit result = cache.getIfValid("key", 100, () -> replacement);
 

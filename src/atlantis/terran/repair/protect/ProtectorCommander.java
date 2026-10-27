@@ -21,25 +21,6 @@ public class ProtectorCommander extends Commander {
 
     // =========================================================
 
-    @Override
-    protected boolean handle() {
-        if (AGame.everyNthGameFrame(5)) {
-            AssignNewBunkerProtectors.assignBunkerProtectorsIfNeeded();
-        }
-        if (AGame.everyNthGameFrame(13)) {
-            assignUnitsProtectorsIfNeeded();
-        }
-        removeProtectorsIfNeeded();
-
-        for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
-            AUnit unit = iterator.next();
-            (new ProtectorManager(unit)).invokeFrom(this);
-        }
-        return false;
-    }
-
-    // =========================================================
-
     protected static void removeExcessiveProtectors(ArrayList<AUnit> existingProtectors, int howMany) {
         ArrayList<AUnit> toRemove = new ArrayList<>();
         int protectorsToRemove = Math.min(howMany, existingProtectors.size());
@@ -51,6 +32,8 @@ public class ProtectorCommander extends Commander {
             RepairAssignments.removeProtector(protector);
         }
     }
+
+    // =========================================================
 
     protected static int maxProtectors() {
         int workers = Count.workers();
@@ -145,8 +128,6 @@ public class ProtectorCommander extends Commander {
         return false;
     }
 
-    // =========================================================
-
     public static void addProtectorsForUnit(AUnit unitToProtect, int numberOfProtectorsToAssign) {
         if (unitToProtect == null || unitToProtect.isDead()) return;
 
@@ -163,5 +144,24 @@ public class ProtectorCommander extends Commander {
 
             if (worker != null) RepairAssignments.addProtector(worker, unitToProtect);
         }
+    }
+
+    // =========================================================
+
+    @Override
+    protected boolean handle() {
+        if (AGame.everyNthGameFrame(5)) {
+            AssignNewBunkerProtectors.assignBunkerProtectorsIfNeeded();
+        }
+        if (AGame.everyNthGameFrame(13)) {
+            assignUnitsProtectorsIfNeeded();
+        }
+        removeProtectorsIfNeeded();
+
+        for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
+            AUnit unit = iterator.next();
+            (new ProtectorManager(unit)).invokeFrom(this);
+        }
+        return false;
     }
 }

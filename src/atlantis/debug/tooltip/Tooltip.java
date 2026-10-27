@@ -19,11 +19,6 @@ public class Tooltip {
         return unit;
     }
 
-    public void setTooltip(String tooltip) {
-        this.tooltip = tooltip;
-        this.tooltipStartInFrames = AGame.now();
-    }
-
     public String getTooltip() {
 //        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
 //            String tooltipToReturn = this.tooltip;
@@ -32,6 +27,11 @@ public class Tooltip {
 //        } else {
         return tooltip;
 //        }
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+        this.tooltipStartInFrames = AGame.now();
     }
 
     public void removeTooltip() {

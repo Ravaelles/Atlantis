@@ -3,8 +3,8 @@ package atlantis.map;
 import atlantis.Atlantis;
 import atlantis.placement.core.Reachability;
 import atlantis.placement.engine.EngineReachabilityProbe;
-import atlantis.placement.engine.RegionReachability;
 import atlantis.placement.engine.EngineWalkabilityGrid;
+import atlantis.placement.engine.RegionReachability;
 
 /**
  * The single place the game asks "can a ground unit get from A to B?".
@@ -61,7 +61,9 @@ public final class ReachableTiles {
     private static Reachability chosen = null;
     private static String chosenReason = "not resolved yet";
 
-    /** A seam for tests: use this implementation instead of resolving one. */
+    /**
+     * A seam for tests: use this implementation instead of resolving one.
+     */
     public static void useReachability(Reachability reachability, String reason) {
         chosen = reachability;
         chosenReason = reason;
@@ -72,7 +74,9 @@ public final class ReachableTiles {
         chosenReason = "not resolved yet";
     }
 
-    /** True when a ground unit can travel between the two positions. */
+    /**
+     * True when a ground unit can travel between the two positions.
+     */
     public static boolean between(atlantis.map.position.HasPosition from, atlantis.map.position.HasPosition to) {
         if (from == null || to == null)
             return false;
@@ -80,7 +84,9 @@ public final class ReachableTiles {
         return from(from.tx(), from.ty()).canReach(from.tx(), from.ty(), to.tx(), to.ty());
     }
 
-    /** True when a ground unit can travel between the two tiles. */
+    /**
+     * True when a ground unit can travel between the two tiles.
+     */
     public static boolean between(int fromTx, int fromTy, int toTx, int toTy) {
         return from(fromTx, fromTy).canReach(fromTx, fromTy, toTx, toTy);
     }
@@ -108,14 +114,15 @@ public final class ReachableTiles {
         // not, the probe is meaningless, so any tile will do for the capability
         // question.
         EngineReachabilityProbe.Verdict verdict = EngineReachabilityProbe.verdictFor(
-                (x, y) -> Atlantis.game() != null && Atlantis.game().hasPath(
-                        new bwapi.Position(x * 32, y * 32), new bwapi.Position(x * 32, y * 32)),
-                tx, ty);
+            (x, y) -> Atlantis.game() != null && Atlantis.game().hasPath(
+                new bwapi.Position(x * 32, y * 32), new bwapi.Position(x * 32, y * 32)),
+            tx, ty);
 
         if (verdict == EngineReachabilityProbe.Verdict.ENGINE_USABLE) {
             chosen = new EngineBackedReachability();
             chosenReason = "engine regions are usable";
-        } else {
+        }
+        else {
             chosen = new RegionReachability(new EngineWalkabilityGrid());
             chosenReason = "engine publishes no regions - answered from terrain";
             System.err.println("ReachableTiles: " + chosenReason);
@@ -124,7 +131,9 @@ public final class ReachableTiles {
         return chosen;
     }
 
-    /** Why this implementation - for diagnostics and for tests to assert. */
+    /**
+     * Why this implementation - for diagnostics and for tests to assert.
+     */
     public static String chosenReason() {
         return chosenReason;
     }
@@ -140,8 +149,8 @@ public final class ReachableTiles {
         @Override
         public boolean canReach(int fromTx, int fromTy, int toTx, int toTy) {
             return Atlantis.game().hasPath(
-                    new bwapi.Position(fromTx * 32, fromTy * 32),
-                    new bwapi.Position(toTx * 32, toTy * 32));
+                new bwapi.Position(fromTx * 32, fromTy * 32),
+                new bwapi.Position(toTx * 32, toTy * 32));
         }
     }
 }

@@ -1,8 +1,8 @@
 package atlantis.combat.cluster;
 
-import atlantis.game.player.Enemy;
 import atlantis.combat.focus.AttackFocusPoint;
 import atlantis.combat.focus.ProtossDefendFocusPoint;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.select.Select;
 
@@ -14,7 +14,9 @@ import atlantis.units.select.Select;
  */
 public class ClusterAnchor {
 
-    /** The anchor for this posture: the enemy base to attack, home to defend. */
+    /**
+     * The anchor for this posture: the enemy base to attack, home to defend.
+     */
     public static HasPosition anchorFor(ClusterMission.Posture posture) {
         return posture == ClusterMission.Posture.ATTACK ? attackAnchor() : defendAnchor();
     }

@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class NotifyNearUnitsToMakeSpace {
-    private AUnit unit;
+    private final AUnit unit;
 
     public NotifyNearUnitsToMakeSpace(AUnit unit) {
         this.unit = unit;

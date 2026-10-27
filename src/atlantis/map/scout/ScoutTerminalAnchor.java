@@ -39,19 +39,6 @@ public class ScoutTerminalAnchor extends Manager {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        target = firstDefined(
-            BaseLocations.enemyNatural(),
-            EnemyThirdBase.position(),
-            EnemyFourthBase.position(),
-            EnemyMainBase.get()
-        );
-        if (target == null) target = nextRoamAnchor(enemyStartPositions(), !EnemyInfo.hasDiscoveredAnyBuilding());
-
-        return target != null;
-    }
-
     public static APosition firstDefined(HasPosition... candidates) {
         for (HasPosition candidate : candidates) {
             if (candidate == null) continue;
@@ -77,13 +64,8 @@ public class ScoutTerminalAnchor extends Manager {
     }
 
     /**
-     * Idle fallback: roam the enemy starts instead of standing around.
-     * Early (enemy never discovered) cycle 1st/2nd/3rd in fixed order;
-     * later pick randomly - fog may hide an expansion exactly where the
-     * map looks empty. Pure over the given candidates except the shared
-     * rotation counter, so the cycle pins in tests.
+     * Test seam: the roam pick behind the idle fallback.
      */
-    /** Test seam: the roam pick behind the idle fallback. */
     public static APosition nextRoamAnchor(List<APosition> enemyStarts, boolean enemyUndiscovered) {
         if (enemyStarts == null || enemyStarts.isEmpty()) return null;
 
@@ -93,6 +75,27 @@ public class ScoutTerminalAnchor extends Manager {
             return enemyStarts.get(i);
         }
         return enemyStarts.get(ARandom.rand(0, enemyStarts.size() - 1));
+    }
+
+    /**
+     * Idle fallback: roam the enemy starts instead of standing around.
+     * Early (enemy never discovered) cycle 1st/2nd/3rd in fixed order;
+     * later pick randomly - fog may hide an expansion exactly where the
+     * map looks empty. Pure over the given candidates except the shared
+     * rotation counter, so the cycle pins in tests.
+     */
+
+    @Override
+    public boolean applies() {
+        target = firstDefined(
+            BaseLocations.enemyNatural(),
+            EnemyThirdBase.position(),
+            EnemyFourthBase.position(),
+            EnemyMainBase.get()
+        );
+        if (target == null) target = nextRoamAnchor(enemyStartPositions(), !EnemyInfo.hasDiscoveredAnyBuilding());
+
+        return target != null;
     }
 
     @Override

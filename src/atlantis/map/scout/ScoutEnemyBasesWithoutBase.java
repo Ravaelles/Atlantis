@@ -29,7 +29,9 @@ import atlantis.units.select.Select;
  */
 public class ScoutEnemyBasesWithoutBase extends Manager {
 
-    /** No movement at all for this long under one target means the site is unarrivable. */
+    /**
+     * No movement at all for this long under one target means the site is unarrivable.
+     */
     static final int STUCK_GIVE_UP_FRAMES = 240;
 
     private ABaseLocation target;
@@ -38,7 +40,13 @@ public class ScoutEnemyBasesWithoutBase extends Manager {
         super(unit);
     }
 
-    /** Test seam: the picked target's visit key, or null when nothing applies. */
+    private static String key(HasPosition location) {
+        return location.x() + "," + location.y();
+    }
+
+    /**
+     * Test seam: the picked target's visit key, or null when nothing applies.
+     */
     public String targetKeyForTest() {
         return target == null ? null : key(target);
     }
@@ -75,7 +83,7 @@ public class ScoutEnemyBasesWithoutBase extends Manager {
             String key = key(best);
             if (key.equals(ScoutState.baselessTrackedKey)
                 && Math.min(unit.lastPositionChangedAgo(), A.now() - ScoutState.baselessTrackedSince)
-                    > STUCK_GIVE_UP_FRAMES) {
+                > STUCK_GIVE_UP_FRAMES) {
                 ScoutState.baselessVisited.add(key);
                 ScoutState.baselessTrackedKey = null;
                 best = pick(enemyCore, key);
@@ -118,10 +126,6 @@ public class ScoutEnemyBasesWithoutBase extends Manager {
             }
         }
         return best;
-    }
-
-    private static String key(HasPosition location) {
-        return location.x() + "," + location.y();
     }
 
     private boolean hasKnownEnemyDepotWithin(ABaseLocation location, double radius) {

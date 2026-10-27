@@ -2,19 +2,20 @@ package atlantis.util.log;
 
 
 import atlantis.util.AConsole;
-import atlantis.util.GameClock;
 import atlantis.util.AFile;
+import atlantis.util.GameClock;
+
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ErrorLog {
 
-    private static Map<String, Integer> errors = new TreeMap<>();
+    private static final Map<String, Integer> errors = new TreeMap<>();
 
     /**
      * Measured in game seconds.
      */
-    private static Map<String, Integer> errorTimestamps = new TreeMap<>();
+    private static final Map<String, Integer> errorTimestamps = new TreeMap<>();
 
     public static void debug(String message) {
         AConsole.errPrintln(LogLevel.LOW, message);

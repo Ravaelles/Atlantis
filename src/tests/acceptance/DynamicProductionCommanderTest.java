@@ -11,19 +11,20 @@ import atlantis.util.AConsole;
 import atlantis.util.Counter;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
-import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.DynamicMockOurUnits;
 import tests.unit.helpers.ClearAllCaches;
 
 import java.util.ArrayList;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Terran_Barracks;
+import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class DynamicProductionCommanderTest extends WorldStubForTests {
     private int nextX = 20;
-    private ArrayList<FakeUnit> newUnits = new ArrayList<>();
-    private ArrayList<FakeUnit> initialUnits = new ArrayList<>();
+    private final ArrayList<FakeUnit> newUnits = new ArrayList<>();
+    private final ArrayList<FakeUnit> initialUnits = new ArrayList<>();
     private boolean initialUnitsCreated = false;
 
     //    protected int currentMinerals = 567;
@@ -36,15 +37,15 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
 
         options = Options.create().set("supplyUsed", 49);
         world(200, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Barracks, 5),
-                    fake(Terran_Supply_Depot, 6),
-                    fake(Terran_Supply_Depot, 7)
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Barracks, 4),
+                fake(Terran_Barracks, 5),
+                fake(Terran_Supply_Depot, 6),
+                fake(Terran_Supply_Depot, 7)
 //                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            )
+        ), fakeExampleEnemies(), () -> {
             onFrame();
         });
     }

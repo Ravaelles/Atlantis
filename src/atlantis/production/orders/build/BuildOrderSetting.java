@@ -2,8 +2,8 @@ package atlantis.production.orders.build;
 
 public class BuildOrderSetting {
 
-    private String name;
-    private Object value;
+    private final String name;
+    private final Object value;
 
     // =========================================================
 

@@ -1,21 +1,18 @@
 package tests.acceptance;
 
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Protoss_Gateway;
-import static atlantis.units.AUnitType.Protoss_Nexus;
-import static atlantis.units.AUnitType.Protoss_Pylon;
-import static atlantis.units.AUnitType.Protoss_Probe;
+import static atlantis.units.AUnitType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

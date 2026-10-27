@@ -137,7 +137,7 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
                     adoptedFrame = frame;
                 }
                 if (c.builder() != null) {
-                    new WorkerManager((AUnit) c.builder()).forceHandle();
+                    new WorkerManager(c.builder()).forceHandle();
                     // Materialise arrival: the stub records move orders but
                     // never walks (FakeOrderSink.move sets no target), so a
                     // dispatched builder would never reach its site. Arrival
@@ -260,16 +260,14 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
                     if (c.builder() != null) {
                         if (assignedSupply == null) {
                             assignedSupply = A.supplyUsed();
-                            new WorkerManager((AUnit) c.builder()).forceHandle();
+                            new WorkerManager(c.builder()).forceHandle();
                         }
                     }
                 }
             });
 
             if (bank < 200) {
-                assertTrue(
-                    assignedSupply == null,
-                    "poor early row (bank " + bank + "): no builder claimed below minSupply");
+                assertNull(assignedSupply, "poor early row (bank " + bank + "): no builder claimed below minSupply");
             }
             else {
                 assertNotNull(assignedSupply, "rich early row must start");

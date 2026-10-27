@@ -13,7 +13,9 @@ import atlantis.production.v2.Producible;
  */
 public interface BuildOrderProgress {
 
-    /** Supply in use now, as BWAPI reports it (queued units are already in it). */
+    /**
+     * Supply in use now, as BWAPI reports it (queued units are already in it).
+     */
     int supplyUsed();
 
     /**

@@ -18,9 +18,7 @@ public class DontAvoidWhenCannonsNear {
             AUnit cannon = unit.friendsNear().cannons().inRadius(maxDistToCannon(unit), unit).nearestTo(unit);
             if (cannon != null) {
                 if (cannon.enemiesNear().havingAntiGroundWeapon().countInRadius(7, cannon) >= 1) {
-                    if ((unit.hp() >= 22 || unit.cooldown() <= 5)) {
-                        return true;
-                    }
+                    return unit.hp() >= 22 || unit.cooldown() <= 5;
 //                    else {
 //                        return unit.cooldown() <= 6 && unit.combatEvalRelative() >= 1.1
 //                            && (!unit.isMelee() || A.s >= 60 * 7);

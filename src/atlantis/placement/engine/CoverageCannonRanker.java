@@ -1,10 +1,10 @@
 package atlantis.placement.engine;
 
-import atlantis.placement.core.CoverageVerdict;
 import atlantis.map.analysis.DefenseSpots;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
+import atlantis.placement.core.CoverageVerdict;
 
 /**
  * Ordering for a defensive structure by weapon coverage, not by distance.
@@ -30,6 +30,11 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
         this.endB = endB;
         this.anchor = anchor;
         this.rangePx = rangeTiles * 32.0;
+    }
+
+    private static APosition centerOf(BuildLocation location) {
+        return DefenseSpots.tileCenter(
+            location.tileX(), location.tileY(), location.tileWidth(), location.tileHeight());
     }
 
     @Override
@@ -73,10 +78,5 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
         APosition middle = centerOf(location);
 
         return Math.hypot(middle.getX() - anchor.getX(), middle.getY() - anchor.getY()) <= rangePx;
-    }
-
-    private static APosition centerOf(BuildLocation location) {
-        return DefenseSpots.tileCenter(
-            location.tileX(), location.tileY(), location.tileWidth(), location.tileHeight());
     }
 }

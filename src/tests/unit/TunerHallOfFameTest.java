@@ -5,15 +5,9 @@ import atlantis.debug.tweaker.TunerObjective.Row;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #160 step 2: the hall of fame keeps the top-N vectors and
@@ -55,8 +49,8 @@ public class TunerHallOfFameTest {
         hall.offer(new Row("g1", true, 6, 60), vector(2.0, 80.0));
 
         Map<String, double[]> bounds = new HashMap<>();
-        bounds.put("KiteStepTiles", new double[] { 1.5, 3.0 });
-        bounds.put("DragoonPinchHp", new double[] { 60.0, 100.0 });
+        bounds.put("KiteStepTiles", new double[]{1.5, 3.0});
+        bounds.put("DragoonPinchHp", new double[]{60.0, 100.0});
 
         Map<String, Double> mutated = TunerHallOfFame.mutateAround(
             hall.champion().get(), bounds, 0.1, new Random(7));
@@ -87,10 +81,10 @@ public class TunerHallOfFameTest {
         hall.offer(new Row("g1", true, 6, 60), vector(2.0, 80.0));
 
         Map<String, double[]> bounds = new HashMap<>();
-        bounds.put("KiteStepTiles", new double[] { 1.5, 3.0 });
-        bounds.put("DragoonPinchHp", new double[] { 60.0, 100.0 });
+        bounds.put("KiteStepTiles", new double[]{1.5, 3.0});
+        bounds.put("DragoonPinchHp", new double[]{60.0, 100.0});
 
-        java.util.Set<String> frozen = new java.util.HashSet<>(Arrays.asList("KiteStepTiles"));
+        java.util.Set<String> frozen = new java.util.HashSet<>(Collections.singletonList("KiteStepTiles"));
         Map<String, Double> mutated = TunerHallOfFame.mutateAroundUnfrozen(
             hall.champion().get(), bounds, frozen, 0.5, new Random(7));
 

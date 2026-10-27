@@ -4,9 +4,7 @@ import atlantis.config.env.ProductionV2Mode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the cutover switch of the production redesign (M6 of
@@ -31,7 +29,7 @@ public class ProductionV2ModeTest {
         assertEquals(ProductionV2Mode.OFF, ProductionV2Mode.parse("false"));
         assertEquals(ProductionV2Mode.OFF, ProductionV2Mode.parse("off"));
         assertEquals(ProductionV2Mode.OFF, ProductionV2Mode.parse("DRY RUN"),
-                "a space is not a valid mode - OFF, not a guess");
+            "a space is not a valid mode - OFF, not a guess");
         assertEquals(ProductionV2Mode.OFF, ProductionV2Mode.parse("drry_run"));
     }
 

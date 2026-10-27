@@ -1,17 +1,14 @@
 package tests.unit;
 
-import atlantis.combat.targeting.AcquireTarget;
 import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.AcquireTarget;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Undetected units (cloaked Observer with no detector near) are not
@@ -23,6 +20,10 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class UndetectedTargetTest extends WorldStubForTests {
+
+    private static int idOf(atlantis.units.AUnit u) {
+        return u == null ? -1 : u.id();
+    }
 
     @Test
     public void validityRefusesUndetected() {
@@ -75,9 +76,7 @@ public class UndetectedTargetTest extends WorldStubForTests {
         world(3, fakeOurs(nexus, dragoon), fakeEnemies(observer), () -> {
             if (atlantis.game.A.now() != 1) return;
 
-            assertEquals(
-                null, ASquadTargeting.nearestEngageableEnemy(dragoon, 9),
-                "no engageable enemy when the only near one is undetected");
+            assertNull(ASquadTargeting.nearestEngageableEnemy(dragoon, 9), "no engageable enemy when the only near one is undetected");
         });
     }
 
@@ -100,9 +99,5 @@ public class UndetectedTargetTest extends WorldStubForTests {
                 dragoon.hasWeaponRangeToAttack(observer, 0),
                 "range refuses undetected");
         });
-    }
-
-    private static int idOf(atlantis.units.AUnit u) {
-        return u == null ? -1 : u.id();
     }
 }

@@ -10,13 +10,12 @@ import atlantis.util.cache.Cache;
 import java.util.List;
 
 public class Bases {
-    private static Cache<AUnit> cache = new Cache<>();
-
     /**
      * The natural re-derives every ~4 seconds; preserved verbatim
      * cadence, tune only with a measured cadence (CONVENTIONS §31).
      */
     private static final int NATURAL_TTL_FRAMES = 93;
+    private static final Cache<AUnit> cache = new Cache<>();
 
     /**
      * Our natural expansion base.

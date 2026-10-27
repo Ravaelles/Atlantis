@@ -20,6 +20,14 @@ public class ResearchStimpacks extends Commander {
         isResearched = true;
     }
 
+    public static TechType what() {
+        return TechType.Stim_Packs;
+    }
+
+    public static boolean isResearched() {
+        return isResearched || ATech.isResearched(what());
+    }
+
     @Override
     public boolean applies() {
         if (isResearched) return true;
@@ -35,17 +43,11 @@ public class ResearchStimpacks extends Commander {
 
         if (Strategy.get().goingBio()) {
             if (Count.infantry() >= 8 && A.canAffordWithReserved(100, 100)) {
-                if (ATech.isNotResearchedOrPlanned(what())) {
-                    return true;
-                }
+                return ATech.isNotResearchedOrPlanned(what());
             }
         }
 
         return false;
-    }
-
-    public static TechType what() {
-        return TechType.Stim_Packs;
     }
 
     @Override
@@ -61,9 +63,5 @@ public class ResearchStimpacks extends Commander {
             }
         }
         return false;
-    }
-
-    public static boolean isResearched() {
-        return isResearched || ATech.isResearched(what());
     }
 }

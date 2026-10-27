@@ -1,4 +1,3 @@
-
 package atlantis.production.orders.build;
 
 /**
@@ -9,11 +8,14 @@ public abstract class ABuildOrderFactory {
     public static ABuildOrder forRace(String race, String name) {
         if ("Protoss".equals(race)) {
             return new ProtossBuildOrder(name);
-        } else if ("Terran".equals(race)) {
+        }
+        else if ("Terran".equals(race)) {
             return new TerranBuildOrder(name);
-        } else if ("Zerg".equals(race)) {
+        }
+        else if ("Zerg".equals(race)) {
             return new ZergBuildOrder(name);
-        } else {
+        }
+        else {
             throw new RuntimeException("Invalid race: " + race);
         }
     }

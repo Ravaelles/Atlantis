@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Opening fighting force. */
+/**
+ * Opening fighting force.
+ */
 public final class OpeningArmyGoal implements Goal {
 
     public static final int OPENING_ARMY_MIN = 6;
@@ -24,7 +26,9 @@ public final class OpeningArmyGoal implements Goal {
         return GoalRanks.ARMY;
     }
 
-    /** the opening force. */
+    /**
+     * the opening force.
+     */
     @Override
     public int priceMinerals() {
         return AUnitType.Protoss_Zealot.mineralPrice();

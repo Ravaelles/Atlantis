@@ -13,8 +13,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The V2 coming-supply count must see constructions, not just units: a
@@ -68,7 +66,8 @@ public class ComingSupplyCountsConstructionsTest extends WorldStubForTests {
     }
 
     @Test
-    public void inProgressWithoutLinkedBuildingCountsAsComing() {        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
+    public void inProgressWithoutLinkedBuildingCountsAsComing() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
 
         world(1, fakeOurs(builder), fakeEnemies(), () -> {
             // The warp was accepted but the unit has not registered yet:
@@ -91,7 +90,8 @@ public class ComingSupplyCountsConstructionsTest extends WorldStubForTests {
     }
 
     @Test
-    public void compositionCountsUnitsAndConstructionsOnce() {        FakeUnit warping = fake(AUnitType.Protoss_Pylon, 92, 113);
+    public void compositionCountsUnitsAndConstructionsOnce() {
+        FakeUnit warping = fake(AUnitType.Protoss_Pylon, 92, 113);
         warping.setCompleted(false);
 
         world(1, fakeOurs(

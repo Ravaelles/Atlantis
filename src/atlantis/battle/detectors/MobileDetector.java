@@ -45,11 +45,11 @@ public class MobileDetector extends Manager {
 //        if (followSquadScout()) return true;
 //        return false;
 //
-////        return followArmy(true);
+
+    /// /        return followArmy(true);
 //    }
 
     // =========================================================
-
     protected boolean followSquadScout() {
         if (!unit.is(unitForSquadScout)) return false;
 

@@ -33,7 +33,9 @@ public final class BuildOrderRow {
         return new BuildOrderRow(item, minSupply, 1, null);
     }
 
-    /** Adapter from the legacy parser output; drops mission rows. */
+    /**
+     * Adapter from the legacy parser output; drops mission rows.
+     */
     public static List<BuildOrderRow> fromLegacy(List<ProductionOrder> orders) {
         List<BuildOrderRow> rows = new ArrayList<>();
         if (orders == null)
@@ -52,7 +54,9 @@ public final class BuildOrderRow {
         return rows;
     }
 
-    /** "x3" -> 3; anything else -> 1. */
+    /**
+     * "x3" -> 3; anything else -> 1.
+     */
     static int parseMultiplicity(String modifier) {
         if (!isMultiplier(modifier))
             return 1;
@@ -66,7 +70,7 @@ public final class BuildOrderRow {
 
     private static boolean isMultiplier(String modifier) {
         return modifier != null && modifier.trim().length() > 1
-                && Character.toLowerCase(modifier.trim().charAt(0)) == 'x';
+            && Character.toLowerCase(modifier.trim().charAt(0)) == 'x';
     }
 
     private static Producible producibleOf(ProductionOrder order) {
@@ -94,7 +98,9 @@ public final class BuildOrderRow {
         return multiplicity;
     }
 
-    /** Raw position modifier, or null. */
+    /**
+     * Raw position modifier, or null.
+     */
     public String positionModifier() {
         return positionModifier;
     }
@@ -102,6 +108,6 @@ public final class BuildOrderRow {
     @Override
     public String toString() {
         return minSupply + " - " + item.id() + (multiplicity > 1 ? " x" + multiplicity : "")
-                + (positionModifier != null ? " @" + positionModifier : "");
+            + (positionModifier != null ? " @" + positionModifier : "");
     }
 }

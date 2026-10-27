@@ -1,25 +1,22 @@
 package tests.unit.sim;
 
+import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
+import atlantis.combat.FightTarget;
+import atlantis.combat.cluster.FightOrFlight;
+import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
+import tests.fakes.FakeOrderSink;
+import tests.fakes.FakeUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import atlantis.combat.BattleCommander;
-import atlantis.combat.FightTarget;
-import atlantis.battle.cluster.Alpha;
-import atlantis.combat.cluster.FightOrFlight;
-import atlantis.units.AUnitType;
-import tests.acceptance.WorldStubForTests;
-import tests.fakes.FakeOrderSink;
-import tests.fakes.FakeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Owner rules from the Steamhammer loss (two Dragoons died shooting
@@ -55,7 +52,8 @@ public class DragoonSwampTest extends WorldStubForTests {
         for (FakeOrderSink.Record r : ((FakeOrderSink) u.orderSink()).orders()) {
             if (!r.operation.equals("move")) continue;
             Matcher m = p.matcher(r.detail);
-            if (m.find()) out.add(new double[]{Integer.parseInt(m.group(1)) / 32.0, Integer.parseInt(m.group(2)) / 32.0});
+            if (m.find())
+                out.add(new double[]{Integer.parseInt(m.group(1)) / 32.0, Integer.parseInt(m.group(2)) / 32.0});
         }
 
         return out;
@@ -139,7 +137,7 @@ public class DragoonSwampTest extends WorldStubForTests {
 
         SimArena arena = new SimArena(70 * 32, 40 * 32);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, gateway, d }, foes.toArray(new FakeUnit[0]), arena);
+            new FakeUnit[]{nexus, gateway, d}, foes.toArray(new FakeUnit[0]), arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -170,14 +168,19 @@ public class DragoonSwampTest extends WorldStubForTests {
 
             String log = atlantis.util.log.EventLog.toJsonLines();
             int stepped = 0, nowhere = 0, idx = 0;
-            while ((idx = log.indexOf("\"stepped-aside\"", idx)) >= 0) { stepped++; idx++; }
+            while ((idx = log.indexOf("\"stepped-aside\"", idx)) >= 0) {
+                stepped++;
+                idx++;
+            }
             idx = 0;
-            while ((idx = log.indexOf("nowhere-to-step", idx)) >= 0) { nowhere++; idx++; }
+            while ((idx = log.indexOf("nowhere-to-step", idx)) >= 0) {
+                nowhere++;
+                idx++;
+            }
             System.err.println("DIAG kite steppedAside=" + stepped + " nowhere=" + nowhere);
             assertTrue(maxDisp > 2.0,
                 "the dragoon displaces instead of gluing on the wall: " + maxDisp);
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();

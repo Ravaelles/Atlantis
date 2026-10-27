@@ -14,9 +14,19 @@ public abstract class Node {
         this.y = y;
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
+    public int getX() {
+        return x;
+    }
 
-    public void setWalkable(boolean walkable) { this.walkable = walkable; }
-    public boolean isWalkable() { return walkable; }
+    public int getY() {
+        return y;
+    }
+
+    public boolean isWalkable() {
+        return walkable;
+    }
+
+    public void setWalkable(boolean walkable) {
+        this.walkable = walkable;
+    }
 }

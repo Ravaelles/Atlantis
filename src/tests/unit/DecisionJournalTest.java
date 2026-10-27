@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Order journal (owner: army corpses died with an empty history - the static
@@ -70,7 +67,7 @@ public class DecisionJournalTest extends WorldStubForTests {
             dragoon.move(APosition.create(33, 20), Actions.MOVE_ENGAGE, "ClusterReengage", true);
 
             assertEquals(1, dragoon.commandHistory().messages(
-                atlantis.game.A.now(), System.currentTimeMillis() / 1000).size(),
+                    atlantis.game.A.now(), System.currentTimeMillis() / 1000).size(),
                 "same tag twice rides one row: " + dragoon.commandHistory());
         });
     }

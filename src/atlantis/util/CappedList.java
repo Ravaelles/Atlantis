@@ -8,7 +8,7 @@ public class CappedList<T> extends AbstractCollection<T> {
 
     private final int size;
 
-    private ArrayList<T> list;
+    private final ArrayList<T> list;
 
     public CappedList(int size) {
         super();

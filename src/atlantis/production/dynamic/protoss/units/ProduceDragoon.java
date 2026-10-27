@@ -1,8 +1,9 @@
 package atlantis.production.dynamic.protoss.units;
 
-import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
@@ -11,26 +12,26 @@ import atlantis.production.dynamic.protoss.decisions.AllowProduceDragoon;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.production.orders.production.queue.PriorityWaiters;
-import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
-import atlantis.game.player.Enemy;
-import atlantis.units.select.Select;
 
 import static atlantis.production.dynamic.protoss.units.ProduceZealot.produceZealot;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceDragoon {
+    /**
+     * See {@link ProduceZealot#reason}.
+     */
+    public static String reason = "-";
     private static int dragoons;
     private static int strength;
-
-    /** See {@link ProduceZealot#reason}. */
-    public static String reason = "-";
 
     public static boolean dragoon() {
         // D3 priority waiting, first so later plenty-rules cannot bypass it:
@@ -63,7 +64,9 @@ public class ProduceDragoon {
 
         if (A.gas() >= 150 && Missions.isGlobalMissionDefendOrSparta()) return produceDragoon();
         if (dragoons <= 14 && A.hasMinerals(175) && Count.basesWithUnfinished() >= 2) return produceDragoon();
-        if (Army.strength() >= 130 && Count.dragoons() >= 6 && !ProtossCriticalStuffInQueue.hasEnoughResources()) return false;
+
+        if (Army.strength() >= 130 && Count.dragoons() >= 6 && !ProtossCriticalStuffInQueue.hasEnoughResources())
+            return false;
 
         if (
             (dragoons >= 3 || A.supplyUsed() >= 50)

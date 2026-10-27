@@ -24,26 +24,19 @@ import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import tests.fakes.FakeFoggedUnit;
 import atlantis.util.AConsole;
 import atlantis.util.GameClock;
 import atlantis.util.Options;
-import tests.fakes.UnitStatsTable;
-
 import bwapi.Game;
 import bwapi.Race;
+import main.Main;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
-import tests.fakes.FakeMapTiles;
-import tests.fakes.FakeResearch;
-import tests.fakes.FakeOrderFallback;
-import tests.fakes.FakeUnit;
-import tests.fakes.FakeUnitOrigin;
+import tests.fakes.*;
 import tests.unit.helpers.ClearAllCaches;
-import main.Main;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -54,20 +47,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractTestWithUnits extends UnitTest {
-    public Game game;
-
-    protected int currentMinerals = 0;
-    protected int currentGas = 0;
-    protected int currentSupplyUsed = 0;
-    protected int currentSupplyTotal = 0;
-
     public static MockedStatic<Env> env;
     public static MockedStatic<AGame> aGame;
     public static MockedStatic<Enemy> enemy;
     public static MockedStatic<EnemyRace> enemyRace;
     public static MockedStatic<AllBaseLocations> allBaseLocations;
     public static MockedStatic<AllChokes> allChokes;
-
     /**
      * The race the test declared with {@link #initRace()}, answered through the
      * same source the bot reads in a game: {@code Main.ourRace()}.
@@ -84,7 +69,11 @@ public class AbstractTestWithUnits extends UnitTest {
      * {@code Main.ourRace()} pinned exactly as the owner ruled.</p>
      */
     public static MockedStatic<Main> main;
-
+    public Game game;
+    protected int currentMinerals = 0;
+    protected int currentGas = 0;
+    protected int currentSupplyUsed = 0;
+    protected int currentSupplyTotal = 0;
     protected Options options = new Options();
 
     /**
@@ -94,6 +83,79 @@ public class AbstractTestWithUnits extends UnitTest {
      * and geysers: the sample world has no neutral units.</p>
      */
     protected FakeUnit[] neutralInWorld = null;
+
+    // =========================================================
+    /**
+     * Which race the enemy is in for one world. Set it in the test method, next
+     * to the units, and it applies from that moment on - the {@code EnemyRace}
+     * and {@code Enemy} mocks read it on every call, so it can change between
+     * frames the way the supply does. {@code null} means "whatever
+     * {@link #initEnemyRace()} says", which is the class-wide default.
+     */
+    protected Race enemyRaceInWorld = null;
+
+    private static void clearCaches() {
+        APainter.disablePainting();
+
+        ClearAllCaches.clearAll();
+    }
+
+    /**
+     * Called once per test, where the mock is created (MockEverything).
+     */
+    static void stubAGameClock(MockedStatic<AGame> aGame) {
+        // One source of truth: production reaches the frame number through
+        // A.now(), which delegates to the statically mocked AGame.now().
+        aGame.when(AGame::now).thenAnswer(invocation -> GameClock.frames());
+
+        // The same question asked a different way. 77 call sites in 65 files
+        // throttle on everyNthGameFrame(n) / notNthGameFrame(n), and a
+        // statically mocked method nobody stubs answers false - so every one of
+        // those code paths was dead in the test suite, quietly. It showed up
+        // as "the Protoss dynamic production commander never runs, so no test
+        // can say whether it produces anything": ProtossDynamicUnitProduction-
+        // Commander.handle() starts with `if (!AGame.everyNthGameFrame(7)) return
+        // false`, and its reason string stayed "-" through a whole world.
+        aGame.when(() -> AGame.everyNthGameFrame(Mockito.anyInt()))
+            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) == 0);
+        aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
+            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) != 0);
+    }
+
+    public static FakeUnit fake(AUnitType type) {
+        return new FakeUnit(type, 10, 10);
+    }
+
+    public static FakeUnit fake(AUnitType type, double tx) {
+        return new FakeUnit(type, tx, 10);
+    }
+
+    public static FakeUnit fakeEnemy(AUnitType type, double tx) {
+        return new FakeUnit(type, tx, 10).setEnemy();
+    }
+
+    public static FakeUnit fakeEnemy(AUnitType type, double tx, double ty) {
+        return new FakeUnit(type, tx, ty).setEnemy();
+    }
+
+    public static FakeUnit fake(AUnitType type, double tx, double ty) {
+        return new FakeUnit(type, tx, ty);
+    }
+
+    public static FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
+        return UnitTest.ourUnits = fakeUnits;
+    }
+
+    public static FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
+        for (FakeUnit unit : fakeUnits) {
+            unit.setEnemy();
+        }
+        return UnitTest.enemyUnits = fakeUnits;
+    }
+
+    protected static FakeFoggedUnit fogged(AUnitType type, double x) {
+        return FakeFoggedUnit.fromFake(fakeEnemy(type, x));
+    }
 
     // =========================================================
 
@@ -160,12 +222,6 @@ public class AbstractTestWithUnits extends UnitTest {
     public void init() {
     }
 
-    private static void clearCaches() {
-        APainter.disablePainting();
-
-        ClearAllCaches.clearAll();
-    }
-
     public Race initRace() {
         return MockEverything.defaultRaceForTests();
     }
@@ -178,15 +234,6 @@ public class AbstractTestWithUnits extends UnitTest {
     public Race initEnemyRace() {
         return MockEverything.defaultEnemyRaceForTests();
     }
-
-    /**
-     * Which race the enemy is in for one world. Set it in the test method, next
-     * to the units, and it applies from that moment on - the {@code EnemyRace}
-     * and {@code Enemy} mocks read it on every call, so it can change between
-     * frames the way the supply does. {@code null} means "whatever
-     * {@link #initEnemyRace()} says", which is the class-wide default.
-     */
-    protected Race enemyRaceInWorld = null;
 
     public Race currentEnemyRace() {
         return enemyRaceInWorld != null ? enemyRaceInWorld : initEnemyRace();
@@ -243,6 +290,8 @@ public class AbstractTestWithUnits extends UnitTest {
     public void tearDown() {
         cleanUp();
     }
+
+    // =========================================================
 
     /**
      * PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
@@ -322,7 +371,21 @@ public class AbstractTestWithUnits extends UnitTest {
         Atlantis.getInstance().setGame(null);
     }
 
-    // =========================================================
+    /**
+     * The AGame clock stubs, answered once per test - not re-stubbed per frame.
+     *
+     * <p>Every {@code aGame.when(...)} is a Mockito registration, and a static
+     * mock keeps its stubbings in a list it copies on every registration and
+     * scans on every intercepted call. The world loop used to re-register all
+     * three from {@code useFakeTime} every frame, which grew the list to
+     * thousands of entries over a 900-frame scenario and made every
+     * {@code A.now()} call pay a scan that grew with the frame number - the
+     * quadratic cost behind BUGS.md B-24 (JFR 2026-10-04: 65% of CPU samples
+     * inside Mockito internals, 64 GB allocated by one 900-frame scenario).
+     * Nothing re-registers them per frame any more: the three answers read the
+     * published clock ({@code GameClock}, written by {@code A.setNow}) at call time,
+     * so one registration per test is enough.</p>
+     */
 
     protected int currentMinerals() {
         return currentMinerals;
@@ -362,8 +425,6 @@ public class AbstractTestWithUnits extends UnitTest {
         Strategy.setTo(initBuildOrder());
     }
 
-    // =========================================================
-
     protected void useFakeTime(int framesNow) {
         game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
 
@@ -386,76 +447,6 @@ public class AbstractTestWithUnits extends UnitTest {
         A.setNow(framesNow, framesNow / 30);
     }
 
-    /**
-     * The AGame clock stubs, answered once per test - not re-stubbed per frame.
-     *
-     * <p>Every {@code aGame.when(...)} is a Mockito registration, and a static
-     * mock keeps its stubbings in a list it copies on every registration and
-     * scans on every intercepted call. The world loop used to re-register all
-     * three from {@code useFakeTime} every frame, which grew the list to
-     * thousands of entries over a 900-frame scenario and made every
-     * {@code A.now()} call pay a scan that grew with the frame number - the
-     * quadratic cost behind BUGS.md B-24 (JFR 2026-10-04: 65% of CPU samples
-     * inside Mockito internals, 64 GB allocated by one 900-frame scenario).
-     * Nothing re-registers them per frame any more: the three answers read the
-     * published clock ({@code GameClock}, written by {@code A.setNow}) at call time,
-     * so one registration per test is enough.</p>
-     */
-    /** Called once per test, where the mock is created (MockEverything). */
-    static void stubAGameClock(MockedStatic<AGame> aGame) {
-        // One source of truth: production reaches the frame number through
-        // A.now(), which delegates to the statically mocked AGame.now().
-        aGame.when(AGame::now).thenAnswer(invocation -> GameClock.frames());
-
-        // The same question asked a different way. 77 call sites in 65 files
-        // throttle on everyNthGameFrame(n) / notNthGameFrame(n), and a
-        // statically mocked method nobody stubs answers false - so every one of
-        // those code paths was dead in the test suite, quietly. It showed up
-        // as "the Protoss dynamic production commander never runs, so no test
-        // can say whether it produces anything": ProtossDynamicUnitProduction-
-        // Commander.handle() starts with `if (!AGame.everyNthGameFrame(7)) return
-        // false`, and its reason string stayed "-" through a whole world.
-        aGame.when(() -> AGame.everyNthGameFrame(Mockito.anyInt()))
-            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) == 0);
-        aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
-            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) != 0);
-    }
-
-    public static FakeUnit fake(AUnitType type) {
-        return new FakeUnit(type, 10, 10);
-    }
-
-    public static FakeUnit fake(AUnitType type, double tx) {
-        return new FakeUnit(type, tx, 10);
-    }
-
-    public static FakeUnit fakeEnemy(AUnitType type, double tx) {
-        return new FakeUnit(type, tx, 10).setEnemy();
-    }
-
-    public static FakeUnit fakeEnemy(AUnitType type, double tx, double ty) {
-        return new FakeUnit(type, tx, ty).setEnemy();
-    }
-
-    public static FakeUnit fake(AUnitType type, double tx, double ty) {
-        return new FakeUnit(type, tx, ty);
-    }
-
-    public static FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
-        return UnitTest.ourUnits = fakeUnits;
-    }
-
-    public static FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
-        for (FakeUnit unit : fakeUnits) {
-            unit.setEnemy();
-        }
-        return UnitTest.enemyUnits = fakeUnits;
-    }
-
-    protected static FakeFoggedUnit fogged(AUnitType type, double x) {
-        return FakeFoggedUnit.fromFake(fakeEnemy(type, x));
-    }
-
     // =========================================================
 
     public void assertContainsAll(Object[] expected, Object[] actual) {
@@ -464,7 +455,7 @@ public class AbstractTestWithUnits extends UnitTest {
         boolean containsAll = true;
         Object missing = null;
 
-        List<Object> expectedList = Arrays.asList(expected);
+        Object[] expectedList = expected;
         List<Object> actualList = Arrays.asList(actual);
 
 //        boolean containsAll = actualList.containsAll(expectedList);

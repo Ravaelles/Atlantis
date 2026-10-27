@@ -1,10 +1,6 @@
 package tests.unit;
 
-import atlantis.decisions.board.ADecision;
-import atlantis.decisions.board.AQuestion;
-import atlantis.decisions.board.BoardState;
-import atlantis.decisions.board.DecisionDispatcher;
-import atlantis.decisions.board.DecisionLog;
+import atlantis.decisions.board.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -40,7 +36,7 @@ public class DecisionDispatcherTest {
 
     private ADecision decide() {
         return ADecision.decide(
-            ADecision.Kind.TRAIN_WORKER, "Probe", "test", ADecision.Source.DYNAMIC)
+                ADecision.Kind.TRAIN_WORKER, "Probe", "test", ADecision.Source.DYNAMIC)
             .frame(100).supply(9, 9).bank(100, 0)
             .build();
     }

@@ -14,8 +14,8 @@ public class PreventAttacksDuringRetreat {
         if (target.isGroundUnit()) return false;
 
         return target.isScourge()
-                || target.isScienceVessel()
-                || target.isWraith()
-                || target.isObserver();
+            || target.isScienceVessel()
+            || target.isWraith()
+            || target.isObserver();
     }
 }

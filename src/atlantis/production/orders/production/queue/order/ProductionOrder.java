@@ -5,9 +5,9 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.MaxBuildingDist;
-import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
@@ -15,12 +15,6 @@ import bwapi.UpgradeType;
 
 public class ProductionOrder implements Comparable<ProductionOrder> {
     private static int firstFreeId = 1;
-
-    /**
-     * True when already executed. Prevents double execution.
-     */
-    private boolean consumed = false;
-
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
      */
@@ -29,7 +23,11 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
      * Tech type to research. Can be null if this production order is for something else than upgrade.
      */
     private final TechType tech;
-    private int id;
+    /**
+     * True when already executed. Prevents double execution.
+     */
+    private boolean consumed = false;
+    private final int id;
     private OrderStatus status = OrderStatus.NOT_READY;
     /**
      * How much supply has to be used for this order to become active
@@ -146,7 +144,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (unitOrBuilding != null && otherOrder.unitOrBuilding != null) {
             if (otherOrder.minSupply == this.minSupply) {
-                if (unitOrBuilding.isCombatBuilding() && otherOrder.unitOrBuilding.isCombatBuilding()) return true;
+                return unitOrBuilding.isCombatBuilding() && otherOrder.unitOrBuilding.isCombatBuilding();
             }
         }
 

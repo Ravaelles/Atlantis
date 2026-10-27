@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScoutPotentialEnemyBases extends Manager {
-    private static Map<HasPosition, Integer> lastSeenAtFrame = new HashMap<>();
+    private static final Map<HasPosition, Integer> lastSeenAtFrame = new HashMap<>();
     private Positions<ABaseLocation> baseLocations;
     private ABaseLocation currentBaseLocationFocus;
 
@@ -29,9 +29,7 @@ public class ScoutPotentialEnemyBases extends Manager {
         if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
 
         currentBaseLocationFocus = longestNotVisited();
-        if (currentBaseLocationFocus == null) return false;
-
-        return true;
+        return currentBaseLocationFocus != null;
 
 //        updateLastSeenAtFrame();
 

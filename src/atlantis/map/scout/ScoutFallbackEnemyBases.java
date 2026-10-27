@@ -25,6 +25,13 @@ public class ScoutFallbackEnemyBases extends Manager {
         super(unit);
     }
 
+    public static APosition firstUnexplored(APosition... candidates) {
+        for (APosition candidate : candidates) {
+            if (candidate != null && !candidate.isExplored()) return candidate;
+        }
+        return null;
+    }
+
     @Override
     public boolean applies() {
         target = firstUnexplored(
@@ -34,13 +41,6 @@ public class ScoutFallbackEnemyBases extends Manager {
         );
 
         return target != null;
-    }
-
-    public static APosition firstUnexplored(APosition... candidates) {
-        for (APosition candidate : candidates) {
-            if (candidate != null && !candidate.isExplored()) return candidate;
-        }
-        return null;
     }
 
     @Override

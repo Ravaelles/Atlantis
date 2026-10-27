@@ -51,7 +51,9 @@ public class ScenarioCombat {
     private final Map<Integer, Integer> strikesByUnitId = new HashMap<>();
     private final Map<Integer, Integer> diedAtFrame = new HashMap<>();
 
-    /** Frame currently being resolved; dealOneRound records deaths against it. */
+    /**
+     * Frame currently being resolved; dealOneRound records deaths against it.
+     */
     private int damageFrame = 0;
 
     /**

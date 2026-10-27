@@ -10,11 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameSummary {
     private static boolean printed = false;

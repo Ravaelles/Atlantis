@@ -2,11 +2,7 @@ package tests.unit.sim;
 
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
-import atlantis.debug.tweaker.DuelHitsMinutesScenario;
-import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.debug.tweaker.TunerBatchManifest;
-import atlantis.debug.tweaker.TunerObjective;
-import atlantis.debug.tweaker.TuningScenario;
+import atlantis.debug.tweaker.*;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 
@@ -15,11 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemy;
@@ -125,39 +117,39 @@ public final class SimTunerBatch {
             System.out.println("[sim-batch] HoldEarlyDisabled=1 (A/B arm: pre-wiring formula)");
         }
         try {
-        for (int i = 1; i <= games; i++) {
-            Map<String, Double> vector;
-            try {
-                vector = vectorForGame(bounds, overrides);
-            } catch (IllegalArgumentException e) {
-                System.err.println(e.getMessage());
+            for (int i = 1; i <= games; i++) {
+                Map<String, Double> vector;
+                try {
+                    vector = vectorForGame(bounds, overrides);
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
 
-                return 2;
+                    return 2;
+                }
+                applyVector(vector);
+                DuelResult result = playDuel(i);
+
+                String dir = "game-" + i;
+                Path gameDir = out.resolve(dir);
+                Files.createDirectories(gameDir);
+                String tweakerRow = tweakerRow(result, vector, bounds);
+                Files.write(gameDir.resolve("tweaker.csv"),
+                    (tweakerHeader(bounds) + "\n" + tweakerRow + "\n").getBytes(StandardCharsets.UTF_8));
+
+                String batchLine = i + "," + (result.win ? "W" : "L") + "," + result.seconds
+                    + "," + result.killed + "," + result.lost + "," + result.hits
+                    + "," + result.shots + "," + result.score + "\n";
+                Files.write(csv, batchLine.getBytes(StandardCharsets.UTF_8),
+                    java.nio.file.StandardOpenOption.APPEND);
+                manifestGames.add(new TunerBatchManifest.Game(
+                    dir, new TunerObjective.Row(dir, result.win, result.hits, result.seconds), vector));
+                System.out.println("[sim-batch] game " + i + "/" + games + ": "
+                    + (result.win ? "WIN" : "LOSS") + " hits=" + result.hits
+                    + " seconds=" + result.seconds);
             }
-            applyVector(vector);
-            DuelResult result = playDuel(i);
 
-            String dir = "game-" + i;
-            Path gameDir = out.resolve(dir);
-            Files.createDirectories(gameDir);
-            String tweakerRow = tweakerRow(result, vector, bounds);
-            Files.write(gameDir.resolve("tweaker.csv"),
-                (tweakerHeader(bounds) + "\n" + tweakerRow + "\n").getBytes(StandardCharsets.UTF_8));
-
-            String batchLine = i + "," + (result.win ? "W" : "L") + "," + result.seconds
-                + "," + result.killed + "," + result.lost + "," + result.hits
-                + "," + result.shots + "," + result.score + "\n";
-            Files.write(csv, batchLine.getBytes(StandardCharsets.UTF_8),
-                java.nio.file.StandardOpenOption.APPEND);
-            manifestGames.add(new TunerBatchManifest.Game(
-                dir, new TunerObjective.Row(dir, result.win, result.hits, result.seconds), vector));
-            System.out.println("[sim-batch] game " + i + "/" + games + ": "
-                + (result.win ? "WIN" : "LOSS") + " hits=" + result.hits
-                + " seconds=" + result.seconds);
-        }
-
-        Files.write(out.resolve("manifest.txt"),
-            TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
+            Files.write(out.resolve("manifest.txt"),
+                TunerBatchManifest.render(scenario.mapFile(), "sim", manifestGames).getBytes(StandardCharsets.UTF_8));
         } finally {
             atlantis.combat.strategy.DuelKite.holdEarlyDisabledForAB = false;
         }
@@ -165,26 +157,6 @@ public final class SimTunerBatch {
             + out.resolve("manifest.txt"));
 
         return 0;
-    }
-
-    private static final class DuelResult {
-        final boolean win;
-        final int seconds;
-        final int killed;
-        final int lost;
-        final int hits;
-        final int shots;
-        final int score;
-
-        DuelResult(boolean win, int seconds, int killed, int lost, int hits, int shots) {
-            this.win = win;
-            this.seconds = seconds;
-            this.killed = killed;
-            this.lost = lost;
-            this.hits = hits;
-            this.shots = shots;
-            this.score = (win ? 0 : -500) + killed * 10 - lost * 40 - seconds;
-        }
     }
 
     private static Map<String, Double> vectorForGame(
@@ -221,7 +193,7 @@ public final class SimTunerBatch {
         int startHp = dragoon.hp + dragoon.shields;
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { zealot }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{zealot}, arena);
         int ticks = 0;
         try {
             BattleCommander.clearForTests();
@@ -266,5 +238,25 @@ public final class SimTunerBatch {
         for (String name : bounds.keySet()) row.append(';').append(vector.get(name));
 
         return row.toString();
+    }
+
+    private static final class DuelResult {
+        final boolean win;
+        final int seconds;
+        final int killed;
+        final int lost;
+        final int hits;
+        final int shots;
+        final int score;
+
+        DuelResult(boolean win, int seconds, int killed, int lost, int hits, int shots) {
+            this.win = win;
+            this.seconds = seconds;
+            this.killed = killed;
+            this.lost = lost;
+            this.hits = hits;
+            this.shots = shots;
+            this.score = (win ? 0 : -500) + killed * 10 - lost * 40 - seconds;
+        }
     }
 }

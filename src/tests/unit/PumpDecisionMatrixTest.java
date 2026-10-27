@@ -16,11 +16,7 @@ import tests.fakes.FakeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The worker pump is a chain of vetoes - every historical stall was one
@@ -42,6 +38,29 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
     private String lastReason = null;
     private boolean lastFlow = false;
 
+    private static FakeUnit[] probes(FakeUnit nexus, int count) {
+        List<FakeUnit> units = new ArrayList<FakeUnit>();
+        units.add(nexus);
+        for (int i = 0; i < count; i++) {
+            units.add(fake(AUnitType.Protoss_Probe, 21 + (i % 4), 21 + (i / 4)));
+        }
+        FakeUnit[] array = new FakeUnit[units.size()];
+
+        return units.toArray(array);
+    }
+
+    private static ProductionOrder row(AUnitType type, int minSupply) {
+        return new ProductionOrder(type, minSupply);
+    }
+
+    private static ProductionOrder highReady(AUnitType type, int minSupply) {
+        ProductionOrder order = new ProductionOrder(type, minSupply);
+        order.setPriority(ProductionOrderPriority.HIGH);
+        order.setStatus(OrderStatus.READY_TO_PRODUCE);
+
+        return order;
+    }
+
     @Override
     protected FakeUnit[] generateOur() {
         return null;
@@ -62,19 +81,8 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
         atlantis.production.constructions.ConstructionRequests.constructions.clear();
     }
 
-    private static FakeUnit[] probes(FakeUnit nexus, int count) {
-        List<FakeUnit> units = new ArrayList<FakeUnit>();
-        units.add(nexus);
-        for (int i = 0; i < count; i++) {
-            units.add(fake(AUnitType.Protoss_Probe, 21 + (i % 4), 21 + (i / 4)));
-        }
-        FakeUnit[] array = new FakeUnit[units.size()];
-
-        return units.toArray(array);
-    }
-
     private void decide(int supplyUsed, int supplyTotal, int minerals, FakeUnit[] ours,
-            List<ProductionOrder> rows) {
+                        List<ProductionOrder> rows) {
         lastReason = null;
         AutoProduceWorkersCommander.REASON = "-";
         currentMinerals = minerals;
@@ -98,24 +106,12 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
         assertTrue(lastReason != null || lastFlow, "the frame was reached");
     }
 
-    private static ProductionOrder row(AUnitType type, int minSupply) {
-        return new ProductionOrder(type, minSupply);
-    }
-
-    private static ProductionOrder highReady(AUnitType type, int minSupply) {
-        ProductionOrder order = new ProductionOrder(type, minSupply);
-        order.setPriority(ProductionOrderPriority.HIGH);
-        order.setStatus(OrderStatus.READY_TO_PRODUCE);
-
-        return order;
-    }
-
     @Test
     public void blockedBaseBuysNothing() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         decide(12, 12, 100, probes(nexus, 5), new ArrayList<ProductionOrder>());
         assertEquals("NoSupply", lastReason);
-        assertTrue(!lastFlow, "a blocked base trains nothing");
+        assertFalse(lastFlow, "a blocked base trains nothing");
     }
 
     @Test
@@ -147,7 +143,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
         rows.add(highReady(AUnitType.Protoss_Gateway, 10));
         decide(14, 17, 140, ours, rows);
         assertEquals("HigherPriorityWaits", lastReason);
-        assertTrue(!lastFlow, "a 60 shortfall still saves");
+        assertFalse(lastFlow, "a 60 shortfall still saves");
     }
 
     @Test
@@ -179,7 +175,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
         rows.add(row(AUnitType.Protoss_Cybernetics_Core, 9));
         decide(9, 18, 100, ours, rows);
         assertEquals("CriticalStuff", lastReason);
-        assertTrue(!lastFlow, "the mandate bypasses the waiter gate only");
+        assertFalse(lastFlow, "the mandate bypasses the waiter gate only");
     }
 
     @Test

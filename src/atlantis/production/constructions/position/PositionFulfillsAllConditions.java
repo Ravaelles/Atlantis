@@ -15,7 +15,9 @@ import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class PositionFulfillsAllConditions {
-//    public static int currentSearchRadius = -1;
+    private static final java.util.Map<String, Integer> lastRefusals =
+        new java.util.HashMap<String, Integer>();
+    //    public static int currentSearchRadius = -1;
     private static int _currentTX = -1;
     private static int _currentTY = -1;
     private static AUnitType building;
@@ -141,9 +143,6 @@ public class PositionFulfillsAllConditions {
         return true;
     }
 
-    private static final java.util.Map<String, Integer> lastRefusals =
-        new java.util.HashMap<String, Integer>();
-
     /**
      * Per-rule refusal counts of the last placement search, all buildings
      * (the Protoss finder keeps its own wider map for Pylons). Cleared
@@ -154,7 +153,9 @@ public class PositionFulfillsAllConditions {
         return new java.util.HashMap<String, Integer>(lastRefusals);
     }
 
-    /** Called once per construction request, before the search runs. */
+    /**
+     * Called once per construction request, before the search runs.
+     */
     public static void clearRefusalBreakdown() {
         lastRefusals.clear();
     }

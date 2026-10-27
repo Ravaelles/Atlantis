@@ -3,7 +3,8 @@ package tests.fakes;
 import atlantis.map.bullets.ABullet;
 import atlantis.units.attacked_by.Bullets;
 
-import java.util.*;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The harness's bullets, and the adapter that hands them to production.

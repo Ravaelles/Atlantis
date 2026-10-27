@@ -1,7 +1,6 @@
 package atlantis.battle.advance.focus;
 
 import atlantis.game.A;
-import atlantis.util.cache.ValidityCheck;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -9,6 +8,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
+import atlantis.util.cache.ValidityCheck;
 
 /**
  * POSITION - where units should concentrate around. Can be offensive or defensive. Usually around a choke.
@@ -17,14 +17,13 @@ import atlantis.units.select.Select;
  * This point should tell units from which side they should stand.
  */
 public class AFocusPoint extends APosition implements ValidityCheck {
+    private static String _prev = "";
     private HasPosition fromSide = null;
     private AChoke choke = null;
     private AUnit unit = null;
-    private HasPosition position = null;
+    private final HasPosition position = null;
     private String name = null;
     private int idealDistanceFromFocus = -1;
-
-    private static String _prev = "";
 
     // =========================================================
 
@@ -61,7 +60,7 @@ public class AFocusPoint extends APosition implements ValidityCheck {
             if (!_prev.equals(name)) {
                 System.err.println(A.minSec() + " - New Focus: " + name);
             }
-    //        this.position = unit.position();
+            //        this.position = unit.position();
 
             _prev = name;
         }

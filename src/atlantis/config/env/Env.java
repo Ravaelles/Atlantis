@@ -15,6 +15,7 @@ import java.io.File;
  * We don't want to print out too much data in production.
  */
 public class Env {
+    private static final java.util.Map<String, String> rawEnv = new java.util.HashMap<>();
     private static boolean firstRun = true;
     private static boolean cherryVisEnabled = false;
     private static boolean isBenchmark = false;
@@ -26,14 +27,6 @@ public class Env {
     private static boolean wineClient = false;
     private static boolean paramTweaker = false;
     private static boolean mapSnapshot = false;
-    /**
-     * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
-     * new engine in parallel with the legacy queue and only logs what it would
-     * order; LIVE lets it issue the orders. {@code PRODUCTION_V2=false}
-     * (or a missing key) used to keep the legacy engine alone; LIVE is the
-     * default since the 20261027 parity game (WO-144 step 3).
-     */
-    private static ProductionV2Mode productionV2 = ProductionV2Mode.LIVE;
 
     /**
      * Raw ENV lines by upper-cased key, kept so parameterized subsystems
@@ -42,24 +35,24 @@ public class Env {
      * domain/debug code that already depends on config, never the reverse.
      */
     /**
+     * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
+     * new engine in parallel with the legacy queue and only logs what it would
+     * order; LIVE lets it issue the orders. {@code PRODUCTION_V2=false}
+     * (or a missing key) used to keep the legacy engine alone; LIVE is the
+     * default since the 20261027 parity game (WO-144 step 3).
+     */
+    private static ProductionV2Mode productionV2 = ProductionV2Mode.LIVE;
+    /**
      * Explicit env file from the command line ({@code --env=path}), e.g.
      * a script-owned file with test flags. When set, the bot reads it
      * instead of the working directory's shared ENV - scripts must never
      * edit the shared file to smuggle in per-run flags.
      */
     private static String envFileOverride = null;
-
-    private static final java.util.Map<String, String> rawEnv = new java.util.HashMap<>();
-
-    /** Raw ENV value for key (upper-cased), or null when absent. */
-    public static String rawEnv(String key) {
-        return key == null ? null : rawEnv.get(key.toUpperCase());
-    }
     /**
      * PLACEMENT=CATALOGUE selects the rewritten planner; false keeps legacy.
      */
     private static boolean placementCatalogue = false;
-
     /**
      * BUILDER_LOG=1 prints, every frame, each builder's active manager, its last
      * issued command and its target position.
@@ -74,7 +67,6 @@ public class Env {
      * </p>
      */
     private static boolean builderLog = false;
-
     /**
      * WINE_SUPER_FAST_MODE=1 hurries a Wine game beyond playable: speed 0,
      * frame skip 1000, GUI off, no dynamic slowdown (owner direction:
@@ -83,7 +75,6 @@ public class Env {
      * write it into shared ENV files. GameSpeed reads it in init().
      */
     private static boolean wineSuperFast = false;
-
     /**
      * CORE_AND_DRAGOON_GATE=true ends the game as soon as the opening is proven.
      *
@@ -96,7 +87,6 @@ public class Env {
      * </p>
      */
     private static boolean coreAndDragoonGate = false;
-
     /**
      * END_GAME_VIA_ENGINE=true makes the bot ask the engine to leave the game instead of
      * killing its own JVM at game end.
@@ -116,8 +106,16 @@ public class Env {
      * </p>
      */
     private static boolean endGameViaEngine = false;
+    private static int forceEndAtSupply = 0;
 
     // =========================================================
+
+    /**
+     * Raw ENV value for key (upper-cased), or null when absent.
+     */
+    public static String rawEnv(String key) {
+        return key == null ? null : rawEnv.get(key.toUpperCase());
+    }
 
     public static void readEnvFile(String[] mainArgs) {
         isBenchmark = BenchmarkMode.detectBenchmarkMode(mainArgs);
@@ -287,6 +285,8 @@ public class Env {
         return "ENV";
     }
 
+    // =========================================================
+
     /**
      * Which ENV file the bot actually plays with (or {@code ENV} fallback
      * when none exists - then every flag silently runs its default, which is
@@ -295,8 +295,6 @@ public class Env {
     public static String envSource() {
         return envFilePath();
     }
-
-    // =========================================================
 
     private static boolean mainArgsContains(String value, String[] mainArgs) {
         for (String arg : mainArgs) {
@@ -401,7 +399,9 @@ public class Env {
         return productionV2;
     }
 
-    /** Test seam (the mode is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the mode is ENV-driven and has no other writer).
+     */
     public static void setProductionV2ForTest(ProductionV2Mode mode) {
         productionV2 = mode == null ? ProductionV2Mode.OFF : mode;
     }
@@ -415,19 +415,23 @@ public class Env {
         return placementCatalogue;
     }
 
-    /** Test seam (the flag is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
     public static void setPlacementCatalogueForTest(boolean enabled) {
         placementCatalogue = enabled;
     }
 
-    /** Test seam (the flag is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
     public static void setWineSuperFastForTest(boolean enabled) {
         wineSuperFast = enabled;
     }
 
-    private static int forceEndAtSupply = 0;
-
-    /** Test seam (the flag is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
     public static void setForceEndAtSupplyForTest(int supply) {
         forceEndAtSupply = supply;
     }
@@ -458,7 +462,9 @@ public class Env {
         return builderLog;
     }
 
-    /** Test seam (the flag is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
     public static void setBuilderLogForTest(boolean enabled) {
         builderLog = enabled;
     }
@@ -516,12 +522,16 @@ public class Env {
         isTesting = enabled;
     }
 
-    /** Test seam (the --short gate is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the --short gate is ENV-driven and has no other writer).
+     */
     public static void setCoreAndDragoonGateForTest(boolean enabled) {
         coreAndDragoonGate = enabled;
     }
 
-    /** Test seam (the backend is ENV-driven and has no other writer). */
+    /**
+     * Test seam (the backend is ENV-driven and has no other writer).
+     */
     public static void setOpenBWForTest(boolean enabled) {
         openBW = enabled;
     }

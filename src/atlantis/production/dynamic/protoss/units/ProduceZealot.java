@@ -1,37 +1,34 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.Strategy;
+import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.production.dynamic.protoss.decisions.AllowProduceZealot;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeProtossBuildingsOverCombatUnits;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.PriorityWaiters;
-import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
-
 import atlantis.util.AMath;
-import static atlantis.units.AUnitType.*;
+
+import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
+import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class ProduceZealot {
-    public static int producedCount = 0;
-    private static int zealots;
-    private static int freeGateways;
-
     /**
      * Banked gas means Dragoons, not more Zealots (owner report: 14 Zealots vs 6 Dragoons
      * with 350 gas banked vs Zerg). The first zealot(s) are always allowed - this brake
@@ -40,13 +37,15 @@ public class ProduceZealot {
      * the gateways.
      */
     private static final int GAS_BANK_PREFER_DRAGOONS = 200;
-
+    public static int producedCount = 0;
     /**
      * Why the last call did not produce a zealot. Set at every gate, for the same reason
      * the commander keeps a reason: B-22 spent a week on "the bot stopped producing and
      * nothing says why", and a reason nobody reads is a comment.
      */
     public static String reason = "-";
+    private static int zealots;
+    private static int freeGateways;
 
     public static boolean zealot() {
         // D3 priority waiting, first so later plenty-rules cannot bypass it.
@@ -81,7 +80,8 @@ public class ProduceZealot {
 
         if (Enemy.protoss() && A.hasGas(50) && Count.dragoons() <= 10 && Have.cyberneticsCore()) return false;
 
-        if (A.hasGas(50) && A.supplyUsed() <= 25 && Count.dragoonsWithUnfinished() == 0 && Have.cyberneticsCore()) return false;
+        if (A.hasGas(50) && A.supplyUsed() <= 25 && Count.dragoonsWithUnfinished() == 0 && Have.cyberneticsCore())
+            return false;
 
         if (preventExcessiveZealots()) return false;
 
@@ -115,7 +115,8 @@ public class ProduceZealot {
         if (Decisions.needToProduceZealotsNow()) return produceZealot("NeedToProduceZealots");
 //        if (BuildOrderSettings.autoProduceZealots()) return produceZealot();
 //        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) return produceZealot();
-        if (EnemyRace.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) return produceZealot("NoZealotsVsZ");
+        if (EnemyRace.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0)
+            return produceZealot("NoZealotsVsZ");
 
         return no("NoRule");
     }

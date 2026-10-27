@@ -1,7 +1,7 @@
 package atlantis.combat.cluster;
 
-import atlantis.combat.Behavior;
 import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.Behavior;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

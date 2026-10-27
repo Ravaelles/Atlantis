@@ -4,18 +4,14 @@ import atlantis.util.AConsole;
 import atlantis.util.log.LogLevel;
 import atlantis.util.log.LogPort;
 import atlantis.util.log.SystemLogPort;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("infra")
 public class AConsoleTest {
@@ -45,8 +41,7 @@ public class AConsoleTest {
 
     @Test
     public void consoleIsThePortUntilSomethingReplacesIt() {
-        assertTrue(originalPort instanceof SystemLogPort,
-            "a fresh JVM must write to the console, not to a test double");
+        assertInstanceOf(SystemLogPort.class, originalPort, "a fresh JVM must write to the console, not to a test double");
     }
 
     @Test
@@ -57,7 +52,7 @@ public class AConsoleTest {
         AConsole.println();
 
         assertEquals(Arrays.asList("[MED] hello", "no newline", ""), recording.out);
-        assertEquals(Arrays.asList("[MED] bad"), recording.errors);
+        assertEquals(Collections.singletonList("[MED] bad"), recording.errors);
     }
 
     @Test
@@ -71,21 +66,21 @@ public class AConsoleTest {
             Arrays.asList("[HIGH] churn", "[CRIT] stuck", "[LOW] flow"),
             recording.out
         );
-        assertEquals(Arrays.asList("[CRIT] dead"), recording.errors);
+        assertEquals(Collections.singletonList("[CRIT] dead"), recording.errors);
     }
 
     @Test
     public void tempMarksRemovableDebuggingLines() {
         AConsole.temp("probe xyz");
 
-        assertEquals(Arrays.asList("[TEMP] probe xyz"), recording.out);
+        assertEquals(Collections.singletonList("[TEMP] probe xyz"), recording.out);
     }
 
     @Test
     public void stackTracesGoThroughThePort() {
         AConsole.printStackTrace("boom");
 
-        assertEquals(Arrays.asList("boom"), recording.stackTraces);
+        assertEquals(Collections.singletonList("boom"), recording.stackTraces);
         assertTrue(recording.errors.isEmpty(), "the port decides how a stack is rendered");
     }
 
@@ -120,7 +115,7 @@ public class AConsoleTest {
     public void nullPortRestoresTheConsole() {
         AConsole.usePort(null);
 
-        assertTrue(AConsole.port() instanceof SystemLogPort, "null restores the console");
+        assertInstanceOf(SystemLogPort.class, AConsole.port(), "null restores the console");
     }
 
     /**

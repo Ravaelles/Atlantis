@@ -72,7 +72,7 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
         if (unit.isMissionDefendOrSparta()) {
-            if ((new DontAvoidEnemy(unit)).applies()) return true;
+            return (new DontAvoidEnemy(unit)).applies();
         }
 
         return false;

@@ -42,7 +42,9 @@ public final class SquadScout {
         return bait != null && bait.id() == unit.id();
     }
 
-    /** Deterministic pick: the lowest-id combat unit, so the whole line agrees. Pure. */
+    /**
+     * Deterministic pick: the lowest-id combat unit, so the whole line agrees. Pure.
+     */
     public static AUnit pickBait(Selection ours) {
         if (ours == null) return null;
 
@@ -54,14 +56,18 @@ public final class SquadScout {
         return bait;
     }
 
-    /** Pure geometry: the bait stands in the funnel mouth, toward the enemy. */
+    /**
+     * Pure geometry: the bait stands in the funnel mouth, toward the enemy.
+     */
     public static APosition baitPoint(APosition chokeCenter, HasPosition enemySide) {
         if (chokeCenter == null || enemySide == null) return null;
 
         return chokeCenter.translateTilesTowards(enemySide, 2);
     }
 
-    /** Guarded detection: the bait point for this unit, or null when there is no held choke. */
+    /**
+     * Guarded detection: the bait point for this unit, or null when there is no held choke.
+     */
     public static APosition baitPointFor(AUnit unit) {
         try {
             atlantis.map.choke.AChoke choke = BattleSetup.chokeNear(unit);

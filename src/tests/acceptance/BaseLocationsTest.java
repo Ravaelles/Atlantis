@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Nexus;
+import static atlantis.units.AUnitType.Protoss_Pylon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -30,15 +31,15 @@ public class BaseLocationsTest extends WorldStubForTests {
 
         options = Options.create().set("supplyUsed", 49);
         world(1, fakeOurs(
-                base,
-                fake(Protoss_Pylon, 11, 48)
-            ), fakeExampleEnemies(), () -> {
-                FakeMapTiles.EXPLORED = false;
-                APosition position = BaseLocations.nearestUnexploredStartingLocation(base);
-                FakeMapTiles.EXPLORED = true;
+            base,
+            fake(Protoss_Pylon, 11, 48)
+        ), fakeExampleEnemies(), () -> {
+            FakeMapTiles.EXPLORED = false;
+            APosition position = BaseLocations.nearestUnexploredStartingLocation(base);
+            FakeMapTiles.EXPLORED = true;
 //                System.err.println("position = " + position);
 
-                assertNotNull(position);
-            });
+            assertNotNull(position);
+        });
     }
 }

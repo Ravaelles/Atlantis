@@ -8,10 +8,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.workers.gather.GatherResources;
 
 public class WorkerDefenceStopFighting extends Manager {
-    public WorkerDefenceStopFighting(AUnit unit) {
-        super(unit);
-    }
-
     /**
      * Owner's line (unsupported pursuit, live report: workers trade far
      * beyond the army, alone, and die): no friendly building inside this,
@@ -22,9 +18,45 @@ public class WorkerDefenceStopFighting extends Manager {
      * {@code WorkerFarFightTest}.
      */
     private static final int NO_BUILDING_WITHIN_TILES = 5;
-
-    /** Companion radius to the one above: support that cannot join is none. */
+    /**
+     * Companion radius to the one above: support that cannot join is none.
+     */
     private static final int NO_SUPPORT_WITHIN_TILES = 3;
+
+    public WorkerDefenceStopFighting(AUnit unit) {
+        super(unit);
+    }
+
+    /**
+     * True when the worker is walking to a live enemy, not yet swinging:
+     * attack order in flight with a target worth naming. Gatherers walk
+     * to minerals (neutral, never the enemy); builders never reach this
+     * chain - so an enemy target plus motion is pursuit, not errand.
+     */
+    private static boolean isPursuingEnemy(AUnit unit) {
+        if (!unit.isMoving()) return false;
+
+        AUnit target = unit.target();
+
+        return target != null && target.isEnemy() && target.hp() > 0;
+    }
+
+    /**
+     * The unsupported-pursuit conjunction (owner's numbers): more than
+     * the shared 10 tiles from the main, no friendly building within
+     * {@link #NO_BUILDING_WITHIN_TILES}, no friendly ground combat unit
+     * within {@link #NO_SUPPORT_WITHIN_TILES}. Each clause owns false:
+     * near the base the swarm rules decide, near buildings the cannon
+     * paths decide, with support the fight is joined - only all three
+     * together mean the walk is a donation.
+     */
+    private static boolean unsupportedPursuit(AUnit unit) {
+        if (!WorkerStrayedFromBase.tooFarFromHome(unit)) return false;
+        if (unit.friendsNear().buildings().countInRadius(NO_BUILDING_WITHIN_TILES, unit) > 0) return false;
+
+        return unit.friendsNear().combatUnits().groundUnits()
+            .countInRadius(NO_SUPPORT_WITHIN_TILES, unit) == 0;
+    }
 
     @Override
     public boolean applies() {
@@ -59,37 +91,6 @@ public class WorkerDefenceStopFighting extends Manager {
         }
 
         return false;
-    }
-
-    /**
-     * True when the worker is walking to a live enemy, not yet swinging:
-     * attack order in flight with a target worth naming. Gatherers walk
-     * to minerals (neutral, never the enemy); builders never reach this
-     * chain - so an enemy target plus motion is pursuit, not errand.
-     */
-    private static boolean isPursuingEnemy(AUnit unit) {
-        if (!unit.isMoving()) return false;
-
-        AUnit target = unit.target();
-
-        return target != null && target.isEnemy() && target.hp() > 0;
-    }
-
-    /**
-     * The unsupported-pursuit conjunction (owner's numbers): more than
-     * the shared 10 tiles from the main, no friendly building within
-     * {@link #NO_BUILDING_WITHIN_TILES}, no friendly ground combat unit
-     * within {@link #NO_SUPPORT_WITHIN_TILES}. Each clause owns false:
-     * near the base the swarm rules decide, near buildings the cannon
-     * paths decide, with support the fight is joined - only all three
-     * together mean the walk is a donation.
-     */
-    private static boolean unsupportedPursuit(AUnit unit) {
-        if (!WorkerStrayedFromBase.tooFarFromHome(unit)) return false;
-        if (unit.friendsNear().buildings().countInRadius(NO_BUILDING_WITHIN_TILES, unit) > 0) return false;
-
-        return unit.friendsNear().combatUnits().groundUnits()
-            .countInRadius(NO_SUPPORT_WITHIN_TILES, unit) == 0;
     }
 
     @Override

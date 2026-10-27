@@ -1,10 +1,9 @@
 package atlantis.information.strategy.response;
 
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
-import atlantis.battle.cluster.Missions;
-
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;

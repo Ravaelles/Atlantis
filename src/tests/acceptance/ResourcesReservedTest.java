@@ -28,13 +28,13 @@ public class ResourcesReservedTest extends WorldStubForTests {
 
         options = Options.create().set("supplyUsed", 49);
         world(1, FakeUnitHelper.merge(
-                ourInitialUnits(),
-                fakeOurs(
-                    fake(Terran_Supply_Depot, 7),
-                    fake(Terran_Barracks, 4),
-                    fake(Terran_Academy, 33)
-                )
-            ), fakeExampleEnemies(), () -> {
+            ourInitialUnits(),
+            fakeOurs(
+                fake(Terran_Supply_Depot, 7),
+                fake(Terran_Barracks, 4),
+                fake(Terran_Academy, 33)
+            )
+        ), fakeExampleEnemies(), () -> {
 //                mineralsAreReservedForOrdersMarkedAsReady();
 
             int haveMinerals = 460;

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *     ...
  *     at atlantis.util.ProcessHelper.executeInCommandLine(ProcessHelper.java:338)
  * </pre>
- *
+ * <p>
  * The exit path is exactly where a failed kill is expected - on Linux there is
  * no {@code taskkill}, and from the IDE the JVM cannot even name the Wine
  * processes - and at that point the outcome no longer matters: the match is
@@ -56,11 +56,11 @@ public class ProcessHelperExitPathTest {
 
     private void assertNoStackDump(String label, String stderr) {
         assertFalse(stderr.contains("java.io.IOException"),
-                label + " must not print an IOException header:\n" + stderr);
+            label + " must not print an IOException header:\n" + stderr);
         assertFalse(stderr.contains("\tat "),
-                label + " must not print a stack frame:\n" + stderr);
+            label + " must not print a stack frame:\n" + stderr);
         assertFalse(stderr.contains("Exception in thread"),
-                label + " must not print an uncaught-exception banner:\n" + stderr);
+            label + " must not print an uncaught-exception banner:\n" + stderr);
     }
 
     @Test
@@ -110,6 +110,6 @@ public class ProcessHelperExitPathTest {
                 newlines++;
         }
         assertTrue(newlines <= 4,
-                "expected at most a few one-line notes, got " + newlines + " lines:\n" + stderr);
+            "expected at most a few one-line notes, got " + newlines + " lines:\n" + stderr);
     }
 }

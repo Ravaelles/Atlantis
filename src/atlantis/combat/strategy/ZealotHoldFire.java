@@ -19,7 +19,9 @@ import atlantis.units.select.Select;
  */
 public final class ZealotHoldFire {
 
-    /** Damage at or below this is not a wound: hold the line. */
+    /**
+     * Damage at or below this is not a wound: hold the line.
+     */
     public static final double WOUND_HP = 10.0;
 
     private ZealotHoldFire() {

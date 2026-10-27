@@ -11,9 +11,13 @@ public final class PlacementReservation {
     private final int tileX;
     private final int tileY;
     private final int readyFrame;
-    /** Frame the builder was actually committed on; -1 while still uncommitted. */
+    /**
+     * Frame the builder was actually committed on; -1 while still uncommitted.
+     */
     private final int committedAtFrame;
-    /** Weapon coverage of the tile, set only by coverage-ranked answers; null when unknown. */
+    /**
+     * Weapon coverage of the tile, set only by coverage-ranked answers; null when unknown.
+     */
     private final Boolean coversChoke;
     private final Boolean coversAnchor;
 
@@ -22,7 +26,7 @@ public final class PlacementReservation {
     }
 
     private PlacementReservation(boolean successful, int tileX, int tileY, int readyFrame, int committedAtFrame,
-        Boolean coversChoke, Boolean coversAnchor) {
+                                 Boolean coversChoke, Boolean coversAnchor) {
         this.successful = successful;
         this.tileX = tileX;
         this.tileY = tileY;
@@ -36,12 +40,20 @@ public final class PlacementReservation {
         return new PlacementReservation(true, tileX, tileY, readyFrame, -1);
     }
 
-    /** A reservation the dispatcher has acted on: the builder is walking or building. */
+    public static PlacementReservation failure() {
+        return new PlacementReservation(false, -1, -1, -1, -1);
+    }
+
+    /**
+     * A reservation the dispatcher has acted on: the builder is walking or building.
+     */
     public PlacementReservation committedAt(int frame) {
         return new PlacementReservation(successful, tileX, tileY, readyFrame, frame, coversChoke, coversAnchor);
     }
 
-    /** Coverage verdict from a coverage-ranked answer; unknown (null) otherwise. */
+    /**
+     * Coverage verdict from a coverage-ranked answer; unknown (null) otherwise.
+     */
     public PlacementReservation withCoverage(boolean coversChoke, boolean coversAnchor) {
         return new PlacementReservation(successful, tileX, tileY, readyFrame, committedAtFrame,
             coversChoke, coversAnchor);
@@ -53,10 +65,6 @@ public final class PlacementReservation {
 
     public Boolean coversAnchor() {
         return coversAnchor;
-    }
-
-    public static PlacementReservation failure() {
-        return new PlacementReservation(false, -1, -1, -1, -1);
     }
 
     public boolean isSuccessful() {
@@ -71,7 +79,9 @@ public final class PlacementReservation {
         return tileY;
     }
 
-    /** First frame the tile is actually usable (builder travel time included). */
+    /**
+     * First frame the tile is actually usable (builder travel time included).
+     */
     public int readyFrame() {
         return readyFrame;
     }
@@ -90,6 +100,6 @@ public final class PlacementReservation {
     public String toString() {
         if (!successful) return "no placement";
         return "tile(" + tileX + "," + tileY + ")@" + readyFrame
-                + (committedAtFrame >= 0 ? " committed@" + committedAtFrame : "");
+            + (committedAtFrame >= 0 ? " committed@" + committedAtFrame : "");
     }
 }

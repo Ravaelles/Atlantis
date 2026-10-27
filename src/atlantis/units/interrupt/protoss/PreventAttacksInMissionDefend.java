@@ -28,9 +28,7 @@ public class PreventAttacksInMissionDefend {
         if (unit.distToLeader() >= 8) return true;
 
         double distToMain = unit.groundDistToMain();
-        if (distToMain >= 60) return true;
-
-        return false;
+        return distToMain >= 60;
 //        return unit.distToFocusPoint() >= 6 && unit.distToLeader() >= 4;
     }
 }

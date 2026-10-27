@@ -25,10 +25,16 @@ public class WalkableAround {
 //        for (int i = 0; i < alsoCheckTilesInRadius; i++) {
 //            APosition pos;
 
-            if (!MapTiles.isWalkable(position.translateByTiles(alsoCheckTilesInRadius, alsoCheckTilesInRadius))) return false;
-            if (!MapTiles.isWalkable(position.translateByTiles(-alsoCheckTilesInRadius, -alsoCheckTilesInRadius))) return false;
-            if (!MapTiles.isWalkable(position.translateByTiles(alsoCheckTilesInRadius, -alsoCheckTilesInRadius))) return false;
-            if (!MapTiles.isWalkable(position.translateByTiles(-alsoCheckTilesInRadius, alsoCheckTilesInRadius))) return false;
+        if (!MapTiles.isWalkable(position.translateByTiles(alsoCheckTilesInRadius, alsoCheckTilesInRadius)))
+            return false;
+
+        if (!MapTiles.isWalkable(position.translateByTiles(-alsoCheckTilesInRadius, -alsoCheckTilesInRadius)))
+            return false;
+
+        if (!MapTiles.isWalkable(position.translateByTiles(alsoCheckTilesInRadius, -alsoCheckTilesInRadius)))
+            return false;
+
+        return MapTiles.isWalkable(position.translateByTiles(-alsoCheckTilesInRadius, alsoCheckTilesInRadius));
 //        }
 
 //        int currentRadius = Math.min(2, alsoCheckTilesInRadius);
@@ -51,7 +57,5 @@ public class WalkableAround {
 //
 //            currentRadius += step;
 //        }
-
-        return true;
     }
 }

@@ -10,7 +10,7 @@ import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
 public class EnemyThirdBase {
-    private static Cache<APosition> cache = new Cache<>();
+    private static final Cache<APosition> cache = new Cache<>();
 
     public static APosition position() {
         return cache.getIfValid(

@@ -12,9 +12,6 @@ import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * March in formation, not single file (owner: the front fights alone
@@ -31,7 +28,7 @@ public class MarchFormationSimTest extends AbstractTestWithUnits {
     @Test
     public void marchingClusterTakesFormationSlots() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 5, 20);
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             fake(AUnitType.Protoss_Dragoon, 10, 19),
             fake(AUnitType.Protoss_Dragoon, 10, 20),
             fake(AUnitType.Protoss_Dragoon, 10, 21),
@@ -45,11 +42,11 @@ public class MarchFormationSimTest extends AbstractTestWithUnits {
             Alpha.get().addUnit(d);
         }
 
-        FakeUnit[] ours = new FakeUnit[] {
+        FakeUnit[] ours = new FakeUnit[]{
             nexus, dragoons[0], dragoons[1], dragoons[2], dragoons[3], dragoons[4]
         };
         SimArena arena = new SimArena(90 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(ours, new FakeUnit[] {}, arena);
+        SimWorld world = new SimWorld(ours, new FakeUnit[]{}, arena);
         try {
             BattleCommander.clearForTests();
             EventLog.clearForTests();
@@ -108,8 +105,7 @@ public class MarchFormationSimTest extends AbstractTestWithUnits {
             // body width only converges on a live map. What the sim does
             // prove: the offered formation is a traveling lateral line
             // (slot spread + slot distance above), and the march follows it.
-        }
-        finally {
+        } finally {
             for (FakeUnit d : dragoons) Alpha.get().removeUnit(d);
             world.close();
             BattleCommander.clearForTests();

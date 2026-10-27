@@ -1,8 +1,8 @@
 package tests.unit;
 
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.expansion.protoss.ProtossExpandNow;
 import atlantis.production.orders.production.queue.Queue;
@@ -14,9 +14,6 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Bases queue at most once per 5 seconds, and only when the bank covers

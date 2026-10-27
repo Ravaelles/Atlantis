@@ -36,7 +36,9 @@ public final class CommittedConstructions {
     private CommittedConstructions() {
     }
 
-    /** {@code plan} plus every pending construction it does not already carry. */
+    /**
+     * {@code plan} plus every pending construction it does not already carry.
+     */
     public static ProductionPlan mergeInto(ProductionPlan plan, int frame) {
         ProductionPlan merged = new ProductionPlan();
         for (ProductionItem item : plan.items()) {
@@ -56,8 +58,8 @@ public final class CommittedConstructions {
                 continue;
 
             PlacementReservation placement = PlacementReservation
-                    .success(tileX, tileY, frame)
-                    .committedAt(frame);
+                .success(tileX, tileY, frame)
+                .committedAt(frame);
             merged.add(new ProductionItem(producible, construction.timeOrdered(), false, placement));
         }
 

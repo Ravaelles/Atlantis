@@ -2,7 +2,9 @@ package atlantis.production.v2;
 
 import atlantis.units.AUnitType;
 
-/** Immutable Zerg identities for {@link ProductionRacePolicy}. */
+/**
+ * Immutable Zerg identities for {@link ProductionRacePolicy}.
+ */
 public final class ZergProductionRacePolicy implements ProductionRacePolicy {
 
     public static final ZergProductionRacePolicy INSTANCE = new ZergProductionRacePolicy();

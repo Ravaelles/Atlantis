@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
@@ -11,7 +12,6 @@ import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 import atlantis.util.HasReason;
 import atlantis.util.We;
 
@@ -19,6 +19,10 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     public static String reason = "-";
 
     private int dynamicOrders;
+
+    private static boolean saveForBase() {
+        return !A.hasMinerals(520) && ShouldExpand.shouldExpand();
+    }
 
     @Override
     public boolean applies() {
@@ -45,10 +49,6 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
             || Count.medics() <= 3
             || ArmyStrength.weAreWeaker()
             || (Strategy.get().isRushOrCheese() && Army.strength() <= 200);
-    }
-
-    private static boolean saveForBase() {
-        return !A.hasMinerals(520) && ShouldExpand.shouldExpand();
     }
 
     @Override

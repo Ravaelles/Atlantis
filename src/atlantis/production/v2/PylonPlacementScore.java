@@ -84,7 +84,7 @@ public final class PylonPlacementScore {
 
     private static boolean withinPowerRadius(int tileX, int tileY, Tile tile) {
         return Math.abs(tile.x - tileX) <= POWER_RADIUS_TILES
-                && Math.abs(tile.y - tileY) <= POWER_RADIUS_TILES;
+            && Math.abs(tile.y - tileY) <= POWER_RADIUS_TILES;
     }
 
     private static boolean contains(List<Tile> tiles, Tile tile) {
@@ -96,7 +96,9 @@ public final class PylonPlacementScore {
         return false;
     }
 
-    /** A build tile, as a value - the only geometry type this class needs. */
+    /**
+     * A build tile, as a value - the only geometry type this class needs.
+     */
     public static final class Tile {
         public final int x;
         public final int y;

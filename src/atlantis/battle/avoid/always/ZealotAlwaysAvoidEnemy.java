@@ -2,13 +2,13 @@ package atlantis.battle.avoid.always;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 public class ZealotAlwaysAvoidEnemy extends Manager {
     private double eval;
-    private String _lastReason = "";
+    private final String _lastReason = "";
 
     public ZealotAlwaysAvoidEnemy(AUnit unit) {
         super(unit);
@@ -28,9 +28,8 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
 
     private boolean vsProtoss() {
         if (woundedEarly()) return true;
-        if (badEvalEarly()) return true;
 
-        return false;
+        return badEvalEarly();
     }
 
     private boolean t(String reason) {

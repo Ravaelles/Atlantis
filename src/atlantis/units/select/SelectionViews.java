@@ -1,9 +1,9 @@
 package atlantis.units.select;
 
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.map.position.APosition;
 
 import java.util.ArrayList;
 import java.util.Collection;

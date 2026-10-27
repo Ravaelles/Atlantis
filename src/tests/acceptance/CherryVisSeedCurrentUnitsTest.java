@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Units already on the board at game start (army, mineral line) never pass a
@@ -27,7 +26,7 @@ public class CherryVisSeedCurrentUnitsTest extends WorldStubForTests {
     public void seedRecordsOursAndMinerals() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 10);
         FakeUnit mineral = fake(AUnitType.Resource_Mineral_Field, 12);
-        neutralInWorld = new FakeUnit[]{ mineral };
+        neutralInWorld = new FakeUnit[]{mineral};
 
         world(1, units(probe), units(), () -> {
             ACherryVis_UnitFirstSeen.clear();

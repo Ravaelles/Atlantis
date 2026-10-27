@@ -110,12 +110,16 @@ public class ABaseLocation implements HasPosition, Comparable<ABaseLocation> {
         return base != null && base.isStartingLocation();
     }
 
-    /** Mineral patches at this base; 0 when the location carries no base. */
+    /**
+     * Mineral patches at this base; 0 when the location carries no base.
+     */
     public int minerals() {
         return base == null ? 0 : base.getMinerals().size();
     }
 
-    /** Geysers at this base; 0 when the location carries no base. */
+    /**
+     * Geysers at this base; 0 when the location carries no base.
+     */
     public int gas() {
         return base == null ? 0 : base.getGeysers().size();
     }

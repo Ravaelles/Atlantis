@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemy;
 
 /**
  * Sim escape-capability pin for the cutoff-surround shape (NEXT #190):
@@ -55,7 +53,7 @@ public class CutoffSwampedRetreatTest extends AbstractTestWithUnits {
         FakeUnit z2 = fakeEnemy(AUnitType.Protoss_Zealot, 21, 20);
         FakeUnit z3 = fakeEnemy(AUnitType.Protoss_Zealot, 20, 19);
         FakeUnit z4 = fakeEnemy(AUnitType.Protoss_Zealot, 20, 21);
-        FakeUnit[] zealots = new FakeUnit[] { z1, z2, z3, z4 };
+        FakeUnit[] zealots = new FakeUnit[]{z1, z2, z3, z4};
 
         int startX = dragoon.position.x();
         int startY = dragoon.position.y();
@@ -63,7 +61,7 @@ public class CutoffSwampedRetreatTest extends AbstractTestWithUnits {
 
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { dragoon, a, b, c }, zealots, arena);
+            new FakeUnit[]{dragoon, a, b, c}, zealots, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -89,8 +87,7 @@ public class CutoffSwampedRetreatTest extends AbstractTestWithUnits {
                 "cutoff dragoon must displace instead of donating itself glued in place: "
                     + displacement + " tiles"
                     + (deathTick >= 0 ? ", died tick " + deathTick : ", survived"));
-        }
-        finally {
+        } finally {
             Alpha.get().removeUnit(dragoon);
             Alpha.get().removeUnit(a);
             Alpha.get().removeUnit(b);

@@ -13,9 +13,7 @@ import org.mockito.Mockito;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 @Tag("map")
@@ -46,8 +44,8 @@ public class ChokeTest extends AbstractTestWithUnits {
         assertEquals(5.0, zealotA.nearestChokeCenterDist());
         assertEquals(2.0, zealotB.nearestChokeCenterDist());
 
-        assertEquals(false, zealotA.isWithinChoke());
-        assertEquals(true, zealotB.isWithinChoke());
+        assertFalse(zealotA.isWithinChoke());
+        assertTrue(zealotB.isWithinChoke());
         assertEquals(3.0, zealotA.distTo(zealotB));
     }
 
@@ -75,7 +73,7 @@ public class ChokeTest extends AbstractTestWithUnits {
 
         assertEquals(999.0, observer.nearestChokeDist(), "chokes are ground concepts");
         assertEquals(999.0, observer.nearestChokeCenterDist(), "chokes are ground concepts");
-        assertEquals(false, observer.isWithinChoke(), "a flyer is never inside a choke");
+        assertFalse(observer.isWithinChoke(), "a flyer is never inside a choke");
     }
 
     @Test

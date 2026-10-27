@@ -1,4 +1,5 @@
 package atlantis.combat.kite;
+
 import atlantis.battle.kite.CombatTuning;
 
 import atlantis.units.AUnit;
@@ -14,6 +15,17 @@ import atlantis.units.special.SleepUntilFrameGate;
  * answers the kite question.
  */
 public final class Kite {
+
+    /**
+     * Meat screen (owner 2026-10-26): friendly zealots inside 8 tiles and
+     * 40+ hp on the dragoon. The screen tanks, so the dragoon stands and
+     * shoots on ready instead of yielding ground for the margin. Public
+     * as a seam: the discipline pins without running the frame.
+     * <p>
+     * A melee enemy this close is already hitting the guns: no stand
+     * discipline applies. Same edge the sim measures contact with.
+     */
+    static final double CHEWING_TILES = 0.5;
 
     private Kite() {
     }
@@ -99,17 +111,8 @@ public final class Kite {
     }
 
     /**
-     * Meat screen (owner 2026-10-26): friendly zealots inside 8 tiles and
-     * 40+ hp on the dragoon. The screen tanks, so the dragoon stands and
-     * shoots on ready instead of yielding ground for the margin. Public
-     * as a seam: the discipline pins without running the frame.
-     *
-     * A melee enemy this close is already hitting the guns: no stand
-     * discipline applies. Same edge the sim measures contact with.
+     * True when a listed melee enemy is already in hitting range. Public as a seam.
      */
-    static final double CHEWING_TILES = 0.5;
-
-    /** True when a listed melee enemy is already in hitting range. Public as a seam. */
     public static boolean isBeingChewed(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return false;
@@ -139,6 +142,7 @@ public final class Kite {
 
         return margin;
     }
+
     /**
      * The threat's order target is exactly this unit (PurpleWave's
      * presumptive-target read: the threat is coming for us, not
@@ -149,6 +153,7 @@ public final class Kite {
 
         return hunted != null && hunted.id() == unit.id();
     }
+
     /**
      * Per-unit attack latency (NEXT #154): the engine's remaining command
      * latency, read live per decision - never a flat constant. The +2 at

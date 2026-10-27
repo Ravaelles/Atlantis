@@ -2,12 +2,7 @@ package atlantis.util.log;
 
 import atlantis.util.AFile;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Structured diagnostic events, buffered and written as JSON lines.
@@ -28,13 +23,12 @@ public class EventLog {
 
     public static final String OUTPUT_PATH = "bwapi-data/write/EVENTS.jsonl";
 
-    /** ~30 game-seconds between flushes: fresh enough to survive a kill. */
+    /**
+     * ~30 game-seconds between flushes: fresh enough to survive a kill.
+     */
     public static final int FLUSH_EVERY_FRAMES = 720;
 
     private static final List<Row> buffer = new ArrayList<>();
-    private static int lastFrame = -1;
-    private static int lastFlushFrame = -1;
-
     /**
      * Paths already truncated by this JVM run. The files are append-only
      * by transport, but each run owns its file: the first flush of a JVM
@@ -44,54 +38,14 @@ public class EventLog {
      * games made per-game attribution impossible).
      */
     private static final Set<String> truncatedPaths = new HashSet<>();
+    private static int lastFrame = -1;
+    private static int lastFlushFrame = -1;
 
     private EventLog() {
     }
 
     public static Builder key(LogKey key) {
         return new Builder(key);
-    }
-
-    /** Frame and time come from the caller: this package cannot read the clock. */
-    public static final class Builder {
-        private final LogKey key;
-        private final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-
-        private Builder(LogKey key) {
-            this.key = key;
-        }
-        public Builder param(String name, String value) {
-            params.put(name, value == null ? "-" : value);
-
-            return this;
-        }
-
-        public Builder param(String name, int value) {
-            params.put(name, value);
-
-            return this;
-        }
-
-        /**
-         * Nullable ids (construction, order): present as a number, absent
-         * as JSON null - the chain twin that joins REQUESTED / PREPARING /
-         * STARTED / CANCEL / ledger rows by cid+oid.
-         */
-        public Builder param(String name, Integer value) {
-            params.put(name, value);
-
-            return this;
-        }
-
-        public Builder param(String name, boolean value) {
-            params.put(name, value);
-
-            return this;
-        }
-
-        public void log(int frame, String time) {
-            EventLog.append(key, frame, time, params);
-        }
     }
 
     private static void append(LogKey key, int frame, String time, LinkedHashMap<String, Object> params) {
@@ -104,7 +58,9 @@ public class EventLog {
         if (flushDue(frame, lastFlushFrame)) flush();
     }
 
-    /** How many buffered rows carry this key (tuning scoreboard reads hits off the twins). */
+    /**
+     * How many buffered rows carry this key (tuning scoreboard reads hits off the twins).
+     */
     public static int countByKey(LogKey key) {
         int count = 0;
         for (Row row : buffer) {
@@ -113,7 +69,9 @@ public class EventLog {
         return count;
     }
 
-    /** How many buffered rows carry this key with a param equal to the given value. */
+    /**
+     * How many buffered rows carry this key with a param equal to the given value.
+     */
     public static int countByKeyParam(LogKey key, String param, Object value) {
         int count = 0;
         for (Row row : buffer) {
@@ -169,6 +127,51 @@ public class EventLog {
 
     private static String escape(String value) {
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
+     * Frame and time come from the caller: this package cannot read the clock.
+     */
+    public static final class Builder {
+        private final LogKey key;
+        private final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+
+        private Builder(LogKey key) {
+            this.key = key;
+        }
+
+        public Builder param(String name, String value) {
+            params.put(name, value == null ? "-" : value);
+
+            return this;
+        }
+
+        public Builder param(String name, int value) {
+            params.put(name, value);
+
+            return this;
+        }
+
+        /**
+         * Nullable ids (construction, order): present as a number, absent
+         * as JSON null - the chain twin that joins REQUESTED / PREPARING /
+         * STARTED / CANCEL / ledger rows by cid+oid.
+         */
+        public Builder param(String name, Integer value) {
+            params.put(name, value);
+
+            return this;
+        }
+
+        public Builder param(String name, boolean value) {
+            params.put(name, value);
+
+            return this;
+        }
+
+        public void log(int frame, String time) {
+            EventLog.append(key, frame, time, params);
+        }
     }
 
     private static final class Row {

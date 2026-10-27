@@ -1,9 +1,10 @@
 package atlantis;
 
-import atlantis.core.world.Worlds;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
-import atlantis.game.*;
+import atlantis.core.world.Worlds;
+import atlantis.game.AtlantisGameCommander;
+import atlantis.game.GameSpeed;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.event.Event;
 import atlantis.game.event.Events;
@@ -19,61 +20,93 @@ import bwapi.*;
 public class Atlantis implements BWEventListener {
 
     /**
-     * Singleton instance.
-     */
-    private static Atlantis instance;
-
-    /**
-     * JBWAPI core class.
-     */
-    private static BWClient bwClient;
-
-    /**
-     * JBWAPI's game object, contains low-level methods.
-     */
-    private Game game;
-
-    /**
-     * Class controlling game speed.
-     */
-    private static GameSpeed gameSpeed;
-
-    /**
-     * Top abstraction-level class that governs all units, buildings etc.
-     */
-    private AtlantisGameCommander gameCommander;
-
-    // =========================================================
-    // Other variables
-    private boolean _isStarted = false; // Has game been started
-    private boolean _isPaused = false; // Is game currently paused
-    private final boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
-
-    // =========================================================
-    // Counters
-    /**
      * How many units we have killed.
      */
     public static int KILLED = 0;
     public static int KILLED_BUILDINGS = 0;
-
     /**
      * How many units we have lost.
      */
     public static int LOST = 0;
     public static int LOST_BUILDINGS = 0;
-
     /**
      * How many resources (minerals+gas) units we have killed were worth.
      */
     public static int KILLED_RESOURCES = 0;
-
     /**
      * How many resources (minerals+gas) units we have lost were worth.
      */
     public static int LOST_RESOURCES = 0;
+    /**
+     * Singleton instance.
+     */
+    private static Atlantis instance;
+    /**
+     * JBWAPI core class.
+     */
+    private static BWClient bwClient;
 
     // =========================================================
+    // Counters
+    /**
+     * Class controlling game speed.
+     */
+    private static GameSpeed gameSpeed;
+    private final boolean _initialActionsExecuted = false; // Have executed one-time actions at match start?
+    /**
+     * JBWAPI's game object, contains low-level methods.
+     */
+    private Game game;
+    /**
+     * Top abstraction-level class that governs all units, buildings etc.
+     */
+    private AtlantisGameCommander gameCommander;
+    // =========================================================
+    // Other variables
+    private boolean _isStarted = false; // Has game been started
+    private boolean _isPaused = false; // Is game currently paused
+
+    // =========================================================
+
+    /**
+     * You have to pass AtlantisRaceConfig object to initialize Atlantis.
+     */
+    private Atlantis() {
+        instance = this; // Save static reference to this instance, act like a singleton.
+    }
+
+    /**
+     * Returns the current Atlantis instance, useful for retrieving game information
+     *
+     * @return
+     */
+    public static Atlantis getInstance() {
+        if (instance == null) {
+            instance = new Atlantis();
+            AutoRegisterEventListeners.initializeListeners();
+        }
+
+        return instance;
+    }
+
+    /**
+     * This method returns bridge connector between Atlantis and Starcraft, which is a JBWAPI object. It
+     * provides low-level functionality for functions like canBuildHere etc. For more details, see JBWAPI
+     * project documentation.
+     */
+    public static Game game() {
+        return getInstance().game;
+    }
+
+    /**
+     * This is convenience that takes any number of arguments and displays them in one line.
+     */
+    public static void debug(Object... args) {
+        for (int i = 0; i < args.length - 1; i++) {
+            (System.out).print(args[i] + " / ");
+        }
+        (System.out).println(args[args.length - 1]);
+    }
 
     /**
      * It's executed only once, before the first game frame happens.
@@ -305,6 +338,13 @@ public class Atlantis implements BWEventListener {
         killProcesses();
     }
 
+    /**
+     * "Nuclear launch detected".
+     * <b>Guess: I guess in this case we don't know the exact point of it.</b>
+     *
+     * @Override public void nukeDetect() { }
+     */
+
     private void killProcesses() {
         if (Env.isOpenBW()) {
             // The OpenBW twin of the Wine/Windows exit path: kill the game host
@@ -379,6 +419,9 @@ public class Atlantis implements BWEventListener {
 
     }
 
+    // =========================================================
+    // Constructors
+
     /**
      * "Nuclear launch detected".
      */
@@ -387,17 +430,14 @@ public class Atlantis implements BWEventListener {
     }
 
     /**
-     * "Nuclear launch detected".
-     * <b>Guess: I guess in this case we don't know the exact point of it.</b>
-     *
-     * @Override public void nukeDetect() { }
-     */
-    /**
      * Other player has left the game.
      */
     @Override
     public void onPlayerLeft(Player player) {
     }
+
+    // =========================================================
+    // Start / Pause / Unpause
 
     /**
      * <b>Not sure, haven't used it, sorry</b>.
@@ -414,31 +454,6 @@ public class Atlantis implements BWEventListener {
     }
 
     // =========================================================
-    // Constructors
-
-    /**
-     * You have to pass AtlantisRaceConfig object to initialize Atlantis.
-     */
-    private Atlantis() {
-        instance = this; // Save static reference to this instance, act like a singleton.
-    }
-
-    /**
-     * Returns the current Atlantis instance, useful for retrieving game information
-     *
-     * @return
-     */
-    public static Atlantis getInstance() {
-        if (instance == null) {
-            instance = new Atlantis();
-            AutoRegisterEventListeners.initializeListeners();
-        }
-
-        return instance;
-    }
-
-    // =========================================================
-    // Start / Pause / Unpause
 
     /**
      * Starts the bot.
@@ -460,36 +475,15 @@ public class Atlantis implements BWEventListener {
         _isPaused = !_isPaused;
     }
 
-    // =========================================================
-
-    /**
-     * This method returns bridge connector between Atlantis and Starcraft, which is a JBWAPI object. It
-     * provides low-level functionality for functions like canBuildHere etc. For more details, see JBWAPI
-     * project documentation.
-     */
-    public static Game game() {
-        return getInstance().game;
-    }
-
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    public AtlantisGameCommander getGameCommander() {
-        return gameCommander;
     }
 
     // =========================================================
     // Utility / Axuliary methods
 
-    /**
-     * This is convenience that takes any number of arguments and displays them in one line.
-     */
-    public static void debug(Object... args) {
-        for (int i = 0; i < args.length - 1; i++) {
-            (System.out).print(args[i] + " / ");
-        }
-        (System.out).println(args[args.length - 1]);
+    public AtlantisGameCommander getGameCommander() {
+        return gameCommander;
     }
 
 }

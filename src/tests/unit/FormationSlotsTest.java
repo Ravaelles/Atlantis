@@ -13,12 +13,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the Moon crescent slots (formation Phase A): the gate (3+
@@ -68,7 +63,7 @@ public class FormationSlotsTest extends AbstractTestWithWorld {
             Selection ours = Select.our();
 
             assertNull(FormationSlots.slotFor(a, ours, pivot),
-                    "two units fight per-unit - no crescent, the duel rules own them");
+                "two units fight per-unit - no crescent, the duel rules own them");
         });
     }
 
@@ -80,7 +75,7 @@ public class FormationSlotsTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(a, b, c), fakeEnemies(), () -> {
             assertNull(FormationSlots.slotFor(a, Select.our(), null),
-                    "marching with no enemy anywhere keeps the leader bunching");
+                "marching with no enemy anywhere keeps the leader bunching");
         });
     }
 
@@ -105,14 +100,14 @@ public class FormationSlotsTest extends AbstractTestWithWorld {
             for (APosition slot : new APosition[]{slotA, slotB, slotC}) {
                 double d = slot.distTo(pivot);
                 assertTrue(Math.abs(d - r) < 1.5,
-                        "slots sit on the leader's circle around the pivot, got " + d + " vs " + r);
+                    "slots sit on the leader's circle around the pivot, got " + d + " vs " + r);
             }
 
             assertTrue(!slotA.equals(slotB) && !slotB.equals(slotC) && !slotA.equals(slotC),
-                    "every unit owns a different slot - no stacking on one pixel");
+                "every unit owns a different slot - no stacking on one pixel");
 
             assertEquals(slotA, FormationSlots.slotFor(a, ours, pivot),
-                    "same frame answers the same slot - no jitter between units");
+                "same frame answers the same slot - no jitter between units");
         });
     }
 
@@ -125,7 +120,7 @@ public class FormationSlotsTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(a, b, c), fakeEnemies(pivot), () -> {
             assertNull(FormationSlots.slotFor(a, Select.our(), pivot),
-                    "pivot inside 3.3 tiles is contact - the kite rules own it, not the arc");
+                "pivot inside 3.3 tiles is contact - the kite rules own it, not the arc");
         });
     }
 }

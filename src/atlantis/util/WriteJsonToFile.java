@@ -9,11 +9,11 @@ public class WriteJsonToFile {
     /**
      * Writes aligned JSON to a file with pretty printing and key alignment.
      *
-     * @param filename   Path of the output file
-     * @param keys       Array of JSON keys
-     * @param values     Array of JSON values (same order/length as keys)
-     * @param colWidth   Minimal width of key column (e.g. 32)
-     * @param useTabs    Whether to use tabs (true) or spaces (false) for indentation
+     * @param filename Path of the output file
+     * @param keys     Array of JSON keys
+     * @param values   Array of JSON values (same order/length as keys)
+     * @param colWidth Minimal width of key column (e.g. 32)
+     * @param useTabs  Whether to use tabs (true) or spaces (false) for indentation
      */
     public static boolean writeOrAppend(String filename, String[] keys, String[] values,
                                         int colWidth, boolean useTabs) {
@@ -56,8 +56,7 @@ public class WriteJsonToFile {
             writeOrAppend(writer, "}", append);
 
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             AConsole.errPrintln("Error writing to file: " + filename);
         }
 

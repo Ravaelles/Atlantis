@@ -16,9 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Sim batch runner (NEXT #160-sim): a 2-game batch lands the wine
@@ -30,6 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("infra")
 public class SimTunerBatchTest extends AbstractTestWithUnits {
+
+    private static boolean columnEquals(String header, String row, String column, String expected) {
+        String[] names = header.split(";");
+        String[] values = row.split(";");
+        for (int i = 0; i < names.length && i < values.length; i++) {
+            if (names[i].equals(column)) return values[i].equals(expected);
+        }
+        return false;
+    }
 
     @AfterEach
     public void resetTuning() {
@@ -67,7 +74,7 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
     public void batchLandsTheWineContractAndTheDriverAcceptsIt() throws Exception {
         Path outdir = Files.createTempDirectory("sim-tuner-batch-test");
 
-        int exit = SimTunerBatch.run(new String[] {
+        int exit = SimTunerBatch.run(new String[]{
             new DuelHitsMinutesScenario().mapFile(), "2", outdir.toString(),
             "KiteStepTiles=2.0", "EscapeStaticWeight=10.0"
         });
@@ -94,8 +101,7 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
 
         Path manifest = outdir.resolve("manifest.txt");
         String text = new String(Files.readAllBytes(manifest), StandardCharsets.UTF_8);
-        assertTrue(new DuelHitsMinutesScenario().mapFile().equals(TunerBatchManifest.parseMap(text)),
-            "manifest names the map");
+        assertEquals(new DuelHitsMinutesScenario().mapFile(), TunerBatchManifest.parseMap(text), "manifest names the map");
         List<TunerBatchManifest.Game> games = TunerBatchManifest.parseGames(text);
         assertEquals(2, games.size(), "both games parse");
         String rerendered = TunerBatchManifest.render(
@@ -104,7 +110,7 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
 
         Path hof = outdir.resolve("halloffame.txt");
         Path fragment = outdir.resolve("fragment.env");
-        TunerDriver.main(new String[] {
+        TunerDriver.main(new String[]{
             "--hof", hof.toString(), "--manifest", manifest.toString(), "--out", fragment.toString()
         });
         assertTrue(Files.exists(fragment), "driver wrote the next fragment");
@@ -117,7 +123,7 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
     public void unknownMapFailsLoudly() throws Exception {
         Path outdir = Files.createTempDirectory("sim-tuner-batch-map-test");
 
-        int exit = SimTunerBatch.run(new String[] { "NoSuchMap.scm", "1", outdir.toString() });
+        int exit = SimTunerBatch.run(new String[]{"NoSuchMap.scm", "1", outdir.toString()});
 
         assertEquals(2, exit, "only the duel scenario tunes");
     }
@@ -127,12 +133,11 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
         Path outdir = Files.createTempDirectory("sim-tuner-batch-path-test");
 
         int exit = SimTunerBatch.run(
-            new String[] { "maps/ums/rav/protoss/1Drag_v_1Zeal.scm", "1", outdir.toString() });
+            new String[]{"maps/ums/rav/protoss/1Drag_v_1Zeal.scm", "1", outdir.toString()});
 
         assertEquals(0, exit, "tune drivers pass map paths, the scenario is picked by file name");
         String manifest = new String(Files.readAllBytes(outdir.resolve("manifest.txt")), StandardCharsets.UTF_8);
-        assertTrue(TunerBatchManifest.parseMap(manifest).equals("1Drag_v_1Zeal.scm"),
-            "manifest records the scenario map, not the caller path");
+        assertEquals("1Drag_v_1Zeal.scm", TunerBatchManifest.parseMap(manifest), "manifest records the scenario map, not the caller path");
     }
 
     @Test
@@ -140,17 +145,8 @@ public class SimTunerBatchTest extends AbstractTestWithUnits {
         Path outdir = Files.createTempDirectory("sim-tuner-batch-param-test");
 
         int exit = SimTunerBatch.run(
-            new String[] { new DuelHitsMinutesScenario().mapFile(), "1", outdir.toString(), "Nope=1.0" });
+            new String[]{new DuelHitsMinutesScenario().mapFile(), "1", outdir.toString(), "Nope=1.0"});
 
         assertEquals(2, exit, "typo in a param name must not tune silently");
-    }
-
-    private static boolean columnEquals(String header, String row, String column, String expected) {
-        String[] names = header.split(";");
-        String[] values = row.split(";");
-        for (int i = 0; i < names.length && i < values.length; i++) {
-            if (names[i].equals(column)) return values[i].equals(expected);
-        }
-        return false;
     }
 }

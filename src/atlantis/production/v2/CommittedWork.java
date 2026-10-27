@@ -33,7 +33,9 @@ public final class CommittedWork {
         return frame;
     }
 
-    /** A supply provider under construction: its supply arrives at completion. */
+    /**
+     * A supply provider under construction: its supply arrives at completion.
+     */
     public static void providerCompletesAt(ResourceTimeline timeline, int completionFrame, int supplyProvided) {
         if (supplyProvided > 0)
             timeline.addSupplyFrom(completionFrame, supplyProvided);
@@ -45,6 +47,6 @@ public final class CommittedWork {
      */
     public static void workerCompletesAt(ResourceTimeline timeline, int completionFrame) {
         timeline.addMiningIncome(completionFrame + EconomyModel.NEW_WORKER_FIRST_TRIP_FRAMES,
-                EconomyModel.MINERALS_PER_WORKER_FRAME, 0);
+            EconomyModel.MINERALS_PER_WORKER_FRAME, 0);
     }
 }

@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Every attack acquisition and every animation hold names itself,
@@ -25,6 +23,22 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class ShotTwinTest extends AbstractTestWithWorld {
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    private static int countRows(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + needle.length();
+        }
+    }
 
     @Override
     public Race initRace() {
@@ -53,10 +67,6 @@ public class ShotTwinTest extends AbstractTestWithWorld {
         ShotTwin.clearForTests();
     }
 
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
-    }
-
     @Test
     public void attackOrderNamesTheShot() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
@@ -73,7 +83,10 @@ public class ShotTwinTest extends AbstractTestWithWorld {
 
             boolean attacked = false;
             for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
-                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacked = true;
+                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) {
+                    attacked = true;
+                    break;
+                }
             }
             assertTrue(attacked, "healthy at 2 tiles: shoot, do not step: " + ordersOf(dragoon));
             assertTrue(EventLog.toJsonLines().contains("\"result\":\"shot-fired\""),
@@ -116,21 +129,9 @@ public class ShotTwinTest extends AbstractTestWithWorld {
             ShotTwin.holding(dragoon, zealot);
 
             String rows = EventLog.toJsonLines();
-            assertTrue(countRows(rows, "\"result\":\"shot-fired\"") == 2, "got: " + rows);
-            assertTrue(countRows(rows, "\"result\":\"holding-shot\"") == 1, "got: " + rows);
+            assertEquals(2, countRows(rows, "\"result\":\"shot-fired\""), "got: " + rows);
+            assertEquals(1, countRows(rows, "\"result\":\"holding-shot\""), "got: " + rows);
         });
-    }
-
-    private static int countRows(String text, String needle) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = text.indexOf(needle, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + needle.length();
-        }
     }
 
     @Test

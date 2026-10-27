@@ -5,9 +5,7 @@ import atlantis.placement.engine.RegionReachability;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The {@code Reachability} implementation that does not ask the engine - and
@@ -93,11 +91,13 @@ public class RegionReachabilityTest {
         RegionReachability reachability = new RegionReachability(openMap(32));
 
         assertTrue(
-                reachability.canReach(20, 20, 20, 20),
-                "the builder must be able to reach the tile it is standing on");
+            reachability.canReach(20, 20, 20, 20),
+            "the builder must be able to reach the tile it is standing on");
     }
 
-    /** Two tiles in the same open area are connected; that is the normal case. */
+    /**
+     * Two tiles in the same open area are connected; that is the normal case.
+     */
     @Test
     public void tilesInOneOpenAreaAreConnected() {
         RegionReachability reachability = new RegionReachability(openMap(32));
@@ -115,7 +115,7 @@ public class RegionReachabilityTest {
     @Test
     public void tilesSeparatedByAWallAreNotConnected() {
         RegionReachability reachability = new RegionReachability(
-                mapWithWalls(12, "6,0", "6,1", "6,2", "6,3", "6,4", "6,5", "6,6", "6,7", "6,8", "6,9", "6,10", "6,11"));
+            mapWithWalls(12, "6,0", "6,1", "6,2", "6,3", "6,4", "6,5", "6,6", "6,7", "6,8", "6,9", "6,10", "6,11"));
 
         assertTrue(reachability.canReach(1, 6, 5, 6), "both are left of the wall");
         assertFalse(reachability.canReach(1, 6, 10, 6), "the wall is not crossable");
@@ -131,8 +131,8 @@ public class RegionReachabilityTest {
         RegionReachability reachability = new RegionReachability(mapWithWalls(10, "5,5"));
 
         assertFalse(
-                reachability.canReach(5, 5, 5, 5),
-                "the reflexivity rule is about WALKABLE tiles; an obstacle is not reachable");
+            reachability.canReach(5, 5, 5, 5),
+            "the reflexivity rule is about WALKABLE tiles; an obstacle is not reachable");
     }
 
     /**

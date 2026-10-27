@@ -12,6 +12,7 @@ import java.util.List;
  * (owner ruling 1A/3A): the legacy files stay readable for reference,
  * nothing is lifted.
  */
+
 /**
  * Protoss opening vocabulary (domain language): one class per goal, this
  * file only assembles the ladder in play order. Game meaning lives here;

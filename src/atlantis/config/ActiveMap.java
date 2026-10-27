@@ -119,7 +119,9 @@ public class ActiveMap {
         return null;
     }
 
-    /** Recursive search for an exact file name; returns the path relative to {@code dir}, or null. */
+    /**
+     * Recursive search for an exact file name; returns the path relative to {@code dir}, or null.
+     */
     private static String findFile(File dir, String fileName, int depth) {
         if (depth > 6) return null;
 
@@ -130,7 +132,8 @@ public class ActiveMap {
             if (child.isDirectory()) {
                 String nested = findFile(child, fileName, depth + 1);
                 if (nested != null) return child.getName() + "/" + nested;
-            } else if (child.getName().equalsIgnoreCase(fileName)) {
+            }
+            else if (child.getName().equalsIgnoreCase(fileName)) {
                 return child.getName();
             }
         }
@@ -140,7 +143,7 @@ public class ActiveMap {
     public static boolean isMap(String... mapPartialName) {
         if (ActiveMap.mapName == null) return false;
 
-        for (String subname : mapPartialName){
+        for (String subname : mapPartialName) {
             if (ActiveMap.mapName.contains(subname)) return true;
         }
 

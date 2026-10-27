@@ -9,8 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #160, step 6: the driver moves files and writes the next env
@@ -34,11 +33,11 @@ public class TunerDriverTest {
         Files.write(manifest, manifest("1Drag_v_1Zeal.scm", "game-1", true, 10, 30).getBytes(StandardCharsets.UTF_8));
         Path out = dir.resolve("fragment.env");
 
-        TunerDriver.main(new String[] {
+        TunerDriver.main(new String[]{
             "--hof", dir.resolve("hof.txt").toString(),
             "--manifest", manifest.toString(),
             "--out", out.toString(),
-            "--step", "0.05", "--radius", "0", "--seed", "7" });
+            "--step", "0.05", "--radius", "0", "--seed", "7"});
 
         // One row is not a history: jitter radius is 0 as well, so the
         // proposal rides at champion values - still a full fragment.
@@ -54,13 +53,13 @@ public class TunerDriverTest {
         Path manifest = dir.resolve("manifest.txt");
         Files.write(manifest, "map=m\njar=j\ngames=0\n".getBytes(StandardCharsets.UTF_8));
 
-        TunerDriver.main(new String[] {
+        TunerDriver.main(new String[]{
             "--hof", dir.resolve("hof.txt").toString(),
             "--manifest", manifest.toString(),
             "--out", dir.resolve("fragment.env").toString(),
-            "--step", "0.05", "--radius", "0.1", "--seed", "7" });
+            "--step", "0.05", "--radius", "0.1", "--seed", "7"});
 
-        assertTrue(!Files.exists(dir.resolve("fragment.env")), "cold start: batch randomizes");
+        assertFalse(Files.exists(dir.resolve("fragment.env")), "cold start: batch randomizes");
         assertTrue(Files.exists(dir.resolve("hof.txt")), "archive file still created");
     }
 

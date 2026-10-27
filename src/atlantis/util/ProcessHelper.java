@@ -4,6 +4,8 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.WineWindowConfig;
 
+import java.nio.charset.StandardCharsets;
+
 
 /**
  * Kills and starts processes: the Starcraft game itself and Chaoslauncher on
@@ -103,8 +105,8 @@ public class ProcessHelper {
         try {
             executeOnHostQuietly("pkill -9 -x StarCraft.exe");
             executeOnHostQuietly("pkill -9 Chaoslauncher");
+        } catch (Exception ex) {
         }
-        catch (Exception ex) {}
     }
 
     /**
@@ -253,7 +255,7 @@ public class ProcessHelper {
         while ((read = stream.read(chunk)) != -1) {
             buffer.write(chunk, 0, read);
         }
-        return new String(buffer.toByteArray(), "UTF-8");
+        return buffer.toString(StandardCharsets.UTF_8);
     }
 
     /**
@@ -302,8 +304,8 @@ public class ProcessHelper {
     public static boolean isOpenBWProcessRunning() {
         try {
             Process p = new ProcessBuilder("pgrep", "-x", "BWAPILauncher")
-                    .redirectErrorStream(true)
-                    .start();
+                .redirectErrorStream(true)
+                .start();
             p.waitFor();
 
             return p.exitValue() == 0;

@@ -59,14 +59,6 @@ public class UnitStatsTable implements UnitStats.Source {
      * entry states what the engine answers and why it is wrong.
      */
     private static final Map<String, int[]> WEAPONS = new HashMap<>();
-
-    static {
-        // No corrections right now. The two historical candidates turned out
-        // to be base-vs-upgraded confusion (see the class javadoc), and
-        // Psi_Blades' factor of 1 is compensated where the bot folds
-        // maxGroundHits into the weapon (WeaponUtil, Zealot x2).
-    }
-
     /**
      * bwapi enum name ({@code type.ut().name()}) to {hit points, shields}.
      * {@code -1} means "the engine is right, ask it". Same admission rule as
@@ -75,11 +67,73 @@ public class UnitStatsTable implements UnitStats.Source {
     private static final Map<String, int[]> NUMBERS = new HashMap<>();
 
     static {
+        // No corrections right now. The two historical candidates turned out
+        // to be base-vs-upgraded confusion (see the class javadoc), and
+        // Psi_Blades' factor of 1 is compensated where the bot folds
+        // maxGroundHits into the weapon (WeaponUtil, Zealot x2).
+    }
+
+    static {
         // No corrections right now.
     }
 
     public static void install() {
         UnitStats.useSource(new UnitStatsTable());
+    }
+
+    /**
+     * Weapons with a correction in this table. Empty means the engine answers
+     * every weapon question - which is the point: a correction here must be
+     * earned, not typed.
+     */
+    public static Set<String> weaponsWithoutEntry() {
+        Set<String> missing = new TreeSet<>();
+        for (WeaponType weapon : WeaponType.values()) {
+            if (weapon == WeaponType.None || weapon == WeaponType.Unknown) continue;
+            if (!WEAPONS.containsKey(weapon.name())) {
+                missing.add(weapon.name());
+            }
+        }
+        return missing;
+    }
+
+    public static boolean hasEntry(AUnitType type) {
+        return NUMBERS.containsKey(type.ut().name());
+    }
+
+    /**
+     * Every unit type name in the table. A name here that no {@link AUnitType}
+     * answers to is a dead entry: it would never be used and would look like
+     * coverage, so {@code UnitStatsTableTest} checks each one resolves.
+     */
+    public static Set<String> unitEntries() {
+        return new TreeSet<>(NUMBERS.keySet());
+    }
+
+    /**
+     * Every weapon name in the table, with the same reason as {@link #unitEntries()}.
+     */
+    public static Set<String> weaponEntries() {
+        return new TreeSet<>(WEAPONS.keySet());
+    }
+
+    /**
+     * Every unit type without a correction. That is the normal state now: the
+     * engine answers, and this table only patches what it gets wrong.
+     */
+    public static Set<String> typesWithoutEntry() {
+        Set<String> missing = new TreeSet<>();
+        for (AUnitType type : AUnitType.getAllUnitTypes()) {
+            if (isRealType(type) && !NUMBERS.containsKey(type.ut().name())) {
+                missing.add(type.ut().name());
+            }
+        }
+        return missing;
+    }
+
+    private static boolean isRealType(AUnitType type) {
+        String name = type.ut().name();
+        return !name.startsWith("Hero_") && !name.startsWith("Unknown") && !name.startsWith("Spell_");
     }
 
     @Override
@@ -115,58 +169,5 @@ public class UnitStatsTable implements UnitStats.Source {
         int[] numbers = WEAPONS.get(weapon.name());
 
         return numbers == null ? -1 : numbers[2];
-    }
-
-    /**
-     * Weapons with a correction in this table. Empty means the engine answers
-     * every weapon question - which is the point: a correction here must be
-     * earned, not typed.
-     */
-    public static Set<String> weaponsWithoutEntry() {
-        Set<String> missing = new TreeSet<>();
-        for (WeaponType weapon : WeaponType.values()) {
-            if (weapon == WeaponType.None || weapon == WeaponType.Unknown) continue;
-            if (!WEAPONS.containsKey(weapon.name())) {
-                missing.add(weapon.name());
-            }
-        }
-        return missing;
-    }
-
-    public static boolean hasEntry(AUnitType type) {
-        return NUMBERS.containsKey(type.ut().name());
-    }
-
-    /**
-     * Every unit type name in the table. A name here that no {@link AUnitType}
-     * answers to is a dead entry: it would never be used and would look like
-     * coverage, so {@code UnitStatsTableTest} checks each one resolves.
-     */
-    public static Set<String> unitEntries() {
-        return new TreeSet<>(NUMBERS.keySet());
-    }
-
-    /** Every weapon name in the table, with the same reason as {@link #unitEntries()}. */
-    public static Set<String> weaponEntries() {
-        return new TreeSet<>(WEAPONS.keySet());
-    }
-
-    /**
-     * Every unit type without a correction. That is the normal state now: the
-     * engine answers, and this table only patches what it gets wrong.
-     */
-    public static Set<String> typesWithoutEntry() {
-        Set<String> missing = new TreeSet<>();
-        for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            if (isRealType(type) && !NUMBERS.containsKey(type.ut().name())) {
-                missing.add(type.ut().name());
-            }
-        }
-        return missing;
-    }
-
-    private static boolean isRealType(AUnitType type) {
-        String name = type.ut().name();
-        return !name.startsWith("Hero_") && !name.startsWith("Unknown") && !name.startsWith("Spell_");
     }
 }

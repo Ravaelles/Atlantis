@@ -1,23 +1,22 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.util.AConsole;
-import atlantis.util.cache.ValidityCheck;
-import atlantis.battle.eval.estimate.Estimate;
-import atlantis.core.world.UnitState;
-import atlantis.core.world.Worlds;
-import atlantis.battle.generic.DoNothing;
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.battle.eval.AtlantisJfap;
 import atlantis.battle.avoid.margin.UnitRange;
 import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Squad;
+import atlantis.battle.eval.AtlantisJfap;
+import atlantis.battle.eval.estimate.Estimate;
 import atlantis.battle.eval.tweaks.ProtossJfapTweaksConsiderChokesEtc;
+import atlantis.battle.generic.DoNothing;
 import atlantis.battle.running.ARunningManager;
-
+import atlantis.cherryvis.ACherryVis;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
+import atlantis.core.world.UnitState;
+import atlantis.core.world.Worlds;
+import atlantis.debug.tools.LogUnitsToFiles;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
@@ -52,13 +51,14 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.gather.AMineralGathering;
-import atlantis.util.*;
+import atlantis.util.AConsole;
+import atlantis.util.Vector;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import atlantis.util.cache.ValidityCheck;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
-import atlantis.debug.tools.LogUnitsToFiles;
 import bwapi.*;
-import atlantis.cherryvis.ACherryVis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,53 +79,6 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, ValidityCheck {
     public static final int NEAR_DIST = 15;
-
-    /**
-     * Choke answers re-derive ~3x per second; preserved verbatim cadence,
-     * tune only with a measured cadence (CONVENTIONS §31).
-     */
-    private static final int NEAREST_CHOKE_TTL_FRAMES = 77;
-
-    /** Within-choke containment re-derives every frame. */
-    private static final int IS_WITHIN_CHOKE_TTL_FRAMES = 1;
-
-    /**
-     * Inner BWAPI Unit object that we extend for easier code maintainability.
-     */
-    private Unit u;
-
-    /**
-     * Last manager used by this unit. Null means that no manager has been used.
-     * You need to set this variable manually each time by using setManagerUsed().
-     */
-    private Manager manager;
-
-    /**
-     * Stage D: the door through which this unit's
-     * orders reach the engine. Live game uses {@link BwapiOrderSink}; tests
-     * plug in a recording fake via {@link #setOrderSink(OrderSink)}.
-     * This per-instance seam dies in Stage E, when the World injects the sink.
-     */
-    private OrderSink orderSink = BwapiOrderSink.instance();
-
-    /**
-     * Stage E: accumulated derived per-unit state,
-     * migrated out of the former {@code public _last*} fields. The only
-     * mutable per-unit state holder besides the engine binding itself.
-     */
-    private final UnitState unitState = new UnitState();
-
-    /**
-     * Cache var storing generic Object-type keys.
-     */
-    private Cache<Object> cache = new Cache<>();
-    private Cache<Integer> cacheInt = new Cache<>();
-    private Cache<Boolean> cacheBoolean = new Cache<>();
-
-    /**
-     * Last type that this unit was seen with. It changes e.g. for Zerg Eggs.
-     */
-    protected AUnitType _lastType = null;
     /**
      * Write every manager log line to logs/units/unit_file.txt, so it is possible to
      * debug what a unit was doing. 0 = off.
@@ -138,37 +91,73 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * {@link #addLogMessage} / {@link #replaceLastManagerMessage}.</p>
      */
     public static final int SAVE_UNIT_LOGS_TO_FILES = 0;
-
-    private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
-    private Log managerLogs = new Log(30 * 30, 14);
-    private Log commandHistory = new Log(-1, 10);
-    private UnderAttack underAttack = new UnderAttack(this);
+    /**
+     * Choke answers re-derive ~3x per second; preserved verbatim cadence,
+     * tune only with a measured cadence (CONVENTIONS §31).
+     */
+    private static final int NEAREST_CHOKE_TTL_FRAMES = 77;
+    /**
+     * Within-choke containment re-derives every frame.
+     */
+    private static final int IS_WITHIN_CHOKE_TTL_FRAMES = 1;
+    public static int _totalHitCount = 0;
+    /**
+     * Stage E: accumulated derived per-unit state,
+     * migrated out of the former {@code public _last*} fields. The only
+     * mutable per-unit state holder besides the engine binding itself.
+     */
+    private final UnitState unitState = new UnitState();
+    public int _hitCount = 0;
+    /**
+     * Last type that this unit was seen with. It changes e.g. for Zerg Eggs.
+     */
+    protected AUnitType _lastType = null;
+    protected int _lastActionReceived = -9668;
+    /**
+     * Inner BWAPI Unit object that we extend for easier code maintainability.
+     */
+    private Unit u;
+    /**
+     * Last manager used by this unit. Null means that no manager has been used.
+     * You need to set this variable manually each time by using setManagerUsed().
+     */
+    private Manager manager;
+    /**
+     * Stage D: the door through which this unit's
+     * orders reach the engine. Live game uses {@link BwapiOrderSink}; tests
+     * plug in a recording fake via {@link #setOrderSink(OrderSink)}.
+     * This per-instance seam dies in Stage E, when the World injects the sink.
+     */
+    private OrderSink orderSink = BwapiOrderSink.instance();
+    /**
+     * Cache var storing generic Object-type keys.
+     */
+    private final Cache<Object> cache = new Cache<>();
+    private final Cache<Integer> cacheInt = new Cache<>();
+    private final Cache<Boolean> cacheBoolean = new Cache<>();
+    private final Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
+    private final Log managerLogs = new Log(30 * 30, 14);
+    private final Log commandHistory = new Log(-1, 10);
+    private final UnderAttack underAttack = new UnderAttack(this);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
     private AttackState attackState = AttackState.getDefault();
 
+//    private AUnit runningFrom = null;
     private ABullet _lastBullet = null;
-
     /**
      * Production order object for a unit that's currently being trained/produced by this unit.
      */
     private ProductionOrder productionOrder = null;
-
     /**
      * For buildings, this is the construction object that represents the building process.
      */
     private Construction construction = null;
-
-//    private AUnit runningFrom = null;
-
     /**
      * Can be used for special missions to remember position assigned for this unit.
      */
     private APosition specialPosition = null;
-    protected int _lastActionReceived = -9668;
-    private int _lastAttackCommand = -9876;
-    public int _hitCount = 0;
-    public static int _totalHitCount = 0;
+    private final int _lastAttackCommand = -9876;
     private AUnit _targetUnitToAttack;
 
     private boolean isScout = false;
@@ -178,6 +167,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     // =========================================================
     // Constructors only used for tests
+    private Squad squad;
+    private ARunningManager runningManager;
+    private boolean _repairableMechanically = false;
+
+    // =========================================================
+    private boolean _healable = false;
+    private boolean _isMilitaryBuildingAntiGround = false;
+
+    // =========================================================
+    private boolean _isMilitaryBuildingAntiAir = false;
+    private String tooltip;
+    private String tooltipForManager;
+
+    // =========================================================
+    private double _size = -1;
+    private double _smallScaleEval = 0;
 
     protected AUnit(Class<AbstractFoggedUnit> allowedClass) {
         /**
@@ -201,7 +206,70 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         init();
     }
 
-    // =========================================================
+    /**
+     * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
+     */
+    private static Object convertToAUnitCollection(Object collection) {
+        if (collection instanceof Map) {
+            Map<AUnit, Integer> result = new HashMap<>();
+            for (Object key : ((Map) collection).keySet()) {
+                Unit u = (Unit) key;
+                AUnit unit = Worlds.units().createFrom(u);
+                result.put(unit, (Integer) ((Map) collection).get(u));
+            }
+            return result;
+        }
+        else if (collection instanceof List) {
+            List<AUnit> result = new ArrayList<>();
+            for (Object key : (List) collection) {
+                Unit u = (Unit) key;
+                AUnit unit = Worlds.units().createFrom(u);
+                result.add(unit);
+            }
+            return result;
+        }
+        else {
+            throw new RuntimeException("I don't know how to convert collection of type: "
+                + collection.toString());
+        }
+    }
+
+    /**
+     * Who issued this order, for the death log (NEXT #176): the first
+     * project frame above the funnel ({@code AUnit}, {@code AUnitOrders},
+     * {@code FakeUnit} in tests). Bounded walk on a hot path: orders are
+     * tens per frame, the walk stops at the first project frame -
+     * microseconds, never a pass over the whole stack. Null when unknown
+     * (engine frames); callers omit the suffix then.
+     */
+    private static String issuerClass() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (StackTraceElement frame : stack) {
+            String cls = frame.getClassName();
+            if (cls == null) continue;
+            if (cls.equals("java.lang.Thread")
+                || cls.equals(AUnit.class.getName())
+                || cls.equals(atlantis.units.AUnitOrders.class.getName())
+                || cls.equals("tests.fakes.FakeUnit")) continue;
+            if (cls.startsWith("java.") || cls.startsWith("javax.")
+                || cls.startsWith("sun.") || cls.startsWith("jdk.")
+                || cls.startsWith("org.") || cls.startsWith("com.")
+                || cls.startsWith("net.") || cls.startsWith("io.")
+                || cls.startsWith("kotlin.") || cls.startsWith("scala.")) continue;
+            String base = cls;
+            int dollar = base.indexOf('$');
+            if (dollar >= 0) base = base.substring(0, dollar);
+            int dot = base.lastIndexOf('.');
+
+            return dot < 0 ? base : base.substring(dot + 1);
+        }
+        return null;
+    }
+
+    private static String withIssuer(String tag) {
+        String issuer = issuerClass();
+        return issuer == null ? tag : tag + "/" + issuer;
+    }
 
     protected void lateInitByAbstractFoggedUnit() {
         init();
@@ -229,8 +297,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
     }
-
-    // =========================================================
 
     /**
      * Last Manager used by this unit. Null means to manager has been used.
@@ -261,8 +327,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         cacheBoolean.clear();
     }
 
-    // =========================================================
-
     /**
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
      */
@@ -276,6 +340,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         return cacheType();
     }
+
+    // =========================================================
+    // =========================================================
+    // =========================================================
 
     public UnitType bwapiType() {
         if (this instanceof AbstractFoggedUnit) {
@@ -357,6 +425,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return -1;
     }
 
+    // =========================================================
+    // Important methods
+
     /**
      * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnit class. AUnit class should be used always in place
      * of Unit.
@@ -381,6 +452,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return unitState;
     }
 
+    // =========================================================
+
     /**
      * Stage D: the {@link OrderSink} this unit's orders go through.
      */
@@ -394,6 +467,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public void setOrderSink(OrderSink orderSink) {
         this.orderSink = orderSink;
     }
+
+    // =========================================================
+    // Compare type methods
 
     @Override
     public boolean equals(Object o) {
@@ -411,21 +487,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return id();
     }
 
-    // =========================================================
-    // =========================================================
-    // =========================================================
-
-    private Squad squad;
-    private ARunningManager runningManager;
-
-    private boolean _repairableMechanically = false;
-    private boolean _healable = false;
-    private boolean _isMilitaryBuildingAntiGround = false;
-    private boolean _isMilitaryBuildingAntiAir = false;
-
-    // =========================================================
-    // Important methods
-
     /**
      * Unit will move by given distance (in build tiles) from given *from*.
      */
@@ -440,8 +501,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean moveAwayFrom(HasPosition from, double moveDistance, Action action) {
         return MoveAway.from(this, from, moveDistance, action, "");
     }
-
-    // =========================================================
 
     @Override
     public String toString() {
@@ -459,9 +518,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public int compareTo(AUnit otherUnit) {
         return Integer.compare(this.hashCode(), otherUnit.hashCode());
     }
-
-    // =========================================================
-    // Compare type methods
 
     public boolean isAlive() {
         if (isOur()) return hp() > 0;
@@ -619,9 +675,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().name() + " #" + id();
     }
 
+//    public boolean hasBiggerWeaponRangeThan(AUnit enemyUnit) {
+//        return type().weaponRangeAgainst(enemyUnit) > enemyUnit.type().weaponRangeAgainst(this);
+//    }
+
     public boolean isTargetInWeaponRangeAccordingToGame(AUnit target) {
         return target == null || hasWeaponRangeByGame(target);
     }
+
+    // ===  Debugging / Painting methods ========================================
 
     public boolean isTargetInWeaponRangeAccordingToGame() {
         AUnit target = target();
@@ -691,10 +753,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().weaponRangeAgainst(enemyUnit);
     }
 
-//    public boolean hasBiggerWeaponRangeThan(AUnit enemyUnit) {
-//        return type().weaponRangeAgainst(enemyUnit) > enemyUnit.type().weaponRangeAgainst(this);
-//    }
-
     /**
      * Returns which unit of the same type this unit is. E.g. it can be first (0) Overlord or third (2)
      * Zergling. It compares IDs of units to return correct result.
@@ -712,11 +770,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             }
         );
     }
-
-    // ===  Debugging / Painting methods ========================================
-
-    private String tooltip;
-    private String tooltipForManager;
 
     public AUnit setTooltipTactical(String tooltip) {
         return setTooltip(tooltip, false);
@@ -747,6 +800,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return this;
     }
 
+    // =========================================================
+    // Very specific auxiliary methods
+
     public boolean setTooltip(String tooltip) {
         if (Env.isTournament()) return true;
 
@@ -771,9 +827,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean hasTooltip() {
         return tooltip != null && !tooltip.equals("");
     }
-
-    // =========================================================
-    // Very specific auxiliary methods
 
     /**
      * Returns true if given unit is one of buildings like Bunker, Photon Cannon etc. For more details, you
@@ -802,6 +855,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().equals(AUnitType.Zerg_Larva) || type().equals(AUnitType.Zerg_Egg);
     }
 
+    // =========================================================
+    // Auxiliary
+
     public boolean isLarva() {
         return type().equals(AUnitType.Zerg_Larva);
     }
@@ -817,6 +873,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().isRealUnit();
     }
 
+    // =========================================================
+    // RANGE and ATTACK methods
+
     public boolean isRealUnitOrBuilding() {
         return type().isRealUnitOrBuilding();
     }
@@ -824,9 +883,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isRealUnitOrCombatBuilding() {
         return type().isRealUnitOrCombatBuilding();
     }
-
-    // =========================================================
-    // Auxiliary
 
     public double distTo(AUnit otherUnit) {
 //        System.err.println("AUnit::distTo (AUnit)");
@@ -841,37 +897,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         return PositionUtil.distanceTo(position(), o);
     }
-
-    /**
-     * Converts collection of <b>Unit</b> variables into collection of <b>AUnit</b> variables.
-     */
-    private static Object convertToAUnitCollection(Object collection) {
-        if (collection instanceof Map) {
-            Map<AUnit, Integer> result = new HashMap<>();
-            for (Object key : ((Map) collection).keySet()) {
-                Unit u = (Unit) key;
-                AUnit unit = Worlds.units().createFrom(u);
-                result.put(unit, (Integer) ((Map) collection).get(u));
-            }
-            return result;
-        }
-        else if (collection instanceof List) {
-            List<AUnit> result = new ArrayList<>();
-            for (Object key : (List) collection) {
-                Unit u = (Unit) key;
-                AUnit unit = Worlds.units().createFrom(u);
-                result.add(unit);
-            }
-            return result;
-        }
-        else {
-            throw new RuntimeException("I don't know how to convert collection of type: "
-                + collection.toString());
-        }
-    }
-
-    // =========================================================
-    // RANGE and ATTACK methods
 
     /**
      * Returns true if this unit is capable of attacking <b>target</b>. For example Zerglings can't attack
@@ -923,9 +948,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (checkVisibility && target.effUndetected()) return false;
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) return false;
         if (isRanged() && target.isUnderDarkSwarm()) return false;
-        if (isABuilding() && isProtoss() && !isPowered()) return false;
 
-        return true;
+        return !isABuilding() || !isProtoss() || isPowered();
     }
 
     public boolean hasWeaponToAttackThisUnit(AUnit otherUnit) {
@@ -966,6 +990,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return dist <= (weaponRangeAgainst(targetUnit) + extraMargin);
     }
 
+    // === Getters ============================================= & setters
+
     /**
      * Returns weapon that would be used to attack given target. If no such weapon, then WeaponTypes.None will
      * be returned.
@@ -1000,8 +1026,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return distTo(target) >= minDist;
     }
 
-    // === Getters ============================================= & setters
-
     /**
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
@@ -1028,6 +1052,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return AGame.now() - _lastActionReceived <= maxFramesAgo;
     }
 
+    /**
+     * Returns true if unit is in the middle of an attack and should not be interrupted otherwise
+     * it would never shoot, just raise the weapon.
+     */
+//    public boolean isJustShooting() {
+//        return DontInterruptStartedAttacks.shouldNotInterrupt(unit());
+//    }
+
     public int lastOrderWasFramesAgo() {
         return AGame.now() - _lastActionReceived;
     }
@@ -1041,7 +1073,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     /**
      * Use AssignUnitToSquad to handle this!
-     *
+     * <p>
      * Assign battle squad object for military units.
      */
     public AUnit forceSetSquad(Squad squad) {
@@ -1056,14 +1088,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public ARunningManager runningManager() {
         return runningManager;
     }
-
-    /**
-     * Returns true if unit is in the middle of an attack and should not be interrupted otherwise
-     * it would never shoot, just raise the weapon.
-     */
-//    public boolean isJustShooting() {
-//        return DontInterruptStartedAttacks.shouldNotInterrupt(unit());
-//    }
 
     /**
      * Returns the frames counter (time) when the unit had been issued any command.
@@ -1110,6 +1134,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         );
     }
 
+    /**
+     * Indicates that this unit should be running from given enemy unit.
+     * If enemy parameter is null, it will try to determine the best run behavior.
+     * If enemy is not null, it will try running straight from this unit.
+     */
+//    public boolean runFrom(HasPosition runFrom, double dist) {
+//        return runningManager.runFrom(runFrom, dist);
+//    }
+//
+//    public boolean runFrom() {
+//        return runningManager.runFromCloseEnemies();
+//    }
+
     public WeaponType airWeapon() {
         return type().airWeapon();
     }
@@ -1131,6 +1168,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
         return 0;
     }
+
+//    public Construction construction() {
+//        return ConstructionRequests.constructionFor(this);
+//    }
 
     /**
      * Returns number of frames unit STILL has to wait before it can shoot again.
@@ -1157,19 +1198,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     /**
-     * Indicates that this unit should be running from given enemy unit.
-     * If enemy parameter is null, it will try to determine the best run behavior.
-     * If enemy is not null, it will try running straight from this unit.
-     */
-//    public boolean runFrom(HasPosition runFrom, double dist) {
-//        return runningManager.runFrom(runFrom, dist);
-//    }
-//
-//    public boolean runFrom() {
-//        return runningManager.runFromCloseEnemies();
-//    }
-
-    /**
      * Returns <b>true</b> if this unit is supposed to "build" something. It will return true even if the unit
      * wasn't issued yet actual build order, but we've created ConstructionOrder and assigned it as a builder,
      * so it will return true.
@@ -1191,10 +1219,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         return construction;
     }
-
-//    public Construction construction() {
-//        return ConstructionRequests.constructionFor(this);
-//    }
 
     /**
      * Returns true if this unit belongs to the enemy.
@@ -1234,9 +1258,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return u.getID();
     }
 
+    // =========================================================
+    // Method intermediates between bridge and Atlantis
+
     public String idWithHash() {
         return "#" + id();
     }
+//    public Player player() {
+//        return u.getPlayer();
+//    }
 
     public String idWithType() {
         return typeWithUnitId();
@@ -1250,15 +1280,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type() + "#" + id();
     }
 
-    // =========================================================
-    // Method intermediates between bridge and Atlantis
-
     public APlayer player() {
         return new APlayer(u.getPlayer());
     }
-//    public Player player() {
-//        return u.getPlayer();
-//    }
+
+//    public boolean exists() {
+//        return true;
 
     public int x() {
         return u.getX();
@@ -1276,11 +1303,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return isCompleted() || getRemainingBuildTimeInSeconds() <= 3;
     }
 
-//    public boolean exists() {
-//        return true;
-////        return u() != null ? u.exists() : true;
+    /// /        return u() != null ? u.exists() : true;
 //    }
-
     public boolean isConstructing() {
         return u.isConstructing();
     }
@@ -1334,7 +1358,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isFree() {
         return isIdle();
     }
-
 
     /**
      * RETURNS TRUE IF UNIT IS VISIBLE ON MAP (NOT THAT UNIT IS NOT CLOAKED!).
@@ -1679,6 +1702,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return u.isUnderDisruptionWeb();
     }
 
+//    public int buildProgress() {
+//        return getRemainingBuildTime() / type().time() * 100;
+//    }
+
     public boolean isUnderDarkSwarm() {
         if (u == null) return false;
 
@@ -1698,10 +1725,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public int getRemainingBuildTimeInSeconds() {
         return u().getRemainingBuildTime() / 30;
     }
-
-//    public int buildProgress() {
-//        return getRemainingBuildTime() / type().time() * 100;
-//    }
 
     public int remainingResearchTime() {
         return u().getRemainingResearchTime();
@@ -1753,6 +1776,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return u.isBeingConstructed();
     }
 
+    // === Unit actions ========================================
+
     public boolean isInterruptible() {
         return u != null && u.isInterruptible();
     }
@@ -1767,13 +1792,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return u.getLastCommand() != null && u.getLastCommand().getType().equals(command);
     }
 
+//    public boolean isUnitActionMove() {
+//        return unitAction.name().startsWith("MOVE_");
+//    }
+
     public Action action() {
         if (unitAction == null) return Actions.INVALID;
 
         return unitAction;
     }
-
-    // === Unit actions ========================================
 
     public boolean isAction(Action constant) {
         return unitAction == constant;
@@ -1791,10 +1818,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isUnitActionAttack() {
         return unitAction == Actions.ATTACK_UNIT || unitAction == Actions.ATTACK_POSITION;
     }
-
-//    public boolean isUnitActionMove() {
-//        return unitAction.name().startsWith("MOVE_");
-//    }
 
     public boolean isUnitActionRepair() {
         return unitAction == Actions.REPAIR || unitAction == Actions.MOVE_REPAIR || unitAction == Actions.MOVE_PROTECT;
@@ -1881,6 +1904,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return lastActionAgo(unitAction) >= framesAgo;
     }
 
+    // =========================================================
+
     public boolean lastActionLessThanAgo(int framesAgo, Action unitAction) {
         if (unitAction == null) return false;
 
@@ -1937,8 +1962,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return time;
     }
 
-    // =========================================================
-
     public boolean noCooldown() {
         return groundWeaponCooldown() <= 2 || airWeaponCooldown() <= 2;
     }
@@ -1957,6 +1980,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return RepairAssignments.isRepairerOfAnyKind(this) || RepairAssignments.isProtector(this);
     }
 
+//    public boolean isScout() {
+//        return ScoutCommander.isScout(this);
+//    }
+
     public boolean isScout() {
         return isScout;
     }
@@ -1973,8 +2000,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         isSquadScout = true;
     }
 
-//    public boolean isScout() {
-//        return ScoutCommander.isScout(this);
+//    public AUnit getCachedNearestMeleeEnemy() {
+//        return _cachedNearestMeleeEnemy;
+//    }
+
+//    public void setCachedNearestMeleeEnemy(AUnit _cachedNearestMeleeEnemy) {
+//        this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
 //    }
 
     public boolean isFlyingScout() {
@@ -1992,14 +2023,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public int spaceRemaining() {
         return u().getSpaceRemaining();
     }
-
-//    public AUnit getCachedNearestMeleeEnemy() {
-//        return _cachedNearestMeleeEnemy;
-//    }
-
-//    public void setCachedNearestMeleeEnemy(AUnit _cachedNearestMeleeEnemy) {
-//        this._cachedNearestMeleeEnemy = _cachedNearestMeleeEnemy;
-//    }
 
     public boolean lastStartedAttackMoreThanAgo(int framesAgo) {
         return A.ago(unitState().getLastStartedAttack()) >= framesAgo;
@@ -2401,6 +2424,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().is(types);
     }
 
+//    public boolean loadedUnitsHas(AUnitType type) {
+//        System.err.println("u.getLoadedUnits() = " + u.getLoadedUnits().size());
+//        for (Unit unit : u.getLoadedUnits()) {
+//            System.err.println("unit.getType() = " + unit.getType());
+//            if (unit.getType().equals(type.ut())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
     public boolean isTargetedBy(AUnit attacker) {
         return this.equals(attacker.target());
     }
@@ -2420,17 +2454,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
         return loaded;
     }
-
-//    public boolean loadedUnitsHas(AUnitType type) {
-//        System.err.println("u.getLoadedUnits() = " + u.getLoadedUnits().size());
-//        for (Unit unit : u.getLoadedUnits()) {
-//            System.err.println("unit.getType() = " + unit.getType());
-//            if (unit.getType().equals(type.ut())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     public AUnit loadedUnitsGet(AUnitType type) {
         for (Unit loaded : u.getLoadedUnits()) {
@@ -2497,7 +2520,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isAirUnitAntiAir() {
         return type().isAirUnitAntiAir();
     }
-
 
     public boolean isNotAttackableByRangedDueToSpell() {
         return isUnderDarkSwarm();
@@ -2682,8 +2704,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().isSunken();
     }
 
-    private double _size = -1;
-
     // Approximate unit width (in tiles).
     public double size() {
         if (_size != -1) {
@@ -2862,6 +2882,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         );
     }
 
+//    public Selection friendsInRadius(double radius) {
+//        return friendsNear().inRadius(radius, this);
+//    }
+//
+//    public int friendsInRadiusCount(double radius) {
+//        return friendsNear().inRadius(radius, this).count();
+//    }
+
     public int ourBuildingsNearCount(double radius) {
         return cacheInt.get(
             "ourBuildingsNearCount:" + A.digit(radius),
@@ -2900,14 +2928,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             }
         ));
     }
-
-//    public Selection friendsInRadius(double radius) {
-//        return friendsNear().inRadius(radius, this);
-//    }
-//
-//    public int friendsInRadiusCount(double radius) {
-//        return friendsNear().inRadius(radius, this).count();
-//    }
 
     public Selection allUnitsNear() {
         return ((Selection) cache.get(
@@ -3086,6 +3106,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return AUnitHealth.isHealthy(this);
     }
 
+//    public void paintInfo(String text) {
+//        APainter.paintTextCentered(this, text, Color.White);
+//    }
+//
+//    public void paintInfo(String text, Color color, double dty) {
+//        APainter.paintTextCentered(this, text, color, 0, dty / 32.0);
+//    }
+
     public boolean shieldDamageAtMost(int maxDamage) {
         return AUnitShield.shieldDamageAtMost(this, maxDamage);
     }
@@ -3097,14 +3125,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean targetPositionAtLeastAway(double minTiles) {
         return targetPosition() != null && targetPosition().distToMoreThan(this, minTiles);
     }
-
-//    public void paintInfo(String text) {
-//        APainter.paintTextCentered(this, text, Color.White);
-//    }
-//
-//    public void paintInfo(String text, Color color, double dty) {
-//        APainter.paintTextCentered(this, text, color, 0, dty / 32.0);
-//    }
 
     public boolean addLog(String message) {
         if (Env.isTournament()) return true;
@@ -3387,6 +3407,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return building.distTo(this);
     }
 
+//    public boolean shouldRetreat() {
+//        return ShouldRetreat.shouldRetreat(this);
+//    }
+
     public double ourNearestBuildingWithUnfinishedDist() {
         AUnit building = Select.ourBuildingsWithUnfinished().nearestTo(this);
         if (building == null) return 999;
@@ -3403,10 +3427,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return lastActionLessThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
 //            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
-
-//    public boolean shouldRetreat() {
-//        return ShouldRetreat.shouldRetreat(this);
-//    }
 
     public boolean isMechanical() {
         return type() != null && type().isMechanical();
@@ -3520,7 +3540,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             // time, and a leading "-" marking the active manager, so manager
             // lines sort apart from engine-order lines in the viewer.
             if (!isABuilding()) {
-                atlantis.cherryvis.CV.unitLog("-" + behavior + managerUsed.toString() + "@" + A.minSec(), this);
+                atlantis.cherryvis.CV.unitLog("-" + behavior + managerUsed + "@" + A.minSec(), this);
             }
 
             this.manager = managerUsed;
@@ -3556,43 +3576,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         else {
             commandHistory.addMessage(signed, A.now());
         }
-    }
-
-    /**
-     * Who issued this order, for the death log (NEXT #176): the first
-     * project frame above the funnel ({@code AUnit}, {@code AUnitOrders},
-     * {@code FakeUnit} in tests). Bounded walk on a hot path: orders are
-     * tens per frame, the walk stops at the first project frame -
-     * microseconds, never a pass over the whole stack. Null when unknown
-     * (engine frames); callers omit the suffix then.
-     */
-    private static String issuerClass() {
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        for (StackTraceElement frame : stack) {
-            String cls = frame.getClassName();
-            if (cls == null) continue;
-            if (cls.equals("java.lang.Thread")
-                || cls.equals(AUnit.class.getName())
-                || cls.equals(atlantis.units.AUnitOrders.class.getName())
-                || cls.equals("tests.fakes.FakeUnit")) continue;
-            if (cls.startsWith("java.") || cls.startsWith("javax.")
-                || cls.startsWith("sun.") || cls.startsWith("jdk.")
-                || cls.startsWith("org.") || cls.startsWith("com.")
-                || cls.startsWith("net.") || cls.startsWith("io.")
-                || cls.startsWith("kotlin.") || cls.startsWith("scala.")) continue;
-            String base = cls;
-            int dollar = base.indexOf('$');
-            if (dollar >= 0) base = base.substring(0, dollar);
-            int dot = base.lastIndexOf('.');
-
-            return dot < 0 ? base : base.substring(dot + 1);
-        }
-        return null;
-    }
-
-    private static String withIssuer(String tag) {
-        String issuer = issuerClass();
-        return issuer == null ? tag : tag + "/" + issuer;
     }
 
     private void addManagerLogMessage(String message) {
@@ -3632,6 +3615,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return id() % n == 1;
     }
 
+//    public void setRunningFrom(HasPosition enemy) {
+//        this.runningManager.setRunFrom(enemy);
+//    }
+
     public boolean isCrucialUnit() {
         return isTank()
 
@@ -3647,21 +3634,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             || isLurker();
     }
 
-//    public void setRunningFrom(HasPosition enemy) {
-//        this.runningManager.setRunFrom(enemy);
-//    }
-
     public HasPosition runningFromPosition() {
         return this.runningManager.runningFromPosition();
-    }
-
-    public AUnit runningFromUnit() {
-        return this.runningManager.runningFromUnit();
     }
 
 //    public HasPosition runningFrom() {
 //        return this.runningManager.runFrom();
 //    }
+
+    public AUnit runningFromUnit() {
+        return this.runningManager.runningFromUnit();
+    }
 
     public boolean hasSiegedRecently() {
         return lastActionLessThanAgo(30 * 6 + unit().id() % 3, Actions.SIEGE);
@@ -4015,8 +3998,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return squad != null && squad.isRetreating();
     }
 
-    private double _smallScaleEval = 0;
-
     public void setLastSmallScaleEval(double dEval) {
         this._smallScaleEval = dEval;
     }
@@ -4074,17 +4055,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return AUnitShield.shieldHealthy(this);
     }
 
-    /** Shield contract lives on {@code AUnitShield} - see it for the NaN rules. */
+    /**
+     * Shield contract lives on {@code AUnitShield} - see it for the NaN rules.
+     */
     public double shieldPercent() {
         return AUnitShield.shieldPercent(this);
     }
 
-    /** {@code shieldPercent()}'s wound-side twin: the share of the shield that is gone. */
+    /**
+     * {@code shieldPercent()}'s wound-side twin: the share of the shield that is gone.
+     */
     public double shieldWoundPercent() {
         return AUnitShield.shieldWoundPercent(this);
     }
 
-    /** Shield contract lives on {@code AUnitShield} - see it for the NaN rules. */
+    /**
+     * Shield contract lives on {@code AUnitShield} - see it for the NaN rules.
+     */
     public double shieldWound() {
         return AUnitShield.shieldWound(this);
     }
@@ -4264,9 +4251,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             return true;
         }
 
-        if (moveAwayFrom(from, dist, Actions.MOVE_AVOID)) return true;
-
-        return false;
+        return moveAwayFrom(from, dist, Actions.MOVE_AVOID);
     }
 
     public boolean lastTargetWasTank() {

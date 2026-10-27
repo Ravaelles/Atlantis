@@ -26,7 +26,9 @@ public final class OrderIssuance {
         return !target.equals(unit.target()) || unit.lastPositionChangedAgo() >= 10;
     }
 
-    /** Re-issue cadence while moving: running units get a longer leash. */
+    /**
+     * Re-issue cadence while moving: running units get a longer leash.
+     */
     public static int commandMinDelayWhenMoving(AUnit unit) {
         return unit.isRunning() ? 3 : 2;
     }

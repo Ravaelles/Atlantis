@@ -10,10 +10,7 @@ import bwapi.UpgradeType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pins the tech and upgrade recipes (01_PRODUCTION.md §2 smell 2: a unit, a
@@ -69,12 +66,12 @@ public class TechAndUpgradeProducibleTest {
 
         String facility = AUnitType.from(stim.whatResearches()).name();
         assertEquals(facility, tech.producerTypeId(),
-                "the producer of a tech is the building that researches it");
+            "the producer of a tech is the building that researches it");
 
         // And that building is also its only prerequisite, so the scheduler
         // plans the Cybernetics Core before the Charge.
         assertFalse(tech.immediatePrerequisites().isEmpty(),
-                "a tech must declare the facility as a prerequisite");
+            "a tech must declare the facility as a prerequisite");
     }
 
     @Test
@@ -88,7 +85,7 @@ public class TechAndUpgradeProducibleTest {
         assertEquals(legs.gasPrice(), upgrade.cost().gas());
         assertEquals(legs.upgradeTime(), upgrade.buildDurationFrames());
         assertEquals(legs.maxRepeats(), upgrade.levels(),
-                "an upgrade has levels, and the goal decides how many it asks for");
+            "an upgrade has levels, and the goal decides how many it asks for");
         assertFalse(upgrade.requiresPlacement());
     }
 
@@ -100,17 +97,17 @@ public class TechAndUpgradeProducibleTest {
         UpgradeProducible level1 = UpgradeProducible.of(weapons, 1);
         UpgradeProducible level2 = UpgradeProducible.of(weapons, 2);
 
-        assertFalse(level1.id().equals(level2.id()), "levels must not dedupe into each other");
+        assertNotEquals(level1.id(), level2.id(), "levels must not dedupe into each other");
         assertEquals(weapons.mineralPrice(2), level2.cost().minerals());
         assertEquals(weapons.gasPrice(2), level2.cost().gas());
         assertEquals(weapons.upgradeTime(2), level2.buildDurationFrames());
         assertTrue(level2.immediatePrerequisites().contains(level1),
-                "level 2 must wait for level 1: " + level2.immediatePrerequisites());
+            "level 2 must wait for level 1: " + level2.immediatePrerequisites());
 
         if (weapons.whatsRequired(2) != null) {
             assertTrue(level2.immediatePrerequisites().contains(
-                            UnitProducible.of(AUnitType.from(weapons.whatsRequired(2)))),
-                    "the level's own requirement must be a prerequisite");
+                    UnitProducible.of(AUnitType.from(weapons.whatsRequired(2)))),
+                "the level's own requirement must be a prerequisite");
         }
     }
 
@@ -128,16 +125,16 @@ public class TechAndUpgradeProducibleTest {
         // things. If any of these returned null or threw, the scheduling loop
         // would need a branch per kind - exactly what the redesign removed.
         Producible[] recipes = {
-                UnitProducible.of(AUnitType.Protoss_Zealot),
-                UpgradeProducible.of(UpgradeType.Singularity_Charge),
-                UpgradeProducible.of(UpgradeType.Leg_Enhancements),
+            UnitProducible.of(AUnitType.Protoss_Zealot),
+            UpgradeProducible.of(UpgradeType.Singularity_Charge),
+            UpgradeProducible.of(UpgradeType.Leg_Enhancements),
         };
 
         for (Producible recipe : recipes) {
             assertNotNull(recipe.id(), recipe + " must have an id");
             assertNotNull(recipe.cost(), recipe + " must have a cost");
             assertNotNull(recipe.immediatePrerequisites(),
-                    recipe + " must answer its prerequisites, empty when there are none");
+                recipe + " must answer its prerequisites, empty when there are none");
             assertNotNull(recipe.producerTypeId(), recipe + " must name a producer");
         }
     }
@@ -151,6 +148,6 @@ public class TechAndUpgradeProducibleTest {
 
         assertFalse(zealot instanceof TechProducible);
         assertFalse(zealot instanceof UpgradeProducible);
-        assertTrue(zealot.requiresPlacement() == false, "a unit is trained, not placed");
+        assertFalse(zealot.requiresPlacement(), "a unit is trained, not placed");
     }
 }

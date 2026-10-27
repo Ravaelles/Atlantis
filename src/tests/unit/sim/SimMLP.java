@@ -12,19 +12,17 @@ package tests.unit.sim;
  */
 public final class SimMLP {
 
+    private static final double BETA1 = 0.9;
+    private static final double BETA2 = 0.999;
+    private static final double EPS = 1e-8;
     private final int[] sizes;
     private final double[][][] weights;
     private final double[][] biases;
-
     private final double[][][] mW;
     private final double[][] mB;
     private final double[][][] vW;
     private final double[][] vB;
     private int adamStep;
-
-    private static final double BETA1 = 0.9;
-    private static final double BETA2 = 0.999;
-    private static final double EPS = 1e-8;
 
     public SimMLP(long seed, int... sizes) {
         if (sizes == null || sizes.length < 2) {
@@ -58,7 +56,20 @@ public final class SimMLP {
         this.adamStep = 0;
     }
 
-    /** Output probability for one feature row. */
+    private static double[] activate(double[] z, boolean output) {
+        double[] a = new double[z.length];
+        if (output) {
+            for (int i = 0; i < z.length; i++) a[i] = 1.0 / (1.0 + Math.exp(-z[i]));
+        }
+        else {
+            for (int i = 0; i < z.length; i++) a[i] = Math.tanh(z[i]);
+        }
+        return a;
+    }
+
+    /**
+     * Output probability for one feature row.
+     */
     public double predictProb(double[] x) {
         double[] a = x.clone();
         for (int l = 0; l < sizes.length - 1; l++) {
@@ -73,7 +84,9 @@ public final class SimMLP {
         return a[0];
     }
 
-    /** Mean binary cross-entropy over the rows. */
+    /**
+     * Mean binary cross-entropy over the rows.
+     */
     public double meanLoss(double[][] xs, double[] ys) {
         double total = 0;
         for (int n = 0; n < xs.length; n++) {
@@ -145,7 +158,7 @@ public final class SimMLP {
         }
 
         double p = a[layers - 1][0];
-        double[] delta = new double[] { p - y };
+        double[] delta = new double[]{p - y};
         for (int l = layers - 2; l >= 0; l--) {
             for (int i = 0; i < sizes[l + 1]; i++) {
                 for (int j = 0; j < sizes[l]; j++) {
@@ -163,16 +176,5 @@ public final class SimMLP {
                 delta = prev;
             }
         }
-    }
-
-    private static double[] activate(double[] z, boolean output) {
-        double[] a = new double[z.length];
-        if (output) {
-            for (int i = 0; i < z.length; i++) a[i] = 1.0 / (1.0 + Math.exp(-z[i]));
-        }
-        else {
-            for (int i = 0; i < z.length; i++) a[i] = Math.tanh(z[i]);
-        }
-        return a;
     }
 }

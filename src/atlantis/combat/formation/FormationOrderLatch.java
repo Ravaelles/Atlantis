@@ -24,7 +24,9 @@ import atlantis.units.AUnit;
  */
 public final class FormationOrderLatch {
 
-    /** Identical formation orders re-issue at most this often while defending. */
+    /**
+     * Identical formation orders re-issue at most this often while defending.
+     */
     public static final int ISSUE_EVERY_FRAMES = 10;
 
     private static int lastUnit = -1;
@@ -35,7 +37,9 @@ public final class FormationOrderLatch {
     private FormationOrderLatch() {
     }
 
-    /** Test seam: the latch is per-game state, never cross-test. */
+    /**
+     * Test seam: the latch is per-game state, never cross-test.
+     */
     public static void clearForTests() {
         lastUnit = -1;
         lastTx = Integer.MIN_VALUE;
@@ -83,8 +87,7 @@ public final class FormationOrderLatch {
         try {
             return ClusterMission.postureFor(
                 Alpha.get().size(), EnemyUnitBreachedBase.get() != null);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return ClusterMission.Posture.ATTACK;
         }
     }

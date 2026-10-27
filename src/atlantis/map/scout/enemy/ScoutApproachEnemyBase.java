@@ -32,9 +32,7 @@ public class ScoutApproachEnemyBase extends Manager {
         position = enemyMain.position();
         if (position == null) return false;
 
-        if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
-
-        return true;
+        return !unit.enemiesThatCanAttackMe(9).notEmpty();
     }
 
     @Override

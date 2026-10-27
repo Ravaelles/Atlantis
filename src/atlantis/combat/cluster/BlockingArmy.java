@@ -1,4 +1,5 @@
 package atlantis.combat.cluster;
+
 import atlantis.battle.cluster.Alpha;
 
 import atlantis.map.position.HasPosition;

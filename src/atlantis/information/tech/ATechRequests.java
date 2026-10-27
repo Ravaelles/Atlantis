@@ -11,9 +11,11 @@ public class ATechRequests {
     public static boolean research(Object techOrUpgrade) {
         if (techOrUpgrade instanceof TechType) {
             return researchTech((TechType) techOrUpgrade);
-        } else if (techOrUpgrade instanceof UpgradeType) {
+        }
+        else if (techOrUpgrade instanceof UpgradeType) {
             return researchUpgrade((UpgradeType) techOrUpgrade);
-        } else {
+        }
+        else {
             System.out.println("techOrUpgrade = " + techOrUpgrade);
             throw new RuntimeException("Neither a tech, nor an upgrade.");
 //            AGame.exit("Neither a tech, nor an upgrade.");

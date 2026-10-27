@@ -1,11 +1,11 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import atlantis.map.position.APosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The sim fake map (NEXT #191, owner sketch): four quadrant regions

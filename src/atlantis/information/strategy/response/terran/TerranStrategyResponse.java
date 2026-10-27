@@ -48,9 +48,7 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
             }
         }
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
-
-        return true;
+        return !shouldSkipAntiRushCombatBuilding(enemyStrategy);
     }
 
     private void requestBunkerNearMain() {

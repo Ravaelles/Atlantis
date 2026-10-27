@@ -14,6 +14,15 @@ public class APlayer implements Comparable<APlayer> {
 
     // =========================================================
 
+    public APlayer() {
+        p = null;
+    }
+
+    public APlayer(Player p) {
+        this.p = p;
+        mapping.put(p, this);
+    }
+
     public static APlayer create(Player p) {
         if (mapping.containsKey(p)) {
             return mapping.get(p);
@@ -23,15 +32,6 @@ public class APlayer implements Comparable<APlayer> {
         mapping.put(p, aPlayer);
 
         return aPlayer;
-    }
-
-    public APlayer() {
-        p = null;
-    }
-
-    public APlayer(Player p) {
-        this.p = p;
-        mapping.put(p, this);
     }
 
     // =========================================================

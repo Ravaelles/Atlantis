@@ -17,7 +17,9 @@ final class SiteScope {
     private SiteScope() {
     }
 
-    /** Null means in scope; anything else is the twin's decline reason. */
+    /**
+     * Null means in scope; anything else is the twin's decline reason.
+     */
     static String declineReason(AUnitType building) {
         if (building == null) return null;
         if (building.isGasBuilding() || building.isBase()) return "dedicated-finder";

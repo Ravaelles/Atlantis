@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
@@ -16,12 +17,22 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class ProtossExtraEarlyCannonCommander extends Commander {
 
     private int cannonsWithUnfinished;
+
+    private static HasPosition defineAt() {
+        HasPosition at = Select.ourWithUnfinished(type()).last();
+        if (at != null) return at;
+
+        return Chokes.natural().groundTranslateTowardsMain(5);
+    }
+
+    private static AUnitType type() {
+        return AUnitType.Protoss_Photon_Cannon;
+    }
 
     @Override
     public boolean applies() {
@@ -29,7 +40,7 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
             && A.s <= 60 * 6
             && Count.basesWithUnfinished() >= 2
             && (cannonsWithUnfinished = Count.withPlanned(type())) <= 2
-            && ConstructionRequests.countNotFinishedOfType(type()) <= (Army.strength() <= 75 ? 1 : 1)
+            && ConstructionRequests.countNotFinishedOfType(type()) <= (1)
             && A.everyNthGameFrame(29)
             && (shouldReinforceVsProtoss() || shouldReinforceVsZerg());
     }
@@ -55,17 +66,6 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
 
         construction.setNearTo(at);
         construction.findPositionForNewBuilding();
-    }
-
-    private static HasPosition defineAt() {
-        HasPosition at = Select.ourWithUnfinished(type()).last();
-        if (at != null) return at;
-
-        return Chokes.natural().groundTranslateTowardsMain(5);
-    }
-
-    private static AUnitType type() {
-        return AUnitType.Protoss_Photon_Cannon;
     }
 
     private boolean shouldReinforceVsProtoss() {

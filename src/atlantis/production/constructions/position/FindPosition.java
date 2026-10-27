@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position;
 
 import atlantis.battle.zerg.ZergCreepColony;
+import atlantis.combat.siting.NewBunkerPositionFinder;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -10,7 +11,6 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.base.FindPositionForBase;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
 import atlantis.production.constructions.position.terran.SupplyDepotPositionFinder;
-import atlantis.combat.siting.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -89,9 +89,7 @@ public class FindPosition {
 //                }
             }
 
-            if (position != null) return position;
-
-            return null;
+            return position;
         }
 
         // === Combat building =====================================
@@ -171,9 +169,7 @@ public class FindPosition {
             && (!We.protoss() || Count.pylons() >= 1)
         ) return true;
 
-        if (We.protoss() && (Count.pylons() - 1) <= Count.forgeWithUnfinished()) return true;
-
-        return false;
+        return We.protoss() && (Count.pylons() - 1) <= Count.forgeWithUnfinished();
     }
 
     private static APosition forCombatBuilding(

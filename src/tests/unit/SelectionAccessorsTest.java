@@ -8,13 +8,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pinning the element-accessor semantics before their extraction out of
@@ -51,11 +45,11 @@ public class SelectionAccessorsTest extends WorldStubForTests {
         world(1, fakeOurs(a, b), fakeEnemies(), () -> {
             Selection ours = Select.our();
 
-            assertEquals(false, ours.areAllBusy(), "idle probes are not all busy");
+            assertFalse(ours.areAllBusy(), "idle probes are not all busy");
             a.busy = true;
-            assertEquals(false, ours.areAllBusy(), "one idle probe vetoes");
+            assertFalse(ours.areAllBusy(), "one idle probe vetoes");
             b.busy = true;
-            assertEquals(true, ours.areAllBusy(), "all busy means all busy");
+            assertTrue(ours.areAllBusy(), "all busy means all busy");
 
             String ids = ours.unitIds();
             assertTrue(ids.startsWith("ids(") && ids.endsWith(")"), "cache-path shape: " + ids);

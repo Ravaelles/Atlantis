@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran.buildings;
 import atlantis.game.A;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Terran_Control_Tower;
 
 public class ProduceControlTower {
     /**

@@ -29,16 +29,6 @@ public final class EngineWallFinder {
         this.wall = new ForgeGatewayWall(grid);
     }
 
-    /** The main choke's wall, or null when none fits. */
-    public ForgeGatewayWall.Tiles forMainChoke() {
-        return wall.find(choke(Chokes.mainChoke()));
-    }
-
-    /** The natural's wall, or null when none fits. */
-    public ForgeGatewayWall.Tiles forNaturalChoke() {
-        return wall.find(choke(Chokes.natural()));
-    }
-
     private static ForgeGatewayWall.Choke choke(AChoke choke) {
         if (choke == null || choke.center() == null)
             return null;
@@ -46,10 +36,24 @@ public final class EngineWallFinder {
         List<int[]> tiles = new ArrayList<>();
         for (int x = choke.tx() - 2; x <= choke.tx() + 2; x++) {
             for (int y = choke.ty() - 2; y <= choke.ty() + 2; y++) {
-                tiles.add(new int[] { x, y });
+                tiles.add(new int[]{x, y});
             }
         }
 
         return new ForgeGatewayWall.Choke(choke.tx(), choke.ty(), tiles);
+    }
+
+    /**
+     * The main choke's wall, or null when none fits.
+     */
+    public ForgeGatewayWall.Tiles forMainChoke() {
+        return wall.find(choke(Chokes.mainChoke()));
+    }
+
+    /**
+     * The natural's wall, or null when none fits.
+     */
+    public ForgeGatewayWall.Tiles forNaturalChoke() {
+        return wall.find(choke(Chokes.natural()));
     }
 }

@@ -22,7 +22,9 @@ public final class GoalBoardWallet {
     private GoalBoardWallet() {
     }
 
-    /** Funded subset of the active goals, ladder order. */
+    /**
+     * Funded subset of the active goals, ladder order.
+     */
     public static List<Goal> funded(BoardState state, Collection<Goal> goals, int minerals, int gas) {
         List<Goal> ranked = GoalBoard.ranked(state, goals);
         List<Goal> funded = new ArrayList<Goal>();

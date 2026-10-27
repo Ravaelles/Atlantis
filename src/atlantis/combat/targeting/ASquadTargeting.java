@@ -60,9 +60,8 @@ public class ASquadTargeting {
         // before validity (focus scan, keepable, shared, squad-last).
         if (enemy.isDeadMan()) return false;
         if (preventForZealots(unit, enemy)) return false;
-        if (!unit.hasWeaponToAttackThisUnit(enemy)) return false;
 
-        return true;
+        return unit.hasWeaponToAttackThisUnit(enemy);
     }
 
     /**
@@ -101,9 +100,7 @@ public class ASquadTargeting {
 
         if (unit.distTo(enemy) > 1.3) return false;
 //        if (preventOvercrowdedZealots(unit, enemy)) return true;
-        if (preventZealotsTargetingRanged(unit, enemy)) return true;
-
-        return false;
+        return preventZealotsTargetingRanged(unit, enemy);
     }
 
     private static boolean preventOvercrowdedZealots(AUnit unit, AUnit enemy) {

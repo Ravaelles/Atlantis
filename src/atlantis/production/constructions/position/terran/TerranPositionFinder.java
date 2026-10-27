@@ -8,10 +8,10 @@ import atlantis.production.constructions.position.PositionFulfillsAllConditions;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.CacheKey;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
-import atlantis.units.select.CacheKey;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
     /**
@@ -57,18 +57,6 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         AUnit finalBuilder = builder;
 
         return new ValidateParams(maxDistance, finalNearTo, finalBuilder);
-    }
-
-    private static class ValidateParams {
-        public final double maxDistance;
-        public final HasPosition finalNearTo;
-        public final AUnit finalBuilder;
-
-        public ValidateParams(double maxDistance, HasPosition finalNearTo, AUnit finalBuilder) {
-            this.maxDistance = maxDistance;
-            this.finalNearTo = finalNearTo;
-            this.finalBuilder = finalBuilder;
-        }
     }
 
     public static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
@@ -136,9 +124,6 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         return null;
     }
 
-    // =========================================================
-    // Low-level
-
     public static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         if (!We.terran()) return false;
 
@@ -166,5 +151,20 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
 
         return false;
+    }
+
+    // =========================================================
+    // Low-level
+
+    private static class ValidateParams {
+        public final double maxDistance;
+        public final HasPosition finalNearTo;
+        public final AUnit finalBuilder;
+
+        public ValidateParams(double maxDistance, HasPosition finalNearTo, AUnit finalBuilder) {
+            this.maxDistance = maxDistance;
+            this.finalNearTo = finalNearTo;
+            this.finalBuilder = finalBuilder;
+        }
     }
 }

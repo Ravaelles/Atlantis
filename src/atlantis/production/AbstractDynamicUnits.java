@@ -3,10 +3,9 @@ package atlantis.production;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.orders.production.queue.add.AddToQueue;
-
-import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 

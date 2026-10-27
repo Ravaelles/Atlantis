@@ -1,11 +1,11 @@
 package atlantis.information.decisions.protoss.dragoon;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 public class DragoonInsteadZealotVsZerg {
     public static boolean dragoonInsteadOfZealot_vZ() {
@@ -14,12 +14,10 @@ public class DragoonInsteadZealotVsZerg {
         if (A.gas() >= 50) return true;
         if (transitionToDragoonsDueToMutas()) return true;
 
-        if (A.hasGas(30) && Count.cannonsWithUnfinished() >= 3) return true;
+        return A.hasGas(30) && Count.cannonsWithUnfinished() >= 3;
 
 //        if (A.minerals() >= 170 && Count.gateways() >= 3) return true;
 //        if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
-
-        return false;
     }
 
     private static boolean transitionToDragoonsDueToMutas() {
@@ -29,7 +27,8 @@ public class DragoonInsteadZealotVsZerg {
 
         if (mutas >= 2) {
             if (GamePhase.isEarlyGame()) return true;
-            if (mutas >= 8) return true;
+
+            return mutas >= 8;
         }
 
         return false;

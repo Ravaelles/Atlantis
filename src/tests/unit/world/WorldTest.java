@@ -4,13 +4,11 @@ import atlantis.core.world.UnitSnapshot;
 import atlantis.core.world.World;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Stage E: the read model is constructible and queryable with no engine.

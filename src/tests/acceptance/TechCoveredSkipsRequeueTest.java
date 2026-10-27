@@ -8,9 +8,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Overdue requeue must not duplicate covered tech.
@@ -22,6 +19,13 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * take this exit.</p>
  */
 public class TechCoveredSkipsRequeueTest extends WorldStubForTests {
+
+    private static FakeUnit warpingCore() {
+        FakeUnit warping = fake(AUnitType.Protoss_Cybernetics_Core, 20, 20);
+        warping.setCompleted(false);
+
+        return warping;
+    }
 
     @Override
     public Race initRace() {
@@ -54,13 +58,6 @@ public class TechCoveredSkipsRequeueTest extends WorldStubForTests {
                 CancelTooLongConstructions.techAlreadyCovered(AUnitType.Protoss_Cybernetics_Core),
                 "a warping Core covers the demand too - it completes or the pump re-orders");
         });
-    }
-
-    private static FakeUnit warpingCore() {
-        FakeUnit warping = fake(AUnitType.Protoss_Cybernetics_Core, 20, 20);
-        warping.setCompleted(false);
-
-        return warping;
     }
 
     @Test

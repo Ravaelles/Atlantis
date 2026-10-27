@@ -1,23 +1,23 @@
 package tests.unit.sim;
 
+import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
-import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.formation.CoverWithdraw;
+import atlantis.combat.targeting.StickyTarget;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import tests.unit.AbstractTestWithUnits;
-import tests.fakes.FakeUnit;
 import tests.fakes.FakeOrderSink;
+import tests.fakes.FakeUnit;
+import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemy;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Dragoons vs Zerglings on the fast behavior sim (NEXT #161): the whole
@@ -42,271 +42,18 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     // of silently simulating a different game.
     // =========================================================
 
-    @Test
-    public void engineDataPins() {
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 10);
-        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 12, 10);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 14, 10);
-
-        assertEquals(5.0, dragoon.maxSpeed(), 0.001, "dragoon top speed, px/frame");
-        assertEquals(30, dragoon.cooldownAbsolute(), "dragoon cooldown, frames");
-        assertEquals(5.49, ling.maxSpeed(), 0.001, "ling top speed, px/frame");
-        assertEquals(8, ling.cooldownAbsolute(), "ling cooldown, frames");
-        assertEquals(4.0, zealot.maxSpeed(), 0.001, "zealot top speed, px/frame");
-        assertEquals(22, zealot.cooldownAbsolute(), "zealot cooldown, frames");
-    }
-
-    // =========================================================
-    // T1: surrounded wounded dragoon flees and lives.
-    // =========================================================
-
-    @Test
-    public void surroundedWoundedDragoonFleesInsteadOfHolding() {
-        // A lone wounded dragoon cannot outrun lings (5.49 > 5.0 px/f) and
-        // cannot out-DPS them before they chew through 50 hp, so survival
-        // is NOT asserted here - T2 covers surviving as a group. What this
-        // test pins is the decision: move orders away from the threat and
-        // real displacement while still trading shots, never hold-and-die.
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        dragoon.hp = 50;
-        dragoon.shields = 0;
-        dragoon.cooldown = 15;
-
-        List<FakeUnit> lings = new ArrayList<>();
-        double[][] ring = { { 28, 20 }, { 32, 20 } };
-        for (double[] spot : ring) {
-            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
-            ling.setEnemy();
-            lings.add(ling);
-        }
-
-        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(
-            new FakeUnit[] { dragoon }, lings.toArray(new FakeUnit[0]), arena);
-        try {
-            double startX = dragoon.position.x();
-            double startY = dragoon.position.y();
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-
-            for (int i = 0; i < 250; i++) {
-                world.tick(() -> {
-                    BattleCommander.act(
-                        dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
-                    scriptLings(lings, dragoon);
-                });
-                if (dragoon.hp <= 0) break;
-            }
-
-            double fledPx = Math.hypot(
-                dragoon.position.x() - startX, dragoon.position.y() - startY);
-            assertTrue(fledPx > 2 * TILE,
-                "dragoon must gain ground from the pocket, fled only " + fledPx + "px");
-            assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
-                "kite must issue move steps, not hold-and-shoot: " + ordersOf(dragoon));
-            assertTrue(world.shotsFired() > 0,
-                "a kite that never shoots is just running - trade while yielding");
-        }
-        finally {
-            world.close();
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-        }
-    }
-
-    // =========================================================
-    // T2: wounded dragoons withdraw as a group and survive.
-    // =========================================================
-
-    @Test
-    public void woundedDragoonsWithdrawAndSurvive() {
-        // Band matters: all three under the 80hp pinch line (wounded),
-        // healthy enough that 3 lings cannot eat them before focus fire
-        // (about a ling per 2 volleys) clears the pressers. Recalibrated
-        // 2026-10-26: the WINDUP lookup fix (dragoon 6->8, ling 6->5)
-        // made the old 4-ling heat lethal - dragoons shoot a third slower
-        // while lings chew faster. Hp band untouched on purpose (pinch-line
-        // semantics); one presser fewer restores the intended regime under
-        // the corrected physics.
-        FakeUnit[] dragoons = new FakeUnit[] {
-            woundedDragoon(30, 20, 70),
-            woundedDragoon(29, 21, 75),
-            woundedDragoon(31, 19, 75),
-        };
-        List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 36, 19 }, { 36, 20 }, { 36, 21 } }) {
-            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
-            ling.setEnemy();
-            lings.add(ling);
-        }
-
-        double startCentroidX = centroidX(dragoons);
-        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
-        try {
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-
-            final boolean[] withdrew = new boolean[] { false };
-            for (int i = 0; i < 300; i++) {
-                world.tick(() -> {
-                    for (FakeUnit dragoon : dragoons) {
-                        if (dragoon.hp <= 0) continue;
-                        BattleCommander.act(
-                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
-                    }
-                    scriptLings(lings, dragoons);
-                });
-                if (centroidX(dragoons) < startCentroidX - TILE) withdrew[0] = true;
-            }
-
-            for (FakeUnit dragoon : dragoons) {
-                assertTrue(dragoon.hp > 0, "no dragoon left behind to die");
-            }
-            assertTrue(world.shotsFired() > 0,
-                "kite or wipe, the guns must speak - silent guns prove nothing");
-            assertTrue(withdrew[0],
-                "sustained melee pressure must move the group west at some point");
-        }
-        finally {
-            world.close();
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-        }
-    }
-
-    // =========================================================
-    // T3: obstacle course for the mover (scripted, no decisions).
-    // =========================================================
-
-    @Test
-    public void moverReachesThroughGapWithoutPermanentWedge() {
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 10, 15);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 10, 13);
-        FakeUnit[] dragoons = new FakeUnit[] { a, b };
-
-        // Vertical wall with a single gap: x in [18,20], gap y in [12,14].
-        SimArena arena = new SimArena(40 * TILE, 30 * TILE)
-            .block(18 * TILE, 0, 2 * TILE, 12 * TILE)
-            .block(18 * TILE, 14 * TILE, 2 * TILE, 16 * TILE);
-        SimWorld world = new SimWorld(dragoons, new FakeUnit[0], arena);
-        try {
-            for (int i = 0; i < 400; i++) {
-                world.tick(() -> {
-                    for (FakeUnit dragoon : dragoons) {
-                        dragoon.lastCommand = "Move";
-                        dragoon.target = null;
-                        dragoon.targetPosition = atlantis.map.position.APosition
-                            .createFromPixels(30 * TILE, 13 * TILE);
-                    }
-                });
-                if (arrived(a, 30 * TILE, 13 * TILE)
-                    && arrived(b, 30 * TILE, 13 * TILE)) break;
-            }
-
-            assertTrue(arrived(a, 30 * TILE, 13 * TILE), "dragoon A reaches through the gap");
-            assertTrue(arrived(b, 30 * TILE, 13 * TILE), "dragoon B reaches through the gap");
-            assertTrue(world.maxStuckFrames(dragoons) < 120,
-                "sliding along the wall is fine, a permanent wedge is not");
-        }
-        finally {
-            world.close();
-        }
-    }
-
-    // =========================================================
-    // T2b: the wipe branch, determined (healthy trio vs few lings).
-    // T2 above stays branch-agnostic on purpose: with live lings it
-    // must withdraw, with dead ones it must have shot. Here there is
-    // nowhere to withdraw to - the trio stands and trades.
-    // =========================================================
-
-    @Test
-    public void healthyTrioWipesPressingLings() {
-        FakeUnit[] dragoons = new FakeUnit[] {
-            woundedDragoon(28, 20, 100),
-            woundedDragoon(29, 21, 100),
-            woundedDragoon(29, 19, 100),
-        };
-        for (FakeUnit dragoon : dragoons) dragoon.cooldown = 0;
-        List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 34, 20 }, { 34, 21 } }) {
-            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
-            ling.setEnemy();
-            lings.add(ling);
-        }
-        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
-        try {
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-
-            for (int i = 0; i < 300; i++) {
-                world.tick(() -> {
-                    for (FakeUnit dragoon : dragoons) {
-                        if (dragoon.hp <= 0) continue;
-                        BattleCommander.act(
-                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
-                    }
-                    scriptLings(lings, dragoons);
-                });
-            }
-
-            assertTrue(world.aliveEnemies() == 0,
-                "two lings pressing a healthy trio die - the wipe branch");
-            for (FakeUnit dragoon : dragoons) {
-                assertTrue(dragoon.hp > 0, "wipe costs no dragoon here");
-            }
-            assertTrue(world.shotsFired() > 0, "a wipe without shots is a contradiction");
-        }
-        finally {
-            world.close();
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-        }
-    }
-
-    // =========================================================
-    // T-spread: pinch A/B with standoff (NEXT #159 without a map).
-    // Same scenario twice, one knob different: pinch yielding on
-    // (default DragoonPinchMeleeCount) vs off (count 99, never
-    // triggered). Deterministic sim, so the comparison is exact -
-    // stronger than Wine N=5+5 with randomized confounders.
-    // =========================================================
-
-    @Test
-    public void pinchWithStandoffDecidesOnShield() {
-        int[] withoutPinch = runSpreadDuel(true);
-        int[] withPinch = runSpreadDuel(false);
-
-        // Pinch was actually engageable in both arms (pocket pressure
-        // observed on live wounded dragoons) - without this the identity
-        // below would be vacuous.
-        assertTrue(withoutPinch[4] >= 2,
-            "standoff must pocket at some point, else pinch can never fire");
-        assertTrue(withPinch[4] >= 2,
-            "standoff must pocket at some point, else pinch can never fire");
-        // Verdict (sim, deterministic): identical outcomes either way -
-        // same survivors, same hp, same kills. Combined with Wine N=5+5
-        // (OFF slightly better on contact): no evidence pinch ever helps.
-        // If this fails after a behavior change, re-evaluate NEXT #159.
-        assertEquals(withoutPinch[0], withPinch[0], "survivors");
-        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
-        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
-    }
-
     /**
      * @return {dragoons alive, dragoon hp, lings alive, shots fired, max pocket pressure}.
      */
     private static int[] runSpreadDuel(boolean disablePinch) {
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             woundedDragoon(12, 20, 75),
             woundedDragoon(11, 21, 75),
             woundedDragoon(13, 19, 75),
         };
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 18, 20 }, { 18, 19 }, { 18, 21 },
-                { 19, 20 }, { 19, 21 } }) {
+        for (double[] spot : new double[][]{{18, 20}, {18, 19}, {18, 21},
+            {19, 20}, {19, 21}}) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
@@ -345,14 +92,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             for (FakeUnit dragoon : dragoons) {
                 if (dragoon.hp > 0) {
                     alive++;
-                    hp += (int) dragoon.hp;
+                    hp += dragoon.hp;
                 }
             }
             int lingsAlive = world.aliveEnemies();
 
-            return new int[] { alive, hp, lingsAlive, world.shotsFired(), maxPinchPressure[0] };
-        }
-        finally {
+            return new int[]{alive, hp, lingsAlive, world.shotsFired(), maxPinchPressure[0]};
+        } finally {
             atlantis.battle.kite.CombatTuning.install(previous);
             world.close();
             BattleCommander.clearForTests();
@@ -360,42 +106,19 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
-
     // =========================================================
-    // T-contact: the Wine shape in the sim - pocket from the start.
-    // Standoff (above) never pockets the dragoons, so pinch never
-    // fires there; here lings start at 2-3 tiles and the pocket is
-    // immediate. Compares WITH vs WITHOUT on identical ground.
+    // T1: surrounded wounded dragoon flees and lives.
     // =========================================================
-
-    @Test
-    public void pinchWithContactDecidesOnShield() {
-        int[] withoutPinch = runContactDuel(true);
-        int[] withPinch = runContactDuel(false);
-
-        // Instant contact must pocket: if maxPinchPressure stayed < 2
-        // the scenario failed to create the pocket, not the rule.
-        assertTrue(withoutPinch[4] >= 2 && withPinch[4] >= 2,
-            "contact must pocket wounded dragoons, else pinch can never fire");
-        assertTrue(withoutPinch[3] > 0 && withPinch[3] > 0,
-            "both arms must actually trade shots");
-        // Verdict (sim, deterministic): same survivors, same hp, same
-        // kills either way - even point-blank, yielding changes nothing
-        // vs standing to trade. Same conclusion as the standoff arms.
-        assertEquals(withoutPinch[0], withPinch[0], "survivors");
-        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
-        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
-    }
 
     private static int[] runContactDuel(boolean disablePinch) {
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             woundedDragoon(12, 20, 75),
             woundedDragoon(11, 21, 75),
             woundedDragoon(13, 19, 75),
         };
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 14, 20 }, { 14, 19 }, { 14, 21 },
-                { 15, 20 }, { 15, 19 }, { 15, 21 } }) {
+        for (double[] spot : new double[][]{{14, 20}, {14, 19}, {14, 21},
+            {15, 20}, {15, 19}, {15, 21}}) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
@@ -434,16 +157,260 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             for (FakeUnit dragoon : dragoons) {
                 if (dragoon.hp > 0) {
                     alive++;
-                    hp += (int) dragoon.hp;
+                    hp += dragoon.hp;
                 }
             }
-            return new int[] { alive, hp, world.aliveEnemies(), world.shotsFired(), maxPinchPressure[0] };
-        }
-        finally {
+            return new int[]{alive, hp, world.aliveEnemies(), world.shotsFired(), maxPinchPressure[0]};
+        } finally {
             atlantis.battle.kite.CombatTuning.install(previous);
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
+    // T2: wounded dragoons withdraw as a group and survive.
+    // =========================================================
+
+    private static Outcome raid(int n) {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit[] lings = new FakeUnit[n];
+        for (int i = 0; i < n; i++) {
+            lings[i] = fakeEnemy(AUnitType.Zerg_Zergling, 10, 12 + i * (7.0 / Math.max(1, n - 1)));
+        }
+        FakeUnit[] ours = new FakeUnit[]{cannonA, cannonB};
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, lings, arena);
+        APosition gap = APosition.create(30, 15);
+        int cannonHpStart = cannonA.hp + cannonB.hp;
+        Outcome out = new Outcome();
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 2200; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, lings);
+                    scriptCannon(cannonB, lings);
+                    for (FakeUnit ling : lings) {
+                        scriptWallRaid(ling, gap, ours);
+                    }
+                });
+                boolean wiped = true;
+                for (FakeUnit ling : lings) {
+                    if (ling.hp > 0) {
+                        wiped = false;
+                        break;
+                    }
+                }
+                if (wiped) {
+                    out.ticks = i;
+                    break;
+                }
+                boolean gunsDead = cannonA.hp <= 0 && cannonB.hp <= 0;
+                if (gunsDead) {
+                    out.ticks = i;
+                    break;
+                }
+                out.ticks = i;
+            }
+            out.wiped = true;
+            for (FakeUnit ling : lings) {
+                if (ling.hp > 0) {
+                    out.wiped = false;
+                    break;
+                }
+            }
+            out.cannonFraction = (Math.max(0, cannonA.hp) + Math.max(0, cannonB.hp))
+                / (double) Math.max(1, cannonHpStart);
+
+            return out;
+        } finally {
+            world.close();
+        }
+    }
+
+    // =========================================================
+    // T3: obstacle course for the mover (scripted, no decisions).
+    // =========================================================
+
+    /**
+     * Ranged presser: walk the raid corridor, but stop at own max range
+     * and shell - never enter the funnel mouth (that would hand the guns
+     * their range back). Mirrors scriptWallRaid's approach, inverts its
+     * ending: hold the standoff the guns cannot answer.
+     */
+    static void scriptRangedPresser(FakeUnit presser, APosition gap, FakeUnit[] guns) {
+        if (presser.hp <= 0) return;
+
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit gun : guns) {
+            if (gun == null || gun.hp <= 0) continue;
+            double dist = presser.distTo(gun);
+            if (dist < best) {
+                best = dist;
+                nearest = gun;
+            }
+        }
+        if (nearest != null && presser.distTo(nearest) <= SimWorld.reachTiles(presser, nearest)) {
+            presser.lastCommand = "AttackUnit";
+            presser.target = nearest;
+            presser.targetPosition = nearest.position;
+        }
+        else {
+            presser.lastCommand = "Move";
+            presser.target = null;
+            presser.targetPosition = presser.distTo(gap) > 1 ? gap.position() : nearest.position;
+        }
+    }
+
+    // =========================================================
+    // T2b: the wipe branch, determined (healthy trio vs few lings).
+    // T2 above stays branch-agnostic on purpose: with live lings it
+    // must withdraw, with dead ones it must have shot. Here there is
+    // nowhere to withdraw to - the trio stands and trades.
+    // =========================================================
+
+    /**
+     * Static gun: trade with the nearest quarry inside cannon range, else hold.
+     */
+    static void scriptCannon(FakeUnit cannon, FakeUnit[] foes) {
+        if (cannon.hp <= 0) return;
+
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit foe : foes) {
+            if (foe == null || foe.hp <= 0) continue;
+            double dist = cannon.distTo(foe);
+            if (dist < best) {
+                best = dist;
+                nearest = foe;
+            }
+        }
+        if (nearest != null && best <= SimWorld.reachTiles(cannon, nearest)) {
+            cannon.lastCommand = "AttackUnit";
+            cannon.target = nearest;
+            cannon.targetPosition = nearest.position;
+        }
+        else {
+            cannon.lastCommand = "Hold";
+        }
+    }
+
+    // =========================================================
+    // T-spread: pinch A/B with standoff (NEXT #159 without a map).
+    // Same scenario twice, one knob different: pinch yielding on
+    // (default DragoonPinchMeleeCount) vs off (count 99, never
+    // triggered). Deterministic sim, so the comparison is exact -
+    // stronger than Wine N=5+5 with randomized confounders.
+    // =========================================================
+
+    /**
+     * Raid script: run at the gap, then trade with the nearest gun.
+     */
+    static void scriptWallRaid(FakeUnit ling, APosition gap, FakeUnit[] guns) {
+        if (ling.hp <= 0) return;
+
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit gun : guns) {
+            if (gun == null || gun.hp <= 0) continue;
+            double dist = ling.distTo(gun);
+            if (dist < best) {
+                best = dist;
+                nearest = gun;
+            }
+        }
+        if (nearest != null && ling.distTo(nearest) <= SimWorld.reachTiles(ling, nearest)) {
+            ling.lastCommand = "AttackUnit";
+            ling.target = nearest;
+            ling.targetPosition = nearest.position;
+        }
+        else {
+            ling.lastCommand = "Move";
+            ling.target = null;
+            ling.targetPosition = ling.distTo(gap) > 1 ? gap.position() : nearest.position;
+        }
+    }
+
+    /**
+     * Map-AI-like chaser: face the quarry, move into range, trade.
+     */
+    static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
+        if (foe.hp <= 0 || dragoon.hp <= 0) {
+            foe.lastCommand = "Stop";
+
+            return;
+        }
+        foe.setAngle(Math.atan2(
+            dragoon.position.y() - foe.position.y(), dragoon.position.x() - foe.position.x()));
+        if (foe.distTo(dragoon) <= SimWorld.reachTiles(foe, dragoon)) {
+            foe.lastCommand = "AttackUnit";
+            foe.target = dragoon;
+            foe.targetPosition = dragoon.position;
+        }
+        else {
+            foe.lastCommand = "Move";
+            foe.target = dragoon;
+            foe.targetPosition = dragoon.position;
+        }
+    }
+
+
+    // =========================================================
+    // T-contact: the Wine shape in the sim - pocket from the start.
+    // Standoff (above) never pockets the dragoons, so pinch never
+    // fires there; here lings start at 2-3 tiles and the pocket is
+    // immediate. Compares WITH vs WITHOUT on identical ground.
+    // =========================================================
+
+    private static FakeUnit woundedDragoon(double tx, double ty, int hp) {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, tx, ty);
+        dragoon.hp = hp;
+        dragoon.shields = 0;
+        dragoon.cooldown = 10;
+
+        return dragoon;
+    }
+
+    /**
+     * Scripted pursuers: nearest live dragoon, move into range, then trade.
+     */
+    private static void scriptLings(List<FakeUnit> lings, FakeUnit... dragoons) {
+        for (FakeUnit ling : lings) {
+            if (ling.hp <= 0) continue;
+            FakeUnit nearest = null;
+            double best = Double.MAX_VALUE;
+            for (FakeUnit dragoon : dragoons) {
+                if (dragoon.hp <= 0) continue;
+                double dist = ling.distTo(dragoon);
+                if (dist < best) {
+                    best = dist;
+                    nearest = dragoon;
+                }
+            }
+            if (nearest == null) {
+                ling.lastCommand = "Stop";
+                continue;
+            }
+            // Same reach rule as the sim engine (SimWorld.reachTiles):
+            // weapon range plus the target's body, so sub-tile melee
+            // weapons can actually connect instead of chasing forever.
+            if (best <= SimWorld.reachTiles(ling, nearest)) {
+                ling.lastCommand = "AttackUnit";
+                ling.target = nearest;
+                ling.targetPosition = nearest.position;
+            }
+            else {
+                ling.lastCommand = "Move";
+                ling.target = nearest;
+                ling.targetPosition = nearest.position;
+            }
         }
     }
 
@@ -454,6 +421,333 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     // yields; WITHOUT (count 99) it holds - proving the knob under
     // test is the one the A/B arms differ in.
     // =========================================================
+
+    /**
+     * Baited-in defender: holds the mouth, trades only in reach (no chasing out).
+     */
+    private static void scriptHoldMouth(FakeUnit ling, FakeUnit[] dragoons) {
+        if (ling.hp <= 0) {
+            ling.lastCommand = "Stop";
+
+            return;
+        }
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit dragoon : dragoons) {
+            if (dragoon.hp <= 0) continue;
+            double dist = ling.distTo(dragoon);
+            if (dist < best) {
+                best = dist;
+                nearest = dragoon;
+            }
+        }
+        if (nearest != null && best <= SimWorld.reachTiles(ling, nearest)) {
+            ling.lastCommand = "AttackUnit";
+            ling.target = nearest;
+            ling.targetPosition = nearest.position;
+        }
+        else {
+            ling.lastCommand = "Stop";
+            ling.target = null;
+        }
+    }
+
+    // =========================================================
+    // T4a-b + T5a-b: formation coordination (NEXT #162). Wounded
+    // first rank withdraws, the line helps: make-way opens the
+    // corridor, cover takes the pursuer instead of the nearest.
+    // =========================================================
+
+    private static double centroidX(FakeUnit[] dragoons) {
+        double sum = 0;
+        for (FakeUnit dragoon : dragoons) sum += dragoon.position.x();
+
+        return sum / dragoons.length;
+    }
+
+    private static boolean arrived(FakeUnit unit, int x, int y) {
+        return Math.hypot(unit.position.x() - x, unit.position.y() - y) < 1.5 * TILE;
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    @Test
+    public void engineDataPins() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 10);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 12, 10);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 14, 10);
+
+        assertEquals(5.0, dragoon.maxSpeed(), 0.001, "dragoon top speed, px/frame");
+        assertEquals(30, dragoon.cooldownAbsolute(), "dragoon cooldown, frames");
+        assertEquals(5.49, ling.maxSpeed(), 0.001, "ling top speed, px/frame");
+        assertEquals(8, ling.cooldownAbsolute(), "ling cooldown, frames");
+        assertEquals(4.0, zealot.maxSpeed(), 0.001, "zealot top speed, px/frame");
+        assertEquals(22, zealot.cooldownAbsolute(), "zealot cooldown, frames");
+    }
+
+    // =========================================================
+    // Helpers.
+    // =========================================================
+
+    // =========================================================
+    // T-hunt: lost contact hunts the last known point (1Drag_v_1Zeal:
+    // brief contact at 0:12, then 9 min idle 60 tiles apart - neither
+    // side re-acquires). Gated to baseless maps + beyond the 9-tile
+    // squad envelope, so focus refusals inside it are never overruled
+    // and based maps keep their formation behavior (negative control).
+    // No UMS check on purpose: the gate is contact memory (lastTarget
+    // exists only after a real fight) plus baselessness.
+    // =========================================================
+
+    @Test
+    public void surroundedWoundedDragoonFleesInsteadOfHolding() {
+        // A lone wounded dragoon cannot outrun lings (5.49 > 5.0 px/f) and
+        // cannot out-DPS them before they chew through 50 hp, so survival
+        // is NOT asserted here - T2 covers surviving as a group. What this
+        // test pins is the decision: move orders away from the threat and
+        // real displacement while still trading shots, never hold-and-die.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.hp = 50;
+        dragoon.shields = 0;
+        dragoon.cooldown = 15;
+
+        List<FakeUnit> lings = new ArrayList<>();
+        double[][] ring = {{28, 20}, {32, 20}};
+        for (double[] spot : ring) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[]{dragoon}, lings.toArray(new FakeUnit[0]), arena);
+        try {
+            double startX = dragoon.position.x();
+            double startY = dragoon.position.y();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 250; i++) {
+                world.tick(() -> {
+                    BattleCommander.act(
+                        dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    scriptLings(lings, dragoon);
+                });
+                if (dragoon.hp <= 0) break;
+            }
+
+            double fledPx = Math.hypot(
+                dragoon.position.x() - startX, dragoon.position.y() - startY);
+            assertTrue(fledPx > 2 * TILE,
+                "dragoon must gain ground from the pocket, fled only " + fledPx + "px");
+            assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "kite must issue move steps, not hold-and-shoot: " + ordersOf(dragoon));
+            assertTrue(world.shotsFired() > 0,
+                "a kite that never shoots is just running - trade while yielding");
+        } finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
+    // T-creep: the hunt hands off to the creep inside 9 tiles, the
+    // creep walks 9 -> 2, then the ghost holds instead of bunching
+    // back (owner, Wine duel: ClusterHunt forward, gather back,
+    // forever 2-3 tiles from the slot).
+    // =========================================================
+
+    @Test
+    public void woundedDragoonsWithdrawAndSurvive() {
+        // Band matters: all three under the 80hp pinch line (wounded),
+        // healthy enough that 3 lings cannot eat them before focus fire
+        // (about a ling per 2 volleys) clears the pressers. Recalibrated
+        // 2026-10-26: the WINDUP lookup fix (dragoon 6->8, ling 6->5)
+        // made the old 4-ling heat lethal - dragoons shoot a third slower
+        // while lings chew faster. Hp band untouched on purpose (pinch-line
+        // semantics); one presser fewer restores the intended regime under
+        // the corrected physics.
+        FakeUnit[] dragoons = new FakeUnit[]{
+            woundedDragoon(30, 20, 70),
+            woundedDragoon(29, 21, 75),
+            woundedDragoon(31, 19, 75),
+        };
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][]{{36, 19}, {36, 20}, {36, 21}}) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+
+        double startCentroidX = centroidX(dragoons);
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            final boolean[] withdrew = new boolean[]{false};
+            for (int i = 0; i < 300; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, dragoons);
+                });
+                if (centroidX(dragoons) < startCentroidX - TILE) withdrew[0] = true;
+            }
+
+            for (FakeUnit dragoon : dragoons) {
+                assertTrue(dragoon.hp > 0, "no dragoon left behind to die");
+            }
+            assertTrue(world.shotsFired() > 0,
+                "kite or wipe, the guns must speak - silent guns prove nothing");
+            assertTrue(withdrew[0],
+                "sustained melee pressure must move the group west at some point");
+        } finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
+    // T-wall: an attack onto the wall, simmed (NEXT #97: the FE game
+    // never took an attack on its wall, so no game can settle whether
+    // the funnel + static DPS holds - this runs that attack: a ling
+    // raid committing through the gap must die on the cannons, in the
+    // funnel, without any army help).
+    // =========================================================
+
+    @Test
+    public void moverReachesThroughGapWithoutPermanentWedge() {
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 10, 15);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 10, 13);
+        FakeUnit[] dragoons = new FakeUnit[]{a, b};
+
+        // Vertical wall with a single gap: x in [18,20], gap y in [12,14].
+        SimArena arena = new SimArena(40 * TILE, 30 * TILE)
+            .block(18 * TILE, 0, 2 * TILE, 12 * TILE)
+            .block(18 * TILE, 14 * TILE, 2 * TILE, 16 * TILE);
+        SimWorld world = new SimWorld(dragoons, new FakeUnit[0], arena);
+        try {
+            for (int i = 0; i < 400; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        dragoon.lastCommand = "Move";
+                        dragoon.target = null;
+                        dragoon.targetPosition = atlantis.map.position.APosition
+                            .createFromPixels(30 * TILE, 13 * TILE);
+                    }
+                });
+                if (arrived(a, 30 * TILE, 13 * TILE)
+                    && arrived(b, 30 * TILE, 13 * TILE)) break;
+            }
+
+            assertTrue(arrived(a, 30 * TILE, 13 * TILE), "dragoon A reaches through the gap");
+            assertTrue(arrived(b, 30 * TILE, 13 * TILE), "dragoon B reaches through the gap");
+            assertTrue(world.maxStuckFrames(dragoons) < 120,
+                "sliding along the wall is fine, a permanent wedge is not");
+        } finally {
+            world.close();
+        }
+    }
+
+    @Test
+    public void healthyTrioWipesPressingLings() {
+        FakeUnit[] dragoons = new FakeUnit[]{
+            woundedDragoon(28, 20, 100),
+            woundedDragoon(29, 21, 100),
+            woundedDragoon(29, 19, 100),
+        };
+        for (FakeUnit dragoon : dragoons) dragoon.cooldown = 0;
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][]{{34, 20}, {34, 21}}) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 300; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, dragoons);
+                });
+            }
+
+            assertEquals(0, world.aliveEnemies(), "two lings pressing a healthy trio die - the wipe branch");
+            for (FakeUnit dragoon : dragoons) {
+                assertTrue(dragoon.hp > 0, "wipe costs no dragoon here");
+            }
+            assertTrue(world.shotsFired() > 0, "a wipe without shots is a contradiction");
+        } finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    @Test
+    public void pinchWithStandoffDecidesOnShield() {
+        int[] withoutPinch = runSpreadDuel(true);
+        int[] withPinch = runSpreadDuel(false);
+
+        // Pinch was actually engageable in both arms (pocket pressure
+        // observed on live wounded dragoons) - without this the identity
+        // below would be vacuous.
+        assertTrue(withoutPinch[4] >= 2,
+            "standoff must pocket at some point, else pinch can never fire");
+        assertTrue(withPinch[4] >= 2,
+            "standoff must pocket at some point, else pinch can never fire");
+        // Verdict (sim, deterministic): identical outcomes either way -
+        // same survivors, same hp, same kills. Combined with Wine N=5+5
+        // (OFF slightly better on contact): no evidence pinch ever helps.
+        // If this fails after a behavior change, re-evaluate NEXT #159.
+        assertEquals(withoutPinch[0], withPinch[0], "survivors");
+        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
+        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
+    }
+
+    @Test
+    public void pinchWithContactDecidesOnShield() {
+        int[] withoutPinch = runContactDuel(true);
+        int[] withPinch = runContactDuel(false);
+
+        // Instant contact must pocket: if maxPinchPressure stayed < 2
+        // the scenario failed to create the pocket, not the rule.
+        assertTrue(withoutPinch[4] >= 2 && withPinch[4] >= 2,
+            "contact must pocket wounded dragoons, else pinch can never fire");
+        assertTrue(withoutPinch[3] > 0 && withPinch[3] > 0,
+            "both arms must actually trade shots");
+        // Verdict (sim, deterministic): same survivors, same hp, same
+        // kills either way - even point-blank, yielding changes nothing
+        // vs standing to trade. Same conclusion as the standoff arms.
+        assertEquals(withoutPinch[0], withPinch[0], "survivors");
+        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
+        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
+    }
 
     @Test
     public void pinchGateTogglesYieldVsHold() {
@@ -467,7 +761,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         f2.setEnemy();
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { dragoon }, new FakeUnit[] { quarry, f1, f2 }, arena);
+            new FakeUnit[]{dragoon}, new FakeUnit[]{quarry, f1, f2}, arena);
         atlantis.battle.kite.CombatTuning previous = atlantis.battle.kite.CombatTuning.current();
         try {
             BattleCommander.clearForTests();
@@ -491,19 +785,12 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             dragoon.cooldown = 20;
             assertTrue(atlantis.combat.kite.Kite.shouldKite(dragoon, quarry),
                 "cooling with close flankers: kite, pinch or no pinch");
-        }
-        finally {
+        } finally {
             atlantis.battle.kite.CombatTuning.install(previous);
             world.close();
             BattleCommander.clearForTests();
         }
     }
-
-    // =========================================================
-    // T4a-b + T5a-b: formation coordination (NEXT #162). Wounded
-    // first rank withdraws, the line helps: make-way opens the
-    // corridor, cover takes the pursuer instead of the nearest.
-    // =========================================================
 
     @Test
     public void makeWayStepClearsBlockedCorridor() {
@@ -514,24 +801,20 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { escaper, helper, third },
-            new FakeUnit[] { pursuer }, arena);
+            new FakeUnit[]{escaper, helper, third},
+            new FakeUnit[]{pursuer}, arena);
         try {
             BattleCommander.clearForTests();
 
             atlantis.combat.formation.CoverWithdraw.Step step =
                 atlantis.combat.formation.CoverWithdraw.makeWayStep(helper);
-            assertTrue(step != null,
-                "helper stands on the escape ray: it must step aside");
-            assertTrue(step.escaper == escaper,
-                "the step names whose ray it clears");
+            assertNotNull(step, "helper stands on the escape ray: it must step aside");
+            assertSame(step.escaper, escaper, "the step names whose ray it clears");
             assertTrue(Math.abs(step.dest.y() - helper.position.y()) > 1,
                 "the step is lateral (off the ray), not along it");
 
-            assertTrue(atlantis.combat.formation.CoverWithdraw.makeWayStep(third) == null,
-                "far from the corridor: no step, fight on unchanged");
-        }
-        finally {
+            assertNull(CoverWithdraw.makeWayStep(third), "far from the corridor: no step, fight on unchanged");
+        } finally {
             world.close();
             BattleCommander.clearForTests();
         }
@@ -545,14 +828,12 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         pursuer.setEnemy();
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { escaper, helper },
-            new FakeUnit[] { pursuer }, arena);
+            new FakeUnit[]{escaper, helper},
+            new FakeUnit[]{pursuer}, arena);
         try {
             atlantis.combat.BattleCommander.clearForTests();
-            assertTrue(atlantis.combat.formation.CoverWithdraw.makeWayStep(helper) == null,
-                "two units is a duel: frozen per-unit behavior, no sharing");
-        }
-        finally {
+            assertNull(CoverWithdraw.makeWayStep(helper), "two units is a duel: frozen per-unit behavior, no sharing");
+        } finally {
             world.close();
             BattleCommander.clearForTests();
         }
@@ -565,16 +846,16 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         FakeUnit wounded = woundedDragoon(34, 20, 50);
         FakeUnit holderA = fake(AUnitType.Protoss_Dragoon, 33, 20);
         FakeUnit holderB = fake(AUnitType.Protoss_Dragoon, 33, 21);
-        FakeUnit[] ours = new FakeUnit[] { wounded, holderA, holderB };
+        FakeUnit[] ours = new FakeUnit[]{wounded, holderA, holderB};
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 36, 20 }, { 37, 21 } }) {
+        for (double[] spot : new double[][]{{36, 20}, {37, 21}}) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
         }
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(ours, lings.toArray(new FakeUnit[0]), arena);
-        final boolean[] sawMakeWay = new boolean[] { false };
+        final boolean[] sawMakeWay = new boolean[]{false};
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -602,8 +883,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 "the corridor trigger fired live: a holder stood on the escape ray");
             assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"MAKE_WAY\""),
                 "the live step-aside rows itself for the game proof");
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -621,8 +901,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         distractor.setEnemy();
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { wounded, healthy, third },
-            new FakeUnit[] { pursuer, distractor }, arena);
+            new FakeUnit[]{wounded, healthy, third},
+            new FakeUnit[]{pursuer, distractor}, arena);
         try {
             BattleCommander.clearForTests();
 
@@ -630,14 +910,19 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 atlantis.combat.formation.CoverWithdraw.coverTarget(healthy);
             assertTrue(cover != null && cover.pursuer == pursuer,
                 "cover names the pursuer chewing the wounded, not the nearer ling");
-            assertTrue(cover.escaper == wounded,
-                "cover names on whose behalf it fires");
-        }
-        finally {
+            assertSame(cover.escaper, wounded, "cover names on whose behalf it fires");
+        } finally {
             world.close();
             BattleCommander.clearForTests();
         }
     }
+
+    // =========================================================
+    // T-duel: 1v1 dragoon vs chasing zealot (NEXT #169: Wine takes 10
+    // hits in a WIN, target under 2). The zealot chases like the map AI:
+    // attack-move at the dragoon, no perfect prediction. The dragoon
+    // must win while the DuelKite standoff keeps the hits down.
+    // =========================================================
 
     @Test
     public void healthyCoversPursuerInLiveFight() {
@@ -648,13 +933,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         FakeUnit wounded = woundedDragoon(32, 20, 30);
         FakeUnit healthy = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
-        FakeUnit[] ours = new FakeUnit[] { wounded, healthy, third };
+        FakeUnit[] ours = new FakeUnit[]{wounded, healthy, third};
         FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 33, 20);
         pursuer.hp = 10;
         pursuer.setEnemy();
         FakeUnit distractor = fake(AUnitType.Zerg_Zergling, 27.5, 20);
         distractor.setEnemy();
-        FakeUnit[] foes = new FakeUnit[] { pursuer, distractor };
+        FakeUnit[] foes = new FakeUnit[]{pursuer, distractor};
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(ours, foes, arena);
         try {
@@ -668,7 +953,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                         BattleCommander.act(
                             dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                     }
-                    scriptLings(java.util.Arrays.asList(pursuer), wounded);
+                    scriptLings(Collections.singletonList(pursuer), wounded);
                     distractor.lastCommand = "Stop";
                 });
                 if (wounded.hp <= 0) break;
@@ -679,8 +964,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 "healthy issues attack orders, not idle watching");
             assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"COVER\""),
                 "the live cover decision rows itself for the game proof");
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -688,17 +972,14 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     }
 
     // =========================================================
-    // Helpers.
-    // =========================================================
-
-    // =========================================================
-    // T-hunt: lost contact hunts the last known point (1Drag_v_1Zeal:
-    // brief contact at 0:12, then 9 min idle 60 tiles apart - neither
-    // side re-acquires). Gated to baseless maps + beyond the 9-tile
-    // squad envelope, so focus refusals inside it are never overruled
-    // and based maps keep their formation behavior (negative control).
-    // No UMS check on purpose: the gate is contact memory (lastTarget
-    // exists only after a real fight) plus baselessness.
+    // T-duel-knobs: the same duel at three standoff insets (NEXT #186).
+    // Every arm must keep the win; the taken numbers are identical
+    // across arms (40/40/40 - this sim does not discriminate the knob,
+    // consistent with #152: amplitude is not the binding constraint).
+    // The 0.15-vs-0.2-vs-0.4 choice therefore rides the live Wine proof,
+    // not this sim; the wiring (pinned in DuelKiteTest) is what makes
+    // the knob live-tunable at all. This test locks in win-preservation
+    // across the plausible range, not the choice itself.
     // =========================================================
 
     @Test
@@ -708,7 +989,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         ling.setEnemy();
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{ling}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -744,17 +1025,16 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(dragoon.distTo(APosition.create(32, 20)) < 1.5 * TILE,
                 "dragoon must march the last engaged point, not sit: " + dragoon.position);
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"), "hunt issues moves");
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
 
     // =========================================================
-    // T-creep: the hunt hands off to the creep inside 9 tiles, the
-    // creep walks 9 -> 2, then the ghost holds instead of bunching
-    // back (owner, Wine duel: ClusterHunt forward, gather back,
-    // forever 2-3 tiles from the slot).
+    // T-run: a probe flees a chasing zealot through the running
+    // managers (NEXT #172, second consumer). The probe outruns the
+    // zealot (4.92 vs 4.0), so survival means the escape chain issued
+    // somewhere away instead of freezing or circling back.
     // =========================================================
 
     @Test
@@ -764,7 +1044,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         ling.setEnemy();
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{ling}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -788,7 +1068,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             dragoon.targetPosition = null;
             double anchorDist = dragoon.distTo(APosition.create(32, 20));
             assertTrue(anchorDist > 9 && anchorDist <= 12, "setup: creep handoff zone: " + anchorDist);
-            final double[] maxDist = { anchorDist };
+            final double[] maxDist = {anchorDist};
             for (int i = 0; i < 300; i++) {
                 world.tick(() -> {
                     if (dragoon.hp > 0) {
@@ -801,19 +1081,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 "creep closed the ghost and holds it: " + dragoon.position);
             assertTrue(maxDist[0] <= anchorDist + 1.0,
                 "never bunched back while closing: " + maxDist[0]);
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
-
-    // =========================================================
-    // T-wall: an attack onto the wall, simmed (NEXT #97: the FE game
-    // never took an attack on its wall, so no game can settle whether
-    // the funnel + static DPS holds - this runs that attack: a ling
-    // raid committing through the gap must die on the cannons, in the
-    // funnel, without any army help).
-    // =========================================================
 
     @Test
     public void wallHoldsEvenHeavyRaidUntouched() {
@@ -834,72 +1105,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             "even a 32-raid dies in the funnel without scratching the guns: " + thirtytwo);
     }
 
-    private static final class Outcome {
-        boolean wiped;
-        double cannonFraction;
-        int ticks;
-
-        @Override
-        public String toString() {
-            return "wiped=" + wiped + ",cannonFraction=" + cannonFraction + ",ticks=" + ticks;
-        }
-    }
-
-    private static Outcome raid(int n) {
-        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
-        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
-        FakeUnit[] lings = new FakeUnit[n];
-        for (int i = 0; i < n; i++) {
-            lings[i] = fakeEnemy(AUnitType.Zerg_Zergling, 10, 12 + i * (7.0 / Math.max(1, n - 1)));
-        }
-        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
-
-        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
-            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
-            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
-        SimWorld world = new SimWorld(ours, lings, arena);
-        APosition gap = APosition.create(30, 15);
-        int cannonHpStart = cannonA.hp + cannonB.hp;
-        Outcome out = new Outcome();
-        try {
-            BattleCommander.clearForTests();
-            atlantis.util.log.EventLog.clearForTests();
-            for (int i = 0; i < 2200; i++) {
-                world.tick(() -> {
-                    scriptCannon(cannonA, lings);
-                    scriptCannon(cannonB, lings);
-                    for (FakeUnit ling : lings) {
-                        scriptWallRaid(ling, gap, ours);
-                    }
-                });
-                boolean wiped = true;
-                for (FakeUnit ling : lings) {
-                    if (ling.hp > 0) wiped = false;
-                }
-                if (wiped) {
-                    out.ticks = i;
-                    break;
-                }
-                boolean gunsDead = cannonA.hp <= 0 && cannonB.hp <= 0;
-                if (gunsDead) {
-                    out.ticks = i;
-                    break;
-                }
-                out.ticks = i;
-            }
-            out.wiped = true;
-            for (FakeUnit ling : lings) {
-                if (ling.hp > 0) out.wiped = false;
-            }
-            out.cannonFraction = (Math.max(0, cannonA.hp) + Math.max(0, cannonB.hp))
-                / (double) Math.max(1, cannonHpStart);
-
-            return out;
-        }
-        finally {
-            world.close();
-        }
-    }
+    // =========================================================
+    // T-ghost: an engaged target that goes invisible and stays that way
+    // stops pinning the frame (NEXT #163 follow-up, live 1Drag: 9 min of
+    // shot-fired at an unhittable ghost, zero damage both sides). Grace
+    // covers fog flicker; a stale ghost is dropped, and the hunt takes
+    // over when the last contact is behind the squad envelope.
+    // =========================================================
 
     /**
      * NEXT #97 (M4 funnel) + #185 Stage B, first harder-scenario
@@ -916,13 +1128,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     public void wallFallsToRangedPressers() {
         FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
         FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
-        FakeUnit[] pressers = new FakeUnit[] {
+        FakeUnit[] pressers = new FakeUnit[]{
             fakeEnemy(AUnitType.Zerg_Guardian, 10, 13),
             fakeEnemy(AUnitType.Zerg_Guardian, 10, 14),
             fakeEnemy(AUnitType.Zerg_Guardian, 10, 16),
             fakeEnemy(AUnitType.Zerg_Guardian, 10, 17),
         };
-        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
+        FakeUnit[] ours = new FakeUnit[]{cannonA, cannonB};
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE)
             .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
@@ -956,40 +1168,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     "outranging means unanswered: a presser that held max range takes no cannon fire: "
                         + presser.hp + "/" + presser.maxHp());
             }
-        }
-        finally {
+        } finally {
             world.close();
-        }
-    }
-
-    /**
-     * Ranged presser: walk the raid corridor, but stop at own max range
-     * and shell - never enter the funnel mouth (that would hand the guns
-     * their range back). Mirrors scriptWallRaid's approach, inverts its
-     * ending: hold the standoff the guns cannot answer.
-     */
-    static void scriptRangedPresser(FakeUnit presser, APosition gap, FakeUnit[] guns) {
-        if (presser.hp <= 0) return;
-
-        FakeUnit nearest = null;
-        double best = Double.MAX_VALUE;
-        for (FakeUnit gun : guns) {
-            if (gun == null || gun.hp <= 0) continue;
-            double dist = presser.distTo(gun);
-            if (dist < best) {
-                best = dist;
-                nearest = gun;
-            }
-        }
-        if (nearest != null && presser.distTo(nearest) <= SimWorld.reachTiles(presser, nearest)) {
-            presser.lastCommand = "AttackUnit";
-            presser.target = nearest;
-            presser.targetPosition = nearest.position;
-        }
-        else {
-            presser.lastCommand = "Move";
-            presser.target = null;
-            presser.targetPosition = presser.distTo(gap) > 1 ? gap.position() : nearest.position;
         }
     }
 
@@ -997,7 +1177,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     public void wallFunnelHoldsRaidWithoutHelp() {
         FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
         FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
-        FakeUnit[] lings = new FakeUnit[] {
+        FakeUnit[] lings = new FakeUnit[]{
             fakeEnemy(AUnitType.Zerg_Zergling, 10, 12),
             fakeEnemy(AUnitType.Zerg_Zergling, 10, 13),
             fakeEnemy(AUnitType.Zerg_Zergling, 10, 14),
@@ -1007,7 +1187,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             fakeEnemy(AUnitType.Zerg_Zergling, 10, 18),
             fakeEnemy(AUnitType.Zerg_Zergling, 10, 19),
         };
-        FakeUnit[] ours = new FakeUnit[] { cannonA, cannonB };
+        FakeUnit[] ours = new FakeUnit[]{cannonA, cannonB};
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE)
             .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
@@ -1028,7 +1208,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 });
                 boolean wiped = true;
                 for (FakeUnit ling : lings) {
-                    if (ling.hp > 0) wiped = false;
+                    if (ling.hp > 0) {
+                        wiped = false;
+                        break;
+                    }
                 }
                 if (wiped) break;
             }
@@ -1040,59 +1223,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(cannonA.hp > 0 && cannonB.hp > 0, "wall guns survive the raid");
             assertTrue(cannonA.hp + cannonB.hp > cannonHpStart / 2,
                 "margin, not a trade: cannons keep over half their hit points");
-        }
-        finally {
+        } finally {
             world.close();
-        }
-    }
-
-    /** Static gun: trade with the nearest quarry inside cannon range, else hold. */
-    static void scriptCannon(FakeUnit cannon, FakeUnit[] foes) {
-        if (cannon.hp <= 0) return;
-
-        FakeUnit nearest = null;
-        double best = Double.MAX_VALUE;
-        for (FakeUnit foe : foes) {
-            if (foe == null || foe.hp <= 0) continue;
-            double dist = cannon.distTo(foe);
-            if (dist < best) {
-                best = dist;
-                nearest = foe;
-            }
-        }
-        if (nearest != null && best <= SimWorld.reachTiles(cannon, nearest)) {
-            cannon.lastCommand = "AttackUnit";
-            cannon.target = nearest;
-            cannon.targetPosition = nearest.position;
-        }
-        else {
-            cannon.lastCommand = "Hold";
-        }
-    }
-
-    /** Raid script: run at the gap, then trade with the nearest gun. */
-    static void scriptWallRaid(FakeUnit ling, APosition gap, FakeUnit[] guns) {
-        if (ling.hp <= 0) return;
-
-        FakeUnit nearest = null;
-        double best = Double.MAX_VALUE;
-        for (FakeUnit gun : guns) {
-            if (gun == null || gun.hp <= 0) continue;
-            double dist = ling.distTo(gun);
-            if (dist < best) {
-                best = dist;
-                nearest = gun;
-            }
-        }
-        if (nearest != null && ling.distTo(nearest) <= SimWorld.reachTiles(ling, nearest)) {
-            ling.lastCommand = "AttackUnit";
-            ling.target = nearest;
-            ling.targetPosition = nearest.position;
-        }
-        else {
-            ling.lastCommand = "Move";
-            ling.target = null;
-            ling.targetPosition = ling.distTo(gap) > 1 ? gap.position() : nearest.position;
         }
     }
 
@@ -1108,7 +1240,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         ling.setEnemy();
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { nexus, dragoon }, new FakeUnit[] { ling }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{nexus, dragoon}, new FakeUnit[]{ling}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -1138,17 +1270,15 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(
                 Math.hypot(dragoon.position.x() - anchorX, dragoon.position.y() - anchorY) < TILE,
                 "based maps keep the formation fallback, no cross-map hunting");
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
 
     // =========================================================
-    // T-duel: 1v1 dragoon vs chasing zealot (NEXT #169: Wine takes 10
-    // hits in a WIN, target under 2). The zealot chases like the map AI:
-    // attack-move at the dragoon, no perfect prediction. The dragoon
-    // must win while the DuelKite standoff keeps the hits down.
+    // T-collapse: the bait pulled the lings into the funnel and the line
+    // crushes 4v2 (NEXT #170). The line joins the bait at the funnel
+    // mouth instead of standing the standoff, then wipes the pack.
     // =========================================================
 
     @Test
@@ -1158,7 +1288,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         zealot.setEnemy();
 
         SimArena arena = new SimArena(20 * TILE, 12 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { zealot }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{zealot}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -1173,7 +1303,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 if (zealot.hp <= 0) break;
             }
             assertTrue(zealot.hp <= 0, "the dragoon wins the duel");
-            int taken = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
+            int taken = (180 - dragoon.hp) + (80 - dragoon.shields);
             // Landing window for re-arms (owner 2026-10-26): a re-attack
             // waits until the riding step lands instead of cancelling it
             // the next frame. The sim has no order-cancellation model,
@@ -1184,22 +1314,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             // breakage (death, no shots), not the margin.
             assertTrue(taken <= 75, "standoff keeps the hits down, taken=" + taken
                 + " (measured 40 on the DuelKite rule; the live Wine target is <2 hits, NEXT #169)");
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
-
-    // =========================================================
-    // T-duel-knobs: the same duel at three standoff insets (NEXT #186).
-    // Every arm must keep the win; the taken numbers are identical
-    // across arms (40/40/40 - this sim does not discriminate the knob,
-    // consistent with #152: amplitude is not the binding constraint).
-    // The 0.15-vs-0.2-vs-0.4 choice therefore rides the live Wine proof,
-    // not this sim; the wiring (pinned in DuelKiteTest) is what makes
-    // the knob live-tunable at all. This test locks in win-preservation
-    // across the plausible range, not the choice itself.
-    // =========================================================
 
     @Test
     public void standoffInsetVariantsAllWinDuel() {
@@ -1229,9 +1347,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     if (zealot.hp <= 0) break;
                 }
                 assertTrue(zealot.hp <= 0, "arm inset=" + insets[arm] + ": the dragoon keeps the win");
-                taken[arm] = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
-            }
-            finally {
+                taken[arm] = (180 - dragoon.hp) + (80 - dragoon.shields);
+            } finally {
                 world.close();
                 CombatTuning.install(before);
             }
@@ -1244,13 +1361,6 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             "no knob value in range holds worse than the legacy 0.4: " + taken[0] + " -> " + taken[1]);
     }
 
-    // =========================================================
-    // T-run: a probe flees a chasing zealot through the running
-    // managers (NEXT #172, second consumer). The probe outruns the
-    // zealot (4.92 vs 4.0), so survival means the escape chain issued
-    // somewhere away instead of freezing or circling back.
-    // =========================================================
-
     @Test
     public void probeOutrunsChaserThroughRunningManagers() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 10, 20);
@@ -1259,7 +1369,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         double startDist = probe.distTo(zealot);
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { probe }, new FakeUnit[] { zealot }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{probe}, new FakeUnit[]{zealot}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -1277,40 +1387,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(probe.hp > 0, "the faster probe escapes the chase");
             assertTrue(probe.distTo(zealot) > startDist,
                 "distance opened instead of circling back: " + probe.distTo(zealot) + " vs " + startDist);
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
-
-    /** Map-AI-like chaser: face the quarry, move into range, trade. */
-    static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
-        if (foe.hp <= 0 || dragoon.hp <= 0) {
-            foe.lastCommand = "Stop";
-
-            return;
-        }
-        foe.setAngle(Math.atan2(
-            dragoon.position.y() - foe.position.y(), dragoon.position.x() - foe.position.x()));
-        if (foe.distTo(dragoon) <= SimWorld.reachTiles(foe, dragoon)) {
-            foe.lastCommand = "AttackUnit";
-            foe.target = dragoon;
-            foe.targetPosition = dragoon.position;
-        }
-        else {
-            foe.lastCommand = "Move";
-            foe.target = dragoon;
-            foe.targetPosition = dragoon.position;
-        }
-    }
-
-    // =========================================================
-    // T-ghost: an engaged target that goes invisible and stays that way
-    // stops pinning the frame (NEXT #163 follow-up, live 1Drag: 9 min of
-    // shot-fired at an unhittable ghost, zero damage both sides). Grace
-    // covers fog flicker; a stale ghost is dropped, and the hunt takes
-    // over when the last contact is behind the squad envelope.
-    // =========================================================
 
     @Test
     public void staleInvisibleTargetIsDroppedForHunt() {
@@ -1319,7 +1399,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         ling.setEnemy();
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{ling}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -1349,8 +1429,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == ling,
-                "fog flicker inside the grace window keeps the commitment");
+            assertSame(StickyTarget.pick(dragoon), ling, "fog flicker inside the grace window keeps the commitment");
             for (int i = 0; i < 60; i++) {
                 world.tick(() -> {
                     if (dragoon.hp > 0) {
@@ -1358,8 +1437,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == null,
-                "a long-unseen target in range still drops (visibility, not distance)");
+            assertNull(StickyTarget.pick(dragoon), "a long-unseen target in range still drops (visibility, not distance)");
             // Phase 3: far away and long unseen - the ghost drops, the hunt takes over.
             world.teleport(dragoon, APosition.create(15, 20));
             dragoon.lastCommand = "Stop";
@@ -1372,71 +1450,20 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(atlantis.combat.targeting.StickyTarget.pick(dragoon) == null,
-                "a stale ghost stops pinning the frame");
+            assertNull(StickyTarget.pick(dragoon), "a stale ghost stops pinning the frame");
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "dropped ghost hands over to the hunt: " + ordersOf(dragoon));
             assertTrue(dragoon.distTo(APosition.create(32, 20)) < 5 * TILE,
                 "marching the last contact, not shooting a ghost: " + dragoon.position);
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
 
-    private static FakeUnit woundedDragoon(double tx, double ty, int hp) {
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, tx, ty);
-        dragoon.hp = hp;
-        dragoon.shields = 0;
-        dragoon.cooldown = 10;
-
-        return dragoon;
-    }
-
-    /** Scripted pursuers: nearest live dragoon, move into range, then trade. */
-    private static void scriptLings(List<FakeUnit> lings, FakeUnit... dragoons) {
-        for (FakeUnit ling : lings) {
-            if (ling.hp <= 0) continue;
-            FakeUnit nearest = null;
-            double best = Double.MAX_VALUE;
-            for (FakeUnit dragoon : dragoons) {
-                if (dragoon.hp <= 0) continue;
-                double dist = ling.distTo(dragoon);
-                if (dist < best) {
-                    best = dist;
-                    nearest = dragoon;
-                }
-            }
-            if (nearest == null) {
-                ling.lastCommand = "Stop";
-                continue;
-            }
-            // Same reach rule as the sim engine (SimWorld.reachTiles):
-            // weapon range plus the target's body, so sub-tile melee
-            // weapons can actually connect instead of chasing forever.
-            if (best <= SimWorld.reachTiles(ling, nearest)) {
-                ling.lastCommand = "AttackUnit";
-                ling.target = nearest;
-                ling.targetPosition = nearest.position;
-            }
-            else {
-                ling.lastCommand = "Move";
-                ling.target = nearest;
-                ling.targetPosition = nearest.position;
-            }
-        }
-    }
-
-    // =========================================================
-    // T-collapse: the bait pulled the lings into the funnel and the line
-    // crushes 4v2 (NEXT #170). The line joins the bait at the funnel
-    // mouth instead of standing the standoff, then wipes the pack.
-    // =========================================================
-
     @Test
     public void collapseWipesBaitedPack() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             fake(AUnitType.Protoss_Dragoon, 27, 29),
             fake(AUnitType.Protoss_Dragoon, 28, 29),
             fake(AUnitType.Protoss_Dragoon, 29, 29),
@@ -1449,8 +1476,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, dragoons[0], dragoons[1], dragoons[2], dragoons[3] },
-            new FakeUnit[] { lingA, lingB }, arena);
+            new FakeUnit[]{nexus, dragoons[0], dragoons[1], dragoons[2], dragoons[3]},
+            new FakeUnit[]{lingA, lingB}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -1471,59 +1498,19 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             int alive = 0;
             for (FakeUnit dragoon : dragoons) if (dragoon.hp > 0) alive++;
             assertTrue(alive >= 3, "crushing collapse trades up, alive=" + alive);
-        }
-        finally {
+        } finally {
             world.close();
         }
     }
 
-    /** Baited-in defender: holds the mouth, trades only in reach (no chasing out). */
-    private static void scriptHoldMouth(FakeUnit ling, FakeUnit[] dragoons) {
-        if (ling.hp <= 0) {
-            ling.lastCommand = "Stop";
+    private static final class Outcome {
+        boolean wiped;
+        double cannonFraction;
+        int ticks;
 
-            return;
+        @Override
+        public String toString() {
+            return "wiped=" + wiped + ",cannonFraction=" + cannonFraction + ",ticks=" + ticks;
         }
-        FakeUnit nearest = null;
-        double best = Double.MAX_VALUE;
-        for (FakeUnit dragoon : dragoons) {
-            if (dragoon.hp <= 0) continue;
-            double dist = ling.distTo(dragoon);
-            if (dist < best) {
-                best = dist;
-                nearest = dragoon;
-            }
-        }
-        if (nearest != null && best <= SimWorld.reachTiles(ling, nearest)) {
-            ling.lastCommand = "AttackUnit";
-            ling.target = nearest;
-            ling.targetPosition = nearest.position;
-        }
-        else {
-            ling.lastCommand = "Stop";
-            ling.target = null;
-        }
-    }
-
-    private static double centroidX(FakeUnit[] dragoons) {
-        double sum = 0;
-        for (FakeUnit dragoon : dragoons) sum += dragoon.position.x();
-
-        return sum / dragoons.length;
-    }
-
-    private static boolean arrived(FakeUnit unit, int x, int y) {
-        return Math.hypot(unit.position.x() - x, unit.position.y() - y) < 1.5 * TILE;
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
     }
 }

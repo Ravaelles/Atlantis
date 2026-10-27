@@ -24,9 +24,13 @@ import java.util.regex.Pattern;
  */
 public final class OpenBWRunner {
 
-    /** The line the client prints once it is in the game. */
+    /**
+     * The line the client prints once it is in the game.
+     */
     private static final String ATTACH_MARKER = "Connection successful";
-    /** The line the bot prints once it is running its logic. */
+    /**
+     * The line the bot prints once it is running its logic.
+     */
     private static final String PLAYING_MARKER = "Atlantis is playing!";
     private static final Pattern FRAME = Pattern.compile("Frame (\\d+)");
 
@@ -69,7 +73,9 @@ public final class OpenBWRunner {
         }
     }
 
-    /** Reads the run back from the bot log - the same evidence a human would. */
+    /**
+     * Reads the run back from the bot log - the same evidence a human would.
+     */
     public OpenBWRunResult verdict() {
         String log = readLog(botLogPath());
         boolean attached = log != null && log.contains(ATTACH_MARKER);

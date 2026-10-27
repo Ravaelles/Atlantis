@@ -1,16 +1,16 @@
 package atlantis.combat.formation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Choke plug (owner, PurpleWave {@code SquadDefendBase} guard port):
@@ -35,13 +35,19 @@ public final class ChokePlug {
      */
     public static final double PLUG_DEPTH_TILES = 3.0;
 
-    /** Row spacing behind the plug row, away from the foe. */
+    /**
+     * Row spacing behind the plug row, away from the foe.
+     */
     public static final double ROW_SPACING_TILES = 1.5;
 
-    /** Slot spacing across a row. */
+    /**
+     * Slot spacing across a row.
+     */
     public static final double SLOT_SPACING_TILES = 1.5;
 
-    /** Rows never grow past this; overflow bunches on the last row. */
+    /**
+     * Rows never grow past this; overflow bunches on the last row.
+     */
     private static final int MAX_ROWS = 6;
 
     private static int cachedFrame = -1;

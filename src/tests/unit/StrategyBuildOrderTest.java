@@ -11,9 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Every strategy must be able to load its build order - the startup path the
@@ -47,9 +45,11 @@ public class StrategyBuildOrderTest {
      */
     private static final String ORDERS_DIR = "bwapi-data/AI/build_orders/";
 
-    /** Gaps tracked in _AI/NEXT.md #46 - not a licence to add more. */
+    /**
+     * Gaps tracked in _AI/NEXT.md #46 - not a licence to add more.
+     */
     private static final List<String> KNOWN_MISSING =
-            java.util.Arrays.asList("3 Gate", "12 Nexus", "Carrier Push");
+        java.util.Arrays.asList("3 Gate", "12 Nexus", "Carrier Push");
 
     @Test
     public void theOnlyMissingBuildOrdersAreTheTrackedOnes() {
@@ -66,8 +66,8 @@ public class StrategyBuildOrderTest {
         }
 
         assertEquals(KNOWN_MISSING, actuallyMissing,
-                "the set of strategies without a build-order file changed; "
-                        + "add the missing .txt or update the tracked list in _AI/NEXT.md #46");
+            "the set of strategies without a build-order file changed; "
+                + "add the missing .txt or update the tracked list in _AI/NEXT.md #46");
     }
 
     @Test
@@ -86,8 +86,8 @@ public class StrategyBuildOrderTest {
         }
 
         assertTrue(missing.isEmpty(),
-                "these strategies name a build-order file that does not exist in " + ORDERS_DIR
-                        + "Protoss/: " + missing + " - the bot would play with no build order and no error");
+            "these strategies name a build-order file that does not exist in " + ORDERS_DIR
+                + "Protoss/: " + missing + " - the bot would play with no build order and no error");
     }
 
     @Test
@@ -100,8 +100,8 @@ public class StrategyBuildOrderTest {
         AStrategy zealotIntoGoon = ProtossStrategies.PROTOSS_Zealot_into_Goon;
         assertNotNull(zealotIntoGoon.name(), "initialize() must name the strategy");
         assertTrue(zealotIntoGoon.name().contains(" "),
-                "the build-order file names contain spaces; a constant-derived name has none: "
-                        + zealotIntoGoon.name());
+            "the build-order file names contain spaces; a constant-derived name has none: "
+                + zealotIntoGoon.name());
 
         File file = new File(ORDERS_DIR + "Protoss/" + zealotIntoGoon.name() + ".txt");
         assertTrue(file.isFile(), "the file the strategy looks for must exist: " + file);
@@ -118,7 +118,7 @@ public class StrategyBuildOrderTest {
             if (strategy.name() == null) continue;
             boolean hasFile = new File(ORDERS_DIR + "Protoss/" + strategy.name() + ".txt").isFile();
             assertEquals(hasFile, strategy.isPlayable(),
-                    "fileless <=> unplayable must hold both ways: " + strategy.name());
+                "fileless <=> unplayable must hold both ways: " + strategy.name());
         }
     }
 
@@ -130,10 +130,10 @@ public class StrategyBuildOrderTest {
         assertNotNull(threeGate.name());
         try {
             ABuildOrderLoader.getBuildOrderForStrategy(threeGate);
-            assertTrue(false, "a fileless strategy must not load silently");
+            fail("a fileless strategy must not load silently");
         } catch (atlantis.production.orders.build.BuildOrderFileNotFoundException expected) {
             assertTrue(expected.getMessage().contains("not playable"),
-                    "the refusal must say unplayable, not missing-file: " + expected.getMessage());
+                "the refusal must say unplayable, not missing-file: " + expected.getMessage());
         }
     }
 
@@ -144,9 +144,9 @@ public class StrategyBuildOrderTest {
         // reachable, every strategy would fail at once.
         assertTrue(AFile.directoryExists(ORDERS_DIR), "build orders must ship with the repo");
 
-        for (String race : new String[] { "Protoss", "Terran", "Zerg" }) {
+        for (String race : new String[]{"Protoss", "Terran", "Zerg"}) {
             assertTrue(AFile.directoryExists(ORDERS_DIR + race),
-                    "the loader walks race subdirectories; missing: " + race);
+                "the loader walks race subdirectories; missing: " + race);
         }
     }
 
@@ -165,6 +165,6 @@ public class StrategyBuildOrderTest {
 
         assertTrue(names.size() >= 15, "initialize() should name every Protoss strategy, got " + names.size());
         assertTrue(names.contains("Zealot into Goon"),
-                "the name the Protoss-vs-Zerg strategy is renamed to: " + names);
+            "the name the Protoss-vs-Zerg strategy is renamed to: " + names);
     }
 }

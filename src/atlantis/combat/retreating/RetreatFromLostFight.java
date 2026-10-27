@@ -1,14 +1,14 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.Behavior;
 import atlantis.battle.DuelMemory;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.Behavior;
 import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.escape.EscapeScoredStep;
 import atlantis.combat.formation.SharedEscape;
-import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.targeting.MeleeChewerTarget;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -25,6 +25,16 @@ import atlantis.units.select.Select;
  * here, not in the composition.
  */
 public final class RetreatFromLostFight {
+
+    /**
+     * A chase is a visible armed enemy that can hit this unit inside its
+     * range + 3 tiles (owner 2026-10-23, NEXT #187 - the same band as the
+     * scout rule). Without one there is nothing to scatter from - the
+     * retreat walks home in formation instead (ClusterOrganizedRetreat).
+     * NOTE: enemy-centric on purpose - our ability to hit back is
+     * irrelevant; a Guardian outranging us still chases us.
+     */
+    private static final double CHASE_MARGIN_TILES = 3;
 
     private RetreatFromLostFight() {
     }
@@ -45,17 +55,6 @@ public final class RetreatFromLostFight {
         DuelMemory.noteRetreated(unit);
 
         return true;
-    }
-
-    /** One decision with its destination, or a null destination to fight in place. */
-    public static final class Verdict {
-        public final FleeReason reason;
-        public final HasPosition dest;
-
-        Verdict(FleeReason reason, HasPosition dest) {
-            this.reason = reason;
-            this.dest = dest;
-        }
     }
 
     /**
@@ -159,8 +158,7 @@ public final class RetreatFromLostFight {
             if (escape != null && escape != home) {
                 try {
                     rerouted = escape.distTo(home) >= 0.5;
-                }
-                catch (RuntimeException ignored) {
+                } catch (RuntimeException ignored) {
                     rerouted = false;
                     escape = home;
                 }
@@ -186,17 +184,20 @@ public final class RetreatFromLostFight {
         return new Verdict(FleeReason.STAY_MID_SWING, null);
     }
 
-    /**
-     * A chase is a visible armed enemy that can hit this unit inside its
-     * range + 3 tiles (owner 2026-10-23, NEXT #187 - the same band as the
-     * scout rule). Without one there is nothing to scatter from - the
-     * retreat walks home in formation instead (ClusterOrganizedRetreat).
-     * NOTE: enemy-centric on purpose - our ability to hit back is
-     * irrelevant; a Guardian outranging us still chases us.
-     */
-    private static final double CHASE_MARGIN_TILES = 3;
-
     private static boolean isChased(AUnit unit) {
         return unit.enemiesNear().havingWeapon().canAttack(unit, CHASE_MARGIN_TILES).notEmpty();
+    }
+
+    /**
+     * One decision with its destination, or a null destination to fight in place.
+     */
+    public static final class Verdict {
+        public final FleeReason reason;
+        public final HasPosition dest;
+
+        Verdict(FleeReason reason, HasPosition dest) {
+            this.reason = reason;
+            this.dest = dest;
+        }
     }
 }

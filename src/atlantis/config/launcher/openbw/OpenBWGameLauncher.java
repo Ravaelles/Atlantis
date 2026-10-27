@@ -31,19 +31,21 @@ public final class OpenBWGameLauncher {
 
     private OpenBWGameLauncher(OpenBWConfig initial) {
         this.config = initial != null
-                ? OpenBWConfig.builder()
-                        .harnessDir(initial.harnessDir())
-                        .gameDir(initial.gameDir())
-                        .serverScript(initial.serverScript())
-                        .map(initial.map())
-                        .races(initial.ourRace(), initial.enemyRace())
-                        .logDir(initial.logDir())
-                        .gameTimeoutSeconds(initial.gameTimeoutSeconds())
-                        .hostWaitSeconds(initial.hostWaitSeconds())
-                : OpenBWConfig.builder();
+            ? OpenBWConfig.builder()
+            .harnessDir(initial.harnessDir())
+            .gameDir(initial.gameDir())
+            .serverScript(initial.serverScript())
+            .map(initial.map())
+            .races(initial.ourRace(), initial.enemyRace())
+            .logDir(initial.logDir())
+            .gameTimeoutSeconds(initial.gameTimeoutSeconds())
+            .hostWaitSeconds(initial.hostWaitSeconds())
+            : OpenBWConfig.builder();
     }
 
-    /** Starts a run with this machine's defaults. */
+    /**
+     * Starts a run with this machine's defaults.
+     */
     public static OpenBWGameLauncher init() {
         return new OpenBWGameLauncher(null);
     }
@@ -52,7 +54,9 @@ public final class OpenBWGameLauncher {
         return new OpenBWGameLauncher(config);
     }
 
-    /** Replaces the whole configuration. */
+    /**
+     * Replaces the whole configuration.
+     */
     public OpenBWGameLauncher useConfig(OpenBWConfig value) {
         return new OpenBWGameLauncher(value);
     }
@@ -95,7 +99,7 @@ public final class OpenBWGameLauncher {
      * Hosts the game and plays the configured run to completion.
      *
      * @return the verdict: whether the client attached, the last frame seen, and
-     *         the log paths - the same facts the shell script used to grep for.
+     * the log paths - the same facts the shell script used to grep for.
      */
     public OpenBWRunResult run() {
         OpenBWConfig resolved = config.build();
@@ -107,7 +111,9 @@ public final class OpenBWGameLauncher {
         return new OpenBWRunner(resolved).run();
     }
 
-    /** Fails fast, with the reason, when this machine cannot host OpenBW at all. */
+    /**
+     * Fails fast, with the reason, when this machine cannot host OpenBW at all.
+     */
     public boolean canRun() {
         String missing = config.build().missingRequirement();
         if (missing != null) {

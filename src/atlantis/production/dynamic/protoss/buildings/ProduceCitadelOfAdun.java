@@ -7,7 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Citadel_of_Adun;
+import static atlantis.units.AUnitType.Protoss_Observatory;
 
 public class ProduceCitadelOfAdun {
     public static boolean produce() {

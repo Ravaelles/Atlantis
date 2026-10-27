@@ -19,6 +19,69 @@ public class TravelToConstruct extends HasUnit {
         super(unit);
     }
 
+    private static boolean shouldMoveToConstruct(
+        Construction construction, double distance, double minDistanceToIssueBuildOrder
+    ) {
+        if (distance <= minDistanceToIssueBuildOrder) return false;
+
+        AUnitType type = construction.buildingType();
+
+
+        if (ShouldNotTravelToConstructYet.check(construction, construction.builder(), distance)) {
+            if (construction.builder() != null) {
+                construction.builder().setTooltipTactical("Wait to build " + type.name() + "(" + A.digit(distance) + ")");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * The distance the issue-threshold is compared against: the footprint
+     * center for every type (NEXT #70 established it for gas; the owner call
+     * extends it after the #56 hover). The worker walks to the center, so a
+     * tile-origin metric parks 4-wide footprints past any fixed line.
+     * Package-visible as a seam so the metric choice is assertable.
+     */
+    public static double distanceForBuildOrderIssue(AUnit unit, Construction construction, AUnitType type) {
+        if (construction.positionToBuildCenter() != null) {
+            return unit.distTo(construction.positionToBuildCenter());
+        }
+        return unit.distTo(construction.buildPosition());
+    }
+
+    private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {
+        double minDistanceToIssueBuildOrder = 1.4;
+
+        if (buildingType.isBunker()) minDistanceToIssueBuildOrder = 8;
+        else if (buildingType.isGasBuilding()) minDistanceToIssueBuildOrder = 3.5;
+        else {
+            // The threshold must cover the walk target: a 4x3 center sits
+            // ~2.5 tiles from its own origin, so a flat 1.4 would re-create
+            // the #56 hover with the metric and target now agreeing. Small
+            // footprints keep 1.4 (Pylon 2x2: ~1.41 - the working path).
+            double halfWidth = buildingType.getTilesWidth() / 2.0;
+            double halfHeight = buildingType.getTilesHeights() / 2.0;
+            minDistanceToIssueBuildOrder = Math.max(
+                1.4, Math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight));
+        }
+
+        return minDistanceToIssueBuildOrder;
+    }
+
+    protected static boolean cantBuildHere(Construction construction, AUnitType buildingType) {
+        return !CanPhysicallyBuildHere.check(
+            construction.builder(), buildingType, construction.buildPosition()
+        ) && preventCantBuildHereForProtoss(buildingType);
+    }
+
+    private static boolean preventCantBuildHereForProtoss(AUnitType buildingType) {
+        if (!We.protoss()) return false;
+
+        return A.supplyTotal() <= 11 && buildingType.isGateway();
+    }
+
     protected boolean travelWhenReady(Construction construction) {
         APosition buildPosition = construction.buildPosition();
         APosition buildPositionCenter = construction.positionToBuildCenter();
@@ -74,24 +137,6 @@ public class TravelToConstruct extends HasUnit {
 
             return (new IssueBuildOrder(unit)).considerIssuingNow(construction);
         }
-    }
-
-    private static boolean shouldMoveToConstruct(
-        Construction construction, double distance, double minDistanceToIssueBuildOrder
-    ) {
-        if (distance <= minDistanceToIssueBuildOrder) return false;
-
-        AUnitType type = construction.buildingType();
-
-
-        if (ShouldNotTravelToConstructYet.check(construction, construction.builder(), distance)) {
-            if (construction.builder() != null) {
-                construction.builder().setTooltipTactical("Wait to build " + type.name() + "(" + A.digit(distance) + ")");
-            }
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -152,51 +197,6 @@ public class TravelToConstruct extends HasUnit {
         return needMinerals;
     }
 
-    /**
-     * The distance the issue-threshold is compared against: the footprint
-     * center for every type (NEXT #70 established it for gas; the owner call
-     * extends it after the #56 hover). The worker walks to the center, so a
-     * tile-origin metric parks 4-wide footprints past any fixed line.
-     * Package-visible as a seam so the metric choice is assertable.
-     */
-    public static double distanceForBuildOrderIssue(AUnit unit, Construction construction, AUnitType type) {
-        if (construction.positionToBuildCenter() != null) {
-            return unit.distTo(construction.positionToBuildCenter());
-        }
-        return unit.distTo(construction.buildPosition());
-    }
-
-    private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {
-        double minDistanceToIssueBuildOrder = 1.4;
-
-        if (buildingType.isBunker()) minDistanceToIssueBuildOrder = 8;
-        else if (buildingType.isGasBuilding()) minDistanceToIssueBuildOrder = 3.5;
-        else {
-            // The threshold must cover the walk target: a 4x3 center sits
-            // ~2.5 tiles from its own origin, so a flat 1.4 would re-create
-            // the #56 hover with the metric and target now agreeing. Small
-            // footprints keep 1.4 (Pylon 2x2: ~1.41 - the working path).
-            double halfWidth = buildingType.getTilesWidth() / 2.0;
-            double halfHeight = buildingType.getTilesHeights() / 2.0;
-            minDistanceToIssueBuildOrder = Math.max(
-                1.4, Math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight));
-        }
-
-        return minDistanceToIssueBuildOrder;
-    }
-
-    protected static boolean cantBuildHere(Construction construction, AUnitType buildingType) {
-        return !CanPhysicallyBuildHere.check(
-            construction.builder(), buildingType, construction.buildPosition()
-        ) && preventCantBuildHereForProtoss(buildingType);
-    }
-
-    private static boolean preventCantBuildHereForProtoss(AUnitType buildingType) {
-        if (!We.protoss()) return false;
-
-        return A.supplyTotal() <= 11 && buildingType.isGateway();
-    }
-
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double dist) {
         if (!unit.isMoving() || A.everyNthGameFrame(13)) {
             RefreshConstructionPosition.refreshIfNeeded(construction);
@@ -222,12 +222,12 @@ public class TravelToConstruct extends HasUnit {
             // distTo(center), and the threshold is footprint-sized, so arrival
             // always counts - the hover needed a metric the target could never
             // reach, and that combination is gone.
-            if (unit.move(
+            return unit.move(
                 buildCenter,
                 Actions.MOVE_BUILD,
                 "Build " + buildingType.name() + A.digit(dist),
                 true
-            )) return true;
+            );
         }
 
         // NOT `true` unconditionally. The old `return true` (and the same on the branch above)

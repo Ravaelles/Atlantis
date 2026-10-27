@@ -17,11 +17,11 @@ public class ACherryVis_GlobalLog {
 
     public static List<ACherryVis_GlobalLog> all = new ArrayList<>();
 
-    private int frame;
-    private String message;
-    private int sev = 0;
+    private final int frame;
+    private final String message;
+    private final int sev = 0;
     private String file = "";
-    private int line = 0;
+    private final int line = 0;
 
     private ACherryVis_GlobalLog(String message, String file) {
         this.frame = A.now();

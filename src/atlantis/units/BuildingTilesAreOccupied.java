@@ -148,8 +148,8 @@ public class BuildingTilesAreOccupied {
         int unitBottom = unitTop + unit.type().getTilesHeights();
 
         return unitLeft < buildingRight
-                && unitRight > buildingLeft
-                && unitTop < buildingBottom
-                && unitBottom > buildingTop;
+            && unitRight > buildingLeft
+            && unitTop < buildingBottom
+            && unitBottom > buildingTop;
     }
 }

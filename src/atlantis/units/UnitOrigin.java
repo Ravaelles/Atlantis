@@ -23,10 +23,6 @@ package atlantis.units;
  * answer that depends on the class order is not an answer.</p>
  */
 public class UnitOrigin {
-    public interface Source {
-        boolean isSimulated(AUnit unit);
-    }
-
     private static Source source = null;
 
     public static void useSource(Source newSource) {
@@ -39,5 +35,9 @@ public class UnitOrigin {
 
     public static boolean isSimulated(AUnit unit) {
         return source != null && source.isSimulated(unit);
+    }
+
+    public interface Source {
+        boolean isSimulated(AUnit unit);
     }
 }

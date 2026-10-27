@@ -5,6 +5,7 @@ import atlantis.production.constructions.position.protoss.PylonNeedsRoomAround;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeMapTiles;
@@ -14,10 +15,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
-import org.junit.jupiter.api.Tag;
 
 /**
  * A Pylon warps power, not just a building (owner 2026-10-20, UMS 7th_rav:
@@ -28,21 +25,13 @@ import org.junit.jupiter.api.Tag;
 @Tag("placement")
 public class PylonNeedsRoomAroundTest extends WorldStubForTests {
 
-    private static Set<String> blocked = new HashSet<>();
-
-    private static final class EdgeMap extends FakeMapTiles {
-        @Override
-        public boolean isWalkable(atlantis.map.position.HasPosition at) {
-            return !blocked.contains(at.tx() + "," + at.ty());
-        }
-    }
+    private static final Set<String> blocked = new HashSet<>();
 
     @AfterEach
     public void clean() {
         blocked.clear();
         FakeMapTiles.installAsSource();
     }
-
 
     @Test
     public void openGroundPassesWithFreeSupply() {
@@ -101,5 +90,12 @@ public class PylonNeedsRoomAroundTest extends WorldStubForTests {
                 PylonNeedsRoomAround.isTooTight(builder, AUnitType.Protoss_Gateway, APosition.create(30, 30)),
                 "the rule is Pylon-only");
         });
+    }
+
+    private static final class EdgeMap extends FakeMapTiles {
+        @Override
+        public boolean isWalkable(atlantis.map.position.HasPosition at) {
+            return !blocked.contains(at.tx() + "," + at.ty());
+        }
     }
 }

@@ -1,12 +1,11 @@
 package atlantis.combat;
-import atlantis.battle.DuelMemory;
-import atlantis.battle.cluster.Alpha;
 
-import atlantis.combat.formation.CoverWithdraw;
-import atlantis.combat.formation.FormationTwin;
+import atlantis.battle.DuelMemory;
+import atlantis.battle.kite.CombatTuning;
 import atlantis.combat.escape.EscapeDestination;
 import atlantis.combat.escape.EscapeScoredStep;
-import atlantis.battle.kite.CombatTuning;
+import atlantis.combat.formation.CoverWithdraw;
+import atlantis.combat.formation.FormationTwin;
 import atlantis.combat.kite.Kite;
 import atlantis.combat.kite.KiteTwin;
 import atlantis.combat.strategy.BattleStrategy;
@@ -16,8 +15,8 @@ import atlantis.combat.twins.FightTrace;
 import atlantis.combat.twins.HitTwin;
 import atlantis.combat.twins.ShotTwin;
 import atlantis.game.A;
-import atlantis.map.position.HasPosition;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
@@ -30,23 +29,40 @@ import atlantis.units.actions.move.MoveAway;
  */
 public final class FightTarget {
 
+    /**
+     * 5 s at 24 fps: a just-issued retreat must execute instead of being cancelled by the next frame's attack.
+     */
+    private static final int RETREAT_REENGAGE_COOLDOWN_FRAMES = 120;
+    /**
+     * How many melee enemies in 2 tiles make standing and trading a lost
+     * DPS race: up to three the guns still win it (pinned: duels are won
+     * trading, a pressing pair dies to focus fire, withdrawing wounded
+     * survive shooting), four and up only donate. Calibrated against
+     * those pins, not a guess - move it only with a sim duel proving
+     * the new line still wins the races above.
+     */
+    private static final int SWAMPED_MELEE_COUNT = 4;
+
     private FightTarget() {
     }
 
-    /** 5 s at 24 fps: a just-issued retreat must execute instead of being cancelled by the next frame's attack. */
-    private static final int RETREAT_REENGAGE_COOLDOWN_FRAMES = 120;
-
-    /** Memory lives in {@link DuelMemory}; the four methods below only forward it. */
+    /**
+     * Memory lives in {@link DuelMemory}; the four methods below only forward it.
+     */
     public static void markRepositioned(AUnit unit) {
         DuelMemory.markRepositioned(unit);
     }
 
-    /** Last engaged point while visible, or null when this unit never fought. */
+    /**
+     * Last engaged point while visible, or null when this unit never fought.
+     */
     public static APosition lastContact(AUnit unit) {
         return DuelMemory.lastContact(unit);
     }
 
-    /** Frame of the last visible contact snapshot, or null when never fought. */
+    /**
+     * Frame of the last visible contact snapshot, or null when never fought.
+     */
     public static Integer lastContactFrame(AUnit unit) {
         return DuelMemory.lastContactFrame(unit);
     }
@@ -123,7 +139,9 @@ public final class FightTarget {
         rearmAttack(unit, target, now, lastStep);
     }
 
-    /** Mid-swing the unit holds: a move now would cancel the damage. */
+    /**
+     * Mid-swing the unit holds: a move now would cancel the damage.
+     */
     private static boolean holdSwing(AUnit unit, AUnit target) {
         // Never interrupt our own shot: a move order during the attack
         // animation cancels the damage (PurpleWave AttackDelay) - the
@@ -186,7 +204,9 @@ public final class FightTarget {
         }
     }
 
-    /** Corridor clearing (#162): step out of a withdrawing ally's escape ray. */
+    /**
+     * Corridor clearing (#162): step out of a withdrawing ally's escape ray.
+     */
     private static boolean makeWay(AUnit unit, int now, Integer lastStep) {
         // Urgent-only (escaper within 1.5 tiles), gated to 3+ army units
         // so duels stay frozen, cadence-kept like every step (reposition
@@ -195,7 +215,7 @@ public final class FightTarget {
         APosition aside = null;
         CoverWithdraw.Step makeWay = CoverWithdraw.makeWayStep(unit);
         if (makeWay != null) aside = makeWay.dest;
-        if (aside != null && violatesBuildingClearance(aside, unit)) aside = null;
+        if (violatesBuildingClearance(aside, unit)) aside = null;
         if (aside != null
             && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
             && unit.move(aside, Actions.MOVE_AVOID, Behavior.MAKE_WAY.tag())) {
@@ -207,9 +227,11 @@ public final class FightTarget {
         return false;
     }
 
-    /** Kite the threat when the margin rule says so, or false to close in. */
+    /**
+     * Kite the threat when the margin rule says so, or false to close in.
+     */
     private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep, BattleStrategy strategy,
-        HasPosition anchor, AUnit leader) {
+                                      HasPosition anchor, AUnit leader) {
         if (threat == null) return false;
         if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
 
@@ -263,7 +285,7 @@ public final class FightTarget {
             // Never kite into a building (owner, Steamhammer loss: two
             // Dragoons died shooting nothing, glued on a Gateway). A
             // vetoed step is not a step - fall through and trade.
-            if (dest != null && violatesBuildingClearance(dest, unit)) dest = null;
+            if (violatesBuildingClearance(dest, unit)) dest = null;
             if (dest == null) {
                 KiteTwin.nowhereToStep(unit, threat);
 
@@ -274,7 +296,7 @@ public final class FightTarget {
                 // the zealot last-stand gun (NEXT #188) stays untouched.
                 if (unit.isDragoon() && Kite.isBeingChewed(unit)
                     && atlantis.combat.retreating.RetreatFromLostFight.retreat(
-                        unit, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, anchor, leader)) {
+                    unit, atlantis.combat.cluster.FightOrFlight.Tactic.FLEE, anchor, leader)) {
                     KiteTwin.escalatedRun(unit, threat);
 
                     return true;
@@ -378,6 +400,20 @@ public final class FightTarget {
     }
 
     /**
+     * Glued with a ready weapon, or the threat's swing already in
+     * flight: the ready shot is free damage, stepping can only donate
+     * it. Answers whether the caller should skip the step, not issue.
+     */
+    /**
+     * Swamped in contact: three or more melee enemies within 2 tiles.
+     * Same headcount as the surrounded stand, opposite conclusion: the
+     * stand assumed escape was impossible, but here a step is already
+     * riding - cancelling it for a shot donates the retreat while the
+     * pack closes in. A lone chewer or two still get shot (duels are won
+     * standing and shooting).
+     */
+
+    /**
      * A wedged order queue looks like kiting but never moves: STOP it
      * once, sleep a frame, and the next step starts a fresh queue.
      */
@@ -410,29 +446,6 @@ public final class FightTarget {
         return false;
     }
 
-    /**
-     * Glued with a ready weapon, or the threat's swing already in
-     * flight: the ready shot is free damage, stepping can only donate
-     * it. Answers whether the caller should skip the step, not issue.
-     */
-    /**
-     * Swamped in contact: three or more melee enemies within 2 tiles.
-     * Same headcount as the surrounded stand, opposite conclusion: the
-     * stand assumed escape was impossible, but here a step is already
-     * riding - cancelling it for a shot donates the retreat while the
-     * pack closes in. A lone chewer or two still get shot (duels are won
-     * standing and shooting).
-     */
-    /**
-     * How many melee enemies in 2 tiles make standing and trading a lost
-     * DPS race: up to three the guns still win it (pinned: duels are won
-     * trading, a pressing pair dies to focus fire, withdrawing wounded
-     * survive shooting), four and up only donate. Calibrated against
-     * those pins, not a guess - move it only with a sim duel proving
-     * the new line still wins the races above.
-     */
-    private static final int SWAMPED_MELEE_COUNT = 4;
-
     private static boolean isSwampedByMelee(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return false;
@@ -460,7 +473,9 @@ public final class FightTarget {
         return unit.cooldown() == 0 && swingIncoming;
     }
 
-    /** Out of range: glide to the max-range firing position with moves only. */
+    /**
+     * Out of range: glide to the max-range firing position with moves only.
+     */
     private static boolean reengage(AUnit unit, AUnit target, int now, Integer lastStep) {
         // A melee unit has no firing position to hold -
         // with integer tile ranges its glide destination lands exactly
@@ -493,7 +508,7 @@ public final class FightTarget {
                 if (fireAt != null && unit.isGroundUnit() && !fireAt.isWalkable()) {
                     fireAt = null;
                 }
-                if (fireAt != null && violatesBuildingClearance(fireAt, unit)) {
+                if (violatesBuildingClearance(fireAt, unit)) {
                     fireAt = null;
                 }
                 if (fireAt != null
@@ -511,12 +526,15 @@ public final class FightTarget {
             // answer (same class as the melee and baseless fall-throughs
             // above). A computable point that only fails the deadband
             // or the move still waits here instead of spamming attack.
-            if (fireAt != null) return true;
+
+            return fireAt != null;
         }
         return false;
     }
 
-    /** Re-arm the attack on a ready weapon only; a riding step is never cancelled. */
+    /**
+     * Re-arm the attack on a ready weapon only; a riding step is never cancelled.
+     */
     private static void rearmAttack(AUnit unit, AUnit target, int now, Integer lastStep) {
         // Let the reposition ride (PurpleWave sleep after move):
         // a fresh attack order here would cancel the step or glide

@@ -10,7 +10,7 @@ import bwapi.BulletType;
 import java.util.ArrayList;
 
 public class BulletsOnMap {
-    private static Cache<ArrayList<Bullet>> cache = new Cache<>();
+    private static final Cache<ArrayList<Bullet>> cache = new Cache<>();
 
     public static ArrayList<Bullet> ofType(BulletType type, int maxDist, HasPosition from) {
         ArrayList<Bullet> bullets = ofType(type);

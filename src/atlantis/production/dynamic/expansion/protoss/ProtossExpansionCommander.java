@@ -10,6 +10,10 @@ public class ProtossExpansionCommander extends Commander {
     public ProtossExpansionCommander() {
     }
 
+    public static int maxBasesAtATime() {
+        return A.minerals() <= 620 ? 1 : 2;
+    }
+
     @Override
     public boolean applies() {
         return We.protoss()
@@ -24,9 +28,5 @@ public class ProtossExpansionCommander extends Commander {
         ProtossExpandNow.requestNewBase();
 
         return false;
-    }
-
-    public static int maxBasesAtATime() {
-        return A.minerals() <= 620 ? 1 : 2;
     }
 }

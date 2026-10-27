@@ -18,9 +18,6 @@ import tests.fakes.FakeUnit;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Early builder dispatch (owner): with supply met, the builder is
@@ -32,6 +29,36 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class EarlyBuilderDispatchTest extends AbstractTestWithWorld {
+
+    /**
+     * The BUILDING_STARTED twin is the contract (the builder field on the
+     * stub construction is not set on this path - the twin carries the
+     * builder id instead). -1 when no Pylon started, which fails both
+     * bounds above loudly.
+     */
+    private static int firstPylonStartedBank() {
+        String log = EventLog.toJsonLines();
+        int from = 0;
+        while (true) {
+            int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
+            if (key < 0) return -1;
+
+            int end = log.indexOf('\n', key);
+            if (end < 0) end = log.length();
+            String row = log.substring(key, end);
+            if (row.contains("\"type\":\"Pylon\"")) {
+                int at = row.indexOf("\"minerals\":");
+                if (at < 0) return -1;
+
+                int digits = at + "\"minerals\":".length();
+                int stop = digits;
+                while (stop < row.length() && Character.isDigit(row.charAt(stop))) stop++;
+
+                return Integer.parseInt(row.substring(digits, stop));
+            }
+            from = end;
+        }
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -101,35 +128,5 @@ public class EarlyBuilderDispatchTest extends AbstractTestWithWorld {
         assertTrue(
             startedBank < 100,
             "dispatched before the full price, not hoarded past it: bank " + startedBank);
-    }
-
-    /**
-     * The BUILDING_STARTED twin is the contract (the builder field on the
-     * stub construction is not set on this path - the twin carries the
-     * builder id instead). -1 when no Pylon started, which fails both
-     * bounds above loudly.
-     */
-    private static int firstPylonStartedBank() {
-        String log = EventLog.toJsonLines();
-        int from = 0;
-        while (true) {
-            int key = log.indexOf("\"key\":\"BUILDING_STARTED\"", from);
-            if (key < 0) return -1;
-
-            int end = log.indexOf('\n', key);
-            if (end < 0) end = log.length();
-            String row = log.substring(key, end);
-            if (row.contains("\"type\":\"Pylon\"")) {
-                int at = row.indexOf("\"minerals\":");
-                if (at < 0) return -1;
-
-                int digits = at + "\"minerals\":".length();
-                int stop = digits;
-                while (stop < row.length() && Character.isDigit(row.charAt(stop))) stop++;
-
-                return Integer.parseInt(row.substring(digits, stop));
-            }
-            from = end;
-        }
     }
 }

@@ -9,7 +9,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 

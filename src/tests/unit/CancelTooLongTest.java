@@ -110,21 +110,21 @@ public class CancelTooLongTest extends AbstractTestWithWorld {
                 return;
 
             assertTrue(A.now() - 100 >= 30 * 60,
-                    "the construction must really be old enough for tookTooLong to fire");
+                "the construction must really be old enough for tookTooLong to fire");
 
             assertTrue(
-                    ConstructionRequests.constructions.contains(construction),
-                    "the fixture must still hold the construction before the call");
+                ConstructionRequests.constructions.contains(construction),
+                "the fixture must still hold the construction before the call");
 
             CancelTooLongConstructions.cancelCauseTakingTooLongIfNeeded(
-                    construction, AUnitType.Protoss_Gateway, AUnitType.Protoss_Gateway);
+                construction, AUnitType.Protoss_Gateway, AUnitType.Protoss_Gateway);
 
             assertTrue(
-                    ConstructionRequests.constructions.contains(construction),
-                    "a construction whose assigned builder is alive and which is only waiting to"
-                            + " become affordable must NOT be cancelled as 'took too long' - that is"
-                            + " the measured reason Gateways end at zero (build order says '9 - Gateway',"
-                            + " the log shows 'Gateway took too long (43s) / buildable:true' instead)");
+                ConstructionRequests.constructions.contains(construction),
+                "a construction whose assigned builder is alive and which is only waiting to"
+                    + " become affordable must NOT be cancelled as 'took too long' - that is"
+                    + " the measured reason Gateways end at zero (build order says '9 - Gateway',"
+                    + " the log shows 'Gateway took too long (43s) / buildable:true' instead)");
         });
     }
 

@@ -12,9 +12,8 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * SUPPLY_BLOCKED on the legacy path (NEXT #150 follow-up): the twin
@@ -55,7 +54,7 @@ public class SupplyBlockedTwinTest extends WorldStubForTests {
             assertTrue(log.contains("\"free\":4") && log.contains("\"coming\":1"),
                 "sample carries the block state: " + log);
             assertTrue(log.contains("\"result\":\"blocker-construction\"")
-                && log.contains("\"status\":\"NOT_STARTED\""),
+                    && log.contains("\"status\":\"NOT_STARTED\""),
                 "unstarted provider named as the blocker: " + log);
         });
     }
@@ -81,8 +80,7 @@ public class SupplyBlockedTwinTest extends WorldStubForTests {
 
             String log = EventLog.toJsonLines();
             assertTrue(log.contains("\"result\":\"sample\""), "sample always rows: " + log);
-            assertTrue(!log.contains("\"result\":\"blocker"),
-                "nothing coming, nothing named: " + log);
+            assertFalse(log.contains("\"result\":\"blocker"), "nothing coming, nothing named: " + log);
         });
     }
 }

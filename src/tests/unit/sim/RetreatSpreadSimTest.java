@@ -6,17 +6,15 @@ import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Retreat pile-up (Tomas Cere game, 52 Dragoons lost): on FLEE every unit
@@ -35,7 +33,9 @@ public class RetreatSpreadSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;
 
-    /** Wall block biting into the rally ring (tiles). */
+    /**
+     * Wall block biting into the rally ring (tiles).
+     */
     private static final int WALL_X = 11;
     private static final int WALL_Y = 21;
     private static final int WALL_W = 2;
@@ -49,7 +49,7 @@ public class RetreatSpreadSimTest extends AbstractTestWithUnits {
     @Test
     public void fleeingUnitsSpreadAroundRallyInsteadOfStacking() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 20);
-        FakeUnit[] dragoons = new FakeUnit[] {
+        FakeUnit[] dragoons = new FakeUnit[]{
             fake(AUnitType.Protoss_Dragoon, 17, 19),
             fake(AUnitType.Protoss_Dragoon, 18, 20),
             fake(AUnitType.Protoss_Dragoon, 17, 21),
@@ -65,13 +65,13 @@ public class RetreatSpreadSimTest extends AbstractTestWithUnits {
         foe.setEnemy();
         foe.hp = 100;
 
-        FakeUnit[] ours = new FakeUnit[] {
+        FakeUnit[] ours = new FakeUnit[]{
             nexus, dragoons[0], dragoons[1], dragoons[2], dragoons[3]
         };
         SimArena arena = new SimArena(70 * TILE, 40 * TILE)
             .block(WALL_X * TILE, WALL_Y * TILE, WALL_W * TILE, WALL_H * TILE);
         SimWorld world = new SimWorld(
-            ours, new FakeUnit[] { foe }, arena);
+            ours, new FakeUnit[]{foe}, arena);
         try {
             BattleCommander.clearForTests();
             EventLog.clearForTests();
@@ -98,22 +98,19 @@ public class RetreatSpreadSimTest extends AbstractTestWithUnits {
             for (int i = 0; i < dragoons.length; i++) {
                 FakeUnit d = dragoons[i];
                 APosition pos = APosition.create(d.position.x(), d.position.y());
-                assertTrue(!insideWall(pos),
-                    "rally scatter never stands inside the wall: " + pos);
+                assertFalse(insideWall(pos), "rally scatter never stands inside the wall: " + pos);
                 tiles.add(d.tx() + "," + d.ty());
                 double moved = Math.hypot(
                     d.position.x() - startX[i], d.position.y() - startY[i]) / TILE;
                 if (moved >= 2.0) displaced++;
             }
 
-            assertTrue(displaced == dragoons.length,
-                "every retreating unit displaces toward the rally: "
-                    + displaced + " of " + dragoons.length);
+            assertEquals(displaced, dragoons.length, "every retreating unit displaces toward the rally: "
+                + displaced + " of " + dragoons.length);
             assertTrue(tiles.size() >= 3,
                 "retreat destinations spread instead of stacking on one pixel: "
                     + tiles);
-        }
-        finally {
+        } finally {
             for (FakeUnit d : dragoons) Alpha.get().removeUnit(d);
             world.close();
             BattleCommander.clearForTests();

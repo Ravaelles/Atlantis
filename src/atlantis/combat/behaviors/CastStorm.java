@@ -31,23 +31,33 @@ public final class CastStorm {
     private static final double SEARCH_RADIUS = 8.8;
     private static final double STORM_RADIUS = 3.3;
 
-    /** Sniped hardware counts inside this range of the Templar. */
+    /**
+     * Sniped hardware counts inside this range of the Templar.
+     */
     private static final double CRUCIAL_RADIUS = 12;
     private static final double IMPORTANT_RADIUS = 8.9;
 
-    /** Storming into more of ours than this wastes the line. */
+    /**
+     * Storming into more of ours than this wastes the line.
+     */
     private static final int OURS_NEAR_MAX = 2;
 
-    /** An important target needs at least this many enemies around it. */
+    /**
+     * An important target needs at least this many enemies around it.
+     */
     private static final int IMPORTANT_PACK_MIN = 2;
 
-    /** Nearly dead Templar storms whatever it can reach. */
+    /**
+     * Nearly dead Templar storms whatever it can reach.
+     */
     private static final int ALMOST_DEAD_HP = 31;
 
     private CastStorm() {
     }
 
-    /** Only charged High Templar with a stormable clump in range. */
+    /**
+     * Only charged High Templar with a stormable clump in range.
+     */
     public static boolean applies(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
         if (!unit.isHighTemplar()) return false;
@@ -93,7 +103,9 @@ public final class CastStorm {
         return aimedAt(densest);
     }
 
-    /** A Reaver or sieged Tank with few of ours on it: storm it. */
+    /**
+     * A Reaver or sieged Tank with few of ours on it: storm it.
+     */
     static APosition crucialAim(AUnit unit) {
         AUnit crucial = firstSniped(unit, CRUCIAL_RADIUS,
             AUnitType.Protoss_Reaver, AUnitType.Terran_Siege_Tank_Siege_Mode);
@@ -102,7 +114,9 @@ public final class CastStorm {
         return aimedAt(crucial);
     }
 
-    /** A Carrier, Reaver, Vessel, Tank or Defiler with a pack and few of ours on it. */
+    /**
+     * A Carrier, Reaver, Vessel, Tank or Defiler with a pack and few of ours on it.
+     */
     static APosition importantAim(AUnit unit) {
         AUnit important = firstSniped(unit, IMPORTANT_RADIUS,
             AUnitType.Protoss_Carrier, AUnitType.Protoss_Reaver,
@@ -114,7 +128,9 @@ public final class CastStorm {
         return aimedAt(important);
     }
 
-    /** The first sniped type in range with few of ours on it, or null. */
+    /**
+     * The first sniped type in range with few of ours on it, or null.
+     */
     static AUnit firstSniped(AUnit unit, double radius, AUnitType... types) {
         Selection candidates = snipeEnemies(unit);
         if (candidates == null) return null;
@@ -126,7 +142,9 @@ public final class CastStorm {
         return null;
     }
 
-    /** Snipe targets: real enemies near the Templar, never Overlords (those are the Corsairs'). */
+    /**
+     * Snipe targets: real enemies near the Templar, never Overlords (those are the Corsairs').
+     */
     static Selection snipeEnemies(AUnit unit) {
         Selection enemies = unit.enemiesNear().realUnits();
         if (enemies == null || enemies.isEmpty()) return enemies;
@@ -153,7 +171,9 @@ public final class CastStorm {
         return aim;
     }
 
-    /** The in-range enemy with the most enemies in storm radius of it. */
+    /**
+     * The in-range enemy with the most enemies in storm radius of it.
+     */
     static AUnit densestEnemy(AUnit unit, boolean forced) {
         Selection candidates = unit.enemiesNear().realUnits().inRadius(SEARCH_RADIUS, unit);
         if (candidates == null || candidates.isEmpty()) return null;

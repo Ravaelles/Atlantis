@@ -15,9 +15,25 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
 
     // =========================================================
 
-    public abstract int expected();
+    public static AntiAirBuildingCommander get() {
+        if (instance == null) {
+            if (We.zerg()) {
+                return instance = new ZergSporeColony();
+            }
+            else if (We.protoss()) {
+                return instance = new ProtossPhotonCannonAntiAir();
+            }
+//            else if (We.terran()) {
+//                return instance = new AntiAirBuildingCommander();
+//            }
+        }
+
+        return instance;
+    }
 
     // =========================================================
+
+    public abstract int expected();
 
     @Override
     public boolean shouldBuildNew() {
@@ -31,6 +47,8 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
 
         return false;
     }
+
+    // =========================================================
 
     @Override
     public boolean requestOne(HasPosition at) {
@@ -66,24 +84,6 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
         }
 
         return false;
-    }
-
-    // =========================================================
-
-    public static AntiAirBuildingCommander get() {
-        if (instance == null) {
-            if (We.zerg()) {
-                return instance = new ZergSporeColony();
-            }
-            else if (We.protoss()) {
-                return instance = new ProtossPhotonCannonAntiAir();
-            }
-//            else if (We.terran()) {
-//                return instance = new AntiAirBuildingCommander();
-//            }
-        }
-
-        return instance;
     }
 
 }

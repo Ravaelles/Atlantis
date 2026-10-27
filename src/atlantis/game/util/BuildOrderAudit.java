@@ -20,24 +20,10 @@ import java.util.List;
  */
 public final class BuildOrderAudit {
 
+    private static final List<Row> rows = new ArrayList<Row>();
+
     private BuildOrderAudit() {
     }
-
-    private static final class Row {
-        final String type;
-        final int orderId;
-        final int expectedSupply;
-        final int actualSupply;
-
-        Row(String type, int orderId, int expectedSupply, int actualSupply) {
-            this.type = type;
-            this.orderId = orderId;
-            this.expectedSupply = expectedSupply;
-            this.actualSupply = actualSupply;
-        }
-    }
-
-    private static final List<Row> rows = new ArrayList<Row>();
 
     /**
      * Called when a Protoss building warps. Dynamic and orderless warps
@@ -55,19 +41,20 @@ public final class BuildOrderAudit {
             if (expected <= 0) return;
 
             rows.add(new Row(type.name(), order.id(), expected, A.supplyUsed()));
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
             // Audit must never break a warp.
         }
     }
 
-    /** Mismatched rows, oldest first. Pure over the recorded rows. */
+    /**
+     * Mismatched rows, oldest first. Pure over the recorded rows.
+     */
     public static List<String> mismatchLines() {
         List<String> lines = new ArrayList<String>();
         for (Row row : rows) {
             if (
                 row.actualSupply != row.expectedSupply
-                && (row.actualSupply <= 20 || Math.abs(row.actualSupply - row.expectedSupply) >= 2)
+                    && (row.actualSupply <= 20 || Math.abs(row.actualSupply - row.expectedSupply) >= 2)
             ) {
                 lines.add("BO ORDER MISMATCH (HIGH): " + row.type
                     + " (BO #" + row.orderId + ") planned At " + row.expectedSupply
@@ -77,9 +64,11 @@ public final class BuildOrderAudit {
         return lines;
     }
 
-    /** End-of-log analysis: every BO building whose warp supply differs
+    /**
+     * End-of-log analysis: every BO building whose warp supply differs
      * from the plan, plus a one-line tally. Silent when everything
-     * matched. Never throws: exit paths call this. */
+     * matched. Never throws: exit paths call this.
+     */
     public static void printAudit() {
         try {
             int total = rows.size();
@@ -91,13 +80,28 @@ public final class BuildOrderAudit {
             for (String line : mismatches) {
                 AConsole.println(line);
             }
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
 
-    /** Test seam: audit rows accumulate per JVM run. */
+    /**
+     * Test seam: audit rows accumulate per JVM run.
+     */
     public static void clearForTests() {
         rows.clear();
+    }
+
+    private static final class Row {
+        final String type;
+        final int orderId;
+        final int expectedSupply;
+        final int actualSupply;
+
+        Row(String type, int orderId, int expectedSupply, int actualSupply) {
+            this.type = type;
+            this.orderId = orderId;
+            this.expectedSupply = expectedSupply;
+            this.actualSupply = actualSupply;
+        }
     }
 }

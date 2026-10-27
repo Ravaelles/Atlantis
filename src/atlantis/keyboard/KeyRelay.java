@@ -23,7 +23,9 @@ import java.util.List;
  */
 public class KeyRelay {
 
-    /** Absolute first (the workspace root is stable, see CONVENTIONS section 8), CWD fallback second. */
+    /**
+     * Absolute first (the workspace root is stable, see CONVENTIONS section 8), CWD fallback second.
+     */
     private static final String[] CANDIDATE_PATHS = {
         "/sc-ai/Atlantis/out/wine/keys.txt",
         "out/wine/keys.txt",
@@ -48,7 +50,9 @@ public class KeyRelay {
         return fallback;
     }
 
-    /** Supervisor side: record a key code for the bot to execute. Never throws. */
+    /**
+     * Supervisor side: record a key code for the bot to execute. Never throws.
+     */
     public static void send(int keyCode, int keyLocation) {
 //        System.out.println("A keyCode=" + keyCode + ", keyLocation=" + keyLocation);
 
@@ -65,7 +69,9 @@ public class KeyRelay {
         }
     }
 
-    /** Bot side: take every key queued so far (code:location lines) and remove the file. */
+    /**
+     * Bot side: take every key queued so far (code:location lines) and remove the file.
+     */
     public static List<int[]> drain() {
         List<int[]> codes = new ArrayList<>();
         File file = file();
@@ -77,7 +83,8 @@ public class KeyRelay {
                     String[] parts = line.trim().split(":", 2);
                     if (parts.length == 2) {
                         codes.add(new int[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1])});
-                    } else {
+                    }
+                    else {
                         // Legacy plain-code lines from an older supervisor: run
                         // them with the standard location.
                         codes.add(new int[]{Integer.parseInt(parts[0]), 1});

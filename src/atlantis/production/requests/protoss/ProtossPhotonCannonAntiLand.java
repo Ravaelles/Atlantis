@@ -1,12 +1,12 @@
 package atlantis.production.requests.protoss;
 
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
     public AUnitType type() {

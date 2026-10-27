@@ -9,8 +9,6 @@ import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitData;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Dragoons must be ordered the moment they are affordable - Core, a free
@@ -26,6 +24,14 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class DragoonProductionAsapTest extends AbstractTestWithWorld {
+
+    private static int dragoonsInTrainLog() {
+        int dragoons = 0;
+        for (AUnitType type : FakeUnitData.TRAIN) {
+            if (type == AUnitType.Protoss_Dragoon) dragoons++;
+        }
+        return dragoons;
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -64,13 +70,5 @@ public class DragoonProductionAsapTest extends AbstractTestWithWorld {
                     + " be ordered on the first call, not frames later - reason: "
                     + ProduceDragoon.reason);
         });
-    }
-
-    private static int dragoonsInTrainLog() {
-        int dragoons = 0;
-        for (AUnitType type : FakeUnitData.TRAIN) {
-            if (type == AUnitType.Protoss_Dragoon) dragoons++;
-        }
-        return dragoons;
     }
 }

@@ -1,11 +1,6 @@
 package atlantis.debug.tweaker;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Finite-difference gradient over tuner history (NEXT #160, step 6):
@@ -23,17 +18,6 @@ import java.util.Set;
 public final class TunerGradient {
 
     private TunerGradient() {
-    }
-
-    /** One evaluated point: the vector that played and the fitness it scored. */
-    public static final class Sample {
-        public final Map<String, Double> vector;
-        public final double fitness;
-
-        public Sample(Map<String, Double> vector, double fitness) {
-            this.vector = vector;
-            this.fitness = fitness;
-        }
     }
 
     /**
@@ -198,7 +182,9 @@ public final class TunerGradient {
         return Double.toString(value);
     }
 
-    /** Backwards-compatible render without bounds (bounds live with the caller). */
+    /**
+     * Backwards-compatible render without bounds (bounds live with the caller).
+     */
     public static String formatValue(String param, double value, Set<String> intParams) {
         return formatValue(param, value, intParams, null);
     }
@@ -208,5 +194,18 @@ public final class TunerGradient {
         if (value > max) return max;
 
         return value;
+    }
+
+    /**
+     * One evaluated point: the vector that played and the fitness it scored.
+     */
+    public static final class Sample {
+        public final Map<String, Double> vector;
+        public final double fitness;
+
+        public Sample(Map<String, Double> vector, double fitness) {
+            this.vector = vector;
+            this.fitness = fitness;
+        }
     }
 }

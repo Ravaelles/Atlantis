@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.combat.twins.UnitTelemetry;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -9,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Per-second unit telemetry (NEXT #180): every combat unit reports hp,
@@ -105,8 +104,7 @@ public class UnitTelemetryTest extends WorldStubForTests {
 
             UnitTelemetry.sample(probe);
 
-            assertTrue(!atlantis.util.log.EventLog.toJsonLines().contains("UNIT_TELEMETRY"),
-                "combat units only");
+            assertFalse(EventLog.toJsonLines().contains("UNIT_TELEMETRY"), "combat units only");
         });
     }
 }

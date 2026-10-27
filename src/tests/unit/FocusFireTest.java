@@ -1,8 +1,8 @@
 package tests.unit;
 
 
-import atlantis.combat.formation.FocusFire;
 import atlantis.combat.BattleCommander;
+import atlantis.combat.formation.FocusFire;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -17,7 +17,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Pins the shared focus target (formation Phase A): the weakest valid
@@ -54,7 +53,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
             AUnit shared = FocusFire.sharedTarget(dragoon, 9);
 
             assertEquals(wounded, shared,
-                    "the wounded zealot draws the shared fire, not the nearest healthy one");
+                "the wounded zealot draws the shared fire, not the nearest healthy one");
         });
     }
 
@@ -65,7 +64,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             assertEquals(zealot, FocusFire.sharedTarget(dragoon, 9),
-                    "one enemy means the shared target is that enemy - duels cannot change");
+                "one enemy means the shared target is that enemy - duels cannot change");
         });
     }
 
@@ -76,7 +75,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(dragoon), fakeEnemies(far), () -> {
             assertNull(FocusFire.sharedTarget(dragoon, 9),
-                    "nothing in reach means no shared target - the caller falls back");
+                "nothing in reach means no shared target - the caller falls back");
         });
     }
 
@@ -99,7 +98,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
             if (!DeadMan.isDeadMan(doomed)) return;
 
             assertEquals(healthy, FocusFire.sharedTarget(dragoon, 9),
-                    "in-flight damage already kills the doomed zealot - focus stays on the healthy one");
+                "in-flight damage already kills the doomed zealot - focus stays on the healthy one");
         });
     }
 
@@ -114,7 +113,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(d1, d2), fakeEnemies(e1, e2), () -> {
             assertEquals(e1, FocusFire.sharedTarget(d1, 4),
-                    "equal health: e1 is in reach of both guns, e2 of one - pile onto e1");
+                "equal health: e1 is in reach of both guns, e2 of one - pile onto e1");
         });
     }
 
@@ -134,8 +133,8 @@ public class FocusFireTest extends AbstractTestWithWorld {
                 dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(weak, dragoon.target(),
-                    "no current target, no squad: the weaker zealot draws the fire, "
-                        + "not the nearer healthy one");
+                "no current target, no squad: the weaker zealot draws the fire, "
+                    + "not the nearer healthy one");
         });
     }
 
@@ -158,7 +157,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
                 dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(strong, dragoon.target(),
-                    "sticky first: the committed target survives a weaker distraction");
+                "sticky first: the committed target survives a weaker distraction");
         });
     }
 }

@@ -5,8 +5,8 @@ import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -16,12 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Phase 4 slice 1: the legacy search delegates "which tile" to the catalogue
@@ -36,6 +31,18 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * </p>
  */
 public class CatalogueSiteAdapterTest extends WorldStubForTests {
+
+    private static CataloguePlacementPlanner blocklessPlanner(int w, int h) {
+        return new CataloguePlacementPlanner(new TileAvailabilityGrid(new Flat(w, h)), null, null, false);
+    }
+
+    private static Construction constructionFor(AUnitType type, ProductionOrder order, APosition near) {
+        Construction construction = new Construction(type);
+        if (order != null) construction.setProductionOrder(order);
+        if (near != null) construction.setNearTo(near);
+
+        return construction;
+    }
 
     @Override
     public Race initRace() {
@@ -52,80 +59,6 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         EventLog.clearForTests();
     }
 
-    /** Flat, fully buildable map. */
-    private static final class Flat implements TileAvailabilityGrid.TerrainSource {
-        private final int w;
-        private final int h;
-
-        Flat(int w, int h) {
-            this.w = w;
-            this.h = h;
-        }
-
-        @Override
-        public int mapWidth() {
-            return w;
-        }
-
-        @Override
-        public int mapHeight() {
-            return h;
-        }
-
-        @Override
-        public boolean isBuildable(int tx, int ty) {
-            return true;
-        }
-
-        @Override
-        public boolean isWalkable(int tx, int ty) {
-            return true;
-        }
-
-        @Override
-        public boolean isResource(int tx, int ty) {
-            return false;
-        }
-
-        @Override
-        public boolean isDepotOrigin(int tx, int ty) {
-            return false;
-        }
-    }
-
-    private static CataloguePlacementPlanner blocklessPlanner(int w, int h) {
-        return new CataloguePlacementPlanner(new TileAvailabilityGrid(new Flat(w, h)), null, null, false);
-    }
-
-    /** A planner with a scripted answer: the seam for decline routing without map physics. */
-    private static final class ScriptedPlanner implements atlantis.production.v2.PlacementPlanner {
-        private final atlantis.production.v2.PlacementReservation answer;
-
-        ScriptedPlanner(atlantis.production.v2.PlacementReservation answer) {
-            this.answer = answer;
-        }
-
-        @Override
-        public void startPass() {
-        }
-
-        @Override
-        public atlantis.production.v2.PlacementReservation reservePlacement(
-            atlantis.production.v2.Producible building,
-            atlantis.production.v2.TargetPlacement constraint, int targetFrame
-        ) {
-            return answer;
-        }
-    }
-
-    private static Construction constructionFor(AUnitType type, ProductionOrder order, APosition near) {
-        Construction construction = new Construction(type);
-        if (order != null) construction.setProductionOrder(order);
-        if (near != null) construction.setNearTo(near);
-
-        return construction;
-    }
-
     @Test
     public void gasBuildingsStayOnTheirDedicatedFinder() {
         world(5, fakeOurs(
@@ -139,7 +72,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Assimilator, construction),
                 "a refinery builds only on its geyser's exact tile - the catalogue must decline");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Assimilator\",\"result\":\"declined\",\"reason\":\"dedicated-finder\""),
+                    "\"key\":\"CATALOGUE_SITE\",\"type\":\"Assimilator\",\"result\":\"declined\",\"reason\":\"dedicated-finder\""),
                 "the decline lands in the twin with its reason, so a game log names the path");
         });
     }
@@ -257,7 +190,8 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     @Test
-    public void aCatalogueFailureIsDeclined() {        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+    public void aCatalogueFailureIsDeclined() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             probe
@@ -280,7 +214,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         atlantis.config.env.Env.setPlacementCatalogueForTest(false);
 
         assertNull(CatalogueSiteAdapter.siteForSited(
-            null, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12),
+                null, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12),
             "flag off means the sited path never touches the catalogue - FindPosition answers as before");
     }
 
@@ -291,7 +225,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
         assertTrue(CatalogueSiteAdapter.withinRange(site, near, 12));
         assertTrue(CatalogueSiteAdapter.withinRange(site, near, 2));
-        assertTrue(!CatalogueSiteAdapter.withinRange(site, near, 1));
+        assertFalse(CatalogueSiteAdapter.withinRange(site, near, 1));
         assertTrue(CatalogueSiteAdapter.withinRange(site, null, 1));
         assertTrue(CatalogueSiteAdapter.withinRange(site, near, -1));
         assertTrue(CatalogueSiteAdapter.withinRange(null, near, 1));
@@ -324,5 +258,71 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     @Override
     protected FakeUnit[] generateEnemies() {
         return null;
+    }
+
+    /**
+     * Flat, fully buildable map.
+     */
+    private static final class Flat implements TileAvailabilityGrid.TerrainSource {
+        private final int w;
+        private final int h;
+
+        Flat(int w, int h) {
+            this.w = w;
+            this.h = h;
+        }
+
+        @Override
+        public int mapWidth() {
+            return w;
+        }
+
+        @Override
+        public int mapHeight() {
+            return h;
+        }
+
+        @Override
+        public boolean isBuildable(int tx, int ty) {
+            return true;
+        }
+
+        @Override
+        public boolean isWalkable(int tx, int ty) {
+            return true;
+        }
+
+        @Override
+        public boolean isResource(int tx, int ty) {
+            return false;
+        }
+
+        @Override
+        public boolean isDepotOrigin(int tx, int ty) {
+            return false;
+        }
+    }
+
+    /**
+     * A planner with a scripted answer: the seam for decline routing without map physics.
+     */
+    private static final class ScriptedPlanner implements atlantis.production.v2.PlacementPlanner {
+        private final atlantis.production.v2.PlacementReservation answer;
+
+        ScriptedPlanner(atlantis.production.v2.PlacementReservation answer) {
+            this.answer = answer;
+        }
+
+        @Override
+        public void startPass() {
+        }
+
+        @Override
+        public atlantis.production.v2.PlacementReservation reservePlacement(
+            atlantis.production.v2.Producible building,
+            atlantis.production.v2.TargetPlacement constraint, int targetFrame
+        ) {
+            return answer;
+        }
     }
 }

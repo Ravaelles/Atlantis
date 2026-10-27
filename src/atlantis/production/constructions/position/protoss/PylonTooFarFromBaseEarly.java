@@ -8,7 +8,6 @@ import atlantis.map.position.Positions;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
 /**
  * A Protoss pylon is power <b>and</b> an expansion: without one, nothing can be

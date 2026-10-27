@@ -16,13 +16,19 @@ package atlantis.config.env;
  */
 public enum ProductionV2Mode {
 
-    /** Legacy queue only. The default, so a missing key changes nothing. */
+    /**
+     * Legacy queue only. The default, so a missing key changes nothing.
+     */
     OFF,
 
-    /** v2 plans every frame and logs the comparison; no command leaves. */
+    /**
+     * v2 plans every frame and logs the comparison; no command leaves.
+     */
     DRY_RUN,
 
-    /** v2 issues the commands; the legacy queue is not asked to produce. */
+    /**
+     * v2 issues the commands; the legacy queue is not asked to produce.
+     */
     LIVE;
 
     /**

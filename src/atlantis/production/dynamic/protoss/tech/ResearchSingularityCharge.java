@@ -24,6 +24,23 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         return Singularity_Charge;
     }
 
+    public static void onResearched() {
+        OurDragoonRange.onSingularityChargeResearched();
+        isResearched = true;
+    }
+
+    public static boolean isResearched() {
+        return isResearched;
+    }
+
+    public static boolean isBeingResearched() {
+        return isBeingResearched(upgrade());
+    }
+
+    public static boolean isResearchedOrBeingResearched() {
+        return isResearched() || isBeingResearched();
+    }
+
     /**
      * D3/D4: Singularity waits above standard spending, so the Dragoon pump
      * saves the 150 gas instead of out-spending it (the starvation behind
@@ -37,11 +54,6 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     @Override
     public UpgradeType what() {
         return upgrade();
-    }
-
-    public static void onResearched() {
-        OurDragoonRange.onSingularityChargeResearched();
-        isResearched = true;
     }
 
     @Override
@@ -95,9 +107,8 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         if (!A.hasGas(100) && Army.strength() <= 90) return false;
 
         if (dragoons >= 4 || (A.hasGas(80) && (A.hasGas(180) || dragoons >= 6))) return true;
-        if (dragoons >= 2 && A.supplyUsed() >= 38 && Army.strength() >= 120 && A.hasMinerals(240)) return true;
 
-        return false;
+        return dragoons >= 2 && A.supplyUsed() >= 38 && Army.strength() >= 120 && A.hasMinerals(240);
     }
 
     private Boolean againstZerg(atlantis.decisions.board.BoardState board) {
@@ -128,9 +139,6 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
         return null;
     }
-    public static boolean isResearched() {
-        return isResearched;
-    }
 
     @Override
     protected boolean handle() {
@@ -147,20 +155,12 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     }
 
     @Override
-    protected void setEnqueued(boolean isEnqueued) {
-        this.isEnqueued = isEnqueued;
-    }
-
-    @Override
     protected boolean isEnqueued() {
         return isEnqueued;
     }
 
-    public static boolean isBeingResearched() {
-        return isBeingResearched(upgrade());
-    }
-
-    public static boolean isResearchedOrBeingResearched() {
-        return isResearched() || isBeingResearched();
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        ResearchSingularityCharge.isEnqueued = isEnqueued;
     }
 }

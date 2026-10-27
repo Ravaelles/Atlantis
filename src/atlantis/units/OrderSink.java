@@ -1,10 +1,6 @@
 package atlantis.units;
 
-import bwapi.Position;
-import bwapi.TechType;
-import bwapi.TilePosition;
-import bwapi.UnitType;
-import bwapi.UpgradeType;
+import bwapi.*;
 
 /**
  * Stage D: the single door through which all engine

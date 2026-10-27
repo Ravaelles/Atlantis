@@ -9,28 +9,44 @@ package atlantis.combat.retreating;
  */
 public enum FleeReason {
 
-    /** Tactic is not FLEE: the fight owns the unit. */
+    /**
+     * Tactic is not FLEE: the fight owns the unit.
+     */
     STAY_TACTIC,
 
-    /** Baseless UMS map: no home to run to, fall through and fight. */
+    /**
+     * Baseless UMS map: no home to run to, fall through and fight.
+     */
     STAY_BASELESS,
 
-    /** Mid-swing: a move order now cancels the shot. */
+    /**
+     * Mid-swing: a move order now cancels the shot.
+     */
     STAY_MID_SWING,
 
-    /** Melee holding an enemy in weapon range with cooldown ready. */
+    /**
+     * Melee holding an enemy in weapon range with cooldown ready.
+     */
     STAY_MELEE_GRAB,
 
-    /** Cut off but able to hit back: fight instead of donating a march. */
+    /**
+     * Cut off but able to hit back: fight instead of donating a march.
+     */
     FIGHT_CUTOFF,
 
-    /** Cut off and outranged: step away locally, never march far. */
+    /**
+     * Cut off and outranged: step away locally, never march far.
+     */
     STEP_CUTOFF,
 
-    /** Cut off with nowhere to step: fight in place. */
+    /**
+     * Cut off with nowhere to step: fight in place.
+     */
     CORNERED_CUTOFF,
 
-    /** March to the home ground (or choke standoff for big armies). */
+    /**
+     * March to the home ground (or choke standoff for big armies).
+     */
     RALLY,
 
     /**
@@ -40,6 +56,8 @@ public enum FleeReason {
      */
     ESCAPE_RALLY,
 
-    /** No point to march to: fall through and fight in place. */
+    /**
+     * No point to march to: fall through and fight in place.
+     */
     NOWHERE_TO_RUN
 }

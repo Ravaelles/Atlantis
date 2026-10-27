@@ -30,8 +30,7 @@ public final class SpecialistBehaviors {
         if (RunWhenAttacked.act(unit)) return true;
         if (CorsairHunt.act(unit)) return true;
         if (ProduceScarabs.act(unit)) return true;
-        if (CastStorm.act(unit)) return true;
 
-        return false;
+        return CastStorm.act(unit);
     }
 }

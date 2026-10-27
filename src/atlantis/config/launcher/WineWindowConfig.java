@@ -26,16 +26,19 @@ package atlantis.config.launcher;
  */
 public final class WineWindowConfig {
 
-    /** Wine virtual-desktop name; fixed, it is an internal handle. */
+    /**
+     * Wine virtual-desktop name; fixed, it is an internal handle.
+     */
     public static final String DESKTOP_NAME = "Default";
 
-    /** Sentinels: "no position requested", so the launcher may center the window. */
+    /**
+     * Sentinels: "no position requested", so the launcher may center the window.
+     */
     public static final int UNSET = Integer.MIN_VALUE;
-
-    private static int x = UNSET;
-    private static int y = UNSET;
     public static int width = 2400;
     public static int height = 1200;
+    private static int x = UNSET;
+    private static int y = UNSET;
 
     private WineWindowConfig() {
     }
@@ -127,7 +130,9 @@ public final class WineWindowConfig {
             + "DisableControls=0\n";
     }
 
-    /** The {@code /desktop=...} argument is no longer used; kept for docs. */
+    /**
+     * The {@code /desktop=...} argument is no longer used; kept for docs.
+     */
     public static String desktopArgument() {
         return "/desktop=" + DESKTOP_NAME + "," + width + "x" + height;
     }

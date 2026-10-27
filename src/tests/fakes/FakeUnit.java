@@ -18,7 +18,7 @@ import java.util.List;
 
 public class FakeUnit extends AUnit implements Serializable {
     public static int firstFreeId = 10;
-    private static List<FakeUnit> all = new ArrayList<>();
+    private static final List<FakeUnit> all = new ArrayList<>();
 
     public int id;
     public AUnitType rawType;
@@ -50,7 +50,6 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean cloaked = false;
     public boolean completed = true;
     public boolean constructing = false;
-    private List<AUnitType> stubTrainingQueue = null;
     public int cooldown = 0;
     /**
      * Sim-owned remaining build/research/upgrade time (frames). The stub
@@ -85,8 +84,16 @@ public class FakeUnit extends AUnit implements Serializable {
     public TechType lastTechUsed = null;
     public TechType researching = null;
     public UpgradeType upgrading = null;
+    public boolean canCommand = true;
 
     // =========================================================
+    public boolean canMove = true;
+
+    // =========================================================
+    public int killCount;
+
+    // =========================================================
+    private List<AUnitType> stubTrainingQueue = null;
 
     public FakeUnit(AUnitType type, double tx, double ty) {
         super(type);
@@ -105,8 +112,6 @@ public class FakeUnit extends AUnit implements Serializable {
         all.add(this);
     }
 
-    // =========================================================
-
     public static void clearCache() {
         for (FakeUnit unit : all) {
             unit.clearAUnitCache();
@@ -116,8 +121,6 @@ public class FakeUnit extends AUnit implements Serializable {
         }
         all.clear();
     }
-
-    // =========================================================
 
     @Override
     public String toString() {
@@ -157,6 +160,11 @@ public class FakeUnit extends AUnit implements Serializable {
         return new TilePosition(position.x() / 32, position.y() / 32);
     }
 
+//    @Override
+//    public AUnitType type() {
+//        return rawType;
+//    }
+
     @Override
     public int x() {
         return position.x();
@@ -171,11 +179,6 @@ public class FakeUnit extends AUnit implements Serializable {
     public UnitType bwapiType() {
         return rawType.ut();
     }
-
-//    @Override
-//    public AUnitType type() {
-//        return rawType;
-//    }
 
     @Override
     public FakePlayer player() {
@@ -203,6 +206,13 @@ public class FakeUnit extends AUnit implements Serializable {
         return !enemy;
     }
 
+    public FakeUnit setOur(boolean trueIfOurFalseIfEnemy) {
+        if (!trueIfOurFalseIfEnemy) {
+            this.enemy = true;
+        }
+        return this;
+    }
+
     @Override
     public boolean isEnemy() {
         return enemy;
@@ -211,6 +221,12 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public boolean isDetected() {
         return detected;
+    }
+
+    public FakeUnit setDetected(boolean detected) {
+        this.detected = detected;
+
+        return this;
     }
 
     @Override
@@ -227,9 +243,6 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean isLoaded() {
         return loaded;
     }
-
-    public boolean canCommand = true;
-    public boolean canMove = true;
 
     @Override
     public boolean canCommand() {
@@ -305,6 +318,12 @@ public class FakeUnit extends AUnit implements Serializable {
         return completed;
     }
 
+    public FakeUnit setCompleted(boolean completed) {
+        this.completed = completed;
+
+        return this;
+    }
+
     @Override
     public boolean isAlive() {
         return hp > 0;
@@ -320,22 +339,25 @@ public class FakeUnit extends AUnit implements Serializable {
         return constructing;
     }
 
+    public FakeUnit setConstructing(boolean constructing) {
+        this.constructing = constructing;
+
+        return this;
+    }
+
     @Override
     public boolean isGatheringMinerals() {
         // A stub worker ordered to gather reads as gathering: the engine
         // half (u.isGatheringMinerals) does not exist in the harness, so
         // the action is the only signal. Matches production, where the
         // GatherResources manager sets GATHER_MINERALS on issue.
-        if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_MINERALS)) return true;
 
-        return false;
+        return action() != null && action().equals(atlantis.units.actions.Actions.GATHER_MINERALS);
     }
 
     @Override
     public boolean isGatheringGas() {
-        if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_GAS)) return true;
-
-        return false;
+        return action() != null && action().equals(atlantis.units.actions.Actions.GATHER_GAS);
     }
 
     @Override
@@ -392,6 +414,12 @@ public class FakeUnit extends AUnit implements Serializable {
         return cloaked || isDT() || isObserver();
     }
 
+    public FakeUnit setCloaked(boolean cloaked) {
+        this.cloaked = cloaked;
+
+        return this;
+    }
+
     @Override
     public boolean isResearching() {
         return researching != null;
@@ -402,47 +430,11 @@ public class FakeUnit extends AUnit implements Serializable {
         return researching;
     }
 
-    @Override
-    public boolean isUpgrading() {
-        return upgrading != null;
-    }
-
-    @Override
-    public UpgradeType whatIsUpgrading() {
-        return upgrading;
-    }
-
-    @Override
-    public AUnit target() {
-        return target;
-    }
-
-    @Override
-    public AUnit orderTarget() {
-        return orderTarget;
-    }
-
-    @Override
-    public APosition targetPosition() {
-        return targetPosition;
-    }
-
-    @Override
-    public double getAngle() {
-        return angle;
-    }
-
     // =========================================================
 
     @Override
-    protected AUnitType cacheType() {
-        // Returns what it just stored. Returning null here worked only because
-        // every caller either ignored the value (refreshType) or never got here -
-        // AUnit.type() returns _lastType itself when it is already set - and it
-        // broke the moment something asked during construction.
-        _lastType = rawType;
-
-        return _lastType;
+    public boolean isUpgrading() {
+        return upgrading != null;
     }
 
 //    @Override
@@ -471,13 +463,9 @@ public class FakeUnit extends AUnit implements Serializable {
 //        double dist = Math.sqrt(dx * dx + dy * dy) / 32.0;
 //
 
-    /// /        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
-//
-//        return dist;
-//    }
     @Override
-    public double groundDist(HasPosition other) {
-        return distTo(other);
+    public UpgradeType whatIsUpgrading() {
+        return upgrading;
     }
 
 //    @Override
@@ -487,6 +475,64 @@ public class FakeUnit extends AUnit implements Serializable {
 
     // =========================================================
     // Orders
+
+    @Override
+    public AUnit target() {
+        return target;
+    }
+
+    @Override
+    public AUnit orderTarget() {
+        return orderTarget;
+    }
+
+    @Override
+    public APosition targetPosition() {
+        return targetPosition;
+    }
+
+//    @Override
+//    public boolean move(AUnit target, UnitAction unitAction, String tooltip) {
+//        lastCommand = "Move";
+//        this.target = (FakeUnit) target;
+//        targetPosition = target.targetPosition();
+//        return true;
+//    }
+
+    @Override
+    public double getAngle() {
+        return angle;
+    }
+
+    // =========================================================
+
+    public FakeUnit setAngle(double angle) {
+        this.angle = angle;
+
+        return this;
+    }
+
+    // =========================================================
+
+    @Override
+    protected AUnitType cacheType() {
+        // Returns what it just stored. Returning null here worked only because
+        // every caller either ignored the value (refreshType) or never got here -
+        // AUnit.type() returns _lastType itself when it is already set - and it
+        // broke the moment something asked during construction.
+        _lastType = rawType;
+
+        return _lastType;
+    }
+
+    /// /        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
+//
+//        return dist;
+//    }
+    @Override
+    public double groundDist(HasPosition other) {
+        return distTo(other);
+    }
 
     @Override
     public boolean useTech(TechType tech, AUnit target) {
@@ -523,14 +569,6 @@ public class FakeUnit extends AUnit implements Serializable {
         return issued;
     }
 
-//    @Override
-//    public boolean move(AUnit target, UnitAction unitAction, String tooltip) {
-//        lastCommand = "Move";
-//        this.target = (FakeUnit) target;
-//        targetPosition = target.targetPosition();
-//        return true;
-//    }
-
     @Override
     public boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (target == null) {
@@ -554,13 +592,9 @@ public class FakeUnit extends AUnit implements Serializable {
         return issued;
     }
 
-    // =========================================================
-
     public void changeRawUnitType(AUnitType newType) {
         rawType = newType;
     }
-
-    // =========================================================
 
     public FakeUnit setEnemy() {
         this.enemy = true;
@@ -570,24 +604,6 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setNeutral() {
         this.neutral = true;
-
-        return this;
-    }
-
-    public FakeUnit setDetected(boolean detected) {
-        this.detected = detected;
-
-        return this;
-    }
-
-    public FakeUnit setCompleted(boolean completed) {
-        this.completed = completed;
-
-        return this;
-    }
-
-    public FakeUnit setConstructing(boolean constructing) {
-        this.constructing = constructing;
 
         return this;
     }
@@ -607,25 +623,6 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setEnergy(int energy) {
         this.energy = energy;
-
-        return this;
-    }
-
-    public FakeUnit setOur(boolean trueIfOurFalseIfEnemy) {
-        if (!trueIfOurFalseIfEnemy) {
-            this.enemy = true;
-        }
-        return this;
-    }
-
-    public FakeUnit setBurrowed(boolean burrowed) {
-        this.burrowed = burrowed;
-
-        return this;
-    }
-
-    public FakeUnit setCloaked(boolean cloaked) {
-        this.cloaked = cloaked;
 
         return this;
     }
@@ -655,6 +652,12 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public boolean isBurrowed() {
         return burrowed;
+    }
+
+    public FakeUnit setBurrowed(boolean burrowed) {
+        this.burrowed = burrowed;
+
+        return this;
     }
 
     @Override
@@ -704,12 +707,6 @@ public class FakeUnit extends AUnit implements Serializable {
         return true;
     }
 
-    public FakeUnit setAngle(double angle) {
-        this.angle = angle;
-
-        return this;
-    }
-
     public FakeUnit injectCooldown() {
         this.cooldown = cooldownAbsolute() - 1 + ARandom.rand(0, 2);
 
@@ -749,8 +746,6 @@ public class FakeUnit extends AUnit implements Serializable {
 
         return this;
     }
-
-    public int killCount;
 
     @Override
     public int killCount() {

@@ -23,7 +23,9 @@ import atlantis.units.select.Selection;
  */
 public final class SharedEscape {
 
-    /** Leader re-picks the direction at most this often (frames). */
+    /**
+     * Leader re-picks the direction at most this often (frames).
+     */
     public static final int REDIRECTION_EVERY_FRAMES = 10;
 
     private static int cachedBucket = -1;
@@ -41,7 +43,7 @@ public final class SharedEscape {
      * leader, no threat on the leader, candidate unwalkable) - the caller
      * then falls back to the per-unit sampling, unchanged.
      *
-     * @param rallyTiles how far along the direction to rally (tiles)
+     * @param rallyTiles  how far along the direction to rally (tiles)
      * @param threatTiles threat envelope the leader reads (tiles)
      */
     public static APosition rallyFor(AUnit unit, AUnit leader, Selection cluster,

@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.DuelMemory;
+import atlantis.combat.BattleCommander;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -11,7 +11,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Battle-hook damage window (NEXT #183): the latch answers from
@@ -51,8 +50,7 @@ public class DuelMemoryTest extends WorldStubForTests {
                         "46 frames after the drop with no new damage: the latch closes");
                 }
             });
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
     }
@@ -75,8 +73,7 @@ public class DuelMemoryTest extends WorldStubForTests {
                         "no hp drop, no latch - a calm holder reads clean");
                 }
             });
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
     }

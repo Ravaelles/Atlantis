@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * NEXT #187 remainder: Separate's fallback issued unscored first-success
@@ -41,7 +41,8 @@ public class ScoutSeparateFallbackTest extends WorldStubForTests {
         for (FakeOrderSink.Record r : ((FakeOrderSink) scout.orderSink()).orders()) {
             if (!r.operation.equals("move") && !r.operation.equals("patrol")) continue;
             Matcher m = TILE.matcher(r.detail);
-            if (m.find()) out.add(new double[]{Double.parseDouble(m.group(1)) / 32, Double.parseDouble(m.group(2)) / 32});
+            if (m.find())
+                out.add(new double[]{Double.parseDouble(m.group(1)) / 32, Double.parseDouble(m.group(2)) / 32});
         }
         return out;
     }
@@ -61,7 +62,7 @@ public class ScoutSeparateFallbackTest extends WorldStubForTests {
             assertTrue(separate.separateFallback(zealot), "fallback issues a step at all");
 
             List<double[]> dests = moveDests(scout);
-            assertTrue(!dests.isEmpty(), "a move order was issued: " + ((FakeOrderSink) scout.orderSink()).orders());
+            assertFalse(dests.isEmpty(), "a move order was issued: " + ((FakeOrderSink) scout.orderSink()).orders());
 
             double half = gateway.type().bodyRadiusPx() / 32.0;
             for (double[] d : dests) {
@@ -84,7 +85,11 @@ public class ScoutSeparateFallbackTest extends WorldStubForTests {
 
             List<HasPosition> blockers = EscapeScoredStep.blockers(scout);
             boolean seen = false;
-            for (HasPosition h : blockers) if (h == gateway) seen = true;
+            for (HasPosition h : blockers)
+                if (h == gateway) {
+                    seen = true;
+                    break;
+                }
             assertTrue(seen, "enemy buildings box the scout exactly like ours do");
         });
     }

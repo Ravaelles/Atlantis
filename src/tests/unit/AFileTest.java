@@ -12,13 +12,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("infra")
 public class AFileTest {
+
+    private static Path write(Path dir, String name, String content) throws IOException {
+        Path file = dir.resolve(name);
+        Files.write(file, content.getBytes(StandardCharsets.UTF_8));
+
+        return file;
+    }
 
     @Test
     public void missingFileIsReportedNotFatal(@TempDir Path dir) {
@@ -31,7 +35,7 @@ public class AFileTest {
 
         assertTrue(thrown.getMessage().contains(missing.toString()),
             "the message must name the file: " + thrown.getMessage());
-        assertTrue(thrown.getCause() instanceof IOException, "the original cause must survive");
+        assertInstanceOf(IOException.class, thrown.getCause(), "the original cause must survive");
     }
 
     @Test
@@ -61,7 +65,7 @@ public class AFileTest {
     public void savesAppendsAndMeasures(@TempDir Path dir) {
         String path = dir.resolve("out.txt").toString();
 
-        assertTrue(AFile.fileExists(path) == false, "file must not exist before the first write");
+        assertFalse(AFile.fileExists(path), "file must not exist before the first write");
         AFile.saveToFile(path, "first\n", true);
         AFile.appendToFile(path, "second\n");
 
@@ -74,13 +78,6 @@ public class AFileTest {
     public void removingAMissingFileIsANoOp(@TempDir Path dir) {
         AFile.removeFile(dir.resolve("never-written.txt").toString());
 
-        assertTrue(AFile.fileExists(dir.resolve("never-written.txt").toString()) == false);
-    }
-
-    private static Path write(Path dir, String name, String content) throws IOException {
-        Path file = dir.resolve(name);
-        Files.write(file, content.getBytes(StandardCharsets.UTF_8));
-
-        return file;
+        assertFalse(AFile.fileExists(dir.resolve("never-written.txt").toString()));
     }
 }

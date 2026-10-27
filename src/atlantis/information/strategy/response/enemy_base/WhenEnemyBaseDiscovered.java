@@ -5,7 +5,8 @@ import atlantis.units.AUnit;
 
 public class WhenEnemyBaseDiscovered {
     public static void whenBaseDiscovered(AUnit enemyUnit) {
-        if (Enemy.zerg()) return;
+        if (Enemy.zerg()) {
+        }
 
 //        if (
 //            A.s <= 700

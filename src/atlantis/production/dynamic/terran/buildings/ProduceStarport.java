@@ -1,11 +1,11 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Starport;
 

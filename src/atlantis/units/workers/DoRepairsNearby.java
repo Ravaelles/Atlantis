@@ -44,7 +44,6 @@ public class DoRepairsNearby extends Manager {
     }
 
 
-
     private boolean repairIfNtTooManyRepairersAlready(AUnit target, String tooltip) {
         if (RepairAssignments.countRepairersForUnit(target) < 6) {
             unit.setTooltip(tooltip);

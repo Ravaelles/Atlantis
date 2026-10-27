@@ -5,11 +5,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.TechProducible;
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.UpgradeProducible;
+import atlantis.production.v2.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -87,9 +83,9 @@ public class GameOrderDirector implements OrderDirector {
 
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction.buildingType() == buildingType
-                    && construction.buildPosition() != null
-                    && construction.buildPosition().tx() == placement.tileX()
-                    && construction.buildPosition().ty() == placement.tileY()) {
+                && construction.buildPosition() != null
+                && construction.buildPosition().tx() == placement.tileX()
+                && construction.buildPosition().ty() == placement.tileY()) {
                 return true;
             }
         }
@@ -178,7 +174,7 @@ public class GameOrderDirector implements OrderDirector {
      * it had to be cancelled.
      */
     private Construction createConstruction(AUnitType buildingType, PlacementReservation placement,
-            Producible building) {
+                                            Producible building) {
         Construction construction = new Construction(buildingType);
         construction.setPositionToBuild(APosition.create(placement.tileX(), placement.tileY()));
         construction.setNearTo(homePosition());

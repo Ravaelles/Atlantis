@@ -14,6 +14,12 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
         super(unit);
     }
 
+    private static boolean shouldScienceVesselFlyToEnemy(AUnit base, AUnit enemy) {
+        return base != null
+            && base.distTo(enemy) <= 7
+            && Select.ourCombatUnits().inRadius(10, enemy).atLeast(2);
+    }
+
     @Override
     public boolean applies() {
         if (Select.main() == null) return false;
@@ -58,11 +64,5 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
         AUnit nearestBase = Select.ourBuildingsWithUnfinished().nearestTo(enemy);
 
         return shouldScienceVesselFlyToEnemy(nearestBase, enemy) ? enemy : null;
-    }
-
-    private static boolean shouldScienceVesselFlyToEnemy(AUnit base, AUnit enemy) {
-        return base != null
-            && base.distTo(enemy) <= 7
-            && Select.ourCombatUnits().inRadius(10, enemy).atLeast(2);
     }
 }

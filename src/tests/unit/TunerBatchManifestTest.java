@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #188: the batch manifest is deterministic and round-trips.
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TunerBatchManifestTest {
 
     private static TunerBatchManifest.Game game(String dir, boolean win, int hits, int seconds,
-            String k1, double v1, String k2, double v2) {
+                                                String k1, double v1, String k2, double v2) {
         Map<String, Double> vector = new HashMap<>();
         vector.put(k1, v1);
         vector.put(k2, v2);
@@ -69,7 +68,7 @@ public class TunerBatchManifestTest {
         assertEquals(20, games.get(0).row.seconds());
         assertEquals(2.5, games.get(0).vector.get("step"), 0.0001);
         assertEquals("game-2", games.get(1).dir);
-        assertTrue(!games.get(1).row.win());
+        assertFalse(games.get(1).row.win());
     }
 
     @Test
@@ -88,7 +87,7 @@ public class TunerBatchManifestTest {
     @Test
     public void parseMapReadsHeader() {
         String text = TunerBatchManifest.render("1Drag_v_1Zeal.scm", "abc123",
-            Arrays.asList(game("game-1", true, 8, 20, "step", 2.5, "margin", 1.0)));
+            Collections.singletonList(game("game-1", true, 8, 20, "step", 2.5, "margin", 1.0)));
 
         assertEquals("1Drag_v_1Zeal.scm", TunerBatchManifest.parseMap(text));
         assertNull(TunerBatchManifest.parseMap("garbage without header"));

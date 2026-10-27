@@ -1,15 +1,14 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
-import atlantis.units.workers.gather.GatherResources;
 import atlantis.units.workers.IdleWorker;
+import atlantis.units.workers.gather.GatherResources;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * A worker the engine still reports as not completed (training in the Nexus)

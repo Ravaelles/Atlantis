@@ -39,6 +39,27 @@ import java.util.Set;
  */
 public final class GoalBoardFeeder {
 
+    /**
+     * The single board-to-type dictionary both directions read: the
+     * feeder (which row a goal needs), the funding door (which goal a
+     * row serves) and the commitment set below. One map, never three
+     * if-chains to keep in sync.
+     */
+    private static final java.util.Map<String, AUnitType> GOAL_TYPES =
+        new java.util.LinkedHashMap<String, AUnitType>();
+    private static Set<String> lastActiveIds = new HashSet<String>();
+    private static Set<String> lastFundedIds = new HashSet<String>();
+    private static int lastFundedFrame = -1;
+
+    static {
+        GOAL_TYPES.put("supply-pylon", AUnitType.Protoss_Pylon);
+        GOAL_TYPES.put("gateway", AUnitType.Protoss_Gateway);
+        GOAL_TYPES.put("core", AUnitType.Protoss_Cybernetics_Core);
+        GOAL_TYPES.put("assimilator", AUnitType.Protoss_Assimilator);
+        GOAL_TYPES.put("sustained-zealot", AUnitType.Protoss_Zealot);
+        GOAL_TYPES.put("sustained-dragoon", AUnitType.Protoss_Dragoon);
+    }
+
     private GoalBoardFeeder() {
     }
 
@@ -64,8 +85,8 @@ public final class GoalBoardFeeder {
             // inFlight below covers rows already out; this covers need.
             if ("supply-pylon".equals(goal.id())
                 && !NeedDynamicSupply.forCurrentRace().needsSupply(
-                    A.supplyUsed(), A.supplyTotal(),
-                    ConstructionRequests.countNotFinishedOfType(type))) {
+                A.supplyUsed(), A.supplyTotal(),
+                ConstructionRequests.countNotFinishedOfType(type))) {
                 continue;
             }
             if (inFlight(type)) {
@@ -121,29 +142,13 @@ public final class GoalBoardFeeder {
         return !ConstructionRequests.notFinishedOfType(type).isEmpty();
     }
 
-    /**
-     * The single board-to-type dictionary both directions read: the
-     * feeder (which row a goal needs), the funding door (which goal a
-     * row serves) and the commitment set below. One map, never three
-     * if-chains to keep in sync.
-     */
-    private static final java.util.Map<String, AUnitType> GOAL_TYPES =
-        new java.util.LinkedHashMap<String, AUnitType>();
-
-    static {
-        GOAL_TYPES.put("supply-pylon", AUnitType.Protoss_Pylon);
-        GOAL_TYPES.put("gateway", AUnitType.Protoss_Gateway);
-        GOAL_TYPES.put("core", AUnitType.Protoss_Cybernetics_Core);
-        GOAL_TYPES.put("assimilator", AUnitType.Protoss_Assimilator);
-        GOAL_TYPES.put("sustained-zealot", AUnitType.Protoss_Zealot);
-        GOAL_TYPES.put("sustained-dragoon", AUnitType.Protoss_Dragoon);
-    }
-
     private static AUnitType orderType(String goalId) {
         return GOAL_TYPES.get(goalId);
     }
 
-    /** Test seam: funding statics leak across test worlds without it. */
+    /**
+     * Test seam: funding statics leak across test worlds without it.
+     */
     public static void clearForTests() {
         lastActiveIds.clear();
         lastFundedIds.clear();
@@ -158,7 +163,9 @@ public final class GoalBoardFeeder {
         return AddToQueue.withStandardPriority(type);
     }
 
-    /** Commander entry: snapshot, feed, throttled single line. */
+    /**
+     * Commander entry: snapshot, feed, throttled single line.
+     */
     public static void update() {
         BoardState state = GoalBoardAdvisor.snapshot();
         String fed = ensure(state);
@@ -175,10 +182,6 @@ public final class GoalBoardFeeder {
                 .log(A.now(), A.minSec());
         }
     }
-
-    private static Set<String> lastActiveIds = new HashSet<String>();
-    private static Set<String> lastFundedIds = new HashSet<String>();
-    private static int lastFundedFrame = -1;
 
     /**
      * Board-owned goals with work already in flight (a queue row or a
@@ -245,7 +248,9 @@ public final class GoalBoardFeeder {
         return lastActiveIds.contains(id);
     }
 
-    /** A ranking younger than the feeder cadence owns decisions; older, legacy triggers do. */
+    /**
+     * A ranking younger than the feeder cadence owns decisions; older, legacy triggers do.
+     */
     public static boolean boardFresh() {
         return atlantis.game.A.now() - lastFundedFrame <= 30;
     }

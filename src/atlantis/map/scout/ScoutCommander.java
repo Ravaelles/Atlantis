@@ -17,6 +17,52 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class ScoutCommander extends Commander {
+    private static boolean assignScout() {
+        for (AUnit worker : FreeWorkers.get().list()) {
+            if (
+                worker.isBuilder()
+                    || worker.isRepairerOfAnyKind()
+                    || worker.isBuilder()
+                    || worker.lastActionLessThanAgo(90, Actions.SPECIAL)
+            ) {
+                ErrorLog.printMaxOncePerMinute("Scout got mission: " + worker.manager());
+                continue;
+            }
+
+            if (addScout(worker)) return true;
+        }
+
+        return false;
+    }
+
+    // =========================================================
+
+    private static boolean addScout(AUnit newScout) {
+        ScoutState.scouts.add(newScout);
+        newScout.setScout(true);
+
+        return true;
+    }
+
+    public static boolean hasAnyScoutBeenKilled() {
+        return ScoutState.scoutsKilledCount > 0;
+    }
+
+    public static int killedScouts() {
+        return ScoutState.scoutsKilledCount;
+    }
+
+    public static ArrayList<AUnit> allScouts() {
+        return ScoutState.scouts;
+    }
+
+    /**
+     * Returns true if given unit has been assigned to explore the map.
+     */
+    public static boolean isScout(AUnit unit) {
+        return ScoutCommander.allScouts().contains(unit);
+    }
+
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
@@ -75,7 +121,9 @@ public class ScoutCommander extends Commander {
         return false;
     }
 
-    // =========================================================
+//    private static List<AUnit> candidates() {
+//        return FreeWorkers.get();
+//    }
 
     private void removeOverlordsAsScouts() {
         if (We.zerg()) {
@@ -93,6 +141,7 @@ public class ScoutCommander extends Commander {
         ScoutState.scouts.clear();
     }
 
+    // =========================================================
 
     /**
      * If we have no scout unit assigned, make one of our units a scout.
@@ -126,35 +175,6 @@ public class ScoutCommander extends Commander {
 //        return A.supplyUsed() >= 70 ? 2 : 1;
     }
 
-    private static boolean assignScout() {
-        for (AUnit worker : FreeWorkers.get().list()) {
-            if (
-                worker.isBuilder()
-                    || worker.isRepairerOfAnyKind()
-                    || worker.isBuilder()
-                    || worker.lastActionLessThanAgo(90, Actions.SPECIAL)
-            ) {
-                ErrorLog.printMaxOncePerMinute("Scout got mission: " + worker.manager());
-                continue;
-            }
-
-            if (addScout(worker)) return true;
-        }
-
-        return false;
-    }
-
-    private static boolean addScout(AUnit newScout) {
-        ScoutState.scouts.add(newScout);
-        newScout.setScout(true);
-
-        return true;
-    }
-
-//    private static List<AUnit> candidates() {
-//        return FreeWorkers.get();
-//    }
-
     private void removeExcessiveScouts() {
         int scoutsNeeded = scoutsNeeded();
 
@@ -166,7 +186,8 @@ public class ScoutCommander extends Commander {
         }
     }
 
-    private void removeDeadScouts() {        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
+    private void removeDeadScouts() {
+        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (scout.hp() <= 0) {
                 scout.setScout(false);
@@ -174,26 +195,5 @@ public class ScoutCommander extends Commander {
                 ScoutState.scoutsKilledCount++;
             }
         }
-    }
-
-    // =========================================================
-
-    public static boolean hasAnyScoutBeenKilled() {
-        return ScoutState.scoutsKilledCount > 0;
-    }
-
-    public static int killedScouts() {
-        return ScoutState.scoutsKilledCount;
-    }
-
-    public static ArrayList<AUnit> allScouts() {
-        return ScoutState.scouts;
-    }
-
-    /**
-     * Returns true if given unit has been assigned to explore the map.
-     */
-    public static boolean isScout(AUnit unit) {
-        return ScoutCommander.allScouts().contains(unit);
     }
 }

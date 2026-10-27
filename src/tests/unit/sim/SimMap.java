@@ -1,13 +1,5 @@
 package tests.unit.sim;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import atlantis.map.position.APosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
@@ -15,6 +7,14 @@ import atlantis.map.snapshot.MapSnapshot;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A stored map inside StarEngine (NEXT #191): loads a {@link
@@ -62,7 +62,15 @@ public final class SimMap {
         return new SimMap(MapSnapshot.parse(json));
     }
 
-    /** Installs tile + region answers backed by the snapshot. */
+    public static void uninstall() {
+        Regions.useEngine();
+        Regions.clearRegions();
+        tests.fakes.FakeMapTiles.installAsSource();
+    }
+
+    /**
+     * Installs tile + region answers backed by the snapshot.
+     */
     public void install() {
         Regions.useSource((tx, ty) -> {
             if (tx < 0 || ty < 0 || tx >= snap.w || ty >= snap.h) return null;
@@ -135,13 +143,9 @@ public final class SimMap {
         });
     }
 
-    public static void uninstall() {
-        Regions.useEngine();
-        Regions.clearRegions();
-        tests.fakes.FakeMapTiles.installAsSource();
-    }
-
-    /** Mineral fields as neutral fakes (amount travels in the file, not the unit). */
+    /**
+     * Mineral fields as neutral fakes (amount travels in the file, not the unit).
+     */
     public List<FakeUnit> minerals() {
         List<FakeUnit> out = new ArrayList<>();
         for (MapSnapshot.Res res : snap.resources) {
@@ -209,7 +213,9 @@ public final class SimMap {
         return snap.regionOf.get(ty * snap.w + tx);
     }
 
-    /** Tiles that accept a building, as positions. */
+    /**
+     * Tiles that accept a building, as positions.
+     */
     public List<APosition> buildableTiles() {
         List<APosition> out = new ArrayList<>();
         for (int ty = 0; ty < snap.h; ty++) {
@@ -276,7 +282,9 @@ public final class SimMap {
         return false;
     }
 
-    /** Tiles that accept a building, as positions. */
+    /**
+     * Tiles that accept a building, as positions.
+     */
     public int walkableTiles() {
         int count = 0;
         for (String row : snap.tiles) {

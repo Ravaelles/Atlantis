@@ -19,7 +19,7 @@ public final class BuildingQuestion implements AQuestion {
         if (state.minerals < 50) return null;
 
         return ADecision.decide(
-            ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)
+                ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)
             .frame(0).supply(state.supplyUsed, state.supplyTotal)
             .bank(state.minerals, state.gas)
             .build();

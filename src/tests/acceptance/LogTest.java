@@ -17,7 +17,7 @@ public class LogTest extends WorldStubForTests {
 
         assertEquals(0, messages(log).size());
         assertFalse(log.lastMessageWas("A1"));
-        assertEquals(null, log.lastMessage());
+        assertNull(log.lastMessage());
 
         unit.addLog("A1");
 

@@ -35,10 +35,14 @@ import atlantis.util.We;
  */
 public class ShouldNotTravelToConstructYet {
 
-    /** Frames ahead the forecast looks (10 s): beyond this, hold. */
+    /**
+     * Frames ahead the forecast looks (10 s): beyond this, hold.
+     */
     public static final int FORECAST_HORIZON_FRAMES = 240;
 
-    /** Above this supply the simulation stops and the legacy margin decides. */
+    /**
+     * Above this supply the simulation stops and the legacy margin decides.
+     */
     public static final int FORECAST_MAX_SUPPLY = 50;
 
     /**

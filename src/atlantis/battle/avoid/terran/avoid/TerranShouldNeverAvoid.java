@@ -10,9 +10,8 @@ public class TerranShouldNeverAvoid extends HasUnit {
 
     public boolean shouldNeverAvoid() {
         if (asMarine()) return true;
-        if (asMedic()) return true;
 
-        return false;
+        return asMedic();
     }
 
     private boolean asMedic() {

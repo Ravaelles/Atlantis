@@ -7,16 +7,36 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
 import atlantis.units.BaseUnderAttack;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.actions.Actions;
 
 public class WorkerDefenceFightCombatUnits extends Manager {
 
-    /** From this many raiders the workers stop swarming (see WorkerDefenceRun). */
+    /**
+     * Owner's line (2026-10-26, Zealot Hell run-by corridor; tightened to
+     * 10 on the live report that workers trade far beyond the army): workers
+     * never walk out to fight combat units far from base. Entry gates
+     * read the worker's position, but the attack order pursues - a legal
+     * engagement at the base edge becomes a cross-map chase while every
+     * entry gate still reads "near" from the decision frame. Read the
+     * ENEMY's address instead: raiders beyond this of our nearest base
+     * are not ours to chase. (FurMotherland below stays: an enemy raiding
+     * deep in our territory is by construction inside.)
+     */
+    public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 10;
+    /**
+     * The refusal reason for the line above, shared by the attack gate
+     * here and the stop-fighting path: one named reason, not scattered
+     * literals (CONVENTIONS §31). It rides the tactical tooltip, so the
+     * twin names it on every refusal.
+     */
+    public static final String TOO_FAR_FROM_BASE = "TooFarFromBase";
+    /**
+     * From this many raiders the workers stop swarming (see WorkerDefenceRun).
+     */
     private static final int WORKERS_RUN_THRESHOLD = 3;
-
     /**
      * Below this local combat eval we are losing badly - and a worker that attacks
      * into a lost fight is not defending anything, it is donating a Probe.
@@ -31,7 +51,6 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      * </p>
      */
     private static final double EVAL_DO_NOT_FIGHT = 0.7;
-
     /**
      * Clearly lost even for a supported line (owner 2026-10-26, live
      * 7th_rav game): at or below this eval the exchange is so bad that a
@@ -42,105 +61,8 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      */
     private static final double EVAL_DO_NOT_FIGHT_BADLY = 0.4;
 
-    /**
-     * Owner's line (2026-10-26, Zealot Hell run-by corridor; tightened to
-     * 10 on the live report that workers trade far beyond the army): workers
-     * never walk out to fight combat units far from base. Entry gates
-     * read the worker's position, but the attack order pursues - a legal
-     * engagement at the base edge becomes a cross-map chase while every
-     * entry gate still reads "near" from the decision frame. Read the
-     * ENEMY's address instead: raiders beyond this of our nearest base
-     * are not ours to chase. (FurMotherland below stays: an enemy raiding
-     * deep in our territory is by construction inside.)
-     */
-    public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 10;
-
-    /**
-     * The refusal reason for the line above, shared by the attack gate
-     * here and the stop-fighting path: one named reason, not scattered
-     * literals (CONVENTIONS §31). It rides the tactical tooltip, so the
-     * twin names it on every refusal.
-     */
-    public static final String TOO_FAR_FROM_BASE = "TooFarFromBase";
-
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
-    }
-
-    @Override
-    public boolean applies() {
-        if (unit.hp() <= (Enemy.zerg() ? 15 : 20)) return false;
-        if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
-        if (unit.distToMain() >= 8) return false;
-        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return false;
-
-        // Run lockout applies in the field only: at home a worker that fled is
-        // wanted back in the defence (B-19).
-        if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return false;
-
-        // Any of our buildings, not just a base within 6 tiles: a worker in the
-        // mineral line of an expansion used to be excluded from fighting.
-        boolean nearOurBuildings = unit.friendsNear().buildings().countInRadius(8, unit) > 0;
-        if (!nearOurBuildings) return false;
-
-        return unit.hp() >= (Enemy.protoss() ? 34 : 26)
-            && !WorkerStrayedFromBase.tooFarFromHome(unit);
-    }
-
-    @Override
-    protected ManagerFactory[] managers() {
-        return new ManagerFactory[]{
-            ProtectScvBusyConstructing::new,
-        };
-    }
-
-    @Override
-    protected Manager handle() {
-        if (handleFightEnemyCombatUnits(unit)) return usedManager(this);
-
-        return null;
-    }
-
-    private boolean handleFightEnemyCombatUnits(AUnit worker) {
-//        if (Enemy.protoss() && worker.hp() <= 38) return false;
-//        if (Enemy.protoss() && worker.enemiesNear().combatUnits().inRadius(2.6, unit).atLeast(2)) return false;
-//        if (worker.hp() <= 20) return false;
-
-//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
-
-//        if (We.protoss() && worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
-//            return attackNearestEnemy(worker);
-//        }
-
-        if (againstProtossDontFightWhenStrongAndTooWounded(worker)) return false;
-
-        int workers = Count.workers();
-
-        // Field harassment is spread across workers by id; at home every hand is
-        // needed (B-19). The 3-worker case must not lose a third of the defence.
-        boolean holdGround = BaseUnderAttack.check();
-        if (!holdGround && workers >= 6) {
-            if (workers <= 9 && unit.id() % 3 == 0) return false;
-            if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
-        }
-
-        if (Select.enemyCombatUnits().ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode,
-            AUnitType.Terran_Siege_Tank_Tank_Mode,
-            AUnitType.Zerg_Lurker,
-            AUnitType.Zerg_Ultralisk,
-            AUnitType.Protoss_Archon,
-            AUnitType.Protoss_Dark_Templar,
-            AUnitType.Protoss_Reaver
-        ).inRadius(8, worker).count() >= 1) {
-            return false;
-        }
-
-        if (processFightEnemyCombatUnits(unit)) {
-            return true;
-        }
-
-        return false;
     }
 
     public static boolean processFightEnemyCombatUnits(AUnit unit) {
@@ -302,7 +224,9 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         return WorkerStrayedFromBase.tooFarFromHome(enemy);
     }
 
-    /** The nearest raider worth walking towards, if the swarm is on. */
+    /**
+     * The nearest raider worth walking towards, if the swarm is on.
+     */
     private static AUnit nearestSwarmableRaider(AUnit worker) {
         Selection raiders = worker.enemiesNear()
             .combatUnits()
@@ -350,5 +274,77 @@ public class WorkerDefenceFightCombatUnits extends Manager {
             && worker.hp() <= 33
 //            && Count.ourCombatUnits() >= 5
             && worker.meleeEnemiesNearCount(2) == 0;
+    }
+
+    @Override
+    public boolean applies() {
+        if (unit.hp() <= (Enemy.zerg() ? 15 : 20)) return false;
+        if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
+        if (unit.distToMain() >= 8) return false;
+        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return false;
+
+        // Run lockout applies in the field only: at home a worker that fled is
+        // wanted back in the defence (B-19).
+        if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return false;
+
+        // Any of our buildings, not just a base within 6 tiles: a worker in the
+        // mineral line of an expansion used to be excluded from fighting.
+        boolean nearOurBuildings = unit.friendsNear().buildings().countInRadius(8, unit) > 0;
+        if (!nearOurBuildings) return false;
+
+        return unit.hp() >= (Enemy.protoss() ? 34 : 26)
+            && !WorkerStrayedFromBase.tooFarFromHome(unit);
+    }
+
+    @Override
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtectScvBusyConstructing::new,
+        };
+    }
+
+    @Override
+    protected Manager handle() {
+        if (handleFightEnemyCombatUnits(unit)) return usedManager(this);
+
+        return null;
+    }
+
+    private boolean handleFightEnemyCombatUnits(AUnit worker) {
+//        if (Enemy.protoss() && worker.hp() <= 38) return false;
+//        if (Enemy.protoss() && worker.enemiesNear().combatUnits().inRadius(2.6, unit).atLeast(2)) return false;
+//        if (worker.hp() <= 20) return false;
+
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
+
+//        if (We.protoss() && worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
+//            return attackNearestEnemy(worker);
+//        }
+
+        if (againstProtossDontFightWhenStrongAndTooWounded(worker)) return false;
+
+        int workers = Count.workers();
+
+        // Field harassment is spread across workers by id; at home every hand is
+        // needed (B-19). The 3-worker case must not lose a third of the defence.
+        boolean holdGround = BaseUnderAttack.check();
+        if (!holdGround && workers >= 6) {
+            if (workers <= 9 && unit.id() % 3 == 0) return false;
+            if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
+        }
+
+        if (Select.enemyCombatUnits().ofType(
+            AUnitType.Terran_Siege_Tank_Siege_Mode,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Zerg_Lurker,
+            AUnitType.Zerg_Ultralisk,
+            AUnitType.Protoss_Archon,
+            AUnitType.Protoss_Dark_Templar,
+            AUnitType.Protoss_Reaver
+        ).inRadius(8, worker).count() >= 1) {
+            return false;
+        }
+
+        return processFightEnemyCombatUnits(unit);
     }
 }

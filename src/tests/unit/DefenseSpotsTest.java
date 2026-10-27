@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * M2 model slice: defense spots are ranked coverage over a tile grid - no
@@ -47,7 +46,7 @@ public class DefenseSpotsTest {
         List<DefenseSpots.Spot> spots = DefenseSpots.ranked(
             endA, endB, anchor, 7, 2, 2, 12, flat(40, 40));
 
-        assertTrue(!spots.isEmpty(), "a flat map has spots");
+        assertFalse(spots.isEmpty(), "a flat map has spots");
         assertTrue(spots.get(0).coversChoke(), "the top spot covers the choke line");
         for (int i = 1; i < spots.size(); i++) {
             DefenseSpots.Spot prev = spots.get(i - 1);
@@ -70,7 +69,7 @@ public class DefenseSpotsTest {
         List<DefenseSpots.Spot> spots = DefenseSpots.ranked(
             endA, endB, anchor, 7, 2, 2, 12, flat(40, 40));
 
-        assertTrue(!spots.isEmpty());
+        assertFalse(spots.isEmpty());
         assertTrue(spots.get(0).coversChoke() && spots.get(0).coversAnchor());
     }
 

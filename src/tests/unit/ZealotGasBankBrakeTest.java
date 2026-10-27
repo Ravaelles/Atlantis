@@ -10,9 +10,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Banked gas means Dragoons, not more Zealots (owner report: 14 Zealots
@@ -54,9 +51,8 @@ public class ZealotGasBankBrakeTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            assertTrue(!ProduceZealot.zealot(),
-                "350 banked gas with the floor met: no more flood zealots, goons take the gateways - "
-                    + ProduceZealot.reason);
+            assertFalse(ProduceZealot.zealot(), "350 banked gas with the floor met: no more flood zealots, goons take the gateways - "
+                + ProduceZealot.reason);
         });
     }
 

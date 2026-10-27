@@ -22,22 +22,6 @@ import atlantis.units.select.Select;
  */
 public final class EngineNeighbourhoodSource implements NeighbourhoodRegistry.Source {
 
-    @Override
-    public NeighbourhoodRegistry.Neighbourhood nearestTo(int tx, int ty) {
-        AUnit base = nearestBase(tx, ty);
-        if (base == null)
-            return null;
-
-        AChoke exit = Chokes.mainChoke();
-        boolean hasExit = exit != null;
-
-        return new NeighbourhoodRegistry.Neighbourhood(
-                base.tx(), base.ty(),
-                hasExit ? exit.tx() : 0,
-                hasExit ? exit.ty() : 0,
-                hasExit);
-    }
-
     /**
      * The base nearest the tile. Uses {@code mainOrAnyBuilding} as the anchor when
      * no owned base is in the lists yet (the Nexus is still a construction), so
@@ -66,5 +50,21 @@ public final class EngineNeighbourhoodSource implements NeighbourhoodRegistry.So
         int dy = Math.abs(unit.ty() - ty);
 
         return Math.max(dx, dy);
+    }
+
+    @Override
+    public NeighbourhoodRegistry.Neighbourhood nearestTo(int tx, int ty) {
+        AUnit base = nearestBase(tx, ty);
+        if (base == null)
+            return null;
+
+        AChoke exit = Chokes.mainChoke();
+        boolean hasExit = exit != null;
+
+        return new NeighbourhoodRegistry.Neighbourhood(
+            base.tx(), base.ty(),
+            hasExit ? exit.tx() : 0,
+            hasExit ? exit.ty() : 0,
+            hasExit);
     }
 }

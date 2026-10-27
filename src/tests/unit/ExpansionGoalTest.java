@@ -5,9 +5,7 @@ import atlantis.decisions.goals.protoss.ExpansionGoal;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The second-base WHEN lives on the board: the top-level matrix of
@@ -74,8 +72,7 @@ public class ExpansionGoalTest {
         assertEquals("HasInProgress",
             ExpansionGoal.veto(state(400, 20, 1, 1, 2, "Protoss", 0, 0, 200, 400, false)));
         // 800 bank flows: 800/400 = 2 > 1.15, no veto named.
-        assertEquals(null,
-            ExpansionGoal.veto(state(800, 20, 1, 1, 4, "Protoss", 0, 0, 200, 400, false)));
+        assertNull(ExpansionGoal.veto(state(800, 20, 1, 1, 4, "Protoss", 0, 0, 200, 400, false)));
         // The veto names itself through the same cases.
         assertEquals("DontExpandAgainstMutas",
             ExpansionGoal.veto(state(900, 20, 1, 0, 1, "Zerg", 3, 0, 200, 400, false)));

@@ -1,29 +1,19 @@
 package tests.unit.sim;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.combat.BattleCommander;
 import atlantis.combat.FormationHold;
-import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.formation.FormationOrderLatch;
 import atlantis.map.position.APosition;
-import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
-import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #210: while defending, the same formation order goes out at most
@@ -36,6 +26,16 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("combat")
 public class FormationOrderLatchTest extends AbstractTestWithWorld {
+
+    private static int moveOrders(FakeUnit d) {
+        int n = 0;
+        for (tests.fakes.FakeOrderSink.Record r
+            : ((tests.fakes.FakeOrderSink) d.orderSink()).orders()) {
+            if (r.operation.equals("move")) n++;
+        }
+
+        return n;
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -69,7 +69,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         // ATTACK (early-strength rule) - the latch under test only exists
         // on DEFEND, so the world fields a zealot mass that holds the line
         // home under both the old headcount and the new strength rule.
-        FakeUnit[] foes = new FakeUnit[] {
+        FakeUnit[] foes = new FakeUnit[]{
             fake(AUnitType.Protoss_Zealot, 60, 20),
             fake(AUnitType.Protoss_Zealot, 61, 20),
             fake(AUnitType.Protoss_Zealot, 62, 20),
@@ -81,7 +81,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foes), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
-                for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().addUnit(u);
             }
             if (now != 12) return;
 
@@ -93,7 +93,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
             assertTrue(FormationOrderLatch.shouldIssue(a, APosition.create(31, 20)),
                 "a changed destination is a new order, not a repeat");
         });
-        for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().removeUnit(u);
+        for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().removeUnit(u);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
         FakeUnit b = fake(AUnitType.Protoss_Dragoon, 21, 20);
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 22, 20);
-        FakeUnit[] foes = new FakeUnit[] {
+        FakeUnit[] foes = new FakeUnit[]{
             fake(AUnitType.Protoss_Zealot, 60, 20),
             fake(AUnitType.Protoss_Zealot, 61, 20),
             fake(AUnitType.Protoss_Zealot, 62, 20),
@@ -114,7 +114,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         world(30, fakeOurs(nexus, a, b, c), fakeEnemies(foes), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
-                for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().addUnit(u);
             }
             if (now == 2) {
                 assertTrue(FormationOrderLatch.shouldIssue(a, APosition.create(30, 20)),
@@ -125,7 +125,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
                     "ten frames later the same order flows again");
             }
         });
-        for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().removeUnit(u);
+        for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().removeUnit(u);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
         foe.setEnemy();
         foe.hp = 100;
-        FakeUnit[] pack = new FakeUnit[] {
+        FakeUnit[] pack = new FakeUnit[]{
             fake(AUnitType.Protoss_Zealot, 61, 20),
             fake(AUnitType.Protoss_Zealot, 62, 20),
             fake(AUnitType.Protoss_Zealot, 60, 21),
@@ -174,7 +174,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(foe, pack[0], pack[1], pack[2], pack[3], pack[4]), () -> {
             if (atlantis.game.A.now() != 2) return;
 
-            for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().addUnit(u);
 
             try {
                 APosition anchor = APosition.create(30, 20);
@@ -184,25 +184,13 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
                 int issued = moveOrders(a) - before;
                 assertTrue(FormationHold.holdIfCalm(a, foe, FightOrFlight.Tactic.FIGHT, a, anchor),
                     "a denied re-issue still claims the unit (stand), "
-                    + "it must not fall through to creep/gather");
+                        + "it must not fall through to creep/gather");
                 int denied = moveOrders(a) - before - issued;
                 assertTrue(issued >= 1, "the first call issued the march");
-                assertTrue(denied == 0,
-                    "the denied call issues nothing - the line holds instead of churning");
-            }
-            finally {
-                for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().removeUnit(u);
+                assertEquals(0, denied, "the denied call issues nothing - the line holds instead of churning");
+            } finally {
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) Alpha.get().removeUnit(u);
             }
         });
-    }
-
-    private static int moveOrders(FakeUnit d) {
-        int n = 0;
-        for (tests.fakes.FakeOrderSink.Record r
-                : ((tests.fakes.FakeOrderSink) d.orderSink()).orders()) {
-            if (r.operation.equals("move")) n++;
-        }
-
-        return n;
     }
 }

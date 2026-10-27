@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.util.AFile;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,8 +18,10 @@ public class ParamTweakerEvaluator {
 
     private static final String DELIMITER = ";";
 
-    /** Fixed-name copy of the last simulation's row only (overwritten
-     * every game, never appended) - the dated files stay the archive. */
+    /**
+     * Fixed-name copy of the last simulation's row only (overwritten
+     * every game, never appended) - the dated files stay the archive.
+     */
     private static final String LAST_FILE = "param_tweaker/__tweaker.csv";
 
     public static void updateOnEnd(boolean winner) {
@@ -57,14 +60,14 @@ public class ParamTweakerEvaluator {
 
     private static String[] fileHeader() {
         String[] base = {
-                "Date",
-                "W/L",
-                "Seconds",
-                "Killed",
-                "Lost",
-                "HitsTaken",
-                "ShotsFired",
-                "Score"
+            "Date",
+            "W/L",
+            "Seconds",
+            "Killed",
+            "Lost",
+            "HitsTaken",
+            "ShotsFired",
+            "Score"
         };
 
         return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
@@ -115,19 +118,19 @@ public class ParamTweakerEvaluator {
             if (line.contains("\"key\":\"HIT\"")) hits++;
             else if (line.contains("\"key\":\"SHOT\"") && line.contains("\"result\":\"shot-fired\"")) shots++;
         }
-        return new int[] { hits, shots };
+        return new int[]{hits, shots};
     }
 
     private static String resultString(boolean winner, int hits, int shots) {
         return timeString() + DELIMITER
-                + (winner ? "W" : "L") + DELIMITER
-                + A.seconds() + DELIMITER
-                + Atlantis.KILLED + DELIMITER
-                + Atlantis.LOST + DELIMITER
-                + hits + DELIMITER
-                + shots + DELIMITER
-                + score(winner) + DELIMITER
-                + paramsString();
+            + (winner ? "W" : "L") + DELIMITER
+            + A.seconds() + DELIMITER
+            + Atlantis.KILLED + DELIMITER
+            + Atlantis.LOST + DELIMITER
+            + hits + DELIMITER
+            + shots + DELIMITER
+            + score(winner) + DELIMITER
+            + paramsString();
     }
 
     private static int score(boolean winner) {

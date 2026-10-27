@@ -1,8 +1,8 @@
 package tests.acceptance;
 
-import atlantis.game.listeners.OnEnemyNewUnitDiscovered;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
+import atlantis.game.listeners.OnEnemyNewUnitDiscovered;
 import atlantis.game.listeners.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -27,23 +27,23 @@ public class FocusPointTest extends AbstractTestWithWorld {
         world(5, generateOur(), generateEnemies(), () -> {
 //            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
-        if (A.now() == 1) {
-            firstFrame();
-        }
-        else if (A.now() == 2) {
-            secondFrame();
-        }
-        else if (A.now() == 3) {
-            thirdFrame();
-        }
-        else if (A.now() == 4) {
-            forthFrame();
-        }
-        else if (A.now() == 5) {
-            fifthFrame();
-        }
+            if (A.now() == 1) {
+                firstFrame();
+            }
+            else if (A.now() == 2) {
+                secondFrame();
+            }
+            else if (A.now() == 3) {
+                thirdFrame();
+            }
+            else if (A.now() == 4) {
+                forthFrame();
+            }
+            else if (A.now() == 5) {
+                fifthFrame();
+            }
 
-        gameCommander.invokedCommander();
+            gameCommander.invokedCommander();
         });
     }
 

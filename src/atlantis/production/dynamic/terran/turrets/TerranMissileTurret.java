@@ -13,17 +13,25 @@ public class TerranMissileTurret extends AntiAirBuildingCommander {
 
     protected final AUnitType turret = AUnitType.Terran_Missile_Turret;
 
+    public static TerranMissileTurret get() {
+        if (instance == null) {
+            return (TerranMissileTurret) (instance = new TerranMissileTurret());
+        }
+
+        return (TerranMissileTurret) instance;
+    }
+
     @Override
     public AUnitType type() {
         return AUnitType.Terran_Missile_Turret;
     }
 
+    // =========================================================
+
     @Override
     public int expected() {
         return 0;
     }
-
-    // =========================================================
 
     protected boolean handleReinforcePosition(HasPosition position, double inRadius) {
         if (position == null) return false;
@@ -42,6 +50,8 @@ public class TerranMissileTurret extends AntiAirBuildingCommander {
         return false;
     }
 
+    // =========================================================
+
     public boolean exceededExistingAndInProduction() {
         if (Count.withPlanned(type()) >= 2) return true;
 
@@ -49,21 +59,9 @@ public class TerranMissileTurret extends AntiAirBuildingCommander {
         if (existing >= 12) return true;
 
         if (existing >= 6) {
-            if (!A.hasMinerals(250)) {
-                return true;
-            }
+            return !A.hasMinerals(250);
         }
 
         return false;
-    }
-
-    // =========================================================
-
-    public static TerranMissileTurret get() {
-        if (instance == null) {
-            return (TerranMissileTurret) (instance = new TerranMissileTurret());
-        }
-
-        return (TerranMissileTurret) instance;
     }
 }

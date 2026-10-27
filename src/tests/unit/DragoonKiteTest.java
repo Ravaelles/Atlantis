@@ -4,17 +4,14 @@ package tests.unit;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.kite.Kite;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.move.MoveAway;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A Dragoon steps back only while the threat sits inside its safety
@@ -26,6 +23,26 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class DragoonKiteTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static int attackOrders(FakeUnit unit) {
+        int attacks = 0;
+        for (tests.fakes.FakeOrderSink.Record record : ordersOf(unit)) {
+            if (record.actorId == unit.id() && record.operation.equals("attackUnit")) attacks++;
+        }
+        return attacks;
+    }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     public Race initRace() {
@@ -80,7 +97,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB), () -> {
             assertTrue(Kite.shouldKite(dragoon, lingA),
                 "hp 70 with two melee inside 2 tiles: the pocket is closing, "
-                + "yield ground instead of standing into it - even with the shot ready");
+                    + "yield ground instead of standing into it - even with the shot ready");
         });
     }
 
@@ -96,7 +113,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(ling, far), () -> {
             assertFalse(Kite.shouldKite(dragoon, far),
                 "one melee inside 2 tiles is harassment, not a pinch - "
-                + "the far threat reads through the normal margin");
+                    + "the far threat reads through the normal margin");
         });
     }
 
@@ -420,8 +437,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertTrue(moves == 1 && attacks == 0,
                 "one step, then ride it - no attack-stop the next frame: "
                     + ordersOf(dragoon));
-        }
-        finally {
+        } finally {
             BattleCommander.clearForTests();
         }
     }
@@ -436,12 +452,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(
-                atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 0.2) == null,
-                "a 0.2-tile hop is not a step");
-            assertTrue(
-                atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 2.0) != null,
-                "a 2-tile step opens real distance");
+            assertNull(MoveAway.bestDestination(dragoon, zealot, 0.2), "a 0.2-tile hop is not a step");
+            assertNotNull(MoveAway.bestDestination(dragoon, zealot, 2.0), "a 2-tile step opens real distance");
         });
     }
 
@@ -458,7 +470,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 15;
         dragoon.hp = 20;
         dragoon.shields = 0;
-        neutralInWorld = new FakeUnit[] {
+        neutralInWorld = new FakeUnit[]{
             fake(AUnitType.Resource_Mineral_Field, 29, 20).setNeutral()
         };
         atlantis.util.log.EventLog.clearForTests();
@@ -473,8 +485,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "mineral-boxed short step retries long instead of trading: "
                     + ordersOf(dragoon));
-        }
-        finally {
+        } finally {
             neutralInWorld = null;
             atlantis.util.log.EventLog.clearForTests();
         }
@@ -512,22 +523,11 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertTrue(
                 atlantis.util.log.EventLog.toJsonLines().contains("\"frozen-reset\""),
                 "the reset names itself");
-        }
-        finally {
+        } finally {
             tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME = oldModifier;
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
-    }
-
-
-
-    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
-                                    int unitId, String operation) {
-        for (tests.fakes.FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
     }
 
     @Test
@@ -607,8 +607,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
                 if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacks++;
             }
-            assertTrue(attacks == 1,
-                "one acquisition, one order - no per-frame re-spam: " + ordersOf(dragoon));
+            assertEquals(1, attacks, "one acquisition, one order - no per-frame re-spam: " + ordersOf(dragoon));
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "margin holds: stand and shoot, do not step back: " + ordersOf(dragoon));
@@ -635,20 +634,18 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealotA, zealotB), () -> {
             BattleCommander.act(
                 dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
-            assertTrue(attackOrders(dragoon) == 1, "acquires A: " + ordersOf(dragoon));
+            assertEquals(1, attackOrders(dragoon), "acquires A: " + ordersOf(dragoon));
 
             zealotB.position = atlantis.map.position.APosition.createFromPixels(1050, 20 * 32);
             BattleCommander.act(
                 dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
-            assertTrue(attackOrders(dragoon) == 1,
-                "B nearer but A alive and in range - no switch, no re-order: " + ordersOf(dragoon));
+            assertEquals(1, attackOrders(dragoon), "B nearer but A alive and in range - no switch, no re-order: " + ordersOf(dragoon));
 
             zealotA.hp = 0;
             dragoon.cooldown = 0;
             BattleCommander.act(
                 dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
-            assertTrue(attackOrders(dragoon) == 2,
-                "A dead - the pick re-arms onto B: " + ordersOf(dragoon));
+            assertEquals(2, attackOrders(dragoon), "A dead - the pick re-arms onto B: " + ordersOf(dragoon));
         });
     }
 
@@ -816,14 +813,6 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
-    private static int attackOrders(FakeUnit unit) {
-        int attacks = 0;
-        for (tests.fakes.FakeOrderSink.Record record : ordersOf(unit)) {
-            if (record.actorId == unit.id() && record.operation.equals("attackUnit")) attacks++;
-        }
-        return attacks;
-    }
-
     @Test
     public void fleeingWithAnchorRunsThere() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
@@ -906,7 +895,6 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
-
     @Test
     public void readyDragoonGlidesInsteadOfAttackChasing() {
         // Out of range with a ready weapon: an attack order would chase
@@ -941,7 +929,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         dragoon.setHp(40);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 20, 20);
-        neutralInWorld = new FakeUnit[] {
+        neutralInWorld = new FakeUnit[]{
             fake(AUnitType.Resource_Mineral_Field, 31, 20).setNeutral()
         };
 
@@ -956,13 +944,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                 assertTrue(Math.abs(dragoon.distTo(dest) - 5.0) < 0.15,
                     "full-length sidestep past the mineral line: " + dest);
             });
-        }
-        finally {
+        } finally {
             neutralInWorld = null;
         }
-    }
-
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
 }

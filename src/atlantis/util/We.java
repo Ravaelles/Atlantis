@@ -7,7 +7,7 @@ import bwapi.Race;
 import main.Main;
 
 public class We {
-    private static Cache<Object> cache = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
 
     // =========================================================
 

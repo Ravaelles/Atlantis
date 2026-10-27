@@ -6,7 +6,8 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Terran_Machine_Shop;
+import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 
 public class ProduceMachineShop {
     /**

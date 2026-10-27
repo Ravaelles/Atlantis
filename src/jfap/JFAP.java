@@ -1,7 +1,10 @@
 package jfap;
 
 import atlantis.units.AUnitType;
-import bwapi.*;
+import bwapi.DamageType;
+import bwapi.Game;
+import bwapi.Race;
+import bwapi.UnitSizeType;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -9,8 +12,8 @@ import java.util.TreeSet;
 
 public class JFAP extends AJFAP {
     static Game game;
-    private Set<JFAPUnit> player1 = new TreeSet<>();
-    private Set<JFAPUnit> player2 = new TreeSet<>();
+    private final Set<JFAPUnit> player1 = new TreeSet<>();
+    private final Set<JFAPUnit> player2 = new TreeSet<>();
     private boolean didSomething = false;
     private int nFrames = 96;
 

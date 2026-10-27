@@ -17,23 +17,6 @@ import java.util.List;
  */
 public final class ADecision {
 
-    /** What kind of act this is. Never a game type - the vocabulary stays fixed. */
-    public enum Kind {
-        TRAIN_WORKER,
-        TRAIN_ARMY,
-        BUILD,
-        RESEARCH,
-        EXPAND
-    }
-
-    /** Where the decision came from. */
-    public enum Source {
-        /** A memorized build-order line, executed verbatim. */
-        BUILD_ORDER,
-        /** A dynamic pump answering a live question. */
-        DYNAMIC
-    }
-
     private final Kind kind;
     private final String subject;
     private final String reason;
@@ -53,14 +36,12 @@ public final class ADecision {
      * cycle behind them is guesswork.
      */
     private final Integer orderId;
-
     /**
      * Engine-side payload (a base, an order, ...). Never logged, never
      * tested: it exists so the domain executor can act without
      * re-resolving what the caller already holds. Null in tests.
      */
     private final Object payload;
-
     private ADecision(Builder builder) {
         this.kind = builder.kind;
         this.subject = builder.subject;
@@ -74,6 +55,28 @@ public final class ADecision {
         this.payload = builder.payload;
         this.orderId = builder.orderId;
         this.children = Collections.unmodifiableList(new ArrayList<>(builder.children));
+    }
+
+    private ADecision(Kind kind, String subject, String reason, Source source,
+                      int frame, int supplyUsed, int supplyTotal,
+                      int minerals, int gas, Object payload, List<ADecision> children,
+                      Integer orderId) {
+        this.kind = kind;
+        this.subject = subject;
+        this.reason = reason;
+        this.source = source;
+        this.frame = frame;
+        this.supplyUsed = supplyUsed;
+        this.supplyTotal = supplyTotal;
+        this.minerals = minerals;
+        this.gas = gas;
+        this.children = Collections.unmodifiableList(new ArrayList<>(children));
+        this.payload = payload;
+        this.orderId = orderId;
+    }
+
+    public static Builder decide(Kind kind, String subject, String reason, Source source) {
+        return new Builder(kind, subject, reason, source);
     }
 
     public Kind kind() {
@@ -156,26 +159,29 @@ public final class ADecision {
             frame, supplyUsed, supplyTotal, minerals, gas, payload, children, orderId);
     }
 
-    private ADecision(Kind kind, String subject, String reason, Source source,
-                      int frame, int supplyUsed, int supplyTotal,
-                      int minerals, int gas, Object payload, List<ADecision> children,
-                      Integer orderId) {
-        this.kind = kind;
-        this.subject = subject;
-        this.reason = reason;
-        this.source = source;
-        this.frame = frame;
-        this.supplyUsed = supplyUsed;
-        this.supplyTotal = supplyTotal;
-        this.minerals = minerals;
-        this.gas = gas;
-        this.children = Collections.unmodifiableList(new ArrayList<>(children));
-        this.payload = payload;
-        this.orderId = orderId;
+    /**
+     * What kind of act this is. Never a game type - the vocabulary stays fixed.
+     */
+    public enum Kind {
+        TRAIN_WORKER,
+        TRAIN_ARMY,
+        BUILD,
+        RESEARCH,
+        EXPAND
     }
 
-    public static Builder decide(Kind kind, String subject, String reason, Source source) {
-        return new Builder(kind, subject, reason, source);
+    /**
+     * Where the decision came from.
+     */
+    public enum Source {
+        /**
+         * A memorized build-order line, executed verbatim.
+         */
+        BUILD_ORDER,
+        /**
+         * A dynamic pump answering a live question.
+         */
+        DYNAMIC
     }
 
     public static final class Builder {
@@ -183,6 +189,7 @@ public final class ADecision {
         private final String subject;
         private final String reason;
         private final Source source;
+        private final List<ADecision> children = new ArrayList<>();
         private int frame;
         private int supplyUsed;
         private int supplyTotal;
@@ -190,7 +197,6 @@ public final class ADecision {
         private int gas;
         private Object payload;
         private Integer orderId;
-        private final List<ADecision> children = new ArrayList<>();
 
         public Builder(Kind kind, String subject, String reason, Source source) {
             this.kind = kind;

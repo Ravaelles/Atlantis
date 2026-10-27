@@ -1,9 +1,5 @@
 package tests.unit;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.game.A;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
@@ -12,12 +8,14 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * WO-150b wiring: the demote path notes the warping building's HP on

@@ -60,10 +60,11 @@ public class AvoidSingleEnemy extends Manager {
 //    private boolean doNotAvoid() {
 //        if (this.enemy == null) return true;
 //        if (unit.effUndetected()) return true;
-////        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
-////        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
-////
-////        APainter.paintCircle(enemy, 16, Color.Orange);
+
+    /// /        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
+    /// /        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
+    /// /
+    /// /        APainter.paintCircle(enemy, 16, Color.Orange);
 //
 //        if (enemy.position() == null) {
 //            System.err.println("enemy.position() is NULL for " + enemy);
@@ -81,7 +82,6 @@ public class AvoidSingleEnemy extends Manager {
 //            && enemy.distTo(unit) >= 1.4
 //            && !unit.isOtherFacingThisUnit(enemy);
 //    }
-
     protected double calculateRunDistance(AUnit enemy) {
         if (enemy.isCombatBuilding()) {
             return 0.25;

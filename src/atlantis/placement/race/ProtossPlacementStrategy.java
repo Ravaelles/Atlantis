@@ -24,7 +24,9 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
 
     private final PsiGating psiGating;
 
-    /** Test seam: a null gate answers "available everywhere" (no Psi check). */
+    /**
+     * Test seam: a null gate answers "available everywhere" (no Psi check).
+     */
     public ProtossPlacementStrategy(PsiGating psiGating) {
         this.psiGating = psiGating;
     }

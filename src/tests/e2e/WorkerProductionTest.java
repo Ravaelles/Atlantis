@@ -46,10 +46,10 @@ public class WorkerProductionTest extends AbstractTestWithWorld {
     public void freshBasePlansWorkers() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit[] probes = {
-                fake(AUnitType.Protoss_Probe, 8.3),
-                fake(AUnitType.Protoss_Probe, 9.1),
-                fake(AUnitType.Protoss_Probe, 10.6),
-                fake(AUnitType.Protoss_Probe, 11.4),
+            fake(AUnitType.Protoss_Probe, 8.3),
+            fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 10.6),
+            fake(AUnitType.Protoss_Probe, 11.4),
         };
         FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 12);
 
@@ -70,13 +70,13 @@ public class WorkerProductionTest extends AbstractTestWithWorld {
             ProductionPlan plan = engine.updateFrame();
 
             assertFalse(plan.isEmpty(), "a base with 4 probes, 500 minerals and free supply must plan something -"
-                    + " an empty plan means the economy is stalled");
+                + " an empty plan means the economy is stalled");
 
             boolean plansAWorker = plan.items().stream()
-                    .anyMatch(i -> i.item().id().equals("Probe"));
+                .anyMatch(i -> i.item().id().equals("Probe"));
             assertTrue(plansAWorker,
-                    "the base is far from saturated (4 workers of 25), so a Probe must be in the plan;"
-                            + " plan was: " + plan);
+                "the base is far from saturated (4 workers of 25), so a Probe must be in the plan;"
+                    + " plan was: " + plan);
 
             assertTrue(Select.ourWorkers().count() >= 4, "the probes must still be selectable");
         });
@@ -92,9 +92,9 @@ public class WorkerProductionTest extends AbstractTestWithWorld {
         // 2026-10-07). The plan must contain the Probe and no extra Nexus.
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit[] probes = {
-                fake(AUnitType.Protoss_Probe, 8.3),
-                fake(AUnitType.Protoss_Probe, 9.1),
-                fake(AUnitType.Protoss_Probe, 10.6),
+            fake(AUnitType.Protoss_Probe, 8.3),
+            fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 10.6),
         };
         FakeUnit[] ours = units(nexus, probes[0], probes[1], probes[2]);
 
@@ -106,11 +106,11 @@ public class WorkerProductionTest extends AbstractTestWithWorld {
             ProductionPlan plan = new ProductionEngine().updateFrame();
 
             long nexuses = plan.items().stream()
-                    .filter(i -> i.item().id().equals("Nexus"))
-                    .count();
+                .filter(i -> i.item().id().equals("Nexus"))
+                .count();
             assertEquals(0, nexuses,
-                    "the base already has a Nexus - planning another blocks the opening"
-                            + " and is the bug this test pins; plan was: " + plan);
+                "the base already has a Nexus - planning another blocks the opening"
+                    + " and is the bug this test pins; plan was: " + plan);
         });
     }
 
@@ -152,9 +152,10 @@ public class WorkerProductionTest extends AbstractTestWithWorld {
             ProductionPlan plan = engine.updateFrame();
 
             boolean plansAWorker = plan.items().stream()
-                    .anyMatch(i -> i.item().id().equals("Probe"));
+                .anyMatch(i -> i.item().id().equals("Probe"));
             assertFalse(plansAWorker,
-                    "30 workers on one base is past saturation - more workers must not be planned;"
-                            + " plan was: " + plan);        });
+                "30 workers on one base is past saturation - more workers must not be planned;"
+                    + " plan was: " + plan);
+        });
     }
 }

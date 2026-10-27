@@ -6,7 +6,7 @@ import atlantis.game.event.Events;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("infra")
 public class EventTest extends AbstractTestWithUnits {
@@ -40,4 +40,4 @@ class FakeListener extends AutomaticListener {
     public void onEvent(Event event, Object... data) {
         EventTest.state = "action taken!";
     }
-};
+}

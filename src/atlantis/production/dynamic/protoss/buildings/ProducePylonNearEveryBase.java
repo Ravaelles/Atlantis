@@ -10,7 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Pylon;
 
 public class ProducePylonNearEveryBase {
     public static boolean produce() {

@@ -20,7 +20,9 @@ import java.util.Map;
  */
 public final class DuelMemory {
 
-    /** Settle window before any swing was ever observed (covers a zealot swing + margin). */
+    /**
+     * Settle window before any swing was ever observed (covers a zealot swing + margin).
+     */
     public static final int PRE_CALIBRATION_SETTLE_FRAMES = 6;
 
     private static final Map<Integer, Integer> lastStepFrame = new HashMap<>();
@@ -48,6 +50,9 @@ public final class DuelMemory {
     private static final Map<Integer, Integer> lastBattleHp = new HashMap<>();
     private static final Map<Integer, Boolean> battleDamage = new HashMap<>();
     private static final Map<Integer, Integer> lastBattleDamageFrame = new HashMap<>();
+
+    private DuelMemory() {
+    }
 
     /**
      * Snapshots current hp and latches whether it dropped since the
@@ -87,7 +92,9 @@ public final class DuelMemory {
         }
     }
 
-    /** True when hp dropped between the last two battle-hook snapshots. */
+    /**
+     * True when hp dropped between the last two battle-hook snapshots.
+     */
     public static boolean tookDamageSinceLastBattleFrame(AUnit unit) {
         if (unit == null) return false;
 
@@ -120,9 +127,6 @@ public final class DuelMemory {
         }
     }
 
-    private DuelMemory() {
-    }
-
     public static void clear() {
         lastStepFrame.clear();
         lastMovedFrame.clear();
@@ -140,17 +144,23 @@ public final class DuelMemory {
         lastBattleDamageFrame.clear();
     }
 
-    /** Another step rode on this unit this frame - the re-arm must not cancel it. */
+    /**
+     * Another step rode on this unit this frame - the re-arm must not cancel it.
+     */
     public static void markRepositioned(AUnit unit) {
         lastRepositionFrame.put(unit.id(), A.now());
     }
 
-    /** Frames since a reposition rode, or a large number when never. */
+    /**
+     * Frames since a reposition rode, or a large number when never.
+     */
     public static int repositionedAgo(AUnit unit) {
         return A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000000);
     }
 
-    /** A retreat move just issued for this unit - the next fight frames let it ride. */
+    /**
+     * A retreat move just issued for this unit - the next fight frames let it ride.
+     */
     public static void noteRetreated(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return;
@@ -160,17 +170,23 @@ public final class DuelMemory {
         }
     }
 
-    /** Frames since a retreat move issued, or a large number when never. */
+    /**
+     * Frames since a retreat move issued, or a large number when never.
+     */
     public static int retreatedAgo(AUnit unit) {
         return A.now() - lastRetreatFrame.getOrDefault(unit.id(), -1000000);
     }
 
-    /** Last engaged point while visible, or null when this unit never fought. */
+    /**
+     * Last engaged point while visible, or null when this unit never fought.
+     */
     public static APosition lastContact(AUnit unit) {
         return lastContactPos.get(unit.id());
     }
 
-    /** Frame of the last visible contact snapshot, or null when never fought. */
+    /**
+     * Frame of the last visible contact snapshot, or null when never fought.
+     */
     public static Integer lastContactFrame(AUnit unit) {
         return lastContactFrame.get(unit.id());
     }
@@ -253,7 +269,9 @@ public final class DuelMemory {
         return lastAttackStartFrame.get(unit.id());
     }
 
-    /** Observed settle window, or the pre-calibration default. */
+    /**
+     * Observed settle window, or the pre-calibration default.
+     */
     public static int attackSettle(AUnit unit) {
         return attackSettleFrames.getOrDefault(unit.id(), PRE_CALIBRATION_SETTLE_FRAMES);
     }

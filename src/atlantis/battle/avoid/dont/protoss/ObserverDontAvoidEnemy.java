@@ -14,7 +14,9 @@ public class ObserverDontAvoidEnemy {
             if (unit.enemiesThatCanAttackMe(4.2).notEmpty()) return Decision.FALSE;
 
             double safetyMargin = 2 + unit.woundPercent() / 18.0;
-            if (unit.enemiesNear().havingAntiAirWeapon().canAttack(unit, safetyMargin).notEmpty()) return Decision.FALSE;
+            if (unit.enemiesNear().havingAntiAirWeapon().canAttack(unit, safetyMargin).notEmpty())
+
+                return Decision.FALSE;
         }
 
         return Decision.TRUE;

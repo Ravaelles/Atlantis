@@ -14,9 +14,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+import atlantis.util.log.LogLevel;
 
 public class RefreshConstructionPosition {
 
@@ -195,7 +195,7 @@ public class RefreshConstructionPosition {
             // path (fresh placement heals); true stalls still die by overdue.
             if (construction.buildPosition() != null
                 && !BuildingTilesAreOccupied.checkBuildingsOnly(
-                    construction.buildPosition(), buildingType)) {
+                construction.buildPosition(), buildingType)) {
                 return buildPosition;
             }
 

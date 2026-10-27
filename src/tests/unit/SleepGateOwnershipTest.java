@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
@@ -40,17 +40,11 @@ public class SleepGateOwnershipTest {
         Manager before = worker.manager();
         SleepUntilFrameGate.holdAfterOrder(worker);
 
-        Manager acted = new IdleWorker(worker).invokeFrom((Manager) null);
+        Manager acted = new IdleWorker(worker).invokeFrom(null);
 
-        assertTrue(acted != null, "the gate must still stop the chain");
-        assertTrue(
-            worker.manager() == before,
-            "sleep must not overwrite the owner, was: " + worker.manager()
-        );
-        assertTrue(
-            !worker.managerLogs().toString().contains("IdleWorker"),
-            "sleep must not append dispatcher lines to the history"
-        );
+        assertNotNull(acted, "the gate must still stop the chain");
+        assertSame(worker.manager(), before, "sleep must not overwrite the owner, was: " + worker.manager());
+        assertFalse(worker.managerLogs().toString().contains("IdleWorker"), "sleep must not append dispatcher lines to the history");
 
         SleepUntilFrameGate.clear();
         A.setNow(0, 0);

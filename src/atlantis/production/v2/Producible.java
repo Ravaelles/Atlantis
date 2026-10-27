@@ -26,10 +26,14 @@ public interface Producible {
      */
     String id();
 
-    /** What producing one of these costs. */
+    /**
+     * What producing one of these costs.
+     */
     ResourceCost cost();
 
-    /** Frames from issuing the order until the thing exists. */
+    /**
+     * Frames from issuing the order until the thing exists.
+     */
     int buildDurationFrames();
 
     /**
@@ -44,10 +48,14 @@ public interface Producible {
      */
     String producerTypeId();
 
-    /** Buildings and (future) wall parts need a tile; units and tech do not. */
+    /**
+     * Buildings and (future) wall parts need a tile; units and tech do not.
+     */
     boolean requiresPlacement();
 
-    /** Supply this provides once complete (Pylon 8, Nexus 9, in halved units). */
+    /**
+     * Supply this provides once complete (Pylon 8, Nexus 9, in halved units).
+     */
     default int supplyProvided() {
         return 0;
     }
@@ -69,7 +77,9 @@ public interface Producible {
         return this;
     }
 
-    /** True when producing this uses up the producer (a Zerg larva). */
+    /**
+     * True when producing this uses up the producer (a Zerg larva).
+     */
     default boolean consumesProducer() {
         return false;
     }

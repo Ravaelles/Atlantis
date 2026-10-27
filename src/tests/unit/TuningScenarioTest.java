@@ -22,6 +22,12 @@ public class TuningScenarioTest {
 
     private final DuelHitsMinutesScenario scenario = new DuelHitsMinutesScenario();
 
+    private static void assertBounds(Map<String, double[]> bounds, String name, double min, double max) {
+        assertTrue(bounds.containsKey(name), "registered: " + name);
+        assertEquals(min, bounds.get(name)[0], 0.0001, name);
+        assertEquals(max, bounds.get(name)[1], 0.0001, name);
+    }
+
     @Test
     public void duelContract() {
         assertEquals("1Drag_v_1Zeal.scm", scenario.mapFile());
@@ -53,11 +59,5 @@ public class TuningScenarioTest {
         for (String intParam : ParamTweakerFactory.integerParams()) {
             assertTrue(bounds.containsKey(intParam), "int param is a real param: " + intParam);
         }
-    }
-
-    private static void assertBounds(Map<String, double[]> bounds, String name, double min, double max) {
-        assertTrue(bounds.containsKey(name), "registered: " + name);
-        assertEquals(min, bounds.get(name)[0], 0.0001, name);
-        assertEquals(max, bounds.get(name)[1], 0.0001, name);
     }
 }

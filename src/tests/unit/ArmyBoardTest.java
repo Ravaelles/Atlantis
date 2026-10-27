@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #214: the army's current task, focus and strength ride the
@@ -25,6 +24,17 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("infra")
 public class ArmyBoardTest extends WorldStubForTests {
+
+    private static int countKeys(String json, String key) {
+        int count = 0;
+        int from = 0;
+        String needle = "\"" + key + "\":";
+        while ((from = json.indexOf(needle, from)) >= 0) {
+            count++;
+            from += needle.length();
+        }
+        return count;
+    }
 
     @BeforeEach
     public void enable() {
@@ -44,7 +54,7 @@ public class ArmyBoardTest extends WorldStubForTests {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
         APosition anchor = APosition.create(90, 20);
 
-        world(64, fakeOurs(nexus, dragoon), new FakeUnit[] {}, () -> {
+        world(64, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 5) return;
 
             ArmyBoard.publish(0, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
@@ -53,32 +63,31 @@ public class ArmyBoardTest extends WorldStubForTests {
                 "Not enough Goons (0/2) vZ", anchor);
 
             String board = ACherryVis_GlobalStates.build();
-            assertTrue(countKeys(board, "AlphaMission") == 1, "same mission writes once: " + board);
-            assertTrue(countKeys(board, "AlphaTactic") == 1, "same tactic writes once: " + board);
-            assertTrue(countKeys(board, "AlphaFocus") == 1, "same focus writes once: " + board);
-            assertTrue(countKeys(board, "AlphaFocusName") == 1, "same focus name writes once: " + board);
-            assertTrue(countKeys(board, "AlphaStrength") == 1, "same strength writes once: " + board);
-            assertTrue(countKeys(board, "AlphaReason") == 1, "same reason writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaMission"), "same mission writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaTactic"), "same tactic writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaFocus"), "same focus writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaFocusName"), "same focus name writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaStrength"), "same strength writes once: " + board);
+            assertEquals(1, countKeys(board, "AlphaReason"), "same reason writes once: " + board);
 
             ArmyBoard.publish(31, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
             board = ACherryVis_GlobalStates.build();
-            assertTrue(countKeys(board, "AlphaMission") == 2, "changed mission writes again: " + board);
+            assertEquals(2, countKeys(board, "AlphaMission"), "changed mission writes again: " + board);
             assertTrue(board.contains("\"AlphaMission\":\"ATTACK\""), "mission names where the army belongs: " + board);
-            assertTrue(countKeys(board, "AlphaTactic") == 2, "changed tactic writes again: " + board);
+            assertEquals(2, countKeys(board, "AlphaTactic"), "changed tactic writes again: " + board);
             assertTrue(board.contains("\"AlphaTactic\":\"FLEE\""), "tactic names what it does: " + board);
-            assertTrue(countKeys(board, "AlphaReason") == 2, "changed reason writes again: " + board);
+            assertEquals(2, countKeys(board, "AlphaReason"), "changed reason writes again: " + board);
             assertTrue(board.contains("\"AlphaReason\":\"Outgunned (1 goon, 100%), coming home\""),
                 "reason speaks with numbers: " + board);
 
             ArmyBoard.publish(32, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
-            assertTrue(countKeys(ACherryVis_GlobalStates.build(), "AlphaMission") == 2,
-                "unchanged mission stays silent: " + board);
+            assertEquals(2, countKeys(ACherryVis_GlobalStates.build(), "AlphaMission"), "unchanged mission stays silent: " + board);
 
             String values = ACherryVis_GlobalValues.build(null);
             assertTrue(values.contains("\"31\":{\"Strength\":"), "strength graphs on cadence: " + values);
-            assertTrue(!values.contains("\"32\""), "off-cadence frames stay out: " + values);
+            assertFalse(values.contains("\"32\""), "off-cadence frames stay out: " + values);
 
             atlantis.battle.advance.focus.AFocusPoint named =
                 new atlantis.battle.advance.focus.AFocusPoint(nexus, "MiddleFocusChoke");
@@ -88,16 +97,5 @@ public class ArmyBoardTest extends WorldStubForTests {
             assertTrue(namedBoard.contains("MiddleFocusChoke ["),
                 "the focus name carries its tile: " + namedBoard);
         });
-    }
-
-    private static int countKeys(String json, String key) {
-        int count = 0;
-        int from = 0;
-        String needle = "\"" + key + "\":";
-        while ((from = json.indexOf(needle, from)) >= 0) {
-            count++;
-            from += needle.length();
-        }
-        return count;
     }
 }

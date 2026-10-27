@@ -1,10 +1,10 @@
 package atlantis.combat.siting;
 
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.dynamic.terran.buildings.ProduceBunker;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
-import atlantis.game.player.Enemy;
 
 public class TerranBunker extends AntiLandBuildingCommander {
     @Override

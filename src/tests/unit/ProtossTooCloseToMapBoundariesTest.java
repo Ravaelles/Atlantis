@@ -48,7 +48,9 @@ import static org.mockito.Mockito.when;
 @Tag("production")
 public class ProtossTooCloseToMapBoundariesTest {
 
-    /** Tiles per build tile in this engine: 32. Anything else here is the bug. */
+    /**
+     * Tiles per build tile in this engine: 32. Anything else here is the bug.
+     */
     private static final int PX_PER_TILE = 32;
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;
@@ -61,6 +63,10 @@ public class ProtossTooCloseToMapBoundariesTest {
 
     private MockedStatic<Atlantis> atlantis;
     private Game mockedGame;
+
+    private static APosition tile(int tx, int ty) {
+        return APosition.create(tx, ty);
+    }
 
     @BeforeEach
     public void mockTheGame() {
@@ -86,11 +92,9 @@ public class ProtossTooCloseToMapBoundariesTest {
         atlantis.close();
     }
 
-    private static APosition tile(int tx, int ty) {
-        return APosition.create(tx, ty);
-    }
-
-    /** A tile in the middle of the map is never "too close" to anything. */
+    /**
+     * A tile in the middle of the map is never "too close" to anything.
+     */
     @Test
     public void theCentreOfTheMapIsFine() {
         assertFalse(
@@ -121,7 +125,9 @@ public class ProtossTooCloseToMapBoundariesTest {
         }
     }
 
-    /** A tile that IS against the right edge must still be refused. */
+    /**
+     * A tile that IS against the right edge must still be refused.
+     */
     @Test
     public void theLastTileColumnIsStillRefused() {
         assertTrue(
@@ -200,7 +206,9 @@ public class ProtossTooCloseToMapBoundariesTest {
         );
     }
 
-    /** A Gateway is included by the class's own race rule, so it is covered too. */
+    /**
+     * A Gateway is included by the class's own race rule, so it is covered too.
+     */
     @Test
     public void aGatewayInTheMiddleIsAlsoFine() {
         assertFalse(
@@ -209,7 +217,9 @@ public class ProtossTooCloseToMapBoundariesTest {
         );
     }
 
-    /** A non-Protoss building is out of this class's scope entirely. */
+    /**
+     * A non-Protoss building is out of this class's scope entirely.
+     */
     @Test
     public void aTerranBuildingIsNeverJudged() {
         assertFalse(
@@ -221,7 +231,9 @@ public class ProtossTooCloseToMapBoundariesTest {
         );
     }
 
-    /** The status string is a diagnostic other code reads, so a refusal must set it. */
+    /**
+     * The status string is a diagnostic other code reads, so a refusal must set it.
+     */
     @Test
     public void aRefusedPositionSetsTheStatusString() {
         AbstractPositionFinder._STATUS = "Init";

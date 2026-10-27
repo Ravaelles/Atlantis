@@ -16,27 +16,6 @@ import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
 public class ProtossNewGasBuildingCommander extends Commander {
 
-    @Override
-    public boolean applies() {
-        return We.protoss()
-            && A.supplyUsed() >= 40
-            && Count.bases() >= 2
-            && A.everyNthGameFrame(9)
-            && (A.gas() < A.minerals() && A.minerals() >= 105)
-            && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
-            && Count.bases() > Count.gasBuildingsWithUnfinished()
-            && ((CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 200 <= A.minerals()) || A.minerals() >= 300)
-            && (A.minerals() >= 400 || Have.existingOrUnfinished(Protoss_Cybernetics_Core));
-//            && !tooEarlyForAnotherGasBuilding()
-    }
-
-    @Override
-    protected boolean handle() {
-        requestAdditionalBuilding();
-
-        return false;
-    }
-
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
@@ -71,5 +50,26 @@ public class ProtossNewGasBuildingCommander extends Commander {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean applies() {
+        return We.protoss()
+            && A.supplyUsed() >= 40
+            && Count.bases() >= 2
+            && A.everyNthGameFrame(9)
+            && (A.gas() < A.minerals() && A.minerals() >= 105)
+            && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
+            && Count.bases() > Count.gasBuildingsWithUnfinished()
+            && ((CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 200 <= A.minerals()) || A.minerals() >= 300)
+            && (A.minerals() >= 400 || Have.existingOrUnfinished(Protoss_Cybernetics_Core));
+//            && !tooEarlyForAnotherGasBuilding()
+    }
+
+    @Override
+    protected boolean handle() {
+        requestAdditionalBuilding();
+
+        return false;
     }
 }

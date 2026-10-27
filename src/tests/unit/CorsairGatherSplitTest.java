@@ -3,18 +3,13 @@ package tests.unit;
 import atlantis.battle.cluster.Alpha;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #201 follow-up: the Alpha.gather split reads the CorsairCluster
@@ -56,7 +51,7 @@ public class CorsairGatherSplitTest extends WorldStubForTests {
                 "the swarm still gathers without its hunter");
             assertTrue(Alpha.get().selection().ofType(AUnitType.Protoss_Corsair).isEmpty(),
                 "no threatening air: the Corsair stays solo instead of "
-                + "trailing the army (NEXT #201)");
+                    + "trailing the army (NEXT #201)");
         });
     }
 

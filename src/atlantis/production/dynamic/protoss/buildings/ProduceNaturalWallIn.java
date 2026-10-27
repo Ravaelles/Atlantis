@@ -37,10 +37,14 @@ import java.util.List;
  */
 public class ProduceNaturalWallIn {
 
-    /** Cannons the wall may spend (charter M4: 1-2). */
+    /**
+     * Cannons the wall may spend (charter M4: 1-2).
+     */
     private static final int CANNONS_WANTED = 2;
 
-    /** A piece standing or coming this near its tile counts as placed. */
+    /**
+     * A piece standing or coming this near its tile counts as placed.
+     */
     private static final double PIECE_RADIUS = 6;
 
     /**

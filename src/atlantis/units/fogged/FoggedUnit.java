@@ -7,6 +7,10 @@ import atlantis.units.AUnit;
  * Stores information about units in order to retrieve them when they are out of sight
  */
 public class FoggedUnit extends AbstractFoggedUnit {
+    protected FoggedUnit(AUnit unit) {
+        super(unit);
+    }
+
     public static AbstractFoggedUnit from(AUnit unit) {
         AbstractFoggedUnit foggedUnit = all.get(unit.id());
         if (foggedUnit != null) {
@@ -14,10 +18,6 @@ public class FoggedUnit extends AbstractFoggedUnit {
         }
 
         return new FoggedUnit(unit);
-    }
-
-    protected FoggedUnit(AUnit unit) {
-        super(unit);
     }
 
 //    protected FoggedUnit(AUnit unit) {

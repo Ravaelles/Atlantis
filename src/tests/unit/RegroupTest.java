@@ -1,8 +1,8 @@
 package tests.unit;
 
+import atlantis.battle.cluster.Alpha;
 import atlantis.combat.FormationHold;
 import atlantis.combat.Regroup;
-import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.units.AUnitType;
@@ -13,7 +13,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * The march without a target: with no strategy point and no ghost the
@@ -56,8 +55,7 @@ public class RegroupTest extends WorldStubForTests {
                     "no formation slot with melee on top: " + journal);
                 assertTrue(journal.contains("ClusterGhost") || journal.contains("ClusterMove"),
                     "the unit still marches, just never in formation: " + journal);
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);

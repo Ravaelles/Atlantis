@@ -11,11 +11,13 @@ import atlantis.map.position.APosition;
  */
 public final class PinchRoom {
 
+    /**
+     * Longest walkable ray that counts as room to kite into.
+     */
+    public static final int STANDOFF_TILES = 5;
+
     private PinchRoom() {
     }
-
-    /** Longest walkable ray that counts as room to kite into. */
-    public static final int STANDOFF_TILES = 5;
 
     public static boolean hasRoom(APosition pos, EscapeRays.Walkability walk) {
         if (pos == null || walk == null) return true;

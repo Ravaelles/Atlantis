@@ -10,15 +10,12 @@ import atlantis.production.constructions.position.DefineExactPositionForNewConst
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
-import bwapi.Race;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The two opposite symptoms of one root cause, from the reports:
@@ -54,47 +51,6 @@ public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
     @Override
     public Race initRace() {
         return Race.Protoss;
-    }
-
-    /**
-     * The engine source with OpenBW's measured unreliability: the raw tile query
-     * says "not buildable" even for a valid, empty tile.
-     */
-    private static class EngineRefusesRawTileQuery implements MapTiles.Source {
-        @Override
-        public boolean isWalkable(HasPosition at) {
-            return true;
-        }
-
-        @Override
-        public boolean isExplored(HasPosition at) {
-            return true;
-        }
-
-        @Override
-        public boolean isVisible(HasPosition at) {
-            return true;
-        }
-
-        @Override
-        public boolean isBuildable(HasPosition at, boolean alsoCheckBuildings) {
-            return false;
-        }
-
-        @Override
-        public boolean hasPathBetween(HasPosition from, HasPosition to) {
-            return true;
-        }
-
-        @Override
-        public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
-            return true;
-        }
-
-        @Override
-        public boolean spawnsFromMapData() {
-            return true;
-        }
     }
 
     @AfterEach
@@ -191,8 +147,6 @@ public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
         });
     }
 
-    // =========================================================
-
     /**
      * The other half of symptom 3: when the construction is built from the order
      * again, an exact position that is now occupied must be discarded (and its flag
@@ -225,6 +179,8 @@ public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
         });
     }
 
+    // =========================================================
+
     private Construction constructionFor(APosition position) {
         Construction construction = new Construction(AUnitType.Protoss_Cybernetics_Core);
         construction.setBuilder(fake(AUnitType.Protoss_Probe, 21, 21));
@@ -233,5 +189,46 @@ public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
         construction.setProductionOrder(new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, position, 0));
 
         return construction;
+    }
+
+    /**
+     * The engine source with OpenBW's measured unreliability: the raw tile query
+     * says "not buildable" even for a valid, empty tile.
+     */
+    private static class EngineRefusesRawTileQuery implements MapTiles.Source {
+        @Override
+        public boolean isWalkable(HasPosition at) {
+            return true;
+        }
+
+        @Override
+        public boolean isExplored(HasPosition at) {
+            return true;
+        }
+
+        @Override
+        public boolean isVisible(HasPosition at) {
+            return true;
+        }
+
+        @Override
+        public boolean isBuildable(HasPosition at, boolean alsoCheckBuildings) {
+            return false;
+        }
+
+        @Override
+        public boolean hasPathBetween(HasPosition from, HasPosition to) {
+            return true;
+        }
+
+        @Override
+        public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
+            return true;
+        }
+
+        @Override
+        public boolean spawnsFromMapData() {
+            return true;
+        }
     }
 }

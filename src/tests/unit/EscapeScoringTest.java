@@ -50,15 +50,15 @@ public class EscapeScoringTest {
 
     @Test
     public void openFieldHasNoCornerPenalty() {
-        double[] open = { 12, 12, 12, 12, 12, 12, 12, 12 };
+        double[] open = {12, 12, 12, 12, 12, 12, 12, 12};
 
         assertEquals(0.0, EscapeScoring.cornerPenalty(open), 0.001);
     }
 
     @Test
     public void pocketScoresWorst() {
-        double[] pocket = { 1, 1, 1, 1, 1, 1, 1, 1 };
-        double[] corridor = { 12, 1, 12, 1, 12, 1, 12, 1 };
+        double[] pocket = {1, 1, 1, 1, 1, 1, 1, 1};
+        double[] corridor = {12, 1, 12, 1, 12, 1, 12, 1};
 
         assertTrue(EscapeScoring.cornerPenalty(pocket) > EscapeScoring.cornerPenalty(corridor),
             "no way out beats a corridor: " + EscapeScoring.cornerPenalty(pocket)

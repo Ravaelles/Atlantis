@@ -16,9 +16,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 import static tests.fakes.FakeUnitHelper.merge;
 
 /**
@@ -36,6 +33,25 @@ import static tests.fakes.FakeUnitHelper.merge;
  */
 @Tag("production")
 public class UpgradeCompletedBehindGateTest extends AbstractTestWithWorld {
+
+    private static int countUpgradeCompletedRows() {
+        String log = EventLog.toJsonLines();
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int key = log.indexOf("\"key\":\"UPGRADE_COMPLETED\"", from);
+            if (key < 0) return count;
+
+            int end = log.indexOf('\n', key);
+            if (end < 0) end = log.length();
+            String row = log.substring(key, end);
+            if (row.contains("\"upgrade\":\"Protoss_Ground_Armor\"")
+                && row.contains("\"level\":3")) {
+                count++;
+            }
+            from = end;
+        }
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -110,24 +126,5 @@ public class UpgradeCompletedBehindGateTest extends AbstractTestWithWorld {
         assertEquals(1, countUpgradeCompletedRows(),
             "the refusing gate still witnessed the 0-to-3 rise exactly once: "
                 + EventLog.toJsonLines());
-    }
-
-    private static int countUpgradeCompletedRows() {
-        String log = EventLog.toJsonLines();
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int key = log.indexOf("\"key\":\"UPGRADE_COMPLETED\"", from);
-            if (key < 0) return count;
-
-            int end = log.indexOf('\n', key);
-            if (end < 0) end = log.length();
-            String row = log.substring(key, end);
-            if (row.contains("\"upgrade\":\"Protoss_Ground_Armor\"")
-                && row.contains("\"level\":3")) {
-                count++;
-            }
-            from = end;
-        }
     }
 }

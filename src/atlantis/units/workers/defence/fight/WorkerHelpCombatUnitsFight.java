@@ -1,13 +1,12 @@
 package atlantis.units.workers.defence.fight;
 
+import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.units.BaseUnderAttack;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
-
-import atlantis.architecture.Manager;
 import atlantis.units.workers.gather.GatherResources;
 
 import static atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits;

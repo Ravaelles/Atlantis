@@ -118,18 +118,14 @@ public class CanPhysicallyBuildHere {
 //                    + " / " + ConstructionRequests.notStartedOfType(AUnitType.Protoss_Pylon).size()
 //                );
 
-            if (
-//                pylon != null
-//                    && position.isPositionVisible()
-                position.isBuildableIncludeBuildings()
-                    && position.isExplored()
+            //                pylon != null
+            //                    && position.isPositionVisible()
+            return position.isBuildableIncludeBuildings()
+                && position.isExplored()
 //                    && position.translateByTiles(1, 0).isBuildable()
 //                    && position.translateByTiles(0, 1).isBuildable()
-                    && Select.ourBuildingsWithUnfinished().countInRadius(2.5, position) == 0
-                    && (pylon == null || position.distTo(pylon) <= 5)
-            ) {
-                return true;
-            }
+                && Select.ourBuildingsWithUnfinished().countInRadius(2.5, position) == 0
+                && (pylon == null || position.distTo(pylon) <= 5);
         }
         return false;
     }

@@ -56,7 +56,9 @@ package atlantis.placement.core;
  */
 public final class ConnectivityRegions {
 
-    /** Marks a tile that can never be walked on, and is therefore in no region. */
+    /**
+     * Marks a tile that can never be walked on, and is therefore in no region.
+     */
     public static final int NO_REGION = -1;
 
     private final int width;
@@ -141,7 +143,7 @@ public final class ConnectivityRegions {
     }
 
     private void unionNeighbour(
-            int[] parent, boolean[] walkable, int x, int y, int nx, int ny) {
+        int[] parent, boolean[] walkable, int x, int y, int nx, int ny) {
         if (nx < 0 || ny < 0 || nx >= width || ny >= height)
             return;
 

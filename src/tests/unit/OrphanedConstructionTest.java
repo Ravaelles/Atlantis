@@ -6,16 +6,14 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.units.AUnitType;
+import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import bwapi.Race;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A construction whose building appears somewhere OTHER than the reserved tile
@@ -104,11 +102,9 @@ public class OrphanedConstructionTest extends AbstractTestWithWorld {
 
             ProtossWarping.updateNewBuildingJustWarped(onItsTile);
 
-            assertTrue(
-                    !ConstructionRequests.constructions.contains(construction),
-                    "a construction whose building appeared must be FINISHED and removed -"
-                            + " IN_PROGRESS leaves it counted as an active construction forever,"
-                            + " which is the same leak the orphan case has");
+            assertFalse(ConstructionRequests.constructions.contains(construction), "a construction whose building appeared must be FINISHED and removed -"
+                + " IN_PROGRESS leaves it counted as an active construction forever,"
+                + " which is the same leak the orphan case has");
             assertNull(construction.builder(), "and its worker released to mining");
         });
     }
@@ -139,16 +135,14 @@ public class OrphanedConstructionTest extends AbstractTestWithWorld {
             // 8 tiles apart: outside `DefineConstructionForNewUnit`'s 2.5-tile radius, which is
             // the real case (the finder moves a site, the engine snaps a footprint).
             assertEquals(8.0, construction.buildPosition().distTo(builtElsewhere), 0.01,
-                    "the fixture must really be outside the positional lookup radius");
+                "the fixture must really be outside the positional lookup radius");
 
-            assertTrue(
-                    !ConstructionRequests.constructions.contains(construction),
-                    "a construction whose building appeared elsewhere must be finished and removed,"
-                            + " not left in the queue counting as an active building forever");
+            assertFalse(ConstructionRequests.constructions.contains(construction), "a construction whose building appeared elsewhere must be finished and removed,"
+                + " not left in the queue counting as an active building forever");
             assertNull(
-                    construction.builder(),
-                    "and it must release the worker it claimed, so the worker can mine again -"
-                            + " the measured duplicate-worker deadlock of NEXT.md #53");
+                construction.builder(),
+                "and it must release the worker it claimed, so the worker can mine again -"
+                    + " the measured duplicate-worker deadlock of NEXT.md #53");
         });
     }
 

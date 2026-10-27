@@ -1,17 +1,13 @@
 package tests.unit.sim;
 
+import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Feature snapshot pins: fractions for cross-unit policies, counts for
@@ -45,7 +41,7 @@ public class BattleFeaturesTest extends WorldStubForTests {
             assertEquals(2, f.foesNear9, "two lings inside 9: " + f.foesNear9);
             assertTrue(f.nearestFoeDist > 0 && f.nearestFoeDist < 2, "nearest: " + f.nearestFoeDist);
             assertTrue(f.friendsNear >= 1, "the zealot counts: " + f.friendsNear);
-            assertTrue(f.toCsv().split(",").length == 7, "seven-column manifest row: " + f.toCsv());
+            assertEquals(7, f.toCsv().split(",").length, "seven-column manifest row: " + f.toCsv());
         });
     }
 

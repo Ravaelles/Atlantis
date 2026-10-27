@@ -85,17 +85,16 @@ public class CombatEvalScale {
      * measured row.</p>
      */
     public static final double NO_ENEMY_IN_REACH = 9874.0;
-
-    public static double hedgedForOurSide(double eval) {
-        return signSafe(eval - OUR_SIDE_HEDGE);
-    }
-
     /**
      * The lowest value eval() is allowed to take. Small, not zero: 0.0 is what a
      * "nothing to fight" shortcut can produce, and a real fight is never exactly
      * free.
      */
     public static final double FLOOR = 0.01;
+
+    public static double hedgedForOurSide(double eval) {
+        return signSafe(eval - OUR_SIDE_HEDGE);
+    }
 
     /**
      * The tweaked value, guaranteed positive.

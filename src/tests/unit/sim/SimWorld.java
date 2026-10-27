@@ -4,14 +4,12 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.BaseSelect;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.mockito.Mockito;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 import tests.unit.helpers.ClearAllCaches;
+
+import java.util.*;
 
 /**
  * A fast, fully controlled fight stepper for behavior scenarios (NEXT #161).
@@ -78,7 +76,39 @@ public class SimWorld {
         installSelection();
     }
 
-    /** BaseSelect answers with the living units of this scenario, as the game would. */
+    private static List<AUnit> living(FakeUnit[] units) {
+        List<AUnit> alive = new ArrayList<>();
+        if (units == null) return alive;
+
+        for (FakeUnit unit : units) {
+            if (unit != null && unit.hp > 0) alive.add(unit);
+        }
+        return alive;
+    }
+
+    /**
+     * Engagement reach in tiles: weapon range plus the target's body
+     * radius (edge-to-edge). Dimensions come from the engine binding,
+     * so no hand table rots here. Single source for the sim and the
+     * scripted opponents in scenario tests.
+     */
+    public static double reachTiles(FakeUnit attacker, FakeUnit target) {
+        double weapon = attacker.weaponRangeAgainst(target);
+        double radius = 0;
+        try {
+            int l = target.type().dimensionLeftPixels();
+            int r = target.type().dimensionRightPixels();
+            int u = target.type().dimensionUpPixels();
+            int d = target.type().dimensionDownPixels();
+            radius = Math.max(Math.max(l, r), Math.max(u, d)) / 32.0;
+        } catch (Exception ignored) {
+        }
+        return Math.max(0, weapon) + radius;
+    }
+
+    /**
+     * BaseSelect answers with the living units of this scenario, as the game would.
+     */
     private void installSelection() {
         if (AbstractTestWithWorld.baseSelect != null) {
             AbstractTestWithWorld.baseSelect.close();
@@ -99,15 +129,7 @@ public class SimWorld {
         });
     }
 
-    private static List<AUnit> living(FakeUnit[] units) {
-        List<AUnit> alive = new ArrayList<>();
-        if (units == null) return alive;
-
-        for (FakeUnit unit : units) {
-            if (unit != null && unit.hp > 0) alive.add(unit);
-        }
-        return alive;
-    }
+    /** Advances one frame: decisions first, then movement, then combat. */
 
     public void close() {
         if (AbstractTestWithWorld.baseSelect != null) {
@@ -116,7 +138,6 @@ public class SimWorld {
         }
     }
 
-    /** Advances one frame: decisions first, then movement, then combat. */
     /**
      * Precise (sub-pixel) position for tests: the published FakeUnit
      * position snaps to whole pixels, so pixel reads freeze frames
@@ -147,18 +168,18 @@ public class SimWorld {
         movement.teleport(unit, dest);
     }
 
-    private List<FakeUnit> all() {
-        List<FakeUnit> all = new ArrayList<>();
-        if (ours != null) for (FakeUnit unit : ours) all.add(unit);
-        if (enemies != null) for (FakeUnit unit : enemies) all.add(unit);
-
-        return all;
-    }
-
     // =========================================================
     // Combat: attack cycles with real cooldown/range/damage, windup as
     // the documented model seam, shields-first damage, death at 0 hp.
     // =========================================================
+
+    private List<FakeUnit> all() {
+        List<FakeUnit> all = new ArrayList<>();
+        if (ours != null) Collections.addAll(all, ours);
+        if (enemies != null) Collections.addAll(all, enemies);
+
+        return all;
+    }
 
     private void combatAll() {
         for (FakeUnit unit : all()) {
@@ -168,7 +189,7 @@ public class SimWorld {
                 continue;
             }
             FakeUnit target = unit.target;
-            if (target == null || !isAlive(target)) {
+            if (!isAlive(target)) {
                 attackStartedAt.remove(unit.id());
                 continue;
             }
@@ -208,26 +229,6 @@ public class SimWorld {
         shotsFired++;
         if (attacker.isOur()) ourShotsFired++;
         else enemyShotsFired++;
-    }
-
-    /**
-     * Engagement reach in tiles: weapon range plus the target's body
-     * radius (edge-to-edge). Dimensions come from the engine binding,
-     * so no hand table rots here. Single source for the sim and the
-     * scripted opponents in scenario tests.
-     */
-    public static double reachTiles(FakeUnit attacker, FakeUnit target) {
-        double weapon = attacker.weaponRangeAgainst(target);
-        double radius = 0;
-        try {
-            int l = target.type().dimensionLeftPixels();
-            int r = target.type().dimensionRightPixels();
-            int u = target.type().dimensionUpPixels();
-            int d = target.type().dimensionDownPixels();
-            radius = Math.max(Math.max(l, r), Math.max(u, d)) / 32.0;
-        } catch (Exception ignored) {
-        }
-        return Math.max(0, weapon) + radius;
     }
 
     private boolean isAlive(FakeUnit unit) {

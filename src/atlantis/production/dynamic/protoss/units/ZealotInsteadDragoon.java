@@ -24,15 +24,9 @@ public class ZealotInsteadDragoon {
             }
         }
 
-        if (
-            dragoons >= 4
-                && EnemyUnits.zerglings() >= 4
-                && (zealots == 0 || zealotToDragoonRatioTooLow(zealots, dragoons))
-        ) {
-            return true;
-        }
-
-        return false;
+        return dragoons >= 4
+            && EnemyUnits.zerglings() >= 4
+            && (zealots == 0 || zealotToDragoonRatioTooLow(zealots, dragoons));
     }
 
     private static boolean zealotToDragoonRatioTooLow(int zealots, int dragoons) {

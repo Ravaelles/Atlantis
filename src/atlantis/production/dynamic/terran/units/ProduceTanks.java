@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.production.dynamic.terran.tech.ResearchSiegeMode;
 import atlantis.units.AUnitType;
@@ -8,7 +9,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
 public class ProduceTanks {
 

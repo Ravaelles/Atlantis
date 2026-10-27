@@ -24,12 +24,10 @@ import atlantis.units.select.Select;
  */
 public final class PostureReasons {
 
-    private PostureReasons() {
-    }
-
-    /** A bank that buys its own army while the attack runs. */
+    /**
+     * A bank that buys its own army while the attack runs.
+     */
     public static final int BANKED_MINERALS = 1000;
-
     /**
      * Owner order 2026-10-26: a small but relatively strong team marches
      * instead of holding - 3+ units at 140%+ relative strength. Strength
@@ -39,13 +37,14 @@ public final class PostureReasons {
      * #200/#205 small-army holds).
      */
     public static final int EARLY_MARCH_ARMY_SIZE = 3;
-
-    /** Relative-strength floor shared by both early-march flips. */
+    /**
+     * Relative-strength floor shared by both early-march flips.
+     */
     public static final int EARLY_MARCH_STRENGTH = 140;
-
-    /** Dragoon pair that kites instead of holding (owner order). */
+    /**
+     * Dragoon pair that kites instead of holding (owner order).
+     */
     public static final int DRAGOON_PAIR_COUNT = 2;
-
     /**
      * Owner order 2026-10-27: vs Terran we pressure early - 2 combat
      * units or a single finished Dragoon march out under the same
@@ -53,7 +52,6 @@ public final class PostureReasons {
      */
     public static final int TERRAN_EARLY_ARMY = 2;
     public static final int TERRAN_EARLY_GOONS = 1;
-
     /**
      * Owner order 2026-10-27: a discovered enemy Dragoon mass outguns a
      * small line - below this many own Dragoons and below this eval the
@@ -61,7 +59,6 @@ public final class PostureReasons {
      */
     public static final int DRAGOON_MASS_COUNT = 4;
     public static final double HOLD_VS_DRAGOON_EVAL = 1.3;
-
     /**
      * Lost-attack fallback (owner order 2026-10-26): the attack found a
      * stronger army - at most one dragoon left and 120% or less relative
@@ -69,43 +66,12 @@ public final class PostureReasons {
      * attacking (it ends attacks, never prevents them).
      */
     public static final int FALLBACK_STRENGTH = 120;
-
-    /** Dragoons that still count as teeth for the fallback. */
+    /**
+     * Dragoons that still count as teeth for the fallback.
+     */
     public static final int FALLBACK_MAX_DRAGOONS = 1;
 
-    /** One decision with its reason. Posture is a direction, never a tile. */
-    public static final class Verdict {
-        public final ClusterMission.Posture posture;
-        public final PostureReason reason;
-        /** Human sentence for the CherryVis board, with the deciding numbers. */
-        public final String text;
-
-        Verdict(PostureReason reason, ClusterMission.Posture posture) {
-            this(reason, posture, reason.name());
-        }
-
-        public Verdict(PostureReason reason, ClusterMission.Posture posture, String text) {
-            this.reason = reason;
-            this.posture = posture;
-            this.text = text;
-        }
-    }
-
-    /** Explicit inputs, so the decision pins without a game. */
-    public static final class Input {
-        public int ours;
-        public int ourDragoons;
-        public int enemyZealots;
-        public int enemyDragoons;
-        public int minerals;
-        public int gameSeconds;
-        public int strength;
-        public double eval = 1.0;
-        public boolean vsZerg;
-        public boolean dragoonMatchup;
-        public boolean wasAttacking;
-        public boolean vsTerran;
-        public String matchup = "?";
+    private PostureReasons() {
     }
 
     /**
@@ -178,7 +144,9 @@ public final class PostureReasons {
         return "Hold ground";
     }
 
-    /** The live reading behind {@link #decide}: counts, bank and clock. */
+    /**
+     * The live reading behind {@link #decide}: counts, bank and clock.
+     */
     public static Verdict decideLive() {
         boolean enemyKnown = Select.enemy().combatUnits().notEmpty();
         boolean vsTerran = atlantis.game.player.Enemy.terran();
@@ -206,5 +174,46 @@ public final class PostureReasons {
         in.matchup = matchup;
 
         return decide(in);
+    }
+
+    /**
+     * One decision with its reason. Posture is a direction, never a tile.
+     */
+    public static final class Verdict {
+        public final ClusterMission.Posture posture;
+        public final PostureReason reason;
+        /**
+         * Human sentence for the CherryVis board, with the deciding numbers.
+         */
+        public final String text;
+
+        Verdict(PostureReason reason, ClusterMission.Posture posture) {
+            this(reason, posture, reason.name());
+        }
+
+        public Verdict(PostureReason reason, ClusterMission.Posture posture, String text) {
+            this.reason = reason;
+            this.posture = posture;
+            this.text = text;
+        }
+    }
+
+    /**
+     * Explicit inputs, so the decision pins without a game.
+     */
+    public static final class Input {
+        public int ours;
+        public int ourDragoons;
+        public int enemyZealots;
+        public int enemyDragoons;
+        public int minerals;
+        public int gameSeconds;
+        public int strength;
+        public double eval = 1.0;
+        public boolean vsZerg;
+        public boolean dragoonMatchup;
+        public boolean wasAttacking;
+        public boolean vsTerran;
+        public String matchup = "?";
     }
 }

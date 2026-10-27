@@ -1,6 +1,6 @@
 package atlantis.util;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
  * Modal popups, extracted from the {@code A} god utility so that the game

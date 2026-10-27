@@ -1,10 +1,10 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 public class ProduceGhosts {
     public static boolean ghosts() {

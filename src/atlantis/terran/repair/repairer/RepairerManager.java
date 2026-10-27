@@ -11,6 +11,18 @@ public class RepairerManager extends Manager {
         super(unit);
     }
 
+    public static boolean itIsForbiddenToRepairThisUnitNow(AUnit unit, AUnit target) {
+        if (target.isABuilding() && target.isCombatBuilding()) {
+            if (target.type().isMilitaryBuildingAntiAir()) {
+                return (unit == null || unit.distTo(target) >= 8)
+                    && target.enemiesNear().groundUnits().inRadius(4, target).atLeast(2);
+            }
+            return false;
+        }
+
+        return target.isABuilding() && target.hp() >= 600 && !target.isBase();
+    }
+
     @Override
     public boolean applies() {
         return unit.isScv() && unit.isRepairerOfAnyKind();
@@ -25,19 +37,5 @@ public class RepairerManager extends Manager {
             IssueRepairCommand::new,
             SeparateFromRunningTanks::new,
         };
-    }
-
-    public static boolean itIsForbiddenToRepairThisUnitNow(AUnit unit, AUnit target) {
-        if (target.isABuilding() && target.isCombatBuilding()) {
-            if (target.type().isMilitaryBuildingAntiAir()) {
-                return (unit == null || unit.distTo(target) >= 8)
-                    && target.enemiesNear().groundUnits().inRadius(4, target).atLeast(2);
-            }
-            return false;
-        }
-
-        if (target.isABuilding() && target.hp() >= 600 && !target.isBase()) return true;
-
-        return false;
     }
 }

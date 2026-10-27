@@ -18,27 +18,6 @@ import atlantis.units.AUnitType;
  */
 public interface ProductionRacePolicy {
 
-    AUnitType workerType();
-
-    AUnitType armyUnitType();
-
-    /**
-     * Advanced army unit once unlocked (Protoss: Dragoons after the Core;
-     * default is the baseline - Terran/Zerg keep one unit until their
-     * policies name equivalents). The goal layer picks this when the
-     * snapshot says the unlock stands; prerequisites (the building itself)
-     * are inserted by the scheduler, never by the goals.
-     */
-    default AUnitType armyUnitTypeAdvanced() {
-        return armyUnitType();
-    }
-
-    AUnitType baseType();
-
-    AUnitType supplyProviderType();
-
-    AUnitType gasBuildingType();
-
     /**
      * The single selection site: composition root and tests resolve here,
      * never by re-branching on race downstream. Unknown race fails fast -
@@ -65,4 +44,25 @@ public interface ProductionRacePolicy {
 
         throw new IllegalArgumentException("No production race policy for ambient race");
     }
+
+    AUnitType workerType();
+
+    AUnitType armyUnitType();
+
+    /**
+     * Advanced army unit once unlocked (Protoss: Dragoons after the Core;
+     * default is the baseline - Terran/Zerg keep one unit until their
+     * policies name equivalents). The goal layer picks this when the
+     * snapshot says the unlock stands; prerequisites (the building itself)
+     * are inserted by the scheduler, never by the goals.
+     */
+    default AUnitType armyUnitTypeAdvanced() {
+        return armyUnitType();
+    }
+
+    AUnitType baseType();
+
+    AUnitType supplyProviderType();
+
+    AUnitType gasBuildingType();
 }

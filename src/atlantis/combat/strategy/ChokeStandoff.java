@@ -17,13 +17,19 @@ import atlantis.units.select.Count;
  */
 public final class ChokeStandoff {
 
-    /** Chokes farther than this from the unit are not on its way. */
+    /**
+     * Chokes farther than this from the unit are not on its way.
+     */
     public static final double DETECT_TILES = 15;
 
-    /** Enemies this close to the choke contest it. */
+    /**
+     * Enemies this close to the choke contest it.
+     */
     public static final double CONTEST_TILES = 12;
 
-    /** Crushing superiority: at this ratio or better the line may push through. */
+    /**
+     * Crushing superiority: at this ratio or better the line may push through.
+     */
     public static final double CRUSH_RATIO = 2.0;
 
     /**
@@ -51,7 +57,9 @@ public final class ChokeStandoff {
         return !crushing(choke);
     }
 
-    /** Pure core: with these headcounts around the choke, may the line push? */
+    /**
+     * Pure core: with these headcounts around the choke, may the line push?
+     */
     public static boolean mayAdvance(int oursNear, int enemiesNear) {
         if (enemiesNear <= 0) return true;
 
@@ -79,20 +87,23 @@ public final class ChokeStandoff {
 
         try {
             return (choke.width() / 2.0) + SPARE_TILES;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return SPARE_TILES;
         }
     }
 
-    /** Pure geometry: the hold point, standoff off the center toward our side. */
+    /**
+     * Pure geometry: the hold point, standoff off the center toward our side.
+     */
     public static APosition holdPoint(AChoke choke, HasPosition ourSide) {
         if (choke == null || choke.center() == null || ourSide == null) return null;
 
         return choke.center().translateTilesTowards(ourSide, standoffTiles(choke));
     }
 
-    /** Guarded detection: this unit's hold point, or null when no choke is held. */
+    /**
+     * Guarded detection: this unit's hold point, or null when no choke is held.
+     */
     public static APosition holdPointFor(AUnit unit) {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);

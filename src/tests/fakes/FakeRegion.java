@@ -2,21 +2,16 @@ package tests.fakes;
 
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
-import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class FakeRegion extends ARegion {
-    private static Map<ABaseLocation, FakeRegion> regions = new HashMap<>();
+    private static final Map<ABaseLocation, FakeRegion> regions = new HashMap<>();
     private static int nextId = 1;
     private final ABaseLocation location;
 

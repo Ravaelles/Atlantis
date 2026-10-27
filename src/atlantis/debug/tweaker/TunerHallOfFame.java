@@ -1,14 +1,6 @@
 package atlantis.debug.tweaker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Elitist hall of fame for the tuner batch (NEXT #160, step 2).
@@ -29,60 +21,11 @@ import java.util.Set;
  */
 public final class TunerHallOfFame {
 
-    /** One archived game: its objective row plus the vector that played it. */
-    public static final class Entry {
-        private final TunerObjective.Row row;
-        private final Map<String, Double> vector;
-
-        public Entry(TunerObjective.Row row, Map<String, Double> vector) {
-            this.row = row;
-            this.vector = Collections.unmodifiableMap(new LinkedHashMap<>(vector));
-        }
-
-        public TunerObjective.Row row() {
-            return row;
-        }
-
-        public Map<String, Double> vector() {
-            return vector;
-        }
-    }
-
     private final int capacity;
     private final ArrayList<Entry> entries = new ArrayList<>();
-
     public TunerHallOfFame(int capacity) {
         if (capacity < 1) throw new IllegalArgumentException("hall of fame holds at least one entry");
         this.capacity = capacity;
-    }
-
-    /** Offers a played vector; only the top-N by objective survive. Returns true when kept. */
-    public boolean offer(TunerObjective.Row row, Map<String, Double> vector) {
-        if (row == null || vector == null || vector.isEmpty()) return false;
-
-        entries.add(new Entry(row, vector));
-        Collections.sort(entries, new Comparator<Entry>() {
-            @Override
-            public int compare(Entry a, Entry b) {
-                return TunerObjective.compare(a.row, b.row);
-            }
-        });
-        while (entries.size() > capacity) entries.remove(entries.size() - 1);
-        for (Entry kept : entries) {
-            if (kept.row == row) return true;
-        }
-        return false;
-    }
-
-    /** The best vector ever offered, or empty when nothing was kept. */
-    public Optional<Entry> champion() {
-        if (entries.isEmpty()) return Optional.empty();
-
-        return Optional.of(entries.get(0));
-    }
-
-    public List<Entry> entries() {
-        return Collections.unmodifiableList(entries);
     }
 
     /**
@@ -92,8 +35,8 @@ public final class TunerHallOfFame {
      * unchanged - the caller owns the bound table, not this store.
      */
     public static Map<String, Double> mutateAround(
-            Entry champion, Map<String, double[]> bounds, double radius, Random random) {
-        return mutateAroundUnfrozen(champion, bounds, Collections.<String>emptySet(), radius, random);
+        Entry champion, Map<String, double[]> bounds, double radius, Random random) {
+        return mutateAroundUnfrozen(champion, bounds, Collections.emptySet(), radius, random);
     }
 
     /**
@@ -103,8 +46,8 @@ public final class TunerHallOfFame {
      * breaks an old archive line.
      */
     public static Map<String, Double> mutateAroundUnfrozen(
-            Entry champion, Map<String, double[]> bounds, Set<String> frozen,
-            double radius, Random random) {
+        Entry champion, Map<String, double[]> bounds, Set<String> frozen,
+        double radius, Random random) {
         LinkedHashMap<String, Double> mutated = new LinkedHashMap<>();
         for (Map.Entry<String, Double> param : champion.vector().entrySet()) {
             if (frozen != null && frozen.contains(param.getKey())) {
@@ -128,39 +71,6 @@ public final class TunerHallOfFame {
         if (value > max) return max;
 
         return value;
-    }
-
-    /**
-     * File round-trip, one line per entry:
-     * {@code game,W,hits,seconds|name=value;name=value}. Malformed lines
-     * are skipped so a hand-edited or half-flushed file never breaks a batch.
-     */
-    public String save() {
-        StringBuilder out = new StringBuilder();
-        for (Entry entry : entries) {
-            TunerObjective.Row row = entry.row();
-            out.append(row.game()).append(",")
-                .append(row.win() ? "W" : "L").append(",")
-                .append(counter(row.seconds())).append(",")
-                .append(counter(row.hitsTaken())).append("|");
-            boolean first = true;
-            for (Map.Entry<String, Double> param : entry.vector().entrySet()) {
-                if (!first) out.append(";");
-                out.append(param.getKey()).append("=").append(param.getValue());
-                first = false;
-            }
-            out.append("\n");
-        }
-        return out.toString();
-    }
-
-    public void load(String text) {
-        if (text == null) return;
-
-        for (String line : text.split("\n")) {
-            Entry entry = parseLine(line);
-            if (entry != null) offer(entry.row(), entry.vector());
-        }
     }
 
     private static String counter(int value) {
@@ -208,5 +118,92 @@ public final class TunerHallOfFame {
         if (vector.isEmpty()) return null;
 
         return new Entry(new TunerObjective.Row(head[0], head[1].equals("W"), hits, seconds), vector);
+    }
+
+    /**
+     * Offers a played vector; only the top-N by objective survive. Returns true when kept.
+     */
+    public boolean offer(TunerObjective.Row row, Map<String, Double> vector) {
+        if (row == null || vector == null || vector.isEmpty()) return false;
+
+        entries.add(new Entry(row, vector));
+        Collections.sort(entries, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry a, Entry b) {
+                return TunerObjective.compare(a.row, b.row);
+            }
+        });
+        while (entries.size() > capacity) entries.remove(entries.size() - 1);
+        for (Entry kept : entries) {
+            if (kept.row == row) return true;
+        }
+        return false;
+    }
+
+    /**
+     * The best vector ever offered, or empty when nothing was kept.
+     */
+    public Optional<Entry> champion() {
+        if (entries.isEmpty()) return Optional.empty();
+
+        return Optional.of(entries.get(0));
+    }
+
+    public List<Entry> entries() {
+        return Collections.unmodifiableList(entries);
+    }
+
+    /**
+     * File round-trip, one line per entry:
+     * {@code game,W,hits,seconds|name=value;name=value}. Malformed lines
+     * are skipped so a hand-edited or half-flushed file never breaks a batch.
+     */
+    public String save() {
+        StringBuilder out = new StringBuilder();
+        for (Entry entry : entries) {
+            TunerObjective.Row row = entry.row();
+            out.append(row.game()).append(",")
+                .append(row.win() ? "W" : "L").append(",")
+                .append(counter(row.seconds())).append(",")
+                .append(counter(row.hitsTaken())).append("|");
+            boolean first = true;
+            for (Map.Entry<String, Double> param : entry.vector().entrySet()) {
+                if (!first) out.append(";");
+                out.append(param.getKey()).append("=").append(param.getValue());
+                first = false;
+            }
+            out.append("\n");
+        }
+        return out.toString();
+    }
+
+    public void load(String text) {
+        if (text == null) return;
+
+        for (String line : text.split("\n")) {
+            Entry entry = parseLine(line);
+            if (entry != null) offer(entry.row(), entry.vector());
+        }
+    }
+
+    /**
+     * One archived game: its objective row plus the vector that played it.
+     */
+    public static final class Entry {
+        private final TunerObjective.Row row;
+        private final Map<String, Double> vector;
+
+        public Entry(TunerObjective.Row row, Map<String, Double> vector) {
+            this.row = row;
+            this.vector = Collections.unmodifiableMap(new LinkedHashMap<>(vector));
+        }
+
+        public TunerObjective.Row row() {
+            return row;
+        }
+
+        public Map<String, Double> vector() {
+            return vector;
+        }
     }
 }

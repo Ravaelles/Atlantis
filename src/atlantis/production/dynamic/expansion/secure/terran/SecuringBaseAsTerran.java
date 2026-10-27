@@ -21,7 +21,7 @@ public class SecuringBaseAsTerran {
     private final SecuringWithBunker securingWithBunker;
     private final SecuringWithTurret securingWithTurret;
 
-    private APosition baseToSecure;
+    private final APosition baseToSecure;
 
     public SecuringBaseAsTerran(APosition baseToSecure) {
         this.baseToSecure = baseToSecure;

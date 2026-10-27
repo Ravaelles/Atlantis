@@ -109,7 +109,7 @@ public class BuilderDiagnostics {
             + " unit=#" + unit.id()
             + " building=" + construction.buildingType().name()
             + " tile=[" + tile.getX() + "," + tile.getY() + "]"
-            + " stoodStillFor=" + unit.lastPositionChangedAgo() + "f"            + " || worker: canCommand=" + builder.canCommand()
+            + " stoodStillFor=" + unit.lastPositionChangedAgo() + "f" + " || worker: canCommand=" + builder.canCommand()
             + " isCompleted=" + builder.isCompleted()
             + " isLockedDown=" + builder.isLockedDown()
             + " isConstructing=" + builder.isConstructing()
@@ -132,7 +132,7 @@ public class BuilderDiagnostics {
             + " canBuild001=" + builder.canBuild(type, tile, false, false, true)
             + " explored=" + exploredFootprint(construction)
             + " canAfford=" + A.canAfford(
-                construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
+            construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
             + " minerals=" + A.minerals()
             + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
             + " || tileRuleSplit: hasPower=" + atlantis.Atlantis.game().hasPower(tile, type)

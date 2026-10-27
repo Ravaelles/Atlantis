@@ -1,25 +1,21 @@
 package tests.unit;
 
 import atlantis.combat.BattleCommander;
+import atlantis.combat.behaviors.CastStorm;
 import atlantis.combat.behaviors.CorsairHunt;
 import atlantis.combat.behaviors.ProduceScarabs;
-import atlantis.combat.behaviors.CastStorm;
 import atlantis.combat.behaviors.RunWhenAttacked;
 import atlantis.combat.cluster.FightOrFlight;
-import atlantis.map.position.APosition;
-import tests.fakes.FakeOrderSink;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
+import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #198: specialists own their frame (ordered list, first true
@@ -28,6 +24,68 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("combat")
 public class SpecialistBehaviorsTest extends WorldStubForTests {
+
+    private static boolean movesAwayFrom(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
+        int fromX = unit.position().tx();
+        int fromY = unit.position().ty();
+        double before = Math.hypot(fromX - tx, fromY - ty);
+        for (FakeOrderSink.Record record : orders) {
+            if (!record.operation.equals("move")) continue;
+            int[] at = parseTile(record.toString());
+            if (at == null) continue;
+            if (Math.hypot(at[0] - tx, at[1] - ty) > before) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean stormCastAt(java.util.List<FakeOrderSink.Record> orders, int unitId) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals("useTechAt")
+                && record.toString().contains("Psionic_Storm")) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean movesToward(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
+        int fromX = unit.position().tx();
+        int fromY = unit.position().ty();
+        double before = Math.hypot(fromX - tx, fromY - ty);
+        for (FakeOrderSink.Record record : orders) {
+            if (!record.operation.equals("move")) continue;
+            int[] at = parseTile(record.toString());
+            if (at == null) continue;
+            if (Math.hypot(at[0] - tx, at[1] - ty) < before) return true;
+        }
+
+        return false;
+    }
+
+    private static int[] parseTile(String row) {
+        try {
+            String cut = row.substring(row.indexOf('[') + 1, row.lastIndexOf(']'));
+            String[] parts = cut.split(",");
+            int x = Integer.parseInt(parts[0].trim()) / 32;
+            int y = Integer.parseInt(parts[1].trim()) / 32;
+
+            return new int[]{x, y};
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static java.util.List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    private static boolean hasOrder(java.util.List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+
+        return false;
+    }
 
     @Override
     public Race initRace() {
@@ -501,67 +559,5 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
             assertFalse(CastStorm.act(ht),
                 "at 179 the bar is still three vs Zerg: hold the pair");
         });
-    }
-
-    private static boolean movesAwayFrom(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
-        int fromX = unit.position().tx();
-        int fromY = unit.position().ty();
-        double before = Math.hypot(fromX - tx, fromY - ty);
-        for (FakeOrderSink.Record record : orders) {
-            if (!record.operation.equals("move")) continue;
-            int[] at = parseTile(record.toString());
-            if (at == null) continue;
-            if (Math.hypot(at[0] - tx, at[1] - ty) > before) return true;
-        }
-
-        return false;
-    }
-
-    private static boolean stormCastAt(java.util.List<FakeOrderSink.Record> orders, int unitId) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals("useTechAt")
-                && record.toString().contains("Psionic_Storm")) return true;
-        }
-
-        return false;
-    }
-
-    private static boolean movesToward(java.util.List<FakeOrderSink.Record> orders, FakeUnit unit, int tx, int ty) {
-        int fromX = unit.position().tx();
-        int fromY = unit.position().ty();
-        double before = Math.hypot(fromX - tx, fromY - ty);
-        for (FakeOrderSink.Record record : orders) {
-            if (!record.operation.equals("move")) continue;
-            int[] at = parseTile(record.toString());
-            if (at == null) continue;
-            if (Math.hypot(at[0] - tx, at[1] - ty) < before) return true;
-        }
-
-        return false;
-    }
-
-    private static int[] parseTile(String row) {
-        try {
-            String cut = row.substring(row.indexOf('[') + 1, row.lastIndexOf(']'));
-            String[] parts = cut.split(",");
-            int x = Integer.parseInt(parts[0].trim()) / 32;
-            int y = Integer.parseInt(parts[1].trim()) / 32;
-
-            return new int[] { x, y };
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
-
-    private static java.util.List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
-    }
-
-    private static boolean hasOrder(java.util.List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-
-        return false;
     }
 }

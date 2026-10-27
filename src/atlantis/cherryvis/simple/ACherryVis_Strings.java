@@ -7,9 +7,9 @@ import java.util.TreeMap;
 public class ACherryVis_Strings {
 
     private static final int START_ID = 10000;
-    private int nextId = START_ID;
     private final Map<String, Integer> stringToId = new HashMap<>();
     private final Map<Integer, String> idToString = new TreeMap<>();
+    private int nextId = START_ID;
 
     public int get(String string) {
         if (string == null) {

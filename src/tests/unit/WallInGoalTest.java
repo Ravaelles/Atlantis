@@ -5,9 +5,7 @@ import atlantis.decisions.goals.protoss.WallInGoal;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Wall-in demand lives on the board: Zerg + core up + fewer than three

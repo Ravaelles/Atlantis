@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #160 step 3: promotion needs K-of-N replicate wins, because
@@ -39,7 +37,7 @@ public class TunerPromotionTest {
     @Test
     public void shortRecordNeverPromotes() {
         assertFalse(TunerPromotion.isPromoted(Collections.singletonList(
-            new Row("g1", true, 10, 30)), 1, 3),
+                new Row("g1", true, 10, 30)), 1, 3),
             "one lucky game is spawn luck until replicated");
     }
 

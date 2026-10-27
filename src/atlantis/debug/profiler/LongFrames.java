@@ -26,7 +26,8 @@ public class LongFrames {
     }
 
     public static void checkPotentialLongMeasurement(long lengthInMs, String title) {
-        if (lengthInMs < 50 || A.now() <= 1) return;
+        if (lengthInMs < 50 || A.now() <= 1) {
+        }
 
 //        ErrorLog.printMaxOncePerMinute("@" + A.now() + ": Long measurement (" + title + "). Took " + lengthInMs + "ms");
     }

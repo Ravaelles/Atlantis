@@ -40,6 +40,16 @@ public class TopLevelCommanderConstructionTest {
 
     private Race raceBefore;
 
+    private static void setGameCommander(Atlantis atlantis, AtlantisGameCommander commander) {
+        try {
+            java.lang.reflect.Field field = Atlantis.class.getDeclaredField("gameCommander");
+            field.setAccessible(true);
+            field.set(atlantis, commander);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @BeforeEach
     public void setOurRace() {
         raceBefore = AtlantisRaceConfig.MY_RACE;
@@ -66,7 +76,7 @@ public class TopLevelCommanderConstructionTest {
         // behaviour matters, so construction must not require a game. This also
         // covers the PRODUCTION_V2 branch inside ProductionCommander, which reads
         // Env at construction time.
-        for (String mode : new String[] { "OFF", "DRY_RUN", "LIVE" }) {
+        for (String mode : new String[]{"OFF", "DRY_RUN", "LIVE"}) {
             try {
                 Env.class.getDeclaredField("productionV2");
             } catch (NoSuchFieldException e) {
@@ -93,19 +103,9 @@ public class TopLevelCommanderConstructionTest {
         try {
             setGameCommander(atlantis, commander);
             assertSame(commander, atlantis.getGameCommander(),
-                    "the singleton must hand back the commander it was given");
+                "the singleton must hand back the commander it was given");
         } finally {
             setGameCommander(atlantis, before);
-        }
-    }
-
-    private static void setGameCommander(Atlantis atlantis, AtlantisGameCommander commander) {
-        try {
-            java.lang.reflect.Field field = Atlantis.class.getDeclaredField("gameCommander");
-            field.setAccessible(true);
-            field.set(atlantis, commander);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 }

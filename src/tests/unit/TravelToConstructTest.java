@@ -1,5 +1,7 @@
 package tests.unit;
 
+import atlantis.config.env.Env;
+import atlantis.config.env.ProductionV2Mode;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.protoss.ProtossStrategies;
@@ -8,8 +10,6 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.config.env.Env;
-import atlantis.config.env.ProductionV2Mode;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import bwapi.Race;
@@ -62,7 +62,7 @@ public class TravelToConstructTest extends WorldStubForTests {
             (worker = fake(AUnitType.Protoss_Probe, 12))
         );
 
-        world(2, our, units(new FakeUnit[0]), () -> {
+        world(2, our, units(), () -> {
             if (A.now() <= 1) {
                 currentSupplyUsed = 8;
             }
@@ -106,7 +106,7 @@ public class TravelToConstructTest extends WorldStubForTests {
             fake(Protoss_Forge, 21)
         );
 
-        world(2, our, units(new FakeUnit[0]), () -> {
+        world(2, our, units(), () -> {
             Queue.get().refresh();
 
             if (A.now() <= 1) {

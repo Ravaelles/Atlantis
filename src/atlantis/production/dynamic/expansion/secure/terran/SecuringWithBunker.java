@@ -8,7 +8,7 @@ import atlantis.units.select.Count;
 
 public class SecuringWithBunker {
     private final SecuringBaseAsTerran securingBase;
-    private NewBunkerPositionFinder newBunkerPositionFinder;
+    private final NewBunkerPositionFinder newBunkerPositionFinder;
 
     public SecuringWithBunker(SecuringBaseAsTerran securingBase) {
         this.securingBase = securingBase;

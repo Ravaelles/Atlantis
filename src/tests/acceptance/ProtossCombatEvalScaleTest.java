@@ -1,7 +1,7 @@
 package tests.acceptance;
 
-import atlantis.units.CombatEvalScale;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.units.CombatEvalScale;
 import atlantis.units.select.Count;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;

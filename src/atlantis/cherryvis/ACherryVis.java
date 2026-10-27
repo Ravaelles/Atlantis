@@ -6,15 +6,15 @@ import atlantis.game.A;
 import atlantis.util.AConsole;
 
 public class ACherryVis {
+    private static AbstractCherryVisLogger instance = null;
+
+    // =========================================================
+
     public static boolean isEnabled() {
 //        if (true) return false;
 
         return !A.isUms() && Env.cherryVisEnabled();
     }
-
-    // =========================================================
-
-    private static AbstractCherryVisLogger instance = null;
 
     public static void initialize() {
         logger();

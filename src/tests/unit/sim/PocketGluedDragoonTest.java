@@ -1,20 +1,18 @@
 package tests.unit.sim;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Sim repro of the live glue (NEXT #190): TauCross PvsZ VICTORY 9450f,
@@ -38,13 +36,13 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
 
     @Test
     public void cutoffSwampedDragoonRunsHome() {
-        assertRunsHome(FightOrFlight.Tactic.FLEE, 13, new int[][] { { 18, 18 }, { 18, 19 }, { 18, 20 }, { 19, 19 } });
+        assertRunsHome(FightOrFlight.Tactic.FLEE, 13, new int[][]{{18, 18}, {18, 19}, {18, 20}, {19, 19}});
     }
 
     @Test
     public void fightPathGlueEscalatesToRun() {
-        assertRunsHome(FightOrFlight.Tactic.FIGHT, 11, new int[][] { { 16, 18 }, { 16, 19 }, { 16, 20 }, { 17, 19 },
-            { 17, 18 }, { 17, 20 } });
+        assertRunsHome(FightOrFlight.Tactic.FIGHT, 11, new int[][]{{16, 18}, {16, 19}, {16, 20}, {17, 19},
+            {17, 18}, {17, 20}});
     }
 
     private void assertRunsHome(FightOrFlight.Tactic tactic, int dragoonTx, int[][] lingTiles) {
@@ -69,16 +67,16 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
 
         // Pocket mouth: walls west/north/south, open east toward home.
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
-        arena.block(10 * TILE, 17 * TILE, 1 * TILE, 5 * TILE);
-        arena.block(10 * TILE, 17 * TILE, 7 * TILE, 1 * TILE);
-        arena.block(10 * TILE, 21 * TILE, 7 * TILE, 1 * TILE);
+        arena.block(10 * TILE, 17 * TILE, TILE, 5 * TILE);
+        arena.block(10 * TILE, 17 * TILE, 7 * TILE, TILE);
+        arena.block(10 * TILE, 21 * TILE, 7 * TILE, TILE);
         useArenaWalkability(arena);
 
         int startX = dragoon.position.x();
         int startY = dragoon.position.y();
         int deathTick = -1;
 
-        FakeUnit[] ours = new FakeUnit[] { dragoon, a, b, c, nexus };
+        FakeUnit[] ours = new FakeUnit[]{dragoon, a, b, c, nexus};
         SimWorld world = new SimWorld(ours, lings, arena);
         try {
             BattleCommander.clearForTests();
@@ -109,8 +107,7 @@ public class PocketGluedDragoonTest extends AbstractTestWithUnits {
                 assertTrue(rows.contains("\"result\":\"stuck-escalated-run\""),
                     "the FIGHT-path handoff must be twinned for live adjudication: " + rows.length());
             }
-        }
-        finally {
+        } finally {
             for (FakeUnit u : ours) Alpha.get().removeUnit(u);
             world.close();
             BattleCommander.clearForTests();

@@ -89,18 +89,18 @@ public class TimelineSlideTest {
         }
 
         assertTrue(
-                starts[0] >= 0,
-                "precondition: with income the Pylon must be plannable somewhere in the horizon - "
-                        + "if this fails the test models the wrong situation. Starts: "
-                        + java.util.Arrays.toString(starts));
+            starts[0] >= 0,
+            "precondition: with income the Pylon must be plannable somewhere in the horizon - "
+                + "if this fails the test models the wrong situation. Starts: "
+                + java.util.Arrays.toString(starts));
 
         for (int i = 1; i < starts.length; i++) {
             assertEquals(
-                    starts[0], starts[i],
-                    "every pass sees the SAME game state, so the Pylon's start must be the same "
-                            + "number each time. A start that moves between identical passes IS the slide - "
-                            + "in the live log it moved forward every frame (Pylon@1129, @1130, @1132). Starts: "
-                            + java.util.Arrays.toString(starts));
+                starts[0], starts[i],
+                "every pass sees the SAME game state, so the Pylon's start must be the same "
+                    + "number each time. A start that moves between identical passes IS the slide - "
+                    + "in the live log it moved forward every frame (Pylon@1129, @1130, @1132). Starts: "
+                    + java.util.Arrays.toString(starts));
         }
     }
 
@@ -116,10 +116,10 @@ public class TimelineSlideTest {
         flat.allocate(PROBE, flat.findEarliestAffordableFrame(PROBE, 0));
 
         assertEquals(
-                -1, flat.findEarliestAffordableFrame(PYLON, 0),
-                "a flat 60-mineral bank cannot afford a 100 Pylon at any frame in the horizon: that is "
-                        + "-1 (unplannable), NOT a late start. The slide needs income - this is a different "
-                        + "defect and must not be chased as the same one");
+            -1, flat.findEarliestAffordableFrame(PYLON, 0),
+            "a flat 60-mineral bank cannot afford a 100 Pylon at any frame in the horizon: that is "
+                + "-1 (unplannable), NOT a late start. The slide needs income - this is a different "
+                + "defect and must not be chased as the same one");
     }
 
     /**
@@ -143,9 +143,9 @@ public class TimelineSlideTest {
         }
 
         assertEquals(
-                starts[0], starts[starts.length - 1],
-                "a healthy bank must give a stable start - if this ever slides too, the cause is "
-                        + "not arbitration and the diagnosis in #52 is wrong");
+            starts[0], starts[starts.length - 1],
+            "a healthy bank must give a stable start - if this ever slides too, the cause is "
+                + "not arbitration and the diagnosis in #52 is wrong");
     }
 
     /**
@@ -166,7 +166,7 @@ public class TimelineSlideTest {
         assertEquals(500, timeline.mineralsAt(9), "frames before the allocation are untouched");
         assertEquals(400, timeline.mineralsAt(10), "the allocation frame pays");
         assertEquals(400, timeline.mineralsAt(99), "and so does the whole tail - this is what "
-                + "makes a later item wait, and what the slide is made of");
+            + "makes a later item wait, and what the slide is made of");
     }
 
     /**
@@ -242,8 +242,8 @@ public class TimelineSlideTest {
         int after = withReservation.findEarliestAffordableFrame(PYLON, 0);
 
         assertTrue(
-                after > before,
-                "a reservation ahead of it must push the same cost later (" + before + " -> " + after
-                        + ") - that is the mechanism, not a bug in the search itself");
+            after > before,
+            "a reservation ahead of it must push the same cost later (" + before + " -> " + after
+                + ") - that is the mechanism, not a bug in the search itself");
     }
 }

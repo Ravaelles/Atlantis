@@ -11,35 +11,59 @@ import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
 import atlantis.production.dynamic.protoss.reinforce.ProtossSecureBaseWithCannons;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import bwapi.Race;
 
 public class RequestBuildingNearTest extends WorldStubForTests {
-
-    /** Pylons, cannons and Protoss base reinforcement - this is a Protoss test. */
-    @Override
-    public Race initRace() {
-        return Race.Protoss;
-    }
 
     private static FakeUnit main = null;
     private static FakeUnit natural = null;
     private static FakeUnit third = null;
 
+    private static ProductionOrder securePositionWithCannon(HasPosition secure) {
+        return (new ProtossSecureBaseWithCannons(secure)).reinforce();
+//        return RequestCannonAt.at(secure);
+    }
+
+    private static void printOrder(ProductionOrder order, HasPosition nearTo) {
+        if (order == null || order.construction() == null) {
+            System.err.println("Order is null, can't print it.");
+
+            return;
+        }
+
+        APosition buildPosition = order.construction().buildPosition();
+
+        System.err.println("order     = " + order);
+        System.err.println("nearTo    = " + nearTo);
+        System.err.println("buildPos  = " + buildPosition);
+        System.err.println("buildable = " + buildPosition.isBuildableIncludeBuildings());
+        System.err.println("choke     = " + Chokes.natural());
+        System.err.println("dist_init = " + nearTo.distTo(buildPosition));
+    }
+
+    /**
+     * Pylons, cannons and Protoss base reinforcement - this is a Protoss test.
+     */
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
+
     @Test
     public void testRequestingACannon_main_requestCannonInStandardWayForMain() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                fake(AUnitType.Protoss_Pylon, 10, 45),
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            fake(AUnitType.Protoss_Pylon, 10, 45),
 
-                fake(AUnitType.Protoss_Pylon, 99, 99),
-                fake(AUnitType.Protoss_Forge, 98, 98),
+            fake(AUnitType.Protoss_Pylon, 99, 99),
+            fake(AUnitType.Protoss_Forge, 98, 98),
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             assertEquals(0, ConstructionRequests.all().size());
             assertEquals("Init", AbstractPositionFinder._STATUS);
 
@@ -58,14 +82,14 @@ public class RequestBuildingNearTest extends WorldStubForTests {
     @Test
     public void testRequestingACannon_mainAndNatural_buildAMissingPylonInNatural() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
 
-                fake(AUnitType.Protoss_Pylon, 99, 99),
-                fake(AUnitType.Protoss_Forge, 98, 98),
+            fake(AUnitType.Protoss_Pylon, 99, 99),
+            fake(AUnitType.Protoss_Forge, 98, 98),
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             // This natural is 32.8 ground tiles from the main and the bot refuses
             // to put a pylon that far from its base before it has 40 supply -
             // PylonTooFarFromBaseEarly, pinned on its own in
@@ -104,13 +128,13 @@ public class RequestBuildingNearTest extends WorldStubForTests {
     @Test
     public void testRequestingAPylon_farFromMainAndSupplyUnder40_pylonIsRefused() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural, 32.8 tiles away
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural, 32.8 tiles away
 
-                fake(AUnitType.Protoss_Pylon, 10, 45), // power next to the main
+            fake(AUnitType.Protoss_Pylon, 10, 45), // power next to the main
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             assertEquals(4, A.supplyTotal());
 
             // Close to the main: allowed.
@@ -144,15 +168,15 @@ public class RequestBuildingNearTest extends WorldStubForTests {
     @Test
     public void testRequestingACannon_mainAndNatural_buildFirstCannonAtNatural() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
-                fake(AUnitType.Protoss_Pylon, 17, 13),
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
+            fake(AUnitType.Protoss_Pylon, 17, 13),
 
-                fake(AUnitType.Protoss_Pylon, 99, 99),
-                fake(AUnitType.Protoss_Forge, 98, 98),
+            fake(AUnitType.Protoss_Pylon, 99, 99),
+            fake(AUnitType.Protoss_Forge, 98, 98),
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             assertEquals(0, ConstructionRequests.all().size());
             assertEquals("Init", AbstractPositionFinder._STATUS);
             assertNull(RequestBuildingNear.lastError);
@@ -169,19 +193,21 @@ public class RequestBuildingNearTest extends WorldStubForTests {
         });
     }
 
+    // =========================================================
+
     @Test
     public void testRequestingACannon_third_noPylon() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
-                third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
-                fake(AUnitType.Protoss_Pylon, 17, 13),
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
+            third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
+            fake(AUnitType.Protoss_Pylon, 17, 13),
 
-                fake(AUnitType.Protoss_Pylon, 99, 99),
-                fake(AUnitType.Protoss_Forge, 98, 98),
+            fake(AUnitType.Protoss_Pylon, 99, 99),
+            fake(AUnitType.Protoss_Forge, 98, 98),
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             // The third base is ~55 ground tiles from the main, so - exactly as
             // for the natural above - it can only get power once the bot has the
             // supply for it.
@@ -209,17 +235,17 @@ public class RequestBuildingNearTest extends WorldStubForTests {
     @Test
     public void testRequestingACannon_third_withPylon() {
         world(1, fakeOurs(
-                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
-                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
-                third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
-                fake(AUnitType.Protoss_Pylon, 53, 12),
-                fake(AUnitType.Protoss_Pylon, 17, 13),
+            main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+            natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
+            third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
+            fake(AUnitType.Protoss_Pylon, 53, 12),
+            fake(AUnitType.Protoss_Pylon, 17, 13),
 
-                fake(AUnitType.Protoss_Pylon, 99, 99),
-                fake(AUnitType.Protoss_Forge, 98, 98),
+            fake(AUnitType.Protoss_Pylon, 99, 99),
+            fake(AUnitType.Protoss_Forge, 98, 98),
 
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             assertEquals(0, ConstructionRequests.all().size());
             assertEquals("Init", AbstractPositionFinder._STATUS);
             assertNull(RequestBuildingNear.lastError);
@@ -235,29 +261,5 @@ public class RequestBuildingNearTest extends WorldStubForTests {
             assertEquals(1, ConstructionRequests.all().size());
             assertTrue(ConstructionRequests.all().get(0).buildingType().isCannon());
         });
-    }
-
-    // =========================================================
-
-    private static ProductionOrder securePositionWithCannon(HasPosition secure) {
-        return (new ProtossSecureBaseWithCannons(secure)).reinforce();
-//        return RequestCannonAt.at(secure);
-    }
-
-    private static void printOrder(ProductionOrder order, HasPosition nearTo) {
-        if (order == null || order.construction() == null) {
-            System.err.println("Order is null, can't print it.");
-
-            return;
-        }
-
-        APosition buildPosition = order.construction().buildPosition();
-
-        System.err.println("order     = " + order);
-        System.err.println("nearTo    = " + nearTo);
-        System.err.println("buildPos  = " + buildPosition);
-        System.err.println("buildable = " + buildPosition.isBuildableIncludeBuildings());
-        System.err.println("choke     = " + Chokes.natural());
-        System.err.println("dist_init = " + nearTo.distTo(buildPosition));
     }
 }

@@ -1,10 +1,10 @@
 package atlantis.battle.avoid.special;
 
 import atlantis.architecture.Manager;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
 public class AvoidDT extends Manager {
     public AvoidDT(AUnit unit) {

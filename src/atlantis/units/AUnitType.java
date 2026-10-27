@@ -18,81 +18,25 @@ import java.util.*;
  */
 public class AUnitType implements Comparable<Object> {
 
-    public static boolean disableErrorReporting = false;
-    private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
-    private static int firstFreeID = 1000;
-
-    private final int ID;
-    private Cache<Object> cache;
+    // =========================================================
+    // =========================================================
+    // =========================================================
+    public static final AUnitType Terran_Firebat = new AUnitType(UnitType.Terran_Firebat);
+    public static final AUnitType Terran_Ghost = new AUnitType(UnitType.Terran_Ghost);
+    public static final AUnitType Terran_Goliath = new AUnitType(UnitType.Terran_Goliath);
+    public static final AUnitType Terran_Marine = new AUnitType(UnitType.Terran_Marine);
+    public static final AUnitType Terran_Medic = new AUnitType(UnitType.Terran_Medic);
 
     // =========================================================
-
-    public static Collection<AUnitType> getAllUnitTypes() {
-        if (instances.size() < 30) {
-            for (UnitType type : UnitType.values()) {
-                from(type);
-            }
-        }
-
-        return instances.values();
-    }
-
-    private final UnitType ut;
+    public static final AUnitType Terran_SCV = new AUnitType(UnitType.Terran_SCV);
+    public static final AUnitType Terran_Siege_Tank_Siege_Mode = new AUnitType(UnitType.Terran_Siege_Tank_Siege_Mode);
 
     // =========================================================
-
-    private AUnitType(UnitType ut) {
-        if (ut == null) {
-            throw new RuntimeException("AUnitType constructor: type is null");
-        }
-        this.ut = ut;
-        this.ID = firstFreeID++;
-        this.cache = new Cache<>();
-    }
-
-    /**
-     * Atlantis uses wrapper for BWAPI  classes which aren't extended.<br />
-     * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
-     * can create missing method here and you can reference original UnitType class via ut() method.
-     */
-    public static AUnitType from(UnitType ut) {
-        if (ut == null) {
-            throw new RuntimeException("AUnitType constructor: type is null");
-        }
-
-        if (ut.name().equals(UnitType.None.name())) {
-            return null;
-        }
-
-        if (instances.containsKey(ut)) {
-            return instances.get(ut);
-        }
-        else {
-            AUnitType unitType = new AUnitType(ut);
-            instances.put(ut, unitType);
-
-            return unitType;
-        }
-//        AUnitType unitType;
-//        if ((unitType = getJBWAPIUnitType(ut)) != null) {
-//            return unitType;
-//        }
-//        else {
-//            unitType = new AUnitType(ut);
-//            instances.add(unitType);
-//            return unitType;
-//        }
-    }
+    public static final AUnitType Terran_Siege_Tank_Tank_Mode = new AUnitType(UnitType.Terran_Siege_Tank_Tank_Mode);
+    public static final AUnitType Terran_Vulture = new AUnitType(UnitType.Terran_Vulture);
 
     // =========================================================
-
-    /**
-     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnitType class. AUnitType class should be used always
-     * in place of UnitType. Use only to access constant of UnitType class.
-     */
-    public UnitType ut() {
-        return ut;
-    }
+    public static final AUnitType Terran_Vulture_Spider_Mine = new AUnitType(UnitType.Terran_Vulture_Spider_Mine);
 
 //    private static AUnitType getJBWAPIUnitType(UnitType ut) {
 //        for (AUnitType unitType : instances.values()) {
@@ -102,20 +46,6 @@ public class AUnitType implements Comparable<Object> {
 //        }
 //        return null;
 //    }
-
-    // =========================================================
-    // =========================================================
-    // =========================================================
-    public static final AUnitType Terran_Firebat = new AUnitType(UnitType.Terran_Firebat);
-    public static final AUnitType Terran_Ghost = new AUnitType(UnitType.Terran_Ghost);
-    public static final AUnitType Terran_Goliath = new AUnitType(UnitType.Terran_Goliath);
-    public static final AUnitType Terran_Marine = new AUnitType(UnitType.Terran_Marine);
-    public static final AUnitType Terran_Medic = new AUnitType(UnitType.Terran_Medic);
-    public static final AUnitType Terran_SCV = new AUnitType(UnitType.Terran_SCV);
-    public static final AUnitType Terran_Siege_Tank_Siege_Mode = new AUnitType(UnitType.Terran_Siege_Tank_Siege_Mode);
-    public static final AUnitType Terran_Siege_Tank_Tank_Mode = new AUnitType(UnitType.Terran_Siege_Tank_Tank_Mode);
-    public static final AUnitType Terran_Vulture = new AUnitType(UnitType.Terran_Vulture);
-    public static final AUnitType Terran_Vulture_Spider_Mine = new AUnitType(UnitType.Terran_Vulture_Spider_Mine);
     public static final AUnitType Terran_Battlecruiser = new AUnitType(UnitType.Terran_Battlecruiser);
     public static final AUnitType Terran_Dropship = new AUnitType(UnitType.Terran_Dropship);
     public static final AUnitType Terran_Nuclear_Missile = new AUnitType(UnitType.Terran_Nuclear_Missile);
@@ -317,10 +247,64 @@ public class AUnitType implements Comparable<Object> {
     public static final AUnitType Buildings = new AUnitType(UnitType.Buildings);
     //    public static final AUnitType Factories = new AUnitType(UnitType.Factories);
     public static final AUnitType Unknown = new AUnitType(UnitType.Unknown);
+    private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
+    public static boolean disableErrorReporting = false;
+    private static int firstFreeID = 1000;
+    private final int ID;
+    private final UnitType ut;
+    private final Cache<Object> cache;
+    private AUnitType(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
+        this.ut = ut;
+        this.ID = firstFreeID++;
+        this.cache = new Cache<>();
+    }
 
-    // =========================================================
-    // =========================================================
-    // =========================================================
+    public static Collection<AUnitType> getAllUnitTypes() {
+        if (instances.size() < 30) {
+            for (UnitType type : UnitType.values()) {
+                from(type);
+            }
+        }
+
+        return instances.values();
+    }
+
+    /**
+     * Atlantis uses wrapper for BWAPI  classes which aren't extended.<br />
+     * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
+     * can create missing method here and you can reference original UnitType class via ut() method.
+     */
+    public static AUnitType from(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
+
+        if (ut.name().equals(UnitType.None.name())) {
+            return null;
+        }
+
+        if (instances.containsKey(ut)) {
+            return instances.get(ut);
+        }
+        else {
+            AUnitType unitType = new AUnitType(ut);
+            instances.put(ut, unitType);
+
+            return unitType;
+        }
+//        AUnitType unitType;
+//        if ((unitType = getJBWAPIUnitType(ut)) != null) {
+//            return unitType;
+//        }
+//        else {
+//            unitType = new AUnitType(ut);
+//            instances.add(unitType);
+//            return unitType;
+//        }
+    }
 
     /**
      * You can "Terran_Marine" or "Terran Marine" or even "Marine".
@@ -372,6 +356,56 @@ public class AUnitType implements Comparable<Object> {
         return null;
     }
 
+    // =========================================================
+    // =========================================================
+    // =========================================================
+
+    /**
+     * Converts collection of <b>UnitType</b> variables into collection of <b>AUnitType</b> variables.
+     */
+    protected static Object convertToAUnitTypesCollection(Object collection) {
+        if (collection instanceof Map) {
+//            Map<AUnitType, Integer> result = new HashMap<>();
+            Counter<AUnitType> units = new Counter<>();
+            for (Object key : ((Map) collection).keySet()) {
+                UnitType ut = (UnitType) key;
+                AUnitType unitType = from(ut);
+//                result.put(unitType, (Integer) ((Map) collection).get(ut));
+                units.setValueFor(unitType, (Integer) ((Map) collection).get(ut));
+            }
+            return units;
+        }
+        else if (collection instanceof List) {
+            List<AUnitType> result = new ArrayList<>();
+            for (Object key : (List) collection) {
+                UnitType ut = (UnitType) key;
+                AUnitType unitType = from(ut);
+                result.add(unitType);
+            }
+            return result;
+        }
+        else {
+            throw new RuntimeException("I don't know how to convert collection of type: "
+                + collection.toString());
+        }
+    }
+
+    public static String arrayToIds(AUnitType[] types) {
+        StringBuilder result = new StringBuilder();
+        for (AUnitType type : types) {
+            result.append((result.length() > 0) ? "," : "").append(type.id());
+        }
+        return result.toString();
+    }
+
+    /**
+     * <b>AVOID USAGE AS MUCH AS POSSIBLE</b> outside AUnitType class. AUnitType class should be used always
+     * in place of UnitType. Use only to access constant of UnitType class.
+     */
+    public UnitType ut() {
+        return ut;
+    }
+
     /**
      * Returns true if given type equals to one of types passed as parameter.
      */
@@ -409,6 +443,9 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    // =========================================================
+    // Auxiliary methods
+
     /**
      * Returns total sum of minerals and gas this unit is worth. Accounts for the Zergling case (each Zergling
      * costs half the pair ;-)
@@ -432,9 +469,6 @@ public class AUnitType implements Comparable<Object> {
 //                () -> ut.toString()
 //        );
     }
-
-    // =========================================================
-    // Auxiliary methods
 
     /**
      * Returns short name for of unit type like e.g. "Zergling", "Marine", "Mutalisk", "Barracks".
@@ -474,6 +508,7 @@ public class AUnitType implements Comparable<Object> {
     public int hashCode() {
         return ID;
     }
+//    public int compareTo(AUnitType o) {
 
     @Override
     public boolean equals(Object obj) {
@@ -494,6 +529,9 @@ public class AUnitType implements Comparable<Object> {
         return false;
     }
 
+    // =========================================================
+    // Auxiliary
+
     @Override
     public int compareTo(Object o) {
         if (o instanceof AUnitType) {
@@ -508,7 +546,9 @@ public class AUnitType implements Comparable<Object> {
 //        return this.ut.toString().compareTo(o.toString());
 //        return Integer.compare(ID, o.ID);
     }
-//    public int compareTo(AUnitType o) {
+
+    // =========================================================
+    // Type comparison methods
 
     /// /        return this.ut.toString().compareTo(o.toString());
 //        return Integer.compare(ID, o.ID);
@@ -517,42 +557,6 @@ public class AUnitType implements Comparable<Object> {
     public String toString() {
         return name();
     }
-
-    // =========================================================
-    // Auxiliary
-
-    /**
-     * Converts collection of <b>UnitType</b> variables into collection of <b>AUnitType</b> variables.
-     */
-    protected static Object convertToAUnitTypesCollection(Object collection) {
-        if (collection instanceof Map) {
-//            Map<AUnitType, Integer> result = new HashMap<>();
-            Counter<AUnitType> units = new Counter<>();
-            for (Object key : ((Map) collection).keySet()) {
-                UnitType ut = (UnitType) key;
-                AUnitType unitType = from(ut);
-//                result.put(unitType, (Integer) ((Map) collection).get(ut));
-                units.setValueFor(unitType, (Integer) ((Map) collection).get(ut));
-            }
-            return units;
-        }
-        else if (collection instanceof List) {
-            List<AUnitType> result = new ArrayList<>();
-            for (Object key : (List) collection) {
-                UnitType ut = (UnitType) key;
-                AUnitType unitType = from(ut);
-                result.add(unitType);
-            }
-            return result;
-        }
-        else {
-            throw new RuntimeException("I don't know how to convert collection of type: "
-                + collection.toString());
-        }
-    }
-
-    // =========================================================
-    // Type comparison methods
 
     public boolean isBase() {
         return (boolean) cache.get(
@@ -1511,14 +1515,6 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    public static String arrayToIds(AUnitType[] types) {
-        StringBuilder result = new StringBuilder();
-        for (AUnitType type : types) {
-            result.append((result.length() > 0) ? "," : "").append(type.id());
-        }
-        return result.toString();
-    }
-
     public DamageType damageTypeAgainst(AUnitType target) {
         return (DamageType) cache.get(
             "damageTypeAgainst:" + target.name(),
@@ -1645,9 +1641,7 @@ public class AUnitType implements Comparable<Object> {
 
         if (isABuilding() && (requirement.isABuilding() && requirement.isBase())) return false;
 
-        if (isABuilding() && requirement.isWorker()) return false;
-
-        return true;
+        return !isABuilding() || !requirement.isWorker();
     }
 
     public boolean isMutalisk() {

@@ -18,6 +18,17 @@ public class ACherryVisLogger_TraceJson {
 
     // =========================================================
 
+    /**
+     * The viewer resolves a unit's {@code manager} integer through this legend,
+     * so it must be the runtime table - the ids in {@code units_updates} are
+     * assigned at runtime in first-logged order. A hardcoded table only matches
+     * if managers happen to log in one exact order, and it has no names at all
+     * past its last row.
+     */
+    public static String customNames(ACherryVis_Strings strings) {
+        return " \"manager\": {" + strings.getJson() + "}";
+    }
+
     private String content() {
         ACherryVis_Strings strings = new ACherryVis_Strings();
         // Generate updates first to populate strings
@@ -51,18 +62,6 @@ public class ACherryVisLogger_TraceJson {
             + "\"units_updates\": {" + unitsUpdates + "}"
             + "}";
     }
-
-    /**
-     * The viewer resolves a unit's {@code manager} integer through this legend,
-     * so it must be the runtime table - the ids in {@code units_updates} are
-     * assigned at runtime in first-logged order. A hardcoded table only matches
-     * if managers happen to log in one exact order, and it has no names at all
-     * past its last row.
-     */
-    public static String customNames(ACherryVis_Strings strings) {
-        return " \"manager\": {" + strings.getJson() + "}";
-    }
-
 
     private String typesToString(ACherryVis_Strings strings) {
         String original = ACherryVis_TypesNames.get();

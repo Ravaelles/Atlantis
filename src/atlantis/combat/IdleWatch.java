@@ -1,8 +1,5 @@
 package atlantis.combat;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -10,6 +7,9 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Post-fight freeze detector (owner, Drag_v_LingsUpg2): a combat unit
@@ -28,16 +28,24 @@ import atlantis.util.log.LogKey;
  */
 public final class IdleWatch {
 
-    /** Still this long with no foe near and weapon ready: idle, not holding. */
+    /**
+     * Still this long with no foe near and weapon ready: idle, not holding.
+     */
     public static final int IDLE_FRAMES = 120;
 
-    /** No enemy combat unit within: far enough that standing is a choice. */
+    /**
+     * No enemy combat unit within: far enough that standing is a choice.
+     */
     public static final double FOE_FAR_TILES = 12.0;
 
-    /** Displacement below this still counts as standing still. */
+    /**
+     * Displacement below this still counts as standing still.
+     */
     public static final double STILL_TILES = 0.5;
 
-    /** How often one unit may log its idle state while it persists. */
+    /**
+     * How often one unit may log its idle state while it persists.
+     */
     private static final int LOG_EVERY_FRAMES = 120;
 
     private static final Map<Integer, APosition> lastPos = new HashMap<>();
@@ -53,7 +61,9 @@ public final class IdleWatch {
         lastLogFrame.clear();
     }
 
-    /** Still frames banked by this unit since it last displaced, or 0. */
+    /**
+     * Still frames banked by this unit since it last displaced, or 0.
+     */
     public static int stillFramesOf(int unitId) {
         Integer still = stillFrames.get(unitId);
 

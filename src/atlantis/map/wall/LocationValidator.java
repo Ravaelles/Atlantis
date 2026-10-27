@@ -22,11 +22,7 @@ public class LocationValidator {
             }
         }
 
-        if (!adjacent && depth != 0) {
-            return false;
-        }
-
-        return true;
+        return adjacent || depth == 0;
     }
 
     private static boolean isOccupied(int xTile, int yTile) {

@@ -3,7 +3,6 @@ package atlantis.combat.behaviors;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 
@@ -19,7 +18,9 @@ public final class CorsairHunt {
     private CorsairHunt() {
     }
 
-    /** Only unmolested Corsairs hunt, and only when Zerg flies Overlords. */
+    /**
+     * Only unmolested Corsairs hunt, and only when Zerg flies Overlords.
+     */
     public static boolean applies(AUnit unit) {
         if (unit == null || !unit.isAlive()) return false;
         if (!unit.isCorsair()) return false;

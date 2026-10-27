@@ -2,8 +2,8 @@ package atlantis.units.special;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
-import atlantis.information.decisions.*;
 import atlantis.decisions.QuitWhenNoUnitsLeft;
+import atlantis.information.decisions.*;
 import atlantis.terran.chokeblockers.ChokeBlockersCommander;
 import atlantis.terran.repair.TerranRepairsCommander;
 import atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander;

@@ -8,8 +8,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.LogLevel;
 
 /**
  * Undecidable-duel exit (NEXT.md FIRST TASK, step 3; owner 2026-10-21):
@@ -65,7 +65,7 @@ public class ForceExitWhenDuelUndecidable extends Commander {
         AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitWhenDuelUndecidable");
-        ErrorLog.printErrorOnce("force-exit-duel", 
+        ErrorLog.printErrorOnce("force-exit-duel",
             "Undecidable duel: no enemy units listed, but our combat units took "
                 + Select.ourCombatUnits().totalHits() + " hits in "
                 + RealTime.gameLengthInRealSeconds() + " real seconds - ending early"

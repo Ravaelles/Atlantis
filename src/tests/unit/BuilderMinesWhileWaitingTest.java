@@ -7,9 +7,7 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.workers.WorkerManager;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
@@ -22,9 +20,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #212, first half: a worker held at a construction site that cannot
@@ -36,6 +31,28 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("production")
 public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
+
+    private static FakeUnit neutralMineral(double tx, double ty) {
+        return fake(AUnitType.Resource_Mineral_Field, tx, ty).setNeutral();
+    }
+
+    private static int gatherOrders(FakeUnit probe) {
+        int n = 0;
+        for (FakeOrderSink.Record r : ((FakeOrderSink) probe.orderSink()).orders()) {
+            if (r.operation.equals("gather")) n++;
+        }
+
+        return n;
+    }
+
+    private static int moveOrders(FakeUnit probe) {
+        int n = 0;
+        for (FakeOrderSink.Record r : ((FakeOrderSink) probe.orderSink()).orders()) {
+            if (r.operation.equals("move")) n++;
+        }
+
+        return n;
+    }
 
     @Override
     public Race initRace() {
@@ -73,7 +90,7 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
     @Test
     public void waitingBuilderMinesInsteadOfStanding() {
         currentMinerals = 10;
-        neutralInWorld = new FakeUnit[] {
+        neutralInWorld = new FakeUnit[]{
             neutralMineral(14, 19),
             neutralMineral(15, 19),
             neutralMineral(16, 18),
@@ -101,10 +118,10 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
 
             assertTrue(probe.isGatheringMinerals(),
                 "a builder held at an unstartable site mines instead of "
-                + "standing: bank 10 of 100, forecast says wait");
+                    + "standing: bank 10 of 100, forecast says wait");
             assertEquals(probe, construction.builder(),
                 "waiting does not unassign - the same builder comes back "
-                + "when the bank covers the price");
+                    + "when the bank covers the price");
             assertTrue(gatherOrders(probe) >= 1,
                 "a gather order was actually issued, not just a flag");
         });
@@ -113,7 +130,7 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
     @Test
     public void affordableBuilderStaysPut() {
         currentMinerals = 400;
-        neutralInWorld = new FakeUnit[] {
+        neutralInWorld = new FakeUnit[]{
             neutralMineral(14, 19),
         };
 
@@ -137,33 +154,10 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
 
             new WorkerManager(probe).forceHandle();
 
-            assertTrue(gatherOrders(probe) == 0,
-                "an affordable build keeps its builder - no wandering off "
+            assertEquals(0, gatherOrders(probe), "an affordable build keeps its builder - no wandering off "
                 + "to the mineral line");
             assertEquals(probe, construction.builder(),
                 "the affordable builder stays assigned");
         });
-    }
-
-    private static FakeUnit neutralMineral(double tx, double ty) {
-        return fake(AUnitType.Resource_Mineral_Field, tx, ty).setNeutral();
-    }
-
-    private static int gatherOrders(FakeUnit probe) {
-        int n = 0;
-        for (FakeOrderSink.Record r : ((FakeOrderSink) probe.orderSink()).orders()) {
-            if (r.operation.equals("gather")) n++;
-        }
-
-        return n;
-    }
-
-    private static int moveOrders(FakeUnit probe) {
-        int n = 0;
-        for (FakeOrderSink.Record r : ((FakeOrderSink) probe.orderSink()).orders()) {
-            if (r.operation.equals("move")) n++;
-        }
-
-        return n;
     }
 }

@@ -21,38 +21,6 @@ import atlantis.units.select.Selection;
  * origin is returned unchanged, which is what every caller already received.</p>
  */
 public class PositionFinder {
-    public interface Source {
-        APosition makeBuildable(HasPosition origin, int maxRadius);
-
-        APosition ensureWithinBounds(HasPosition origin);
-
-        APosition makeValidFarFromBounds(HasPosition origin, int atLeastTilesAwayFromBounds);
-
-        APosition makeBuildableFarFromBounds(HasPosition origin, int atLeastTilesAwayFromBounds);
-
-        APosition makeWalkable(HasPosition origin, int maxRadius, int step, ARegion sameRegion);
-
-        APosition makeLandableFor(HasPosition origin, AUnit building);
-
-        APosition makeWalkableAndFreeOfAnyGroundUnits(
-            HasPosition origin, double maxRadius, double step, AUnit exceptUnit
-        );
-    }
-
-    private static Source source = null;
-
-    public static void useSource(Source newSource) {
-        source = newSource;
-    }
-
-    public static void useEngine() {
-        source = null;
-    }
-
-    private static Source source() {
-        return source != null ? source : EngineSource;
-    }
-
     private static final Source EngineSource = new Source() {
         @Override
         public APosition makeBuildable(HasPosition origin, int maxRadius) {
@@ -257,12 +225,25 @@ public class PositionFinder {
             return null;
         }
     };
+    private static Source source = null;
 
-    // =========================================================
+    public static void useSource(Source newSource) {
+        source = newSource;
+    }
+
+    public static void useEngine() {
+        source = null;
+    }
+
+    private static Source source() {
+        return source != null ? source : EngineSource;
+    }
 
     public static APosition makeBuildable(HasPosition origin, int maxRadius) {
         return source().makeBuildable(origin, maxRadius);
     }
+
+    // =========================================================
 
     public static APosition ensureWithinBounds(HasPosition origin) {
         return source().ensureWithinBounds(origin);
@@ -288,5 +269,23 @@ public class PositionFinder {
         HasPosition origin, double maxRadius, double step, AUnit exceptUnit
     ) {
         return source().makeWalkableAndFreeOfAnyGroundUnits(origin, maxRadius, step, exceptUnit);
+    }
+
+    public interface Source {
+        APosition makeBuildable(HasPosition origin, int maxRadius);
+
+        APosition ensureWithinBounds(HasPosition origin);
+
+        APosition makeValidFarFromBounds(HasPosition origin, int atLeastTilesAwayFromBounds);
+
+        APosition makeBuildableFarFromBounds(HasPosition origin, int atLeastTilesAwayFromBounds);
+
+        APosition makeWalkable(HasPosition origin, int maxRadius, int step, ARegion sameRegion);
+
+        APosition makeLandableFor(HasPosition origin, AUnit building);
+
+        APosition makeWalkableAndFreeOfAnyGroundUnits(
+            HasPosition origin, double maxRadius, double step, AUnit exceptUnit
+        );
     }
 }

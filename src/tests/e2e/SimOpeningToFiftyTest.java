@@ -57,7 +57,9 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
         1218, 2274, 3419, 3175, 3187, 3836, 4436, 4444, 6024, 4784, 5175,
     };
 
-    /** Real supply (halved, like AGame): the opening plays to 50. */
+    /**
+     * Real supply (halved, like AGame): the opening plays to 50.
+     */
     private static final int SUPPLY_TARGET = 50;
     private static final int FRAME_CAP = 16000;
     /**
@@ -97,7 +99,9 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
         OpeningRunner.assertFaithfulBuilderWalksToFirstPylon(numbers());
     }
 
-    /** The number feeds the sim pushes into the harness fields every frame. */
+    /**
+     * The number feeds the sim pushes into the harness fields every frame.
+     */
     private OpeningRunner.BankAndSupply numbers() {
         return new OpeningRunner.BankAndSupply() {
             @Override

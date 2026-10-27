@@ -1,10 +1,12 @@
 # CherryVis Integration for Java StarCraft Bot
 
-This package provides Java 8 integration with the CherryVis replay enhancer for StarCraft: Brood War bots. CherryVis allows adding logs to specific units and events that can be viewed when watching replays.
+This package provides Java 8 integration with the CherryVis replay enhancer for StarCraft: Brood War bots. CherryVis
+allows adding logs to specific units and events that can be viewed when watching replays.
 
 ## Overview
 
-The CherryVis system creates additional files alongside regular replay files that contain logs and data about specific units and events during a game. This information can then be viewed in the CherryVis replay viewer.
+The CherryVis system creates additional files alongside regular replay files that contain logs and data about specific
+units and events during a game. This information can then be viewed in the CherryVis replay viewer.
 
 ## Usage
 

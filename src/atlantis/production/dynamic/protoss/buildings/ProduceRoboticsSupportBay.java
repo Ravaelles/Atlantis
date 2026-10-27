@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
@@ -8,7 +9,6 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

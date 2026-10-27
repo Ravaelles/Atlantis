@@ -11,7 +11,7 @@ import atlantis.util.cache.Cache;
 public class EnemyTooCloseToUnstartedConstruction {
     public static String _STATUS = null;
 
-    private static Cache<Selection> cache = new Cache<>();
+    private static final Cache<Selection> cache = new Cache<>();
 
     public static boolean check(AUnit builder, AUnitType building, APosition position) {
         _STATUS = null;

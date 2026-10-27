@@ -1,12 +1,12 @@
 package atlantis.production.requests.produce;
 
-import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.DecisionDispatcher;
 import atlantis.decisions.goals.protoss.WorkerQuestion;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.order.ProductionOrder;

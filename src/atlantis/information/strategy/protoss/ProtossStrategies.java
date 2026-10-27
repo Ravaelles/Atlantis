@@ -1,12 +1,44 @@
 package atlantis.information.strategy.protoss;
 
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.information.strategy.AStrategy;
 import atlantis.units.AUnitType;
-import atlantis.game.player.Enemy;
 
 
 public class ProtossStrategies extends AStrategy {
+    // Standard
+    public static final AStrategy PROTOSS_Zealot_Core_Dragoon = protossStrategy();
+
+    // =========================================================
+    public static final AStrategy PROTOSS_Zealot_Core_Zealot = protossStrategy();
+    public static final AStrategy PROTOSS_Zealot_Core_Zealot_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_4Zealot_Core_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_Zealot_into_Goon = protossStrategy();
+    public static final AStrategy PROTOSS_ZZ_Core = protossStrategy();
+    public static final AStrategy PROTOSS_ZZZ_Core = protossStrategy();
+    public static final AStrategy PROTOSS_ZZZZ_Core = protossStrategy();
+    // Rush
+    public static final AStrategy PROTOSS_2_Gate_Zealot_vP = protossStrategy();
+    public static final AStrategy PROTOSS_3_Gate_Zealot_vP = protossStrategy();
+    public static final AStrategy PROTOSS_5_Gate_Zealot_vP = protossStrategy();
+    public static final AStrategy PROTOSS_2_Gate_Zealot_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_Speedzealot = protossStrategy();
+    public static final AStrategy PROTOSS_One_Base_Speedzealot = protossStrategy();
+    // Cheese
+    public static final AStrategy PROTOSS_3_Gate = protossStrategy();
+    // Expansion
+    public static final AStrategy PROTOSS_12_Nexus = protossStrategy();
+    public static final AStrategy PROTOSS_Forge_FE_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_Forge_FE_vP = protossStrategy();
+    // Tech
+    public static final AStrategy PROTOSS_Core_Dragoon = protossStrategy();
+    public static final AStrategy PROTOSS_Dragoon_First = protossStrategy();
+    public static final AStrategy PROTOSS_2_Gate_Range_Expand = protossStrategy();
+    public static final AStrategy PROTOSS_2_Gate_DT = protossStrategy();
+    public static final AStrategy PROTOSS_Carrier_Push = protossStrategy();
+    public static final AStrategy PROTOSS_Fast_DT = protossStrategy();
+
     public static AStrategy protossChooseStrategy() {
 //        if (true) return ProtossStrategies.PROTOSS_2_Gate_DT;
 
@@ -59,43 +91,9 @@ public class ProtossStrategies extends AStrategy {
 
     // =========================================================
 
-    // Standard
-    public static final AStrategy PROTOSS_Zealot_Core_Dragoon = protossStrategy();
-    public static final AStrategy PROTOSS_Zealot_Core_Zealot = protossStrategy();
-    public static final AStrategy PROTOSS_Zealot_Core_Zealot_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_4Zealot_Core_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Zealot_into_Goon = protossStrategy();
-    public static final AStrategy PROTOSS_ZZ_Core = protossStrategy();
-    public static final AStrategy PROTOSS_ZZZ_Core = protossStrategy();
-    public static final AStrategy PROTOSS_ZZZZ_Core = protossStrategy();
-
-    // Rush
-    public static final AStrategy PROTOSS_2_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_3_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_5_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_Zealot_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Speedzealot = protossStrategy();
-    public static final AStrategy PROTOSS_One_Base_Speedzealot = protossStrategy();
-
-    // Cheese
-    public static final AStrategy PROTOSS_3_Gate = protossStrategy();
-
-    // Expansion
-    public static final AStrategy PROTOSS_12_Nexus = protossStrategy();
-    public static final AStrategy PROTOSS_Forge_FE_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Forge_FE_vP = protossStrategy();
-
-    // Tech
-    public static final AStrategy PROTOSS_Core_Dragoon = protossStrategy();
-    public static final AStrategy PROTOSS_Dragoon_First = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_Range_Expand = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_DT = protossStrategy();
-    public static final AStrategy PROTOSS_Carrier_Push = protossStrategy();
-    public static final AStrategy PROTOSS_Fast_DT = protossStrategy();
-
-    // =========================================================
-
-    /** Every Protoss strategy instance, in declaration order. */
+    /**
+     * Every Protoss strategy instance, in declaration order.
+     */
     public static java.util.List<AStrategy> allProtossStrategies() {
         java.util.List<AStrategy> protoss = new java.util.ArrayList<>();
         for (AStrategy strategy : allStrategies) {

@@ -17,7 +17,9 @@ public final class ProductionPlan {
         items.add(item);
     }
 
-    /** Read-only view: callers may inspect a plan but cannot invalidate its invariants. */
+    /**
+     * Read-only view: callers may inspect a plan but cannot invalidate its invariants.
+     */
     public List<ProductionItem> items() {
         return Collections.unmodifiableList(items);
     }
@@ -30,7 +32,9 @@ public final class ProductionPlan {
         return items.size();
     }
 
-    /** First planned item of the given producible, or null. */
+    /**
+     * First planned item of the given producible, or null.
+     */
     public ProductionItem firstOf(Producible producible) {
         for (ProductionItem item : items) {
             if (item.item().id().equals(producible.id()))
@@ -40,7 +44,9 @@ public final class ProductionPlan {
         return null;
     }
 
-    /** True when at least one item of this producible is already in the plan. */
+    /**
+     * True when at least one item of this producible is already in the plan.
+     */
     public boolean contains(Producible producible) {
         return firstOf(producible) != null;
     }

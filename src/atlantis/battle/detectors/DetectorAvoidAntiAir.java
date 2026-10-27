@@ -2,6 +2,7 @@ package atlantis.battle.detectors;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -9,7 +10,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class DetectorAvoidAntiAir extends Manager {
@@ -18,6 +18,19 @@ public class DetectorAvoidAntiAir extends Manager {
 
     public DetectorAvoidAntiAir(AUnit unit) {
         super(unit);
+    }
+
+    private static double baseDist() {
+        if (A.supplyUsed() >= 140 && Count.observers() >= 2) return 1.0;
+
+        return 3.5;
+    }
+
+    private static AUnit getDangerouslyNearScourge(AUnit unit) {
+        return unit.enemiesNear()
+            .ofType(AUnitType.Zerg_Scourge)
+            .inRadius(7 + (unit.idIsOdd() ? 2 : 0), unit)
+            .nearestTo(unit);
     }
 
     @Override
@@ -33,11 +46,7 @@ public class DetectorAvoidAntiAir extends Manager {
                 && unit.friendsNear().cannons().countInRadius(2, unit) == 0
         ) return false;
 
-        if (preventRunningFromScourgeIndefinitely()) {
-            return false;
-        }
-
-        return true;
+        return !preventRunningFromScourgeIndefinitely();
     }
 
     public Manager handle() {
@@ -52,9 +61,7 @@ public class DetectorAvoidAntiAir extends Manager {
         AUnit cannon = Select.our().ofType(AUnitType.Protoss_Photon_Cannon).nearestTo(unit);
         if (cannon == null || cannon.distTo(unit) >= 25) return false;
 
-        if (unit.move(cannon, Actions.MOVE_AVOID, "ObserverGoToCannon")) return true;
-
-        return false;
+        return unit.move(cannon, Actions.MOVE_AVOID, "ObserverGoToCannon");
     }
 
     private HasPosition enemyAntiAirInRange(AUnit unit) {
@@ -72,33 +79,15 @@ public class DetectorAvoidAntiAir extends Manager {
         // =========================================================
 
         AUnit nearestEnemy = enemies.inRadius(6 + unit.shieldWound() / 25, unit).nearestTo(unit);
-        if (nearestEnemy != null) return nearestEnemy;
 
-        return null;
-    }
-
-    private static double baseDist() {
-        if (A.supplyUsed() >= 140 && Count.observers() >= 2) return 1.0;
-
-        return 3.5;
-    }
-
-    private static AUnit getDangerouslyNearScourge(AUnit unit) {
-        return unit.enemiesNear()
-            .ofType(AUnitType.Zerg_Scourge)
-            .inRadius(7 + (unit.idIsOdd() ? 2 : 0), unit)
-            .nearestTo(unit);
+        return nearestEnemy;
     }
 
     private boolean preventRunningFromScourgeIndefinitely() {
         if (!Enemy.zerg()) return false;
         if (unit.enemiesNear().ofType(AUnitType.Zerg_Scourge).empty()) return false;
 
-        if (
-            unit.enemiesNear().detectors().empty()
-                && unit.enemiesNear().groundUnits().combatUnits().empty()
-        ) return false;
-
-        return true;
+        return !unit.enemiesNear().detectors().empty()
+            || !unit.enemiesNear().groundUnits().combatUnits().empty();
     }
 }

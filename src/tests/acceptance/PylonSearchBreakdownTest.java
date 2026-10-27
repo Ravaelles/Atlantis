@@ -11,12 +11,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner 2026-10-15 (NEXT #81): the corner-base Pylon hunt needs refusal
@@ -52,7 +47,7 @@ public class PylonSearchBreakdownTest extends WorldStubForTests {
                 builder, AUnitType.Protoss_Pylon, APosition.create(10, 10), 2
             );
 
-            assertTrue(refused == null, "a fully occupied block yields no Pylon tile");
+            assertNull(refused, "a fully occupied block yields no Pylon tile");
             Map<String, Integer> breakdown = ProtossPositionFinder.lastRefusalBreakdown();
             assertFalse(breakdown.isEmpty(), "a failed Pylon sweep must leave its refusal counts behind");
             int total = 0;

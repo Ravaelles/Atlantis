@@ -33,7 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class OpeningDoesNotHoardMineralsTest extends AbstractTestWithWorld {
 
-    /** The owner's threshold: at most this much left when a build starts. */
+    /**
+     * The owner's threshold: at most this much left when a build starts.
+     */
 
     @Override
     public Race initRace() {
@@ -49,9 +51,9 @@ public class OpeningDoesNotHoardMineralsTest extends AbstractTestWithWorld {
         // waiting for 400 minerals was (owner report, 2026-10-07).
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit[] probes = {
-                fake(AUnitType.Protoss_Probe, 8.3),
-                fake(AUnitType.Protoss_Probe, 9.1),
-                fake(AUnitType.Protoss_Probe, 10.6),
+            fake(AUnitType.Protoss_Probe, 8.3),
+            fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 10.6),
         };
         FakeUnit[] ours = units(nexus, probes[0], probes[1], probes[2]);
 
@@ -69,8 +71,8 @@ public class OpeningDoesNotHoardMineralsTest extends AbstractTestWithWorld {
             }
 
             assertTrue(hasAffordableItem,
-                    "with 100 minerals banked the plan must contain something we can pay for;"
-                            + " plan was: " + plan);
+                "with 100 minerals banked the plan must contain something we can pay for;"
+                    + " plan was: " + plan);
         });
     }
 

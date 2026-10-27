@@ -43,6 +43,42 @@ import java.io.File;
  */
 public class UnixChaosGameLauncher implements GameLauncher {
 
+    /**
+     * Runs {@code scripts/run-wine-full.sh} (client first, then the game,
+     * watches for HELLO_ATLANTIS) with inherited I/O so the owner sees everything
+     * in the IDE console, and ends this JVM with the script's exit code.
+     */
+    private static void runWineFullScript(String mapName) {
+        String script = "scripts/run-wine-full.sh";
+        if (!new File(script).exists()) {
+            script = "/sc-ai/Atlantis/scripts/run-wine-full.sh";
+        }
+
+        ProcessBuilder pb = new ProcessBuilder("bash", script, mapName == null ? "" : mapName);
+        pb.inheritIO();
+
+        try {
+            int exitCode = pb.start().waitFor();
+            System.out.println("[Atlantis] run-wine-full.sh finished with exit code " + exitCode);
+            System.exit(exitCode);
+        } catch (Exception e) {
+            System.err.println("[Atlantis] Failed to run " + script + ": " + e.getMessage());
+            System.err.println("[Atlantis] Run it by hand: bash scripts/run-wine-full.sh");
+            System.exit(1);
+        }
+    }
+
+    /**
+     * True when this JVM itself is a Windows process running under Wine -
+     * i.e. the owner started the bot with {@code wine java -jar Atlantis.jar}.
+     * Detected via the {@code winelauncher} environment marker Wine sets; the
+     * absence of /proc is not used on purpose, since that file also exists in
+     * some containers.
+     */
+    private static boolean runningUnderWine() {
+        return System.getenv("WINEDEBUG") != null || System.getenv("WINEDLLOVERRIDES") != null;
+    }
+
     @Override
     public void launch(String[] args) {
         ActiveMap.specifyMap(Main.defineMapToUse(args));
@@ -97,42 +133,6 @@ public class UnixChaosGameLauncher implements GameLauncher {
     }
 
     /**
-     * Runs {@code scripts/run-wine-full.sh} (client first, then the game,
-     * watches for HELLO_ATLANTIS) with inherited I/O so the owner sees everything
-     * in the IDE console, and ends this JVM with the script's exit code.
-     */
-    private static void runWineFullScript(String mapName) {
-        String script = "scripts/run-wine-full.sh";
-        if (!new File(script).exists()) {
-            script = "/sc-ai/Atlantis/scripts/run-wine-full.sh";
-        }
-
-        ProcessBuilder pb = new ProcessBuilder("bash", script, mapName == null ? "" : mapName);
-        pb.inheritIO();
-
-        try {
-            int exitCode = pb.start().waitFor();
-            System.out.println("[Atlantis] run-wine-full.sh finished with exit code " + exitCode);
-            System.exit(exitCode);
-        } catch (Exception e) {
-            System.err.println("[Atlantis] Failed to run " + script + ": " + e.getMessage());
-            System.err.println("[Atlantis] Run it by hand: bash scripts/run-wine-full.sh");
-            System.exit(1);
-        }
-    }
-
-    /**
-     * True when this JVM itself is a Windows process running under Wine -
-     * i.e. the owner started the bot with {@code wine java -jar Atlantis.jar}.
-     * Detected via the {@code winelauncher} environment marker Wine sets; the
-     * absence of /proc is not used on purpose, since that file also exists in
-     * some containers.
-     */
-    private static boolean runningUnderWine() {
-        return System.getenv("WINEDEBUG") != null || System.getenv("WINEDLLOVERRIDES") != null;
-    }
-
-    /**
      * A map name that does not exist in the Wine install is the silent failure
      * this backend is most prone to: BWAPI cannot load the map, the game never
      * starts, and the bot prints "Game table mapping not found" forever while
@@ -164,7 +164,8 @@ public class UnixChaosGameLauncher implements GameLauncher {
             if (foundUnder != null) {
                 AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   a file of that name exists under: " + foundUnder);
                 AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   pass --map=<that path relative to maps/> instead.");
-            } else {
+            }
+            else {
                 AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   no file of that name in: " + mapsRoot);
             }
             AConsole.errPrintln(LogLevel.HIGH, "[Atlantis]   the game will NOT start; the bot would sit in the menu.");
@@ -172,7 +173,9 @@ public class UnixChaosGameLauncher implements GameLauncher {
         }
     }
 
-    /** Returns the folder (relative to maps/) holding a file of this name, or null. */
+    /**
+     * Returns the folder (relative to maps/) holding a file of this name, or null.
+     */
     private String findMapFolder(File dir, String fileName) {
         return findMapFolder(dir, fileName, dir, 0);
     }
@@ -187,7 +190,8 @@ public class UnixChaosGameLauncher implements GameLauncher {
             if (child.isDirectory()) {
                 String found = findMapFolder(child, fileName, root, depth + 1);
                 if (found != null) return found;
-            } else if (child.getName().equalsIgnoreCase(fileName)) {
+            }
+            else if (child.getName().equalsIgnoreCase(fileName)) {
                 String full = child.getParentFile().getPath();
                 String rootPath = root.getPath();
                 String relative = full.startsWith(rootPath) ? full.substring(rootPath.length()) : full;

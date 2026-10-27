@@ -15,11 +15,13 @@ import java.util.List;
  */
 public final class EscapeCandidates {
 
+    /**
+     * Rings in tiles: 4 (boxed fallback), 8 (the want), 12 (open ground).
+     */
+    public static final int[] RADII_TILES = {4, 8, 12};
+
     private EscapeCandidates() {
     }
-
-    /** Rings in tiles: 4 (boxed fallback), 8 (the want), 12 (open ground). */
-    public static final int[] RADII_TILES = { 4, 8, 12 };
 
     public static List<APosition> generate(
         APosition from, EscapeRays.Walkability walk

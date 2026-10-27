@@ -55,7 +55,7 @@ public class OnGameEndLatchTest {
         OnGameEnd.reset();
 
         assertFalse(OnGameEnd.hasExecuted(),
-                "a new game must start with the latch clear, or its real end-of-game cleanup never runs");
+            "a new game must start with the latch clear, or its real end-of-game cleanup never runs");
     }
 
     @Test

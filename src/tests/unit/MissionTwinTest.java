@@ -12,7 +12,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * MISSION twin (NEXT #96): global mission transitions row with from/to
@@ -23,6 +22,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class MissionTwinTest extends WorldStubForTests {
+
+    private static int countRows(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + needle.length();
+        }
+    }
 
     @BeforeEach
     public void cleanLogBefore() {
@@ -54,17 +65,5 @@ public class MissionTwinTest extends WorldStubForTests {
             assertEquals(2, countRows(rows, "\"key\":\"MISSION\""),
                 "one row per transition, repeats stay silent: " + rows);
         });
-    }
-
-    private static int countRows(String text, String needle) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = text.indexOf(needle, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + needle.length();
-        }
     }
 }

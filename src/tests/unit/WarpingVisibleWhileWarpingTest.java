@@ -8,18 +8,14 @@ import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import bwapi.Race;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A Protoss building that just warped (exists but is not completed yet)
@@ -77,7 +73,7 @@ public class WarpingVisibleWhileWarpingTest extends AbstractTestWithWorld {
                 ConstructionRequests.constructions.contains(construction),
                 "a warping building stays listed (painters iterate the list)");
             assertNull(construction.builder(), "and its worker is still released");
-            assertTrue(warping.construction() == construction, "unit links back");
+            assertSame(warping.construction(), construction, "unit links back");
 
             // Completion: the unit-completed event finishes exactly this one.
             warping.setCompleted(true);

@@ -23,47 +23,15 @@ import java.util.List;
  */
 public final class StartBlockFinder {
 
-    /** A chosen anchor: the template and where it was placed. */
-    public static final class Anchor {
-        private final BuildBlock.Spec spec;
-        private final int left;
-        private final int top;
-
-        Anchor(BuildBlock.Spec spec, int left, int top) {
-            this.spec = spec;
-            this.left = left;
-            this.top = top;
-        }
-
-        public BuildBlock.Spec spec() {
-            return spec;
-        }
-
-        public int left() {
-            return left;
-        }
-
-        public int top() {
-            return top;
-        }
-
-        /** The block at its chosen position, for reading its slots. */
-        public BuildBlock block() {
-            return new BuildBlock(spec, left, top);
-        }
-
-        @Override
-        public String toString() {
-            return spec.name + "@(" + left + "," + top + ")";
-        }
-    }
-
     private final TileAvailabilityGrid grid;
     private final List<BuildBlock.Spec> startBlocks;
-
     public StartBlockFinder(TileAvailabilityGrid grid, List<BuildBlock.Spec> startBlocks) {
         this.grid = grid;
         this.startBlocks = startBlocks;
+    }
+
+    private static int dist(int[] origin, int baseX, int baseY) {
+        return Math.max(Math.abs(origin[0] - baseX), Math.abs(origin[1] - baseY));
     }
 
     /**
@@ -103,7 +71,7 @@ public final class StartBlockFinder {
     }
 
     private List<int[]> originsByDistance(
-            BuildBlock.Spec spec, final int baseX, final int baseY, int searchRadius) {
+        BuildBlock.Spec spec, final int baseX, final int baseY, int searchRadius) {
         List<int[]> origins = new ArrayList<>();
 
         int minX = Math.max(0, baseX - searchRadius);
@@ -113,7 +81,7 @@ public final class StartBlockFinder {
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
-                origins.add(new int[] { x, y });
+                origins.add(new int[]{x, y});
             }
         }
 
@@ -127,7 +95,42 @@ public final class StartBlockFinder {
         return origins;
     }
 
-    private static int dist(int[] origin, int baseX, int baseY) {
-        return Math.max(Math.abs(origin[0] - baseX), Math.abs(origin[1] - baseY));
+    /**
+     * A chosen anchor: the template and where it was placed.
+     */
+    public static final class Anchor {
+        private final BuildBlock.Spec spec;
+        private final int left;
+        private final int top;
+
+        Anchor(BuildBlock.Spec spec, int left, int top) {
+            this.spec = spec;
+            this.left = left;
+            this.top = top;
+        }
+
+        public BuildBlock.Spec spec() {
+            return spec;
+        }
+
+        public int left() {
+            return left;
+        }
+
+        public int top() {
+            return top;
+        }
+
+        /**
+         * The block at its chosen position, for reading its slots.
+         */
+        public BuildBlock block() {
+            return new BuildBlock(spec, left, top);
+        }
+
+        @Override
+        public String toString() {
+            return spec.name + "@(" + left + "," + top + ")";
+        }
     }
 }

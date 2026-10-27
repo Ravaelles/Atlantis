@@ -12,22 +12,29 @@ package atlantis.combat.focus;
  */
 public final class TrappedByMassZealots {
 
+    /**
+     * A line that can trade on open ground instead of donating boxed in.
+     */
+    public static final int MIN_COMBAT_UNITS = 4;
+    /**
+     * Enough dragoons to hold a kite line once out.
+     */
+    public static final int MIN_DRAGOONS = 2;
+    /**
+     * A zealot mass the base cannot kite around (sim-bracketed: 4 no, 6 yes).
+     */
+    public static final int MIN_ENEMY_ZEALOTS = 6;
+    /**
+     * Early game, single-base economies with no room to kite at home.
+     */
+    public static final int MAX_GAME_SECONDS = 650;
+
     private TrappedByMassZealots() {
     }
 
-    /** A line that can trade on open ground instead of donating boxed in. */
-    public static final int MIN_COMBAT_UNITS = 4;
-
-    /** Enough dragoons to hold a kite line once out. */
-    public static final int MIN_DRAGOONS = 2;
-
-    /** A zealot mass the base cannot kite around (sim-bracketed: 4 no, 6 yes). */
-    public static final int MIN_ENEMY_ZEALOTS = 6;
-
-    /** Early game, single-base economies with no room to kite at home. */
-    public static final int MAX_GAME_SECONDS = 650;
-
-    /** True when marching out beats holding the pocket. */
+    /**
+     * True when marching out beats holding the pocket.
+     */
     public static boolean applies(int ours, int ourDragoons, int enemyZealots, int gameSeconds) {
         return ours >= MIN_COMBAT_UNITS
             && ourDragoons >= MIN_DRAGOONS

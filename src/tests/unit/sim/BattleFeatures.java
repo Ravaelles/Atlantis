@@ -1,7 +1,6 @@
 package tests.unit.sim;
 
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 
 /**
  * Per-tick feature snapshot: the flat numeric view of one unit the
@@ -33,7 +32,9 @@ public final class BattleFeatures {
         this.friendsNear = friendsNear;
     }
 
-    /** Empty reading: null or dead unit answers zeros, never throws. */
+    /**
+     * Empty reading: null or dead unit answers zeros, never throws.
+     */
     public static BattleFeatures snapshot(AUnit unit) {
         double hpFrac = 0;
         double shieldFrac = 0;
@@ -70,7 +71,9 @@ public final class BattleFeatures {
         return new BattleFeatures(hpFrac, shieldFrac, cooldownFrac, nearest, foes2, foes9, friends);
     }
 
-    /** Compact CSV row for episode archives (manifests, not console). */
+    /**
+     * Compact CSV row for episode archives (manifests, not console).
+     */
     public String toCsv() {
         return String.format(java.util.Locale.US, "%.3f,%.3f,%.3f,%.2f,%d,%d,%d",
             hpFrac, shieldFrac, cooldownFrac, nearestFoeDist, foesMelee2, foesNear9, friendsNear);

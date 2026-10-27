@@ -2,12 +2,13 @@ package tests.unit.world;
 
 import atlantis.core.world.UnitSnapshot;
 import atlantis.units.AUnitType;
-import tests.fakes.FakeFoggedUnit;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tests.fakes.FakeFoggedUnit;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Stage E: fogged units expose their last-known state as a snapshot.
@@ -40,7 +41,7 @@ public class FoggedSnapshotTest {
         // The value is the compensated maxHp (for army sums), not a reading:
         // a rule that treats it as "full health, known" would misrank every
         // wounded fogged unit. See _AI/NEXT.md #2.
-        assertEquals(false, fogged.snapshot().hasKnownHp());
+        assertFalse(fogged.snapshot().hasKnownHp());
         assertEquals(fogged.maxHp(), fogged.snapshot().hp());
     }
 }

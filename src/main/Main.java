@@ -3,8 +3,8 @@ package main;
 import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.GameLauncherFactory;
-import atlantis.game.util.GameSummary;
 import atlantis.game.listeners.OnGameEnd;
+import atlantis.game.util.GameSummary;
 
 import java.io.IOException;
 

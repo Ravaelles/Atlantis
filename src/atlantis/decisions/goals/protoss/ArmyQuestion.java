@@ -19,7 +19,7 @@ public final class ArmyQuestion implements AQuestion {
         if (state.minerals < 100) return null;
 
         return ADecision.decide(
-            ADecision.Kind.TRAIN_ARMY, "army", "army-flow", ADecision.Source.DYNAMIC)
+                ADecision.Kind.TRAIN_ARMY, "army", "army-flow", ADecision.Source.DYNAMIC)
             .frame(0).supply(state.supplyUsed, state.supplyTotal)
             .bank(state.minerals, state.gas)
             .build();

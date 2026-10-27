@@ -27,21 +27,15 @@ public class WantsToAvoid extends Manager {
 
         if (unit.isMelee() && unit.hp() >= 30 && enemies.onlyWorkers()) return true;
 
-        if (
-            unit.isMelee()
-                && !unit.isWorker()
-                && !unit.isTerran()
-                && (new DontAvoidEnemy(unit)).applies()
-        ) {
-            return true;
-        }
+        return unit.isMelee()
+            && !unit.isWorker()
+            && !unit.isTerran()
+            && (new DontAvoidEnemy(unit)).applies();
 
 //        if (unit.isWorker() && enemies.onlyMelee() && unit.meleeEnemiesNearCount(3) == 0) {
 //            unit.addLog("BraveWorker");
 //            return unit.hp() >= 40;
 //        }
-
-        return false;
     }
 
 }

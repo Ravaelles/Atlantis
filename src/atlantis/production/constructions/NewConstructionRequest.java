@@ -5,29 +5,38 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.APositionFinder;
-import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
-import atlantis.units.select.Select;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
+import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
 import atlantis.production.constructions.position.protoss.PylonPosition;
-import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
+import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.log.EventLog;
-import atlantis.util.log.LogKey;
+import atlantis.units.select.Select;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
+import atlantis.util.log.LogLevel;
 import bwapi.TilePosition;
 
 public class NewConstructionRequest {
+    /**
+     * Patience for a failed placement search, in attempts (about one
+     * attempt per frame per live order, so ~20 s): battle clutter clears
+     * in seconds while a structurally unusable area never clears. A
+     * failure that outlasts this still cancels - the number bounds the
+     * wait, and its calibration rides the live proof (NEXT #192).
+     */
+    public static final int NULL_POSITION_PATIENCE_ATTEMPTS = 480;
+
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for it.
      */
@@ -177,7 +186,7 @@ public class NewConstructionRequest {
                 .param("nearTo", nearToString(near))
                 .param("tile", newConstruction.buildPosition() == null ? "-"
                     : "[" + newConstruction.buildPosition().tx() + ","
-                    + newConstruction.buildPosition().ty() + "]")
+                      + newConstruction.buildPosition().ty() + "]")
                 .param("order", order == null ? "-" : order.toString())
                 .param("caller", requestingCaller())
                 .param("supplyUsed", A.supplyUsed())
@@ -302,7 +311,8 @@ public class NewConstructionRequest {
         return dominant.contains("power");
     }
 
-    private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
+    private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
+        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
         // Dominant refusal, not the last one: the sweep ends wherever the
         // rings end, so the final _STATUS names an edge tile, not the rule
         // that killed the search (measured: 8x Gateway "Not powered" while
@@ -402,15 +412,6 @@ public class NewConstructionRequest {
     }
 
     /**
-     * Patience for a failed placement search, in attempts (about one
-     * attempt per frame per live order, so ~20 s): battle clutter clears
-     * in seconds while a structurally unusable area never clears. A
-     * failure that outlasts this still cancels - the number bounds the
-     * wait, and its calibration rides the live proof (NEXT #192).
-     */
-    public static final int NULL_POSITION_PATIENCE_ATTEMPTS = 480;
-
-    /**
      * The wait half of the null-position guard (NEXT #192): an order
      * whose search failed fewer times than the patience waits instead
      * of dying. Pure except reading nothing - the streak decides, so
@@ -460,10 +461,8 @@ public class NewConstructionRequest {
 //        System.out.println("requiredBuilding for " + building + " = " + requiredBuilding);
 
 //        if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
-        if (Count.existing(requiredBuilding) == 0) {
-//            System.out.println("---------- NOOOOO QUIT");
-            return true;
-        }
+        //            System.out.println("---------- NOOOOO QUIT");
+        return Count.existing(requiredBuilding) == 0;
 //        System.out.println("OK");
 
         // =========================================================
@@ -482,6 +481,5 @@ public class NewConstructionRequest {
 //                + "\nIN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
 //        );
 //        ErrorLog.printMaxOncePerMinute(building + " // " + requiredBuilding);
-        return false;
     }
 }

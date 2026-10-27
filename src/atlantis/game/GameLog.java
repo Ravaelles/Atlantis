@@ -4,7 +4,7 @@ import atlantis.util.log.Log;
 
 public class GameLog {
 
-    private static Log instance = new Log(100, 8);
+    private static final Log instance = new Log(100, 8);
 
     public static Log get() {
         return instance;

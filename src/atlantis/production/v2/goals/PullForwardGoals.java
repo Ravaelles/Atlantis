@@ -1,11 +1,6 @@
 package atlantis.production.v2.goals;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.ResourceCost;
-import atlantis.production.v2.ResourceTimeline;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
+import atlantis.production.v2.*;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -49,12 +44,16 @@ public final class PullForwardGoals {
      * still meaningful.
      */
     private static final int LOOKAHEAD_FRAMES = 400;
+    /**
+     * A mineral bank this large is not going to be spent on units alone.
+     */
+    private static final int RICH_MINERALS = 450;
 
     private PullForwardGoals() {
     }
 
     public static List<ProductionGoal> contribute(
-            ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
+        ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
         List<ProductionGoal> goals = new ArrayList<>();
 
         addGasIfMineralRich(goals, timeline, state, race);
@@ -71,7 +70,7 @@ public final class PullForwardGoals {
      */
     public static ProductionGoal supplyGoal(Snapshot state, ProductionRacePolicy race) {
         return DynamicGoals.supplyGoal(new DynamicGoals.GameSnapshot(
-                state.mineralWorkers, 1, state.supplyUsed, state.supplyFree, 0, state.minerals, false), race);
+            state.mineralWorkers, 1, state.supplyUsed, state.supplyFree, 0, state.minerals, false), race);
     }
 
     /**
@@ -79,7 +78,7 @@ public final class PullForwardGoals {
      * that cannot spend its minerals on anything but workers.
      */
     private static void addGasIfMineralRich(
-            List<ProductionGoal> goals, ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
+        List<ProductionGoal> goals, ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
         AUnitType refinery = race.gasBuildingType();
         if (refinery == null)
             return;
@@ -96,15 +95,12 @@ public final class PullForwardGoals {
             return;
 
         goals.add(new ProductionGoal(UnitProducible.of(refinery),
-                ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
     }
 
-    /** A mineral bank this large is not going to be spent on units alone. */
-    private static final int RICH_MINERALS = 450;
-
-
-
-    /** The few numbers these rules read, so they stay testable without a game. */
+    /**
+     * The few numbers these rules read, so they stay testable without a game.
+     */
     public static final class Snapshot {
         public final int supplyFree;
         public final int minerals;
@@ -118,7 +114,7 @@ public final class PullForwardGoals {
         }
 
         public Snapshot(int supplyFree, int minerals, int mineralWorkers, int refineries, int desiredRefineries,
-                int supplyUsed) {
+                        int supplyUsed) {
             this.supplyFree = supplyFree;
             this.minerals = minerals;
             this.mineralWorkers = mineralWorkers;

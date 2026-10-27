@@ -22,7 +22,9 @@ public final class WallAnchorWarpTwin {
     private WallAnchorWarpTwin() {
     }
 
-    /** Nearest anchor slot in tiles, or -1 for no row / no tile. */
+    /**
+     * Nearest anchor slot in tiles, or -1 for no row / no tile.
+     */
     public static double nearestSlotDist(List<APosition> slots, APosition tile) {
         if (slots == null || slots.isEmpty() || tile == null) return -1;
 
@@ -36,7 +38,7 @@ public final class WallAnchorWarpTwin {
     }
 
     public static void emit(String type, APosition warpTile, APosition plannedTile,
-            boolean exact, List<APosition> slots, int frame, String time) {
+                            boolean exact, List<APosition> slots, int frame, String time) {
         if (type == null || warpTile == null) return;
         // Decitiles, the KiteTwin convention: JSON params carry no doubles.
         int anchorDist = scaled(nearestSlotDist(slots, warpTile));

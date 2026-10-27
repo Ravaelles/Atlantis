@@ -38,6 +38,44 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
      */
     private static final int PYLON_RADIUS_TILES = 6;
 
+    private static boolean isPylonSpotFree(int x, int y) {
+        for (int dx = 0; dx < 2; dx++) {
+            for (int dy = 0; dy < 2; dy++) {
+                APosition tile = APosition.create(x + dx, y + dy);
+                if (tile.isOutOfBounds() || !tile.isWalkable()) return false;
+                if (!tile.isBuildableIncludeBuildings()) return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean tileWithinRadius(int pylonX, int pylonY, int tx, int ty) {
+        return Math.max(Math.abs(tx - pylonX), Math.abs(ty - pylonY)) <= PYLON_RADIUS_TILES + 1;
+    }
+
+    /**
+     * Would a Pylon at this unit's position power the tile once finished?
+     */
+    private static boolean withinPowerRadius(AUnit pylon, int tx, int ty) {
+        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1);
+    }
+
+    /**
+     * Frames until this building finishes, estimated from its health fraction -
+     * the engine does not expose remaining build time through this binding. The
+     * estimate is an upper bound (a fresh Pylon reports its full duration), which
+     * is the safe direction for a time shift.
+     */
+    private static int framesUntilComplete(AUnit unit) {
+        int hpPercent = unit.hpPercent();
+        if (hpPercent >= 100) return 0;
+
+        int total = unit.type().totalTrainTime();
+        int remaining = (int) Math.ceil(total * (100 - hpPercent) / 100.0);
+
+        return Math.max(0, remaining);
+    }
+
     @Override
     public boolean isPowered(int tx, int ty) {
         // No game attached (a unit test): there are no Pylons, so nothing is
@@ -93,41 +131,5 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         }
 
         return false;
-    }
-
-    private static boolean isPylonSpotFree(int x, int y) {
-        for (int dx = 0; dx < 2; dx++) {
-            for (int dy = 0; dy < 2; dy++) {
-                APosition tile = APosition.create(x + dx, y + dy);
-                if (tile.isOutOfBounds() || !tile.isWalkable()) return false;
-                if (!tile.isBuildableIncludeBuildings()) return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean tileWithinRadius(int pylonX, int pylonY, int tx, int ty) {
-        return Math.max(Math.abs(tx - pylonX), Math.abs(ty - pylonY)) <= PYLON_RADIUS_TILES + 1;
-    }
-
-    /** Would a Pylon at this unit's position power the tile once finished? */
-    private static boolean withinPowerRadius(AUnit pylon, int tx, int ty) {
-        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1);
-    }
-
-    /**
-     * Frames until this building finishes, estimated from its health fraction -
-     * the engine does not expose remaining build time through this binding. The
-     * estimate is an upper bound (a fresh Pylon reports its full duration), which
-     * is the safe direction for a time shift.
-     */
-    private static int framesUntilComplete(AUnit unit) {
-        int hpPercent = unit.hpPercent();
-        if (hpPercent >= 100) return 0;
-
-        int total = unit.type().totalTrainTime();
-        int remaining = (int) Math.ceil(total * (100 - hpPercent) / 100.0);
-
-        return Math.max(0, remaining);
     }
 }

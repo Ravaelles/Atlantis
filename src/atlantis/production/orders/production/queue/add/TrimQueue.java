@@ -25,7 +25,8 @@ public class TrimQueue {
             if (maxCount >= (dominantType.isCombatBuilding() ? 3 : 2)) {
                 int cancelCount = maxCount - 1;
                 cancelOrders(orders, dominantType, cancelCount, typeCount);
-            } else {
+            }
+            else {
                 break; // Exit if no type has 2 or more orders
             }
 

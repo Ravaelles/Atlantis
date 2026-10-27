@@ -176,10 +176,9 @@ public class CancelTooLongConstructions {
         }
 
         int timeoutSeconds = base + bonus + (
-                + (type.isBase() || type.isCombatBuilding() ? 20 : 0)
+            +(type.isBase() || type.isCombatBuilding() ? 20 : 0)
                 + ((int) (2 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
         );
-
 
 
         return timeoutSeconds;
@@ -240,7 +239,7 @@ public class CancelTooLongConstructions {
 
             ErrorLog.printMaxOncePerMinute(
                 "### FAILED ### Requesting " + type + " as it got cancelled\n" +
-                "New requested order: " + newOrder
+                    "New requested order: " + newOrder
             );
 
             if (newOrder == null && type.isProtossImportantTechBuilding()) {
@@ -248,7 +247,7 @@ public class CancelTooLongConstructions {
 
                 ErrorLog.printMaxOncePerMinute(
                     "### IMPORTANT ### Re-request failed again " + type + "\n" +
-                    "Re-requested: " + newOrder
+                        "Re-requested: " + newOrder
                 );
             }
         }

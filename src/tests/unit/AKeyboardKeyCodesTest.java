@@ -59,14 +59,14 @@ public class AKeyboardKeyCodesTest {
         // key produces is a dead shortcut, and that is exactly the failure the
         // audit caught (tilde wired as 96).
         int[] wired = {
-                VC_ESCAPE,
-                VC_MINUS, 3658, VC_OPEN_BRACKET, // slower trio
-                VC_EQUALS, 3662, VC_CLOSE_BRACKET, // faster trio
-                VC_C,
-                VC_P,
-                VC_PAUSE, VC_SPACE, VC_CONTROL, VC_BACKQUOTE,
-                VC_1, VC_2, VC_3, VC_4, VC_5, VC_6, VC_7, VC_8, VC_9,
-                VC_0,
+            VC_ESCAPE,
+            VC_MINUS, 3658, VC_OPEN_BRACKET, // slower trio
+            VC_EQUALS, 3662, VC_CLOSE_BRACKET, // faster trio
+            VC_C,
+            VC_P,
+            VC_PAUSE, VC_SPACE, VC_CONTROL, VC_BACKQUOTE,
+            VC_1, VC_2, VC_3, VC_4, VC_5, VC_6, VC_7, VC_8, VC_9,
+            VC_0,
         };
 
         for (int code : wired) {
@@ -75,7 +75,7 @@ public class AKeyboardKeyCodesTest {
             // found wired to tilde.
             assertTrue(code > 0, "Key code must be positive: " + code);
             assertTrue(code != 96, "96 is not a real key code in this library"
-                    + " (tilde/backquote is 41) - a wired case with it is dead");
+                + " (tilde/backquote is 41) - a wired case with it is dead");
         }
     }
 
@@ -92,10 +92,10 @@ public class AKeyboardKeyCodesTest {
         // test running under Env.isLocal() would take the whole suite down.
         // 3665 is the RIGHT Ctrl - an observed code (owner's live hook output),
         // not a named library constant (see CHALLENGES/Keyboard.md).
-        for (int code : new int[] {
-                2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 26, 27, 3658, 3662, 3665,
-                25, 46, 29, 41, 57, 3653,
+        for (int code : new int[]{
+            2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            12, 13, 26, 27, 3658, 3662, 3665,
+            25, 46, 29, 41, 57, 3653,
         }) {
             for (int location : new int[]{1, 2, 3}) {
                 int finalCode = code;

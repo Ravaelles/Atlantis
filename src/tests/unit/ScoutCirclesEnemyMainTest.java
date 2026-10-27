@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Owner report 2026-10-23 (NEXT #187, critical): a scout that finds the
@@ -41,6 +41,10 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
     private static final double FOE_X = 117, FOE_Y = 9;
 
     private static final Pattern TILE = Pattern.compile("\\[\\s*(\\d+(?:\\.\\d+)?)\\s*,\\s*(\\d+(?:\\.\\d+)?)\\s*\\]");
+
+    private static double dist(double[] a, double bx, double by) {
+        return Math.hypot(a[0] - bx, a[1] - by);
+    }
 
     @BeforeEach
     public void resetScoutState() throws Exception {
@@ -109,13 +113,10 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
         for (FakeOrderSink.Record r : ((FakeOrderSink) scout.orderSink()).orders()) {
             if (!r.operation.equals("move") && !r.operation.equals("patrol")) continue;
             Matcher m = TILE.matcher(r.detail);
-            if (m.find()) out.add(new double[]{Double.parseDouble(m.group(1)) / 32, Double.parseDouble(m.group(2)) / 32});
+            if (m.find())
+                out.add(new double[]{Double.parseDouble(m.group(1)) / 32, Double.parseDouble(m.group(2)) / 32});
         }
         return out;
-    }
-
-    private static double dist(double[] a, double bx, double by) {
-        return Math.hypot(a[0] - bx, a[1] - by);
     }
 
     @Test
@@ -127,20 +128,20 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
 
         FakeUnit scout = ours[1];
         List<double[]> dests = moveDests(scout);
-        assertTrue(!dests.isEmpty(), "the chain issues scout moves at all: "
+        assertFalse(dests.isEmpty(), "the chain issues scout moves at all: "
             + ((FakeOrderSink) scout.orderSink()).orders());
         for (double[] d : dests) {
             assertTrue(dist(d, FOE_X, FOE_Y) <= 25,
                 "every destination stays around the enemy main, never a far expo: "
                     + dests.stream().map(p -> "(" + (int) p[0] + "," + (int) p[1] + ")")
-                        .reduce((a, b) -> a + " " + b).orElse("")
+                    .reduce((a, b) -> a + " " + b).orElse("")
                     + " logs=" + scout.managerLogs());
         }
         String logs = scout.managerLogs().toString();
         assertTrue(logs.contains("RoamAroundEnemyBase") || logs.contains("MoveBetweenEnemyBaseAndEnemyNatural"),
             "a main-hugging manager claims the scout: " + logs);
         assertTrue(!logs.contains("ScoutPotentialEnemyBases") && !logs.contains("ScoutFreeBases")
-            && !logs.contains("ScoutUnexploredBasesNearEnemy") && !logs.contains("ScoutEnemyBasesWithoutBase"),
+                && !logs.contains("ScoutUnexploredBasesNearEnemy") && !logs.contains("ScoutEnemyBasesWithoutBase"),
             "no far-expo explorer claims a healthy scout at a found main: " + logs);
     }
 
@@ -154,10 +155,9 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
             zealot.position = ours[1].position().translateByPixels(5 * 32, 0));
 
         String logs = ours[1].managerLogs().toString();
-        assertTrue(!logs.contains("ScoutSeparateFromCloseEnemies"),
-            "zealot at 5 tiles (range + 3 = ~4) is not a chase yet: " + logs);
+        assertFalse(logs.contains("ScoutSeparateFromCloseEnemies"), "zealot at 5 tiles (range + 3 = ~4) is not a chase yet: " + logs);
         List<double[]> dests = moveDests(ours[1]);
-        assertTrue(!dests.isEmpty(), "scout keeps working: " + logs);
+        assertFalse(dests.isEmpty(), "scout keeps working: " + logs);
         String destStr = dests.stream().map(p -> "(" + (int) p[0] + "," + (int) p[1] + ")")
             .reduce((a, b) -> a + " " + b).orElse("");
         for (double[] d : dests) {
@@ -200,7 +200,10 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
         double startHome = Math.hypot(113 - HOME_X, 12 - HOME_Y);
         boolean homeward = false;
         for (double[] d : moveDests(ours[1])) {
-            if (d[0] <= 103 && Math.hypot(d[0] - HOME_X, d[1] - HOME_Y) <= startHome - 8) homeward = true;
+            if (d[0] <= 103 && Math.hypot(d[0] - HOME_X, d[1] - HOME_Y) <= startHome - 8) {
+                homeward = true;
+                break;
+            }
         }
         assertTrue(homeward, "hurt chased scout retreats toward home, not merely south: scoutHp=" + ours[1].hp()
             + " pos=" + ours[1].position() + " logs=" + ours[1].managerLogs());
@@ -228,8 +231,7 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
         });
 
         String logs = ours[1].managerLogs().toString();
-        assertTrue(!logs.contains("ScoutHurtHome"),
-            "no march home through the blocker: " + logs);
+        assertFalse(logs.contains("ScoutHurtHome"), "no march home through the blocker: " + logs);
         assertTrue(logs.contains("ScoutHurtField") || logs.contains("ScoutSeparate"),
             "blocked hurt scout micros locally instead: " + logs);
         double startHome = Math.hypot(113 - HOME_X, 12 - HOME_Y);

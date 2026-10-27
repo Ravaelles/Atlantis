@@ -15,6 +15,7 @@ import java.util.Map;
 public class ProtossForbiddenByStreetGrid {
     public static final int GRID_SIZE_X = 11;
     public static final int GRID_SIZE_Y = 7;
+    private static final Map<AUnitType, Integer> specialExclusions = new HashMap<>();
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -95,7 +96,7 @@ public class ProtossForbiddenByStreetGrid {
 
         // P:2-3  G:4-7  G:8-11
         boolean moduloXIsInvalid = moduloX != 2 && moduloX != 4 && moduloX != 6
-                && (moduloX != 8 || !A.hasMinerals(500));
+            && (moduloX != 8 || !A.hasMinerals(500));
 
         // G:2-4  G:5-7
         boolean moduloYIsInvalid = moduloY != 2 && moduloY != 5;
@@ -221,13 +222,12 @@ public class ProtossForbiddenByStreetGrid {
 
         if (A.supplyTotal() <= 15) {
             if (building.isPylon()) return true;
-            if (building.isForge()) return true;
+
+            return building.isForge();
         }
 
         return false;
     }
-
-    private static Map<AUnitType, Integer> specialExclusions = new HashMap<>();
 
     private static boolean specialExclusionPermission(AUnitType building) {
         if (specialExclusions.isEmpty()) return false;

@@ -28,6 +28,23 @@ import java.util.Map;
  */
 public final class BuildOrderGoals {
 
+    /**
+     * The supply gate up to which a supply provider counts as the OPENING one - the "Pylon
+     * at 8" that every Protoss build order in this repository starts with.
+     *
+     * <p>
+     * <b>Chosen from the build orders, not guessed.</b> Checked against
+     * {@code bwapi-data/AI/build_orders/Protoss/*.txt}: the first Pylon is at supply <b>8</b>
+     * in every file, and the second one is at <b>15</b> or <b>16</b>. So the opening is a
+     * narrow band, and 12 sits between it and the second provider - it covers the real
+     * opening with headroom for a build order that asks a few supply earlier or later,
+     * and excludes the first top-up. A threshold of 16 was tried first and the test caught
+     * it: it silently promoted the supply-16 Pylon too, which is exactly the depot the
+     * rule must not touch.
+     * </p>
+     */
+    static final int OPENING_SUPPLY_THRESHOLD = 12;
+
     private BuildOrderGoals() {
     }
 
@@ -67,11 +84,11 @@ public final class BuildOrderGoals {
             if (!emittedTypes.add(id)) continue;
 
             goals.add(new ProductionGoal(
-                    row.item(),
-                    priorityFor(row, line, supplyUsed),
-                    missing,
-                    0,
-                    TargetPlacement.namedArea(row.positionModifier())));
+                row.item(),
+                priorityFor(row, line, supplyUsed),
+                missing,
+                0,
+                TargetPlacement.namedArea(row.positionModifier())));
         }
 
         goals.replaceAll(goal -> goal.withSource("build-order"));
@@ -97,7 +114,7 @@ public final class BuildOrderGoals {
      * provider has exactly one author (the row), never two.
      */
     public static boolean hasUnproducedRowOf(
-            List<BuildOrderRow> rows, BuildOrderProgress progress, Producible item) {
+        List<BuildOrderRow> rows, BuildOrderProgress progress, Producible item) {
         if (rows == null || progress == null || item == null) return false;
 
         int demanded = 0;
@@ -147,23 +164,6 @@ public final class BuildOrderGoals {
 
         return ProductionGoal.PRIORITY_NORMAL;
     }
-
-    /**
-     * The supply gate up to which a supply provider counts as the OPENING one - the "Pylon
-     * at 8" that every Protoss build order in this repository starts with.
-     *
-     * <p>
-     * <b>Chosen from the build orders, not guessed.</b> Checked against
-     * {@code bwapi-data/AI/build_orders/Protoss/*.txt}: the first Pylon is at supply <b>8</b>
-     * in every file, and the second one is at <b>15</b> or <b>16</b>. So the opening is a
-     * narrow band, and 12 sits between it and the second provider - it covers the real
-     * opening with headroom for a build order that asks a few supply earlier or later,
-     * and excludes the first top-up. A threshold of 16 was tried first and the test caught
-     * it: it silently promoted the supply-16 Pylon too, which is exactly the depot the
-     * rule must not touch.
-     * </p>
-     */
-    static final int OPENING_SUPPLY_THRESHOLD = 12;
 
     /**
      * Is this row the supply provider that unlocks production, rather than a later top-up?

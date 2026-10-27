@@ -3,8 +3,8 @@ package tests.unit;
 import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.focus.MiddleFocusChoke;
-import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.combat.retreating.RetreatFloor;
+import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.combat.retreating.RetreatLadder;
 import atlantis.combat.strategy.ChokeStandoff;
 import atlantis.game.A;
@@ -22,10 +22,7 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Retreat floor + ladder (owner orders 2026-10-25 / 2026-10-26): a
@@ -52,24 +49,38 @@ public class RetreatFloorTest extends WorldStubForTests {
     private AChoke middle;
     private FakeUnit nexus;
 
+    private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
+        FakeUnit[] all = new FakeUnit[rest.length + 1];
+        all[0] = first;
+        System.arraycopy(rest, 0, all, 1, rest.length);
+
+        return all;
+    }
+
     private void stubChokes() {
         mainChoke = new FakeChoke(APosition.create(60, 20), 10);
         middle = new FakeChoke(APosition.create(100, 100), 18);
     }
 
-    /** The middle-choke standing line: RADIUS + 6 off its center, our side. */
+    /**
+     * The middle-choke standing line: RADIUS + 6 off its center, our side.
+     */
     private HasPosition floorLine() {
         return middle.center().translateTilesTowards(
             ChokeStandoff.standoffTiles(middle), nexus.position());
     }
 
-    /** The natural-choke standing line - the last rung, never the main. */
+    /**
+     * The natural-choke standing line - the last rung, never the main.
+     */
     private HasPosition naturalLine() {
         return mainChoke.center().translateTilesTowards(
             ChokeStandoff.standoffTiles(mainChoke), nexus.position());
     }
 
-    /** What the fight funnel records (ArmyContact.noteFight) on every engaged frame. */
+    /**
+     * What the fight funnel records (ArmyContact.noteFight) on every engaged frame.
+     */
     private void recordFightAt(HasPosition ground) {
         RetreatLadder.noteFightGround(ground, Alpha.get().size());
     }
@@ -110,8 +121,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertTrue(clamped.distTo(nexus) > deep.distTo(nexus),
                         "stopped short of the deep rally: " + clamped.distTo(nexus)
                             + " vs " + deep.distTo(nexus));
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -143,8 +153,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertNotNull(kept, "the clamp answers a point");
                     assertTrue(kept.distTo(out) < 0.1,
                         "a rally already in front of the line is never pulled back: " + kept);
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -177,8 +186,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertNotNull(kept, "the clamp answers a point");
                     assertTrue(kept.distTo(deep) < 0.1,
                         "an army inside its own choke line keeps today's rally: " + kept);
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -217,8 +225,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                             + clamped.distTo(mainChoke.center()) + " tiles off its center");
                     assertTrue(clamped.distTo(nexus) > 10,
                         "never the main itself: " + clamped.distTo(nexus) + " tiles off the Nexus");
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -257,8 +264,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                             + clamped.distTo(mainChoke.center()) + " tiles off its center");
                     assertTrue(clamped.distTo(floorLine()) > 10,
                         "and never back down to the middle line: " + clamped);
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -296,8 +302,7 @@ public class RetreatFloorTest extends WorldStubForTests {
                             + " vs cluster center " + Alpha.get().center());
                     assertTrue(clamped.distTo(nexus) > 20,
                         "and it stays off the main: " + clamped.distTo(nexus));
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
@@ -334,13 +339,14 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertEquals(
                         far.distTo(nexus.position()), RetreatLadder.lastFightDepth(), 0.01,
                         "a squad fight records its depth from the main");
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
         }
     }
+
+    // =========================================================
 
     @Test
     public void retreatNeverGoesBehindTheMiddleLine() {
@@ -373,15 +379,12 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertTrue(dest.distTo(nexus) >= floor.distTo(nexus) - 0.5,
                         "the retreat stops at the middle line: dest " + dest
                             + " is behind floor " + floor);
-                }
-                finally {
+                } finally {
                     leaveAlpha(army);
                 }
             });
         }
     }
-
-    // =========================================================
 
     private void joinAlpha(FakeUnit[] army) {
         for (FakeUnit unit : army) Alpha.get().addUnit(unit);
@@ -389,13 +392,5 @@ public class RetreatFloorTest extends WorldStubForTests {
 
     private void leaveAlpha(FakeUnit[] army) {
         for (FakeUnit unit : army) Alpha.get().removeUnit(unit);
-    }
-
-    private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
-        FakeUnit[] all = new FakeUnit[rest.length + 1];
-        all[0] = first;
-        System.arraycopy(rest, 0, all, 1, rest.length);
-
-        return all;
     }
 }

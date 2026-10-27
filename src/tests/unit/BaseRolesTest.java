@@ -25,7 +25,9 @@ public class BaseRolesTest {
         return new BaseRoles.BaseNode(APosition.create(tx, ty), start, minerals, gas);
     }
 
-    /** All connected, Euclidean ground measure. */
+    /**
+     * All connected, Euclidean ground measure.
+     */
     private static BaseRoles.GroundLink mesh() {
         return new BaseRoles.GroundLink() {
             @Override

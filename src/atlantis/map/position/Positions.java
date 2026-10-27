@@ -4,6 +4,7 @@ import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 
 import atlantis.util.AConsole;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -14,8 +15,10 @@ import java.util.*;
 //public class Positions<T extends Point<Position>> {
 public class Positions<T extends HasPosition> implements Serializable {
 
+    private static int _lastIndex = 0;
     private final ArrayList<T> positions = new ArrayList<>();
 
+    // =====================================================================
     /**
      * This mapping can be used to store extra values assigned to positions e.g. if positions reprents mineral
      * fields, we can easily store info how many workers are gathering each mineral field thanks to this
@@ -23,16 +26,14 @@ public class Positions<T extends HasPosition> implements Serializable {
      */
     private HashMap<T, Double> positionValues;
 
-    // =====================================================================
-
     public Positions() {
     }
+
+    // =====================================================================
 
     public Positions(Collection<T> positionsToAdd) {
         addPositions(positionsToAdd);
     }
-
-    // =====================================================================
 
     //    public static T nearestToFrom(HasPosition nearestTo, List<T extends HasPosition> positionsList) {
     public static HasPosition nearestToFrom(HasPosition nearestTo, Collection<? extends HasPosition> positionsList) {
@@ -89,6 +90,9 @@ public class Positions<T extends HasPosition> implements Serializable {
         return positions.get(index);
     }
 
+    // =========================================================
+    // Special methods
+
     public Positions<T> limit(int n) {
         if (positions.size() > n) {
             return new Positions<>(positions.subList(0, n));
@@ -96,9 +100,6 @@ public class Positions<T extends HasPosition> implements Serializable {
 
         return this;
     }
-
-    // =========================================================
-    // Special methods
 
     /**
      * Shuffle positions to have random sequence in the list.
@@ -208,6 +209,9 @@ public class Positions<T extends HasPosition> implements Serializable {
         return bestPosition;
     }
 
+    // =========================================================
+    // Override methods
+
     private void ensureValueMappingExists() {
         positionValues = new HashMap<>();
         for (T position : positions) {
@@ -216,7 +220,7 @@ public class Positions<T extends HasPosition> implements Serializable {
     }
 
     // =========================================================
-    // Override methods
+    // Auxiliary
 
     @Override
     public String toString() {
@@ -229,8 +233,7 @@ public class Positions<T extends HasPosition> implements Serializable {
         return string;
     }
 
-    // =========================================================
-    // Auxiliary
+    // === Getters =============================================
 
     public void print() {
         AConsole.println("Positions in list:");
@@ -239,8 +242,6 @@ public class Positions<T extends HasPosition> implements Serializable {
         }
         AConsole.println();
     }
-
-    // === Getters =============================================
 
     /**
      * Returns iterable collection of positions in this object.
@@ -259,8 +260,6 @@ public class Positions<T extends HasPosition> implements Serializable {
 
         return copy;
     }
-
-    private static int _lastIndex = 0;
 
     public Positions<T> unexplored() {
         positions.removeIf(HasPosition::isExplored);
@@ -326,7 +325,7 @@ public class Positions<T extends HasPosition> implements Serializable {
     }
 
     public APosition average() {
-        return PositionHelper.getPositionAverage((Collection<HasPosition>) positions);
+        return PositionHelper.getPositionAverage(positions);
     }
 
     public APosition center() {

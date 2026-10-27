@@ -2,6 +2,7 @@ package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.cluster.Alpha;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
@@ -11,7 +12,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 import java.util.ArrayList;
 

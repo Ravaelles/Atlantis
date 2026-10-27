@@ -30,6 +30,10 @@ public class GoalBoardWalletTest {
         return ids;
     }
 
+    private static List<Goal> funded(BoardState state, int minerals, int gas) {
+        return GoalBoardWallet.funded(state, ProtossOpening.goals(), minerals, gas);
+    }
+
     private BoardState blockedPoor() {
         return BoardState.builder()
             .minerals(61).gas(0).supply(39, 41)
@@ -47,10 +51,6 @@ public class GoalBoardWalletTest {
             ids(funded),
             "a 61-mineral bank at a 39/41 block funds the supply rescue and nothing else");
         assertEquals("supply-pylon", funded.get(0).id());
-    }
-
-    private static List<Goal> funded(BoardState state, int minerals, int gas) {
-        return GoalBoardWallet.funded(state, ProtossOpening.goals(), minerals, gas);
     }
 
     @Test

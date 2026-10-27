@@ -17,11 +17,7 @@ import tests.fakes.FakeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Dynamic Dragoon rows never wait on supply, and their own arrival fires
@@ -66,14 +62,14 @@ public class DynamicDragoonOrderTest extends AbstractTestWithWorld {
 
             ProductionOrder dragoon = AddToQueue.withStandardPriority(AUnitType.Protoss_Dragoon);
             Queue.get().clearCache();
-            assertTrue(dragoon != null, "dynamic Dragoon demand queues a row");
+            assertNotNull(dragoon, "dynamic Dragoon demand queues a row");
             assertEquals(
                 0, dragoon.minSupply(),
                 "dynamic Dragoon rows never wait on supply: " + dragoon.minSupply());
 
             ProductionOrder zealot = AddToQueue.withStandardPriority(AUnitType.Protoss_Zealot);
             Queue.get().clearCache();
-            assertTrue(zealot != null, "control row queues");
+            assertNotNull(zealot, "control row queues");
             assertTrue(
                 zealot.minSupply() > 0,
                 "only Dragoons get the zero gate, the rest keeps its order: " + zealot.minSupply());
@@ -113,11 +109,9 @@ public class DynamicDragoonOrderTest extends AbstractTestWithWorld {
             ProductionOrder dragoon = AddToQueue.withStandardPriority(AUnitType.Protoss_Dragoon);
             Queue.get().clearCache();
 
-            assertTrue(dragoon != null, "row queued");
+            assertNotNull(dragoon, "row queued");
             assertEquals(1, seen.size(), "one dynamic-unit event per queued Dragoon");
-            assertTrue(
-                seen.get(0)[0] == dragoon,
-                "the event carries the queued row itself");
+            assertSame(seen.get(0)[0], dragoon, "the event carries the queued row itself");
         });
     }
 
@@ -142,7 +136,7 @@ public class DynamicDragoonOrderTest extends AbstractTestWithWorld {
 
             ProductionOrder dragoon = AddToQueue.withStandardPriority(AUnitType.Protoss_Dragoon);
             Queue.get().clearCache();
-            assertTrue(dragoon != null, "row queued");
+            assertNotNull(dragoon, "row queued");
 
             new TrainQueuedDragoonImmediately().onEvent(Event.DYNAMIC_UNIT_QUEUED, dragoon);
 

@@ -1,6 +1,7 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -9,7 +10,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.game.player.Enemy;
 import atlantis.util.AMath;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;

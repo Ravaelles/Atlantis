@@ -15,9 +15,8 @@ public class ProtectScvBusyConstructing extends Manager {
     public boolean applies() {
         if (!We.terran()) return false;
         if (Count.ourCombatUnits() >= 1) return false;
-        if (unit.id() % 6 != 0 || unit.hp() <= 13) return false;
 
-        return true;
+        return unit.id() % 6 == 0 && unit.hp() > 13;
     }
 
     @Override

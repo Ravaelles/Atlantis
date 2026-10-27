@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Production capacity for the opening. */
+/**
+ * Production capacity for the opening.
+ */
 public final class GatewayGoal implements Goal {
 
     public static final int WANTED_GATEWAYS = 2;

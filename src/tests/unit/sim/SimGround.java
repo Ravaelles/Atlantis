@@ -29,6 +29,26 @@ public final class SimGround {
         this.snap = snap;
     }
 
+    /**
+     * Footprint overlap between a building placed at (tx, ty) and a
+     * standing unit, in tiles. Shared by order validation and the
+     * warp-start proximity check so both answer the same question.
+     */
+    public static boolean footprintsOverlap(AUnitType type, int tx, int ty,
+                                            atlantis.units.AUnit other) {
+        AUnitType otherType = other.type();
+        int ax1 = tx;
+        int ay1 = ty;
+        int ax2 = tx + type.getTilesWidth();
+        int ay2 = ty + type.getTilesHeights();
+        int bx1 = other.position().tx();
+        int by1 = other.position().ty();
+        int bx2 = bx1 + otherType.getTilesWidth();
+        int by2 = by1 + otherType.getTilesHeights();
+
+        return ax1 < bx2 && bx1 < ax2 && ay1 < by2 && by1 < ay2;
+    }
+
     public int mapWidthTiles() {
         return snap.w;
     }
@@ -41,7 +61,9 @@ public final class SimGround {
         return tx >= 0 && ty >= 0 && tx < snap.w && ty < snap.h;
     }
 
-    /** Tiles: '.' buildable, 'w' walkable-only, 'x' blocked. */
+    /**
+     * Tiles: '.' buildable, 'w' walkable-only, 'x' blocked.
+     */
     public char tileAt(int tx, int ty) {
         if (!inBounds(tx, ty)) return 'x';
         String row = snap.tiles.get(ty);
@@ -57,7 +79,9 @@ public final class SimGround {
         return tileAt(tx, ty) == '.';
     }
 
-    /** Every footprint tile must be buildable (OpenBW rule 6, simplified). */
+    /**
+     * Every footprint tile must be buildable (OpenBW rule 6, simplified).
+     */
     public boolean footprintBuildable(AUnitType type, int tx, int ty) {
         int w = type.getTilesWidth();
         int h = type.getTilesHeights();
@@ -70,7 +94,9 @@ public final class SimGround {
         return true;
     }
 
-    /** True when a geyser resource sits on this tile (refinery rule). */
+    /**
+     * True when a geyser resource sits on this tile (refinery rule).
+     */
     public boolean isGeyserTile(int tx, int ty) {
         for (MapSnapshot.Res res : snap.resources) {
             if ("G".equals(res.t) && res.x == tx && res.y == ty) return true;
@@ -79,7 +105,9 @@ public final class SimGround {
         return false;
     }
 
-    /** Region id under a tile, or -1 outside any region. */
+    /**
+     * Region id under a tile, or -1 outside any region.
+     */
     public int regionIdAt(int tx, int ty) {
         if (!inBounds(tx, ty)) return -1;
 
@@ -129,8 +157,8 @@ public final class SimGround {
         ArrayDeque<Integer> open = new ArrayDeque<>();
         open.add(sy * w + sx);
         dist[sy * w + sx] = 0;
-        int[] stepX = { 1, -1, 0, 0 };
-        int[] stepY = { 0, 0, 1, -1 };
+        int[] stepX = {1, -1, 0, 0};
+        int[] stepY = {0, 0, 1, -1};
         while (!open.isEmpty()) {
             int cur = open.poll();
             int cx = cur % w;
@@ -152,26 +180,8 @@ public final class SimGround {
     }
 
     /**
-     * Footprint overlap between a building placed at (tx, ty) and a
-     * standing unit, in tiles. Shared by order validation and the
-     * warp-start proximity check so both answer the same question.
+     * Tiles of a footprint as positions, for occupancy checks.
      */
-    public static boolean footprintsOverlap(AUnitType type, int tx, int ty,
-            atlantis.units.AUnit other) {
-        AUnitType otherType = other.type();
-        int ax1 = tx;
-        int ay1 = ty;
-        int ax2 = tx + type.getTilesWidth();
-        int ay2 = ty + type.getTilesHeights();
-        int bx1 = other.position().tx();
-        int by1 = other.position().ty();
-        int bx2 = bx1 + otherType.getTilesWidth();
-        int by2 = by1 + otherType.getTilesHeights();
-
-        return ax1 < bx2 && bx1 < ax2 && ay1 < by2 && by1 < ay2;
-    }
-
-    /** Tiles of a footprint as positions, for occupancy checks. */
     public List<APosition> footprintTiles(AUnitType type, int tx, int ty) {
         List<APosition> out = new ArrayList<>();
         for (int y = ty; y < ty + type.getTilesHeights(); y++) {
@@ -183,7 +193,9 @@ public final class SimGround {
         return out;
     }
 
-    /** Mineral patch ids of one snapshot base, for miner assignment. */
+    /**
+     * Mineral patch ids of one snapshot base, for miner assignment.
+     */
     public List<MapSnapshot.Res> baseMinerals(MapSnapshot.Base base) {
         List<MapSnapshot.Res> out = new ArrayList<>();
         for (int id : base.mineralIds) {

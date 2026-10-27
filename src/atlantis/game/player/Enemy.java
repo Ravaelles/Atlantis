@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Enemy {
 
-    private static Cache<Object> cache = new Cache<>();
+    private static final Cache<Object> cache = new Cache<>();
 
     // =========================================================
 

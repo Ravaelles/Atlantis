@@ -7,8 +7,8 @@ import atlantis.map.position.APosition;
 import java.util.*;
 
 public class WallInAlgorithm {
-    private static Set<Structure> structureSet = new HashSet<>();
-    private static boolean[][] visited = new boolean[16][16];
+    private static final Set<Structure> structureSet = new HashSet<>();
+    private static final boolean[][] visited = new boolean[16][16];
 
     public static Set<Structure> wallIn(
         List<Structure> structures,

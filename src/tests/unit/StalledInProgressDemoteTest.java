@@ -16,9 +16,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * An IN_PROGRESS construction whose warp never started must not hold its
@@ -44,6 +42,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("infra")
 public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
 
+    /**
+     * B134 cid60 shape (NEXT #150): live builder walked away from the site,
+     * no warping entity ever appears, IN_PROGRESS sits 20k frames - the
+     * 3.5-tile shield holds forever and no demote/twin ever fires. The
+     * age-cap re-arms ancient entries (2400f > longest legal 1800f warp +
+     * margin) while young travellers keep the shield (same far-away
+     * fixture, frame 120 stays IN_PROGRESS).
+     */
+    private Construction walkedAway;
+    private FakeUnit walkedProbe;
+    private Construction aging;
+    private FakeUnit agingProbe;
+    private Construction archivedStalled;
+    private Construction frozenStalled;
+    private Construction healthyStalled;
+    private Construction standstill;
+    private Construction builderless;
+
+    // =========================================================
+    /**
+     * NEXT #150, oid36 shape (Wine 182050: Pylon STARTED f6793, builder
+     * alive, never tracked again, no building ever, no twin ever fires).
+     * The age-cap cannot see whether the attached builder works THIS site:
+     * a builder constructing elsewhere shields an ancient building-less
+     * stall forever (only the stoodStill and builder-gone branches look at
+     * the builder, and both miss a far-away constructing worker). Pinned
+     * as-shielded (no behavior change): fixing this hole needs an owner
+     * decision, never a silent flip.
+     */
+    private Construction busyStall;
+    private FakeUnit busyProbe;
+
     @Override
     protected FakeUnit[] generateOur() {
         return null;
@@ -53,6 +83,8 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
     protected FakeUnit[] generateEnemies() {
         return null;
     }
+
+    // =========================================================
 
     @AfterEach
     public void cleanConstructions() {
@@ -136,17 +168,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         });
     }
 
-    /**
-     * B134 cid60 shape (NEXT #150): live builder walked away from the site,
-     * no warping entity ever appears, IN_PROGRESS sits 20k frames - the
-     * 3.5-tile shield holds forever and no demote/twin ever fires. The
-     * age-cap re-arms ancient entries (2400f > longest legal 1800f warp +
-     * margin) while young travellers keep the shield (same far-away
-     * fixture, frame 120 stays IN_PROGRESS).
-     */
-    private Construction walkedAway;
-    private FakeUnit walkedProbe;
-
     @Test
     public void aWalkedAwayBuilderAgesOutAfter2400() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
@@ -178,11 +199,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
             }
         });
     }
-
-    // =========================================================
-
-    private Construction aging;
-    private FakeUnit agingProbe;
 
     @Test
     public void aBuilderlessStallRearmsWhenOld() {
@@ -224,8 +240,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
                 "freshly flipped: a real warp shows its building within frames");
         });
     }
-
-    // =========================================================
 
     private Construction stalledCoreAt(FakeUnit probe, int tx, int ty) {
         Construction construction = new Construction(AUnitType.Protoss_Cybernetics_Core);
@@ -289,8 +303,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
             }
         });
     }
-
-    private Construction archivedStalled;
 
     /**
      * The cid-331 shape (Wine macro 2026-10-21): the builder died
@@ -372,11 +384,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         });
     }
 
-    private Construction frozenStalled;
-    private Construction healthyStalled;
-    private Construction standstill;
-    private Construction builderless;
-
     @Test
     public void demoteTwinsCidTypeTileAndReasonOnBothPaths() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
@@ -424,19 +431,6 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
             }
         });
     }
-
-    /**
-     * NEXT #150, oid36 shape (Wine 182050: Pylon STARTED f6793, builder
-     * alive, never tracked again, no building ever, no twin ever fires).
-     * The age-cap cannot see whether the attached builder works THIS site:
-     * a builder constructing elsewhere shields an ancient building-less
-     * stall forever (only the stoodStill and builder-gone branches look at
-     * the builder, and both miss a far-away constructing worker). Pinned
-     * as-shielded (no behavior change): fixing this hole needs an owner
-     * decision, never a silent flip.
-     */
-    private Construction busyStall;
-    private FakeUnit busyProbe;
 
     @Test
     public void attachedBuilderConstructingElsewhereShieldsAncientStall() {

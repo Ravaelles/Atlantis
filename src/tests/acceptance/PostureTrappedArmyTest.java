@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * NEXT #197: the trapped shape from the live report, wired end to end -
@@ -30,10 +29,10 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
         FakeUnit d2 = fake(AUnitType.Protoss_Dragoon, 49, 10);
         FakeUnit d3 = fake(AUnitType.Protoss_Dragoon, 50, 10);
         FakeUnit d4 = fake(AUnitType.Protoss_Dragoon, 51, 10);
-        FakeUnit[] foes = new FakeUnit[] {
+        FakeUnit[] foes = new FakeUnit[]{
             fake(AUnitType.Protoss_Zealot, 30, 9), fake(AUnitType.Protoss_Zealot, 31, 9),
             fake(AUnitType.Protoss_Zealot, 32, 9), fake(AUnitType.Protoss_Zealot, 30, 10),
-            fake(AUnitType.Protoss_Zealot, 31, 10), fake(AUnitType.Protoss_Zealot, 32, 10) };
+            fake(AUnitType.Protoss_Zealot, 31, 10), fake(AUnitType.Protoss_Zealot, 32, 10)};
         for (FakeUnit zealot : foes) zealot.setEnemy();
 
         world(400, fakeOurs(
@@ -74,12 +73,12 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
         FakeUnit z4 = fake(AUnitType.Protoss_Zealot, 30, 10);
         FakeUnit z5 = fake(AUnitType.Protoss_Zealot, 31, 10);
         FakeUnit z6 = fake(AUnitType.Protoss_Zealot, 32, 10);
-        for (FakeUnit zealot : new FakeUnit[] { z1, z2, z3, z4, z5, z6 }) zealot.setEnemy();
+        for (FakeUnit zealot : new FakeUnit[]{z1, z2, z3, z4, z5, z6}) zealot.setEnemy();
 
         world(20, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 10, 10),
             d1, d2, d3, d4
-        ), new FakeUnit[] { z1, z2, z3, z4, z5, z6 }, () -> {
+        ), new FakeUnit[]{z1, z2, z3, z4, z5, z6}, () -> {
             if (atlantis.game.A.now() != 12) return;
 
             PostureReasons.Verdict verdict = PostureReasons.decideLive();

@@ -10,7 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class ScoutEnemyThird extends Manager {
-    private static boolean noLongerScoutAsBaseFound = false;
+    private static final boolean noLongerScoutAsBaseFound = false;
     private static int lastSeenAtFrame = -1;
 
     private APosition enemyThird;
@@ -44,9 +44,8 @@ public class ScoutEnemyThird extends Manager {
         if (unit.lastPositionChangedAgo() >= 5 && unit.lastCommandIssuedAgo() >= 10) return true;
 
         if (!enemyThird.isExplored()) return true;
-        if (unit.lastPositionChangedAgo() >= 20) return true;
 
-        return false;
+        return unit.lastPositionChangedAgo() >= 20;
     }
 
     @Override

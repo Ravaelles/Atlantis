@@ -12,6 +12,12 @@ import atlantis.util.AConsole;
 public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     private int cannonNeeded;
 
+    private static int cannonNeeded() {
+        return Enemy.zerg()
+            ? 2
+            : (Enemy.protoss() ? 3 : 2);
+    }
+
     public boolean handle() {
         buildCannons();
         cancelBasesBeingConstructed();
@@ -35,12 +41,6 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
         for (int i = 0; i < cannonNeeded; i++) {
             ProduceCannonAtNaturalOrMain.produce();
         }
-    }
-
-    private static int cannonNeeded() {
-        return Enemy.zerg()
-            ? 2
-            : (Enemy.protoss() ? 3 : 2);
     }
 
     private void cancelConstructionsIfNeededToGetMinerals() {

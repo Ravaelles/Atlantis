@@ -25,23 +25,10 @@ import java.util.stream.Collectors;
  * so a game behaves exactly as before.</p>
  */
 public class Bullets implements ClearsCache {
-    /**
-     * Where bullets come from. {@link #engine()} is what production uses; the
-     * harness installs its own.
-     */
-    public interface Source {
-        /** Every bullet that currently exists, known or new. */
-        Set<ABullet> currentBullets();
-
-        /**
-         * Is the engine object behind this bullet still there? A source without
-         * engine objects (the harness) answers true: a fake bullet exists for as
-         * long as the test keeps it.
-         */
-        boolean bulletStillExists(ABullet bullet);
-    }
-
+    private static final Source EngineBulletsSource = new EngineBulletsSource();
     private static Source source = null;
+    private static final Map<Integer, ABullet> allRawBullets = new HashMap<>();
+    private static final Map<Integer, ABullet> validBullets = new HashMap<>();
 
     public static void useSource(Source newSource) {
         source = newSource;
@@ -58,32 +45,6 @@ public class Bullets implements ClearsCache {
     private static Source engine() {
         return EngineBulletsSource;
     }
-
-    private static Map<Integer, ABullet> allRawBullets = new HashMap<>();
-    private static Map<Integer, ABullet> validBullets = new HashMap<>();
-
-    /** The engine: {@link AGame#get()} for the bullets, {@code bullet.b()} for their existence. */
-    private static final class EngineBulletsSource implements Source {
-        @Override
-        public Set<ABullet> currentBullets() {
-            return AGame.get().getBullets()
-                .stream()
-                .filter(b -> b.getTarget() != null && !allRawBullets.containsKey(b.getID()))
-//            .peek(b -> System.out.println("b.getID()=" + b.getID() + " / allRaw=" + A.keysToString(allRawBullets.keySet())))
-                .map(ABullet::fromBullet)
-//            .filter(b -> b != null && !b.isConsumed())
-                .filter(b -> b != null)
-//                .collect(Collectors.toMap(ABullet::id, b -> b));
-                .collect(Collectors.toSet());
-        }
-
-        @Override
-        public boolean bulletStillExists(ABullet bullet) {
-            return bullet.b() != null && bullet.b().exists();
-        }
-    }
-
-    private static final Source EngineBulletsSource = new EngineBulletsSource();
 
     public static void updateKnown() {
         addNewRawBullets();
@@ -148,5 +109,46 @@ public class Bullets implements ClearsCache {
         existingBullets.addAll(pendingAttackBullets);
 
         return existingBullets;
+    }
+
+    /**
+     * Where bullets come from. {@link #engine()} is what production uses; the
+     * harness installs its own.
+     */
+    public interface Source {
+        /**
+         * Every bullet that currently exists, known or new.
+         */
+        Set<ABullet> currentBullets();
+
+        /**
+         * Is the engine object behind this bullet still there? A source without
+         * engine objects (the harness) answers true: a fake bullet exists for as
+         * long as the test keeps it.
+         */
+        boolean bulletStillExists(ABullet bullet);
+    }
+
+    /**
+     * The engine: {@link AGame#get()} for the bullets, {@code bullet.b()} for their existence.
+     */
+    private static final class EngineBulletsSource implements Source {
+        @Override
+        public Set<ABullet> currentBullets() {
+            return AGame.get().getBullets()
+                .stream()
+                .filter(b -> b.getTarget() != null && !allRawBullets.containsKey(b.getID()))
+//            .peek(b -> System.out.println("b.getID()=" + b.getID() + " / allRaw=" + A.keysToString(allRawBullets.keySet())))
+                .map(ABullet::fromBullet)
+//            .filter(b -> b != null && !b.isConsumed())
+                .filter(b -> b != null)
+//                .collect(Collectors.toMap(ABullet::id, b -> b));
+                .collect(Collectors.toSet());
+        }
+
+        @Override
+        public boolean bulletStillExists(ABullet bullet) {
+            return bullet.b() != null && bullet.b().exists();
+        }
     }
 }

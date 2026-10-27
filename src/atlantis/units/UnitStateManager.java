@@ -5,7 +5,7 @@ import atlantis.battle.cluster.Squad;
 import atlantis.game.AGame;
 
 public class UnitStateManager extends Manager {
-    private int timeNow;
+    private final int timeNow;
 
     public UnitStateManager(AUnit unit) {
         super(unit);

@@ -19,6 +19,11 @@ import java.util.logging.Logger;
 
 public class AKeyboard implements NativeKeyListener {
     /**
+     * It looks that Starcraft needs to receive a pause with a delay, otherwise the speed settings don't work.
+     */
+    public static final int MS_DELAY_FIX = 25;
+
+    /**
      * True when this JVM is the bot itself - the one running under Wine with the
      * game attached (it has BWAPI, so speed/camera shortcuts can work). The Linux
      * supervisor JVM starts with no game and stays without one.
@@ -49,11 +54,6 @@ public class AKeyboard implements NativeKeyListener {
             || System.getenv("WINEPREFIX") != null;
     }
 
-    /**
-     * It looks that Starcraft needs to receive a pause with a delay, otherwise the speed settings don't work.
-     */
-    public static final int MS_DELAY_FIX = 25;
-
     public static void listenForKeyEvents() {
         turnOffLibraryLogging();
 
@@ -83,12 +83,6 @@ public class AKeyboard implements NativeKeyListener {
     }
 
     // =========================================================
-
-    @Override
-    public void nativeKeyPressed(NativeKeyEvent e) {
-        consumeEvent(e);
-        dispatchKeyCode(e.getKeyCode(), e.getKeyLocation());
-    }
 
     /**
      * Executes one key action. Used both directly from the keyboard hook and
@@ -253,13 +247,37 @@ public class AKeyboard implements NativeKeyListener {
             GameSpeed.changeSpeed(deltaChangeSpeed * (positiveForQuickerNegativeForSlower > 0 ? -1 : +1));
 
             A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
-        }
-        finally {
+        } finally {
             // The pause MUST lift even when the speed change throws (e.g. no game
             // attached yet): otherwise OnEveryFrame spins in its pause loop forever
             // and the bot looks paused from that moment on.
             GameSpeed.unpauseGame();
         }
+    }
+
+    /**
+     * Test seam, same reason as {@link #changeGameSpeed(int)}.
+     */
+    public static void changeSpeedAndFrameSkip(int speed, int frameSkip) {
+        GameSpeed.pauseGame();
+
+        try {
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+
+            GameSpeed.changeSpeedTo(speed);
+            GameSpeed.changeFrameSkipTo(frameSkip);
+
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+        } finally {
+            // Same rule as changeGameSpeed above: never stay paused.
+            GameSpeed.unpauseGame();
+        }
+    }
+
+    @Override
+    public void nativeKeyPressed(NativeKeyEvent e) {
+        consumeEvent(e);
+        dispatchKeyCode(e.getKeyCode(), e.getKeyLocation());
     }
 
     @Override
@@ -283,26 +301,6 @@ public class AKeyboard implements NativeKeyListener {
             f.setShort(e, (short) 0x01);
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Test seam, same reason as {@link #changeGameSpeed(int)}.
-     */
-    public static void changeSpeedAndFrameSkip(int speed, int frameSkip) {
-        GameSpeed.pauseGame();
-
-        try {
-            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
-
-            GameSpeed.changeSpeedTo(speed);
-            GameSpeed.changeFrameSkipTo(frameSkip);
-
-            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
-        }
-        finally {
-            // Same rule as changeGameSpeed above: never stay paused.
-            GameSpeed.unpauseGame();
         }
     }
 

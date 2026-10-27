@@ -21,30 +21,6 @@ public final class DefendedPlace {
     }
 
     /**
-     * Priority order, highest first. The declaration order IS the
-     * decision: first non-null input wins (pinned by DefendedPlaceTest).
-     */
-    public enum Kind {
-        BREACH,
-        SPARTA_CHOKE,
-        MIDDLE,
-        MAIN_CHOKE,
-        NATURAL_CHOKE,
-        BASE
-    }
-
-    /** The defended ground plus why it was picked. */
-    public static final class Answer {
-        public final Kind kind;
-        public final HasPosition ground;
-
-        Answer(Kind kind, HasPosition ground) {
-            this.kind = kind;
-            this.ground = ground;
-        }
-    }
-
-    /**
      * First non-null input in Kind order wins; null when nothing
      * qualifies (UMS/baseless) - the caller falls back, same as the old
      * null path. Pure: no statics, no cache (callers cache), no orders.
@@ -65,5 +41,31 @@ public final class DefendedPlace {
         if (base != null) return new Answer(Kind.BASE, base);
 
         return null;
+    }
+
+    /**
+     * Priority order, highest first. The declaration order IS the
+     * decision: first non-null input wins (pinned by DefendedPlaceTest).
+     */
+    public enum Kind {
+        BREACH,
+        SPARTA_CHOKE,
+        MIDDLE,
+        MAIN_CHOKE,
+        NATURAL_CHOKE,
+        BASE
+    }
+
+    /**
+     * The defended ground plus why it was picked.
+     */
+    public static final class Answer {
+        public final Kind kind;
+        public final HasPosition ground;
+
+        Answer(Kind kind, HasPosition ground) {
+            this.kind = kind;
+            this.ground = ground;
+        }
     }
 }

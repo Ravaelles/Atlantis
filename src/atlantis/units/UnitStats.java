@@ -32,33 +32,6 @@ import bwapi.WeaponType;
  * invented.</p>
  */
 public class UnitStats {
-    public interface Source {
-        /**
-         * @return maximum hit points of the type, or -1 when unknown.
-         */
-        int hitPoints(AUnitType type);
-
-        /**
-         * @return maximum shields of the type, or -1 when unknown.
-         */
-        int shields(AUnitType type);
-
-        /**
-         * @return maximum range of the weapon in pixels, or -1 when unknown.
-         */
-        int weaponRange(WeaponType weapon);
-
-        /**
-         * @return damage of one shot, or -1 when unknown.
-         */
-        int weaponDamage(WeaponType weapon);
-
-        /**
-         * @return damage multiplier of the weapon, or -1 when unknown.
-         */
-        int weaponDamageFactor(WeaponType weapon);
-    }
-
     private static Source source = null;
 
     public static void useSource(Source newSource) {
@@ -142,5 +115,32 @@ public class UnitStats {
      */
     public static int weaponDamageNormalized(WeaponType weapon) {
         return weaponDamage(weapon) * weaponDamageFactor(weapon);
+    }
+
+    public interface Source {
+        /**
+         * @return maximum hit points of the type, or -1 when unknown.
+         */
+        int hitPoints(AUnitType type);
+
+        /**
+         * @return maximum shields of the type, or -1 when unknown.
+         */
+        int shields(AUnitType type);
+
+        /**
+         * @return maximum range of the weapon in pixels, or -1 when unknown.
+         */
+        int weaponRange(WeaponType weapon);
+
+        /**
+         * @return damage of one shot, or -1 when unknown.
+         */
+        int weaponDamage(WeaponType weapon);
+
+        /**
+         * @return damage multiplier of the weapon, or -1 when unknown.
+         */
+        int weaponDamageFactor(WeaponType weapon);
     }
 }

@@ -106,9 +106,8 @@ public class Requirements {
         if (required != null && Count.ofType(required) == 0) return false;
 
         AUnitType whatResearches = AUnitType.from(tech.whatResearches());
-        if (whatResearches != null && Count.ofType(whatResearches) == 0) return false;
 
-        return true;
+        return whatResearches == null || Count.ofType(whatResearches) != 0;
     }
 
     private static boolean hasRequirements(UpgradeType upgrade) {
@@ -129,7 +128,7 @@ public class Requirements {
 //            if (ResearchU238.upgradeType().equals(upgrade)) {
 //                AConsole.errPrintln("for ResearchU238 whatResearches = " + whatUpgrades);
 //            }
-            if (whatUpgrades != null && Count.ofType(whatUpgrades) == 0) return false;
+            return whatUpgrades == null || Count.ofType(whatUpgrades) != 0;
         }
 
         return true;

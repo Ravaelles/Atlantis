@@ -1,11 +1,6 @@
 package atlantis.decisions.board;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The priority board: pure ranking over goal vocabulary. No builders, no
@@ -21,7 +16,9 @@ public final class GoalBoard {
     private GoalBoard() {
     }
 
-    /** Active goals, ladder order. */
+    /**
+     * Active goals, ladder order.
+     */
     public static List<Goal> ranked(BoardState state, Collection<Goal> goals) {
         List<Goal> active = new ArrayList<Goal>();
         for (Goal goal : goals) {

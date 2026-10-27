@@ -10,7 +10,7 @@ import bwapi.Race;
 
 public class RaceStrategyResponseFactory {
 
-    private static Cache<RaceStrategyResponse> cache = new Cache<>();
+    private static final Cache<RaceStrategyResponse> cache = new Cache<>();
 
     // =========================================================
 

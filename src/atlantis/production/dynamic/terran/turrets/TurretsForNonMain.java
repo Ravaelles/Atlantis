@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.turrets;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -11,7 +12,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.game.player.Enemy;
 
 public class TurretsForNonMain extends TerranMissileTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
@@ -22,9 +22,8 @@ public class TurretsForNonMain extends TerranMissileTurret {
         if (Count.bases() == 1) return false;
 
         if (handleReinforcePosition(turretForNatural(), 7)) return true;
-        if (handleTurretForAllBases()) return true;
 
-        return false;
+        return handleTurretForAllBases();
     }
 
     // =========================================================

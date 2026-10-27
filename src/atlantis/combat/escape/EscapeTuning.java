@@ -16,13 +16,13 @@ package atlantis.combat.escape;
  */
 public final class EscapeTuning {
 
+    private static volatile EscapeTuning current = EscapeTuning.defaults();
     private double staticWeight = 10.0;
     private double cornerWeight = 8.0;
     private double pocketExtra = 20.0;
     private double enemyWeight = 5.0;
     private double staticRadiusTiles = 3.0;
     private double enemyRadiusTiles = 20.0;
-
     /**
      * Arc-retreat blend (NEXT #175): 0 = straight escape steps (today,
      * bit-identical), 1 = bend fully toward the squad center. Deliberately
@@ -34,28 +34,6 @@ public final class EscapeTuning {
     private EscapeTuning() {
     }
 
-    private static volatile EscapeTuning current = EscapeTuning.defaults();
-
-    /** The live snapshot; the tuner replaces it per game. */
-    public static EscapeTuning current() {
-        return current;
-    }
-
-    /** Installs a derived snapshot - the tuner's only write path. */
-    public static void install(EscapeTuning next) {
-        if (next != null) current = next;
-    }
-
-    /** Engine-faithful defaults: the scoring constants as tuned by hand. */
-    public static EscapeTuning defaults() {
-        return new EscapeTuning();
-    }
-
-    /** Per-game reset next to the other static resets. */
-    public static void resetToDefaults() {
-        current = EscapeTuning.defaults();
-    }
-
     private EscapeTuning(EscapeTuning other) {
         staticWeight = other.staticWeight;
         cornerWeight = other.cornerWeight;
@@ -64,6 +42,34 @@ public final class EscapeTuning {
         staticRadiusTiles = other.staticRadiusTiles;
         enemyRadiusTiles = other.enemyRadiusTiles;
         arcBlend = other.arcBlend;
+    }
+
+    /**
+     * The live snapshot; the tuner replaces it per game.
+     */
+    public static EscapeTuning current() {
+        return current;
+    }
+
+    /**
+     * Installs a derived snapshot - the tuner's only write path.
+     */
+    public static void install(EscapeTuning next) {
+        if (next != null) current = next;
+    }
+
+    /**
+     * Engine-faithful defaults: the scoring constants as tuned by hand.
+     */
+    public static EscapeTuning defaults() {
+        return new EscapeTuning();
+    }
+
+    /**
+     * Per-game reset next to the other static resets.
+     */
+    public static void resetToDefaults() {
+        current = EscapeTuning.defaults();
     }
 
     public double getStaticWeight() {

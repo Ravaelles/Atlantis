@@ -1,8 +1,8 @@
 package tests.acceptance;
 
 import atlantis.map.position.APosition;
-import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.units.AUnitType;
+import atlantis.units.BuildingTilesAreOccupied;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;

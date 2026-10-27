@@ -1,8 +1,8 @@
 package atlantis.battle.avoid.margin;
 
 import atlantis.game.A;
-import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
+import atlantis.units.AUnit;
 
 public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
@@ -109,7 +109,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
             if (defender.hp() <= 18) return false;
 
-            if (attacker.cooldownRemaining() >= 9) return true;
+            return attacker.cooldownRemaining() >= 9;
 //            if (defender.hp() >= 18 && !attacker.hasTargetted(defender) && !attacker.isFacing(defender)) return true;
         }
 

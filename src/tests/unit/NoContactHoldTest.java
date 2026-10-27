@@ -18,9 +18,7 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * No-contact hold (owner 2026-10-26, live game vs Protoss on 7th_rav):
@@ -31,6 +29,14 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class NoContactHoldTest extends WorldStubForTests {
+
+    private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
+        FakeUnit[] all = new FakeUnit[rest.length + 1];
+        all[0] = first;
+        System.arraycopy(rest, 0, all, 1, rest.length);
+
+        return all;
+    }
 
     @Test
     public void blindLineHoldsHalfwayBetweenMainAndChoke() {
@@ -82,8 +88,7 @@ public class NoContactHoldTest extends WorldStubForTests {
                 Regroup.march(a, FightOrFlight.Tactic.FIGHT, farAnchor, a, BattleStrategy.OPEN_FIELD);
 
                 String journal = a.commandHistory().toString();
-                assertTrue(!journal.contains("ClusterStandoff"),
-                    "an attack anchor must march out, never hold home: " + journal);
+                assertFalse(journal.contains("ClusterStandoff"), "an attack anchor must march out, never hold home: " + journal);
             });
         }
     }
@@ -107,8 +112,7 @@ public class NoContactHoldTest extends WorldStubForTests {
                 Regroup.march(a, FightOrFlight.Tactic.FLEE, anchor, a, BattleStrategy.OPEN_FIELD);
 
                 String journal = a.commandHistory().toString();
-                assertTrue(!journal.contains("ClusterStandoff"),
-                    "FLEE owns the rally, the hold must not steal it: " + journal);
+                assertFalse(journal.contains("ClusterStandoff"), "FLEE owns the rally, the hold must not steal it: " + journal);
             });
         }
     }
@@ -283,13 +287,5 @@ public class NoContactHoldTest extends WorldStubForTests {
     @org.junit.jupiter.api.AfterEach
     public void forgetTheBuildFlag() {
         atlantis.combat.cluster.FirstDragoonGate.clearForTests();
-    }
-
-    private static FakeUnit[] concat(FakeUnit first, FakeUnit[] rest) {
-        FakeUnit[] all = new FakeUnit[rest.length + 1];
-        all[0] = first;
-        System.arraycopy(rest, 0, all, 1, rest.length);
-
-        return all;
     }
 }

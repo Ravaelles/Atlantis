@@ -1,11 +1,11 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class WorkerDoNotFight {
@@ -88,16 +88,13 @@ public class WorkerDoNotFight {
 //            }
         }
 
-        if (!We.zerg() && (unit.isBuilder() || unit.isConstructing())) return true;
-
-        return false;
+        return !We.zerg() && (unit.isBuilder() || unit.isConstructing());
     }
 
     private static boolean forceFightVsEarlyZerg(AUnit unit) {
         if (!Enemy.zerg()) return false;
-        if (unit.hp() <= 12) return false;
 
-        return true;
+        return unit.hp() > 12;
     }
 
     private static boolean dontFightAsTooManyZealotsComparedToWorkers(AUnit unit) {

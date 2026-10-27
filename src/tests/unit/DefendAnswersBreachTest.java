@@ -10,7 +10,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * A DEFEND unit whose 9-tile reach misses the raiders chewing our workers
@@ -22,6 +21,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class DefendAnswersBreachTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -78,17 +89,5 @@ public class DefendAnswersBreachTest extends AbstractTestWithWorld {
                 "nothing to engage and nowhere to bunch (null anchor, self leader): "
                     + ordersOf(zealot));
         });
-    }
-
-    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
-                                    int unitId, String operation) {
-        for (tests.fakes.FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
 }

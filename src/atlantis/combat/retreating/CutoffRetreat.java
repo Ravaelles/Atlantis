@@ -18,14 +18,17 @@ import atlantis.units.select.Select;
  */
 public final class CutoffRetreat {
 
+    /**
+     * Detached from the army: beyond mutual-support range of its center.
+     */
+    private static final double DETACHED_ARMY_TILES = 12;
+    /**
+     * Enemies only count when close enough to matter for the march.
+     */
+    private static final double DETACHED_THREAT_TILES = 10;
+
     private CutoffRetreat() {
     }
-
-    /** Detached from the army: beyond mutual-support range of its center. */
-    private static final double DETACHED_ARMY_TILES = 12;
-
-    /** Enemies only count when close enough to matter for the march. */
-    private static final double DETACHED_THREAT_TILES = 10;
 
     /**
      * The enemy this detached unit must answer, or null when the unit
@@ -62,8 +65,7 @@ public final class CutoffRetreat {
     static AUnit nearestEnemyCombatUnit(AUnit unit) {
         try {
             return Select.enemy().combatUnits().nearestTo(unit);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }

@@ -16,7 +16,7 @@ public class AStrategy {
     protected static final List<AStrategy> allStrategies = new ArrayList<>();
 
     // =========================================================
-
+    protected boolean unknown = false;
     private String name;
     private String url;
     private ABuildOrder buildOrder = null;
@@ -31,24 +31,25 @@ public class AStrategy {
     private boolean goingHiddenUnits = false;
     private boolean goingAirUnitsQuickly = false;
     private boolean goingAirUnitsLate = false;
-    protected boolean unknown = false;
 
     // =========================================================
+    /**
+     * Whether WE may play this strategy. Entries without a build-order file
+     * stay playable=false: they remain first-class detection vocabulary
+     * (enemy recognition maps observations onto these same objects), but our
+     * own use refuses them loudly instead of mining mute. See
+     * {@code ABuildOrderLoader}.
+     */
+    private boolean playable = true;
 
     public AStrategy() {
         allStrategies.add(this);
     }
 
-    protected static AStrategy protossStrategy() {
-        return (new AStrategy()).setProtoss();
-    }
-
     // =========================================================
 
-    public boolean canProduceUnit(AUnitType type) {
-        if (We.protoss()) return ProtossGenericCanTransitionToUnit.check(type);
-
-        return true;
+    protected static AStrategy protossStrategy() {
+        return (new AStrategy()).setProtoss();
     }
 
     // =========================================================
@@ -61,6 +62,12 @@ public class AStrategy {
         return EnemyUnits.count(type);
     }
 
+    public boolean canProduceUnit(AUnitType type) {
+        if (We.protoss()) return ProtossGenericCanTransitionToUnit.check(type);
+
+        return true;
+    }
+
     /**
      * Assigns build order for this strategy from build orders directory. Uses corresponding strategy/build order name.
      */
@@ -69,12 +76,12 @@ public class AStrategy {
         CurrentBuildOrder.set(buildOrder);
     }
 
+    // =========================================================
+
     @Override
     public String toString() {
         return race() + ":" + name;
     }
-
-    // =========================================================
 
     public String name() {
         return name;
@@ -85,15 +92,6 @@ public class AStrategy {
 
         return this;
     }
-
-    /**
-     * Whether WE may play this strategy. Entries without a build-order file
-     * stay playable=false: they remain first-class detection vocabulary
-     * (enemy recognition maps observations onto these same objects), but our
-     * own use refuses them loudly instead of mining mute. See
-     * {@code ABuildOrderLoader}.
-     */
-    private boolean playable = true;
 
     public boolean isPlayable() {
         return playable;

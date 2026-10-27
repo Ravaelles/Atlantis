@@ -39,7 +39,7 @@ public class PowerFailurePullsPylonTest {
     @Test
     public void powerFreeBuildingsAndMissingContextNeverPull() {
         assertFalse(NewConstructionRequest.shouldPullPylon(
-            AUnitType.Protoss_Pylon, "Not powered by a Pylon x5", order()),
+                AUnitType.Protoss_Pylon, "Not powered by a Pylon x5", order()),
             "pylons need no power - pulling one for power is nonsense");
         assertFalse(NewConstructionRequest.shouldPullPylon(
             AUnitType.Protoss_Gateway, "Not powered by a Pylon x5", null));

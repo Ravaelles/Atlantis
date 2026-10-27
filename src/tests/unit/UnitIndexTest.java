@@ -73,7 +73,8 @@ public class UnitIndexTest {
     }
 
     @Test
-    public void allReturnsACopy() {        UnitIndex index = new UnitIndex(units());
+    public void allReturnsACopy() {
+        UnitIndex index = new UnitIndex(units());
 
         assertEquals(3, index.all().size());
         index.all().clear();

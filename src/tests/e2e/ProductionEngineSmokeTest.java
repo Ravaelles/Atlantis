@@ -14,8 +14,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The production-v2 engine on a real (stub) game world: it must read the state,
@@ -48,10 +47,10 @@ public class ProductionEngineSmokeTest extends AbstractTestWithWorld {
     public void enginePlansOnARealGameStateWithoutThrowing() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit[] probes = {
-                fake(AUnitType.Protoss_Probe, 8.3),
-                fake(AUnitType.Protoss_Probe, 9.1),
-                fake(AUnitType.Protoss_Probe, 10.6),
-                fake(AUnitType.Protoss_Probe, 11.4),
+            fake(AUnitType.Protoss_Probe, 8.3),
+            fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 10.6),
+            fake(AUnitType.Protoss_Probe, 11.4),
         };
         FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 12);
         FakeUnit gateway = fake(AUnitType.Protoss_Gateway, 13);
@@ -85,20 +84,18 @@ public class ProductionEngineSmokeTest extends AbstractTestWithWorld {
             // The holes we built into the map must be visible to the registry,
             // otherwise the whole scheduler works against an empty world.
             List<ProducerFacility> gateways = state.facilityRegistry().facilitiesOf("Protoss_Gateway");
-            assertTrue(!gateways.isEmpty(),
-                    "the Gateway on the map must be found by the facility registry");
+            assertFalse(gateways.isEmpty(), "the Gateway on the map must be found by the facility registry");
 
             List<ProducerFacility> nexuses = state.facilityRegistry().facilitiesOf("Protoss_Nexus");
-            assertTrue(!nexuses.isEmpty(), "the Nexus must be found too - it trains workers");
+            assertFalse(nexuses.isEmpty(), "the Nexus must be found too - it trains workers");
 
             // And the full pipeline must run on that state.
             ProductionEngine engine = new ProductionEngine();
             ProductionPlan plan = engine.updateFrame();
             assertNotNull(plan, "the engine must return a plan");
 
-            assertTrue(!engine.lastPlan().isEmpty(),
-                    "a 30-supply Protoss start with 4 probes must have something to do"
-                            + " (workers at the least); got an empty plan");
+            assertFalse(engine.lastPlan().isEmpty(), "a 30-supply Protoss start with 4 probes must have something to do"
+                + " (workers at the least); got an empty plan");
         });
     }
 

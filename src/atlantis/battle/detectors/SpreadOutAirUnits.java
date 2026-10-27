@@ -18,6 +18,7 @@ public abstract class SpreadOutAirUnits extends Manager {
     }
 
     protected abstract double minDistBetweenUnits();
+
     protected abstract Selection unitsSelector();
 
     public Manager handle() {

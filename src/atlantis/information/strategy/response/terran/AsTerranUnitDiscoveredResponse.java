@@ -1,7 +1,6 @@
 package atlantis.information.strategy.response.terran;
 
 
-
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
@@ -66,22 +65,17 @@ public class AsTerranUnitDiscoveredResponse {
 
     private static void whenRushOrCheese(AUnit enemyUnit) {
         if (asTerranDontPushWhenEnemyHasDragoons()) return;
-        if (asTerranDontHaveBunkersAndEnemyIsStrong()) return;
+
+        if (asTerranDontHaveBunkersAndEnemyIsStrong()) {
+        }
     }
 
     private static boolean asTerranDontPushWhenEnemyHasDragoons() {
         if (!We.terran()) return false;
 
-        if (
-            EnemyUnits.has(AUnitType.Protoss_Dragoon)
-                && (ArmyStrength.ourArmyRelativeStrength() <= 130 || Count.medics() <= 1)
-        ) {
-            // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
-
-            return true;
-        }
-
-        return false;
+        // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
+        return EnemyUnits.has(AUnitType.Protoss_Dragoon)
+            && (ArmyStrength.ourArmyRelativeStrength() <= 130 || Count.medics() <= 1);
     }
 
     private static boolean asTerranDontHaveBunkersAndEnemyIsStrong() {

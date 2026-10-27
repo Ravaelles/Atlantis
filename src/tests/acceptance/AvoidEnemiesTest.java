@@ -5,17 +5,19 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import tests.fakes.FakeFoggedUnit;
 import atlantis.util.Angle;
+import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+import tests.fakes.FakeFoggedUnit;
 import tests.fakes.FakeUnit;
-import bwapi.Race;
 
 public class AvoidEnemiesTest extends WorldStubForTests {
     public MockedStatic<AGame> aGame;
 
-    /** Drones, hydras, lurkers and spore colonies - a Zerg enemy. */
+    /**
+     * Drones, hydras, lurkers and spore colonies - a Zerg enemy.
+     */
     @Override
     public Race initEnemyRace() {
         return Race.Zerg;
@@ -81,10 +83,10 @@ public class AvoidEnemiesTest extends WorldStubForTests {
         );
 
         world(1, units(our), enemies, () -> {
-        assertContainsAll(
-            new FakeUnit[]{enemy3, enemy4},
-            (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-        );
+            assertContainsAll(
+                new FakeUnit[]{enemy3, enemy4},
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+            );
         });
     }
 

@@ -1,8 +1,8 @@
 package tests.unit;
 
+import atlantis.battle.cluster.Alpha;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.IdleWatch;
-import atlantis.battle.cluster.Alpha;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.twins.ClusterTwin;
@@ -18,7 +18,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Owner, Drag_v_LingsUpg2: a combat unit that does not displace while

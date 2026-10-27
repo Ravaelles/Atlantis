@@ -1,31 +1,16 @@
 package tests.unit;
 
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.ResourceTimeline;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.BuildOrderGoals;
-import atlantis.production.v2.goals.BuildOrderProgress;
-import atlantis.production.v2.goals.BuildOrderRow;
-import atlantis.production.v2.goals.DynamicGoals;
-import atlantis.production.v2.goals.PullForwardGoals;
-import atlantis.production.v2.goals.V2GoalSourceTwin;
+import atlantis.production.v2.*;
+import atlantis.production.v2.goals.*;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * WO-144 open question: which goal re-fires a duplicate V2 Pylon pair.
@@ -42,6 +27,31 @@ public class V2GoalSourceTest {
 
     private static final String PYLON = UnitProducible.of(AUnitType.Protoss_Pylon).id();
     private static final String GATEWAY = UnitProducible.of(AUnitType.Protoss_Gateway).id();
+
+    private static ProductionGoal tagged(Producible item, String source) {
+        return new ProductionGoal(
+            item, ProductionGoal.PRIORITY_DEPOTS, 1, 0, TargetPlacement.anywhere())
+            .withSource(source);
+    }
+
+    private static ProductionGoal firstOf(List<ProductionGoal> goals, String id) {
+        for (ProductionGoal goal : goals) {
+            if (goal.item().id().equals(id)) return goal;
+        }
+        return null;
+    }
+
+    private static int countRows(String log, String key) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = log.indexOf("\"key\":\"" + key + "\"", from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + 1;
+        }
+    }
 
     @BeforeEach
     public void clearLog() {
@@ -71,7 +81,7 @@ public class V2GoalSourceTest {
             DynamicGoals.contribute(low, ProductionRacePolicy.forRace("Protoss"));
 
         ProductionGoal supply = firstOf(goals, PYLON);
-        assertTrue(supply != null, "low supply wants a provider");
+        assertNotNull(supply, "low supply wants a provider");
         assertEquals("dynamic", supply.source(), "the supply goal names its list");
     }
 
@@ -82,7 +92,7 @@ public class V2GoalSourceTest {
             new PullForwardGoals.Snapshot(1, 500, 10, 0, 1),
             ProductionRacePolicy.forRace("Protoss"));
 
-        assertTrue(!goals.isEmpty(), "rich mineral bank with no refinery wants gas");
+        assertFalse(goals.isEmpty(), "rich mineral bank with no refinery wants gas");
         for (ProductionGoal goal : goals) {
             assertEquals("pull-forward", goal.source(), "every pull-forward goal names its list");
         }
@@ -110,31 +120,6 @@ public class V2GoalSourceTest {
         assertEquals(2, countRows(log, "V2_GOAL_SOURCE"), "only provider goals witnessed: " + log);
         assertTrue(log.contains("\"source\":\"build-order\""), "BO author named: " + log);
         assertTrue(log.contains("\"source\":\"dynamic\""), "dynamic author named: " + log);
-    }
-
-    private static ProductionGoal tagged(Producible item, String source) {
-        return new ProductionGoal(
-            item, ProductionGoal.PRIORITY_DEPOTS, 1, 0, TargetPlacement.anywhere())
-            .withSource(source);
-    }
-
-    private static ProductionGoal firstOf(List<ProductionGoal> goals, String id) {
-        for (ProductionGoal goal : goals) {
-            if (goal.item().id().equals(id)) return goal;
-        }
-        return null;
-    }
-
-    private static int countRows(String log, String key) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = log.indexOf("\"key\":\"" + key + "\"", from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + 1;
-        }
     }
 
     private static final class Progress implements BuildOrderProgress {

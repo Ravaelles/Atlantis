@@ -9,8 +9,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tests.fakes.FakeUnitHelper.merge;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Game 162906: Assimilator stood all game with gas=0 in all 177 bank

@@ -17,11 +17,9 @@ public class FixActions {
 //        if (goTo == null || !goTo.isWalkable()) return false;
 
         if (unit.distTo(goTo) >= 2.5 && goTo.isWalkable()) {
-            if (unit.move(goTo, Actions.MOVE_IDLE, "FixIdleByLeader")) {
-//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
-//                    " / " + unit.action());
-                return true;
-            }
+            //                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
+            //                    " / " + unit.action());
+            return unit.move(goTo, Actions.MOVE_IDLE, "FixIdleByLeader");
         }
         return false;
     }
@@ -35,9 +33,7 @@ public class FixActions {
 
         if (unit.enemiesNear().notEmpty()) {
             if (unit.isRanged() && unit.meleeEnemiesNearCount(2.5) > 0) {
-                if ((new ProtossAvoidEnemies(unit)).forceHandle() != null) return true;
-
-                return false;
+                return (new ProtossAvoidEnemies(unit)).forceHandle() != null;
             }
 
             // BATTLE CUTOVER: idle auto-attack (deleted attack managers)
@@ -62,9 +58,7 @@ public class FixActions {
 
         APosition goTo = unit.position().translateByPixels(2, 2);
         if (goTo != null && goTo.isWalkable()) {
-            if (unit.move(goTo, Actions.MOVE_IDLE)) {
-                return true;
-            }
+            return unit.move(goTo, Actions.MOVE_IDLE);
         }
 
         return false;

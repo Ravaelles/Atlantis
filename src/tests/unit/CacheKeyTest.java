@@ -34,6 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("infra")
 public class CacheKeyTest {
 
+    private static LogPort currentPort() {
+        try {
+            java.lang.reflect.Field field = AConsole.class.getDeclaredField("port");
+            field.setAccessible(true);
+
+            return (LogPort) field.get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("AConsole.port field moved", e);
+        }
+    }
+
     @Test
     public void integerFormatsAsItsDecimalString() {
         assertEquals("172", CacheKey.toKey(172),
@@ -65,32 +76,19 @@ public class CacheKeyTest {
             assertTrue(recording.errors.isEmpty() && recording.stackTraces.isEmpty(),
                 "an Integer is whitelisted - nothing may reach the error log, got: "
                     + recording.errors + recording.stackTraces);
-        }
-        finally {
+        } finally {
             AConsole.usePort(previous);
             GameClock.publish(framesBefore, secondsBefore);
         }
     }
+
+    // =========================================================
 
     @Test
     public void existingBranchesAreUntouched() {
         assertEquals("NuLL", CacheKey.toKey(null));
         assertEquals("Nexus", CacheKey.toKey("Nexus"));
         assertEquals("35.0", CacheKey.toKey(35.04));
-    }
-
-    // =========================================================
-
-    private static LogPort currentPort() {
-        try {
-            java.lang.reflect.Field field = AConsole.class.getDeclaredField("port");
-            field.setAccessible(true);
-
-            return (LogPort) field.get(null);
-        }
-        catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("AConsole.port field moved", e);
-        }
     }
 
     private static class RecordingLogPort implements LogPort {

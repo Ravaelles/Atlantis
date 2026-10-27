@@ -12,29 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Regions {
-    private static Cache<Object> cache = new Cache<>();
-
-    /**
-     * Which region a tile belongs to.
-     *
-     * <p>In a game the answer comes from BWEM: {@code AMap.getMap().getArea(...)}
-     * and {@link ARegion#create}. The stub world has no areas at all - every
-     * inherited method that touches one would throw - so the harness answers with
-     * one region per base location ({@code tests.fakes.FakeRegion}). A port says
-     * which of those two is in charge, so this class no longer imports the fake
-     * and the jar no longer has to ship it.</p>
-     */
-    public interface Source {
-        /** @param tx tile x, @param ty tile y. */
-        ARegion regionAt(int tx, int ty);
-    }
-
+    private static final Source EngineRegionsSource = (tx, ty) ->
+        ARegion.create(AMap.getMap().getArea(APosition.create(tx * 32, ty * 32).toTilePosition()));
+    private static final Cache<Object> cache = new Cache<>();
     private static Source source = null;
-
-    public static void useSource(Source newSource) {
-        source = newSource;
-    }
-
     /**
      * Test-seam twin of {@link #useSource}: the sim installs its own
      * region list (rect-region fake map) because there is no BWEM
@@ -42,6 +23,10 @@ public class Regions {
      * {@code finally} next to the source.
      */
     private static java.util.List<ARegion> regionsOverride = null;
+
+    public static void useSource(Source newSource) {
+        source = newSource;
+    }
 
     public static void useRegions(java.util.List<ARegion> regions) {
         regionsOverride = regions;
@@ -58,11 +43,6 @@ public class Regions {
     private static Source source() {
         return source != null ? source : EngineRegionsSource;
     }
-
-    private static final Source EngineRegionsSource = (tx, ty) ->
-        ARegion.create(AMap.getMap().getArea(APosition.create(tx * 32, ty * 32).toTilePosition()));
-
-    // =========================================================
 
     /**
      * Returns nearest (preferably directly connected) region which has center of it still unexplored.
@@ -86,6 +66,8 @@ public class Regions {
 
         return null;
     }
+
+    // =========================================================
 
     /**
      * @fix
@@ -199,5 +181,22 @@ public class Regions {
 
     public static Cache<Object> getCache() {
         return cache;
+    }
+
+    /**
+     * Which region a tile belongs to.
+     *
+     * <p>In a game the answer comes from BWEM: {@code AMap.getMap().getArea(...)}
+     * and {@link ARegion#create}. The stub world has no areas at all - every
+     * inherited method that touches one would throw - so the harness answers with
+     * one region per base location ({@code tests.fakes.FakeRegion}). A port says
+     * which of those two is in charge, so this class no longer imports the fake
+     * and the jar no longer has to ship it.</p>
+     */
+    public interface Source {
+        /**
+         * @param tx tile x, @param ty tile y.
+         */
+        ARegion regionAt(int tx, int ty);
     }
 }

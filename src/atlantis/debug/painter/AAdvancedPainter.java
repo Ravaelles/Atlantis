@@ -2,15 +2,14 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
+import atlantis.battle.advance.focus.AFocusPoint;
+import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Mission;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Squad;
 import atlantis.combat.FrozenWatch;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
-import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.battle.cluster.Mission;
-import atlantis.battle.cluster.Missions;
-
-import atlantis.battle.cluster.Squad;
-import atlantis.battle.cluster.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -21,7 +20,8 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.*;
+import atlantis.map.base.define.DefineNaturalBase;
+import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -33,15 +33,15 @@ import atlantis.map.scout.ScoutState;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.terran.turrets.TurretsForMain;
-import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.order.Orders;
+import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.order.Orders;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
@@ -72,10 +72,6 @@ import static bwapi.Color.*;
 
 public class AAdvancedPainter extends APainter {
 
-    protected static int sideMessageTopCounter = 0;
-    protected static int sideMessageMiddleCounter = 0;
-    protected static int sideMessageBottomCounter = 0;
-    protected static int prevTotalFindBuildPlace = 0;
     private static final int rightSideMessageLeftOffset = 572;
     private static final int rightSideMessageTopOffset = 450;
     private static final int timeConsumptionLeftOffset = 572;
@@ -83,6 +79,13 @@ public class AAdvancedPainter extends APainter {
     private static final int timeConsumptionBarMaxWidth = 50;
     private static final int timeConsumptionBarHeight = 14;
     private static final int timeConsumptionYInterval = 16;
+    protected static int sideMessageTopCounter = 0;
+    protected static int sideMessageMiddleCounter = 0;
+    protected static int sideMessageBottomCounter = 0;
+    protected static int prevTotalFindBuildPlace = 0;
+
+    // =========================================================
+    private static int prevMode;
 
     // =========================================================
 
@@ -151,8 +154,6 @@ public class AAdvancedPainter extends APainter {
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
     }
 
-    // =========================================================
-
     private static void paintUnitTypes() {
         for (AUnit unit : Select.all().list()) {
             paintTextCentered(unit, unit.type().toString(), Color.White, 0, -0.2);
@@ -198,7 +199,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             if (FrozenWatch.isFrozen(unit)) {
-                APainter.paintCircle(unit, new int[] { 10, 12, 14, 16 }, Color.Purple);
+                APainter.paintCircle(unit, new int[]{10, 12, 14, 16}, Color.Purple);
             }
 
             // =========================================================
@@ -1365,6 +1366,31 @@ public class AAdvancedPainter extends APainter {
     }
 
     /**
+     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding, but
+     * slows the game down impossibly.
+     */
+//    private static void paintTestSupplyDepotLocationsNearMain() {
+//        AUnit worker = Select.ourWorkers().first();
+//        AUnit base = Select.ourBases().first();
+//        int tileX = base.position().tx();
+//        int tileY = base.position().ty();
+//        for (int x = tileX - 10; x <= tileX + 10; x++) {
+//            for (int y = tileY - 10; y <= tileY + 10; y++) {
+//                APosition position = APosition.create(x, y);
+//                boolean canBuild = PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+//                    worker, AUnitType.Terran_Supply_Depot, position,
+//                    nearTo);
+//
+//                paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
+//
+//                if (x == tileX && y == tileY) {
+//                    paintCircleFilled(position, 10, canBuild ? Green : Color.Red);
+//                }
+//            }
+//        }
+//    }
+
+    /**
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     public static void paintFoggedUnits() {
@@ -1397,31 +1423,6 @@ public class AAdvancedPainter extends APainter {
             paintText(topLeft, type.name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
         }
     }
-
-    /**
-     * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding, but
-     * slows the game down impossibly.
-     */
-//    private static void paintTestSupplyDepotLocationsNearMain() {
-//        AUnit worker = Select.ourWorkers().first();
-//        AUnit base = Select.ourBases().first();
-//        int tileX = base.position().tx();
-//        int tileY = base.position().ty();
-//        for (int x = tileX - 10; x <= tileX + 10; x++) {
-//            for (int y = tileY - 10; y <= tileY + 10; y++) {
-//                APosition position = APosition.create(x, y);
-//                boolean canBuild = PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
-//                    worker, AUnitType.Terran_Supply_Depot, position,
-//                    nearTo);
-//
-//                paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
-//
-//                if (x == tileX && y == tileY) {
-//                    paintCircleFilled(position, 10, canBuild ? Green : Color.Red);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
@@ -1464,7 +1465,7 @@ public class AAdvancedPainter extends APainter {
             int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter;
 
             // Draw aspect time consumption bar
-            int barWidth = maxValue == 0 ? 30 : (int) (timeConsumptionBarMaxWidth * value / maxValue);
+            int barWidth = maxValue == 0 ? 30 : (timeConsumptionBarMaxWidth * value / maxValue);
             if (barWidth < 3) {
                 barWidth = 3;
             }
@@ -1530,17 +1531,6 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintGameLog() {
-        int x = rightSideMessageLeftOffset - 130;
-        int y = rightSideMessageTopOffset;
-
-        int counter = 0;
-        setTextSizeSmall();
-        for (LogMessage log : GameLog.get().messages(A.now(), A.realSecondsNow())) {
-            paintMessage(log.message(), log.color(A.realSecondsNow()), x, y - 12 * counter++, true);
-        }
-    }
-
 //    private static void paintCooldown(AUnit unit) {
 //        Color color;
 //
@@ -1552,6 +1542,17 @@ public class AAdvancedPainter extends APainter {
 //            color = Brown;
 //        }
 //
+
+    private static void paintGameLog() {
+        int x = rightSideMessageLeftOffset - 130;
+        int y = rightSideMessageTopOffset;
+
+        int counter = 0;
+        setTextSizeSmall();
+        for (LogMessage log : GameLog.get().messages(A.now(), A.realSecondsNow())) {
+            paintMessage(log.message(), log.color(A.realSecondsNow()), x, y - 12 * counter++, true);
+        }
+    }
 
     /// /        paintUnitProgressBar(unit, 27, 100, Color.Grey);
 //        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
@@ -1580,7 +1581,7 @@ public class AAdvancedPainter extends APainter {
         APosition topLeft = new APosition(unit.x() - barWidth / 2, unit.y() + dpy);
 
         // Progress bar
-        paintRectangleFilled(topLeft, (int) AMath.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
+        paintRectangleFilled(topLeft, AMath.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
 
         // Bar borders
         paintRectangle(topLeft, barWidth, barHeight, Color.Black);
@@ -1744,6 +1745,10 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
+//    public static void paintBuildingPosition(HasPosition position, String text) {
+//        paintBuildingPosition(position, text, null);
+//    }
+
     private static void paintMineralDistance() {
         AUnit mainBase = Select.main();
         if (mainBase == null) {
@@ -1765,10 +1770,6 @@ public class AAdvancedPainter extends APainter {
             }
         }
     }
-
-//    public static void paintBuildingPosition(HasPosition position, String text) {
-//        paintBuildingPosition(position, text, null);
-//    }
 
     public static void paintBuildingPosition(HasPosition position, String text, AUnitType type) {
         if (position == null) return;
@@ -1913,8 +1914,6 @@ public class AAdvancedPainter extends APainter {
         );
         APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }
-
-    private static int prevMode;
 
     public static void forcePainting() {
         prevMode = paintingMode;

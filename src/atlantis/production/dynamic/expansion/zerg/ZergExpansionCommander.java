@@ -12,6 +12,10 @@ public class ZergExpansionCommander extends Commander {
     public ZergExpansionCommander() {
     }
 
+    private static void requestNewBase() {
+        AddToQueue.withStandardPriority(AtlantisRaceConfig.BASE, Select.naturalOrMain());
+    }
+
     @Override
     public boolean applies() {
         return We.zerg()
@@ -28,9 +32,5 @@ public class ZergExpansionCommander extends Commander {
 
     protected void prepareNewBase() {
         requestNewBase();
-    }
-
-    private static void requestNewBase() {
-        AddToQueue.withStandardPriority(AtlantisRaceConfig.BASE, Select.naturalOrMain());
     }
 }

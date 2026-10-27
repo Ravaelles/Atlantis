@@ -3,8 +3,8 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.battle.cluster.Squad;
 import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Squad;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -20,18 +20,6 @@ public class CameraCommander extends Commander {
     // toggle do nothing for the owner - the camera never followed, so there was
     // nothing to switch (measured 2026-10-06).
     protected static boolean focusCameraOnFirstCombatUnit = true;
-
-    // =========================================================
-
-
-    @Override
-    protected boolean handle() {
-        AUnit cameraUnit = centerCameraOnUnit();
-        if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
-            CameraCommander.centerCameraOn(cameraUnit);
-        }
-        return false;
-    }
 
     // =========================================================
 
@@ -67,12 +55,7 @@ public class CameraCommander extends Commander {
         return Select.ourRealUnits().first();
     }
 
-//    public static void centerCameraNowOnFirstCombatUnit() {
-//        AUnit unit = Select.ourCombatUnits().groundUnits().nonBuildings().first();
-//        if (unit != null) {
-//            centerCameraOn(unit);
-//        }
-//    }
+    // =========================================================
 
     public static void centerCameraOn(HasPosition position) {
         if (position == null) return;
@@ -81,6 +64,13 @@ public class CameraCommander extends Commander {
             position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()
         );
     }
+
+//    public static void centerCameraNowOnFirstCombatUnit() {
+//        AUnit unit = Select.ourCombatUnits().groundUnits().nonBuildings().first();
+//        if (unit != null) {
+//            centerCameraOn(unit);
+//        }
+//    }
 
     public static void toggleFocusCameraOnInterestingCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
@@ -96,5 +86,14 @@ public class CameraCommander extends Commander {
 
     public static void centerCameraNowOnSquadCenter() {
         centerCameraOn(Squad.alphaCenter());
+    }
+
+    @Override
+    protected boolean handle() {
+        AUnit cameraUnit = centerCameraOnUnit();
+        if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
+            CameraCommander.centerCameraOn(cameraUnit);
+        }
+        return false;
     }
 }

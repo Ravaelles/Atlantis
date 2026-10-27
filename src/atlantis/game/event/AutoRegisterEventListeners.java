@@ -1,8 +1,8 @@
 package atlantis.game.event;
 
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.ClassScanner;
+import atlantis.util.log.LogLevel;
 
 public class AutoRegisterEventListeners {
     private static boolean initialized = false;

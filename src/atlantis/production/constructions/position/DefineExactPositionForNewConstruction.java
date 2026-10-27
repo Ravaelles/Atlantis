@@ -2,10 +2,10 @@ package atlantis.production.constructions.position;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
-import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.BuildingTilesAreOccupied;
 
 public class DefineExactPositionForNewConstruction {
     public static APosition exactPositionForNewConstruction(

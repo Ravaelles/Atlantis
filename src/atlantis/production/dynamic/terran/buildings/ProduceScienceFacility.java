@@ -1,12 +1,12 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

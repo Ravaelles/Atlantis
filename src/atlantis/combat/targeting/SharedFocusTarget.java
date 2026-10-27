@@ -14,7 +14,9 @@ import atlantis.units.AUnit;
  */
 public final class SharedFocusTarget {
 
-    /** The squad envelope both focus rules read (was the ladder's literal). */
+    /**
+     * The squad envelope both focus rules read (was the ladder's literal).
+     */
     public static final double SHARED_FOCUS_TILES = 9;
 
     private SharedFocusTarget() {

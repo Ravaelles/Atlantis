@@ -7,11 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Moon crescent slots (formation Phase A, no map lib): one shared shape
@@ -34,13 +30,19 @@ import java.util.Map;
  */
 public final class FormationSlots {
 
-    /** Minimum cluster size: pairs and duels never form up. */
+    /**
+     * Minimum cluster size: pairs and duels never form up.
+     */
     public static final int MIN_CLUSTER_SIZE = 3;
 
-    /** Too close for a shape: contact belongs to micro, not geometry. */
+    /**
+     * Too close for a shape: contact belongs to micro, not geometry.
+     */
     private static final double MIN_RADIUS_TILES = 3.3;
 
-    /** Arc never opens wider than this (Moon cap). */
+    /**
+     * Arc never opens wider than this (Moon cap).
+     */
     private static final double MAX_RADIUS_TILES = 11.0;
 
     /**
@@ -49,17 +51,32 @@ public final class FormationSlots {
      * the line, far enough to keep a lateral body instead of a file.
      */
     private static final double LINE_AHEAD_TILES = 6.0;
+    /**
+     * A slot inside a standing (or warping) building is not a slot: the
+     * engine's walkability is terrain-only, so it reads true there and
+     * the march wedges on the wall instead (NEXT #209: blocked units
+     * pile up inside the base instead of spreading). A finished wall
+     * and a warping one are equally solid underfoot, so unfinished
+     * counts too - unlike the placement seam, nothing is cancelled
+     * here, the slot is just stood on. Air units keep the sky.
+     */
+    private static final int SLOT_BODY_TILES = 1;
+    private static int cachedFrame = -1;
+    private static Map<AUnit, APosition> cachedSlots = new HashMap<>();
+    private static int lineCachedFrame = -1;
+    private static Map<AUnit, APosition> lineCachedSlots = new HashMap<>();
 
-    /** The far-pivot bar, shared with the march line (same arc cap). */
+    private FormationSlots() {
+    }
+
+    /**
+     * The far-pivot bar, shared with the march line (same arc cap).
+     */
     public static double maxRadiusTiles() {
         return MAX_RADIUS_TILES;
     }
 
-    private static int cachedFrame = -1;
-    private static Map<AUnit, APosition> cachedSlots = new HashMap<>();
-
-    private FormationSlots() {
-    }
+    // =========================================================
 
     public static boolean applies(int combatUnitCount) {
         return combatUnitCount >= MIN_CLUSTER_SIZE;
@@ -84,8 +101,6 @@ public final class FormationSlots {
         cachedFrame = -1;
         cachedSlots = new HashMap<>();
     }
-
-    // =========================================================
 
     private static void compute(Selection cluster, HasPosition pivot) {
         cachedFrame = atlantis.game.A.now();
@@ -129,7 +144,7 @@ public final class FormationSlots {
             APosition slot = APosition.create(
                 (int) (pivot.tx() - Math.cos(angle) * radius),
                 (int) (pivot.ty() - Math.sin(angle) * radius));
-            if (slot != null && valid(slot, units.get(i))) slots.add(slot);
+            if (valid(slot, units.get(i))) slots.add(slot);
         }
         if (slots.isEmpty()) return;
 
@@ -155,9 +170,6 @@ public final class FormationSlots {
         }
         return lineCachedSlots.get(unit);
     }
-
-    private static int lineCachedFrame = -1;
-    private static Map<AUnit, APosition> lineCachedSlots = new HashMap<>();
 
     public static void clearLineForTests() {
         lineCachedFrame = -1;
@@ -194,7 +206,7 @@ public final class FormationSlots {
             APosition slot = APosition.create(
                 (int) (ax - dy / len * off),
                 (int) (ay + dx / len * off));
-            if (slot != null && valid(slot, units.get(i))) slots.add(slot);
+            if (valid(slot, units.get(i))) slots.add(slot);
         }
         if (slots.isEmpty()) return;
 
@@ -247,17 +259,6 @@ public final class FormationSlots {
         return !standsInBuilding(slot);
     }
 
-    /**
-     * A slot inside a standing (or warping) building is not a slot: the
-     * engine's walkability is terrain-only, so it reads true there and
-     * the march wedges on the wall instead (NEXT #209: blocked units
-     * pile up inside the base instead of spreading). A finished wall
-     * and a warping one are equally solid underfoot, so unfinished
-     * counts too - unlike the placement seam, nothing is cancelled
-     * here, the slot is just stood on. Air units keep the sky.
-     */
-    private static final int SLOT_BODY_TILES = 1;
-
     private static boolean standsInBuilding(APosition slot) {
         try {
             for (AUnit building : Select.all().buildings().list()) {
@@ -270,7 +271,9 @@ public final class FormationSlots {
         return false;
     }
 
-    /** Tile-rectangle overlap between a 1x1 slot and a building footprint. */
+    /**
+     * Tile-rectangle overlap between a 1x1 slot and a building footprint.
+     */
     static boolean overlapsFootprint(APosition slot, AUnit building) {
         int sx = slot.tx();
         int sy = slot.ty();
@@ -291,8 +294,7 @@ public final class FormationSlots {
             if (region == null || region.center() == null) return center;
 
             return center.translatePercentTowards(33, region.center());
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return center;
         }
     }

@@ -9,12 +9,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Per-second unit telemetry (NEXT #180, owner 2026-10-26): the death
@@ -28,10 +23,14 @@ import java.util.Map;
  */
 public final class UnitTelemetry {
 
-    /** One row per game-second keeps even long games readable. */
+    /**
+     * One row per game-second keeps even long games readable.
+     */
     public static final int TRACE_EVERY_FRAMES = 24;
 
-    /** Snapshots kept per unit for the death log. */
+    /**
+     * Snapshots kept per unit for the death log.
+     */
     public static final int TRAIL_LENGTH = 5;
 
     private static final Map<Integer, Integer> lastSampleFrame = new HashMap<>();
@@ -95,7 +94,9 @@ public final class UnitTelemetry {
         while (trail.size() > TRAIL_LENGTH) trail.removeFirst();
     }
 
-    /** The last snapshots of a dead unit, oldest first, for the death log. */
+    /**
+     * The last snapshots of a dead unit, oldest first, for the death log.
+     */
     public static List<String> trailFor(int unitId) {
         Deque<String> trail = trails.get(unitId);
         if (trail == null) return new ArrayList<>();

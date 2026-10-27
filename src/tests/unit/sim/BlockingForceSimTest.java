@@ -1,7 +1,7 @@
 package tests.unit.sim;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.ClusterTactic;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
@@ -13,8 +13,8 @@ import tests.fakes.FakeUnit;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Stardust rule, live-fire proof in the sim (owner 2026-10-26, NEXT #188):
@@ -37,11 +37,6 @@ public class BlockingForceSimTest extends tests.unit.AbstractTestWithUnits {
 
     private static final int TILE = 32;
 
-    private static final class Outcome {
-        int attacksOnFoes;
-        double endX = 55;
-    }
-
     @Test
     public void blockingForceIsFoughtThroughNotFledInto() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 30);
@@ -55,8 +50,7 @@ public class BlockingForceSimTest extends tests.unit.AbstractTestWithUnits {
 
         assertTrue(blocked.attacksOnFoes >= 3,
             "blocking army is engaged, not fled into: " + blocked.attacksOnFoes + " attack orders");
-        assertTrue(lateral.attacksOnFoes == 0,
-            "lateral army is walked away from, not engaged: " + lateral.attacksOnFoes + " attack orders");
+        assertEquals(0, lateral.attacksOnFoes, "lateral army is walked away from, not engaged: " + lateral.attacksOnFoes + " attack orders");
         assertTrue(lateral.endX <= 45,
             "unblocked cluster retreats home (x falls toward the main at 10): end x=" + lateral.endX);
     }
@@ -105,20 +99,23 @@ public class BlockingForceSimTest extends tests.unit.AbstractTestWithUnits {
                     if (!r.operation.equals("attackUnit")) continue;
                     try {
                         if (foeIds.contains(Integer.parseInt(r.detail.trim()))) out.attacksOnFoes++;
-                    }
-                    catch (NumberFormatException ignored) {
+                    } catch (NumberFormatException ignored) {
                     }
                 }
             }
 
             return out;
-        }
-        finally {
+        } finally {
             for (FakeUnit zealot : zealots) Alpha.get().removeUnit(zealot);
             Alpha.get().removeUnit(nexus);
             world.close();
             BattleCommander.clearForTests();
             ClusterTactic.reset();
         }
+    }
+
+    private static final class Outcome {
+        int attacksOnFoes;
+        double endX = 55;
     }
 }

@@ -20,13 +20,17 @@ package atlantis.debug.tweaker;
  */
 public final class TunerFitness {
 
-    /** Flat loss penalty: dwarfs any realistic hits x minutes score. */
+    /**
+     * Flat loss penalty: dwarfs any realistic hits x minutes score.
+     */
     public static final double LOSS_PENALTY = 1000000.0;
 
     private TunerFitness() {
     }
 
-    /** Game seconds as minutes. Non-positive or unknown reads as infinite (unusable row). */
+    /**
+     * Game seconds as minutes. Non-positive or unknown reads as infinite (unusable row).
+     */
     public static double minutes(int seconds) {
         if (seconds <= 0 || seconds == Integer.MAX_VALUE) return Double.MAX_VALUE;
 

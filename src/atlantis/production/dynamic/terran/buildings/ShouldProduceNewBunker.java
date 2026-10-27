@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
@@ -12,17 +13,21 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class ShouldProduceNewBunker {
     protected final int existingAndPlannedBunkers;
-    private AStrategy enemyStrategy;
+    private final AStrategy enemyStrategy;
 
     public ShouldProduceNewBunker() {
         existingAndPlannedBunkers = Count.withPlanned(what());
         enemyStrategy = EnemyStrategy.get();
+    }
+
+    private static boolean ignore() {
+        return Strategy.get().isRushOrCheese()
+            && (A.s <= 60 * 6 || Army.strength() >= 110);
     }
 
     private AUnitType what() {
@@ -46,11 +51,6 @@ public class ShouldProduceNewBunker {
         if (enemyNotStrongEnoughForUsToBuildABunker()) return false;
 
         return !weHaveEnoughBunkers() && wantsToBuildABunker();
-    }
-
-    private static boolean ignore() {
-        return Strategy.get().isRushOrCheese()
-            && (A.s <= 60 * 6 || Army.strength() >= 110);
     }
 
     // =========================================================

@@ -12,22 +12,23 @@ package atlantis.production.v2;
  */
 public final class ProductionItem {
 
+    public static final int NO_PRODUCER = 0;
     private final Producible item;
     private final int startFrame;
     private final int completionFrame;
     private final boolean isPrerequisite;
     private final PlacementReservation placement;
-    /** Id of the facility that produces it; {@link #NO_PRODUCER} for buildings and when unknown. */
+    /**
+     * Id of the facility that produces it; {@link #NO_PRODUCER} for buildings and when unknown.
+     */
     private final int producerId;
-
-    public static final int NO_PRODUCER = 0;
 
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite) {
         this(item, startFrame, isPrerequisite, null, NO_PRODUCER);
     }
 
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
-            PlacementReservation placement) {
+                          PlacementReservation placement) {
         this(item, startFrame, isPrerequisite, placement, NO_PRODUCER);
     }
 
@@ -36,7 +37,7 @@ public final class ProductionItem {
      *                  (units, techs, upgrades) and for hand-built test items
      */
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
-            PlacementReservation placement, int producerId) {
+                          PlacementReservation placement, int producerId) {
         this.item = item;
         this.producerId = producerId;
         this.startFrame = startFrame;
@@ -74,7 +75,9 @@ public final class ProductionItem {
         return placement;
     }
 
-    /** The concrete facility (unit id) assigned to produce this, or {@link #NO_PRODUCER}. */
+    /**
+     * The concrete facility (unit id) assigned to produce this, or {@link #NO_PRODUCER}.
+     */
     public int producerId() {
         return producerId;
     }
@@ -82,6 +85,6 @@ public final class ProductionItem {
     @Override
     public String toString() {
         return (isPrerequisite ? "[pre] " : "") + item.id() + "@" + startFrame + "-" + completionFrame
-                + (producerId != NO_PRODUCER ? " by#" + producerId : "");
+            + (producerId != NO_PRODUCER ? " by#" + producerId : "");
     }
 }

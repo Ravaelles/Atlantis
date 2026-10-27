@@ -12,12 +12,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Long-vector escape (NEXT #173, owner doctrine): walk straight out as
@@ -29,7 +24,9 @@ import static tests.unit.AbstractTestWithUnits.fake;
 @Tag("combat")
 public class EscapeLongVectorTest extends WorldStubForTests {
 
-    /** Step length along its ray (straight 5 and diagonal 5 both read 5). */
+    /**
+     * Step length along its ray (straight 5 and diagonal 5 both read 5).
+     */
     private static int rayLen(APosition dest, FakeUnit from) {
         return Math.max(Math.abs(dest.tx() - from.tx()), Math.abs(dest.ty() - from.ty()));
     }
@@ -124,7 +121,7 @@ public class EscapeLongVectorTest extends WorldStubForTests {
             Math.abs(x - 30) <= 1 && Math.abs(y - 20) <= 1;
 
         assertNull(EscapeDestination.pickEscape(dragoon, threat, 2,
-            pocket, Collections.emptyList(), Collections.singletonList(threat)),
+                pocket, Collections.emptyList(), Collections.singletonList(threat)),
             "a true box still fights - no direction exists at any length");
     }
 
@@ -151,7 +148,7 @@ public class EscapeLongVectorTest extends WorldStubForTests {
             Math.max(Math.abs(x - 30), Math.abs(y - 20)) <= 6;
 
         assertNull(EscapeDestination.pick(dragoon, threat, 8,
-            capped, Collections.emptyList(), Collections.emptyList()),
+                capped, Collections.emptyList(), Collections.emptyList()),
             "precondition: nothing scores at 8");
         APosition dest = EscapeDestination.pickEscape(dragoon, threat, 8,
             capped, Collections.emptyList(), Collections.emptyList());

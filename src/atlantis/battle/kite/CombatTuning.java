@@ -18,6 +18,7 @@ package atlantis.battle.kite;
  */
 public final class CombatTuning {
 
+    private static volatile CombatTuning current = CombatTuning.defaults();
     private double kiteEnemyTiles = 5.0;
     private double kiteGlueTiles = 0.5;
     private double kiteStepTiles = 2.0;
@@ -71,24 +72,8 @@ public final class CombatTuning {
     private int umsNoRetreatFrames = 15 * 24;
     private double regroupThreatTiles = 15.0;
     private double regroupRallyTiles = 6.0;
+
     private CombatTuning() {
-    }
-
-    private static volatile CombatTuning current = CombatTuning.defaults();
-
-    /** The live snapshot; the tuner replaces it per game. */
-    public static CombatTuning current() {
-        return current;
-    }
-
-    /** Installs a derived snapshot - the tuner's only write path. */
-    public static void install(CombatTuning next) {
-        if (next != null) current = next;
-    }
-
-    /** Per-game reset next to the other static resets. */
-    public static void resetToDefaults() {
-        current = CombatTuning.defaults();
     }
 
     private CombatTuning(CombatTuning other) {
@@ -130,163 +115,246 @@ public final class CombatTuning {
         regroupRallyTiles = other.regroupRallyTiles;
     }
 
+    /**
+     * The live snapshot; the tuner replaces it per game.
+     */
+    public static CombatTuning current() {
+        return current;
+    }
+
+    /**
+     * Installs a derived snapshot - the tuner's only write path.
+     */
+    public static void install(CombatTuning next) {
+        if (next != null) current = next;
+    }
+
+    /**
+     * Per-game reset next to the other static resets.
+     */
+    public static void resetToDefaults() {
+        current = CombatTuning.defaults();
+    }
+
     public static CombatTuning defaults() {
         return new CombatTuning();
     }
 
-    /** Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)). */
+    /**
+     * Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)).
+     */
     public double getKiteEnemyTiles() {
         return kiteEnemyTiles;
     }
 
-    /** At or under this threat distance the duel is glue: bodies overlap, no step opens. */
+    /**
+     * At or under this threat distance the duel is glue: bodies overlap, no step opens.
+     */
     public double getKiteGlueTiles() {
         return kiteGlueTiles;
     }
 
-    /** How far the kiting step carries (tiles). */
+    /**
+     * How far the kiting step carries (tiles).
+     */
     public double getKiteStepTiles() {
         return kiteStepTiles;
     }
 
-    /** A step candidate has to open at least this much beyond the current distance (anti-jitter). */
+    /**
+     * A step candidate has to open at least this much beyond the current distance (anti-jitter).
+     */
     public double getKiteMinStepGainTiles() {
         return kiteMinStepGainTiles;
     }
 
-    /** Threat committed to exactly this unit shrinks the margin by this much (tiles). */
+    /**
+     * Threat committed to exactly this unit shrinks the margin by this much (tiles).
+     */
     public double getKiteHuntedTiles() {
         return kiteHuntedTiles;
     }
 
-    /** Threat facing this unit shrinks the margin by this much (tiles). */
+    /**
+     * Threat facing this unit shrinks the margin by this much (tiles).
+     */
     public double getKiteFacedTiles() {
         return kiteFacedTiles;
     }
 
-    /** Margin a full-health Dragoon demands before yielding (tiles). */
+    /**
+     * Margin a full-health Dragoon demands before yielding (tiles).
+     */
     public double getKiteMarginBaseTiles() {
         return kiteMarginBaseTiles;
     }
 
-    /** Margin a dying Dragoon demands before yielding (tiles). */
+    /**
+     * Margin a dying Dragoon demands before yielding (tiles).
+     */
     public double getKiteMarginDyingTiles() {
         return kiteMarginDyingTiles;
     }
 
-    /** Each survived Zealot pass lowers the demanded margin by this much (tiles). */
+    /**
+     * Each survived Zealot pass lowers the demanded margin by this much (tiles).
+     */
     public double getKiteMarginPerHitTiles() {
         return kiteMarginPerHitTiles;
     }
 
-    /** One Zealot pass deals this much damage (2x8 swings; jar reports 8x1). */
+    /**
+     * One Zealot pass deals this much damage (2x8 swings; jar reports 8x1).
+     */
     public double getKiteZealotPassDamage() {
         return kiteZealotPassDamage;
     }
 
-    /** Firing point sits this far inside max range (tiles). */
+    /**
+     * Firing point sits this far inside max range (tiles).
+     */
     public double getKiteStandoffInsetTiles() {
         return kiteStandoffInsetTiles;
     }
 
-    /** Glide deadband around the firing point (tiles). */
+    /**
+     * Glide deadband around the firing point (tiles).
+     */
     public double getKiteGlideDeadbandTiles() {
         return kiteGlideDeadbandTiles;
     }
 
-    /** Hold this many tiles inside max range when the threat is outranged by 2+ tiles. */
+    /**
+     * Hold this many tiles inside max range when the threat is outranged by 2+ tiles.
+     */
     public double getKiteMeleeCloserTiles() {
         return kiteMeleeCloserTiles;
     }
 
-    /** Range edge for the melee-closer term (Stardust: targetRange <= myRange - 64px). */
+    /**
+     * Range edge for the melee-closer term (Stardust: targetRange <= myRange - 64px).
+     */
     public double getKiteMeleeEdgeTiles() {
         return kiteMeleeEdgeTiles;
     }
 
-    /** At or under this many survived Zealot passes the Dragoon counts as wounded. */
+    /**
+     * At or under this many survived Zealot passes the Dragoon counts as wounded.
+     */
     public double getKiteWoundedHitsLeft() {
         return kiteWoundedHitsLeft;
     }
 
-    /** Wounded edge inset: hold this far inside max range instead of the melee-closer. */
+    /**
+     * Wounded edge inset: hold this far inside max range instead of the melee-closer.
+     */
     public double getKiteWoundedEdgeInsetTiles() {
         return kiteWoundedEdgeInsetTiles;
     }
 
-    /** Committed target sticks while inside weapon range plus this chase allowance (tiles). */
+    /**
+     * Committed target sticks while inside weapon range plus this chase allowance (tiles).
+     */
     public double getKiteStickyChaseTiles() {
         return kiteStickyChaseTiles;
     }
 
-    /** Below this health (hp + shields) a Dragoon holds fire unless the shot is safe. */
+    /**
+     * Below this health (hp + shields) a Dragoon holds fire unless the shot is safe.
+     */
     public int getDragoonLowHp() {
         return dragoonLowHp;
     }
 
-    /** Hold-fire Dragoon shoots only at this distance or more (tiles). */
+    /**
+     * Hold-fire Dragoon shoots only at this distance or more (tiles).
+     */
     public double getDragoonLowHpHoldTiles() {
         return dragoonLowHpHoldTiles;
     }
 
-    /** Hold-fire exception: the weapon fires within this many frames. */
+    /**
+     * Hold-fire exception: the weapon fires within this many frames.
+     */
     public int getDragoonLowHpFireCooldown() {
         return dragoonLowHpFireCooldown;
     }
 
-    /** Melee enemies inside 3 tiles that pin a Dragoon in place (escape impossible). */
+    /**
+     * Melee enemies inside 3 tiles that pin a Dragoon in place (escape impossible).
+     */
     public int getDragoonSurroundedMeleeCount() {
         return dragoonSurroundedMeleeCount;
     }
 
-    /** Surrounded Dragoon stands when the shot lands within this many frames. */
+    /**
+     * Surrounded Dragoon stands when the shot lands within this many frames.
+     */
     public int getDragoonSurroundedStandCooldown() {
         return dragoonSurroundedStandCooldown;
     }
 
-    /** Surrounded Dragoon stands when the nearest enemy is at least this far (tiles). */
+    /**
+     * Surrounded Dragoon stands when the nearest enemy is at least this far (tiles).
+     */
     public double getDragoonSurroundedStandDistTiles() {
         return dragoonSurroundedStandDistTiles;
     }
 
-    /** Pinched Dragoon retreats below this health (hp + shields). */
+    /**
+     * Pinched Dragoon retreats below this health (hp + shields).
+     */
     public int getDragoonPinchHp() {
         return dragoonPinchHp;
     }
 
-    /** Pinch retreat needs this many melee enemies inside the pinch radius. */
+    /**
+     * Pinch retreat needs this many melee enemies inside the pinch radius.
+     */
     public int getDragoonPinchMeleeCount() {
         return dragoonPinchMeleeCount;
     }
 
-    /** Pinch radius: melee enemies this close (tiles) close the pocket. */
+    /**
+     * Pinch radius: melee enemies this close (tiles) close the pocket.
+     */
     public double getDragoonPinchMeleeTiles() {
         return dragoonPinchMeleeTiles;
     }
 
     /** A reposition keeps riding this long before the attack re-arms (frames). */
 
-    /** A reposition keeps riding this long before the attack re-arms (frames). */
+    /**
+     * A reposition keeps riding this long before the attack re-arms (frames).
+     */
     public int getKiteRideFrames() {
         return kiteRideFrames;
     }
 
-    /** A step or glide re-issues at most this often (frames, Stardust latency+6 cadence). */
+    /**
+     * A step or glide re-issues at most this often (frames, Stardust latency+6 cadence).
+     */
     public int getKiteRestepsEveryFrames() {
         return kiteRestepsEveryFrames;
     }
 
-    /** Breach retreat hatch: at or under this hp a unit may leave a breached base. */
+    /**
+     * Breach retreat hatch: at or under this hp a unit may leave a breached base.
+     */
     public int getBreachRetreatHp() {
         return breachRetreatHp;
     }
 
-    /** Breach retreat only with at least this much cooldown left (no shot to give). */
+    /**
+     * Breach retreat only with at least this much cooldown left (no shot to give).
+     */
     public int getBreachRetreatCooldown() {
         return breachRetreatCooldown;
     }
 
-    /** Rally stands this far from the main toward the main choke (tiles). */
+    /**
+     * Rally stands this far from the main toward the main choke (tiles).
+     */
     public double getBreachRallyTiles() {
         return breachRallyTiles;
     }
@@ -299,17 +367,23 @@ public final class CombatTuning {
         return retreatFormationMinArmy;
     }
 
-    /** UMS opening stand-ground window: no retreat for the first 15 seconds (frames). */
+    /**
+     * UMS opening stand-ground window: no retreat for the first 15 seconds (frames).
+     */
     public int getUmsNoRetreatFrames() {
         return umsNoRetreatFrames;
     }
 
-    /** Threat radius the regroup rally reads: the fight the vanguard answers. */
+    /**
+     * Threat radius the regroup rally reads: the fight the vanguard answers.
+     */
     public double getRegroupThreatTiles() {
         return regroupThreatTiles;
     }
 
-    /** Regroup rally distance from the threat: clear of ground range, close enough to re-engage. */
+    /**
+     * Regroup rally distance from the threat: clear of ground range, close enough to re-engage.
+     */
     public double getRegroupRallyTiles() {
         return regroupRallyTiles;
     }

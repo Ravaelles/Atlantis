@@ -1,6 +1,7 @@
 package atlantis.information.decisions.terran;
 
 import atlantis.decisions.Decision;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
@@ -9,7 +10,6 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

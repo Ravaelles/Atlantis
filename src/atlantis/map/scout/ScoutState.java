@@ -15,54 +15,6 @@ public class ScoutState {
      * Current scout units.
      */
     public static final ArrayList<AUnit> scouts = new ArrayList<>();
-
-    /**
-     * Which worker number is allowed to become a scout, from the build order's
-     * {@code SCOUT_IS_NTH_WORKER} setting.
-     *
-     * <p>Scouting asks for this every frame, so the number is read once by the
-     * game root ({@code OnGameStarted}) instead of by Scouting from the
-     * production package - the boundary test forbids {@code map.scout..} from
-     * depending on {@code production..}, and routing the lookup through
-     * {@code Strategy} would just move the edge into another rule's baseline.</p>
-     */
-    public static int scoutIsNthWorker = 9;
-
-    /**
-     * Builds the per-unit manager for one scout. The implementation is Combat's
-     * ({@code atlantis.combat.scout.ScoutUnitManagers}); the
-     * game root sets it once, because Scouting must not name a Combat class.
-     *
-     * @see ScoutUnitManager
-     */
-    public static ScoutUnitManager scoutUnitManager = unit -> {
-        throw new IllegalStateException("ScoutUnitManager was never wired - is the game root running?");
-    };
-
-    //    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
-    public static boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = false;
-
-    public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
-    public static int scoutsKilledCount = 0;
-    public static int unitingAroundBaseNextPolygonIndex = -1;
-    public static HasPosition unitingAroundBaseLastPolygonPoint = null;
-    public static boolean scoutingAroundBaseWasInterrupted = false;
-    public static boolean unitingAroundBaseDirectionClockwise = true;
-    public static HasPosition nextPositionToScout = null;
-    public static HasPosition nextPositionToScout2 = null;
-    public static ARegion enemyBaseRegion = null;
-
-    /**
-     * Roam timeout (NEXT #78 follow-up): last distance to the current roam
-     * point and when progress was last seen. The polygon index used to advance
-     * only on arrival (within 1.8) - a scout that can never get there (blocked
-     * point, chased loop) returned the same target every frame, and
-     * {@code move()} suppresses re-issues to an unchanged target, so it stood
-     * still holding a move order. -1 = no point tracked (re-armed on advance).
-     */
-    public static double roamLastDistToPoint = -1;
-    public static int roamLastProgressFrame = 0;
-
     /**
      * Baseless-visit memory (ScoutEnemyBasesWithoutBase repair, Wine game:
      * the scout re-issued Move to the same base location for 100+ frames -
@@ -75,6 +27,48 @@ public class ScoutState {
      * above (the build order fields exactly one).
      */
     public static final Set<String> baselessVisited = new HashSet<>();
+    /**
+     * Which worker number is allowed to become a scout, from the build order's
+     * {@code SCOUT_IS_NTH_WORKER} setting.
+     *
+     * <p>Scouting asks for this every frame, so the number is read once by the
+     * game root ({@code OnGameStarted}) instead of by Scouting from the
+     * production package - the boundary test forbids {@code map.scout..} from
+     * depending on {@code production..}, and routing the lookup through
+     * {@code Strategy} would just move the edge into another rule's baseline.</p>
+     */
+    public static int scoutIsNthWorker = 9;
+    /**
+     * Builds the per-unit manager for one scout. The implementation is Combat's
+     * ({@code atlantis.combat.scout.ScoutUnitManagers}); the
+     * game root sets it once, because Scouting must not name a Combat class.
+     *
+     * @see ScoutUnitManager
+     */
+    public static ScoutUnitManager scoutUnitManager = unit -> {
+        throw new IllegalStateException("ScoutUnitManager was never wired - is the game root running?");
+    };
+    //    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
+    public static boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = false;
+    public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
+    public static int scoutsKilledCount = 0;
+    public static int unitingAroundBaseNextPolygonIndex = -1;
+    public static HasPosition unitingAroundBaseLastPolygonPoint = null;
+    public static boolean scoutingAroundBaseWasInterrupted = false;
+    public static boolean unitingAroundBaseDirectionClockwise = true;
+    public static HasPosition nextPositionToScout = null;
+    public static HasPosition nextPositionToScout2 = null;
+    public static ARegion enemyBaseRegion = null;
+    /**
+     * Roam timeout (NEXT #78 follow-up): last distance to the current roam
+     * point and when progress was last seen. The polygon index used to advance
+     * only on arrival (within 1.8) - a scout that can never get there (blocked
+     * point, chased loop) returned the same target every frame, and
+     * {@code move()} suppresses re-issues to an unchanged target, so it stood
+     * still holding a move order. -1 = no point tracked (re-armed on advance).
+     */
+    public static double roamLastDistToPoint = -1;
+    public static int roamLastProgressFrame = 0;
     public static String baselessTrackedKey = null;
     public static int baselessTrackedSince = 0;
 

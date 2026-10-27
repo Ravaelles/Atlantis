@@ -1,16 +1,15 @@
 package atlantis.information.decisions;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class Decisions {
     protected static Cache<Boolean> cache = new Cache<>();
@@ -25,15 +24,15 @@ public class Decisions {
 //                if (
 //                    !SoonInQueue.unit(AUnitType.Terran_Siege_Tank_Tank_Mode)
 //                        && !SoonInQueue.unit(AUnitType.Terran_Machine_Shop)
-////                    !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
-////                        && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
+
+    /// /                    !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
+    /// /                        && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
 //                ) return false;
 //
 //                return EnemyInfo.startedWithCombatBuilding && Strategy.get().goingBio();
 //            }
 //        );
 //    }
-
     public static boolean isEnemyGoingAirAndWeAreNotPreparedEnough() {
         return cache.get(
             "isEnemyGoingAirAndWeAreNotPreparedEnough",
@@ -70,9 +69,7 @@ public class Decisions {
                 return true;
             }
 
-            if (zealots <= 1 || (A.hasMinerals(225) && Have.free(Protoss_Gateway))) {
-                return true;
-            }
+            return zealots <= 1 || (A.hasMinerals(225) && Have.free(Protoss_Gateway));
         }
 
         // Mid + Late game
@@ -81,12 +78,8 @@ public class Decisions {
                 return true;
             }
 
-            if (A.canAffordWithReserved(130, 0)) {
-                return true;
-            }
+            return A.canAffordWithReserved(130, 0);
         }
-
-        return false;
     }
 
     public static boolean enemyStrategyIsRushOrCheese() {

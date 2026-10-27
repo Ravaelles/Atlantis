@@ -7,8 +7,8 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.We;
+import atlantis.util.log.LogLevel;
 
 import java.util.ArrayList;
 import java.util.List;

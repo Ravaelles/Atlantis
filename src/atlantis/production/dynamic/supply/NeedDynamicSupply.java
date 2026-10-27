@@ -11,22 +11,26 @@ package atlantis.production.dynamic.supply;
 public interface NeedDynamicSupply {
 
     /**
-     * @param supplyUsed       units of supply in use right now.
-     * @param supplyTotal      total supply right now.
-     * @param unfinishedProviders unfinished supply buildings (warping
-     *                            or not started): one in flight Already
-     *                            covers the block it was ordered for.
+     * Dispatch by race; non-Protoss stays legacy (D8: Protoss-only).
      */
-    boolean needsSupply(int supplyUsed, int supplyTotal, int unfinishedProviders);
-
-    /** Dispatch by race; non-Protoss stays legacy (D8: Protoss-only). */
     static NeedDynamicSupply forCurrentRace() {
         if (atlantis.util.We.protoss()) return new ProtossNeedDynamicSupply();
 
         return new PermissiveNeedDynamicSupply();
     }
 
-    /** Fail-open for races without a tuned rule: legacy paths decide. */
+    /**
+     * @param supplyUsed          units of supply in use right now.
+     * @param supplyTotal         total supply right now.
+     * @param unfinishedProviders unfinished supply buildings (warping
+     *                            or not started): one in flight Already
+     *                            covers the block it was ordered for.
+     */
+    boolean needsSupply(int supplyUsed, int supplyTotal, int unfinishedProviders);
+
+    /**
+     * Fail-open for races without a tuned rule: legacy paths decide.
+     */
     final class PermissiveNeedDynamicSupply implements NeedDynamicSupply {
         @Override
         public boolean needsSupply(int supplyUsed, int supplyTotal, int unfinishedProviders) {

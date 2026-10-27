@@ -82,16 +82,16 @@ public final class BoardState {
         this.ourForgeExpand = builder.ourForgeExpand;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public int supplyFree() {
         return supplyTotal - supplyUsed;
     }
 
     public boolean hasDetection() {
         return observerCount > 0 || cannonCount > 0;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static final class Builder {
@@ -251,11 +251,13 @@ public final class BoardState {
 
             return this;
         }
+
         public Builder basesUnfinished(int basesUnfinished) {
             this.basesUnfinished = basesUnfinished;
 
             return this;
         }
+
         public Builder basesPlanned(int basesPlanned) {
             this.basesPlanned = basesPlanned;
 
@@ -294,28 +296,36 @@ public final class BoardState {
             return this;
         }
 
-        /** Army strength without static defense: rush math, not siege math. */
+        /**
+         * Army strength without static defense: rush math, not siege math.
+         */
         public Builder armyStrengthWithoutCB(int armyStrengthWithoutCB) {
             this.armyStrengthWithoutCB = armyStrengthWithoutCB;
 
             return this;
         }
 
-        /** Enemy has ranged units (DT prediction: ranged mirrors need no Forge first). */
+        /**
+         * Enemy has ranged units (DT prediction: ranged mirrors need no Forge first).
+         */
         public Builder enemyHasRanged(boolean enemyHasRanged) {
             this.enemyHasRanged = enemyHasRanged;
 
             return this;
         }
 
-        /** Strategy reads the enemy going hidden units (DT prediction). */
+        /**
+         * Strategy reads the enemy going hidden units (DT prediction).
+         */
         public Builder enemyGoingHidden(boolean enemyGoingHidden) {
             this.enemyGoingHidden = enemyGoingHidden;
 
             return this;
         }
 
-        /** Gateways still warping (Forge timing waits for production first). */
+        /**
+         * Gateways still warping (Forge timing waits for production first).
+         */
         public Builder gatewaysUnfinished(int gatewaysUnfinished) {
             this.gatewaysUnfinished = gatewaysUnfinished;
 

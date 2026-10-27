@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.information.strategy.Strategy;
@@ -10,7 +11,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

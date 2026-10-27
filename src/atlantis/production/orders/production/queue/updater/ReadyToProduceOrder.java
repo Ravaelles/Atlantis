@@ -49,11 +49,24 @@ public final class ReadyToProduceOrder {
 
     private static final int RICH_BANK_LATE_SUPPLY = 150;
 
-    /** How far below the gate an order may start when rich (owner rule). */
+    /**
+     * How far below the gate an order may start when rich (owner rule).
+     */
     private static final int ALLOWED_EARLY_SUPPLY = 1;
 
-    /** One worker in pocket above the price (owner rule). */
+    /**
+     * One worker in pocket above the price (owner rule).
+     */
     private static final int WORKER_POCKET_MINERALS = 50;
+    /**
+     * Builder headroom in minerals (owner: the golden middle between a
+     * builder idling 30 s on site and starting ~15 s late): readiness
+     * fires once the bank is this close to the price, so the builder
+     * walks while the last minerals are mined instead of queuing behind
+     * them. Only below, the aim-while-poor path and the twin are
+     * untouched; only above, early dispatch is already affordable.
+     */
+    private static final int EARLY_DISPATCH_HEADROOM_MINERALS = 50;
 
     private ReadyToProduceOrder() {
     }
@@ -71,7 +84,9 @@ public final class ReadyToProduceOrder {
         return bankHoldsPricePlusWorker(order);
     }
 
-    /** Price plus one worker in hand, net of reserves. */
+    /**
+     * Price plus one worker in hand, net of reserves.
+     */
     static boolean bankHoldsPricePlusWorker(ProductionOrder order) {
         AUnitType type = order.unitType();
 
@@ -211,16 +226,6 @@ public final class ReadyToProduceOrder {
         return order.aroundPosition().distTo(main) >= 17;
     }
 
-    /**
-     * Builder headroom in minerals (owner: the golden middle between a
-     * builder idling 30 s on site and starting ~15 s late): readiness
-     * fires once the bank is this close to the price, so the builder
-     * walks while the last minerals are mined instead of queuing behind
-     * them. Only below, the aim-while-poor path and the twin are
-     * untouched; only above, early dispatch is already affordable.
-     */
-    private static final int EARLY_DISPATCH_HEADROOM_MINERALS = 50;
-
     private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean farSite) {
         AUnitType type = order.unitType();
 
@@ -236,8 +241,8 @@ public final class ReadyToProduceOrder {
         boolean canAffordNow = A.canAffordWithReserved(Math.min(220, type.mineralPrice()), type.gasPrice());
         boolean canAffordSoon = type.isABuilding() && A.supplyUsed() >= order.minSupply()
             && A.canAffordWithReserved(
-                Math.max(0, Math.min(220, type.mineralPrice()) - EARLY_DISPATCH_HEADROOM_MINERALS),
-                type.gasPrice());
+            Math.max(0, Math.min(220, type.mineralPrice()) - EARLY_DISPATCH_HEADROOM_MINERALS),
+            type.gasPrice());
 
         if (A.supplyUsed() >= order.minSupply()) return canAffordNow || canAffordSoon;
 

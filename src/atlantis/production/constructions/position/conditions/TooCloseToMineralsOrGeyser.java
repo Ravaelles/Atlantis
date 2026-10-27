@@ -11,6 +11,24 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class TooCloseToMineralsOrGeyser {
+    /**
+     * Minimum tile distance from a mineral patch for a Protoss building that is not
+     * a Cannon - the owner's ruling, 2026-10-10 (ideally one tile edge-to-edge).
+     */
+    public static final double PROSTOSS_MIN_DIST_TO_MINERAL = 3.1;
+
+//    private static boolean allowCloseToBase(AUnit nearestBase, AUnitType building, APosition position) {
+//        if (nearestBase == null) return false;
+//        if (!building.isCannon()) return false;
+//
+//        return nearestBase.distTo(position) <= 3.5;
+//    }
+    /**
+     * The same for a Photon Cannon, which is allowed closer because covering the
+     * mineral line is what it is for - the owner's ruling, 2026-10-10.
+     */
+    public static final double PROSTOSS_MIN_DIST_TO_MINERAL_CANNON = 2.0;
+
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
         if (building.isMissileTurret()) return false;
         if (building.isBase()) return false;
@@ -64,13 +82,6 @@ public class TooCloseToMineralsOrGeyser {
         return false;
     }
 
-//    private static boolean allowCloseToBase(AUnit nearestBase, AUnitType building, APosition position) {
-//        if (nearestBase == null) return false;
-//        if (!building.isCannon()) return false;
-//
-//        return nearestBase.distTo(position) <= 3.5;
-//    }
-
     private static double minDistToGeyser(AUnitType building) {
 //        if (true) return 0.1;
 
@@ -94,18 +105,6 @@ public class TooCloseToMineralsOrGeyser {
 
         return true;
     }
-
-    /**
-     * Minimum tile distance from a mineral patch for a Protoss building that is not
-     * a Cannon - the owner's ruling, 2026-10-10 (ideally one tile edge-to-edge).
-     */
-    public static final double PROSTOSS_MIN_DIST_TO_MINERAL = 3.1;
-
-    /**
-     * The same for a Photon Cannon, which is allowed closer because covering the
-     * mineral line is what it is for - the owner's ruling, 2026-10-10.
-     */
-    public static final double PROSTOSS_MIN_DIST_TO_MINERAL_CANNON = 2.0;
 
     /**
      * The Protoss base case: ideally one tile of clearance edge-to-edge, which is

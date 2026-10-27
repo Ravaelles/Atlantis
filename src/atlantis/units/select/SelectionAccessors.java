@@ -17,11 +17,11 @@ final class SelectionAccessors {
     }
 
     static AUnit first(Selection selection) {
-        return selection.data.isEmpty() ? null : (AUnit) selection.data.get(0);
+        return selection.data.isEmpty() ? null : selection.data.get(0);
     }
 
     static AUnit second(Selection selection) {
-        return selection.data.size() < 2 ? null : (AUnit) selection.data.get(1);
+        return selection.data.size() < 2 ? null : selection.data.get(1);
     }
 
     static AUnit randomWithSeed(Selection selection, int seed) {
@@ -34,7 +34,7 @@ final class SelectionAccessors {
     }
 
     static AUnit last(Selection selection) {
-        return selection.data.isEmpty() ? null : (AUnit) selection.data.get(selection.data.size() - 1);
+        return selection.data.isEmpty() ? null : selection.data.get(selection.data.size() - 1);
     }
 
     static AUnit random(Selection selection) {
@@ -42,7 +42,7 @@ final class SelectionAccessors {
     }
 
     static boolean areAllBusy(Selection selection) {
-        for (java.util.Iterator<AUnit> it = (java.util.Iterator) selection.data.iterator(); it.hasNext(); ) {
+        for (java.util.Iterator<AUnit> it = selection.data.iterator(); it.hasNext(); ) {
             AUnit unit = it.next();
             if (!unit.isBusy()) return false;
         }

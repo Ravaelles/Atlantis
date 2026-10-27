@@ -6,8 +6,9 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import bwapi.TechType;
 
 public abstract class TechResearchCommander extends Commander {
-    protected abstract void setEnqueued(boolean isEnqueued);
     protected abstract boolean isEnqueued();
+
+    protected abstract void setEnqueued(boolean isEnqueued);
 
     public abstract TechType what();
 

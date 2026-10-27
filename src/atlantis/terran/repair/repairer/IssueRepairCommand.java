@@ -24,9 +24,7 @@ public class IssueRepairCommand extends Manager {
 
         target = RepairAssignments.unitToRepairForSCV(unit);
 
-        if (target == null || !target.isAlive()) return false;
-
-        return true;
+        return target != null && target.isAlive();
     }
 
     @Override

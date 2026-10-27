@@ -1,24 +1,19 @@
 package tests.unit;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.escape.EscapeDestination;
 import atlantis.combat.escape.EscapeRays;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner rule (Steamhammer loss: two Dragoons died shooting nothing,
@@ -89,7 +84,7 @@ public class EscapeBuildingClearanceTest extends WorldStubForTests {
         blockers.add(mineral);
 
         assertFalse(EscapeDestination.violatesBuildingClearance(
-            APosition.create(38, 20), blockers),
+                APosition.create(38, 20), blockers),
             "minerals are walk-around cover, not a hard veto");
     }
 
@@ -102,10 +97,10 @@ public class EscapeBuildingClearanceTest extends WorldStubForTests {
         assertFalse(EscapeDestination.violatesBuildingClearance(null, blockers),
             "no dest: the caller owns that exit");
         assertFalse(EscapeDestination.violatesBuildingClearance(
-            APosition.create(38, 20), null),
+                APosition.create(38, 20), null),
             "no blockers: the step stands");
         assertFalse(EscapeDestination.violatesBuildingClearance(
-            APosition.create(38, 20), new ArrayList<>()),
+                APosition.create(38, 20), new ArrayList<>()),
             "empty blockers: the step stands");
     }
 

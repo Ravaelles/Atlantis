@@ -1,18 +1,12 @@
 package tests.acceptance;
 
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
+import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import bwapi.Race;
-
-import static atlantis.units.AUnitType.Protoss_Gateway;
-import static atlantis.units.AUnitType.Protoss_Nexus;
-import static atlantis.units.AUnitType.Protoss_Probe;
-import static atlantis.units.AUnitType.Terran_Marine;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static atlantis.units.AUnitType.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Every way out of the expansion decision has to leave a reason behind.

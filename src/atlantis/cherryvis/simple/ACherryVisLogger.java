@@ -1,18 +1,17 @@
 package atlantis.cherryvis.simple;
 
 import atlantis.cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.cherryvis.AbstractCherryVisLogger;
+import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.cherryvis.ACherryVisConfig;
-import atlantis.cherryvis.generic.ACherryVis_GameSummary;
-
 import atlantis.util.AConsole;
 import atlantis.util.AFile;
 
 public class ACherryVisLogger implements AbstractCherryVisLogger {
-    private ACherryVisConfig config;
-    private ACherryVisUnitLogger unitLogger;
+    private final ACherryVisConfig config;
+    private final ACherryVisUnitLogger unitLogger;
 
     public ACherryVisLogger(ACherryVisConfig config) {
         this.config = config;

@@ -9,22 +9,32 @@ import atlantis.units.AUnit;
  * approach; the decisions live in their own classes, picked by
  * {@link BattleStrategies} from the detected setup - never by scattered
  * if-branches at the call sites.
- *
+ * <p>
  * The same holds for the no-contact regroup point below: it is answered
  * here, per value, so callers never switch on the enum. Values without a
  * strategy point (duel, open field) answer null and the caller falls back
  * to the formation.
  */
 public enum BattleStrategy {
-    /** Tiny baseless duel: kite off to range minus a step, hunt lost contact. */
+    /**
+     * Tiny baseless duel: kite off to range minus a step, hunt lost contact.
+     */
     DUEL_KITE,
-    /** Bait detached at a held choke: pull the enemy into the funnel. */
+    /**
+     * Bait detached at a held choke: pull the enemy into the funnel.
+     */
     SCOUT_BAIT,
-    /** Choke ahead with the enemy near and no crushing superiority: hold, don't push. */
+    /**
+     * Choke ahead with the enemy near and no crushing superiority: hold, don't push.
+     */
     CHOKE_HOLD,
-    /** Bait pulled the enemy into the funnel and the line crushes: join the bait at the mouth. */
+    /**
+     * Bait pulled the enemy into the funnel and the line crushes: join the bait at the mouth.
+     */
     COLLAPSE,
-    /** Everything else: the standing fight. */
+    /**
+     * Everything else: the standing fight.
+     */
     OPEN_FIELD;
 
     /**

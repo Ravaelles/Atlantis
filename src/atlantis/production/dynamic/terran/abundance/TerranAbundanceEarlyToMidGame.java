@@ -12,10 +12,14 @@ public class TerranAbundanceEarlyToMidGame extends Commander {
 
     @Override
     protected boolean handle() {
-        if (AbundanceProduce.produceWraith()) {}
-        if (AbundanceProduce.produceTank()) {}
-        if (AbundanceProduce.produceMarine()) {}
-        if (AbundanceProduce.produceVulture()) {}
+        if (AbundanceProduce.produceWraith()) {
+        }
+        if (AbundanceProduce.produceTank()) {
+        }
+        if (AbundanceProduce.produceMarine()) {
+        }
+        if (AbundanceProduce.produceVulture()) {
+        }
         return false;
     }
 }

@@ -27,6 +27,11 @@ public class RoamAroundEnemyBase extends Manager {
      * construction overdue window, not a tuned value.
      */
     public static final int ROAM_STUCK_TIMEOUT_FRAMES = 300;
+    private HasPosition enemyMain;
+    private APosition position = null;
+    public RoamAroundEnemyBase(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * Pure timeout decision, so the rule is unit-testable without a game.
@@ -37,13 +42,6 @@ public class RoamAroundEnemyBase extends Manager {
         return lastDist >= 0
             && distToPoint >= lastDist - 0.1
             && now - lastProgressFrame > ROAM_STUCK_TIMEOUT_FRAMES;
-    }
-
-    private HasPosition enemyMain;
-    private APosition position = null;
-
-    public RoamAroundEnemyBase(AUnit unit) {
-        super(unit);
     }
 
     @Override

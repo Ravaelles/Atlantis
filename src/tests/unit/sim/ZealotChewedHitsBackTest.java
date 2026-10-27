@@ -1,26 +1,20 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Repro of the Steamhammer loss (Zealot#177, owner report): surrounded by
@@ -62,7 +56,7 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
     private static FakeUnit[] surround(double cx, double cy) {
         // H: healthy, nearest (0.25). W: wounded (hp 5), in range (0.35).
         // Two more pressers at 3 and 5 tiles: in enemiesNear, out of reach.
-        return new FakeUnit[] {
+        return new FakeUnit[]{
             zling(cx + 0.25, cy, 35),
             zling(cx - 0.35, cy, 5),
             zling(cx + 3, cy + 1, 35),
@@ -70,7 +64,9 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
         };
     }
 
-    /** Zombie policy A: chase the nearest live unit, trade in reach. */
+    /**
+     * Zombie policy A: chase the nearest live unit, trade in reach.
+     */
     private static void chaseNearest(List<FakeUnit> foes, List<FakeUnit> ours) {
         for (FakeUnit f : foes) {
             if (f.hp <= 0) continue;
@@ -94,7 +90,9 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
         }
     }
 
-    /** Zombie policy B: stand the surround, trade only - no chase. */
+    /**
+     * Zombie policy B: stand the surround, trade only - no chase.
+     */
     private static void standAndTrade(List<FakeUnit> foes, List<FakeUnit> ours) {
         for (FakeUnit f : foes) {
             if (f.hp <= 0) continue;
@@ -157,14 +155,14 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
         List<FakeUnit> ours = new ArrayList<>();
         ours.add(z);
         List<FakeUnit> foes = new ArrayList<>();
-        for (FakeUnit f : foeArr) foes.add(f);
+        Collections.addAll(foes, foeArr);
 
         FakeUnit[] foeIds = foeArr;
         int weakId = foeArr[1].id();
 
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, z }, foes.toArray(new FakeUnit[0]), arena);
+            new FakeUnit[]{nexus, z}, foes.toArray(new FakeUnit[0]), arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -181,16 +179,11 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
                 listener.onTick(tick, z, foeIds, weakId, ordersOf(z));
                 if (z.hp <= 0) break;
             }
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
-    }
-
-    private interface Listener {
-        void onTick(int tick, FakeUnit z, FakeUnit[] foes, int weakId, List<FakeOrderSink.Record> orders);
     }
 
     @Test
@@ -237,8 +230,7 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
         });
 
         assertFalse(firstTargets.isEmpty(), "a grabbed zealot with its shot ready shoots, not marches");
-        assertTrue(targetsWhileWeakAlive.size() == 1,
-            "one stable in-range target, never the far pressers: " + targetsWhileWeakAlive);
+        assertEquals(1, targetsWhileWeakAlive.size(), "one stable in-range target, never the far pressers: " + targetsWhileWeakAlive);
     }
 
     @Test
@@ -247,11 +239,11 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
         FakeUnit z = zealot(30, 20);
         FakeUnit[] foeArr = surround(30, 20);
         List<FakeUnit> foes = new ArrayList<>();
-        for (FakeUnit f : foeArr) foes.add(f);
+        Collections.addAll(foes, foeArr);
 
         SimArena arena = new SimArena(70 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(
-            new FakeUnit[] { nexus, z }, foes.toArray(new FakeUnit[0]), arena);
+            new FakeUnit[]{nexus, z}, foes.toArray(new FakeUnit[0]), arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -265,12 +257,15 @@ public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
                 "grabbed with shot ready: fight, never march home - farthest move dest " + farthest);
             assertTrue(ordersOf(z).stream().anyMatch(r -> r.operation.equals("attackUnit")),
                 "the ready shot goes into the chewer: " + ordersOf(z));
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
+    }
+
+    private interface Listener {
+        void onTick(int tick, FakeUnit z, FakeUnit[] foes, int weakId, List<FakeOrderSink.Record> orders);
     }
 
 }

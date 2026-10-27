@@ -16,9 +16,8 @@ public class TerranAlwaysAvoidEnemy extends Manager {
     public boolean shouldAlwaysAvoid() {
         if (asTank()) return true;
         if (asVulture()) return true;
-        if (AlwaysAvoidAsTerranInfantry.asInfantry(unit)) return true;
 
-        return false;
+        return AlwaysAvoidAsTerranInfantry.asInfantry(unit);
     }
 
     private boolean asTank() {

@@ -39,9 +39,6 @@ import atlantis.units.AUnitType;
  */
 public final class CatalogueSiteAdapter {
 
-    private CatalogueSiteAdapter() {
-    }
-
     /**
      * One planner per game frame, shared by every site search in that frame.
      * A fresh planner rebuilds the whole-map grid + catalogue at
@@ -54,6 +51,8 @@ public final class CatalogueSiteAdapter {
      */
     private static CataloguePlacementPlanner sharedPlanner;
     private static int sharedPlannerFrame = -1;
+    private CatalogueSiteAdapter() {
+    }
 
     private static synchronized PlacementPlanner plannerForFrame(int frame) {
         if (sharedPlanner == null || sharedPlannerFrame != frame) {

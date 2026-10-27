@@ -15,9 +15,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Game 175329: the hoarding tripwire (600+ minerals) ended a healthy game
@@ -127,7 +124,8 @@ public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void bankWithFreeSupplyStaysSilent() {        currentMinerals = 650;
+    public void bankWithFreeSupplyStaysSilent() {
+        currentMinerals = 650;
         currentSupplyUsed = 30;
         currentSupplyTotal = 50;
         Env.setOpenBWForTest(true);

@@ -5,7 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 
 public class DoAvoidEnemies extends Manager {
-    private ProcessAvoid avoid;
+    private final ProcessAvoid avoid;
     private Units enemies;
 
     public DoAvoidEnemies(AUnit unit, Units enemies) {

@@ -2,7 +2,7 @@ package tests.fakes;
 
 import atlantis.game.player.APlayer;
 import atlantis.units.AUnitType;
-import bwapi.*;
+import bwapi.UpgradeType;
 
 public class FakePlayer extends APlayer {
 
@@ -12,8 +12,8 @@ public class FakePlayer extends APlayer {
 
     private static int firstFreeId = 1;
 
-    private int fakeId;
-    private boolean our;
+    private final int fakeId;
+    private final boolean our;
     private boolean neutral;
     private boolean enemy;
 

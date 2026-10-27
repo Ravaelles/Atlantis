@@ -1,6 +1,5 @@
 package atlantis.production.constructions.position.protoss;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;

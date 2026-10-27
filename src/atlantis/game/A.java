@@ -1,20 +1,18 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.game.player.Enemy;
+import atlantis.util.GameClock;
 import bwapi.Game;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import java.io.*;
 import java.time.Instant;
 import java.util.*;
-import atlantis.util.GameClock;
-
 import java.util.regex.Pattern;
 
 /**

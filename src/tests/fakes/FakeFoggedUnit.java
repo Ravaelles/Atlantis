@@ -17,6 +17,14 @@ import atlantis.units.fogged.FoggedUnit;
  */
 public class FakeFoggedUnit extends AbstractFoggedUnit {
 
+    private FakeFoggedUnit(FakeUnit unit) {
+        super(unit);
+    }
+
+//    protected FakeFoggedUnit() {
+//        super(null);
+//    }
+
     /**
      * Makes this class the answer to {@code AbstractFoggedUnit.from(...)} here.
      * A unit that does have an engine object still gets the game's own fogged
@@ -28,14 +36,6 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
             unit instanceof FakeUnit
                 ? fromFake((FakeUnit) unit)
                 : FoggedUnit.from(unit));
-    }
-
-//    protected FakeFoggedUnit() {
-//        super(null);
-//    }
-
-    private FakeFoggedUnit(FakeUnit unit) {
-        super(unit);
     }
 
     public static FakeFoggedUnit fromFake(FakeUnit unit) {
@@ -64,7 +64,7 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
             // in the same package as AbstractFoggedUnit, so it has no access to
             // a protected member through a base-typed reference. type() is what
             // callers read anyway.
-            _lastType = ((AbstractFoggedUnit) unit).type();
+            _lastType = unit.type();
         }
     }
 

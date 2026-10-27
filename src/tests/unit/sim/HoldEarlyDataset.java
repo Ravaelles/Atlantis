@@ -1,14 +1,14 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.strategy.DuelKite;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static tests.unit.AbstractTestWithUnits.fake;
 
@@ -30,27 +30,15 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 public final class HoldEarlyDataset {
 
-    /** Feature count. Order is frozen: the net, the CSV and the gate agree on it. */
+    /**
+     * Feature count. Order is frozen: the net, the CSV and the gate agree on it.
+     */
     public static final int FEATURES = 9;
 
     public static final int CHASE = 0;
     public static final int STAND = 1;
     public static final int KITEBACK = 2;
     public static final int HOLDSTILL = 3;
-
-    public static final class Row {
-        public final double[] x;
-        public final double y;
-        public final int policy;
-        public final int seed;
-
-        Row(double[] x, double y, int policy, int seed) {
-            this.x = x;
-            this.y = y;
-            this.policy = policy;
-            this.seed = seed;
-        }
-    }
 
     private HoldEarlyDataset() {
     }
@@ -105,9 +93,9 @@ public final class HoldEarlyDataset {
      */
     public static List<Row> generate() {
         List<Row> rows = new ArrayList<>();
-        double[] dists = new double[] { 12, 15 };
-        int[] policies = new int[] { CHASE, STAND, KITEBACK, HOLDSTILL };
-        double[] jitters = new double[] { 0, 0.7, 1.4 };
+        double[] dists = new double[]{12, 15};
+        int[] policies = new int[]{CHASE, STAND, KITEBACK, HOLDSTILL};
+        double[] jitters = new double[]{0, 0.7, 1.4};
 
         for (double dist : dists) {
             for (int policy : policies) {
@@ -132,7 +120,7 @@ public final class HoldEarlyDataset {
         foes.add(zealot);
 
         SimArena arena = new SimArena(20 * 32, 12 * 32);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { zealot }, arena);
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{zealot}, arena);
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -153,8 +141,7 @@ public final class HoldEarlyDataset {
                 });
                 if (dragoon.hp <= 0 || zealot.hp <= 0) break;
             }
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -178,7 +165,9 @@ public final class HoldEarlyDataset {
         }
     }
 
-    /** Chasers face us, kiters face away while retreating - the live meaning of facing. */
+    /**
+     * Chasers face us, kiters face away while retreating - the live meaning of facing.
+     */
     static void orient(FakeUnit foe, FakeUnit dragoon, int policy) {
         if (foe == null || foe.hp <= 0 || dragoon.hp <= 0) return;
 
@@ -188,6 +177,20 @@ public final class HoldEarlyDataset {
         }
         else {
             foe.setAngle(toward);
+        }
+    }
+
+    public static final class Row {
+        public final double[] x;
+        public final double y;
+        public final int policy;
+        public final int seed;
+
+        Row(double[] x, double y, int policy, int seed) {
+            this.x = x;
+            this.y = y;
+            this.policy = policy;
+            this.seed = seed;
         }
     }
 }

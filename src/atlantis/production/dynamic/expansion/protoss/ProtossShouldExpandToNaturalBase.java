@@ -80,7 +80,8 @@ public class ProtossShouldExpandToNaturalBase extends ProtossShouldExpand {
         if (armyStrength <= 90) return no("TooWeak");
         if (seconds <= 500 && Strategy.get().isRushOrCheese()) no("RushPlan");
         if (enemyHasNoCombatBuilding()) return no("NoEnemyCB");
-        if (basesWithUnfinished <= 2 && workers <= basesWithUnfinished * 21) return no("TooFewWorkers(" + workers + ")");
+        if (basesWithUnfinished <= 2 && workers <= basesWithUnfinished * 21)
+            return no("TooFewWorkers(" + workers + ")");
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
 

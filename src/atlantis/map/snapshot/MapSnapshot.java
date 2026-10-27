@@ -50,138 +50,6 @@ public final class MapSnapshot {
      */
     public List<Integer> regionReach = new ArrayList<>();
 
-    public static final class Base {
-        public int x;
-        public int y;
-        public int startIndex;
-        public List<Integer> mineralIds = new ArrayList<>();
-        public List<Integer> gasIds = new ArrayList<>();
-    }
-
-    public static final class Region {
-        public int id;
-        public int cx;
-        public int cy;
-        public List<Integer> neighbors = new ArrayList<>();
-    }
-
-    public static final class Choke {
-        public int x;
-        public int y;
-        public int w;
-        public int r1 = -1;
-        public int r2 = -1;
-        public int x1;
-        public int y1;
-        public int x2;
-        public int y2;
-    }
-
-    public static final class Res {
-        /** "M" for minerals, "G" for geyser. */
-        public String t = "";
-        public int x;
-        public int y;
-        public int amount;
-    }
-
-    public static final class Pos {
-        public int x;
-        public int y;
-    }
-
-    public static final class Unit {
-        public String t = "";
-        public int x;
-        public int y;
-    }
-
-    // =========================================================
-
-    public String toJson() {
-        StringBuilder out = new StringBuilder(1024);
-        out.append("{\"map\":\"").append(escape(map)).append("\",\"w\":").append(w)
-            .append(",\"h\":").append(h).append(",\"tiles\":[");
-        for (int i = 0; i < tiles.size(); i++) {
-            if (i > 0) out.append(',');
-            out.append('"').append(tiles.get(i)).append('"');
-        }
-        out.append("],\"regionOf\":[");
-        for (int i = 0; i < regionOf.size(); i++) {
-            if (i > 0) out.append(',');
-            out.append(regionOf.get(i));
-        }
-        out.append("],\"regions\":[");
-        for (int i = 0; i < regions.size(); i++) {
-            if (i > 0) out.append(',');
-            Region r = regions.get(i);
-            out.append("{\"id\":").append(r.id)
-                .append(",\"cx\":").append(r.cx).append(",\"cy\":").append(r.cy)
-                .append(",\"neighbors\":[");
-            for (int j = 0; j < r.neighbors.size(); j++) {
-                if (j > 0) out.append(',');
-                out.append(r.neighbors.get(j));
-            }
-            out.append("]}");
-        }
-        out.append("],\"chokes\":[");
-        for (int i = 0; i < chokes.size(); i++) {
-            if (i > 0) out.append(',');
-            Choke c = chokes.get(i);
-            out.append("{\"x\":").append(c.x).append(",\"y\":").append(c.y)
-                .append(",\"w\":").append(c.w).append(",\"r1\":").append(c.r1)
-                .append(",\"r2\":").append(c.r2).append(",\"x1\":").append(c.x1)
-                .append(",\"y1\":").append(c.y1).append(",\"x2\":").append(c.x2)
-                .append(",\"y2\":").append(c.y2).append('}');
-        }
-        out.append("],\"resources\":[");
-        for (int i = 0; i < resources.size(); i++) {
-            if (i > 0) out.append(',');
-            Res r = resources.get(i);
-            out.append("{\"t\":\"").append(escape(r.t)).append("\",\"x\":").append(r.x)
-                .append(",\"y\":").append(r.y).append(",\"amount\":").append(r.amount).append('}');
-        }
-        out.append("],\"starts\":[");
-        for (int i = 0; i < starts.size(); i++) {
-            if (i > 0) out.append(',');
-            Pos p = starts.get(i);
-            out.append("{\"x\":").append(p.x).append(",\"y\":").append(p.y).append('}');
-        }
-        out.append("],\"units\":[");
-        for (int i = 0; i < units.size(); i++) {
-            if (i > 0) out.append(',');
-            Unit u = units.get(i);
-            out.append("{\"t\":\"").append(escape(u.t)).append("\",\"x\":").append(u.x)
-                .append(",\"y\":").append(u.y).append('}');
-        }
-        out.append("],\"bases\":[");
-        for (int i = 0; i < bases.size(); i++) {
-            if (i > 0) out.append(',');
-            Base b = bases.get(i);
-            out.append("{\"x\":").append(b.x).append(",\"y\":").append(b.y)
-                .append(",\"startIndex\":").append(b.startIndex)
-                .append(",\"mineralIds\":[");
-            for (int j = 0; j < b.mineralIds.size(); j++) {
-                if (j > 0) out.append(',');
-                out.append(b.mineralIds.get(j));
-            }
-            out.append("],\"gasIds\":[");
-            for (int j = 0; j < b.gasIds.size(); j++) {
-                if (j > 0) out.append(',');
-                out.append(b.gasIds.get(j));
-            }
-            out.append("]}");
-        }
-        out.append("],\"regionReach\":[");
-        for (int i = 0; i < regionReach.size(); i++) {
-            if (i > 0) out.append(',');
-            out.append(regionReach.get(i));
-        }
-        out.append("]}");
-
-        return out.toString();
-    }
-
     private static String escape(String value) {
         if (value == null) return "";
         StringBuilder out = new StringBuilder(value.length());
@@ -194,9 +62,9 @@ public final class MapSnapshot {
         return out.toString();
     }
 
-    // =========================================================
-
-    /** Reads exactly what {@link #toJson} writes; throws on anything else. */
+    /**
+     * Reads exactly what {@link #toJson} writes; throws on anything else.
+     */
     @SuppressWarnings("unchecked")
     public static MapSnapshot parse(String json) {
         Object root = new Parser(json).parseValue();
@@ -294,7 +162,145 @@ public final class MapSnapshot {
         throw new IllegalArgumentException("snapshot field '" + key + "' is not a list");
     }
 
-    /** Minimal JSON reader: objects, arrays, strings, integers. No floats, no literals. */
+    public String toJson() {
+        StringBuilder out = new StringBuilder(1024);
+        out.append("{\"map\":\"").append(escape(map)).append("\",\"w\":").append(w)
+            .append(",\"h\":").append(h).append(",\"tiles\":[");
+        for (int i = 0; i < tiles.size(); i++) {
+            if (i > 0) out.append(',');
+            out.append('"').append(tiles.get(i)).append('"');
+        }
+        out.append("],\"regionOf\":[");
+        for (int i = 0; i < regionOf.size(); i++) {
+            if (i > 0) out.append(',');
+            out.append(regionOf.get(i));
+        }
+        out.append("],\"regions\":[");
+        for (int i = 0; i < regions.size(); i++) {
+            if (i > 0) out.append(',');
+            Region r = regions.get(i);
+            out.append("{\"id\":").append(r.id)
+                .append(",\"cx\":").append(r.cx).append(",\"cy\":").append(r.cy)
+                .append(",\"neighbors\":[");
+            for (int j = 0; j < r.neighbors.size(); j++) {
+                if (j > 0) out.append(',');
+                out.append(r.neighbors.get(j));
+            }
+            out.append("]}");
+        }
+        out.append("],\"chokes\":[");
+        for (int i = 0; i < chokes.size(); i++) {
+            if (i > 0) out.append(',');
+            Choke c = chokes.get(i);
+            out.append("{\"x\":").append(c.x).append(",\"y\":").append(c.y)
+                .append(",\"w\":").append(c.w).append(",\"r1\":").append(c.r1)
+                .append(",\"r2\":").append(c.r2).append(",\"x1\":").append(c.x1)
+                .append(",\"y1\":").append(c.y1).append(",\"x2\":").append(c.x2)
+                .append(",\"y2\":").append(c.y2).append('}');
+        }
+        out.append("],\"resources\":[");
+        for (int i = 0; i < resources.size(); i++) {
+            if (i > 0) out.append(',');
+            Res r = resources.get(i);
+            out.append("{\"t\":\"").append(escape(r.t)).append("\",\"x\":").append(r.x)
+                .append(",\"y\":").append(r.y).append(",\"amount\":").append(r.amount).append('}');
+        }
+        out.append("],\"starts\":[");
+        for (int i = 0; i < starts.size(); i++) {
+            if (i > 0) out.append(',');
+            Pos p = starts.get(i);
+            out.append("{\"x\":").append(p.x).append(",\"y\":").append(p.y).append('}');
+        }
+        out.append("],\"units\":[");
+        for (int i = 0; i < units.size(); i++) {
+            if (i > 0) out.append(',');
+            Unit u = units.get(i);
+            out.append("{\"t\":\"").append(escape(u.t)).append("\",\"x\":").append(u.x)
+                .append(",\"y\":").append(u.y).append('}');
+        }
+        out.append("],\"bases\":[");
+        for (int i = 0; i < bases.size(); i++) {
+            if (i > 0) out.append(',');
+            Base b = bases.get(i);
+            out.append("{\"x\":").append(b.x).append(",\"y\":").append(b.y)
+                .append(",\"startIndex\":").append(b.startIndex)
+                .append(",\"mineralIds\":[");
+            for (int j = 0; j < b.mineralIds.size(); j++) {
+                if (j > 0) out.append(',');
+                out.append(b.mineralIds.get(j));
+            }
+            out.append("],\"gasIds\":[");
+            for (int j = 0; j < b.gasIds.size(); j++) {
+                if (j > 0) out.append(',');
+                out.append(b.gasIds.get(j));
+            }
+            out.append("]}");
+        }
+        out.append("],\"regionReach\":[");
+        for (int i = 0; i < regionReach.size(); i++) {
+            if (i > 0) out.append(',');
+            out.append(regionReach.get(i));
+        }
+        out.append("]}");
+
+        return out.toString();
+    }
+
+    // =========================================================
+
+    public static final class Base {
+        public int x;
+        public int y;
+        public int startIndex;
+        public List<Integer> mineralIds = new ArrayList<>();
+        public List<Integer> gasIds = new ArrayList<>();
+    }
+
+    public static final class Region {
+        public int id;
+        public int cx;
+        public int cy;
+        public List<Integer> neighbors = new ArrayList<>();
+    }
+
+    // =========================================================
+
+    public static final class Choke {
+        public int x;
+        public int y;
+        public int w;
+        public int r1 = -1;
+        public int r2 = -1;
+        public int x1;
+        public int y1;
+        public int x2;
+        public int y2;
+    }
+
+    public static final class Res {
+        /**
+         * "M" for minerals, "G" for geyser.
+         */
+        public String t = "";
+        public int x;
+        public int y;
+        public int amount;
+    }
+
+    public static final class Pos {
+        public int x;
+        public int y;
+    }
+
+    public static final class Unit {
+        public String t = "";
+        public int x;
+        public int y;
+    }
+
+    /**
+     * Minimal JSON reader: objects, arrays, strings, integers. No floats, no literals.
+     */
     static final class Parser {
         private final String text;
         private int pos;

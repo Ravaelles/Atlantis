@@ -26,9 +26,7 @@ public class IsOrderCompleted {
             // is always null): only fall back when no work is active, else a
             // warping Nexus-2 would complete against its standing main.
             if (order.construction().buildingUnit() == null) {
-                return isConstructionActive(order.construction())
-                    ? false
-                    : completedByExistence(order);
+                return !isConstructionActive(order.construction()) && completedByExistence(order);
             }
 
             return order.construction().buildingUnit().isCompleted();
@@ -76,10 +74,8 @@ public class IsOrderCompleted {
         // Nobody works on it: dead, missing, or never-assigned builder. A
         // finished building elsewhere then satisfies the row by existence,
         // so built rows leave the next-orders list (owner 2026-10-14).
-        if (construction.builder() == null || !construction.builder().isAlive()) return false;
+        return construction.builder() != null && construction.builder().isAlive();
         // Living builder, any non-finished status: walking, issuing, warping.
-
-        return true;
     }
 
     /**

@@ -31,8 +31,8 @@ public class Vector extends Vector2d {
     }
 
     public Vector rotate(double angle) {
-        double x1 = (double) (x * Math.cos(angle) - y * Math.sin(angle));
-        double y1 = (double) (x * Math.sin(angle) + y * Math.cos(angle));
+        double x1 = x * Math.cos(angle) - y * Math.sin(angle);
+        double y1 = x * Math.sin(angle) + y * Math.cos(angle);
 
         return new Vector(x1, y1);
     }

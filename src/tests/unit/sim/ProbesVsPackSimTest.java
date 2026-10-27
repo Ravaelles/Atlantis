@@ -4,16 +4,16 @@ import atlantis.units.AUnitType;
 import atlantis.units.BaseUnderAttack;
 import atlantis.units.workers.WorkerManager;
 import bwapi.Race;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import tests.unit.AbstractTestWithUnits;
 import tests.fakes.FakeUnit;
+import tests.unit.AbstractTestWithUnits;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * B-19 in StarEngine: a packed early rush in the mineral line. Do the workers
@@ -45,10 +45,112 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;
 
-    /** Zerglings in the rush; measured red baseline killed only one of them. */
+    /**
+     * Zerglings in the rush; measured red baseline killed only one of them.
+     */
     private static final int PACK = 8;
 
-    /** The harness default is Terran; this is a Protoss mineral line (B-1 lesson). */
+    private static FakeUnit[] concatAll(FakeUnit nexus, FakeUnit cannon, List<FakeUnit> rest) {
+        List<FakeUnit> all = new ArrayList<>();
+        all.add(nexus);
+        all.add(cannon);
+        all.addAll(rest);
+
+        return all.toArray(new FakeUnit[0]);
+    }
+
+    private static int countAlive(List<FakeUnit> units) {
+        int n = 0;
+        for (FakeUnit unit : units) if (unit.hp > 0) n++;
+
+        return n;
+    }
+
+    // =========================================================
+    // T1: the rule. No worker is sent on the long-range run while
+    // its own base is being attacked - the swarm stays together.
+    // =========================================================
+
+    private static int countOccurrences(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + needle.length();
+        }
+    }
+
+    // =========================================================
+    // T2: the point of staying. The standing swarm pays in Zergling
+    // kills - fleeing measured 1 kill and 7 of 8 lings left standing.
+    // =========================================================
+
+    /**
+     * The cannon auto-acquires like the engine does: nearest ling in range.
+     */
+    private static void scriptCannon(FakeUnit cannon, List<FakeUnit> lings) {
+        if (cannon.hp <= 0) return;
+
+        FakeUnit target = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit ling : lings) {
+            if (ling.hp <= 0) continue;
+            double d = cannon.distTo(ling);
+            if (d < best) {
+                best = d;
+                target = ling;
+            }
+        }
+        if (target == null) return;
+
+        cannon.lastCommand = "AttackUnit";
+        cannon.target = target;
+        cannon.targetPosition = null;
+    }
+
+    // =========================================================
+    // T3: the scenario itself stays honest - the rush really is at
+    // home, so "no long-range run" cannot be vacuous.
+    // =========================================================
+
+    /**
+     * Scripted rush: every ling attacks the nearest living Probe.
+     */
+    private static void scriptLings(List<FakeUnit> lings, List<FakeUnit> probes) {
+        for (FakeUnit ling : lings) {
+            if (ling.hp <= 0) continue;
+            FakeUnit target = null;
+            double best = Double.MAX_VALUE;
+            for (FakeUnit probe : probes) {
+                if (probe.hp <= 0) continue;
+                double d = ling.distTo(probe);
+                if (d < best) {
+                    best = d;
+                    target = probe;
+                }
+            }
+            if (target == null) continue;
+            ling.lastCommand = "AttackUnit";
+            ling.target = target;
+            ling.targetPosition = null;
+        }
+    }
+
+    // =========================================================
+    // Scenario: a Nexus, a Photon Cannon covering the mineral line, eight
+    // Probes, and eight Zerglings charging in from the north-east. This is
+    // the B-19 shape from the bug report: "nobody ever supported the cannon
+    // while it died". The workers' job is to support the cannon, not to win
+    // a duel alone - probes alone vs eight lings lose in real physics (the
+    // no-support variant measured 0-2 kills), and no rule can change that.
+    // =========================================================
+
+    /**
+     * The harness default is Terran; this is a Protoss mineral line (B-1 lesson).
+     */
     @Override
     public Race initRace() {
         return Race.Protoss;
@@ -59,29 +161,18 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
         return Race.Zerg;
     }
 
-    // =========================================================
-    // T1: the rule. No worker is sent on the long-range run while
-    // its own base is being attacked - the swarm stays together.
-    // =========================================================
-
     @Test
     public void noWorkerAbandonsTheHomeFightForALongRangeRun() {
         Rush rush = packedRush();
 
         for (FakeUnit probe : rush.probes) {
             String history = probe.commandHistory().toString();
-            assertTrue(!history.contains("RunHellFar"),
-                "a worker inside its own base under attack must not be pulled out"
-                    + " of the swarm for a cross-map run (B-19, rule"
-                    + " StandAndTradeAtHome): probe #" + probe.id()
-                    + " ordered " + history.replace("\n", " | "));
+            assertFalse(history.contains("RunHellFar"), "a worker inside its own base under attack must not be pulled out"
+                + " of the swarm for a cross-map run (B-19, rule"
+                + " StandAndTradeAtHome): probe #" + probe.id()
+                + " ordered " + history.replace("\n", " | "));
         }
     }
-
-    // =========================================================
-    // T2: the point of staying. The standing swarm pays in Zergling
-    // kills - fleeing measured 1 kill and 7 of 8 lings left standing.
-    // =========================================================
 
     @Test
     public void theStandingSwarmActuallyKillsThePack() {
@@ -106,11 +197,6 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
                 + " attack orders across " + countAlive(rush.probes) + " living probes");
     }
 
-    // =========================================================
-    // T3: the scenario itself stays honest - the rush really is at
-    // home, so "no long-range run" cannot be vacuous.
-    // =========================================================
-
     @Test
     public void theRushIsAtHomeNotInTheField() {
         Rush rush = packedRush();
@@ -131,15 +217,6 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
             "the defence must have engaged the pack, else T2 proves nothing");
     }
 
-    // =========================================================
-    // Scenario: a Nexus, a Photon Cannon covering the mineral line, eight
-    // Probes, and eight Zerglings charging in from the north-east. This is
-    // the B-19 shape from the bug report: "nobody ever supported the cannon
-    // while it died". The workers' job is to support the cannon, not to win
-    // a duel alone - probes alone vs eight lings lose in real physics (the
-    // no-support variant measured 0-2 kills), and no rule can change that.
-    // =========================================================
-
     private Rush packedRush() {
         BaseUnderAttack.clearForTests();
         atlantis.util.log.EventLog.clearForTests();
@@ -147,18 +224,18 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon, 22, 22);
         List<FakeUnit> probes = new ArrayList<>();
-        for (double[] spot : new double[][] {
-                { 19, 23 }, { 20, 23 }, { 21, 23 }, { 22, 23 },
-                { 18, 23 }, { 23, 23 }, { 20, 24 }, { 21, 24 } }) {
+        for (double[] spot : new double[][]{
+            {19, 23}, {20, 23}, {21, 23}, {22, 23},
+            {18, 23}, {23, 23}, {20, 24}, {21, 24}}) {
             FakeUnit probe = fake(AUnitType.Protoss_Probe, spot[0], spot[1]);
             probe.hp = 40;   // real Probe: 20 hit points + 20 shields (hp() reads both)
             probes.add(probe);
         }
 
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] {
-                { 36, 20 }, { 37, 21 }, { 36, 19 }, { 38, 20 },
-                { 37, 20 }, { 36, 22 }, { 38, 22 }, { 38, 18 } }) {
+        for (double[] spot : new double[][]{
+            {36, 20}, {37, 21}, {36, 19}, {38, 20},
+            {37, 20}, {36, 22}, {38, 22}, {38, 18}}) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
@@ -178,8 +255,7 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
                     scriptLings(lings, probes);
                 });
             }
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             world.close();
             throw e;
         }
@@ -198,76 +274,6 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
             this.probes = probes;
             this.lings = lings;
             this.world = world;
-        }
-    }
-
-    private static FakeUnit[] concatAll(FakeUnit nexus, FakeUnit cannon, List<FakeUnit> rest) {
-        List<FakeUnit> all = new ArrayList<>();
-        all.add(nexus);
-        all.add(cannon);
-        all.addAll(rest);
-
-        return all.toArray(new FakeUnit[0]);
-    }
-
-    private static int countAlive(List<FakeUnit> units) {
-        int n = 0;
-        for (FakeUnit unit : units) if (unit.hp > 0) n++;
-
-        return n;
-    }
-
-    private static int countOccurrences(String text, String needle) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = text.indexOf(needle, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + needle.length();
-        }
-    }
-
-    /** The cannon auto-acquires like the engine does: nearest ling in range. */
-    private static void scriptCannon(FakeUnit cannon, List<FakeUnit> lings) {
-        if (cannon.hp <= 0) return;
-
-        FakeUnit target = null;
-        double best = Double.MAX_VALUE;
-        for (FakeUnit ling : lings) {
-            if (ling.hp <= 0) continue;
-            double d = cannon.distTo(ling);
-            if (d < best) {
-                best = d;
-                target = ling;
-            }
-        }
-        if (target == null) return;
-
-        cannon.lastCommand = "AttackUnit";
-        cannon.target = target;
-        cannon.targetPosition = null;
-    }
-
-    /** Scripted rush: every ling attacks the nearest living Probe. */
-    private static void scriptLings(List<FakeUnit> lings, List<FakeUnit> probes) {
-        for (FakeUnit ling : lings) {
-            if (ling.hp <= 0) continue;
-            FakeUnit target = null;
-            double best = Double.MAX_VALUE;
-            for (FakeUnit probe : probes) {
-                if (probe.hp <= 0) continue;
-                double d = ling.distTo(probe);
-                if (d < best) {
-                    best = d;
-                    target = probe;
-                }
-            }
-            if (target == null) continue;
-            ling.lastCommand = "AttackUnit";
-            ling.target = target;
-            ling.targetPosition = null;
         }
     }
 }

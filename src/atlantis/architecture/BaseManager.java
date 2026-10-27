@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseManager {
-    protected Manager[] submanagerObjects = new Manager[0];
-
     protected final AUnit unit;
     protected final Squad squad;
-
-    private Manager parent;
+    protected Manager[] submanagerObjects = new Manager[0];
     protected List<String> parents = new ArrayList<>(); // Useful for debugging
     protected int parentsLastTimestamp;
+    private Manager parent;
 
     public BaseManager(AUnit unit) {
         this.unit = unit;

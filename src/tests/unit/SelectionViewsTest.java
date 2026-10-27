@@ -8,12 +8,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pinning the container-view semantics before their extraction out of
@@ -133,7 +128,7 @@ public class SelectionViewsTest extends WorldStubForTests {
             Selection ours = Select.our();
             assertEquals(a, ours.list().get(0));
 
-            assertTrue(ours.reverse() == ours);
+            assertSame(ours.reverse(), ours);
             assertEquals(b, ours.list().get(0));
             assertEquals(a, ours.list().get(1));
         });

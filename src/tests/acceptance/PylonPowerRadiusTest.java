@@ -9,9 +9,7 @@ import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * "Is this tile inside a finished Pylon's power field?" - the question that
@@ -46,12 +44,12 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
 
         world(1, fakeOurs(pylon), fakeEnemies(), () -> {
             assertTrue(
-                    IsPoweredByAPylon.check(APosition.create(52, 50), AUnitType.Protoss_Gateway),
-                    "a tile two tiles from the Pylon is inside its field");
+                IsPoweredByAPylon.check(APosition.create(52, 50), AUnitType.Protoss_Gateway),
+                "a tile two tiles from the Pylon is inside its field");
 
             assertFalse(
-                    IsPoweredByAPylon.check(APosition.create(50 + 12, 50), AUnitType.Protoss_Gateway),
-                    "a tile 12 tiles away is well outside the field");
+                IsPoweredByAPylon.check(APosition.create(50 + 12, 50), AUnitType.Protoss_Gateway),
+                "a tile 12 tiles away is well outside the field");
         });
     }
 
@@ -67,12 +65,12 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
 
         world(1, fakeOurs(pylon), fakeEnemies(), () -> {
             assertFalse(
-                    IsPoweredByAPylon.check(APosition.create(14, 51), AUnitType.Protoss_Gateway),
-                    "5 tiles below the Pylon is outside the engine's 160px vertical bound");
+                IsPoweredByAPylon.check(APosition.create(14, 51), AUnitType.Protoss_Gateway),
+                "5 tiles below the Pylon is outside the engine's 160px vertical bound");
 
             assertTrue(
-                    IsPoweredByAPylon.check(APosition.create(14, 48), AUnitType.Protoss_Gateway),
-                    "two tiles nearer is inside - the boundary is razor-thin here");
+                IsPoweredByAPylon.check(APosition.create(14, 48), AUnitType.Protoss_Gateway),
+                "two tiles nearer is inside - the boundary is razor-thin here");
         });
     }
 
@@ -89,13 +87,13 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
 
         world(1, fakeOurs(nexus, pylon, probe), fakeEnemies(), () -> {
             assertFalse(
-                    PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
-                            probe, AUnitType.Protoss_Gateway, APosition.create(14, 51), probe),
-                    "a Gateway outside every Pylon field must not pass the shared chain");
+                PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+                    probe, AUnitType.Protoss_Gateway, APosition.create(14, 51), probe),
+                "a Gateway outside every Pylon field must not pass the shared chain");
 
             assertEquals(
-                    "Not powered by a Pylon", AbstractPositionFinder._STATUS,
-                    "the refusal names power, so the next hunt starts at the cause");
+                "Not powered by a Pylon", AbstractPositionFinder._STATUS,
+                "the refusal names power, so the next hunt starts at the cause");
         });
     }
 }

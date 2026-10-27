@@ -18,31 +18,6 @@ import atlantis.units.AUnitType;
  */
 public final class CannonGoal implements Goal {
 
-    @Override
-    public String id() {
-        return "cannon";
-    }
-
-    @Override
-    public boolean active(BoardState state) {
-        return state.cannonCount < wanted(state);
-    }
-
-    @Override
-    public int rank() {
-        return GoalRanks.CANNON;
-    }
-
-    @Override
-    public int priceMinerals() {
-        return AUnitType.Protoss_Photon_Cannon.mineralPrice();
-    }
-
-    @Override
-    public int priceGas() {
-        return AUnitType.Protoss_Photon_Cannon.gasPrice();
-    }
-
     /**
      * Wanted cannon total for this state. Pure: supply, bank, matchup and
      * scouted mutas in, number out. Matches the legacy matrix row for row so
@@ -76,5 +51,30 @@ public final class CannonGoal implements Goal {
         if (state.enemyMutalisks == 0) return 0;
 
         return 1 + (state.enemyMutalisks / 4) + (state.minerals / 500);
+    }
+
+    @Override
+    public String id() {
+        return "cannon";
+    }
+
+    @Override
+    public boolean active(BoardState state) {
+        return state.cannonCount < wanted(state);
+    }
+
+    @Override
+    public int rank() {
+        return GoalRanks.CANNON;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Photon_Cannon.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Photon_Cannon.gasPrice();
     }
 }

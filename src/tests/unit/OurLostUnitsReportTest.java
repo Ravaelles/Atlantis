@@ -52,7 +52,9 @@ public class OurLostUnitsReportTest extends tests.acceptance.WorldStubForTests {
         UnitsArchive.reset();
     }
 
-    /** Nothing lost yet: the report shows a plain count rather than `(0 lost)`. */
+    /**
+     * Nothing lost yet: the report shows a plain count rather than `(0 lost)`.
+     */
     @Test
     public void nothingLostIsReportedAsZero() {
         FakeUnit zealot = fake(ZEALOT, 50, 50);
@@ -61,8 +63,8 @@ public class OurLostUnitsReportTest extends tests.acceptance.WorldStubForTests {
             resetArchive();
 
             assertEquals(
-                    0, UnitsArchive.ourLost(ZEALOT),
-                    "a fresh archive has lost nothing - the report omits the note for this");
+                0, UnitsArchive.ourLost(ZEALOT),
+                "a fresh archive has lost nothing - the report omits the note for this");
         });
     }
 
@@ -87,8 +89,8 @@ public class OurLostUnitsReportTest extends tests.acceptance.WorldStubForTests {
             // Asserted INSIDE the world: the fixture clears its own state on the way in, so a
             // count checked after it would be read from a reset archive.
             assertEquals(
-                    3, UnitsArchive.ourLost(ZEALOT),
-                    "three destruction events on the same type must count as three losses");
+                3, UnitsArchive.ourLost(ZEALOT),
+                "three destruction events on the same type must count as three losses");
         });
     }
 
@@ -111,11 +113,11 @@ public class OurLostUnitsReportTest extends tests.acceptance.WorldStubForTests {
 
             assertEquals(1, UnitsArchive.ourLost(ZEALOT), "one Zealot destroyed");
             assertEquals(
-                    2, UnitsArchive.ourLost(AUnitType.Protoss_Dragoon),
-                    "two Dragoons destroyed");
+                2, UnitsArchive.ourLost(AUnitType.Protoss_Dragoon),
+                "two Dragoons destroyed");
             assertEquals(
-                    0, UnitsArchive.ourLost(AUnitType.Protoss_Pylon),
-                    "and a type with no losses reports none, rather than another type's count");
+                0, UnitsArchive.ourLost(AUnitType.Protoss_Pylon),
+                "and a type with no losses reports none, rather than another type's count");
         });
     }
 

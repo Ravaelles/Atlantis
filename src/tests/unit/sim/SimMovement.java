@@ -19,11 +19,17 @@ import java.util.Map;
  */
 public final class SimMovement {
 
-    /** Approach rate toward desired velocity per tick (0..1). */
+    /**
+     * Approach rate toward desired velocity per tick (0..1).
+     */
     private static final double ACCEL = 0.35;
-    /** Kept velocity fraction per tick with no order. */
+    /**
+     * Kept velocity fraction per tick with no order.
+     */
     private static final double BRAKE = 0.55;
-    /** Max heading change per tick, degrees. */
+    /**
+     * Max heading change per tick, degrees.
+     */
     private static final double MAX_TURN_DEG = 75.0;
 
     private final SimArena arena;
@@ -36,15 +42,19 @@ public final class SimMovement {
         this.arena = arena;
     }
 
-    /** Starts tracking a unit: still, at its published position. */
+    /**
+     * Starts tracking a unit: still, at its published position.
+     */
     public void register(FakeUnit unit) {
-        velocity.put(unit.id(), new double[] { 0.0, 0.0 });
+        velocity.put(unit.id(), new double[]{0.0, 0.0});
         precise.put(unit.id(),
-            new double[] { (double) unit.position.x(), (double) unit.position.y() });
+            new double[]{(double) unit.position.x(), (double) unit.position.y()});
         stuckFrames.put(unit.id(), 0);
     }
 
-    /** Advances every living unit one tick toward its ordered velocity. */
+    /**
+     * Advances every living unit one tick toward its ordered velocity.
+     */
     public void stepAll(List<FakeUnit> units) {
         for (FakeUnit unit : units) {
             if (unit == null || unit.hp <= 0) continue;
@@ -76,8 +86,8 @@ public final class SimMovement {
      */
     public void teleport(FakeUnit unit, APosition dest) {
         unit.position = dest;
-        precise.put(unit.id(), new double[] { (double) dest.x(), (double) dest.y() });
-        velocity.put(unit.id(), new double[] { 0.0, 0.0 });
+        precise.put(unit.id(), new double[]{(double) dest.x(), (double) dest.y()});
+        velocity.put(unit.id(), new double[]{0.0, 0.0});
     }
 
     /**
@@ -88,7 +98,7 @@ public final class SimMovement {
     public double[] precisePosition(FakeUnit unit) {
         double[] pos = precise.get(unit.id());
 
-        return new double[] { pos[0], pos[1] };
+        return new double[]{pos[0], pos[1]};
     }
 
     public int stuckFrames(FakeUnit unit) {
@@ -108,7 +118,9 @@ public final class SimMovement {
         if (!precise.containsKey(unit.id())) register(unit);
     }
 
-    /** Ordered velocity in px/frame, or null when the unit should brake. */
+    /**
+     * Ordered velocity in px/frame, or null when the unit should brake.
+     */
     private double[] desiredVelocity(FakeUnit unit) {
         String order = unit.lastCommand;
         if ("Move".equals(order) && unit.targetPosition != null) {
@@ -129,9 +141,9 @@ public final class SimMovement {
         double dx = tx - unit.position.x();
         double dy = ty - unit.position.y();
         double dist = Math.hypot(dx, dy);
-        if (dist < 1.0) return new double[] { 0.0, 0.0 };
+        if (dist < 1.0) return new double[]{0.0, 0.0};
 
-        return new double[] { dx / dist * speed, dy / dist * speed };
+        return new double[]{dx / dist * speed, dy / dist * speed};
     }
 
     private double topSpeed(FakeUnit unit) {
@@ -155,7 +167,7 @@ public final class SimMovement {
         double angle = Math.toRadians(cur + capped);
         double mag = Math.hypot(desired[0], desired[1]);
 
-        return new double[] { Math.cos(angle) * mag, Math.sin(angle) * mag };
+        return new double[]{Math.cos(angle) * mag, Math.sin(angle) * mag};
     }
 
     private void step(FakeUnit unit, double[] vel) {

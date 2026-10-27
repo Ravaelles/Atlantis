@@ -1,13 +1,13 @@
 package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 

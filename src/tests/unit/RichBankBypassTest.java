@@ -12,16 +12,11 @@ import atlantis.units.select.Select;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
-import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Owner bank rule (NEXT #202): with 550 minerals in the bank every
@@ -78,7 +73,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             assertTrue(
                 ReadyToProduceOrder.isReady(dragoon),
                 "600/350 in the bank produces a Dragoon through 500/300 of "
-                + "stale reservations - the bank, not the earmark, decides");
+                    + "stale reservations - the bank, not the earmark, decides");
         });
     }
 
@@ -103,7 +98,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             assertTrue(
                 ReadyToProduceOrder.isReady(zealot),
                 "a Zealot costs no gas, so gas reservations never block it - "
-                + "banked 600 minerals is the whole question");
+                    + "banked 600 minerals is the whole question");
         });
     }
 
@@ -145,7 +140,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             assertTrue(
                 ReadyToProduceOrder.isReady(dragoon),
                 "600/350 in the bank produces a Dragoon despite 600 of HIGH "
-                + "waiters above it - rich bank flows, saving pauses below it");
+                    + "waiters above it - rich bank flows, saving pauses below it");
         });
     }
 }

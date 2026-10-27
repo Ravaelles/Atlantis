@@ -26,6 +26,48 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("infra")
 public class V2DispatchTwinTest {
 
+    private static int countRows(String log) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = log.indexOf("\"key\":\"V2_DISPATCH\"", from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + 1;
+        }
+    }
+
+    @BeforeEach
+    public void clearLog() {
+        EventLog.clearForTests();
+    }
+
+    @Test
+    public void everyResultLeavesOneRowWithItsReason() {
+        List<DispatchResult> results = new ArrayList<DispatchResult>();
+        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Pylon"), 100, false), true, "built@t1"));
+        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Zealot"), 120, false), false, "producer-busy"));
+        results.add(null);
+
+        V2DispatchTwin.emit(200, results);
+
+        String log = EventLog.toJsonLines();
+        assertEquals(2, countRows(log), "one row per real result, nulls skipped: " + log);
+        assertTrue(log.contains("\"item\":\"Pylon\""), "item named: " + log);
+        assertTrue(log.contains("\"start\":100"), "plan frame named: " + log);
+        assertTrue(log.contains("\"issued\":true"), "accept named: " + log);
+        assertTrue(log.contains("\"detail\":\"producer-busy\""), "refusal reason named: " + log);
+    }
+
+    @Test
+    public void emptyAndNullEmitNothing() {
+        V2DispatchTwin.emit(200, new ArrayList<DispatchResult>());
+        V2DispatchTwin.emit(200, null);
+
+        assertEquals(0, countRows(EventLog.toJsonLines()), "no results, no rows");
+    }
+
     private static final class FakeProducible implements Producible {
         private final String id;
 
@@ -61,48 +103,6 @@ public class V2DispatchTwinTest {
         @Override
         public boolean requiresPlacement() {
             return false;
-        }
-    }
-
-    @BeforeEach
-    public void clearLog() {
-        EventLog.clearForTests();
-    }
-
-    @Test
-    public void everyResultLeavesOneRowWithItsReason() {
-        List<DispatchResult> results = new ArrayList<DispatchResult>();
-        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Pylon"), 100, false), true, "built@t1"));
-        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Zealot"), 120, false), false, "producer-busy"));
-        results.add(null);
-
-        V2DispatchTwin.emit(200, results);
-
-        String log = EventLog.toJsonLines();
-        assertEquals(2, countRows(log), "one row per real result, nulls skipped: " + log);
-        assertTrue(log.contains("\"item\":\"Pylon\""), "item named: " + log);
-        assertTrue(log.contains("\"start\":100"), "plan frame named: " + log);
-        assertTrue(log.contains("\"issued\":true"), "accept named: " + log);
-        assertTrue(log.contains("\"detail\":\"producer-busy\""), "refusal reason named: " + log);
-    }
-
-    @Test
-    public void emptyAndNullEmitNothing() {
-        V2DispatchTwin.emit(200, new ArrayList<DispatchResult>());
-        V2DispatchTwin.emit(200, null);
-
-        assertEquals(0, countRows(EventLog.toJsonLines()), "no results, no rows");
-    }
-
-    private static int countRows(String log) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = log.indexOf("\"key\":\"V2_DISPATCH\"", from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + 1;
         }
     }
 }

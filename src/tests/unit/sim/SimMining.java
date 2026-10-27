@@ -21,14 +21,6 @@ import java.util.Map;
  */
 public final class SimMining {
 
-    /** Sim-owned miner state; the bot reads it through stub actions. */
-    public enum Job {
-        MINING,
-        GAS,
-        BUILDING,
-        IDLE
-    }
-
     private final Map<Integer, Job> jobs = new HashMap<>();
     private final Map<Integer, Integer> jobSince = new HashMap<>();
 
@@ -45,7 +37,9 @@ public final class SimMining {
         return job == null ? Job.IDLE : job;
     }
 
-    /** Probes earning minerals this frame (tenure past the first trip). */
+    /**
+     * Probes earning minerals this frame (tenure past the first trip).
+     */
     public int effectiveMiners(SimUnitRegistry units, int frame) {
         int count = 0;
         for (FakeUnit probe : units.ours()) {
@@ -71,14 +65,18 @@ public final class SimMining {
         return count;
     }
 
-    /** Applies one frame of income to the bank. */
+    /**
+     * Applies one frame of income to the bank.
+     */
     public void earn(SimBank bank, SimUnitRegistry units, int frame, int bases) {
         bank.earn(
             EconomyModel.mineralRate(effectiveMiners(units, frame), bases),
             gasMiners(units) * EconomyModel.GAS_PER_WORKER_FRAME);
     }
 
-    /** Nearest idle/mining probes, for builder and gas reassignment. */
+    /**
+     * Nearest idle/mining probes, for builder and gas reassignment.
+     */
     public java.util.List<FakeUnit> freeProbes(SimUnitRegistry units, int limit) {
         java.util.List<FakeUnit> out = new java.util.ArrayList<>();
         for (FakeUnit probe : units.ours()) {
@@ -90,5 +88,15 @@ public final class SimMining {
         }
 
         return out;
+    }
+
+    /**
+     * Sim-owned miner state; the bot reads it through stub actions.
+     */
+    public enum Job {
+        MINING,
+        GAS,
+        BUILDING,
+        IDLE
     }
 }

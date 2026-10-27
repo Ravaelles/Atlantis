@@ -1,21 +1,17 @@
 package tests.unit;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeMapTiles;
 import tests.unit.sim.SimArena;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The stub position-finder answers like the engine source (owner
@@ -83,8 +79,7 @@ public class FakePositionFinderTest extends WorldStubForTests {
             assertNotNull(slid, "a slide exists next to the wall");
             assertTrue(arena.isWalkablePx(slid.x(), slid.y()),
                 "the slide lands on walkable ground: " + slid.tx() + "," + slid.ty());
-        }
-        finally {
+        } finally {
             FakeMapTiles.installAsSource();
         }
     }
@@ -100,8 +95,7 @@ public class FakePositionFinderTest extends WorldStubForTests {
             // Punch one hole far outside the search radius.
             assertNull(APosition.create(35, 20).makeWalkable(2, 1, null),
                 "no walkable tile in radius: null instead of an unwalkable origin");
-        }
-        finally {
+        } finally {
             FakeMapTiles.installAsSource();
         }
     }

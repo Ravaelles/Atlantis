@@ -83,7 +83,7 @@ public class SupplyNineWorkerMandateTest extends AbstractTestWithWorld {
                 .filter(o -> o.isUnitOrBuilding()
                     && AUnitType.Protoss_Gateway.equals(o.unitType()))
                 .findFirst().orElse(null);
-            assertTrue(gateway != null, "the Gateway row is queued");
+            assertNotNull(gateway, "the Gateway row is queued");
 
             assertFalse(
                 ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway),
@@ -114,7 +114,7 @@ public class SupplyNineWorkerMandateTest extends AbstractTestWithWorld {
                 .filter(o -> o.isUnitOrBuilding()
                     && AUnitType.Protoss_Gateway.equals(o.unitType()))
                 .findFirst().orElse(null);
-            assertTrue(gateway != null, "the Gateway row is queued");
+            assertNotNull(gateway, "the Gateway row is queued");
 
             assertTrue(
                 ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway),

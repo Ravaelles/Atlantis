@@ -18,7 +18,9 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
  */
 public class BuildOrderOwnsGame {
 
-    /** Past this supply the opening is over, whatever rows linger. */
+    /**
+     * Past this supply the opening is over, whatever rows linger.
+     */
     public static final int OPENING_END_SUPPLY = 18;
 
     public static boolean owns() {

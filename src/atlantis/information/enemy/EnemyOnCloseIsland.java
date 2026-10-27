@@ -20,9 +20,7 @@ public class EnemyOnCloseIsland {
     }
 
     private static boolean shouldNullify() {
-        if (enemyOnIsland != null && (enemyOnIsland.isDead() || enemyOnIsland.lastSeenAgo() >= 30 * 15)) return true;
-
-        return false;
+        return enemyOnIsland != null && (enemyOnIsland.isDead() || enemyOnIsland.lastSeenAgo() >= 30 * 15);
 
 //        if (
 //            enemyOnIsland != null && (

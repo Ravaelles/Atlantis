@@ -28,8 +28,7 @@ public abstract class Manager extends BaseManager {
             }
 
             return null;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(e.getMessage());
 
             return null;

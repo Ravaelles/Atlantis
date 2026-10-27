@@ -2,28 +2,15 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.v2.PlacementPlanner;
-import atlantis.placement.core.SupportRequest;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.map.position.APosition;
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.ProductionScheduler;
-import atlantis.production.v2.ResourceTimeline;
-import atlantis.production.v2.LegacyPlacementPlanner;
-import atlantis.production.v2.execution.DispatchResult;
-import atlantis.production.v2.execution.DryRunOrderDirector;
-import atlantis.production.v2.execution.GameOrderDirector;
-import atlantis.production.v2.execution.OrderDirector;
-import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.placement.core.SupportRequest;
+import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.v2.*;
+import atlantis.production.v2.execution.*;
 import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.BuildOrderRow;
-import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnitType;
-import atlantis.production.v2.execution.V2DispatchTwin;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
@@ -68,7 +55,9 @@ import java.util.List;
  */
 public final class ProductionEngine {
 
-    /** Latency margin for issuing commands; BWAPI drops a command sent too late. */
+    /**
+     * Latency margin for issuing commands; BWAPI drops a command sent too late.
+     */
     private static final int LATENCY_FRAMES = 3;
 
     /**
@@ -83,6 +72,24 @@ public final class ProductionEngine {
      * </p>
      */
     private final PlacementPlanner placementPlanner = createPlacementPlanner();
+    private final DryRunOrderDirector dryRunDirector = new DryRunOrderDirector();
+    private final GameOrderDirector gameDirector = new GameOrderDirector();
+    /**
+     * Race identities for goal generation, injected once (NEXT #8).
+     */
+    private final ProductionRacePolicy racePolicy;
+    private ProductionPlan lastPlan = new ProductionPlan();
+
+    /**
+     * Ambient race (tests, legacy callers).
+     */
+    public ProductionEngine() {
+        this(ProductionRacePolicy.ambient());
+    }
+
+    public ProductionEngine(ProductionRacePolicy racePolicy) {
+        this.racePolicy = racePolicy;
+    }
 
     private static PlacementPlanner createPlacementPlanner() {
         if (atlantis.config.env.Env.placementCatalogue()) {
@@ -91,21 +98,20 @@ public final class ProductionEngine {
         return new LegacyPlacementPlanner();
     }
 
-    private final DryRunOrderDirector dryRunDirector = new DryRunOrderDirector();
-    private final GameOrderDirector gameDirector = new GameOrderDirector();
-
-    private ProductionPlan lastPlan = new ProductionPlan();
-
-    /** Race identities for goal generation, injected once (NEXT #8). */
-    private final ProductionRacePolicy racePolicy;
-
-    /** Ambient race (tests, legacy callers). */
-    public ProductionEngine() {
-        this(ProductionRacePolicy.ambient());
+    /**
+     * True when the engine is allowed to play; the game caller uses it to skip
+     * the work entirely rather than run a pipeline whose output it will throw
+     * away. Kept static so a debug painter can read it without an instance.
+     */
+    public static boolean enabled() {
+        return Env.productionV2().isEnabled();
     }
 
-    public ProductionEngine(ProductionRacePolicy racePolicy) {
-        this.racePolicy = racePolicy;
+    /**
+     * Frame of the next update, for the comparison log.
+     */
+    public static int now() {
+        return A.now();
     }
 
     /**
@@ -133,7 +139,7 @@ public final class ProductionEngine {
         }
 
         ProductionScheduler scheduler = new ProductionScheduler(
-                state.facilityRegistry(), placementPlanner, state.existingItems());
+            state.facilityRegistry(), placementPlanner, state.existingItems());
         ProductionPlan plan = scheduler.schedule(goals, timeline);
         plan = CommittedConstructions.mergeInto(plan, state.frame());
         lastPlan = plan;
@@ -150,7 +156,8 @@ public final class ProductionEngine {
                 dryRunDirector.orders().add(
                     "support " + support.unitType() + " at tile(" + support.tileX() + "," + support.tileY() + ")");
             }
-        } else {
+        }
+        else {
             logFrame(state.frame(), plan, issued);
             // Bridge, not a layer break: the catalogue declares support, the
             // engine (the only v2 class that knows the game exists) forwards
@@ -167,7 +174,9 @@ public final class ProductionEngine {
         return plan;
     }
 
-    /** One line per frame with work in it: the plan, and what actually left. */
+    /**
+     * One line per frame with work in it: the plan, and what actually left.
+     */
     private void logFrame(int frame, ProductionPlan plan, List<DispatchResult> issued) {
         if (issued.isEmpty()) return;
 
@@ -234,22 +243,10 @@ public final class ProductionEngine {
             rows, new LiveBuildOrderProgress(), UnitProducible.of(provider));
     }
 
-    /** The plan of the last frame, for debug output and tests. Read-only. */
+    /**
+     * The plan of the last frame, for debug output and tests. Read-only.
+     */
     public ProductionPlan lastPlan() {
         return lastPlan;
-    }
-
-    /**
-     * True when the engine is allowed to play; the game caller uses it to skip
-     * the work entirely rather than run a pipeline whose output it will throw
-     * away. Kept static so a debug painter can read it without an instance.
-     */
-    public static boolean enabled() {
-        return Env.productionV2().isEnabled();
-    }
-
-    /** Frame of the next update, for the comparison log. */
-    public static int now() {
-        return A.now();
     }
 }

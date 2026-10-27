@@ -18,31 +18,6 @@ import atlantis.units.AUnitType;
  */
 public final class ForgeGoal implements Goal {
 
-    @Override
-    public String id() {
-        return "forge";
-    }
-
-    @Override
-    public boolean active(BoardState state) {
-        return !state.hasForge && wanted(state);
-    }
-
-    @Override
-    public int rank() {
-        return GoalRanks.FORGE;
-    }
-
-    @Override
-    public int priceMinerals() {
-        return AUnitType.Protoss_Forge.mineralPrice();
-    }
-
-    @Override
-    public int priceGas() {
-        return AUnitType.Protoss_Forge.gasPrice();
-    }
-
     /**
      * Forge wanted in this state. Pure mirror of the legacy producer:
      * DT prediction first, then the supply/army gate with the matchup
@@ -78,5 +53,30 @@ public final class ForgeGoal implements Goal {
         if ("Zerg".equals(state.enemyRace)) return 46 + (state.armyStrength <= 150 ? 10 : 0);
 
         return 62;
+    }
+
+    @Override
+    public String id() {
+        return "forge";
+    }
+
+    @Override
+    public boolean active(BoardState state) {
+        return !state.hasForge && wanted(state);
+    }
+
+    @Override
+    public int rank() {
+        return GoalRanks.FORGE;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Forge.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Forge.gasPrice();
     }
 }

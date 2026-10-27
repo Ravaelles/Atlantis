@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * BUILD rows must answer "why this building now" on their own: the order
@@ -75,7 +75,7 @@ public class DecisionDemandContextTest {
             .frame(6300).supply(33, 49).bank(104, 176).orderId(72)
             .build());
 
-        String content = new String(Files.readAllBytes(out.toPath()), "UTF-8");
+        String content = new String(Files.readAllBytes(out.toPath()), StandardCharsets.UTF_8);
         assertTrue(content.contains("\"oid\":72"),
             "every BUILD row joins its EVENTS chain, no join by frame guessing");
     }
@@ -90,7 +90,7 @@ public class DecisionDemandContextTest {
             .atFrame(2500);
 
         // refine without an order carries none; the door stamps the real one.
-        assertEquals(null, refined.orderId());
+        assertNull(refined.orderId());
 
         ADecision stamped = ADecision.decide(
                 ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)

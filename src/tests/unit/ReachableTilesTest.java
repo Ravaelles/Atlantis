@@ -7,9 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The one place the game asks "can a ground unit get from A to B".
@@ -51,14 +49,14 @@ public class ReachableTilesTest {
      */
     @Test
     public void callsGoThroughTheInstalledImplementation() {
-        int[] calls = { 0 };
+        int[] calls = {0};
         ReachableTiles.useReachability(
-                (fromTx, fromTy, toTx, toTy) -> {
-                    calls[0]++;
+            (fromTx, fromTy, toTx, toTy) -> {
+                calls[0]++;
 
-                    return true;
-                },
-                "test double");
+                return true;
+            },
+            "test double");
 
         assertTrue(ReachableTiles.between(10, 10, 20, 20), "the installed answer is returned");
         assertEquals(1, calls[0], "exactly one delegation, not a re-resolved implementation");
@@ -95,8 +93,8 @@ public class ReachableTilesTest {
 
         assertFalse(ReachableTiles.between(null, null), "both null");
         assertFalse(
-                ReachableTiles.between(atlantis.map.position.APosition.create(1, 1), null),
-                "a null target is not reachable, even when the implementation would say yes");
+            ReachableTiles.between(atlantis.map.position.APosition.create(1, 1), null),
+            "a null target is not reachable, even when the implementation would say yes");
     }
 
     /**

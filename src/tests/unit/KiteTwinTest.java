@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Every kiting step names itself (dist x10, cooldown, result) so a kite
@@ -22,6 +20,18 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class KiteTwinTest extends WorldStubForTests {
+
+    private static int countRows(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+
+            count++;
+            from = at + needle.length();
+        }
+    }
 
     @Override
     public Race initRace() {
@@ -38,18 +48,6 @@ public class KiteTwinTest extends WorldStubForTests {
     public void cleanLogAfter() {
         EventLog.clearForTests();
         KiteTwin.clearForTests();
-    }
-
-    private static int countRows(String text, String needle) {
-        int count = 0;
-        int from = 0;
-        while (true) {
-            int at = text.indexOf(needle, from);
-            if (at < 0) return count;
-
-            count++;
-            from = at + needle.length();
-        }
     }
 
     @Test
@@ -84,7 +82,7 @@ public class KiteTwinTest extends WorldStubForTests {
         });
 
         int steps = countRows(EventLog.toJsonLines(), "\"result\":\"stepped-aside\"");
-        assertTrue(steps == 3, "no throttle - every step must row for hit timing: " + steps);
+        assertEquals(3, steps, "no throttle - every step must row for hit timing: " + steps);
     }
 
     @Test

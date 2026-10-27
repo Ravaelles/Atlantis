@@ -1,11 +1,10 @@
 package atlantis.battle.avoid.always;
 
+import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
-import atlantis.game.player.Enemy;
-
-import atlantis.architecture.Manager;
 
 public class DragoonAlwaysAvoidEnemy extends Manager {
     public DragoonAlwaysAvoidEnemy(AUnit unit) {
@@ -43,8 +42,8 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
 //                && unit.isMissionAttack()
                 && (unit.hp() <= 25 || unit.shotSecondsAgo(5))
                 && (
-                    unit.enemiesNear().melee().inRadius(3.7, unit).notEmpty()
-                        || unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.1, unit).notEmpty()
+                unit.enemiesNear().melee().inRadius(3.7, unit).notEmpty()
+                    || unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.1, unit).notEmpty()
             )
         ) {
             return t("VeryWounded_vP");
@@ -80,7 +79,7 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                 && unit.isMissionAttack()
                 && unit.shotSecondsAgo(2.5)
                 && (
-                    unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.4, unit).notEmpty()
+                unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.4, unit).notEmpty()
                     || unit.enemiesNear().melee().inRadius(3, unit).notEmpty()
             )
         ) {
@@ -162,9 +161,9 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
 
         boolean heavilyWounded = unit.hp() <= 40;
         return (
-                unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.3) > 0
-                    || unit.rangedEnemiesCount(rangedEnemiesSafetyMargin(heavilyWounded)) >= (heavilyWounded ? 1 : 2)
-            ) && t("SeriouslyWounded&EnemiesNear");
+            unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.3) > 0
+                || unit.rangedEnemiesCount(rangedEnemiesSafetyMargin(heavilyWounded)) >= (heavilyWounded ? 1 : 2)
+        ) && t("SeriouslyWounded&EnemiesNear");
     }
 
     private double rangedEnemiesSafetyMargin(boolean heavilyWounded) {

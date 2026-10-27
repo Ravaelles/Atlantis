@@ -6,15 +6,17 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;
+import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import bwapi.Race;
 
 public class ProtossSecureBasesCommanderTest extends WorldStubForTests {
 
-    /** Photon cannons at a natural - a Protoss test. */
+    /**
+     * Photon cannons at a natural - a Protoss test.
+     */
     @Override
     public Race initRace() {
         return Race.Protoss;
@@ -24,10 +26,10 @@ public class ProtossSecureBasesCommanderTest extends WorldStubForTests {
     public void testNaturalBaseGetsCannons() {
         options = Options.create().set("supplyUsed", 18);
         world(1, fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 7, 44), // Main
-                fake(AUnitType.Protoss_Nexus, 16, 15), // Natural
-                fake(AUnitType.Protoss_Probe, 7, 47)
-            ), fakeEnemies(), () -> {
+            fake(AUnitType.Protoss_Nexus, 7, 44), // Main
+            fake(AUnitType.Protoss_Nexus, 16, 15), // Natural
+            fake(AUnitType.Protoss_Probe, 7, 47)
+        ), fakeEnemies(), () -> {
             assertEquals(0, EnemyUnits.discovered().size());
 
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Creep_Colony, 95, 10));

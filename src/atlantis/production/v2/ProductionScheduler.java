@@ -1,12 +1,6 @@
 package atlantis.production.v2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The scheduling engine: turns prioritized goals into a plan over a resource
@@ -39,15 +33,25 @@ public final class ProductionScheduler {
 
     // ---- per-pass state, reset by schedule() ---------------------------------
 
-    /** Facility id -> frame it frees up, including what this pass assigned. */
+    /**
+     * Facility id -> frame it frees up, including what this pass assigned.
+     */
     private final Map<Integer, Integer> busyUntil = new HashMap<>();
-    /** Facility id -> facility, for everything known this pass (existing + planned). */
+    /**
+     * Facility id -> facility, for everything known this pass (existing + planned).
+     */
     private final Map<String, List<ProducerFacility>> facilitiesByType = new HashMap<>();
-    /** Item id -> earliest frame it becomes available through this plan. */
+    /**
+     * Item id -> earliest frame it becomes available through this plan.
+     */
     private final Map<String, Integer> plannedAvailable = new HashMap<>();
-    /** Facility ids consumed this pass (larvae). */
+    /**
+     * Facility ids consumed this pass (larvae).
+     */
     private final Set<Integer> consumed = new HashSet<>();
-    /** Building goals already accepted this pass, keyed by item and placement. */
+    /**
+     * Building goals already accepted this pass, keyed by item and placement.
+     */
     private final Set<String> plannedBuildingGoals = new HashSet<>();
     private int nextPlannedFacilityId;
 
@@ -56,7 +60,7 @@ public final class ProductionScheduler {
     }
 
     public ProductionScheduler(ProducerFacilityRegistry facilityRegistry, PlacementPlanner placementPlanner,
-            ExistingItems existingItems) {
+                               ExistingItems existingItems) {
         this.facilityRegistry = facilityRegistry;
         this.placementPlanner = placementPlanner;
         this.existingItems = existingItems != null ? existingItems : ExistingItems.NONE;
@@ -113,7 +117,7 @@ public final class ProductionScheduler {
 
         for (int produced = 0; produced < wanted; produced++) {
             ProductionItem scheduled = scheduleItem(item, Math.max(earliest, prerequisitesReady), timeline, plan,
-                    goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous());
+                goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous());
             if (scheduled == null) return;
         }
     }
@@ -137,8 +141,8 @@ public final class ProductionScheduler {
      */
     private String buildingGoalKey(Producible item, TargetPlacement placement) {
         return item.id() + "|" + placement.mode() + "|" + placement.areaName()
-                + "|" + placement.tileX() + "," + placement.tileY()
-                + "|" + placement.exactTileX() + "," + placement.exactTileY();
+            + "|" + placement.tileX() + "," + placement.tileY()
+            + "|" + placement.exactTileX() + "," + placement.exactTileY();
     }
 
     private int alreadyAvailableOrComing(Producible item, ProductionGoal goal) {
@@ -170,7 +174,7 @@ public final class ProductionScheduler {
      * of them cannot be had within the horizon.
      */
     private int ensurePrerequisites(Producible item, int notBefore, ResourceTimeline timeline,
-            ProductionPlan plan, Set<String> path) {
+                                    ProductionPlan plan, Set<String> path) {
         if (!path.add(item.id())) return -1; // recipe cycle: cut it
 
         int readyFrame = notBefore;
@@ -184,8 +188,8 @@ public final class ProductionScheduler {
                     return -1;
                 }
                 ProductionItem planned = scheduleItem(prerequisite, ownReady, timeline, plan,
-                        TargetPlacement.anywhere(), true, ProductionGoal.NO_PRODUCER_LIMIT,
-                        new HashSet<Integer>(), false);
+                    TargetPlacement.anywhere(), true, ProductionGoal.NO_PRODUCER_LIMIT,
+                    new HashSet<Integer>(), false);
                 if (planned == null) {
                     path.remove(item.id());
 
@@ -201,7 +205,9 @@ public final class ProductionScheduler {
         return readyFrame;
     }
 
-    /** From the game or from this plan, whichever is earlier; -1 when neither. */
+    /**
+     * From the game or from this plan, whichever is earlier; -1 when neither.
+     */
     private int availableFrom(Producible item) {
         int inGame = existingItems.availableFrom(item);
         Integer planned = plannedAvailable.get(item.id());
@@ -213,8 +219,8 @@ public final class ProductionScheduler {
     // ---- one item -------------------------------------------------------------
 
     private ProductionItem scheduleItem(Producible item, int notBefore, ResourceTimeline timeline,
-            ProductionPlan plan, TargetPlacement placement, boolean isPrerequisite,
-            int producerLimit, Set<Integer> usedProducers, boolean onlyFreeProducers) {
+                                        ProductionPlan plan, TargetPlacement placement, boolean isPrerequisite,
+                                        int producerLimit, Set<Integer> usedProducers, boolean onlyFreeProducers) {
         ResourceCost cost = item.cost();
 
         ProducerFacility producer = null;
@@ -223,7 +229,8 @@ public final class ProductionScheduler {
         if (item.requiresPlacement()) {
             start = timeline.findEarliestAffordableFrame(cost, notBefore);
             if (start < 0) return null;
-        } else {
+        }
+        else {
             producer = chooseProducer(item, notBefore, producerLimit, usedProducers);
             if (producer == null) return null;
 
@@ -250,7 +257,7 @@ public final class ProductionScheduler {
         timeline.allocate(cost, start);
 
         ProductionItem scheduled = new ProductionItem(item, start, isPrerequisite, reservation,
-                producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER);
+            producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER);
         plan.add(scheduled);
         commit(item, scheduled, producer, timeline, usedProducers);
 
@@ -258,7 +265,7 @@ public final class ProductionScheduler {
     }
 
     private void commit(Producible item, ProductionItem scheduled, ProducerFacility producer,
-            ResourceTimeline timeline, Set<Integer> usedProducers) {
+                        ResourceTimeline timeline, Set<Integer> usedProducers) {
         if (producer != null) {
             usedProducers.add(producer.id());
             if (item.consumesProducer()) consumed.add(producer.id());
@@ -273,7 +280,7 @@ public final class ProductionScheduler {
 
         if (item.becomesFacility()) {
             ProducerFacility planned = new ProducerFacility(nextPlannedFacilityId--, item.id(),
-                    scheduled.completionFrame());
+                scheduled.completionFrame());
             facilities(item.id()).add(planned);
         }
     }
@@ -286,7 +293,7 @@ public final class ProductionScheduler {
      * holds.
      */
     private ProducerFacility chooseProducer(Producible item, int notBefore, int producerLimit,
-            Set<Integer> usedProducers) {
+                                            Set<Integer> usedProducers) {
         boolean atLimit = usedProducers.size() >= producerLimit;
 
         ProducerFacility best = null;

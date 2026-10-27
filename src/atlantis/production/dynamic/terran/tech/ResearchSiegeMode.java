@@ -1,30 +1,18 @@
 package atlantis.production.dynamic.terran.tech;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.tech.TechResearchCommander;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 import bwapi.TechType;
 
 public class ResearchSiegeMode extends TechResearchCommander {
-    private static boolean isResearched = false;
+    private static final boolean isResearched = false;
     private static boolean isEnqueued = false;
-
-    @Override
-    public TechType what() {
-        return TechType.Tank_Siege_Mode;
-    }
-
-    @Override
-    public boolean applies() {
-        if (isResearched) return false;
-
-        return Have.factory() && shouldResearchNow();
-    }
 
     private static boolean shouldResearchNow() {
         if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse() && Count.tanks() <= 0) return false;
@@ -45,6 +33,15 @@ public class ResearchSiegeMode extends TechResearchCommander {
         return (tanks >= 3 || A.seconds() >= 440) && Army.strength() >= 200;
     }
 
+    public static boolean isResearched() {
+        return isResearched;
+    }
+
+    @Override
+    public TechType what() {
+        return TechType.Tank_Siege_Mode;
+    }
+
 //    @Override
 //    protected void handle() {
 //        AUnit machineShop = Select.ourFree(AUnitType.Terran_Machine_Shop).first();
@@ -60,17 +57,20 @@ public class ResearchSiegeMode extends TechResearchCommander {
 //        }
 //    }
 
-    public static boolean isResearched() {
-        return isResearched;
-    }
-
     @Override
-    protected void setEnqueued(boolean isEnqueued) {
-        this.isEnqueued = isEnqueued;
+    public boolean applies() {
+        if (isResearched) return false;
+
+        return Have.factory() && shouldResearchNow();
     }
 
     @Override
     protected boolean isEnqueued() {
         return isEnqueued;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        ResearchSiegeMode.isEnqueued = isEnqueued;
     }
 }

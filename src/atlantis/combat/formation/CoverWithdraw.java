@@ -22,19 +22,29 @@ import atlantis.units.select.Selection;
  */
 public final class CoverWithdraw {
 
-    /** Escape ray length the corridor covers, pixels. */
+    /**
+     * Escape ray length the corridor covers, pixels.
+     */
     private static final double RAY_PX = 64.0;
-    /** Corridor half-width, pixels: only the ray itself, not the area. */
+    /**
+     * Corridor half-width, pixels: only the ray itself, not the area.
+     */
     private static final double HALF_WIDTH_PX = 16.0;
-    /** Only an escaper this close gets a unit interrupted, pixels. */
+    /**
+     * Only an escaper this close gets a unit interrupted, pixels.
+     */
     private static final double URGENT_PX = 48.0;
-    /** Lateral step length, pixels (one tile). */
+    /**
+     * Lateral step length, pixels (one tile).
+     */
     private static final double SIDESTEP_PX = 32.0;
 
     private CoverWithdraw() {
     }
 
-    /** A Dragoon yielding ground under melee pressure: the pinched unit. */
+    /**
+     * A Dragoon yielding ground under melee pressure: the pinched unit.
+     */
     public static boolean isWithdrawing(AUnit unit) {
         if (unit == null || !unit.isAlive() || !unit.isDragoon()) return false;
         if (unit.hp() + unit.shields() >= CombatTuning.current().getDragoonPinchHp()) return false;
@@ -65,19 +75,6 @@ public final class CoverWithdraw {
             if (step != null) return new Step(step, ally, threat);
         }
         return null;
-    }
-
-    /** A corridor-clearing step: where to go and whose ray it clears. */
-    public static final class Step {
-        public final APosition dest;
-        public final AUnit escaper;
-        public final AUnit threat;
-
-        public Step(APosition dest, AUnit escaper, AUnit threat) {
-            this.dest = dest;
-            this.escaper = escaper;
-            this.threat = threat;
-        }
     }
 
     /**
@@ -119,19 +116,6 @@ public final class CoverWithdraw {
         return null;
     }
 
-    /** A covering assignment: which pursuer, on whose behalf. */
-    public static final class Cover {
-        public final AUnit pursuer;
-        public final AUnit escaper;
-
-        public Cover(AUnit pursuer, AUnit escaper) {
-            this.pursuer = pursuer;
-            this.escaper = escaper;
-        }
-    }
-
-    // =========================================================
-
     private static AUnit nearestMeleeThreat(AUnit unit) {
         Selection melee = unit.enemiesNear().melee();
         if (melee == null) return null;
@@ -170,6 +154,8 @@ public final class CoverWithdraw {
         return Math.hypot(rx, ry) < URGENT_PX;
     }
 
+    // =========================================================
+
     private static APosition lateralStep(AUnit helper, AUnit escaper, AUnit threat) {
         double ex = escaper.position().x();
         double ey = escaper.position().y();
@@ -206,5 +192,33 @@ public final class CoverWithdraw {
         double dy = a.y() - b.position().y();
 
         return Math.hypot(dx, dy);
+    }
+
+    /**
+     * A corridor-clearing step: where to go and whose ray it clears.
+     */
+    public static final class Step {
+        public final APosition dest;
+        public final AUnit escaper;
+        public final AUnit threat;
+
+        public Step(APosition dest, AUnit escaper, AUnit threat) {
+            this.dest = dest;
+            this.escaper = escaper;
+            this.threat = threat;
+        }
+    }
+
+    /**
+     * A covering assignment: which pursuer, on whose behalf.
+     */
+    public static final class Cover {
+        public final AUnit pursuer;
+        public final AUnit escaper;
+
+        public Cover(AUnit pursuer, AUnit escaper) {
+            this.pursuer = pursuer;
+            this.escaper = escaper;
+        }
     }
 }

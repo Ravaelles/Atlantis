@@ -1,7 +1,7 @@
 package atlantis.battle.avoid.terran.fight;
 
-import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
+import atlantis.units.AUnit;
 
 public class MarineCanAttackNearEnemy {
     public static boolean allowedForThisUnit(AUnit unit) {

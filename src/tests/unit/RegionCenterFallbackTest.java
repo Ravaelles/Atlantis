@@ -72,8 +72,7 @@ public class RegionCenterFallbackTest {
                 Regions.getNearestUnexploredRegion(APosition.create(20, 20)),
                 "a region without a center is skipped, not exploded on"
             );
-        }
-        finally {
+        } finally {
             tests.fakes.FakeRegion.installAsSource();
         }
     }

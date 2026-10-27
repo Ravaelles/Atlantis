@@ -7,14 +7,18 @@ import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.LogLevel;
 
 public class ForceExitLocallyAfterSomeTime extends Commander {
-    /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */
+    /**
+     * Wall-clock limit in real seconds; set from ENV, never widened past the cap.
+     */
     public static int realSecondsLimit = 60 * 10;
 
-    /** In-game limit in game seconds; 0 disables it. 20 game minutes by default. */
+    /**
+     * In-game limit in game seconds; 0 disables it. 20 game minutes by default.
+     */
     public static int inGameSecondsLimit = 60 * 20;
 
     @Override
@@ -23,7 +27,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         if (A.now() % 300 != 0) return false;
 
         if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) {
-            AConsole.errPrintln(LogLevel.HIGH, 
+            AConsole.errPrintln(LogLevel.HIGH,
                 "### realSecondsLimit = " + RealTime.gameLengthInRealSeconds() + "/" + realSecondsLimit
             );
 
@@ -31,7 +35,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         }
 
         if (inGameSecondsLimit > 0 && AGame.timeSeconds() >= inGameSecondsLimit) {
-            AConsole.errPrintln(LogLevel.HIGH, 
+            AConsole.errPrintln(LogLevel.HIGH,
                 "### inGameSecondsLimit = " + AGame.timeSeconds() + "/" + inGameSecondsLimit
             );
 
@@ -53,10 +57,10 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         AConsole.errPrintln(LogLevel.HIGH, "####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterSomeTime");
-        ErrorLog.printErrorOnce("force-exit-timeout", 
+        ErrorLog.printErrorOnce("force-exit-timeout",
             "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
-            + " real seconds, " + A.minSec() + " in-game time,"
-            + " supply: " + A.supplyUsed() + "/" + A.supplyTotal()
+                + " real seconds, " + A.minSec() + " in-game time,"
+                + " supply: " + A.supplyUsed() + "/" + A.supplyTotal()
         );
 
         Atlantis.getInstance().onEnd(false);

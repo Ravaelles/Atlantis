@@ -13,7 +13,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Reengage glide discipline (owner 2026-10-26): the glide destination
@@ -56,8 +55,7 @@ public class ReengageGlideTest extends WorldStubForTests {
                 assertTrue(journal.contains("Attack:"),
                     "chase with an attack instead of standing: " + journal);
             });
-        }
-        finally {
+        } finally {
             FakeMapTiles.installAsSource();
         }
     }

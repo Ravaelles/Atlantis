@@ -9,9 +9,8 @@ public class ProtossTooBigBattleToRetreat_asZealot {
         if (!unit.isZealot()) return false;
 
         if (zealotShouldSupportDragoons(unit)) return true;
-        if (zealotShouldKeepZealotLine(unit)) return true;
 
-        return false;
+        return zealotShouldKeepZealotLine(unit);
     }
 
     private static boolean zealotShouldKeepZealotLine(AUnit unit) {

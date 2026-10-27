@@ -26,7 +26,7 @@ public class ProtossPhotonCannonAntiAir extends AntiAirBuildingCommander {
             return 2 + mutaBonus;
         }
 
-        return 0 + mutaBonus;
+        return mutaBonus;
     }
 
     private int mutaBonus() {

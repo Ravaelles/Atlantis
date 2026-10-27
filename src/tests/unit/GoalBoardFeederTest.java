@@ -14,12 +14,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NEXT #91 feeder (board -> queue): active goals nobody owns get exactly
@@ -73,6 +68,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
                 if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Pylon)
                     && order.priority() == ProductionOrderPriority.TOP) {
                     topPylon = true;
+                    break;
                 }
             }
             assertTrue(topPylon, "a blocked supply feeds one TOP Pylon row");
@@ -105,6 +101,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             for (ProductionOrder order : Queue.get().allOrders().list()) {
                 if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Pylon)) {
                     pylonRow = true;
+                    break;
                 }
             }
             assertFalse(pylonRow, "healthy supply feeds no Pylon row");
@@ -144,7 +141,8 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void coveredGoalIsSilent() {        world(5, fakeOurs(
+    public void coveredGoalIsSilent() {
+        world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
@@ -272,9 +270,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
                 }
             }
             assertEquals(1, dragoons, "the pump's own row stands alone - no feeder duplicate");
-            assertTrue(
-                !fed.contains("sustained-dragoon"),
-                "an acting pump always wins over the posture default");
+            assertFalse(fed.contains("sustained-dragoon"), "an acting pump always wins over the posture default");
         });
     }
 

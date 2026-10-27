@@ -25,13 +25,6 @@ package atlantis.placement.core;
  */
 public interface RacePlacementStrategy {
 
-    /** Generic result of checking whether a candidate can be used. */
-    enum AvailabilityVerdict {
-        AVAILABLE,
-        NEEDS_SUPPORT,
-        REFUSE
-    }
-
     /**
      * The block templates this race uses, in the order they should be tried.
      * Protoss ships 24 normal blocks and four start variants (S2); Terran and Zerg
@@ -86,5 +79,14 @@ public interface RacePlacementStrategy {
      */
     default int extraRankingWeight(BuildLocation location, String buildableTypeId) {
         return 0;
+    }
+
+    /**
+     * Generic result of checking whether a candidate can be used.
+     */
+    enum AvailabilityVerdict {
+        AVAILABLE,
+        NEEDS_SUPPORT,
+        REFUSE
     }
 }

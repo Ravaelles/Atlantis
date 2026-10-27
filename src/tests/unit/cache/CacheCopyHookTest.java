@@ -4,17 +4,13 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 import atlantis.util.cache.Copyable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Terran_Marine;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link Cache#get(String, int, atlantis.util.Callback)} hands a cached value out as
@@ -79,7 +75,7 @@ public class CacheCopyHookTest extends WorldStubForTests {
         world(1, fakeOurs(fake(Terran_Marine, 10), fake(Terran_Marine, 20)), fakeEnemies(), () -> {
             Selection selection = Select.our();
 
-            assertTrue(selection instanceof Copyable, "the cache only copies what says so");
+            assertInstanceOf(Copyable.class, selection, "the cache only copies what says so");
             Selection copy = selection.copy();
             assertNotSame(selection, copy);
             assertEquals(selection.size(), copy.size());

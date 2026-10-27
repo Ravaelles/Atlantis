@@ -1,12 +1,16 @@
 package jps;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Kevin
  */
 public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
-    public JPSDiagOneObstacle(Graph<T> graph) { super(graph); }
+    public JPSDiagOneObstacle(Graph<T> graph) {
+        super(graph);
+    }
 
     @Override
     protected Set<T> findNeighbors(T node, Map<T, T> parentMap) {
@@ -32,7 +36,8 @@ public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
                     neighbors.add(graph.getNode(x - dx, y + dy));
                 if ((!graph.isWalkable(x, y - dy) && graph.isWalkable(x + dx, y)) && graph.isWalkable(x + dx, y - dy))
                     neighbors.add(graph.getNode(x + dx, y - dy));
-            } else { // search horizontally/vertically
+            }
+            else { // search horizontally/vertically
                 if (dx == 0) {
                     if (graph.isWalkable(x, y + dy)) {
                         neighbors.add(graph.getNode(x, y + dy));
@@ -41,7 +46,8 @@ public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
                         if (!graph.isWalkable(x - 1, y))
                             neighbors.add(graph.getNode(x - 1, y + dy));
                     }
-                } else {
+                }
+                else {
                     if (graph.isWalkable(x + dx, y)) {
                         neighbors.add(graph.getNode(x + dx, y));
                         if (!graph.isWalkable(x, y + 1))
@@ -51,7 +57,8 @@ public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
                     }
                 }
             }
-        } else {
+        }
+        else {
             // no parent, return all neighbors
             neighbors.addAll(graph.getNeighborsOf(node, Graph.Diagonal.ONE_OBSTACLE));
         }
@@ -71,23 +78,25 @@ public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
         // check along diagonal
         if (dx != 0 && dy != 0) {
             if ((graph.isWalkable(neighbor.x - dx, neighbor.y + dy) && !graph.isWalkable(neighbor.x - dx, neighbor.y)) ||
-                    (graph.isWalkable(neighbor.x + dx, neighbor.y - dy) && !graph.isWalkable(neighbor.x, neighbor.y - dy))) {
+                (graph.isWalkable(neighbor.x + dx, neighbor.y - dy) && !graph.isWalkable(neighbor.x, neighbor.y - dy))) {
                 return neighbor;
             }
             // when moving diagonally, must check for vertical/horizontal jump points
             if (jump(graph.getNode(neighbor.x + dx, neighbor.y), neighbor, goals) != null ||
-                    jump(graph.getNode(neighbor.x, neighbor.y + dy), neighbor, goals) != null) {
+                jump(graph.getNode(neighbor.x, neighbor.y + dy), neighbor, goals) != null) {
                 return neighbor;
             }
-        } else { // check horizontally/vertically
+        }
+        else { // check horizontally/vertically
             if (dx != 0) {
                 if ((graph.isWalkable(neighbor.x + dx, neighbor.y + 1) && !graph.isWalkable(neighbor.x, neighbor.y + 1)) ||
-                        (graph.isWalkable(neighbor.x + dx, neighbor.y - 1) && !graph.isWalkable(neighbor.x, neighbor.y - 1))) {
+                    (graph.isWalkable(neighbor.x + dx, neighbor.y - 1) && !graph.isWalkable(neighbor.x, neighbor.y - 1))) {
                     return neighbor;
                 }
-            } else {
+            }
+            else {
                 if ((graph.isWalkable(neighbor.x + 1, neighbor.y + dy) && !graph.isWalkable(neighbor.x + 1, neighbor.y)) ||
-                        (graph.isWalkable(neighbor.x - 1, neighbor.y + dy) && !graph.isWalkable(neighbor.x - 1, neighbor.y))) {
+                    (graph.isWalkable(neighbor.x - 1, neighbor.y + dy) && !graph.isWalkable(neighbor.x - 1, neighbor.y))) {
                     return neighbor;
                 }
             }
@@ -97,7 +106,8 @@ public class JPSDiagOneObstacle<T extends Node> extends JPS<T> {
         // neighbors is open to allow the path
         if (graph.isWalkable(neighbor.x + dx, neighbor.y) || graph.isWalkable(neighbor.x, neighbor.y + dy)) {
             return jump(graph.getNode(neighbor.x + dx, neighbor.y + dy), neighbor, goals);
-        } else {
+        }
+        else {
             return null;
         }
     }

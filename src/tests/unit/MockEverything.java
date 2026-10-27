@@ -3,16 +3,18 @@ package tests.unit;
 import atlantis.Atlantis;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
 import atlantis.game.race.EnemyRace;
 import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
-import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
-import bwapi.*;
+import bwapi.Game;
+import bwapi.Race;
+import bwapi.WalkPosition;
+import main.Main;
 import org.mockito.Mockito;
 import tests.fakes.FakeBaseLocations;
 import tests.fakes.FakeChokes;
-import main.Main;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -65,8 +67,8 @@ public class MockEverything {
      * dropped by {@code Cache.nukeAllCaches()} above and rebuilt from these.</p>
      */
     private void mockOurRace() {
-        if (test.main == null) test.main = Mockito.mockStatic(Main.class);
-        test.main.when(Main::ourRace).thenAnswer(invocation -> test.initRace().name());
+        if (AbstractTestWithUnits.main == null) AbstractTestWithUnits.main = Mockito.mockStatic(Main.class);
+        AbstractTestWithUnits.main.when(Main::ourRace).thenAnswer(invocation -> test.initRace().name());
     }
 
     private void mockAtlantisConfig() {
@@ -105,7 +107,7 @@ public class MockEverything {
     }
 
     private void mockAGameObject() {
-        if (test.aGame == null) test.aGame = Mockito.mockStatic(AGame.class);
+        if (AbstractTestWithUnits.aGame == null) AbstractTestWithUnits.aGame = Mockito.mockStatic(AGame.class);
 
         // The frame-clock questions (AGame::now, everyNthGameFrame,
         // notNthGameFrame) are stubbed once, here - not re-stubbed by
@@ -115,17 +117,17 @@ public class MockEverything {
         // the frame number - the quadratic cost behind BUGS.md B-24. The
         // answers read the published clock at call time, so one registration
         // per test is enough.
-        AbstractTestWithUnits.stubAGameClock(test.aGame);
+        AbstractTestWithUnits.stubAGameClock(AbstractTestWithUnits.aGame);
 
         test.currentSupplyUsed = test.options == null ? 0 : test.options.getIntOr("supplyUsed", 0);
         test.currentSupplyTotal = test.options == null ? 4 : test.options.getIntOr("supplyTotal", 4);
 
-        test.aGame.when(AGame::supplyUsed).thenAnswer(invocation -> test.currentSupplyUsed());
-        test.aGame.when(AGame::supplyTotal).thenAnswer(invocation -> test.currentSupplyTotal());
-        test.aGame.when(AGame::supplyFree).thenAnswer(invocation -> test.currentSupplyFree());
+        AbstractTestWithUnits.aGame.when(AGame::supplyUsed).thenAnswer(invocation -> test.currentSupplyUsed());
+        AbstractTestWithUnits.aGame.when(AGame::supplyTotal).thenAnswer(invocation -> test.currentSupplyTotal());
+        AbstractTestWithUnits.aGame.when(AGame::supplyFree).thenAnswer(invocation -> test.currentSupplyFree());
 
-        test.aGame.when(AGame::minerals).thenAnswer(invocation -> test.currentMinerals());
-        test.aGame.when(AGame::gas).thenAnswer(invocation -> test.currentGas());
+        AbstractTestWithUnits.aGame.when(AGame::minerals).thenAnswer(invocation -> test.currentMinerals());
+        AbstractTestWithUnits.aGame.when(AGame::gas).thenAnswer(invocation -> test.currentGas());
 
         // Answered on every call, not stubbed once in setUp(): the enemy race is
         // a property of the world, like the supply, and a test declares it where
@@ -134,10 +136,10 @@ public class MockEverything {
         // and does not say so gets every Enemy.zerg() branch answering for a
         // Protoss, which is how ATargetingTest's Zerg scenarios ended up
         // unreachable.
-        if (test.enemyRace == null) test.enemyRace = Mockito.mockStatic(EnemyRace.class);
-        test.enemyRace.when(EnemyRace::isEnemyProtoss).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
-        test.enemyRace.when(EnemyRace::isEnemyTerran).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
-        test.enemyRace.when(EnemyRace::isEnemyZerg).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
+        if (AbstractTestWithUnits.enemyRace == null) AbstractTestWithUnits.enemyRace = Mockito.mockStatic(EnemyRace.class);
+        AbstractTestWithUnits.enemyRace.when(EnemyRace::isEnemyProtoss).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
+        AbstractTestWithUnits.enemyRace.when(EnemyRace::isEnemyTerran).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
+        AbstractTestWithUnits.enemyRace.when(EnemyRace::isEnemyZerg).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
     }
 
     /**
@@ -157,19 +159,19 @@ public class MockEverything {
         // Same race as EnemyRace above - the two mocks used to disagree, because
         // this one was hard-coded to "enemy is Protoss" while a test could change
         // the other one. Enemy.* is what production code actually calls.
-        if (test.enemy == null) test.enemy = Mockito.mockStatic(Enemy.class);
-        test.enemy.when(() -> Enemy.terran()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
-        test.enemy.when(() -> Enemy.protoss()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
-        test.enemy.when(() -> Enemy.zerg()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
+        if (AbstractTestWithUnits.enemy == null) AbstractTestWithUnits.enemy = Mockito.mockStatic(Enemy.class);
+        AbstractTestWithUnits.enemy.when(() -> Enemy.terran()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
+        AbstractTestWithUnits.enemy.when(() -> Enemy.protoss()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
+        AbstractTestWithUnits.enemy.when(() -> Enemy.zerg()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
     }
 
     private void mockBaseLocations() {
-        if (test.allBaseLocations == null) test.allBaseLocations = Mockito.mockStatic(AllBaseLocations.class);
-        test.allBaseLocations.when(AllBaseLocations::get).thenReturn(FakeBaseLocations.get());
+        if (AbstractTestWithUnits.allBaseLocations == null) AbstractTestWithUnits.allBaseLocations = Mockito.mockStatic(AllBaseLocations.class);
+        AbstractTestWithUnits.allBaseLocations.when(AllBaseLocations::get).thenReturn(FakeBaseLocations.get());
     }
 
     private void mockChokes() {
-        if (test.allChokes == null) test.allChokes = Mockito.mockStatic(AllChokes.class);
-        test.allChokes.when(AllChokes::get).thenReturn(FakeChokes.get());
+        if (AbstractTestWithUnits.allChokes == null) AbstractTestWithUnits.allChokes = Mockito.mockStatic(AllChokes.class);
+        AbstractTestWithUnits.allChokes.when(AllChokes::get).thenReturn(FakeChokes.get());
     }
 }

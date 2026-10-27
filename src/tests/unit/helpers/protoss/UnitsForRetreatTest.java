@@ -3,7 +3,8 @@ package tests.unit.helpers.protoss;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 
-import static tests.unit.AbstractTestWithUnits.*;
+import static tests.unit.AbstractTestWithUnits.fake;
+import static tests.unit.AbstractTestWithUnits.fakeEnemy;
 
 public class UnitsForRetreatTest {
     // Positions are fixed. They used to include FakeUnit.firstFreeId / 10.0, so

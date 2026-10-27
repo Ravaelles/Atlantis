@@ -71,8 +71,7 @@ public final class RetreatEscapeRoute {
             HasPosition step = localStep(unit, nearestFoe(unit, foes));
 
             return step != null ? step : home;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return home;
         }
     }
@@ -128,8 +127,7 @@ public final class RetreatEscapeRoute {
                 if (segDistTiles(from, to, foe) < corridorTiles) return true;
             }
             return false;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return false;
         }
     }
@@ -158,8 +156,7 @@ public final class RetreatEscapeRoute {
         if (candidate instanceof AChoke) {
             try {
                 return ((AChoke) candidate).center();
-            }
-            catch (RuntimeException ignored) {
+            } catch (RuntimeException ignored) {
                 return null;
             }
         }
@@ -193,8 +190,7 @@ public final class RetreatEscapeRoute {
     private static double safeDist(HasPosition a, HasPosition b) {
         try {
             return a.distTo(b);
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return Double.MAX_VALUE;
         }
     }
@@ -204,8 +200,7 @@ public final class RetreatEscapeRoute {
 
         try {
             return atlantis.combat.escape.EscapeScoredStep.pickScored(unit, threat, 8);
-        }
-        catch (RuntimeException | Error ignored) {
+        } catch (RuntimeException | Error ignored) {
             return null;
         }
     }
@@ -221,8 +216,7 @@ public final class RetreatEscapeRoute {
             for (AUnit foe : enemies.list()) {
                 if (foe != null && foe.isAlive()) foes.add(foe);
             }
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
         }
         return foes;
     }
@@ -237,8 +231,7 @@ public final class RetreatEscapeRoute {
                 HasPosition ground = groundOf(choke);
                 if (ground != null) grounds.add(ground);
             }
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
         }
         return grounds;
     }
@@ -249,8 +242,7 @@ public final class RetreatEscapeRoute {
             if (base != null && base.isAlive()) return base;
 
             return EnemyUnits.enemyMainBase();
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return null;
         }
     }

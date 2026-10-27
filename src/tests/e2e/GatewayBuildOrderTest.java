@@ -121,15 +121,15 @@ public class GatewayBuildOrderTest extends AbstractTestWithWorld {
 
             FakeOrderSink sink = (FakeOrderSink) myProbe.orderSink();
             boolean built = sink.orders().stream()
-                    .anyMatch(o -> o.operation.equals("build"));
+                .anyMatch(o -> o.operation.equals("build"));
 
             assertTrue(built,
-                    "a builder one tile from its own buildable Gateway site must issue a build"
-                            + " order within the window; measured instead: 43 game-seconds of"
-                            + " GatherResources/BuilderManager alternating, no build, then"
-                            + " 'Gateway took too long (43s) / buildable:true'. Orders seen: "
-                            + sink.orders()
-                            + " | manager history: " + myProbe.managerLogs());
+                "a builder one tile from its own buildable Gateway site must issue a build"
+                    + " order within the window; measured instead: 43 game-seconds of"
+                    + " GatherResources/BuilderManager alternating, no build, then"
+                    + " 'Gateway took too long (43s) / buildable:true'. Orders seen: "
+                    + sink.orders()
+                    + " | manager history: " + myProbe.managerLogs());
         });
     }
 }

@@ -7,7 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;
 
 public class EnemyNaturalBase {
-    private static Cache<APosition> cache = new Cache<>();
+    private static final Cache<APosition> cache = new Cache<>();
 
     public static APosition get() {
         return cache.getIfValid(

@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.combat.ArmyContact;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -9,11 +9,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Split-cluster reinforcement (NEXT #181, owner 2026-10-26): one part of
@@ -95,7 +91,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             // scouting skirmish never drags the army across the map.
             BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, b);
             assertTrue(b.targetPosition == null
-                || b.targetPosition.distTo(enemy.position()) >= 1.0,
+                    || b.targetPosition.distTo(enemy.position()) >= 1.0,
                 "melee does not march at fresh contacts: " + b.targetPosition);
         });
     }
@@ -180,7 +176,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
 
             BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, b);
             assertTrue(b.targetPosition != null
-                && b.targetPosition.distTo(enemy.position()) < 5.0,
+                    && b.targetPosition.distTo(enemy.position()) < 5.0,
                 "B joins the ongoing fight instead of a slot: " + b.targetPosition);
             assertTrue(b.commandHistory().toString().contains("ClusterReinforce"),
                 "the march is tagged reinforce, not a slot: " + b.commandHistory());
@@ -202,8 +198,7 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 2) return;
 
             BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, b);
-            assertTrue(!b.commandHistory().toString().contains("ClusterReinforce"),
-                "no fight, no reinforce - slots/ghost/gather as before: " + b.commandHistory());
+            assertFalse(b.commandHistory().toString().contains("ClusterReinforce"), "no fight, no reinforce - slots/ghost/gather as before: " + b.commandHistory());
         });
     }
 }

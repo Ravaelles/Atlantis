@@ -17,18 +17,16 @@ public class Log {
      * type at all. Read the flag before calling it; it lives in
      * {@code atlantis.units.AUnit} now.</p>
      */
+    public static final int UNIT_LOG_SIZE = 8;
+//    public static boolean logUnitActionChanges = true;
+    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 10;
     /**
      * Helpful for logging of <b>unitAction</b> changes. Very helpful to get human-readable unit reasoning.
      */
     public static boolean logUnitActionChanges = false;
-//    public static boolean logUnitActionChanges = true;
-
-    public static final int UNIT_LOG_SIZE = 8;
-    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 10;
-
-    private ArrayList<LogMessage> messages = new ArrayList<>();
-    private int expireAfterFrames;
-    private int limit;
+    private final ArrayList<LogMessage> messages = new ArrayList<>();
+    private final int expireAfterFrames;
+    private final int limit;
 
     // =========================================================
 

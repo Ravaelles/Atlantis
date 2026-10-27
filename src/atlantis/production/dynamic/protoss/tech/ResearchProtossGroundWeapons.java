@@ -1,19 +1,33 @@
 package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
-    private static boolean isResearched = false;
+    private static final boolean isResearched = false;
     private static boolean isEnqueued = false;
+
+    public static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(Protoss_Ground_Weapons);
+        if (!isResearched) return false;
+
+        int upgradeLevel = getCurrentUpgradeLevel();
+        if (upgradeLevel >= 3) return true;
+
+        return !A.canAfford(550, 300);
+    }
+
+    private static int getCurrentUpgradeLevel() {
+        return ATech.getUpgradeLevel(Protoss_Ground_Weapons);
+    }
 
     public UpgradeType what() {
         return Protoss_Ground_Weapons;
@@ -67,27 +81,13 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
     }
 
     @Override
-    protected void setEnqueued(boolean isEnqueued) {
-        this.isEnqueued = isEnqueued;
-    }
-
-    @Override
     protected boolean isEnqueued() {
         return isEnqueued;
     }
 
-    public static boolean isResearched() {
-        boolean isResearched = ATech.isResearched(Protoss_Ground_Weapons);
-        if (!isResearched) return false;
-
-        int upgradeLevel = getCurrentUpgradeLevel();
-        if (upgradeLevel >= 3) return true;
-
-        return !A.canAfford(550, 300);
-    }
-
-    private static int getCurrentUpgradeLevel() {
-        return ATech.getUpgradeLevel(Protoss_Ground_Weapons);
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        ResearchProtossGroundWeapons.isEnqueued = isEnqueued;
     }
 
     @Override

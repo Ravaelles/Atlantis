@@ -26,86 +26,47 @@ import java.util.List;
  */
 public final class ForgeGatewayWall {
 
-    /** The three buildings a wall is made of. */
-    public static final class Tiles {
-        private final int forgeX;
-        private final int forgeY;
-        private final int gatewayX;
-        private final int gatewayY;
-        private final int pylonX;
-        private final int pylonY;
-
-        Tiles(int forgeX, int forgeY, int gatewayX, int gatewayY, int pylonX, int pylonY) {
-            this.forgeX = forgeX;
-            this.forgeY = forgeY;
-            this.gatewayX = gatewayX;
-            this.gatewayY = gatewayY;
-            this.pylonX = pylonX;
-            this.pylonY = pylonY;
-        }
-
-        public int forgeX() {
-            return forgeX;
-        }
-
-        public int forgeY() {
-            return forgeY;
-        }
-
-        public int gatewayX() {
-            return gatewayX;
-        }
-
-        public int gatewayY() {
-            return gatewayY;
-        }
-
-        public int pylonX() {
-            return pylonX;
-        }
-
-        public int pylonY() {
-            return pylonY;
-        }
-
-        @Override
-        public String toString() {
-            return "wall[forge(" + forgeX + "," + forgeY + ") "
-                    + "gateway(" + gatewayX + "," + gatewayY + ") "
-                    + "pylon(" + pylonX + "," + pylonY + ")]";
-        }
-    }
-
-    /** The choke centre and the tiles it spans, as the wall strategy needs them. */
-    public static final class Choke {
-        private final int centerX;
-        private final int centerY;
-        private final List<int[]> tiles;
-
-        public Choke(int centerX, int centerY, List<int[]> tiles) {
-            this.centerX = centerX;
-            this.centerY = centerY;
-            this.tiles = tiles;
-        }
-
-        public int centerX() {
-            return centerX;
-        }
-
-        public int centerY() {
-            return centerY;
-        }
-
-        /** Every tile of the choke, nearest-relevant first is not required. */
-        public List<int[]> tiles() {
-            return tiles;
-        }
-    }
-
     private final TileAvailabilityGrid grid;
 
     public ForgeGatewayWall(TileAvailabilityGrid grid) {
         this.grid = grid;
+    }
+
+    /**
+     * What this wall does NOT model, stated here so nobody assumes more than it
+     * does: the gap the wall leaves is not measured, so a wall that leaves a
+     * one-tile hole a unit can walk through is still returned; tiles inside vs
+     * outside are not classified; and probe-blocking positions are not computed.
+     * Those are Stardust's choke-walking results and would be a follow-up stage.
+     */
+    public static String limitations() {
+        return "no gap measurement, no inside/outside classification, no probe-blocking positions";
+    }
+
+    private static boolean pylonPowers(int[] pylon, int[] building) {
+        // The same 6-tile radius the engine applies to a finished Pylon.
+        int dx = Math.abs(pylon[0] - building[0]);
+        int dy = Math.abs(pylon[1] - building[1]);
+
+        return Math.max(dx, dy) <= 6;
+    }
+
+    private static boolean overlaps(int[] a, int aw, int ah, int[] b, int bw, int bh) {
+        return a[0] < b[0] + bw && a[0] + aw > b[0]
+            && a[1] < b[1] + bh && a[1] + ah > b[1];
+    }
+
+    private static void sortByDistanceTo(List<int[]> tiles, final int cx, final int cy) {
+        java.util.Collections.sort(tiles, new java.util.Comparator<int[]>() {
+            @Override
+            public int compare(int[] a, int[] b) {
+                return Integer.compare(dist(a, cx, cy), dist(b, cx, cy));
+            }
+        });
+    }
+
+    private static int dist(int[] tile, int cx, int cy) {
+        return Math.max(Math.abs(tile[0] - cx), Math.abs(tile[1] - cy));
     }
 
     /**
@@ -151,36 +112,12 @@ public final class ForgeGatewayWall {
                         continue;
 
                     return new Tiles(
-                            forge[0], forge[1], gateway[0], gateway[1], pylon[0], pylon[1]);
+                        forge[0], forge[1], gateway[0], gateway[1], pylon[0], pylon[1]);
                 }
             }
         }
 
         return null;
-    }
-
-    /**
-     * What this wall does NOT model, stated here so nobody assumes more than it
-     * does: the gap the wall leaves is not measured, so a wall that leaves a
-     * one-tile hole a unit can walk through is still returned; tiles inside vs
-     * outside are not classified; and probe-blocking positions are not computed.
-     * Those are Stardust's choke-walking results and would be a follow-up stage.
-     */
-    public static String limitations() {
-        return "no gap measurement, no inside/outside classification, no probe-blocking positions";
-    }
-
-    private static boolean pylonPowers(int[] pylon, int[] building) {
-        // The same 6-tile radius the engine applies to a finished Pylon.
-        int dx = Math.abs(pylon[0] - building[0]);
-        int dy = Math.abs(pylon[1] - building[1]);
-
-        return Math.max(dx, dy) <= 6;
-    }
-
-    private static boolean overlaps(int[] a, int aw, int ah, int[] b, int bw, int bh) {
-        return a[0] < b[0] + bw && a[0] + aw > b[0]
-                && a[1] < b[1] + bh && a[1] + ah > b[1];
     }
 
     private List<int[]> freeTilesWithin(Choke choke, int radius) {
@@ -192,23 +129,92 @@ public final class ForgeGatewayWall {
                     continue;
                 if (grid.flagsAt(x, y) != 0)
                     continue;
-                free.add(new int[] { x, y });
+                free.add(new int[]{x, y});
             }
         }
 
         return free;
     }
 
-    private static void sortByDistanceTo(List<int[]> tiles, final int cx, final int cy) {
-        java.util.Collections.sort(tiles, new java.util.Comparator<int[]>() {
-            @Override
-            public int compare(int[] a, int[] b) {
-                return Integer.compare(dist(a, cx, cy), dist(b, cx, cy));
-            }
-        });
+    /**
+     * The three buildings a wall is made of.
+     */
+    public static final class Tiles {
+        private final int forgeX;
+        private final int forgeY;
+        private final int gatewayX;
+        private final int gatewayY;
+        private final int pylonX;
+        private final int pylonY;
+
+        Tiles(int forgeX, int forgeY, int gatewayX, int gatewayY, int pylonX, int pylonY) {
+            this.forgeX = forgeX;
+            this.forgeY = forgeY;
+            this.gatewayX = gatewayX;
+            this.gatewayY = gatewayY;
+            this.pylonX = pylonX;
+            this.pylonY = pylonY;
+        }
+
+        public int forgeX() {
+            return forgeX;
+        }
+
+        public int forgeY() {
+            return forgeY;
+        }
+
+        public int gatewayX() {
+            return gatewayX;
+        }
+
+        public int gatewayY() {
+            return gatewayY;
+        }
+
+        public int pylonX() {
+            return pylonX;
+        }
+
+        public int pylonY() {
+            return pylonY;
+        }
+
+        @Override
+        public String toString() {
+            return "wall[forge(" + forgeX + "," + forgeY + ") "
+                + "gateway(" + gatewayX + "," + gatewayY + ") "
+                + "pylon(" + pylonX + "," + pylonY + ")]";
+        }
     }
 
-    private static int dist(int[] tile, int cx, int cy) {
-        return Math.max(Math.abs(tile[0] - cx), Math.abs(tile[1] - cy));
+    /**
+     * The choke centre and the tiles it spans, as the wall strategy needs them.
+     */
+    public static final class Choke {
+        private final int centerX;
+        private final int centerY;
+        private final List<int[]> tiles;
+
+        public Choke(int centerX, int centerY, List<int[]> tiles) {
+            this.centerX = centerX;
+            this.centerY = centerY;
+            this.tiles = tiles;
+        }
+
+        public int centerX() {
+            return centerX;
+        }
+
+        public int centerY() {
+            return centerY;
+        }
+
+        /**
+         * Every tile of the choke, nearest-relevant first is not required.
+         */
+        public List<int[]> tiles() {
+            return tiles;
+        }
     }
 }

@@ -21,7 +21,7 @@ public final class WorkerQuestion implements AQuestion {
         if (state.workerCount >= 25 * Math.max(1, state.baseCount)) return null;
 
         return ADecision.decide(
-            ADecision.Kind.TRAIN_WORKER, "Probe", "pump-flow", ADecision.Source.DYNAMIC)
+                ADecision.Kind.TRAIN_WORKER, "Probe", "pump-flow", ADecision.Source.DYNAMIC)
             .frame(0).supply(state.supplyUsed, state.supplyTotal)
             .bank(state.minerals, state.gas)
             .build();

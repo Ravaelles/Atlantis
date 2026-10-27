@@ -22,39 +22,6 @@ import java.util.ArrayList;
 import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class TerranReinforceBasesWithBunkers extends Commander {
-    @Override
-    public boolean applies() {
-        if (!We.terran()) return false;
-        if (A.everyFrameExceptNthFrame(35)) return false;
-        if (Count.bases() <= 2) return false;
-        if (Count.bunkersWithUnfinished() > Count.basesWithUnfinished()) return false;
-
-        if (
-            Have.barracks()
-                && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2
-                && Count.withPlanned(AUnitType.Terran_Bunker) <= Count.basesWithPlanned()
-//                && CountInQueue.count(AUnitType.Terran_Bunker, 10) <= 0
-        ) {
-            int maxBunkersInProgress = ArmyStrength.ourArmyRelativeStrength() <= 70 ? 2 : 1;
-            if (Count.inProductionOrInQueue(Terran_Bunker) >= maxBunkersInProgress) return false;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    protected boolean handle() {
-        for (HasPosition position : allBases(true, true)) {
-            if (position == null) continue;
-
-            if (ensurePositionHasBunker(position)) return true;
-        }
-
-        return false;
-    }
-
     /**
      * Moved here from {@code information.generic.AllOfOurBasePositions} (WO-13):
      * its only caller was this commander, and the information->production edges
@@ -79,6 +46,38 @@ public class TerranReinforceBasesWithBunkers extends Commander {
         positions.addAll(Select.ourBasesWithUnfinished().list());
 
         return positions;
+    }
+
+    @Override
+    public boolean applies() {
+        if (!We.terran()) return false;
+        if (A.everyFrameExceptNthFrame(35)) return false;
+        if (Count.bases() <= 2) return false;
+        if (Count.bunkersWithUnfinished() > Count.basesWithUnfinished()) return false;
+
+        if (
+            Have.barracks()
+                && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2
+                && Count.withPlanned(AUnitType.Terran_Bunker) <= Count.basesWithPlanned()
+//                && CountInQueue.count(AUnitType.Terran_Bunker, 10) <= 0
+        ) {
+            int maxBunkersInProgress = ArmyStrength.ourArmyRelativeStrength() <= 70 ? 2 : 1;
+
+            return Count.inProductionOrInQueue(Terran_Bunker) < maxBunkersInProgress;
+        }
+
+        return false;
+    }
+
+    @Override
+    protected boolean handle() {
+        for (HasPosition position : allBases(true, true)) {
+            if (position == null) continue;
+
+            if (ensurePositionHasBunker(position)) return true;
+        }
+
+        return false;
     }
 
     private boolean ensurePositionHasBunker(HasPosition position) {

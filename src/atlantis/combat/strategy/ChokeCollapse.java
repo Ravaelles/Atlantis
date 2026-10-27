@@ -38,7 +38,9 @@ public final class ChokeCollapse {
         return SquadScout.pickBait(ours) != null;
     }
 
-    /** Guarded detection: the collapse point for this unit, or null when there is no crush. */
+    /**
+     * Guarded detection: the collapse point for this unit, or null when there is no crush.
+     */
     public static APosition collapsePointFor(AUnit unit) {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);

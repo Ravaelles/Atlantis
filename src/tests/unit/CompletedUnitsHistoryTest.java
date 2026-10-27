@@ -42,14 +42,16 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
         CompletedUnitsHistory.reset();
     }
 
-    /** Nothing built is reported as nothing, not as a wrong number. */
+    /**
+     * Nothing built is reported as nothing, not as a wrong number.
+     */
     @Test
     public void anEmptyHistoryCountsNothing() {
         assertEquals(0, CompletedUnitsHistory.completedCount(PYLON), "no Pylon was built");
         assertEquals(0, CompletedUnitsHistory.completedCount(GATEWAY), "no Gateway was built");
         assertTrue(
-                CompletedUnitsHistory.typesByFirstCompletion().isEmpty(),
-                "an empty history lists no types - the report says \"(nothing completed)\" for this");
+            CompletedUnitsHistory.typesByFirstCompletion().isEmpty(),
+            "an empty history lists no types - the report says \"(nothing completed)\" for this");
     }
 
     /**
@@ -89,8 +91,8 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
         // the game build, which is a trap this repository has paid for before.
         assertEquals(
             Arrays.asList(PYLON, GATEWAY, CORE), order,
-                "Pylon first, then Gateway, then Core - the order they were first built, not the "
-                        + "order they were last built and not a list written by hand");
+            "Pylon first, then Gateway, then Core - the order they were first built, not the "
+                + "order they were last built and not a list written by hand");
     }
 
     /**
@@ -115,14 +117,14 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
         CompletedUnitsHistory.record(PYLON);
 
         assertEquals(
-                100, firstFrame, "precondition: the first recording captured frame 100");
+            100, firstFrame, "precondition: the first recording captured frame 100");
         assertEquals(
-                100, CompletedUnitsHistory.firstCompletedFrame(PYLON),
-                "the first completion keeps its frame - it is the sort key, and a later "
-                        + "recording must not move it");
+            100, CompletedUnitsHistory.firstCompletedFrame(PYLON),
+            "the first completion keeps its frame - it is the sort key, and a later "
+                + "recording must not move it");
         assertEquals(
-                3, CompletedUnitsHistory.completedCount(PYLON),
-                "while the COUNT still accumulates - only the first frame is frozen");
+            3, CompletedUnitsHistory.completedCount(PYLON),
+            "while the COUNT still accumulates - only the first frame is frozen");
     }
 
     /**
@@ -131,9 +133,9 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
     @Test
     public void aTypeNeverBuiltHasNoCompletionFrame() {
         assertEquals(
-                Integer.MAX_VALUE, CompletedUnitsHistory.firstCompletedFrame(GATEWAY),
-                "a type we never built must sort last, not first - a zero default would put it "
-                        + "at the top of the report");
+            Integer.MAX_VALUE, CompletedUnitsHistory.firstCompletedFrame(GATEWAY),
+            "a type we never built must sort last, not first - a zero default would put it "
+                + "at the top of the report");
     }
 
     /**
@@ -154,17 +156,17 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
         CompletedUnitsHistory.record(PYLON);
 
         assertEquals(
-                Arrays.asList(GATEWAY, PYLON), CompletedUnitsHistory.typesByFirstCompletion(),
-                "with equal frames the type recorded first comes first - Gateway here");
+            Arrays.asList(GATEWAY, PYLON), CompletedUnitsHistory.typesByFirstCompletion(),
+            "with equal frames the type recorded first comes first - Gateway here");
 
         CompletedUnitsHistory.reset();
         CompletedUnitsHistory.record(PYLON);
         CompletedUnitsHistory.record(GATEWAY);
 
         assertEquals(
-                Arrays.asList(PYLON, GATEWAY), CompletedUnitsHistory.typesByFirstCompletion(),
-                "reversing the recording order reverses the report, which is what proves the "
-                        + "tie-break is the sequence rather than an accident of iteration order");
+            Arrays.asList(PYLON, GATEWAY), CompletedUnitsHistory.typesByFirstCompletion(),
+            "reversing the recording order reverses the report, which is what proves the "
+                + "tie-break is the sequence rather than an accident of iteration order");
     }
 
     /**
@@ -176,7 +178,7 @@ public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
         CompletedUnitsHistory.record(null);
 
         assertTrue(
-                CompletedUnitsHistory.typesByFirstCompletion().isEmpty(),
-                "a null type must not create an entry");
+            CompletedUnitsHistory.typesByFirstCompletion().isEmpty(),
+            "a null type must not create an entry");
     }
 }

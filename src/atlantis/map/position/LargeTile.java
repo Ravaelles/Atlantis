@@ -6,8 +6,8 @@ public class LargeTile implements Comparable<LargeTile> {
 
     public static final int LARGE_TILE_TILES = 6;
 
-    private int largeX;
-    private int largeY;
+    private final int largeX;
+    private final int largeY;
 
     public LargeTile(HasPosition fromPosition) {
         this.largeX = fromPosition.x() / (32 * LARGE_TILE_TILES);

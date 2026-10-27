@@ -7,12 +7,52 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.units.workers.gather.GatherResources;
 import atlantis.units.workers.WorkerRepository;
+import atlantis.units.workers.gather.GatherResources;
 
 import java.util.Collection;
 
 public class NumberOfGasWorkersCommander extends Commander {
+    private static boolean shouldHaveNoWorkersAssigned(AUnit gasBuilding) {
+        return Select.ourBases().inRadius(12, gasBuilding).count() == 0
+            || gasBuilding.u().getResources() <= 1;
+    }
+
+    // =========================================================
+    private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
+        AUnit worker = getWorkerForGasBuilding(gasBuilding);
+        if (worker == null) {
+//            if (Count.workers() >= 8) ErrorLog.printMaxOncePerMinute("No worker for gas building");
+            return;
+        }
+
+        // If is carrying stuff, return first
+//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
+//            worker.returnCargo();
+//            worker.setTooltip("Cargo");
+//            return;
+//        }
+
+        worker.gather(gasBuilding);
+        worker.setTooltipTactical("Gas");
+
+//        atlantis.util.AConsole.println(atlantis.util.log.LogLevel.LOW,
+//            "GasWorker assigned " + worker.typeWithUnitId() + " to " + gasBuilding.type());
+    }
+
+    private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
+        return FreeWorkers.get()
+            .inRadius(AUnit.NEAR_DIST, gasBuilding)
+            .gatheringMinerals(true)
+            .nearestTo(gasBuilding);
+    }
+
+    // =========================================================
+
+    private static int expectedGasWorkers() {
+        return GasWorkersPerBuilding.define();
+    }
+
     @Override
     public boolean applies() {
         return A.everyNthGameFrame(7);
@@ -57,45 +97,5 @@ public class NumberOfGasWorkersCommander extends Commander {
             }
         }
         return false;
-    }
-
-    private static boolean shouldHaveNoWorkersAssigned(AUnit gasBuilding) {
-        return Select.ourBases().inRadius(12, gasBuilding).count() == 0
-            || gasBuilding.u().getResources() <= 1;
-    }
-
-    // =========================================================
-
-    // =========================================================
-    private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
-        AUnit worker = getWorkerForGasBuilding(gasBuilding);
-        if (worker == null) {
-//            if (Count.workers() >= 8) ErrorLog.printMaxOncePerMinute("No worker for gas building");
-            return;
-        }
-
-        // If is carrying stuff, return first
-//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
-//            worker.returnCargo();
-//            worker.setTooltip("Cargo");
-//            return;
-//        }
-
-        worker.gather(gasBuilding);
-        worker.setTooltipTactical("Gas");
-
-//        atlantis.util.AConsole.println(atlantis.util.log.LogLevel.LOW,
-//            "GasWorker assigned " + worker.typeWithUnitId() + " to " + gasBuilding.type());
-    }
-
-    private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
-        return FreeWorkers.get()
-            .inRadius(AUnit.NEAR_DIST, gasBuilding)
-            .gatheringMinerals(true)
-            .nearestTo(gasBuilding);
-    }
-
-    private static int expectedGasWorkers() {
-        return GasWorkersPerBuilding.define();
     }
 }

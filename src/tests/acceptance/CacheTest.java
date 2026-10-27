@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CacheTest extends WorldStubForTests {
     private static int counter = 0;
@@ -31,7 +32,7 @@ public class CacheTest extends WorldStubForTests {
             FakeUnit sunken = enemies[1];
             Cache<FakeUnit> cache = new Cache<>();
 
-            assertEquals(null, cache.get("keyA"));
+            assertNull(cache.get("keyA"));
 
             Callback callback = () -> {
                 counter++;

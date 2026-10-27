@@ -147,23 +147,16 @@ public class PreventDuplicateOrders {
             AConsole.printStackTrace("Excessive observER // " + Count.withPlanned(type));
         }
 
-        if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding() && !type.isPylon()) {
-//            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
-            return true;
-        }
+        //            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
 
-        return false;
+        return lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding() && !type.isPylon();
     }
 
     private static boolean tooManyRecently(AUnitType type) {
         if (type == null) return false;
         if (!type.isCombatBuilding()) return false;
 
-        if (Queue.get().history().countInLastSeconds(type.name(), 15) >= 2) {
-            return true;
-        }
-
-        return false;
+        return Queue.get().history().countInLastSeconds(type.name(), 15) >= 2;
     }
 
     private static boolean excessivePylon(AUnitType type, HasPosition position) {
@@ -228,7 +221,8 @@ public class PreventDuplicateOrders {
 
         if (We.terran()) {
             if (tooManyDepots(type, position)) return true;
-            if (tooManyBunkers(type, position)) return true;
+
+            return tooManyBunkers(type, position);
         }
 
         return false;

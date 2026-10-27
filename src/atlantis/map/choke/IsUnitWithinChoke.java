@@ -2,18 +2,17 @@ package atlantis.map.choke;
 
 import atlantis.map.position.PositionUtil;
 import atlantis.units.AUnit;
-import atlantis.util.cache.Cache;
 import atlantis.units.select.CacheKey;
+import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
 public class IsUnitWithinChoke {
-    private static Cache<Boolean> cache = new Cache<>();
-
     /**
      * Containment re-derives ~3x per second; preserved verbatim cadence,
      * tune only with a measured cadence (CONVENTIONS §31).
      */
     private static final int WITHIN_TTL_FRAMES = 19;
+    private static final Cache<Boolean> cache = new Cache<>();
 
     public static boolean check(AChoke choke, AUnit unit) {
         if (choke == null) {

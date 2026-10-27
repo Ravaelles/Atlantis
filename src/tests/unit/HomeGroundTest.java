@@ -11,9 +11,7 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * HomeGround (NEXT #194): the main base plus the main choke, resolved
@@ -35,8 +33,8 @@ public class HomeGroundTest extends WorldStubForTests {
         HomeGround home = HomeGround.resolve(main, choke);
 
         assertTrue(home.isComplete(), "this is exactly the old standing question");
-        assertTrue(home.main() == main, "the resolver hands over, never copies");
-        assertTrue(home.mainChoke() == choke, "the resolver hands over, never copies");
+        assertSame(home.main(), main, "the resolver hands over, never copies");
+        assertSame(home.mainChoke(), choke, "the resolver hands over, never copies");
     }
 
     @Test
@@ -82,7 +80,7 @@ public class HomeGroundTest extends WorldStubForTests {
             // and, more importantly, resolves at all instead of throwing.
             HomeGround home = HomeGround.resolve();
             assertTrue(home.isComplete(), "stub main + stub choke resolve live");
-            assertTrue(home.main() == nexus, "the live main is our Nexus");
+            assertSame(home.main(), nexus, "the live main is our Nexus");
         });
     }
 }

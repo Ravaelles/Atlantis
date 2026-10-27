@@ -11,18 +11,18 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
 
 public class TurretNeededHereCommander extends Commander {
-    @Override
-    public boolean applies() {
-        return turretNeeded();
-//            && EnemyInfo.hasLotOfAirUnits();
-    }
-
     private static boolean turretNeeded() {
         return We.terran()
             && (A.hasMinerals(200) || A.seconds() >= 400)
             && A.everyNthGameFrame(67)
             && Have.engBay()
             && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(500) ? 2 : 0);
+    }
+
+    @Override
+    public boolean applies() {
+        return turretNeeded();
+//            && EnemyInfo.hasLotOfAirUnits();
     }
 
     @Override

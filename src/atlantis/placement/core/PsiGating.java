@@ -25,29 +25,6 @@ import java.util.List;
  */
 public final class PsiGating {
 
-    /**
-     * The engine answers "is this tile powered" and "when will this Pylon finish"
-     * - the two facts gating needs.
-     */
-    public interface PowerSource {
-        /** True when a completed Pylon covers this tile right now. */
-        boolean isPowered(int tx, int ty);
-
-        /**
-         * Completion frames (relative to now) of Pylons under construction that
-         * will cover this tile once done, earliest first. Empty when none will.
-         */
-        List<Integer> incomingPowerFrames(int tx, int ty);
-
-        /**
-         * Could a Pylon we may place cover this tile - i.e. is there a free spot
-         * near enough that a new Pylon would reach it? False when the tile is
-         * walled off from every placeable spot, which is what makes it a hard
-         * refuse rather than "go build a Pylon".
-         */
-        boolean canBeCoveredByNewPylon(int tx, int ty);
-    }
-
     private final PowerSource power;
 
     public PsiGating(PowerSource power) {
@@ -92,20 +69,6 @@ public final class PsiGating {
     }
 
     /**
-     * What the planner should do about a candidate's power (`§2` Step 5.1 rule 3,
-     * S3's pull-forward):
-     * </p>
-     */
-    public enum PowerVerdict {
-        /** Powered now, or by a Pylon that will finish first anyway. */
-        ACCEPT,
-        /** Not powered, but a Pylon placed here would fix it - build one. */
-        NEEDS_NEW_PYLON,
-        /** Nothing can ever power this tile; refuse it. */
-        REFUSE
-    }
-
-    /**
      * The verdict for a power-needing building at this tile.
      *
      * <p>
@@ -133,5 +96,50 @@ public final class PsiGating {
      */
     private boolean powerCouldReach(int tx, int ty) {
         return power.canBeCoveredByNewPylon(tx, ty);
+    }
+
+    /**
+     * What the planner should do about a candidate's power (`§2` Step 5.1 rule 3,
+     * S3's pull-forward):
+     * </p>
+     */
+    public enum PowerVerdict {
+        /**
+         * Powered now, or by a Pylon that will finish first anyway.
+         */
+        ACCEPT,
+        /**
+         * Not powered, but a Pylon placed here would fix it - build one.
+         */
+        NEEDS_NEW_PYLON,
+        /**
+         * Nothing can ever power this tile; refuse it.
+         */
+        REFUSE
+    }
+
+    /**
+     * The engine answers "is this tile powered" and "when will this Pylon finish"
+     * - the two facts gating needs.
+     */
+    public interface PowerSource {
+        /**
+         * True when a completed Pylon covers this tile right now.
+         */
+        boolean isPowered(int tx, int ty);
+
+        /**
+         * Completion frames (relative to now) of Pylons under construction that
+         * will cover this tile once done, earliest first. Empty when none will.
+         */
+        List<Integer> incomingPowerFrames(int tx, int ty);
+
+        /**
+         * Could a Pylon we may place cover this tile - i.e. is there a free spot
+         * near enough that a new Pylon would reach it? False when the tile is
+         * walled off from every placeable spot, which is what makes it a hard
+         * refuse rather than "go build a Pylon".
+         */
+        boolean canBeCoveredByNewPylon(int tx, int ty);
     }
 }

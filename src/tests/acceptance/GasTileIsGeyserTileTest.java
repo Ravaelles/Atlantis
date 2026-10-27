@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * A refinery is built on its geyser's OWN tile - the engine accepts nothing
@@ -36,7 +35,7 @@ public class GasTileIsGeyserTileTest extends WorldStubForTests {
     public void finderReturnsGeyserTile() {
         FakeUnit base = fake(AUnitType.Protoss_Nexus, 80, 110);
         FakeUnit worker = fake(AUnitType.Protoss_Probe, 79, 109);
-        neutralInWorld = new FakeUnit[]{ fake(AUnitType.Resource_Vespene_Geyser, GX, GY) };
+        neutralInWorld = new FakeUnit[]{fake(AUnitType.Resource_Vespene_Geyser, GX, GY)};
 
         world(1, units(base, worker), units(), () -> {
             APosition tile = FindPosition.findForBuilding(
@@ -53,7 +52,7 @@ public class GasTileIsGeyserTileTest extends WorldStubForTests {
         FakeUnit base = fake(AUnitType.Protoss_Nexus, 80, 110);
         FakeUnit worker = fake(AUnitType.Protoss_Probe, 79, 109);
         FakeUnit geyser = fake(AUnitType.Resource_Vespene_Geyser, GX, GY);
-        neutralInWorld = new FakeUnit[]{ geyser };
+        neutralInWorld = new FakeUnit[]{geyser};
 
         world(1, units(base, worker), units(), () -> {
             // Request tile near the geyser but not on it: the fix must snap to

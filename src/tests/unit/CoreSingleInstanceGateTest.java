@@ -20,7 +20,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * Pins the single-instance gate after the mutual-lock fix (NEXT #155,
@@ -35,6 +34,21 @@ import static tests.unit.AbstractTestWithUnits.fake;
 public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
 
     private static final AUnitType CORE = AUnitType.Protoss_Cybernetics_Core;
+
+    private static void linkNotStartedSite(ProductionOrder order) {
+        Construction construction = new Construction(CORE);
+        construction.setPositionToBuild(APosition.create(30, 30));
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+        construction.setProductionOrder(order);
+        ConstructionRequests.constructions.add(construction);
+    }
+
+    private static BuildGate gate() {
+        for (BuildGate gate : BuildGates.all()) {
+            if (gate.name().equals("core-single-instance")) return gate;
+        }
+        throw new IllegalStateException("core-single-instance gate missing from the registry");
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -77,9 +91,9 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
             Queue.get().addNew(1, younger);
 
             assertNull(gate().check(CORE, older),
-                    "oldest ready waiter proceeds - no symmetric lock");
+                "oldest ready waiter proceeds - no symmetric lock");
             assertEquals("core-single-instance", gate().check(CORE, younger),
-                    "younger ready waiter still waits behind the older ready one");
+                "younger ready waiter still waits behind the older ready one");
         });
     }
 
@@ -100,7 +114,7 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
             Queue.get().addNew(1, richYounger);
 
             assertNull(gate().check(CORE, richYounger),
-                    "the older row cannot fire (poor) - it must not park the ready younger one");
+                "the older row cannot fire (poor) - it must not park the ready younger one");
         });
     }
 
@@ -122,18 +136,10 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
             linkNotStartedSite(sited);
 
             assertEquals("core-single-instance", gate().check(CORE, waiter),
-                    "a live site for another order is genuinely coming - the waiter waits");
+                "a live site for another order is genuinely coming - the waiter waits");
             assertNull(gate().check(CORE, sited),
-                    "own sited site never blocks its own re-request");
+                "own sited site never blocks its own re-request");
         });
-    }
-
-    private static void linkNotStartedSite(ProductionOrder order) {
-        Construction construction = new Construction(CORE);
-        construction.setPositionToBuild(APosition.create(30, 30));
-        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-        construction.setProductionOrder(order);
-        ConstructionRequests.constructions.add(construction);
     }
 
     /**
@@ -171,12 +177,5 @@ public class CoreSingleInstanceGateTest extends AbstractTestWithWorld {
             assertEquals("core-single-instance", gate().check(CORE, zombie),
                 "the zombie waits on the re-request's preparing site - nobody proceeds, the lock is terminal");
         });
-    }
-
-    private static BuildGate gate() {
-        for (BuildGate gate : BuildGates.all()) {
-            if (gate.name().equals("core-single-instance")) return gate;
-        }
-        throw new IllegalStateException("core-single-instance gate missing from the registry");
     }
 }

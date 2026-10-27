@@ -42,11 +42,11 @@ public class BuildGateOrderTest {
         List<BuildGate> gates = BuildGates.all();
 
         assertEquals(EXPECTED_ORDER.size(), gates.size(),
-                "a gate added or removed must update this contract deliberately, never silently");
+            "a gate added or removed must update this contract deliberately, never silently");
 
         for (int i = 0; i < EXPECTED_ORDER.size(); i++) {
             assertEquals(EXPECTED_ORDER.get(i), gates.get(i).name(),
-                    "gate " + i + " out of order: the sequence is semantic");
+                "gate " + i + " out of order: the sequence is semantic");
         }
     }
 
@@ -54,7 +54,7 @@ public class BuildGateOrderTest {
     public void gateNameMatchesItsRefusalReason() {
         for (BuildGate gate : BuildGates.all()) {
             assertTrue(gate.name() != null && !gate.name().isEmpty(),
-                    "every gate names the twin-visible refusal reason");
+                "every gate names the twin-visible refusal reason");
         }
     }
 }

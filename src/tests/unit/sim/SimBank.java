@@ -28,7 +28,9 @@ public final class SimBank {
         return this.minerals >= minerals && this.gas >= gas;
     }
 
-    /** Deducts a validated cost; throws when the stock does not cover it. */
+    /**
+     * Deducts a validated cost; throws when the stock does not cover it.
+     */
     public void spend(int minerals, int gas, String what) {
         if (!canAfford(minerals, gas)) {
             throw new IllegalStateException(
@@ -47,7 +49,9 @@ public final class SimBank {
         return (int) gas;
     }
 
-    /** Exact stocks, for parity assertions (rounded display lies by a frame). */
+    /**
+     * Exact stocks, for parity assertions (rounded display lies by a frame).
+     */
     public double mineralsExact() {
         return minerals;
     }

@@ -15,9 +15,12 @@ import java.util.List;
  */
 public final class TunerPromotion {
 
-    private TunerPromotion() { }
+    private TunerPromotion() {
+    }
 
-    /** Wins among the replicates. */
+    /**
+     * Wins among the replicates.
+     */
     public static int wins(List<Row> replicates) {
         if (replicates == null) return 0;
 

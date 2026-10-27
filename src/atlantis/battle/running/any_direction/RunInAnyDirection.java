@@ -24,11 +24,23 @@ public class RunInAnyDirection {
 
     private AUnit unit = null;
     private ARunningManager runningManager;
-    private RunToPositionFinder positionFinder;
+    private final RunToPositionFinder positionFinder;
     private HasPosition runAwayFrom;
 
     public RunInAnyDirection(RunToPositionFinder positionFinder) {
         this.positionFinder = positionFinder;
+    }
+
+    private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom, boolean considerOtherUnitsInGoToPlace) {
+        Selection allUnitsToConsider = considerOtherUnitsInGoToPlace ? Select.all() : Select.mineralsAndGeysers();
+
+        double enemyDistThere = position.distTo(runAwayFrom);
+        double ourDistThere = position.distTo(unit);
+
+        return enemyDistThere
+            - ourDistThere
+            + (enemyDistThere <= ourDistThere ? -10 : 0)
+            - allUnitsToConsider.inRadius(0.4, position).exclude(unit).count() * 0.5;
     }
 
     public HasPosition runInAnyDirection(HasPosition runAwayFrom) {
@@ -60,18 +72,6 @@ public class RunInAnyDirection {
         // =============================================================================
 
         return runningManager.runTo();
-    }
-
-    private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom, boolean considerOtherUnitsInGoToPlace) {
-        Selection allUnitsToConsider = considerOtherUnitsInGoToPlace ? Select.all() : Select.mineralsAndGeysers();
-
-        double enemyDistThere = position.distTo(runAwayFrom);
-        double ourDistThere = position.distTo(unit);
-
-        return enemyDistThere
-            - ourDistThere
-            + (enemyDistThere <= ourDistThere ? -10 : 0)
-            - allUnitsToConsider.inRadius(0.4, position).exclude(unit).count() * 0.5;
     }
 
     private boolean handleInvalidCaseWhenRunToIsTooClose() {
@@ -150,9 +150,8 @@ public class RunInAnyDirection {
 
         radius = runAnyDirectionRadius(unit, runAwayFrom);
         position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
-        if (position != null) return position;
 
-        return null;
+        return position;
     }
 
     private APosition findPositionWithRadius(HasPosition runAwayFrom, int radius, boolean considerOtherUnitsInGoToPlace) {
@@ -207,14 +206,14 @@ public class RunInAnyDirection {
                     }
 
                     // Create position, Make sure it's inbounds
-    //                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                    //                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
                     APosition potentialPosition = unit.translateByTiles(dtx, dty);
 
                     // If has path to given point, add it to the list of potential points
                     if (
                         IsReasonablePositionToRunTo.check(
                             unit, potentialPosition, runAwayFrom
-    //                        , "O", "x"
+                            //                        , "O", "x"
                         )
                             && potentialPosition.distTo(unit) >= 0.4
                             && !potentialPosition.isCloseToMapBounds()
@@ -246,7 +245,8 @@ public class RunInAnyDirection {
 //                if (
 //                    IsReasonablePositionToRunTo.check(
 //                        unit, potentialPosition, runAwayFrom
-////                        , "O", "x"
+
+    /// /                        , "O", "x"
 //                    )
 //                        && potentialPosition.distTo(unit) >= 0.4
 //                        && !potentialPosition.isCloseToMapBounds()

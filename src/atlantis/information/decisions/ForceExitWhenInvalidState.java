@@ -9,10 +9,14 @@ import atlantis.util.AConsole;
 import atlantis.util.log.LogLevel;
 
 public class ForceExitWhenInvalidState extends Commander {
-    /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */
+    /**
+     * Wall-clock limit in real seconds; set from ENV, never widened past the cap.
+     */
     public static int realSecondsLimit = 60 * 10;
 
-    /** In-game limit in game seconds; 0 disables it. 20 game minutes by default. */
+    /**
+     * In-game limit in game seconds; 0 disables it. 20 game minutes by default.
+     */
     public static int inGameSecondsLimit = 60 * 20;
 
     @Override
@@ -26,9 +30,7 @@ public class ForceExitWhenInvalidState extends Commander {
         // (measured 2026-10-20). Only a PUBLISHED zero is a stuck game.
         if (A.supplyTotal() <= 0) return false;
 
-        if (A.supplyUsed() <= 5 && A.minerals() >= 1000) return true;
-
-        return false;
+        return A.supplyUsed() <= 5 && A.minerals() >= 1000;
     }
 
     protected boolean handle() {

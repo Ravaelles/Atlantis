@@ -13,13 +13,13 @@ import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
+    //    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
+    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 2.1;
+    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
     public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.95;
     public static int INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = 33;
-    //    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
-    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 2.1;
-    private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 
     public SafetyMarginAgainstMelee(AUnit defender) {
         super(defender);
@@ -142,9 +142,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //                return 0;
 //            }
 //
-////            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
-////                return 0;
-////            }
+
+    /// /            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
+    /// /                return 0;
+    /// /            }
 //        }
 //
 //        if (attacker.isZergling()) {
@@ -155,8 +156,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //    }
 
     // =========================================================
-
-
     private double baseAgainstMelee(AUnit attacker) {
         double base = 0.7;
 

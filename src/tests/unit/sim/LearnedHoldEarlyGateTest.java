@@ -1,11 +1,5 @@
 package tests.unit.sim;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.combat.BattleCommander;
 import atlantis.combat.Behavior;
 import atlantis.combat.strategy.DuelKite;
@@ -13,11 +7,15 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
  * S1 vehicle proof (NEXT #185): the hold-early gate cloned from
@@ -32,16 +30,6 @@ import static tests.unit.AbstractTestWithUnits.fake;
 public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
 
     private static Fixture fixture;
-
-    private static final class Fixture {
-        SimMLP net;
-        LearnedHoldEarlyGate gate;
-        double initLoss;
-        double finalLoss;
-        double agreement;
-        double majority;
-        int holdoutRows;
-    }
 
     private static synchronized Fixture fixture() {
         if (fixture != null) return fixture;
@@ -78,9 +66,9 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
         int agree = 0;
         int ones = 0;
         StringBuilder per = new StringBuilder();
-        int[] policies = new int[] {
+        int[] policies = new int[]{
             HoldEarlyDataset.CHASE, HoldEarlyDataset.STAND,
-            HoldEarlyDataset.KITEBACK, HoldEarlyDataset.HOLDSTILL };
+            HoldEarlyDataset.KITEBACK, HoldEarlyDataset.HOLDSTILL};
         for (int p : policies) {
             int pa = 0;
             int pn = 0;
@@ -116,40 +104,6 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
         return fixture;
     }
 
-    @Test
-    public void lossGoesDown() {
-        Fixture f = fixture();
-        assertTrue(f.finalLoss < f.initLoss * 0.5,
-            "training must clearly descend: " + f.initLoss + " -> " + f.finalLoss);
-    }
-
-    @Test
-    public void beatsMajorityOnHoldout() {
-        Fixture f = fixture();
-        assertTrue(f.holdoutRows >= 200,
-            "the holdout must be a real slice, not a token: " + f.holdoutRows);
-        assertTrue(f.agreement >= f.majority + 0.10,
-            "held-out agreement " + f.agreement + " must beat majority "
-                + f.majority + " by margin");
-    }
-
-    @Test
-    public void downstreamDuelWinsPreserved() {
-        Fixture f = fixture();
-        int[][] scenarios = new int[][] {
-            { 12, HoldEarlyDataset.CHASE }, { 15, HoldEarlyDataset.CHASE },
-            { 12, HoldEarlyDataset.KITEBACK }, { 15, HoldEarlyDataset.KITEBACK },
-            { 12, HoldEarlyDataset.HOLDSTILL }, { 15, HoldEarlyDataset.HOLDSTILL },
-        };
-        for (int[] s : scenarios) {
-            boolean hand = runDuel(s[0], 2.1, s[1], f.gate, false);
-            assertTrue(hand, "hand gate must win dist=" + s[0] + " policy=" + s[1]
-                + " or the comparison is vacuous");
-            boolean net = runDuel(s[0], 2.1, s[1], f.gate, true);
-            assertTrue(net, "net gate must preserve the win dist=" + s[0] + " policy=" + s[1]);
-        }
-    }
-
     private static boolean runDuel(
         double dist, double jitter, int policy, LearnedHoldEarlyGate gate, boolean useNet
     ) {
@@ -165,8 +119,8 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
         foes.add(zealot);
 
         SimArena arena = new SimArena(20 * 32, 12 * 32);
-        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { zealot }, arena);
-        final Integer[] lastYield = new Integer[] { null };
+        SimWorld world = new SimWorld(new FakeUnit[]{dragoon}, new FakeUnit[]{zealot}, arena);
+        final Integer[] lastYield = new Integer[]{null};
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -197,11 +151,54 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
                 if (zealot.hp <= 0 || dragoon.hp <= 0) break;
             }
             return zealot.hp <= 0;
-        }
-        finally {
+        } finally {
             world.close();
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
         }
+    }
+
+    @Test
+    public void lossGoesDown() {
+        Fixture f = fixture();
+        assertTrue(f.finalLoss < f.initLoss * 0.5,
+            "training must clearly descend: " + f.initLoss + " -> " + f.finalLoss);
+    }
+
+    @Test
+    public void beatsMajorityOnHoldout() {
+        Fixture f = fixture();
+        assertTrue(f.holdoutRows >= 200,
+            "the holdout must be a real slice, not a token: " + f.holdoutRows);
+        assertTrue(f.agreement >= f.majority + 0.10,
+            "held-out agreement " + f.agreement + " must beat majority "
+                + f.majority + " by margin");
+    }
+
+    @Test
+    public void downstreamDuelWinsPreserved() {
+        Fixture f = fixture();
+        int[][] scenarios = new int[][]{
+            {12, HoldEarlyDataset.CHASE}, {15, HoldEarlyDataset.CHASE},
+            {12, HoldEarlyDataset.KITEBACK}, {15, HoldEarlyDataset.KITEBACK},
+            {12, HoldEarlyDataset.HOLDSTILL}, {15, HoldEarlyDataset.HOLDSTILL},
+        };
+        for (int[] s : scenarios) {
+            boolean hand = runDuel(s[0], 2.1, s[1], f.gate, false);
+            assertTrue(hand, "hand gate must win dist=" + s[0] + " policy=" + s[1]
+                + " or the comparison is vacuous");
+            boolean net = runDuel(s[0], 2.1, s[1], f.gate, true);
+            assertTrue(net, "net gate must preserve the win dist=" + s[0] + " policy=" + s[1]);
+        }
+    }
+
+    private static final class Fixture {
+        SimMLP net;
+        LearnedHoldEarlyGate gate;
+        double initLoss;
+        double finalLoss;
+        double agreement;
+        double majority;
+        int holdoutRows;
     }
 }

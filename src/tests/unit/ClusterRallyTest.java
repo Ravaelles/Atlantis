@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.combat.BattleCommander;
 import atlantis.battle.cluster.Alpha;
+import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.game.AGame;
@@ -15,11 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Formation orientation by expected direction (owner 2026-10-26): with
@@ -65,8 +61,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                 assertNotNull(slot, "blind crescent faces the fogged address, not the leader");
                 assertTrue(slot.distTo(foe.position()) < a.distTo(foe.position()),
                     "slot steps toward the expected enemy: " + slot);
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -96,8 +91,7 @@ public class ClusterRallyTest extends WorldStubForTests {
             try {
                 assertNull(ClusterRally.formationSlotFor(a, a, null, FightOrFlight.Tactic.FIGHT),
                     "melee away from home keeps bunching when blind");
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -119,7 +113,7 @@ public class ClusterRallyTest extends WorldStubForTests {
         atlantis.map.choke.AChoke choke = org.mockito.Mockito.mock(atlantis.map.choke.AChoke.class);
         org.mockito.Mockito.when(choke.center()).thenReturn(APosition.create(60, 20));
         try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
-                org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
             chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
 
             world(3, fakeOurs(nexus, a, b, c), fakeEnemies(), () -> {
@@ -133,8 +127,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                     assertNotNull(slot, "home crescent faces the main choke");
                     assertTrue(slot.distTo(choke.center()) < a.distTo(choke.center()),
                         "slot steps toward the choke: " + slot);
-                }
-                finally {
+                } finally {
                     Alpha.get().removeUnit(a);
                     Alpha.get().removeUnit(b);
                     Alpha.get().removeUnit(c);
@@ -156,7 +149,7 @@ public class ClusterRallyTest extends WorldStubForTests {
         FakeUnit c = fake(AUnitType.Protoss_Dragoon, 20, 21);
 
         try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
-                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
             regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
                 org.mockito.ArgumentMatchers.any())).thenReturn(null);
 
@@ -173,8 +166,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                     assertNotNull(slot, "blind on FIGHT still faces the march");
                     assertTrue(slot.distTo(anchor) < a.distTo(anchor),
                         "slot steps toward the anchor: " + slot);
-                }
-                finally {
+                } finally {
                     Alpha.get().removeUnit(a);
                     Alpha.get().removeUnit(b);
                     Alpha.get().removeUnit(c);
@@ -208,8 +200,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                 HasPosition slot = ClusterRally.formationSlotFor(
                     a, a, null, FightOrFlight.Tactic.FIGHT);
                 assertNotNull(slot, "corpses hold no slots, the living still form up");
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -237,16 +228,16 @@ public class ClusterRallyTest extends WorldStubForTests {
             Alpha.get().addUnit(c);
             try {
                 assertNull(ClusterRally.formationSlotFor(
-                    a, a, null, FightOrFlight.Tactic.FLEE),
+                        a, a, null, FightOrFlight.Tactic.FLEE),
                     "visible pursuer or not: FLEE means move, never arc");
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
             }
         });
     }
+
     @Test
     public void regroupMarchesLineInFormationScoutAhead() {
         // The approach march: the vanguard detaches with the ghost
@@ -273,15 +264,14 @@ public class ClusterRallyTest extends WorldStubForTests {
                 atlantis.combat.BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, a);
 
                 assertTrue(a.commandHistory().toString().contains("ClusterGhost")
-                    || a.commandHistory().toString().contains("ClusterScout"),
+                        || a.commandHistory().toString().contains("ClusterScout"),
                     "vanguard detaches with the creep: " + a.commandHistory());
                 HasPosition slot = ClusterRally.formationSlotFor(
                     b, a, null, FightOrFlight.Tactic.FIGHT);
                 assertNotNull(slot, "line owns a formation slot");
                 assertEquals(slot.toString(), b.targetPosition.toString(),
                     "line marches at its slot, not at the ghost");
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -313,8 +303,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                 assertNotNull(slot, "a displaced crescent still forms");
                 assertTrue(slot.tx() >= 32,
                     "slots face outward past the army, not back at the main: " + slot);
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -344,8 +333,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                 assertNull(
                     ClusterRally.formationSlotFor(a, a, natural, FightOrFlight.Tactic.FIGHT),
                     "on its anchor the line bunches: the pivot is underfoot");
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);
@@ -377,8 +365,7 @@ public class ClusterRallyTest extends WorldStubForTests {
                 assertNotNull(slot, "a forward anchor still forms the crescent");
                 assertTrue(slot.tx() > 30,
                     "slots face the objective ahead, not home: " + slot);
-            }
-            finally {
+            } finally {
                 Alpha.get().removeUnit(a);
                 Alpha.get().removeUnit(b);
                 Alpha.get().removeUnit(c);

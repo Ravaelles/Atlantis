@@ -5,8 +5,8 @@ import atlantis.util.cache.Cache;
 
 public class ArmyStrength {
 
-    private static Cache<Boolean> cacheBoolean = new Cache<>();
-    private static Cache<Integer> cacheInteger = new Cache<>();
+    private static final Cache<Boolean> cacheBoolean = new Cache<>();
+    private static final Cache<Integer> cacheInteger = new Cache<>();
 
     // =========================================================
 

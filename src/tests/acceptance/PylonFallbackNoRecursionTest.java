@@ -8,9 +8,7 @@ import atlantis.units.select.Select;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The Pylon relaxed-margin fallback must run exactly once.

@@ -14,10 +14,7 @@ import tests.fakes.FakeUnit;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner: with raiders in the base the cluster ALWAYS fights - even two
@@ -30,6 +27,17 @@ import static tests.unit.AbstractTestWithUnits.fake;
  */
 @Tag("combat")
 public class BreachMeansFightTest extends AbstractTestWithWorld {
+
+    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
+        for (FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((FakeOrderSink) unit.orderSink()).orders();
+    }
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -181,16 +189,5 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
             HasPosition rally = ClusterBreach.breachRallyPoint();
             assertNotNull(rally, "baseless or chokeless maps fall back, never null");
         });
-    }
-
-    private static boolean hasOrder(List<FakeOrderSink.Record> orders, int unitId, String operation) {
-        for (FakeOrderSink.Record record : orders) {
-            if (record.actorId == unitId && record.operation.equals(operation)) return true;
-        }
-        return false;
-    }
-
-    private static List<FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((FakeOrderSink) unit.orderSink()).orders();
     }
 }

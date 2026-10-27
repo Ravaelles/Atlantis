@@ -4,7 +4,9 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.units.AUnitType;
 
-/** Tech unlock for Dragoons, needs a Gateway first. */
+/**
+ * Tech unlock for Dragoons, needs a Gateway first.
+ */
 public final class CyberneticsCoreGoal implements Goal {
 
     @Override

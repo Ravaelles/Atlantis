@@ -6,12 +6,7 @@ import atlantis.game.event.AutomaticListener;
 import atlantis.game.event.Event;
 import atlantis.units.AUnit;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     private static final Set<Integer> seenUnitIds = new HashSet<>();
@@ -26,6 +21,21 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * to every first-seen record from the unit's own engine handle.
      */
     private static final Map<Integer, Integer> engineIds = new TreeMap<>();
+    /**
+     * Units whose own position is not known yet (NEXT #68 follow-up): a mobile
+     * unit at completion still reports its PRODUCER's position - every late
+     * Probe recorded at the Nexus, and the viewer (nearest same-type within
+     * 25px, no retry) matches nothing in the crowd. The id is parked here with
+     * its completion frame; {@link #processPending} records it a few frames
+     * later, when the unit has walked out with a position of its own. Same
+     * frame in the trace and in the replay means distance zero, so the delay
+     * cannot hurt matching - only a wrong position can.
+     */
+    private static final Map<Integer, Integer> pendingFirstSeen = new TreeMap<>();
+    /**
+     * Frames between completion and the deferred first-seen record.
+     */
+    private static final int DEFER_FRAMES = 7;
 
     /**
      * "10203": [
@@ -99,7 +109,9 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         }
     }
 
-    /** Test seam: static maps leak between tests in one JVM, so clear it. */
+    /**
+     * Test seam: static maps leak between tests in one JVM, so clear it.
+     */
     public static void clear() {
         seenUnitIds.clear();
         unitsByFrame.clear();
@@ -118,7 +130,9 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         noteEngineId(unit.id(), unit.u().getID());
     }
 
-    /** Explicit ids for tests (production reads them off the unit). */
+    /**
+     * Explicit ids for tests (production reads them off the unit).
+     */
     public static void noteEngineId(int ourId, int engineId) {
         engineIds.put(ourId, engineId);
     }
@@ -138,26 +152,13 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         return result.toString();
     }
 
-    /**
-     * Units whose own position is not known yet (NEXT #68 follow-up): a mobile
-     * unit at completion still reports its PRODUCER's position - every late
-     * Probe recorded at the Nexus, and the viewer (nearest same-type within
-     * 25px, no retry) matches nothing in the crowd. The id is parked here with
-     * its completion frame; {@link #processPending} records it a few frames
-     * later, when the unit has walked out with a position of its own. Same
-     * frame in the trace and in the replay means distance zero, so the delay
-     * cannot hurt matching - only a wrong position can.
-     */
-    private static final Map<Integer, Integer> pendingFirstSeen = new TreeMap<>();
-
-    /** Frames between completion and the deferred first-seen record. */
-    private static final int DEFER_FRAMES = 7;
-
     public static void defer(int id) {
         defer(id, A.now());
     }
 
-    /** Explicit frame for tests (production stamps the current frame). */
+    /**
+     * Explicit frame for tests (production stamps the current frame).
+     */
     public static void defer(int id, int frame) {
         pendingFirstSeen.put(id, frame);
     }

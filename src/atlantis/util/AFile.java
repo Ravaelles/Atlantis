@@ -2,13 +2,7 @@ package atlantis.util;
 
 import atlantis.util.log.ErrorLog;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -116,9 +110,9 @@ public class AFile {
      * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
      *
      * @throws UncheckedIOException if the file cannot be read. A leaf utility
-     *     must not decide policy: it reports the failure, the caller decides
-     *     whether that means quitting the game (see
-     *     {@code ABuildOrderLoader}) or degrading.
+     *                              must not decide policy: it reports the failure, the caller decides
+     *                              whether that means quitting the game (see
+     *                              {@code ABuildOrderLoader}) or degrading.
      */
     public static String[][] loadFile(String path, int numberOfFields, String delimiter) {
         if (delimiter == null) {

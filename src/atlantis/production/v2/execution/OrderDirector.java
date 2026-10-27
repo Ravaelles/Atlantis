@@ -23,7 +23,7 @@ public interface OrderDirector {
      * facility of the type).
      *
      * @return true when a command was actually issued (false when the unit
-     *         could not take it now, e.g. it is already training the same thing)
+     * could not take it now, e.g. it is already training the same thing)
      */
     boolean trainFacility(String typeId, int producerId, Producible item);
 

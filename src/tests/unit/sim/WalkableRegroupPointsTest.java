@@ -15,9 +15,6 @@ import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * Regroup points must be marchable (NEXT #199): the regroup-point
@@ -29,6 +26,8 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  */
 @Tag("combat")
 public class WalkableRegroupPointsTest extends WorldStubForTests {
+
+    private static final int TILE = 32;
 
     @Test
     public void regroupPointsAreNeverInsideWalls() {
@@ -47,7 +46,7 @@ public class WalkableRegroupPointsTest extends WorldStubForTests {
         world(5, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             try (MockedStatic<Chokes> chokes = Mockito.mockStatic(Chokes.class)) {
                 chokes.when(() -> Chokes.nearestChoke(
-                    Mockito.<atlantis.map.position.HasPosition>any(), Mockito.eq("ALL")
+                    Mockito.any(), Mockito.eq("ALL")
                 )).thenReturn(choke);
 
                 APosition hold = ChokeStandoff.holdPointFor(dragoon);
@@ -64,8 +63,6 @@ public class WalkableRegroupPointsTest extends WorldStubForTests {
             }
         });
     }
-
-    private static final int TILE = 32;
 
     private void useArenaWalkability(final SimArena arena) {
         atlantis.map.MapTiles.useSource(new atlantis.map.MapTiles.Source() {

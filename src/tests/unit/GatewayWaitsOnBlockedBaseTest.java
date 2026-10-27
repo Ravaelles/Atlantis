@@ -1,13 +1,5 @@
 package tests.unit;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
@@ -15,25 +7,24 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
-import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A search that fails on a blocked base must WAIT, not die (NEXT #192):
@@ -123,9 +114,7 @@ public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {
                 NewConstructionRequest.handleFailedSearch(
                     AUnitType.Protoss_Gateway, gateway, dominant);
             }
-            assertTrue(
-                !queueContains(gateway),
-                "a failure that outlasts the patience still cancels (stuck-loop guard)");
+            assertFalse(queueContains(gateway), "a failure that outlasts the patience still cancels (stuck-loop guard)");
         });
     }
 
@@ -174,8 +163,8 @@ public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {
         }
         ours.addAll(blockers);
 
-        final int[] tick = { 0 };
-        final int[] trainedBefore = { -1 };
+        final int[] tick = {0};
+        final int[] trainedBefore = {-1};
         world(21, fakeOurs(ours.toArray(new FakeUnit[0])), fakeEnemies(), () -> {
             tick[0]++;
             // Keep the null-position guard live every frame (its clock

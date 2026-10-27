@@ -4,7 +4,6 @@ import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 
 /**
  * Breach rules (extracted from BattleCommander): raiders in the base
@@ -39,6 +38,7 @@ public final class ClusterBreach {
 
         return foe != null && foe.distTo(main) <= 8;
     }
+
     /**
      * Who a unit with no enemy in reach attacks when the base is breached:
      * without this a DEFEND cluster whose 9-tile reach misses the raiders
@@ -85,6 +85,7 @@ public final class ClusterBreach {
 
         return unit.hasWeaponToAttackThisUnit(foe) ? foe : null;
     }
+
     /**
      * Where a withdrawing unit rallies (owner): three tiles from the main
      * toward the main choke - a forward defensive spot, not the mineral
@@ -106,8 +107,7 @@ public final class ClusterBreach {
             if (point == null) return ClusterAnchor.defendAnchor();
 
             return point;
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
             return ClusterAnchor.defendAnchor();
         }
     }

@@ -21,7 +21,7 @@ public final class OpenBWRunResult {
     private final String failureReason;
 
     OpenBWRunResult(boolean attached, boolean playing, int lastFrame,
-            String serverLogPath, String botLogPath, String failureReason) {
+                    String serverLogPath, String botLogPath, String failureReason) {
         this.attached = attached;
         this.playing = playing;
         this.lastFrame = lastFrame;
@@ -32,14 +32,16 @@ public final class OpenBWRunResult {
 
     public static OpenBWRunResult hostDidNotStart(String serverLogPath, String botLogPath) {
         return new OpenBWRunResult(false, false, 0, serverLogPath, botLogPath,
-                "the OpenBW host never came up");
+            "the OpenBW host never came up");
     }
 
     public boolean attached() {
         return attached;
     }
 
-    /** True when the bot reached its own game logic, not merely the connection. */
+    /**
+     * True when the bot reached its own game logic, not merely the connection.
+     */
     public boolean playing() {
         return playing;
     }
@@ -56,7 +58,9 @@ public final class OpenBWRunResult {
         return botLogPath;
     }
 
-    /** Null on success; the reason on failure. */
+    /**
+     * Null on success; the reason on failure.
+     */
     public String failureReason() {
         return failureReason;
     }

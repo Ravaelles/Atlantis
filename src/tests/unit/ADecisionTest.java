@@ -4,9 +4,7 @@ import atlantis.decisions.board.ADecision;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * __PLAN-DECISIONS step 0: decisions are engine-free values - what, why,
@@ -18,7 +16,7 @@ public class ADecisionTest {
 
     private ADecision worker() {
         return ADecision.decide(
-            ADecision.Kind.TRAIN_WORKER, "Probe", "BO-line-2", ADecision.Source.BUILD_ORDER)
+                ADecision.Kind.TRAIN_WORKER, "Probe", "BO-line-2", ADecision.Source.BUILD_ORDER)
             .frame(100).supply(9, 9).bank(60, 0)
             .build();
     }
@@ -39,13 +37,14 @@ public class ADecisionTest {
     }
 
     @Test
-    public void childrenComposeWithoutMutation() {        ADecision site = ADecision.decide(
-            ADecision.Kind.BUILD, "Pylon@[16,46]", "site-picked", ADecision.Source.BUILD_ORDER)
+    public void childrenComposeWithoutMutation() {
+        ADecision site = ADecision.decide(
+                ADecision.Kind.BUILD, "Pylon@[16,46]", "site-picked", ADecision.Source.BUILD_ORDER)
             .frame(100).supply(8, 9).bank(100, 0)
             .build();
 
         ADecision building = ADecision.decide(
-            ADecision.Kind.BUILD, "Pylon", "BO-line-1", ADecision.Source.BUILD_ORDER)
+                ADecision.Kind.BUILD, "Pylon", "BO-line-1", ADecision.Source.BUILD_ORDER)
             .frame(100).supply(8, 9).bank(100, 0)
             .build();
 
@@ -59,7 +58,7 @@ public class ADecisionTest {
     @Test
     public void refineAndStampKeepAudit() {
         ADecision generic = ADecision.decide(
-            ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)
+                ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)
             .frame(0).supply(12, 17).bank(200, 0)
             .build();
 

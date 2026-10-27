@@ -12,16 +12,402 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
-import atlantis.util.log.LogLevel;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+import atlantis.util.log.LogLevel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ConstructionStatusChanger extends Commander {
+    /**
+     * Frames after an engine build attempt during which a stall demote is
+     * suppressed. A healthy warp shows its building within about a minute of
+     * the accept; a dead one still demotes after this window.
+     */
+    private static final int STALLED_IN_PROGRESS_DEMOTE_FRAMES = 90;
+    /**
+     * Frames after an engine build attempt during which demote holds fire even
+     * for a standstill. Covers accept-to-entity latency with margin; the
+     * measured misfire demoted 7 frames after an accepted attempt on a 258f
+     * pre-attempt standstill clock.
+     */
+    private static final int DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES = 150;
+
+//    private void assignBuilderToConstructionIfNeeded(Construction construction) {
+//        AUnit builder = construction.builder();
+//
+//        if (!construction.hasStarted() && builder == null) {
+//            construction.assignOptimalBuilder();
+//        }
+//
+//        return builder;
+//    }
+    /**
+     * Frames after IN_PROGRESS start past which a still-unfinished warp
+     * with a dead builder is named frozen. Longest legal Protoss warp is
+     * 1800 frames (Nexus, measured jbwapi-2.2.0), so 2400 leaves margin
+     * for accept latency without ever catching a healthy warp.
+     */
+    private static final int FROZEN_WARP_OBSERVED_FRAMES = 2400;
+    /**
+     * HP-observation window for the frozen-warp progress signal (NEXT
+     * #150 WO-150b): a warping building whose HP does not move inside
+     * this window is stalled, not progressing. Reporting granularity
+     * only - no demote reads it (the WO forbids deciding on the twin;
+     * the signal first proves itself in live twins).
+     */
+    private static final int FROZEN_WARP_STATIC_FRAMES = 240;
+
+    /**
+     * Frames an IN_PROGRESS builder may stand idle at its site with no building
+     * before the construction is demoted. A healthy Protoss warp frees the
+     * worker within a frame or two of the issue (the worker walks away, the
+     * building warps without it); a Terran builder reports
+     * {@code isConstructing} for the whole build. Only a dropped warp sits out
+     * this long, and the measured one sat out 2400 frames.
+     */
+
+    /**
+     * Refine a NOT_STARTED construction with a live assigned builder that
+     * has not started constructing into STARTING (travelling). The seam
+     * mirrors advance/demote: the rule pins without running a game.
+     *
+     * @return true when the construction refined to STARTING.
+     */
+    public static boolean refineToStartingIfTravelling(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return false;
+        if (construction.buildPosition() == null) return false;
+        if (builder == null || builder.isDead() || builder.isConstructing()) return false;
+        if (buildingFinishedAtSite(construction)) return false;
+
+        construction.setStatus(ConstructionOrderStatus.STARTING);
+
+        return true;
+    }
+
+    /**
+     * Advance a NOT_STARTED construction whose builder has started (or
+     * whose building already stands on the tile) to IN_PROGRESS.
+     *
+     * <p>Public as a seam: the status advance is assertable without running
+     * a game (NEXT #150 - a Gateway that stays NOT_STARTED forever while
+     * its builder works is exactly this transition not firing), the same
+     * way {@link #demoteStalledInProgress} pins the way back.</p>
+     *
+     * @return true when the status advanced.
+     */
+    public static boolean advanceToInProgressIfStarted(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED
+            && construction.status() != ConstructionOrderStatus.STARTING) return false;
+
+        boolean engineSaysStarted = builder != null
+            && builder.isConstructing()
+            && builderAtConstructionSite(builder, construction);
+
+        if (engineSaysStarted || buildingFinishedAtSite(construction)) {
+            construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
+     *
+     * <p>Public as a seam so the rule is assertable without running a game
+     * (NEXT #70). Every exclusion is a healthy shape that must NOT demote: a
+     * constructing or travelling worker, a non-worker builder (Zerg morph), a
+     * worker that walked away from a warping building, a recently arrived
+     * worker, a young IN_PROGRESS, a recent build attempt, and a site with a
+     * building on it.</p>
+     *
+     * @return true when the construction was demoted.
+     */
+    public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
+        if (construction.buildPosition() == null) return false;
+
+        AUnit warping = warpingNearSite(construction);
+        if (warping != null) {
+            construction.noteWarpHp(A.now(), warping.hp());
+            twinFrozenWarp(construction, builder, warping);
+
+            return false;
+        }
+        if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
+
+        // No builder at all (measured on Wine: setStatus(IN_PROGRESS) releases
+        // the Protoss builder the moment the status flips - correct for a real
+        // warp, fatal for a refused attempt's order echo, which leaves
+        // IN_PROGRESS + no builder + no building + no recovery). Re-arm once
+        // old enough that a real warp would have shown its building; the
+        // NOT_STARTED state reassigns a builder on the next pass.
+        if (builder == null || builder.isDead() || !builder.isWorker()) {
+            if (construction.startedAgo() < STALLED_IN_PROGRESS_DEMOTE_FRAMES) return false;
+
+            logDemote(construction, "builder gone");
+            twinDemote(construction, "builder gone");
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+            return true;
+        }
+
+        // B134 cid60 shape (NEXT #150): live builder walked away, no warping
+        // entity, IN_PROGRESS forever - the 3.5-tile / movement / standstill
+        // shields below hold young travellers (pinned), the age-cap re-arms
+        // ancient entries regardless of where the builder went. Threshold is
+        // the frozen-warp age (2400f > longest legal 1800f Nexus warp +
+        // accept-latency margin), so no healthy warp trips it: a real warp
+        // shows its entity within a minute and exits through the warping
+        // branch above. Terran constructing stays shielded (builder works
+        // the whole build).
+        if (construction.startedAgo() >= FROZEN_WARP_OBSERVED_FRAMES) {
+            if (builder.isConstructing()) return false;
+
+            logDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
+            twinDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+            return true;
+        }
+
+        if (builder.isConstructing() || builder.isMoving()) return false;
+        if (builder.distTo(construction.buildPosition()) > 3.5) return false;
+        if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
+
+        logDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
+        twinDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+        return true;
+    }
+
+    private static AUnit warpingNearSite(Construction construction) {
+        return Select.ourWithUnfinishedOfType(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition()).first();
+    }
+
+    /**
+     * Names a frozen warp (NEXT #150, cid-331 shape): IN_PROGRESS older
+     * than any legal build, builder dead, warping entity still on the
+     * site. The demote path above is shielded by its own self-match, so
+     * without this row the freeze is silent. Names only, never removes
+     * or demotes; twinned once per construction.
+     */
+    private static void twinFrozenWarp(Construction construction, AUnit builder, AUnit warping) {
+        if (construction.isFrozenWarpTwinned()) return;
+        if (builder == null || !builder.isDead()) return;
+        if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return;
+
+        construction.markFrozenWarpTwinned();
+        boolean hpStatic;
+        try {
+            hpStatic = construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now());
+        } catch (Exception | Error ignored) {
+            hpStatic = false;
+        }
+        EventLog.key(LogKey.FROZEN_WARP)
+            .param("cid", construction.id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition().toString())
+            .param("builder", "#" + builder.id())
+            .param("startedAgo", construction.startedAgo())
+            .param("warpingHp", warping.hp())
+            .param("hpStatic", hpStatic)
+            .log(A.now(), A.minSec());
+    }
+
+    private static void logDemote(Construction construction, String detail) {
+        if (atlantis.config.env.Env.builderLog()) {
+            System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
+                + " at=" + construction.buildPosition() + " " + detail);
+        }
+    }
+
+    /**
+     * Names a stall demote (NEXT #70 + #150 lifecycle): a stalled
+     * IN_PROGRESS construction handed back to NOT_STARTED so the
+     * travel/issue/cancel/requeue machinery recovers it. Names only,
+     * never demotes by itself - the two call sites above do that.
+     * Fires per demote (a re-armed construction can stall again),
+     * unlike the once-per-construction frozen-warp twin.
+     */
+    private static void twinDemote(Construction construction, String reason) {
+        EventLog.key(LogKey.DEMOTE_STALLED)
+            .param("cid", construction.id())
+            .param("oid", construction.productionOrder() == null
+                ? null : construction.productionOrder().id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition() == null ? "-" : construction.buildPosition().toString())
+            .param("reason", reason)
+            .log(A.now(), A.minSec());
+    }
+
+    /**
+     * Public as a seam: tests pin the finish-vs-churn contract here (a
+     * waiting PREPARING site next to a sibling building is owed demand,
+     * not a duplicate) rather than through a game.
+     */
+    public static boolean shouldProximityFinish(Construction construction) {
+        if (construction.status().isTerminal()) return false;
+        // Dead site, not a waiting one: the same finished building on the
+        // exact same tiles means this demand is already standing (measured
+        // Wine: own warped Core on its tiles, canBuild000=false, builder
+        // held 369f, bank 600). This fires above the exemptions below on
+        // purpose - they exist for sites that may still build, and this
+        // one cannot be built twice.
+        if (finishedBuildingOnSameTiles(construction)) return true;
+        if (unworkedAdoption(construction)) return false;
+
+        return buildingFinishedAtSite(construction);
+    }
+
+    private static boolean unworkedAdoption(Construction construction) {
+        // A picked-but-unproducible site holds no worker (nothing to free -
+        // the deadlock this finish cures cannot occur) and its order is not
+        // producible yet (nothing is owed downstream). A same-type building
+        // nearby is then the normal street-grid shape - a sibling on the
+        // next slot - not proof this demand is covered (measured: Gateway
+        // PREPARING re-picked 6x in 8s next to its finished sibling). Only
+        // builderless sites are exempt: a builder held on one stays visible
+        // to the old path. An occupied site itself still fails loudly at
+        // adoption/issue time instead of spinning here.
+        if (construction.status().isWaiting()
+            && construction.builder() == null) return true;
+        return construction.status() == ConstructionOrderStatus.NOT_STARTED
+            && construction.builder() != null && !construction.builder().isDead()
+            && construction.buildWasNeverAttempted();
+    }
+
+    /**
+     * Is a building of this type standing on the construction's tile?
+     *
+     * <p>
+     * Used for two questions, and the name says which half it was written for: the completion
+     * check cares whether it is finished, the status check (below) only whether it EXISTS. Both
+     * ask the live unit list rather than the construction's own {@code buildingUnit()}
+     * reference, because that reference is only filled from {@code builder.buildUnit()} - the
+     * shared-memory field OpenBW leaves empty ({@code NEXT.md} #53).
+     * </p>
+     *
+     * <p>
+     * Asked of the live unit list rather than of the construction's own {@code buildingUnit()}
+     * reference, because that reference is only filled from {@code builder.buildUnit()} -
+     * the shared-memory field OpenBW leaves empty ({@code NEXT.md} #53). The unit list is
+     * the source that works on both engines.
+     * </p>
+     *
+     * <p>
+     * The radius allows for the engine shifting a building whose footprint overlaps the
+     * reserved origin, which is why it is not an exact tile comparison.
+     * </p>
+     */
+
+    /**
+     * The stale-duplicate killer (Wine: a Core construction survived its
+     * own warped building standing on its exact tiles - builder held
+     * 369f, canBuild000=false, bank 600): the same finished building type
+     * on the exact same tiles means this demand is already standing in
+     * the game, so the construction finishes regardless of the
+     * exemptions below, which exist for sites that may still build.
+     *
+     * <p>Exact tiles, not nearness and not mere overlap: same type means
+     * same footprint, so origin equality is tile equality. A sibling
+     * grazing the footprint stays exempt (its demand is live), and an
+     * unfinished (warping) overlap waits conservatively - a dropped warp
+     * must not silently eat demand.</p>
+     */
+    private static boolean finishedBuildingOnSameTiles(Construction construction) {
+        APosition site = construction.buildPosition();
+        if (site == null) return false;
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            if (!unit.isABuilding() || !unit.isCompleted()) continue;
+            if (!construction.buildingType().equals(unit.type())) continue;
+            if (unit.tx() == site.tx() && unit.ty() == site.ty()) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Names the covering building for the proximity-finish twin: the same
+     * two loops as the finish predicates, in the same order, but returning
+     * the tile instead of a boolean. Read-only, same sources, so it cannot
+     * disagree with the decision it annotates.
+     */
+    private static String coveringBuildingTile(Construction construction) {
+        APosition site = construction.buildPosition();
+        if (site == null) return "-";
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            if (!unit.isABuilding() || !unit.isCompleted()) continue;
+            if (!construction.buildingType().equals(unit.type())) continue;
+            if (unit.tx() == site.tx() && unit.ty() == site.ty()) {
+                return "[" + unit.tx() + "," + unit.ty() + "]";
+            }
+        }
+
+        int w = construction.buildingType().getTilesWidth();
+        int h = construction.buildingType().getTilesHeights();
+        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
+            if (unit == null || !unit.isCompleted()) continue;
+            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
+                site.tx(), site.ty(), w, h,
+                unit.tx(), unit.ty(),
+                unit.type().getTilesWidth(), unit.type().getTilesHeights()
+            )) return "[" + unit.tx() + "," + unit.ty() + "]";
+        }
+
+        return "-";
+    }
+
+    private static boolean buildingFinishedAtSite(Construction construction) {
+        if (construction.buildPosition() == null) return false;
+
+        // Footprint overlap, not nearness: a finished sibling on the next
+        // slot (measured: Pylon [119,18] next to warped [118,16], centers
+        // 2.2 apart, footprints disjoint) is live packed-base demand, not
+        // coverage - finishing it silently re-requested the same tile 5x
+        // in a minute (totalOfType pinned at 1, no cancel twin anywhere).
+        // The engine-shift tolerance this radius was for is exactly
+        // overlap (a shifted warp still covers part of the ordered
+        // footprint), so nothing real is lost.
+        APosition site = construction.buildPosition();
+        int w = construction.buildingType().getTilesWidth();
+        int h = construction.buildingType().getTilesHeights();
+        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
+            if (unit == null || !unit.isCompleted()) continue;
+            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
+                site.tx(), site.ty(), w, h,
+                unit.tx(), unit.ty(),
+                unit.type().getTilesWidth(), unit.type().getTilesHeights()
+            )) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Is the builder standing on (or beside) the tile it is building on?
+     *
+     * <p>
+     * Used only to decide whether a started construction should be marked in progress, so a
+     * generous radius is right: the engine moves the worker onto the site as the building
+     * goes up, and refusing to notice because it is one tile off would leave the deadlock
+     * in place. What must NOT count is a worker still walking to a distant site.
+     * </p>
+     */
+    private static boolean builderAtConstructionSite(AUnit builder, Construction construction) {
+        if (construction.buildPosition() == null) return false;
+
+        return builder.distTo(construction.buildPosition()) <= 3.5;
+    }
+
     @Override
     protected boolean handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
@@ -217,7 +603,7 @@ public class ConstructionStatusChanger extends Commander {
         // builder is found (still travelling), and only demote paths clear.
         if ((builder == null || builder.isDead())
             && (!construction.hasStarted()
-                || construction.status() == ConstructionOrderStatus.STARTING)) {
+            || construction.status() == ConstructionOrderStatus.STARTING)) {
             builder = construction.assignOptimalBuilder();
         }
 //        builder = assignBuilderToConstructionIfNeeded(construction);
@@ -234,392 +620,6 @@ public class ConstructionStatusChanger extends Commander {
                 construction.cancel(building + " and builder are dead");
             }
         }
-    }
-
-//    private void assignBuilderToConstructionIfNeeded(Construction construction) {
-//        AUnit builder = construction.builder();
-//
-//        if (!construction.hasStarted() && builder == null) {
-//            construction.assignOptimalBuilder();
-//        }
-//
-//        return builder;
-//    }
-
-    /**
-     * Refine a NOT_STARTED construction with a live assigned builder that
-     * has not started constructing into STARTING (travelling). The seam
-     * mirrors advance/demote: the rule pins without running a game.
-     *
-     * @return true when the construction refined to STARTING.
-     */
-    public static boolean refineToStartingIfTravelling(Construction construction, AUnit builder) {
-        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return false;
-        if (construction.buildPosition() == null) return false;
-        if (builder == null || builder.isDead() || builder.isConstructing()) return false;
-        if (buildingFinishedAtSite(construction)) return false;
-
-        construction.setStatus(ConstructionOrderStatus.STARTING);
-
-        return true;
-    }
-
-    /**
-     * Advance a NOT_STARTED construction whose builder has started (or
-     * whose building already stands on the tile) to IN_PROGRESS.
-     *
-     * <p>Public as a seam: the status advance is assertable without running
-     * a game (NEXT #150 - a Gateway that stays NOT_STARTED forever while
-     * its builder works is exactly this transition not firing), the same
-     * way {@link #demoteStalledInProgress} pins the way back.</p>
-     *
-     * @return true when the status advanced.
-     */
-    public static boolean advanceToInProgressIfStarted(Construction construction, AUnit builder) {
-        if (construction.status() != ConstructionOrderStatus.NOT_STARTED
-            && construction.status() != ConstructionOrderStatus.STARTING) return false;
-
-        boolean engineSaysStarted = builder != null
-            && builder.isConstructing()
-            && builderAtConstructionSite(builder, construction);
-
-        if (engineSaysStarted || buildingFinishedAtSite(construction)) {
-            construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
-
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Frames an IN_PROGRESS builder may stand idle at its site with no building
-     * before the construction is demoted. A healthy Protoss warp frees the
-     * worker within a frame or two of the issue (the worker walks away, the
-     * building warps without it); a Terran builder reports
-     * {@code isConstructing} for the whole build. Only a dropped warp sits out
-     * this long, and the measured one sat out 2400 frames.
-     */
-    /**
-     * Frames after an engine build attempt during which a stall demote is
-     * suppressed. A healthy warp shows its building within about a minute of
-     * the accept; a dead one still demotes after this window.
-     */
-    private static final int STALLED_IN_PROGRESS_DEMOTE_FRAMES = 90;
-
-    /**
-     * Frames after an engine build attempt during which demote holds fire even
-     * for a standstill. Covers accept-to-entity latency with margin; the
-     * measured misfire demoted 7 frames after an accepted attempt on a 258f
-     * pre-attempt standstill clock.
-     */
-    private static final int DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES = 150;
-
-    /**
-     * Frames after IN_PROGRESS start past which a still-unfinished warp
-     * with a dead builder is named frozen. Longest legal Protoss warp is
-     * 1800 frames (Nexus, measured jbwapi-2.2.0), so 2400 leaves margin
-     * for accept latency without ever catching a healthy warp.
-     */
-    private static final int FROZEN_WARP_OBSERVED_FRAMES = 2400;
-
-    /**
-     * HP-observation window for the frozen-warp progress signal (NEXT
-     * #150 WO-150b): a warping building whose HP does not move inside
-     * this window is stalled, not progressing. Reporting granularity
-     * only - no demote reads it (the WO forbids deciding on the twin;
-     * the signal first proves itself in live twins).
-     */
-    private static final int FROZEN_WARP_STATIC_FRAMES = 240;
-
-    /**
-     * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
-     *
-     * <p>Public as a seam so the rule is assertable without running a game
-     * (NEXT #70). Every exclusion is a healthy shape that must NOT demote: a
-     * constructing or travelling worker, a non-worker builder (Zerg morph), a
-     * worker that walked away from a warping building, a recently arrived
-     * worker, a young IN_PROGRESS, a recent build attempt, and a site with a
-     * building on it.</p>
-     *
-     * @return true when the construction was demoted.
-     */
-    public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
-        if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
-        if (construction.buildPosition() == null) return false;
-
-        AUnit warping = warpingNearSite(construction);
-        if (warping != null) {
-            construction.noteWarpHp(A.now(), warping.hp());
-            twinFrozenWarp(construction, builder, warping);
-
-            return false;
-        }
-        if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
-
-        // No builder at all (measured on Wine: setStatus(IN_PROGRESS) releases
-        // the Protoss builder the moment the status flips - correct for a real
-        // warp, fatal for a refused attempt's order echo, which leaves
-        // IN_PROGRESS + no builder + no building + no recovery). Re-arm once
-        // old enough that a real warp would have shown its building; the
-        // NOT_STARTED state reassigns a builder on the next pass.
-        if (builder == null || builder.isDead() || !builder.isWorker()) {
-            if (construction.startedAgo() < STALLED_IN_PROGRESS_DEMOTE_FRAMES) return false;
-
-            logDemote(construction, "builder gone");
-            twinDemote(construction, "builder gone");
-            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-
-            return true;
-        }
-
-        // B134 cid60 shape (NEXT #150): live builder walked away, no warping
-        // entity, IN_PROGRESS forever - the 3.5-tile / movement / standstill
-        // shields below hold young travellers (pinned), the age-cap re-arms
-        // ancient entries regardless of where the builder went. Threshold is
-        // the frozen-warp age (2400f > longest legal 1800f Nexus warp +
-        // accept-latency margin), so no healthy warp trips it: a real warp
-        // shows its entity within a minute and exits through the warping
-        // branch above. Terran constructing stays shielded (builder works
-        // the whole build).
-        if (construction.startedAgo() >= FROZEN_WARP_OBSERVED_FRAMES) {
-            if (builder.isConstructing()) return false;
-
-            logDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
-            twinDemote(construction, "stalledAge=" + construction.startedAgo() + "f");
-            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-
-            return true;
-        }
-
-        if (builder.isConstructing() || builder.isMoving()) return false;
-        if (builder.distTo(construction.buildPosition()) > 3.5) return false;
-        if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
-
-        logDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
-        twinDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
-        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-
-        return true;
-    }
-
-    private static AUnit warpingNearSite(Construction construction) {
-        return Select.ourWithUnfinishedOfType(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition()).first();
-    }
-
-    /**
-     * Names a frozen warp (NEXT #150, cid-331 shape): IN_PROGRESS older
-     * than any legal build, builder dead, warping entity still on the
-     * site. The demote path above is shielded by its own self-match, so
-     * without this row the freeze is silent. Names only, never removes
-     * or demotes; twinned once per construction.
-     */
-    private static void twinFrozenWarp(Construction construction, AUnit builder, AUnit warping) {
-        if (construction.isFrozenWarpTwinned()) return;
-        if (builder == null || !builder.isDead()) return;
-        if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return;
-
-        construction.markFrozenWarpTwinned();
-        boolean hpStatic;
-        try {
-            hpStatic = construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now());
-        } catch (Exception | Error ignored) {
-            hpStatic = false;
-        }
-        EventLog.key(LogKey.FROZEN_WARP)
-            .param("cid", construction.id())
-            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
-            .param("tile", construction.buildPosition().toString())
-            .param("builder", "#" + builder.id())
-            .param("startedAgo", construction.startedAgo())
-            .param("warpingHp", warping.hp())
-            .param("hpStatic", hpStatic)
-            .log(A.now(), A.minSec());
-    }
-
-    private static void logDemote(Construction construction, String detail) {
-        if (atlantis.config.env.Env.builderLog()) {
-            System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
-                + " at=" + construction.buildPosition() + " " + detail);
-        }
-    }
-
-    /**
-     * Names a stall demote (NEXT #70 + #150 lifecycle): a stalled
-     * IN_PROGRESS construction handed back to NOT_STARTED so the
-     * travel/issue/cancel/requeue machinery recovers it. Names only,
-     * never demotes by itself - the two call sites above do that.
-     * Fires per demote (a re-armed construction can stall again),
-     * unlike the once-per-construction frozen-warp twin.
-     */
-    private static void twinDemote(Construction construction, String reason) {
-        EventLog.key(LogKey.DEMOTE_STALLED)
-            .param("cid", construction.id())
-            .param("oid", construction.productionOrder() == null
-                ? null : construction.productionOrder().id())
-            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
-            .param("tile", construction.buildPosition() == null ? "-" : construction.buildPosition().toString())
-            .param("reason", reason)
-            .log(A.now(), A.minSec());
-    }
-
-    /**
-     * Is a building of this type standing on the construction's tile?
-     *
-     * <p>
-     * Used for two questions, and the name says which half it was written for: the completion
-     * check cares whether it is finished, the status check (below) only whether it EXISTS. Both
-     * ask the live unit list rather than the construction's own {@code buildingUnit()}
-     * reference, because that reference is only filled from {@code builder.buildUnit()} - the
-     * shared-memory field OpenBW leaves empty ({@code NEXT.md} #53).
-     * </p>
-     *
-     * <p>
-     * Asked of the live unit list rather than of the construction's own {@code buildingUnit()}
-     * reference, because that reference is only filled from {@code builder.buildUnit()} -
-     * the shared-memory field OpenBW leaves empty ({@code NEXT.md} #53). The unit list is
-     * the source that works on both engines.
-     * </p>
-     *
-     * <p>
-     * The radius allows for the engine shifting a building whose footprint overlaps the
-     * reserved origin, which is why it is not an exact tile comparison.
-     * </p>
-     */
-    /**
-     * Public as a seam: tests pin the finish-vs-churn contract here (a
-     * waiting PREPARING site next to a sibling building is owed demand,
-     * not a duplicate) rather than through a game.
-     */
-    public static boolean shouldProximityFinish(Construction construction) {
-        if (construction.status().isTerminal()) return false;
-        // Dead site, not a waiting one: the same finished building on the
-        // exact same tiles means this demand is already standing (measured
-        // Wine: own warped Core on its tiles, canBuild000=false, builder
-        // held 369f, bank 600). This fires above the exemptions below on
-        // purpose - they exist for sites that may still build, and this
-        // one cannot be built twice.
-        if (finishedBuildingOnSameTiles(construction)) return true;
-        if (unworkedAdoption(construction)) return false;
-
-        return buildingFinishedAtSite(construction);
-    }
-
-    private static boolean unworkedAdoption(Construction construction) {
-        // A picked-but-unproducible site holds no worker (nothing to free -
-        // the deadlock this finish cures cannot occur) and its order is not
-        // producible yet (nothing is owed downstream). A same-type building
-        // nearby is then the normal street-grid shape - a sibling on the
-        // next slot - not proof this demand is covered (measured: Gateway
-        // PREPARING re-picked 6x in 8s next to its finished sibling). Only
-        // builderless sites are exempt: a builder held on one stays visible
-        // to the old path. An occupied site itself still fails loudly at
-        // adoption/issue time instead of spinning here.
-        if (construction.status().isWaiting()
-            && construction.builder() == null) return true;
-        return construction.status() == ConstructionOrderStatus.NOT_STARTED
-            && construction.builder() != null && !construction.builder().isDead()
-            && construction.buildWasNeverAttempted();
-    }
-
-    /**
-     * The stale-duplicate killer (Wine: a Core construction survived its
-     * own warped building standing on its exact tiles - builder held
-     * 369f, canBuild000=false, bank 600): the same finished building type
-     * on the exact same tiles means this demand is already standing in
-     * the game, so the construction finishes regardless of the
-     * exemptions below, which exist for sites that may still build.
-     *
-     * <p>Exact tiles, not nearness and not mere overlap: same type means
-     * same footprint, so origin equality is tile equality. A sibling
-     * grazing the footprint stays exempt (its demand is live), and an
-     * unfinished (warping) overlap waits conservatively - a dropped warp
-     * must not silently eat demand.</p>
-     */
-    private static boolean finishedBuildingOnSameTiles(Construction construction) {
-        APosition site = construction.buildPosition();
-        if (site == null) return false;
-
-        for (AUnit unit : Select.all().list()) {
-            if (unit == null || !unit.isAlive()) continue;
-            if (!unit.isABuilding() || !unit.isCompleted()) continue;
-            if (!construction.buildingType().equals(unit.type())) continue;
-            if (unit.tx() == site.tx() && unit.ty() == site.ty()) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Names the covering building for the proximity-finish twin: the same
-     * two loops as the finish predicates, in the same order, but returning
-     * the tile instead of a boolean. Read-only, same sources, so it cannot
-     * disagree with the decision it annotates.
-     */
-    private static String coveringBuildingTile(Construction construction) {
-        APosition site = construction.buildPosition();
-        if (site == null) return "-";
-
-        for (AUnit unit : Select.all().list()) {
-            if (unit == null || !unit.isAlive()) continue;
-            if (!unit.isABuilding() || !unit.isCompleted()) continue;
-            if (!construction.buildingType().equals(unit.type())) continue;
-            if (unit.tx() == site.tx() && unit.ty() == site.ty()) {
-                return "[" + unit.tx() + "," + unit.ty() + "]";
-            }
-        }
-
-        int w = construction.buildingType().getTilesWidth();
-        int h = construction.buildingType().getTilesHeights();
-        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
-            if (unit == null || !unit.isCompleted()) continue;
-            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
-                site.tx(), site.ty(), w, h,
-                unit.tx(), unit.ty(),
-                unit.type().getTilesWidth(), unit.type().getTilesHeights()
-            )) return "[" + unit.tx() + "," + unit.ty() + "]";
-        }
-
-        return "-";
-    }
-
-    private static boolean buildingFinishedAtSite(Construction construction) {        if (construction.buildPosition() == null) return false;
-
-        // Footprint overlap, not nearness: a finished sibling on the next
-        // slot (measured: Pylon [119,18] next to warped [118,16], centers
-        // 2.2 apart, footprints disjoint) is live packed-base demand, not
-        // coverage - finishing it silently re-requested the same tile 5x
-        // in a minute (totalOfType pinned at 1, no cancel twin anywhere).
-        // The engine-shift tolerance this radius was for is exactly
-        // overlap (a shifted warp still covers part of the ordered
-        // footprint), so nothing real is lost.
-        APosition site = construction.buildPosition();
-        int w = construction.buildingType().getTilesWidth();
-        int h = construction.buildingType().getTilesHeights();
-        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
-            if (unit == null || !unit.isCompleted()) continue;
-            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
-                site.tx(), site.ty(), w, h,
-                unit.tx(), unit.ty(),
-                unit.type().getTilesWidth(), unit.type().getTilesHeights()
-            )) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Is the builder standing on (or beside) the tile it is building on?
-     *
-     * <p>
-     * Used only to decide whether a started construction should be marked in progress, so a
-     * generous radius is right: the engine moves the worker onto the site as the building
-     * goes up, and refusing to notice because it is one tile off would leave the deadlock
-     * in place. What must NOT count is a worker still walking to a distant site.
-     * </p>
-     */
-    private static boolean builderAtConstructionSite(AUnit builder, Construction construction) {
-        if (construction.buildPosition() == null) return false;
-
-        return builder.distTo(construction.buildPosition()) <= 3.5;
     }
 
     /**

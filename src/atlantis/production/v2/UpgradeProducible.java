@@ -25,7 +25,9 @@ import java.util.List;
 public final class UpgradeProducible implements Producible {
 
     private final UpgradeType upgrade;
-    /** 1-based level this recipe researches. */
+    /**
+     * 1-based level this recipe researches.
+     */
     private final int level;
 
     public UpgradeProducible(UpgradeType upgrade) {
@@ -68,7 +70,9 @@ public final class UpgradeProducible implements Producible {
         return upgrade.upgradeTime(level);
     }
 
-    /** The facility, plus the level's own requirement (+2 weapons: Templar Archives). */
+    /**
+     * The facility, plus the level's own requirement (+2 weapons: Templar Archives).
+     */
     @Override
     public List<Producible> immediatePrerequisites() {
         List<Producible> result = new ArrayList<>();
@@ -109,7 +113,9 @@ public final class UpgradeProducible implements Producible {
         return of(upgrade, n);
     }
 
-    /** How many levels this upgrade has - the ceiling a goal can ask for. */
+    /**
+     * How many levels this upgrade has - the ceiling a goal can ask for.
+     */
     public int levels() {
         return upgrade.maxRepeats();
     }
@@ -117,7 +123,7 @@ public final class UpgradeProducible implements Producible {
     @Override
     public boolean equals(Object o) {
         return o instanceof UpgradeProducible && ((UpgradeProducible) o).upgrade == upgrade
-                && ((UpgradeProducible) o).level == level;
+            && ((UpgradeProducible) o).level == level;
     }
 
     @Override

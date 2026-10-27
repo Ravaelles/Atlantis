@@ -19,61 +19,6 @@ import java.util.List;
  */
 public final class BaseRoles {
 
-    /** What a base location is for us, assigned once per game. */
-    public enum Role {
-        MAIN,
-        NATURAL,
-        EXPANSION,
-        ISLAND,
-        MINERAL_ONLY
-    }
-
-    /** One base location as the assignment sees it: geometry + economy only. */
-    public static final class BaseNode {
-        private final APosition position;
-        private final boolean startLocation;
-        private final int minerals;
-        private final int gas;
-
-        public BaseNode(APosition position, boolean startLocation, int minerals, int gas) {
-            this.position = position;
-            this.startLocation = startLocation;
-            this.minerals = minerals;
-            this.gas = gas;
-        }
-
-        public APosition position() {
-            return position;
-        }
-    }
-
-    /** Ground connectivity between two nodes, owned by the caller (reachability, not geometry). */
-    public interface GroundLink {
-        boolean connected(BaseNode a, BaseNode b);
-
-        /** Walking distance in tiles; decides which expansion is the natural. */
-        double groundDistance(BaseNode a, BaseNode b);
-    }
-
-    /** A node with its assigned role. */
-    public static final class AssignedBase {
-        private final BaseNode node;
-        private final Role role;
-
-        AssignedBase(BaseNode node, Role role) {
-            this.node = node;
-            this.role = role;
-        }
-
-        public BaseNode node() {
-            return node;
-        }
-
-        public Role role() {
-            return role;
-        }
-    }
-
     private BaseRoles() {
     }
 
@@ -137,5 +82,70 @@ public final class BaseRoles {
         if (node.gas == 0) return Role.MINERAL_ONLY;
 
         return Role.EXPANSION;
+    }
+
+    /**
+     * What a base location is for us, assigned once per game.
+     */
+    public enum Role {
+        MAIN,
+        NATURAL,
+        EXPANSION,
+        ISLAND,
+        MINERAL_ONLY
+    }
+
+    /**
+     * Ground connectivity between two nodes, owned by the caller (reachability, not geometry).
+     */
+    public interface GroundLink {
+        boolean connected(BaseNode a, BaseNode b);
+
+        /**
+         * Walking distance in tiles; decides which expansion is the natural.
+         */
+        double groundDistance(BaseNode a, BaseNode b);
+    }
+
+    /**
+     * One base location as the assignment sees it: geometry + economy only.
+     */
+    public static final class BaseNode {
+        private final APosition position;
+        private final boolean startLocation;
+        private final int minerals;
+        private final int gas;
+
+        public BaseNode(APosition position, boolean startLocation, int minerals, int gas) {
+            this.position = position;
+            this.startLocation = startLocation;
+            this.minerals = minerals;
+            this.gas = gas;
+        }
+
+        public APosition position() {
+            return position;
+        }
+    }
+
+    /**
+     * A node with its assigned role.
+     */
+    public static final class AssignedBase {
+        private final BaseNode node;
+        private final Role role;
+
+        AssignedBase(BaseNode node, Role role) {
+            this.node = node;
+            this.role = role;
+        }
+
+        public BaseNode node() {
+            return node;
+        }
+
+        public Role role() {
+            return role;
+        }
     }
 }

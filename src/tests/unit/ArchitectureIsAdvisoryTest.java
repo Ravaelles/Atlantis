@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,22 +60,26 @@ public class ArchitectureIsAdvisoryTest {
     private static final String FAST = "scripts/run-tests.sh";
     private static final String STRICT = "scripts/run-architecture-tests.sh";
 
+    private static String read(String path) throws Exception {
+        return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+    }
+
     @Test
     public void theFastLoopDowngradesOnlyTheArchitectureScope() throws Exception {
         String source = read(FAST);
 
         assertTrue(source.contains("ARCHITECTURE WARNING"),
-                "the fast runner must report a boundary failure as a warning");
+            "the fast runner must report a boundary failure as a warning");
 
         assertTrue(source.contains("ARCH_ADVISORY"),
-                "the architecture scope must be tracked separately (ARCH_ADVISORY), not mixed into "
-                        + "the normal scope - a shared pass would have to downgrade unit failures too");
+            "the architecture scope must be tracked separately (ARCH_ADVISORY), not mixed into "
+                + "the normal scope - a shared pass would have to downgrade unit failures too");
 
         assertTrue(source.contains("exit $?") || source.contains("|| exit")
                 || (source.contains("status=$?") && source.contains("exit $status")),
-                "the normal scope must exit with its OWN code before the advisory"
-                        + " pass runs, so a real unit/e2e regression still fails the build"
-                        + " (the || exit shape, or the captured-output shape with status=$?)");
+            "the normal scope must exit with its OWN code before the advisory"
+                + " pass runs, so a real unit/e2e regression still fails the build"
+                + " (the || exit shape, or the captured-output shape with status=$?)");
 
         // The advisory pass must come after the normal one; otherwise a boundary
         // warning could
@@ -82,22 +87,17 @@ public class ArchitectureIsAdvisoryTest {
         int normalRun = source.indexOf("org.junit.platform.console.ConsoleLauncher");
         int advisoryRun = source.lastIndexOf("org.junit.platform.console.ConsoleLauncher");
         assertTrue(normalRun >= 0 && advisoryRun > normalRun,
-                "the normal scope must run before the advisory architecture scope");
+            "the normal scope must run before the advisory architecture scope");
     }
 
     @Test
     public void theAuthoritativeGateStaysStrict() throws Exception {
         String source = read(STRICT);
 
-        assertTrue(!source.contains("ARCHITECTURE WARNING"),
-                "run-architecture-tests.sh is the authoritative gate and must not downgrade a"
-                        + " failure to a warning - that is the inner loop's concession, not the gate's");
+        assertFalse(source.contains("ARCHITECTURE WARNING"), "run-architecture-tests.sh is the authoritative gate and must not downgrade a"
+            + " failure to a warning - that is the inner loop's concession, not the gate's");
 
         assertTrue(source.contains("set -euo pipefail"),
-                "the authoritative gate must keep failing hard");
-    }
-
-    private static String read(String path) throws Exception {
-        return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+            "the authoritative gate must keep failing hard");
     }
 }

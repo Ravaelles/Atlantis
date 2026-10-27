@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -9,7 +10,6 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
@@ -33,8 +33,6 @@ public class ProduceCannonAtNatural {
     }
 
     private static APosition shouldProduceAt() {
-
-
 
 
         HasPosition naturalChoke = Chokes.natural();
