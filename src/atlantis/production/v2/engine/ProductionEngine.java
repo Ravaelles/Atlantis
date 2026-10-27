@@ -147,7 +147,7 @@ public final class ProductionEngine {
         boolean dryRun = Env.productionV2().isDryRun();
         OrderDirector director = dryRun ? dryRunDirector : gameDirector;
         gameDirector.startFrame();
-        List<DispatchResult> issued = new ProductionDispatcher(director).dispatch(plan, state.frame(), LATENCY_FRAMES);
+        List<DispatchResult> issued = new ProductionDispatcher(director).dispatch(plan, goals, state.frame(), LATENCY_FRAMES);
 
         if (dryRun) {
             dryRunDirector.logSummary(state.frame(), plan.size());

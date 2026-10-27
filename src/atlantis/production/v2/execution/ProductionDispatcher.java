@@ -53,12 +53,41 @@ public final class ProductionDispatcher {
     /**
      * Issues everything due at {@code currentFrame} and returns what was
      * issued, in order.
+     *
+     * <p>Without a goal list there is nothing to revalidate against, so every
+     * due item is issued - the historical behavior the older tests pin.</p>
      */
     public List<DispatchResult> dispatch(ProductionPlan plan, int currentFrame, int latencyFrames) {
+        return dispatch(plan, null, currentFrame, latencyFrames);
+    }
+
+    /**
+     * Issues everything due at {@code currentFrame} that is still wanted by a
+     * goal of this frame, and returns what was issued, in order.
+     *
+     * <p>A non-prerequisite item whose producible no current-frame goal asks
+     * for is stale: the plan is rebuilt every frame, but a merged
+     * re-offer, a demoted construction or a goal that died between passes
+     * can leave one behind (measured live 000314: a second Pylon dispatch
+     * 337 frames after the first while the first builder was still walking).
+     * It is skipped, never issued - the twin names it {@code stale}, so the
+     * next live game shows whether the shape still occurs. Two things are
+     * never stale: prerequisites (auto-inserted unlocks have no goal of
+     * their own by design) and committed re-offers (same-tile idempotent
+     * builder replacement, the only path that recovers a dead builder).</p>
+     *
+     * @param goals this frame's goals, or null to skip revalidation
+     */
+    public List<DispatchResult> dispatch(
+        ProductionPlan plan, List<ProductionGoal> goals, int currentFrame, int latencyFrames) {
         List<ProductionItem> due = itemsDue(plan, currentFrame, latencyFrames);
 
         List<DispatchResult> issued = new ArrayList<>();
         for (ProductionItem item : due) {
+            if (goals != null && isStale(item, goals)) {
+                issued.add(new DispatchResult(item, false, "stale: no live goal"));
+                continue;
+            }
             issued.add(issue(item));
         }
         return issued;
@@ -103,6 +132,23 @@ public final class ProductionDispatcher {
         }
 
         return currentFrame >= item.startFrame();
+    }
+
+    /**
+     * True when this item outlived its demand: no goal of this frame asks for
+     * its producible. Prerequisites and committed re-offers are never stale
+     * (see {@link #dispatch}).
+     */
+    private boolean isStale(ProductionItem item, List<ProductionGoal> goals) {
+        if (item.isPrerequisite()) return false;
+
+        PlacementReservation placement = item.placement();
+        if (placement != null && placement.committedAtFrame() >= 0) return false;
+
+        for (ProductionGoal goal : goals) {
+            if (goal.item().id().equals(item.item().id())) return false;
+        }
+        return true;
     }
 
     private DispatchResult issue(ProductionItem item) {

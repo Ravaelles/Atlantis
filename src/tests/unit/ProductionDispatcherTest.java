@@ -200,6 +200,86 @@ public class ProductionDispatcherTest {
         assertTrue(director.commands.get(0).startsWith("research:" + legs.id() + "@"));
     }
 
+    @Test
+    public void staleFreshBuildingWithoutGoalIsSkipped() {
+        // Live 000314: a second Pylon dispatched 337 frames after the first
+        // while the first builder was still walking - the plan item outlived
+        // its goal. A fresh (uncommitted) non-prerequisite item nobody asks
+        // for is not issued; the twin names it, so the next live game shows
+        // whether the shape still occurs.
+        FakeProducible pylon = new FakeProducible("Pylon", true, "Probe");
+        FakeProducible zealot = new FakeProducible("Zealot", false, "Gateway");
+        PlacementReservation fresh = PlacementReservation.success(42, 18, 100);
+        ProductionPlan plan = planOf(new ProductionItem(pylon, 100, false, fresh));
+        List<ProductionGoal> goals = goalsOf(zealot);
+
+        RecordingDirector director = new RecordingDirector();
+        List<DispatchResult> results = new ProductionDispatcher(director).dispatch(plan, goals, 100, LATENCY);
+
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).issued(), "nobody wants a Pylon - nothing leaves");
+        assertTrue(director.commands.isEmpty());
+    }
+
+    @Test
+    public void committedReofferWithoutGoalStillFlows() {
+        // Builder replacement must survive revalidation: a committed tile is
+        // re-offered every frame by design, goal or no goal.
+        FakeProducible pylon = new FakeProducible("Pylon", true, "Probe");
+        FakeProducible zealot = new FakeProducible("Zealot", false, "Gateway");
+        PlacementReservation committed = PlacementReservation.success(42, 18, 100).committedAt(100);
+        ProductionPlan plan = planOf(new ProductionItem(pylon, 100, false, committed));
+
+        RecordingDirector director = new RecordingDirector();
+        List<DispatchResult> results = new ProductionDispatcher(director).dispatch(
+            plan, goalsOf(zealot), 140, LATENCY);
+
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).issued(), "a committed re-offer is never stale");
+        assertEquals("build:Pylon@42,18", director.commands.get(0));
+    }
+
+    @Test
+    public void prereqWithoutGoalStillFlows() {
+        // Prerequisites are auto-inserted unlocks with no goal of their own -
+        // revalidation must never eat them.
+        FakeProducible core = new FakeProducible("Core", false, "Gateway");
+        FakeProducible zealot = new FakeProducible("Zealot", false, "Gateway");
+        ProductionPlan plan = planOf(new ProductionItem(core, 0, true));
+
+        RecordingDirector director = new RecordingDirector();
+        List<DispatchResult> results = new ProductionDispatcher(director).dispatch(
+            plan, goalsOf(zealot), 0, LATENCY);
+
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).issued(), "a prerequisite is never stale");
+    }
+
+    @Test
+    public void freshItemWithMatchingGoalIsIssued() {
+        // The guard only removes demand nobody declared - a wanted building
+        // flows exactly as before.
+        FakeProducible pylon = new FakeProducible("Pylon", true, "Probe");
+        PlacementReservation fresh = PlacementReservation.success(42, 18, 100);
+        ProductionPlan plan = planOf(new ProductionItem(pylon, 100, false, fresh));
+
+        RecordingDirector director = new RecordingDirector();
+        List<DispatchResult> results = new ProductionDispatcher(director).dispatch(
+            plan, goalsOf(pylon), 100, LATENCY);
+
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).issued());
+        assertEquals("build:Pylon@42,18", director.commands.get(0));
+    }
+
+    private static List<ProductionGoal> goalsOf(Producible... items) {
+        List<ProductionGoal> goals = new ArrayList<>();
+        for (Producible item : items) {
+            goals.add(new ProductionGoal(item, ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+        }
+        return goals;
+    }
+
     private static final class FakeProducible implements Producible {
         private final String id;
         private final boolean building;

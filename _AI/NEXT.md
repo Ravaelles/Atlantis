@@ -620,7 +620,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   exactly this shape). REMAINDER: per-frame re-fire while a Pylon is in
   flight (000314: 481 late dispatches, 1 warp) - absorbed same-tile, no
   cancel, no stall, just churn. Needs the builderLog game to confirm
-  zero-cancel persistence under siege pressure.
+  zero-cancel persistence under siege pressure. BACKSTOP LANDED
+  2026-10-28: dispatch-time revalidation (`ProductionDispatcher.dispatch`
+  with this frame's goals) - a fresh non-prerequisite item nobody asks for
+  is skipped as `stale: no live goal`, prerequisites and committed
+  re-offers always flow, pinned in `ProductionDispatcherTest` (4 new).
+  The 000314 opening pair (BO goals f3996+f4333, dispatches same frames,
+  warps f4349+f4474 at supply 23) is undecided from the twin: re-fire of
+  one row in the dispatch-to-warp walk window, or the next row firing on
+  a supply the twin does not log - either way the backstop now drops a
+  second dispatch nobody asks for. Live proof rides the next macro.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
