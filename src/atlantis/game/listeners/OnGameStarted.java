@@ -53,6 +53,7 @@ public class OnGameStarted {
         atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
         atlantis.game.listeners.OnGameEnd.reset();
         atlantis.map.scout.ScoutState.reset();
+        atlantis.map.base.define.EnemyMainBase.clear();
         BattleCommander.reset();
         atlantis.battle.cluster.Missions.reset();
 

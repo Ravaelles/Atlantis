@@ -6,7 +6,6 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
 import atlantis.units.AUnitType;
-import atlantis.util.cache.Cache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -15,7 +14,6 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -60,12 +58,7 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
         ScoutState.reset();
         ScoutState.scouts.clear();
         ScoutState.scoutsKilledCount = 0;
-        Field last = EnemyMainBase.class.getDeclaredField("_lastNonNull");
-        last.setAccessible(true);
-        last.set(null, null);
-        Field cache = EnemyMainBase.class.getDeclaredField("cache");
-        cache.setAccessible(true);
-        ((Cache<?>) cache.get(null)).clear();
+        EnemyMainBase.clear();
     }
 
     private FakeUnit[] oursWithScoutAt(double x, double y) {

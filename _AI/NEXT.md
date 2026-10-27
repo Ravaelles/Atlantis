@@ -381,7 +381,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#187** Scout should remain near a discovered enemy main until chased out;
   time cutoff and separation fallback are sim-pinned. `SCOUT_WATCH` now records
   the trail. First live trail never discovered the enemy main, so discovery
-  coverage is the new open question.
+  coverage is the new open question. ROOT CAUSE FOUND AND FIXED 2026-10-28
+  (B-43): `EnemyMainBase.get()` cached its first miss forever (`Cache` TTL
+  -1) - combat focus reads it from the early frames, the scout later stood
+  within 1.0 tile of the enemy start, and every reader kept the early null.
+  Measured 10/10 retained games at 0/5111 known-enemy scout rows (183253
+  through 004959, all V2 LIVE TauCross). Fix: misses are never cached, only
+  the hit latches, plus a per-game `clear()` in `OnGameStarted`; pinned
+  `lateDiscoveryStillLatchesTheMain` (red-first: null despite late
+  discovery on the old code). Open: live proof that the main latches and
+  the army finally leaves.
 - **#189** Log priority adoption is complete: console levels and event `lvl`
   follow CONVENTIONS §27; diagnostic event volume stays MED by design. TEMP
   lines are session-only; latest source sweep found none.
