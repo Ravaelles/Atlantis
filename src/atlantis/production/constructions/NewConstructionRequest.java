@@ -11,6 +11,7 @@ import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
+import atlantis.production.constructions.position.protoss.PylonPosition;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -163,6 +164,12 @@ public class NewConstructionRequest {
         else {
             // Add to list of pending orders
             ConstructionRequests.addConstruction(newConstruction);
+            if (building.isPylon()) {
+                atlantis.cherryvis.CV.globalState("PylonSite",
+                    "[" + newConstruction.buildPosition().tx() + ","
+                        + newConstruction.buildPosition().ty() + "] via "
+                        + PylonPosition.lastReason);
+            }
             EventLog.key(LogKey.CONSTRUCTION_REQUESTED)
                 .param("type", building.name())
                 .param("cid", newConstruction.id())

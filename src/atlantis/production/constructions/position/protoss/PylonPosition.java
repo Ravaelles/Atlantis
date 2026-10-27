@@ -193,21 +193,25 @@ public class PylonPosition {
     public static HasPosition nearToForPylon(HasPosition nearTo) {
 //        int supply = A.supplyTotal();
         int pylons = Count.pylons();
+        HasPosition entry = nearTo;
 
         // First pylon should be close to Nexus for shorter travel dist
         if (pylons <= 0) {
             nearTo = nearToPositionForFirstPylon();
+            lastReason = "first-pylon";
 //                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
         }
 
         // First pylon should be oriented towards the nearest choke
         else if (pylons <= 1) {
             nearTo = nearToPositionForSecondPylon();
+            lastReason = "second-pylon-choke";
         }
 
         // First pylon should be oriented towards the nearest choke
         else if (pylons == 5) {
             nearTo = Select.mainOrAnyBuilding().translatePercentTowards(Chokes.mainChoke(), 50);
+            lastReason = "fifth-pylon-mid";
         }
 
         // Owner: Pylons #3-#4 adjoin the main, never the natural. The old
@@ -218,6 +222,7 @@ public class PylonPosition {
         // FirstFourPylonsStayAtMainTest.
         if (nearTo == null && pylons < 4) {
             nearTo = Select.mainOrAnyBuilding();
+            lastReason = "first-four-main-pin";
         }
 
 //        AUnit main = Select.main();
@@ -230,14 +235,36 @@ public class PylonPosition {
 //        }
         if (A.supplyFree() <= 1 && A.hasMinerals(300)) {
 //            if (nearTo == null && ARandom.chance(70) && Count.bases() >= 3) nearTo = Select.ourBases().last();
-            if (nearTo == null) nearTo = Select.mainOrAnyBuildingPosition();
+            if (nearTo == null) {
+                nearTo = Select.mainOrAnyBuildingPosition();
+                lastReason = "supply-blocked-main";
+            }
         }
-        if (nearTo == null) nearTo = Select.ourBasesWithUnfinished().exclude(Bases.natural()).last();
-        if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
+        if (nearTo == null) {
+            nearTo = Select.ourBasesWithUnfinished().exclude(Bases.natural()).last();
+            lastReason = "exclude-natural-last";
+        }
+        if (nearTo == null) {
+            nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
+            lastReason = "random-pylon";
+        }
+        if (nearTo == entry && entry != null) lastReason = "caller-provided";
 //        if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
 
 //        System.err.println("pylons = " + pylons);
 
         return nearTo;
+    }
+
+    /**
+     * Which nearTo branch sited the last Pylon (NEXT #214a): the board
+     * "PylonSite" key reads this, so a far-away warp names the rule that
+     * chose its origin instead of leaving tile forensics. Test seam:
+     * per-siting state, reset around each pin.
+     */
+    public static String lastReason = "-";
+
+    public static void clearForTests() {
+        lastReason = "-";
     }
 }
