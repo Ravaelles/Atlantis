@@ -49,4 +49,10 @@ public class ACherryVisUnitLogger {
             .computeIfAbsent(unit.id(), k -> new ArrayList<>())
             .add(new UnitLogEntry(frame, message));
     }
+
+    /** Test seam: the singleton logger accumulates across tests, never cross-test. */
+    public void clearForTests() {
+        unitsManagerLogs.clear();
+        unitsFreetextLogs.clear();
+    }
 }

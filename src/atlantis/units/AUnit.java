@@ -3500,6 +3500,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
                 tooltipString = " (" + tooltip + ")";
             }
 
+            // NEXT #214c: the caller's behavior tag (e.g. "ClusterFlee")
+            // rides the CherryVis line (was: manager class only, so the
+            // unit log never named the active behavior). In-memory history
+            // keeps today's shape byte-identical.
+            String behavior = (message != null && !message.isEmpty()) ? message + "/" : "";
             message = managerUsed.toString() + tooltipString;
             addManagerLogMessage(message);
 
@@ -3515,7 +3520,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             // time, and a leading "-" marking the active manager, so manager
             // lines sort apart from engine-order lines in the viewer.
             if (!isABuilding()) {
-                atlantis.cherryvis.CV.unitLog("-" + managerUsed.toString() + "@" + A.minSec(), this);
+                atlantis.cherryvis.CV.unitLog("-" + behavior + managerUsed.toString() + "@" + A.minSec(), this);
             }
 
             this.manager = managerUsed;
