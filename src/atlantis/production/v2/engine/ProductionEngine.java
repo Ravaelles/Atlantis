@@ -176,11 +176,15 @@ public final class ProductionEngine {
 
     /**
      * One line per frame with work in it: the plan, and what actually left.
+     * Builder-log-gated like the goal bands above (the twin already carries
+     * this structurally every frame) - an unconditional per-minute line is
+     * noise in every game and every sim run.
      */
     private void logFrame(int frame, ProductionPlan plan, List<DispatchResult> issued) {
         if (issued.isEmpty()) return;
 
         V2DispatchTwin.emit(frame, issued);
+        if (!Env.builderLog()) return;
 
         StringBuilder log = new StringBuilder("PRODUCTION_V2 @@" + frame + " plan=" + plan.size() + " [");
         for (ProductionItem item : plan.items()) log.append(item).append(' ');
