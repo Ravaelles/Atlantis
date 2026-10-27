@@ -677,6 +677,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   tag army units with their cluster/mission behavior through
   `usedManager` (or wire the disabled tooltip channel change-only) -
   needs a trace-size check, not a guess. (Log half rides #214(c).)
+- **#222** Sim order-fragility (pre-existing, untouched): `CutoffSwampedRetreatTest`
+  flips under suite order - razor margin (measured 7.01 vs threshold 8) with
+  iteration order keyed off the global FakeUnit id hash, so a shifted id
+  counter reshuffles the cutoff evaluation. Reproduction recipe: full fast
+  suite (solo and package runs stay green); trigger is intermittent, not
+  deterministic. DATUM 2026-10-28: solo 1/1 green, `tests.unit.sim` package
+  108/108 green, full suite 1693/1693 green twice - no flip today. Do NOT
+  fix with a global FakeUnit id reset (reshuffles all order-sensitive
+  expectations) and do NOT touch from the builder-log harness (world()-based
+  setup perturbs global state and flips it - `BuilderOrderLogTest` uses
+  direct BaseSelect mocks for exactly this reason).
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 
