@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -78,7 +78,7 @@ public class LateOneBaseReadinessTest extends AbstractTestWithWorld {
             lateOneBase(600);
 
             assertTrue(
-                IsReadyToProduceOrder.isReady(new ProductionOrder(AUnitType.Protoss_Probe, 0)),
+                ReadyToProduceOrder.isReady(new ProductionOrder(AUnitType.Protoss_Probe, 0)),
                 "600 minerals at 701 s on one base must not halt production (gate says cant-afford)");
         });
     }
@@ -91,7 +91,7 @@ public class LateOneBaseReadinessTest extends AbstractTestWithWorld {
             lateOneBase(100);
 
             assertFalse(
-                IsReadyToProduceOrder.isReady(new ProductionOrder(AUnitType.Protoss_Probe, 0)),
+                ReadyToProduceOrder.isReady(new ProductionOrder(AUnitType.Protoss_Probe, 0)),
                 "100 minerals at 701 s on one base must wait - save for the expansion");
         });
     }

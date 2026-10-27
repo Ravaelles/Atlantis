@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.protoss.prioritize;
 
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -60,7 +61,7 @@ public class ProtossCriticalStuffInQueue {
         // the minSupply bookkeeping (which inherits the queue tail).
         if (order.priority() != null && order.priority().isTop()) return true;
 
-        return order.supplyRequirementFulfilled(0);
+        return ReadyToProduceOrder.supplyAllows(order);
     }
 
     /**

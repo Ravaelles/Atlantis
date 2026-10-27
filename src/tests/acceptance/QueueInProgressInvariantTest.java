@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * commented out ("for units this will happen in OnOurUnitCreated"), and
  * {@code OnOurUnitCreated} only ever <i>set</i> IN_PROGRESS - nothing checked it
  * afterwards. So on every {@code Queue.refresh()} an unfinished building's order was
- * decided by {@code IsReadyToProduceOrder.isReady}, and the only thing in there that
+ * decided by {@code ReadyToProduceOrder.isReady}, and the only thing in there that
  * kept it out of READY_TO_PRODUCE was:</p>
  *
  * <pre>
@@ -172,7 +172,7 @@ public class QueueInProgressInvariantTest extends WorldStubForTests {
         // Destruction in the game: hit points go to 0 and the unit leaves the list
         // we query. Both, because the queue asks two different questions - "does a
         // unit of this type exist" (the list) and "is the building unit alive"
-        // (its hit points, via IsReadyToProduceOrder's construction check).
+        // (its hit points, via ReadyToProduceOrder's construction check).
         barracks.setHp(0);
         ourUnitsNowExclude(barracks);
         refreshTheQueue();

@@ -58,7 +58,7 @@ public class QueueRefresher {
     private OrderStatus tryChangingStatusToReady(ProductionOrder order) {
 
         // Ready to produce
-        if (IsReadyToProduceOrder.isReady(order)) return markAsReadyToProduce(order);
+        if (ReadyToProduceOrder.isReady(order)) return markAsReadyToProduce(order);
 
 
         return null;

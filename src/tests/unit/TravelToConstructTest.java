@@ -175,7 +175,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 //                AConsole.println("Minerals: " + A.minerals());
 //                AConsole.println("Sup used: " + A.supplyUsed());
 //
-//                IsReadyToProduceOrder readyToProduceService = new IsReadyToProduceOrder();
+//                ReadyToProduceOrder readiness (static since the 2026-10-27 SRP split);
 //                boolean isApprxReady = readyToProduceService.check(pylonOrder);
 //
 //                AConsole.println("isApprxReady = " + isApprxReady);

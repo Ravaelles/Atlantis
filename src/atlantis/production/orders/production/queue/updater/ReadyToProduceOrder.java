@@ -18,7 +18,21 @@ import atlantis.util.We;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
-public class IsReadyToProduceOrder {
+/**
+ * The single owner of "is this order ready to produce" (owner order
+ * 2026-10-27). Supply, resources, requirements, savings and priority
+ * waiting are verdicts of this class only. Replaces
+ * {@code IsReadyToProduceOrder} plus the {@code ProductionOrder} supply
+ * bonuses, which fired rows early on lookahead and travel margins.
+ *
+ * <p>
+ * Supply rule (owner): at or past the gate the order builds, priority
+ * permitting; below the gate it builds at most one supply early, and only
+ * with the price plus one worker (50) in the bank. No lookahead, no travel
+ * bonus, no nearness bonus.
+ * </p>
+ */
+public final class ReadyToProduceOrder {
     /**
      * Owner bank rule (NEXT #202, live stall with banked gas): with 550
      * minerals in the bank every production is affordable; gas blocks only
@@ -34,6 +48,37 @@ public class IsReadyToProduceOrder {
     private static final int RICH_BANK_GAS_LATE = 400;
 
     private static final int RICH_BANK_LATE_SUPPLY = 150;
+
+    /** How far below the gate an order may start when rich (owner rule). */
+    private static final int ALLOWED_EARLY_SUPPLY = 1;
+
+    /** One worker in pocket above the price (owner rule). */
+    private static final int WORKER_POCKET_MINERALS = 50;
+
+    private ReadyToProduceOrder() {
+    }
+
+    /**
+     * The supply term, shared by {@link #isReady} and the queue filters:
+     * one definition of "supply ok". At or past the gate always; at most
+     * one early, and only with price-plus-a-worker in the bank.
+     */
+    public static boolean supplyAllows(ProductionOrder order) {
+        if (A.supplyUsed() >= order.minSupply()) return true;
+
+        if (order.minSupply() - A.supplyUsed() > ALLOWED_EARLY_SUPPLY) return false;
+
+        return bankHoldsPricePlusWorker(order);
+    }
+
+    /** Price plus one worker in hand, net of reserves. */
+    static boolean bankHoldsPricePlusWorker(ProductionOrder order) {
+        AUnitType type = order.unitType();
+
+        if (type == null) return true;
+
+        return A.canAffordWithReserved(type.mineralPrice() + WORKER_POCKET_MINERALS, 0);
+    }
 
     private static boolean richBankCoversEverything(ProductionOrder order) {
         if (!A.hasMinerals(RICH_BANK_MINERALS)) return false;
@@ -76,9 +121,9 @@ public class IsReadyToProduceOrder {
             if (EnemyUnitBreachedBase.get() != null) return false;
         }
 
-        boolean isFarFromMainBaseSoTravelEarly = !isFarFromMainBaseSoTravelEarly(order);
-        boolean supplyOk = isSupplyRequirementFulfilled(order, isFarFromMainBaseSoTravelEarly);
-        boolean resourcesOk = hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly);
+        boolean farSite = isFarSite(order);
+        boolean supplyOk = supplyWithGatewayFloor(order);
+        boolean resourcesOk = hasEnoughResourcesFor(order, farSite);
         boolean requirementsOk = order.checkIfHasWhatRequired();
         if (!supplyOk || !resourcesOk || !requirementsOk) {
             // Refusing term with numbers, buildings only (units churn through
@@ -140,18 +185,23 @@ public class IsReadyToProduceOrder {
         return true;
     }
 
-    private static boolean isSupplyRequirementFulfilled(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
+    /**
+     * The supply term plus the Gateway savings floor (owner-measured,
+     * pinned): a poor Gateway below supply 16 waits for 234 minerals even
+     * when the gate is near - the floor is bank discipline, not lookahead.
+     */
+    private static boolean supplyWithGatewayFloor(ProductionOrder order) {
         if (
             A.supplyUsed() <= 16
                 && !A.hasMinerals(234)
                 && order.is(AUnitType.Protoss_Gateway)
-                && !order.supplyRequirementFulfilled(0)
+                && A.supplyUsed() < order.minSupply()
         ) return false;
 
-        return order.supplyRequirementFulfilled(isFarFromMainBaseSoTravelEarly ? 1 : 0);
+        return supplyAllows(order);
     }
 
-    private static boolean isFarFromMainBaseSoTravelEarly(ProductionOrder order) {
+    private static boolean isFarSite(ProductionOrder order) {
         if (!order.isBuilding()) return false;
         if (order.aroundPosition() == null) return false;
 
@@ -171,12 +221,16 @@ public class IsReadyToProduceOrder {
      */
     private static final int EARLY_DISPATCH_HEADROOM_MINERALS = 50;
 
-    private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
+    private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean farSite) {
         AUnitType type = order.unitType();
 
         if (type == null) return true;
         if (type.isBase()) return A.hasMinerals(310);
-        if (isFarFromMainBaseSoTravelEarly) return true;
+        // Funds gate at dispatch, not here, for everything but far sites:
+        // units, positionless orders and near sites assume the producer is
+        // already there. A far site ties up the builder's whole walk, so it
+        // checks funds now.
+        if (!farSite) return true;
         if (type.isForge() && A.supplyUsed() == 9) return true;
 
         boolean canAffordNow = A.canAffordWithReserved(Math.min(220, type.mineralPrice()), type.gasPrice());
@@ -186,11 +240,12 @@ public class IsReadyToProduceOrder {
                 type.gasPrice());
 
         if (A.supplyUsed() >= order.minSupply()) return canAffordNow || canAffordSoon;
-        else if (!canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())) return false;
 
-
-        return A.supplyUsed() + (A.supplyUsed() >= 19 ? 3 : 1) >= order.minSupply()
-            && (canAffordNow || applySpecialPriority(type));
+        // Below the gate only real funds count (no supply lookahead here -
+        // earliness is the supply term's job): the special-priority
+        // leniency for key tech stays, it never covered the funds.
+        return canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())
+            || applySpecialPriority(type);
     }
 
     private static boolean applySpecialPriority(AUnitType unitType) {
@@ -226,38 +281,5 @@ public class IsReadyToProduceOrder {
         // RICH, and a rich bank only grows, so it never released (livelock).
         return !A.hasMinerals(550)
             && (A.seconds() >= 700 && Count.basesWithUnfinished() <= 1);
-    }
-
-    public static boolean canAffordWithReserved(ProductionOrder order) {
-
-        if (true) return false;
-
-        if (order.isBuilding()) return true;
-
-        return (A.hasMinerals(600) || mineralsAvailable(order) >= order.mineralPrice())
-            && (A.hasGas(500) || gasAvailable(order) >= order.gasPrice());
-    }
-
-    // =========================================================
-
-    private static int mineralsAvailable(ProductionOrder order) {
-        int mineralsBonus = mineralsBonusForEarlyConstruction(order);
-        int reservedMinerals = Math.min(500, ReservedResources.minerals());
-
-        return A.minerals() - reservedMinerals + order.reservations().minerals() + mineralsBonus;
-    }
-
-    private static int gasAvailable(ProductionOrder order) {
-        int gasBonus = gasBonusForEarlyConstruction(order);
-
-        return A.gas() - ReservedResources.gas() + order.reservations().gas() + gasBonus;
-    }
-
-    private static int mineralsBonusForEarlyConstruction(ProductionOrder order) {
-        return order.isBuilding() ? (order.unitType().isBase() ? 150 : 80) : 0;
-    }
-
-    private static int gasBonusForEarlyConstruction(ProductionOrder order) {
-        return order.isBuilding() ? 30 : 0;
     }
 }

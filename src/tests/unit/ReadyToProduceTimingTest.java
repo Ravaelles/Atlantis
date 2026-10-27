@@ -2,7 +2,7 @@ package tests.unit;
 
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -19,16 +19,12 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
 /**
  * What the readiness gate actually guarantees (measured, not assumed).
  *
- * <p>The gate is supply-side: a row goes READY up to two supplies before
- * its threshold when rich ({@code +1} nearness bonus for buildings at
- * supply 9+, {@code +1} dispatch margin for near or positionless sites;
- * the Gateway row below 9 is additionally held by its 234-mineral rule).
- * Minerals are NOT gated here for near sites - affordability is enforced
- * downstream at dispatch ({@code ShouldNotTravelToConstructYet}) and at
- * issue, which {@code FirstGatewayTimingTest} pins end to end. The
- * parameter is even misnamed ({@code isFarFromMainBaseSoTravelEarly}
- * carries the negation), but the behavior is coherent: near assumes the
- * builder arrives instantly, far ties up capital early.</p>
+ * <p>Owner rule: at or past the gate the order builds, priority permitting;
+ * below the gate it builds at most one supply early, and only with the
+ * price plus one worker (50) in the bank. No lookahead, no travel bonus,
+ * no nearness bonus. Minerals at the gate are NOT required - affordability
+ * is enforced downstream at dispatch and at issue, which
+ * {@code FirstGatewayTimingTest} pins end to end.</p>
  *
  * <p>These pins call the gate directly (no frames, no engine), so timing
  * work never needs an end-to-end run for the decision half. The
@@ -62,60 +58,66 @@ public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
             currentSupplyUsed = 8;
             currentMinerals = 150;
             assertFalse(
-                IsReadyToProduceOrder.isReady(order),
+                ReadyToProduceOrder.isReady(order),
                 "supply 8 for At 9 while poor: the 234-mineral rule holds below 9");
 
             currentMinerals = 500;
             assertTrue(
-                IsReadyToProduceOrder.isReady(order),
-                "supply 8 but rich: the 234 rule opens early by design (travel-early)");
+                ReadyToProduceOrder.isReady(order),
+                "supply 8 but rich: one early with price-plus-a-worker in the bank");
 
             currentSupplyUsed = 9;
             currentMinerals = 0;
             assertTrue(
-                IsReadyToProduceOrder.isReady(order),
+                ReadyToProduceOrder.isReady(order),
                 "at supply 9 the Gateway row is READY even broke - minerals gate at dispatch, not here");
         });
     }
 
     @Test
-    public void pylonReadyTwoEarlyWhenRich() {
+    public void pylonReadyOneEarlyWhenRichNeverTwoEarly() {
         world(5, fixture(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
             ProductionOrder order = queued(new ProductionOrder(AUnitType.Protoss_Pylon, 13));
 
-            currentSupplyUsed = 10;
+            currentSupplyUsed = 11;
             currentMinerals = 500;
             assertFalse(
-                IsReadyToProduceOrder.isReady(order),
-                "supply 10 for At 13: below even the early margins");
+                ReadyToProduceOrder.isReady(order),
+                "supply 11 for At 13: two early is too early, rich or not");
 
-            currentSupplyUsed = 11;
+            currentSupplyUsed = 12;
+            currentMinerals = 100;
+            assertFalse(
+                ReadyToProduceOrder.isReady(order),
+                "supply 12 for At 13 but poor: one early needs price-plus-a-worker (150)");
+
+            currentMinerals = 500;
             assertTrue(
-                IsReadyToProduceOrder.isReady(order),
-                "at supply 11 with bank the Pylon row is READY (+1 nearness, +1 margin)");
+                ReadyToProduceOrder.isReady(order),
+                "supply 12 with bank: one early with 150 in hand");
         });
     }
 
     @Test
-    public void coreReadyAtSixteenWhenRichNeverAtFifteen() {
+    public void coreReadyAtSeventeenWhenRichNeverAtSixteen() {
         world(5, withGateway(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
             ProductionOrder order = queued(new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 18));
 
-            currentSupplyUsed = 15;
+            currentSupplyUsed = 16;
             currentMinerals = 500;
             currentGas = 150;
             assertFalse(
-                IsReadyToProduceOrder.isReady(order),
-                "supply 15 for At 18: below the margins (the live 16-warp was churn, not readiness)");
+                ReadyToProduceOrder.isReady(order),
+                "supply 16 for At 18: two early never fires, the old margins are gone");
 
-            currentSupplyUsed = 16;
+            currentSupplyUsed = 17;
             assertTrue(
-                IsReadyToProduceOrder.isReady(order),
-                "at supply 16 with bank the Core row is READY through the early margins");
+                ReadyToProduceOrder.isReady(order),
+                "supply 17 with bank: one early with price-plus-a-worker (250)");
         });
     }
 

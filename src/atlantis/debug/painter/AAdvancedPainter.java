@@ -792,7 +792,7 @@ public class AAdvancedPainter extends APainter {
                 return Grey;
 
             case READY_TO_PRODUCE:
-                return order.canAffordWithReserved() ? Red : Brown;
+                return A.canAffordWithReserved(order.mineralPrice(), order.gasPrice()) ? Red : Brown;
 
             case IN_PROGRESS:
                 return order.isBuildingAndConstructionStarted() ? Purple : Yellow;

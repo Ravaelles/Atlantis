@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.workers;
 
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.decisions.board.BoardState;
@@ -160,7 +161,7 @@ public class AutoProduceWorkersCommander extends Commander {
             if (!A.hasMinerals(75 * Count.creepColonies())) return dont("CreepColonies");
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
-                if (order != null && order.supplyRequirementFulfilled(0)) {
+                if (order != null && ReadyToProduceOrder.supplyAllows(order)) {
                     return dont("Not250Min");
                 }
             }

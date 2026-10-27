@@ -1,6 +1,7 @@
 package atlantis.production;
 
 
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.decisions.board.BoardState;
@@ -185,6 +186,6 @@ public class GoalBoardAdvisor extends Commander {
         }
         ProductionOrder order = Queue.get().notFinished().ofType(AUnitType.Protoss_Cybernetics_Core).first();
 
-        return order != null && order.supplyRequirementFulfilled(0);
+        return order != null && ReadyToProduceOrder.supplyAllows(order);
     }
 }

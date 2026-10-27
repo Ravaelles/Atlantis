@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.order;
 
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -98,7 +99,7 @@ public interface OrdersFilters {
     default Orders forCurrentSupply() {
         return new Orders(
             list().stream()
-                .filter(order -> order.supplyRequirementFulfilled(0))
+                .filter(order -> ReadyToProduceOrder.supplyAllows(order))
                 .collect(Collectors.toList())
         );
     }

@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -56,7 +56,7 @@ public class OrderReadinessTest extends AbstractTestWithWorld {
                 AUnitType.Protoss_Nexus, atlantis.map.position.APosition.create(40, 40), 0);
 
             assertTrue(
-                IsReadyToProduceOrder.isReady(order),
+                ReadyToProduceOrder.isReady(order),
                 "a base order with bank must be ready-eligible (supply/resources/requirements all pass)");
         });
     }
@@ -74,7 +74,7 @@ public class OrderReadinessTest extends AbstractTestWithWorld {
                 AUnitType.Protoss_Nexus, atlantis.map.position.APosition.create(40, 40), 0);
 
             assertFalse(
-                IsReadyToProduceOrder.isReady(order),
+                ReadyToProduceOrder.isReady(order),
                 "a base order with an empty bank must wait (hasMinerals(310) fails)");
         });
     }

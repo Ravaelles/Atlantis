@@ -5,7 +5,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
-import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
+import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -75,7 +75,7 @@ public class RichBankBypassTest extends WorldStubForTests {
 
             assertTrue(worker.isAlive());
             assertTrue(
-                IsReadyToProduceOrder.isReady(dragoon),
+                ReadyToProduceOrder.isReady(dragoon),
                 "600/350 in the bank produces a Dragoon through 500/300 of "
                 + "stale reservations - the bank, not the earmark, decides");
         });
@@ -99,7 +99,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             ProductionOrder zealot = new ProductionOrder(AUnitType.Protoss_Zealot, 0);
 
             assertTrue(
-                IsReadyToProduceOrder.isReady(zealot),
+                ReadyToProduceOrder.isReady(zealot),
                 "a Zealot costs no gas, so gas reservations never block it - "
                 + "banked 600 minerals is the whole question");
         });
@@ -140,7 +140,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             ProductionOrder dragoon = new ProductionOrder(AUnitType.Protoss_Dragoon, 0);
 
             assertTrue(
-                IsReadyToProduceOrder.isReady(dragoon),
+                ReadyToProduceOrder.isReady(dragoon),
                 "600/350 in the bank produces a Dragoon despite 600 of HIGH "
                 + "waiters above it - rich bank flows, saving pauses below it");
         });
