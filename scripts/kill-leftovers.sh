@@ -79,4 +79,24 @@ if [ -n "$remaining" ]; then
   echo "[kill-leftovers] STILL RUNNING: $remaining- refuse to call the box quiet" >&2
   exit 1
 fi
+
+# The game lock can outlive the game processes: Wine children inherit
+# the runner's flock FD, so a dead run's services.exe/winedevice.exe
+# keep holding /tmp/atlantis-wine-game.lock with no game alive
+# (measured 2026-10-27: the next run refused on a "quiet" box).
+# Killing is deliberately NOT automatic here: a runner in early
+# startup holds the same lock legitimately, and only a live game's
+# absence (checked above) tells stale from live. Report and refuse;
+# the operator kills the named holders after confirming no game runs.
+LOCK_FILE="/tmp/atlantis-wine-game.lock"
+if [ -f "$LOCK_FILE" ]; then
+  holders="$(fuser "$LOCK_FILE" 2>/dev/null || true)"
+  holders="$(echo "$holders" | sed 's/^[^:]*: *//')"
+  if [ -n "${holders// /}" ]; then
+    echo "[kill-leftovers] game lock still held by: $holders" >&2
+    echo "[kill-leftovers] box NOT quiet - confirm no game runs, kill the holders, retry" >&2
+    exit 1
+  fi
+fi
+
 echo "[kill-leftovers] box quiet"
