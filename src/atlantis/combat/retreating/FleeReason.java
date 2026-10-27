@@ -33,6 +33,13 @@ public enum FleeReason {
     /** March to the home ground (or choke standoff for big armies). */
     RALLY,
 
+    /**
+     * The road home ran through the enemy: rally to the farthest clear
+     * choke instead (owner 2026-10-26, tested loss vs Protoss - fleeing
+     * through a dozen zealots donated the army on its own march).
+     */
+    ESCAPE_RALLY,
+
     /** No point to march to: fall through and fight in place. */
     NOWHERE_TO_RUN
 }

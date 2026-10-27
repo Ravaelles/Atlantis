@@ -148,6 +148,24 @@ public final class RetreatFromLostFight {
                     CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
                 if (home == null) home = ClusterRally.regroupRallyPoint(unit);
             }
+            // Retreat with an escape route (owner 2026-10-26, tested
+            // loss vs Protoss): the rally above is always home ground,
+            // but the road there can run straight through the enemy
+            // army - marching it donates the unit on its own retreat.
+            // The escape route owns the destination; the reason names
+            // the reroute so the telemetry tells them apart.
+            HasPosition escape = RetreatEscapeRoute.safeRally(unit, home);
+            boolean rerouted = false;
+            if (escape != null && escape != home) {
+                try {
+                    rerouted = escape.distTo(home) >= 0.5;
+                }
+                catch (RuntimeException ignored) {
+                    rerouted = false;
+                    escape = home;
+                }
+            }
+            if (rerouted) home = escape;
             // Retreat floor (owner 2026-10-25): a retreat stops at the
             // middle-choke line, it never runs all the way home.
             home = RetreatFloor.clamp(home);
@@ -158,7 +176,7 @@ public final class RetreatFromLostFight {
             // the shared anchor, goes through the clamp.
             if (tactic == FightOrFlight.Tactic.FLEE) point = RetreatFloor.clamp(point);
             if (point != null && unit.distTo(point) >= 0.2) {
-                return new Verdict(FleeReason.RALLY, point);
+                return new Verdict(rerouted ? FleeReason.ESCAPE_RALLY : FleeReason.RALLY, point);
             }
 
             return new Verdict(FleeReason.NOWHERE_TO_RUN, null);
