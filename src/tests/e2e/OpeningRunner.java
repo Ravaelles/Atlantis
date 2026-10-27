@@ -201,6 +201,47 @@ final class OpeningRunner {
         return supplyUsed >= rowSupply;
     }
 
+    /**
+     * Duplicate-construction guard (live games duplicate Pylons and
+     * Gateways): during the opening every building warp must answer a
+     * row. Occurrence matching alone would absorb a duplicate into the
+     * next row's slot, so the counts are asserted too. Units are excluded
+     * - the dynamic army goal legitimately trains beyond its rows.
+     */
+    private static void assertNoExtraConstructions(
+            List<Row> rows, List<RowDivergence> table, List<SimDriver.WarpRecord> log,
+            List<SimOrder> invalid, List<String> cancels) {
+        int openingEnd = 0;
+        for (RowDivergence row : table) openingEnd = Math.max(openingEnd, row.warpFrame);
+        Map<String, Integer> expected = new HashMap<>();
+        for (Row row : rows) {
+            if (!row.type.isABuilding()) continue;
+            expected.merge(row.type.name(), 1, Integer::sum);
+        }
+        List<String> extras = new ArrayList<>();
+        for (Map.Entry<String, Integer> need : expected.entrySet()) {
+            int actual = 0;
+            for (SimDriver.WarpRecord record : log) {
+                if (!record.kind.equals("building")) continue;
+                if (record.frame > openingEnd) continue;
+                if (record.type.equals(need.getKey())) actual++;
+            }
+            if (actual > need.getValue()) {
+                extras.add(need.getKey() + ": " + actual + " warps for " + need.getValue() + " rows");
+            }
+        }
+        for (SimDriver.WarpRecord record : log) {
+            if (!record.kind.equals("building") || record.frame > openingEnd) continue;
+            if (!expected.containsKey(record.type)) {
+                extras.add(record.type + " f" + record.frame + ": no row wants it");
+            }
+        }
+        if (!extras.isEmpty()) {
+            fail("extra constructions during the opening:\n  " + String.join("\n  ", extras) + "\n"
+                + describe(log, invalid, cancels, table));
+        }
+    }
+
     private static String describe(List<SimDriver.WarpRecord> log, List<SimOrder> invalid,
                                    List<String> cancels, List<RowDivergence> table) {
         StringBuilder out = new StringBuilder();
@@ -334,6 +375,7 @@ final class OpeningRunner {
                 System.out.println("SimOpening: late rows (delta>=2, tuning watch):\n  "
                     + String.join("\n  ", late));
             }
+            assertNoExtraConstructions(rows, table, log, invalid, cancels);
         }
 
         /**
