@@ -8,9 +8,13 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.config.env.Env;
+import atlantis.config.env.ProductionV2Mode;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import bwapi.Race;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
@@ -22,6 +26,23 @@ import static atlantis.units.AUnitType.*;
 
 @Tag("production")
 public class TravelToConstructTest extends WorldStubForTests {
+
+    private ProductionV2Mode modeBefore;
+
+    @BeforeEach
+    public void legacyQueueMode() {
+        // The travel math reads the legacy queue, which no-ops under V2
+        // LIVE by design - these pins own the legacy shape, so they run
+        // in legacy mode whatever the default is.
+        modeBefore = Env.productionV2();
+        Env.setProductionV2ForTest(ProductionV2Mode.OFF);
+    }
+
+    @AfterEach
+    public void restoreMode() {
+        Env.setProductionV2ForTest(modeBefore);
+    }
+
     @Override
     public Race initRace() {
         return Race.Protoss;

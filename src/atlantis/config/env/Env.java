@@ -29,11 +29,11 @@ public class Env {
     /**
      * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
      * new engine in parallel with the legacy queue and only logs what it would
-     * order; LIVE lets it issue the orders. {@code PRODUCTION_V2=false} (or a
-     * missing key) keeps the legacy engine alone - the default until a dry-run
-     * game has been read.
+     * order; LIVE lets it issue the orders. {@code PRODUCTION_V2=false}
+     * (or a missing key) used to keep the legacy engine alone; LIVE is the
+     * default since the 20261027 parity game (WO-144 step 3).
      */
-    private static ProductionV2Mode productionV2 = ProductionV2Mode.OFF;
+    private static ProductionV2Mode productionV2 = ProductionV2Mode.LIVE;
 
     /**
      * Raw ENV lines by upper-cased key, kept so parameterized subsystems
@@ -393,9 +393,9 @@ public class Env {
     }
 
     /**
-     * production-v2 mode from {@code PRODUCTION_V2} in ENV: OFF (default,
-     * legacy engine only), DRY_RUN (v2 plans in parallel and only logs), or
-     * LIVE (v2 issues the commands).
+     * production-v2 mode from {@code PRODUCTION_V2} in ENV: LIVE (default,
+     * the v2 engine owns production), DRY_RUN (v2 plans in parallel and only
+     * logs), or OFF (legacy engine only).
      */
     public static ProductionV2Mode productionV2() {
         return productionV2;

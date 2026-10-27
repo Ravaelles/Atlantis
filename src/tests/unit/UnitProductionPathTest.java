@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UnitProductionPathTest {
 
     private Race raceBefore;
+    private atlantis.config.env.ProductionV2Mode modeBefore;
 
     @BeforeEach
     public void setOurRace() {
@@ -47,11 +48,13 @@ public class UnitProductionPathTest {
         // The tree is built in constructors, so the race must be set first -
         // the same ordering the game has (MY_RACE is assigned on game start).
         AtlantisRaceConfig.MY_RACE = Race.Protoss;
+        modeBefore = Env.productionV2();
     }
 
     @AfterEach
     public void restoreRace() {
         AtlantisRaceConfig.MY_RACE = raceBefore;
+        Env.setProductionV2ForTest(modeBefore);
     }
 
     @Test
@@ -80,6 +83,9 @@ public class UnitProductionPathTest {
 
     @Test
     public void theLegacyChainIsIntactFromProductionDownToTheProtossProducer() throws Exception {
+        // Pins the legacy chain, so it runs in legacy mode whatever the
+        // default is (the mode-aware test above owns the LIVE shape).
+        Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.OFF);
         ProductionCommander production = new ProductionCommander();
         DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
         assertNotNull(dynamic, "DynamicProductionCommander missing under ProductionCommander");
