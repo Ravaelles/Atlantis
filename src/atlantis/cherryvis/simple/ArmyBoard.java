@@ -19,9 +19,11 @@ public final class ArmyBoard {
     /** Graph sampling cadence (frames); the board keys are on-change. */
     public static final int VALUES_EVERY_FRAMES = 31;
 
-    private static String lastTask = null;
+    private static String lastMission = null;
+    private static String lastTactic = null;
     private static String lastReason = null;
     private static String lastFocus = null;
+    private static String lastFocusName = null;
     private static int lastStrength = Integer.MIN_VALUE;
     private static int lastValuesFrame = Integer.MIN_VALUE;
 
@@ -33,10 +35,20 @@ public final class ArmyBoard {
     ) {
         if (!ACherryVis.isEnabled()) return;
 
-        String task = posture.name() + "/" + tactic.name();
-        if (!task.equals(lastTask)) {
-            lastTask = task;
-            ACherryVis_GlobalState.logNewState("Task", task);
+        // Mission and tactic ride separate keys: posture is where the
+        // army belongs (ATTACK = enemy base, DEFEND = home), tactic is
+        // what it does (FIGHT/FLEE) - one combined "ATTACK/FLEE" string
+        // reads as a contradiction and it is two answers, not one.
+        String mission = posture.name();
+        if (!mission.equals(lastMission)) {
+            lastMission = mission;
+            ACherryVis_GlobalState.logNewState("Mission", mission);
+        }
+
+        String tacticName = tactic.name();
+        if (!tacticName.equals(lastTactic)) {
+            lastTactic = tacticName;
+            ACherryVis_GlobalState.logNewState("Tactic", tacticName);
         }
 
         if (!reason.equals(lastReason)) {
@@ -48,6 +60,12 @@ public final class ArmyBoard {
         if (!focus.equals(lastFocus)) {
             lastFocus = focus;
             ACherryVis_GlobalState.logNewState("Focus", focus);
+        }
+
+        String focusName = ClusterTwin.focusShortName(anchor);
+        if (!focusName.equals(lastFocusName)) {
+            lastFocusName = focusName;
+            ACherryVis_GlobalState.logNewState("FocusName", focusName);
         }
 
         int strength;
@@ -70,9 +88,11 @@ public final class ArmyBoard {
 
     /** Test seam: the last-value cache is per-game state, never cross-test. */
     public static void clearForTests() {
-        lastTask = null;
+        lastMission = null;
+        lastTactic = null;
         lastReason = null;
         lastFocus = null;
+        lastFocusName = null;
         lastStrength = Integer.MIN_VALUE;
         lastValuesFrame = Integer.MIN_VALUE;
         ACherryVis_GlobalState.all.clear();

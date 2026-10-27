@@ -123,6 +123,19 @@ public final class ClusterTwin {
     }
 
     /**
+     * The focus name alone (NEXT #214: board "FocusName" key) - the kind
+     * without the tile ("MiddleFocusChoke", never a chasing unit).
+     * Non-focus anchors fall back to their own string.
+     */
+    public static String focusShortName(HasPosition anchor) {
+        if (!(anchor instanceof atlantis.battle.advance.focus.AFocusPoint)) {
+            return anchor == null ? "-" : anchor.toString();
+        }
+        String name = ((atlantis.battle.advance.focus.AFocusPoint) anchor).name();
+        return name == null ? "Focus" : name;
+    }
+
+    /**
      * Short focus name for the row (owner: place + kind, mobile units
      * excluded - a building anchor names its type, a chasing unit never
      * does). Non-focus anchors fall back to their own string. Public as
