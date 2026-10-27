@@ -36,6 +36,27 @@ public final class MapSnapshot {
     public List<Res> resources = new ArrayList<>();
     public List<Pos> starts = new ArrayList<>();
     public List<Unit> units = new ArrayList<>();
+    /**
+     * One base per start: tile, start index, and the resource indices
+     * (into {@link #resources}) of its mineral line and gas. Static map
+     * data, dumped from the live game - never gameplay state.
+     */
+    public List<Base> bases = new ArrayList<>();
+    /**
+     * All-pairs region reachability, row-major over {@link #regions}
+     * order (1 = reachable through walkable neighbours, 0 = not).
+     * Dumped from live BWEM connectivity; the loader verifies it
+     * equals BFS over {@link Region#neighbors}.
+     */
+    public List<Integer> regionReach = new ArrayList<>();
+
+    public static final class Base {
+        public int x;
+        public int y;
+        public int startIndex;
+        public List<Integer> mineralIds = new ArrayList<>();
+        public List<Integer> gasIds = new ArrayList<>();
+    }
 
     public static final class Region {
         public int id;
@@ -133,6 +154,29 @@ public final class MapSnapshot {
             out.append("{\"t\":\"").append(escape(u.t)).append("\",\"x\":").append(u.x)
                 .append(",\"y\":").append(u.y).append('}');
         }
+        out.append("],\"bases\":[");
+        for (int i = 0; i < bases.size(); i++) {
+            if (i > 0) out.append(',');
+            Base b = bases.get(i);
+            out.append("{\"x\":").append(b.x).append(",\"y\":").append(b.y)
+                .append(",\"startIndex\":").append(b.startIndex)
+                .append(",\"mineralIds\":[");
+            for (int j = 0; j < b.mineralIds.size(); j++) {
+                if (j > 0) out.append(',');
+                out.append(b.mineralIds.get(j));
+            }
+            out.append("],\"gasIds\":[");
+            for (int j = 0; j < b.gasIds.size(); j++) {
+                if (j > 0) out.append(',');
+                out.append(b.gasIds.get(j));
+            }
+            out.append("]}");
+        }
+        out.append("],\"regionReach\":[");
+        for (int i = 0; i < regionReach.size(); i++) {
+            if (i > 0) out.append(',');
+            out.append(regionReach.get(i));
+        }
         out.append("]}");
 
         return out.toString();
@@ -212,6 +256,17 @@ public final class MapSnapshot {
             u.y = num(um, "y");
             snap.units.add(u);
         }
+        for (Object bo : list(obj, "bases")) {
+            Map<String, Object> bm = (Map<String, Object>) bo;
+            Base b = new Base();
+            b.x = num(bm, "x");
+            b.y = num(bm, "y");
+            b.startIndex = num(bm, "startIndex");
+            for (Object id : list(bm, "mineralIds")) b.mineralIds.add(((Number) id).intValue());
+            for (Object id : list(bm, "gasIds")) b.gasIds.add(((Number) id).intValue());
+            snap.bases.add(b);
+        }
+        for (Object v : list(obj, "regionReach")) snap.regionReach.add(((Number) v).intValue());
 
         return snap;
     }

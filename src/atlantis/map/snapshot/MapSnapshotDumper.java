@@ -3,6 +3,7 @@ package atlantis.map.snapshot;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import atlantis.Atlantis;
 import atlantis.config.env.Env;
@@ -85,13 +86,18 @@ public final class MapSnapshotDumper {
         if (snap.w <= 0 || snap.h <= 0 || snap.w > 512 || snap.h > 512) return null;
 
         // --- tiles: walkable + buildable, terrain only ----------------
+        // isWalkable takes WALK coordinates (the bot multiplies tiles by 4
+        // everywhere it asks: EngineWalkabilityGrid). Passing tile coords
+        // straight in sampled walktile (tx,ty) instead of tile (tx,ty) -
+        // a scrambled walkability grid nobody noticed because open blobs
+        // still look open. Mirror the bot's own predicate exactly.
         for (int ty = 0; ty < snap.h; ty++) {
             StringBuilder row = new StringBuilder(snap.w);
             for (int tx = 0; tx < snap.w; tx++) {
                 boolean walkable;
                 boolean buildable;
                 try {
-                    walkable = Atlantis.game().isWalkable(tx, ty);
+                    walkable = Atlantis.game().isWalkable(new bwapi.WalkPosition(tx * 4, ty * 4));
                 } catch (Exception ignored) {
                     walkable = false;
                 }
@@ -110,6 +116,8 @@ public final class MapSnapshotDumper {
         captureResources(snap);
         captureStarts(snap);
         captureBuildings(snap);
+        captureBases(snap);
+        captureRegionReach(snap);
 
         return snap;
     }
@@ -259,6 +267,79 @@ public final class MapSnapshotDumper {
                 unit.y = building.position().ty();
                 snap.units.add(unit);
             }
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * One base per start: the start tile plus its mineral line and gas.
+     * Assignment is nearest-start within a main-base radius; lines beyond
+     * it are expansions and stay unassigned (documented gap, not a silent
+     * guess). Pure over snapshot data so the golden file and the loader
+     * test pin it without a game.
+     */
+    static final int BASE_LINE_RADIUS_TILES = 12;
+
+    static void computeBases(MapSnapshot snap) {
+        snap.bases.clear();
+        for (int s = 0; s < snap.starts.size(); s++) {
+            MapSnapshot.Pos start = snap.starts.get(s);
+            MapSnapshot.Base base = new MapSnapshot.Base();
+            base.x = start.x;
+            base.y = start.y;
+            base.startIndex = s;
+            for (int i = 0; i < snap.resources.size(); i++) {
+                MapSnapshot.Res res = snap.resources.get(i);
+                double dist = Math.hypot(res.x - start.x, res.y - start.y);
+                if (dist > BASE_LINE_RADIUS_TILES) continue;
+                if ("M".equals(res.t)) base.mineralIds.add(i);
+                else if ("G".equals(res.t)) base.gasIds.add(i);
+            }
+            snap.bases.add(base);
+        }
+    }
+
+    /**
+     * All-pairs region reachability over walkable neighbours, row-major
+     * over {@code snap.regions} order. Pure BFS so the loader test can
+     * verify the dumped matrix instead of trusting it.
+     */
+    static void computeRegionReach(MapSnapshot snap) {
+        snap.regionReach.clear();
+        Map<Integer, Integer> indexById = new java.util.HashMap<>();
+        for (int i = 0; i < snap.regions.size(); i++) indexById.put(snap.regions.get(i).id, i);
+
+        int n = snap.regions.size();
+        for (int i = 0; i < n; i++) {
+            boolean[] seen = new boolean[n];
+            java.util.ArrayDeque<Integer> open = new java.util.ArrayDeque<>();
+            open.add(i);
+            seen[i] = true;
+            while (!open.isEmpty()) {
+                int cur = open.poll();
+                java.util.List<Integer> neighbours = snap.regions.get(cur).neighbors;
+                if (neighbours == null) continue;
+                for (int id : neighbours) {
+                    Integer at = indexById.get(id);
+                    if (at == null || seen[at]) continue;
+                    seen[at] = true;
+                    open.add(at);
+                }
+            }
+            for (int j = 0; j < n; j++) snap.regionReach.add(seen[j] ? 1 : 0);
+        }
+    }
+
+    private static void captureBases(MapSnapshot snap) {
+        try {
+            computeBases(snap);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static void captureRegionReach(MapSnapshot snap) {
+        try {
+            computeRegionReach(snap);
         } catch (Exception ignored) {
         }
     }

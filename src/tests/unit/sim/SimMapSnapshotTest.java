@@ -62,7 +62,10 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
             + "{\"t\":\"M\",\"x\":4,\"y\":3,\"amount\":1500},"
             + "{\"t\":\"G\",\"x\":3,\"y\":8,\"amount\":5000}],"
             + "\"starts\":[{\"x\":2,\"y\":2},{\"x\":13,\"y\":2}],"
-            + "\"units\":[{\"t\":\"Protoss_Nexus\",\"x\":2,\"y\":9}]}";
+            + "\"units\":[{\"t\":\"Protoss_Nexus\",\"x\":2,\"y\":9}],"
+            + "\"bases\":[{\"x\":2,\"y\":2,\"startIndex\":0,"
+            + "\"mineralIds\":[0,1],\"gasIds\":[2]}],"
+            + "\"regionReach\":[1,1,1,1]}";
     }
 
     @Test
@@ -79,6 +82,11 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
         assertEquals(3, snap.resources.size());
         assertEquals(2, snap.starts.size());
         assertEquals(1, snap.units.size());
+        assertEquals(1, snap.bases.size(), "one base stored");
+        assertEquals(0, snap.bases.get(0).startIndex);
+        assertEquals(2, snap.bases.get(0).mineralIds.size(), "both patches assigned");
+        assertEquals(1, snap.bases.get(0).gasIds.size(), "geyser assigned");
+        assertEquals(4, snap.regionReach.size(), "2x2 reachability matrix");
 
         assertEquals(20, countChar(snap, 'x', false), "blocked tiles");
         assertEquals(171, countChar(snap, '.', true), "buildable tiles");
@@ -103,6 +111,33 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
         assertEquals(snap.resources.size(), reread.resources.size());
         assertEquals(snap.starts.size(), reread.starts.size());
         assertEquals(9, reread.regions.get(0).neighbors.get(0));
+        assertEquals(snap.bases.get(0).mineralIds, reread.bases.get(0).mineralIds,
+            "base mineral assignment survives the round trip");
+        assertEquals(snap.regionReach, reread.regionReach, "reach matrix survives");
+    }
+
+    @Test
+    public void microMapBasesAndReachAnswer() {
+        SimMap map = SimMap.fromJson(microJson());
+        map.install();
+        try {
+            assertEquals(1, map.bases().size());
+            assertEquals(2, map.bases().get(0).mineralIds.size());
+
+            assertTrue(map.regionsConnected(7, 9), "linked regions connect");
+            assertTrue(map.regionsConnected(7, 7), "a region connects to itself");
+            assertFalse(map.regionsConnected(7, 42), "unknown regions do not connect");
+
+            assertTrue(APosition.create(2, 2).hasPathTo(APosition.create(13, 2)),
+                "the gap joins the halves through the choke");
+            assertTrue(map.hasPathBetween(APosition.create(2, 2), APosition.create(13, 2)),
+                "the snapshot graph agrees through the choke");
+            assertFalse(map.hasPathBetween(APosition.create(2, 2), APosition.create(2, 12)),
+                "outside the map the snapshot answers no path");
+        }
+        finally {
+            SimMap.uninstall();
+        }
     }
 
     @Test
@@ -159,6 +194,15 @@ public class SimMapSnapshotTest extends AbstractTestWithUnits {
         assertEquals(102, snap.resources.size(), "minerals + geysers");
         assertEquals(3, snap.starts.size());
         assertEquals(128 * 128, snap.regionOf.size());
+        assertEquals(3, snap.bases.size(), "one base per start");
+        for (int b = 0; b < 3; b++) {
+            assertEquals(b, snap.bases.get(b).startIndex);
+            assertFalse(snap.bases.get(b).mineralIds.isEmpty(), "main line assigned at base " + b);
+            assertFalse(snap.bases.get(b).gasIds.isEmpty(), "gas assigned at base " + b);
+        }
+        assertEquals(21 * 21, snap.regionReach.size(), "full reachability matrix");
+        long ones = snap.regionReach.stream().filter(v -> v == 1).count();
+        assertTrue(ones > 21, "the map is connected, the matrix is not just a diagonal: " + ones);
 
         MapSnapshot reread = MapSnapshot.parse(snap.toJson());
         assertEquals(snap.regionOf, reread.regionOf, "tiles survive the round trip");

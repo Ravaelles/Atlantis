@@ -93,7 +93,7 @@ public final class SimMap {
 
             @Override
             public boolean hasPathBetween(atlantis.map.position.HasPosition from, atlantis.map.position.HasPosition to) {
-                return true;
+                return SimMap.this.hasPathBetween(from, to);
             }
 
             @Override
@@ -103,7 +103,20 @@ public final class SimMap {
 
             @Override
             public boolean canBuildHere(atlantis.units.AUnit builder, AUnitType building, APosition at) {
-                return tileChar(at) == '.';
+                // Engine semantics (OpenBW can_place_building): the WHOLE
+                // footprint must be buildable, not just the anchor tile. A
+                // single-tile answer lets the finder offer tiles the engine
+                // would refuse (measured: Pylon at [3,40] with an 'x' row
+                // under it), and then nothing agrees on anything.
+                int w = building == null ? 1 : building.getTilesWidth();
+                int h = building == null ? 1 : building.getTilesHeights();
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        if (tileChar(at.translateByTiles(x, y)) != '.') return false;
+                    }
+                }
+
+                return true;
             }
 
             private char tileChar(atlantis.map.position.HasPosition at) {
@@ -169,6 +182,31 @@ public final class SimMap {
         return out;
     }
 
+    /**
+     * Ground truth pathing from the snapshot: same region, or regions
+     * joined through walkable neighbours (the stored matrix, BFS
+     * fallback). Replaces the old always-true answer.
+     */
+    public boolean hasPathBetween(atlantis.map.position.HasPosition from, atlantis.map.position.HasPosition to) {
+        if (from == null || to == null) return false;
+        try {
+            int idA = regionIdAt(from.position().x() / 32, from.position().y() / 32);
+            int idB = regionIdAt(to.position().x() / 32, to.position().y() / 32);
+            if (idA < 0 || idB < 0) return false;
+            if (idA == idB) return true;
+
+            return regionsConnected(idA, idB);
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private int regionIdAt(int tx, int ty) {
+        if (tx < 0 || ty < 0 || tx >= snap.w || ty >= snap.h) return -1;
+
+        return snap.regionOf.get(ty * snap.w + tx);
+    }
+
     /** Tiles that accept a building, as positions. */
     public List<APosition> buildableTiles() {
         List<APosition> out = new ArrayList<>();
@@ -182,7 +220,59 @@ public final class SimMap {
         return out;
     }
 
-    /** Walkable tiles, for flood sanity checks. */
+    /**
+     * Bases from the snapshot (one per start: tile + mineral/gear ids).
+     * Static map data - the scenario spawns its own units on top.
+     */
+    public List<MapSnapshot.Base> bases() {
+        return new ArrayList<>(snap.bases);
+    }
+
+    /**
+     * Region reachability from the dumped matrix (falls back to BFS over
+     * neighbours when the file predates the matrix). The stored
+     * hasPathBetween-type value: O(1), no per-test flood.
+     */
+    public boolean regionsConnected(int idA, int idB) {
+        int n = snap.regions.size();
+        if (n > 0 && snap.regionReach.size() == n * n) {
+            int a = indexOfRegion(idA);
+            int b = indexOfRegion(idB);
+            if (a >= 0 && b >= 0) return snap.regionReach.get(a * n + b) == 1;
+        }
+        return reachableByBfs(idA, idB);
+    }
+
+    private int indexOfRegion(int id) {
+        for (int i = 0; i < snap.regions.size(); i++) {
+            if (snap.regions.get(i).id == id) return i;
+        }
+
+        return -1;
+    }
+
+    private boolean reachableByBfs(int idA, int idB) {
+        if (idA == idB) return true;
+        java.util.Map<Integer, java.util.List<Integer>> adj = new java.util.HashMap<>();
+        for (MapSnapshot.Region r : snap.regions) adj.put(r.id, r.neighbors);
+        java.util.Set<Integer> seen = new java.util.HashSet<>();
+        java.util.ArrayDeque<Integer> open = new java.util.ArrayDeque<>();
+        open.add(idA);
+        seen.add(idA);
+        while (!open.isEmpty()) {
+            int cur = open.poll();
+            java.util.List<Integer> next = adj.get(cur);
+            if (next == null) continue;
+            for (int id : next) {
+                if (id == idB) return true;
+                if (seen.add(id)) open.add(id);
+            }
+        }
+
+        return false;
+    }
+
+    /** Tiles that accept a building, as positions. */
     public int walkableTiles() {
         int count = 0;
         for (String row : snap.tiles) {
