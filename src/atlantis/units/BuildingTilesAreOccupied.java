@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.map.position.APosition;
+import bwapi.TilePosition;
 import atlantis.units.select.Select;
 
 /**
@@ -142,8 +143,17 @@ public class BuildingTilesAreOccupied {
         int buildingRight = buildingLeft + buildingType.getTilesWidth();
         int buildingBottom = buildingTop + buildingType.getTilesHeights();
 
-        int unitLeft = unit.tx();
-        int unitTop = unit.ty();
+        // Top-left on both sides: tx()/ty() read the CENTER tile on
+        // live units (engine pixels) while sites are top-left, so an even
+        // footprint reads one tile off and an adjacent site looks covered
+        // (measured live: Pylon [95,121] cancelled 256x in a row against
+        // standing [93,121]). tilePosition() is top-left in both worlds
+        // (engine truth live, stored tile on fakes).
+        TilePosition leftTop = unit.tilePosition();
+        if (leftTop == null) return false;
+
+        int unitLeft = leftTop.getX();
+        int unitTop = leftTop.getY();
         int unitRight = unitLeft + unit.type().getTilesWidth();
         int unitBottom = unitTop + unit.type().getTilesHeights();
 

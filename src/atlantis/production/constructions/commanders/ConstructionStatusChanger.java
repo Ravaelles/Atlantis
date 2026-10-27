@@ -329,7 +329,7 @@ public class ConstructionStatusChanger extends Commander {
             if (unit == null || !unit.isAlive()) continue;
             if (!unit.isABuilding() || !unit.isCompleted()) continue;
             if (!construction.buildingType().equals(unit.type())) continue;
-            if (unit.tx() == site.tx() && unit.ty() == site.ty()) return true;
+            if (topLeftTx(unit) == site.tx() && topLeftTy(unit) == site.ty()) return true;
         }
         return false;
     }
@@ -348,8 +348,8 @@ public class ConstructionStatusChanger extends Commander {
             if (unit == null || !unit.isAlive()) continue;
             if (!unit.isABuilding() || !unit.isCompleted()) continue;
             if (!construction.buildingType().equals(unit.type())) continue;
-            if (unit.tx() == site.tx() && unit.ty() == site.ty()) {
-                return "[" + unit.tx() + "," + unit.ty() + "]";
+            if (topLeftTx(unit) == site.tx() && topLeftTy(unit) == site.ty()) {
+                return "[" + topLeftTx(unit) + "," + topLeftTy(unit) + "]";
             }
         }
 
@@ -359,9 +359,9 @@ public class ConstructionStatusChanger extends Commander {
             if (unit == null || !unit.isCompleted()) continue;
             if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
                 site.tx(), site.ty(), w, h,
-                unit.tx(), unit.ty(),
+                topLeftTx(unit), topLeftTy(unit),
                 unit.type().getTilesWidth(), unit.type().getTilesHeights()
-            )) return "[" + unit.tx() + "," + unit.ty() + "]";
+            )) return "[" + topLeftTx(unit) + "," + topLeftTy(unit) + "]";
         }
 
         return "-";
@@ -385,11 +385,29 @@ public class ConstructionStatusChanger extends Commander {
             if (unit == null || !unit.isCompleted()) continue;
             if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
                 site.tx(), site.ty(), w, h,
-                unit.tx(), unit.ty(),
+                topLeftTx(unit), topLeftTy(unit),
                 unit.type().getTilesWidth(), unit.type().getTilesHeights()
             )) return true;
         }
         return false;
+    }
+
+    /**
+     * Top-left tile of a standing building (see the same rule in
+     * {@code BuildingTilesAreOccupied}): tx()/ty() read the CENTER tile
+     * on live units while sites are top-left. Falls back to the unit's
+     * own tile when the origin is unknown, never to a guess.
+     */
+    private static int topLeftTx(AUnit unit) {
+        bwapi.TilePosition origin = unit.tilePosition();
+
+        return origin == null ? unit.tx() : origin.getX();
+    }
+
+    private static int topLeftTy(AUnit unit) {
+        bwapi.TilePosition origin = unit.tilePosition();
+
+        return origin == null ? unit.ty() : origin.getY();
     }
 
     /**
