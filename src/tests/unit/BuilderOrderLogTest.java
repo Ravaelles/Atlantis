@@ -14,13 +14,11 @@ import org.mockito.Mockito;
 import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * NEXT #214 (owner ask): the units log names WHAT the builder is building
@@ -42,19 +40,27 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         return bwapi.Race.Protoss;
     }
 
+    private int firstFreeIdBefore;
+
     @BeforeEach
     public void enableTrace() {
+        // FakeUnit ids are process-global: without this every suite
+        // reshuffle re-seeds every sim after us.
+        firstFreeIdBefore = tests.fakes.FakeUnit.firstFreeId;
         Env.setCherryVisEnabledForTest(true);
         unitLogger().clearForTests();
         atlantis.cherryvis.simple.ACherryVis_OrderWatcher.clear();
+        atlantis.production.constructions.ConstructionRequests.constructions.clear();
         baseSelect = Mockito.mockStatic(BaseSelect.class);
     }
 
     @AfterEach
     public void cleanTrace() {
+        tests.fakes.FakeUnit.firstFreeId = firstFreeIdBefore;
         if (baseSelect != null) baseSelect.close();
         unitLogger().clearForTests();
         atlantis.cherryvis.simple.ACherryVis_OrderWatcher.clear();
+        atlantis.production.constructions.ConstructionRequests.constructions.clear();
         Env.setCherryVisEnabledForTest(false);
     }
 
@@ -75,6 +81,7 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
     public void builderRowNamesBuildingAndBehavior() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
         Construction construction = new Construction(AUnitType.Protoss_Pylon);
+        atlantis.production.constructions.ConstructionRequests.constructions.add(construction);
         probe.setConstruction(construction);
         probe.setTooltip("TravelToSite", false);
         showUnits(probe);
@@ -84,6 +91,36 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         String rows = rows();
         assertTrue(rows.contains("/Pylon/TravelToSite@"),
             "the row names the building and the behavior: " + rows);
+    }
+
+    @Test
+    public void assigningBuilderLinksBothWays() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
+        FakeUnit other = fake(AUnitType.Protoss_Probe, 31, 20);
+        Construction construction = new Construction(AUnitType.Protoss_Pylon);
+
+        construction.setBuilder(probe);
+        assertTrue(probe.construction() == construction, "link is two-way");
+
+        construction.setBuilder(other);
+        assertTrue(probe.construction() == null, "replaced builder forgets");
+        assertTrue(other.construction() == construction, "new builder knows");
+    }
+
+    @Test
+    public void unlistedConstructionNamesNothing() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
+        // Never added to ConstructionRequests: a cancelled-away order.
+        probe.setConstruction(new Construction(AUnitType.Protoss_Pylon));
+        probe.setTooltip("TravelToSite", false);
+        showUnits(probe);
+        atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
+
+        String rows = rows();
+        assertTrue(!rows.contains("/Pylon"),
+            "a dangling link names nothing - the order is gone: " + rows);
+        assertTrue(rows.contains("/TravelToSite"),
+            "the behavior still rows: " + rows);
     }
 
     @Test

@@ -44,10 +44,18 @@ public class ACherryVis_OrderWatcher {
         }
     }
 
-    /** "/Pylon" while this builder holds an unfinished construction. */
+    /** "/Pylon" while this builder holds a live construction of that type. */
     private static String buildingTag(AUnit unit) {
         Construction construction = unit.construction();
         if (construction == null || !construction.notFinished()) return "";
+
+        // A cancelled order leaves the unit's link dangling (cancel removes
+        // the order, never the pointer): only a construction the engine can
+        // still place names the row, or every freed builder keeps advertising
+        // its last job.
+        if (!atlantis.production.constructions.ConstructionRequests.constructions.contains(construction)) {
+            return "";
+        }
 
         return "/" + construction.buildingType().name();
     }

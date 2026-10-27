@@ -162,7 +162,7 @@ public class Construction implements Comparable<Construction> {
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
         if (optimalBuilder != null) {
-            builder = optimalBuilder;
+            setBuilder(optimalBuilder);
             if (oldBuilder != null && !oldBuilder.equals(optimalBuilder)) {
 //                oldBuilder.stop("OldBuilder");
                 (new GatherResources(oldBuilder)).forceHandle();
@@ -284,7 +284,13 @@ public class Construction implements Comparable<Construction> {
     }
 
     public Construction setBuilder(AUnit builder) {
+        // Two-way link: whoever reads the builder (units log, warp
+        // adoption) must see the same assignment the construction holds.
+        // Cleared on every hand-over, so a freed builder never names a
+        // dead order and a replaced one never keeps the old one.
+        if (this.builder != null) this.builder.setConstruction(null);
         this.builder = builder;
+        if (builder != null) builder.setConstruction(this);
 
         return this;
     }
