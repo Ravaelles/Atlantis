@@ -420,14 +420,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   deep-energy tiers and snipes). Observers use their own detector chain and fall
   through the specialist dispatch. The 195-energy single-target tier is rarely
   expressible in sim; live geometry remains its evidence path.
-- **#199** Unwalkable regroup points spam the log (owner: HIGHEST priority;
-  keep this line on close per owner order): `holdPointFor`/`baitPointFor`/
-  `collapsePointFor` answered pure geometry and could land in a wall. Fixed
-  (`WalkableRegroupPointsTest` red-first; producers nudge to walkable ground or
-  answer null); ownership gate added after a renegade-unit trip
-  (`ForeignUnitSkippedTest`). Four consecutive live games were clean. Same
-  session also fixed cold-box startup failures in `run-wine-full.sh` and
-  `build-bot-jar.sh`.
 - **#200** Against early Zerg, fewer than five combat units hold at the main
   when the midpoint exceeds six tiles, leaving room for workers to join
   (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
