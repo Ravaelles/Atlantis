@@ -20,13 +20,37 @@ public class PostureReasonsTest {
     private static PostureReasons.Verdict decide(
         int ours, int dragoons, int zealots, int minerals, int seconds
     ) {
-        return PostureReasons.decide(ours, dragoons, zealots, minerals, seconds, 0, false, false, "?");
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = ours;
+        in.ourDragoons = dragoons;
+        in.enemyZealots = zealots;
+        in.minerals = minerals;
+        in.gameSeconds = seconds;
+        return PostureReasons.decide(in);
     }
 
     private static PostureReasons.Verdict decideStrong(
         int ours, int dragoons, int strength, boolean dragoonMatchup, boolean wasAttacking, String matchup
     ) {
-        return PostureReasons.decide(ours, dragoons, 0, 0, 100, strength, dragoonMatchup, wasAttacking, matchup);
+        return decideFull(ours, dragoons, strength, dragoonMatchup, wasAttacking, matchup, false, 0, 1.0);
+    }
+
+    private static PostureReasons.Verdict decideFull(
+        int ours, int dragoons, int strength, boolean dragoonMatchup, boolean wasAttacking, String matchup,
+        boolean vsTerran, int enemyDragoons, double eval
+    ) {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = ours;
+        in.ourDragoons = dragoons;
+        in.gameSeconds = 100;
+        in.strength = strength;
+        in.dragoonMatchup = dragoonMatchup;
+        in.wasAttacking = wasAttacking;
+        in.matchup = matchup;
+        in.vsTerran = vsTerran;
+        in.enemyDragoons = enemyDragoons;
+        in.eval = eval;
+        return PostureReasons.decide(in);
     }
 
     @Test
@@ -129,6 +153,43 @@ public class PostureReasonsTest {
     }
 
     @Test
+    public void terranEarlyPressureFromTwoUnitsOrOneGoon() {
+        assertEquals(PostureReason.EARLY_TERRAN_PRESSURE,
+            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0).reason,
+            "vs Terran two units march");
+        assertEquals(PostureReason.EARLY_TERRAN_PRESSURE,
+            decideFull(1, 1, 200, false, false, "vT", true, 0, 1.0).reason,
+            "vs Terran one finished Dragoon marches");
+        assertEquals(PostureReason.HOLD_GROUND,
+            decideFull(2, 0, 100, false, false, "vT", true, 0, 1.0).reason,
+            "the shared strength floor holds even vs Terran");
+        assertEquals(PostureReason.HOLD_GROUND,
+            decideFull(1, 0, 999, false, false, "vT", true, 0, 1.0).reason,
+            "one zealot is not pressure");
+    }
+
+    @Test
+    public void mirrorDragoonsSendSmallLinesHome() {
+        PostureReasons.Verdict verdict = decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0);
+
+        assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
+        assertEquals(PostureReason.ENEMY_DRAGOONS_SO_COME_HOME, verdict.reason);
+    }
+
+    @Test
+    public void mirrorDragoonsReleaseOnSuperiorityOrMass() {
+        assertEquals(PostureReason.EARLY_STRENGTH,
+            decideFull(3, 1, 300, true, true, "vP", false, 2, 1.3).reason,
+            "eval 1.3+ lets the composition decide");
+        assertEquals(PostureReason.EARLY_DRAGOONS_OK_SO_PRESSURE,
+            decideFull(4, 4, 300, true, true, "vP", false, 2, 1.0).reason,
+            "4 own Dragoons decide for themselves");
+        assertEquals(PostureReason.HOLD_GROUND,
+            decideFull(3, 2, 100, true, false, "vZ", false, 0, 1.0).reason,
+            "without enemy dragoons there is nothing to mirror");
+    }
+
+    @Test
     public void reasonsSpeakWithNumbers() {
         assertEquals("Early dragoons ok (2 goons, 140%), pressure",
             decideStrong(2, 2, 140, true, false, "vZ").text);
@@ -140,5 +201,9 @@ public class PostureReasonsTest {
             decideStrong(4, 2, 50, false, false, "vZ").text);
         assertEquals("No pair pressure (ranged vP)",
             decideStrong(2, 2, 999, false, false, "vP").text);
+        assertEquals("Early Terran pressure (2 units, 200%)",
+            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0).text);
+        assertEquals("Enemy dragoons (2 goons, eval 1.0), coming home",
+            decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0).text);
     }
 }

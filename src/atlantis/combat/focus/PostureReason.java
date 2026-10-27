@@ -46,6 +46,20 @@ public enum PostureReason {
     EARLY_DRAGOONS_OK_SO_PRESSURE,
 
     /**
+     * Owner order 2026-10-27: vs Terran we pressure early - the race
+     * stays aggressive from 2 units or 1 Dragoon under the shared
+     * strength floor.
+     */
+    EARLY_TERRAN_PRESSURE,
+
+    /**
+     * Owner order 2026-10-27: a discovered enemy Dragoon mass outguns
+     * a small line - below 4 own Dragoons and below 1.3 eval the army
+     * comes home; at 1.3+ or 4+ Dragoons the composition decides.
+     */
+    ENEMY_DRAGOONS_SO_COME_HOME,
+
+    /**
      * Owner order 2026-10-26: the attack found a stronger army - at most
      * one dragoon left at 120% or less means coming home instead of
      * feeding. Ends attacks, never prevents them.
