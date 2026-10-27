@@ -259,8 +259,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   Singularity and Dragoon demand fire live; the owner-ordered ASAP Dragoon rule
   is in `DynamicGoals.addArmyGoal`. V2 remains OFF until parity. Recorded
   “Protoss rich but idle” shape has no verdict.
-- **#144–#147** Rewrite order, clean-room: each lands specced, stub-pinned,
+- **#145–#147** Rewrite order, clean-room: each lands specced, stub-pinned,
   default-flipped with a game proof, then the legacy files move to `src-old/`.
+  (#144 closed by e203c6121 with the 104542 VICTORY proof. WO-144 supply-gate
+  verdict input from V2 LIVE 183253 (long, clean) + 190104 (short, clean
+  opening, died f14295): duplicate-free openings, no warp at cap; legacy
+  queue built Gateway#1 in 183253 despite LIVE mode - mixed authorship
+  stands, it is WO-147's question. Third verification game running to
+  strengthen the roster before step-4-style deletions resume.)
   - **#145** Legacy site-finding chain → catalogue-only siting; delete the chain
     after cutover. The [119,12]/`Null position` storm mints here (no
     standing-cover check), so the cutover is the fix. `SITE_TOO_FAR` only rejects
@@ -574,16 +580,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Volume rule: transitions, never per-frame rows. Motivating game:
   14:25:25 Tomas Cere (TauCross, Defeat 95/86, 52 Dragoons lost, army
   never left the main - unattributed, no trace).
-- **#215** Strength 999 with a known-but-unseen enemy: `discovered()`
-  ends in `havingPosition()`, so a fogged unit whose tile was seen
-  empty (address cleared, owner 2026-10-26) drops out of the sum and
-  strength reads 999 - the "forgotten army". Fixed:
-  `discoveredIncludingAddressless()` feeds `EnemyArmyStrength` (target
-  selection keeps `discovered()`, it needs positions), pinned
-  `EnemyStrengthCountsAddresslessTest`. Live proof from the 222936
-  TauCross game (first CLUSTER row: strength 999, foe unseen). Regression
-  note: the address-clearing change is correct for pursuit; strength
-  was its silent casualty.
 - **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
   green): `run-openbw-e2e.sh` on TauCross attaches but the host never
   publishes frames. Same map + script played full openings on 10-18/21.
