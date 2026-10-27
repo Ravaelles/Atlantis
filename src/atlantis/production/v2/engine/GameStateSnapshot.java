@@ -182,6 +182,10 @@ public final class GameStateSnapshot {
         // Supply providers already on the way, so the supply goal is not re-emitted
         // every frame (see DynamicGoals.supplyGoal).
         snapshot.supplyProvidersComing = supplyProvidersComing();
+        // Fortification cannons need a standing Forge (legacy gate,
+        // ProtossSecureBasesCommander): without it a Cannon goal from frame
+        // 0 plans an orphan Forge ahead of the Gateway.
+        snapshot.hasForge = We.protoss() && Have.forge();
         twinSuppressedSupply(snapshot);
 
         return DynamicGoals.contribute(snapshot, racePolicy);

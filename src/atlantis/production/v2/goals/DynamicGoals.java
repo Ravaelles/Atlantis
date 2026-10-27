@@ -86,6 +86,19 @@ public final class DynamicGoals {
          */
         public int supplyProvidersComing;
 
+        /**
+         * A Forge already standing (Protoss; other races leave it true so the
+         * gate below stays a Protoss rule). Legacy never secured a base with
+         * cannons before a Forge stood ({@code ProtossSecureBasesCommander}
+         * gates on {@code Have.forge()}), and the V2 fortification port
+         * dropped that gate - so a Cannon goal from frame 0 pulled an orphan
+         * Forge ahead of the Gateway in openings whose build order has no
+         * Forge (measured LIVE: Forge f2112-2746 before Gateway in three
+         * Zealot-into-Goon games, zero Cannons ever completing). Set
+         * post-construction like {@link #supplyProvidersComing}.
+         */
+        public boolean hasForge;
+
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame) {
             this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
@@ -215,6 +228,13 @@ public final class DynamicGoals {
     private static void addFortificationGoals(List<ProductionGoal> goals, GameSnapshot state) {
         if (!We.protoss()) return;
         if (state.mainBaseTileX < 0) return;
+        // No Forge, no cannons: legacy secured bases with cannons only
+        // once a Forge stood (ProtossSecureBasesCommander.applies gates on
+        // Have.forge()). Without this a Cannon goal from frame 0 plans an
+        // orphan Forge prerequisite that the dispatcher builds while the
+        // Cannon itself never schedules - a Forge before the Gateway in
+        // openings whose build order has no Forge.
+        if (!state.hasForge) return;
 
         atlantis.placement.policy.CannonFortificationPolicy.Context context =
             new atlantis.placement.policy.CannonFortificationPolicy.Context(

@@ -37,9 +37,13 @@ public class ProductionPlacementIntegrationTest {
 
     /** A snapshot with nothing remarkable except what a test sets. */
     private static DynamicGoals.GameSnapshot snapshot(int minerals, int supplyTotal) {
-        return new DynamicGoals.GameSnapshot(
+        DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
                 20, 1, supplyTotal, 4, supplyTotal, minerals, false,
                 0, 1, 0, false, false, 0).atBase(30, 30);
+        // Fortification is a post-Forge concern (legacy gate): these pins
+        // own the cannon behavior once a Forge stands, not the opening.
+        snapshot.hasForge = true;
+        return snapshot;
     }
 
     private static List<ProductionGoal> cannonGoals(DynamicGoals.GameSnapshot state) {
