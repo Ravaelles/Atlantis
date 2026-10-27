@@ -122,6 +122,12 @@ public final class DynamicGoals {
      * v2 form is the saturation rule itself, because the vetoes were really
      * about "is there money for anything more important" - and that question is
      * now answered once, by the timeline, for every goal at the same time.
+     *
+     * <p>
+     * A warping base counts toward saturation: pre-saturating the expansion
+     * is standard play, and counting only standing bases stalls the pump
+     * for the whole warp (measured: 1 probe in ~1800 frames, bank to 849).
+     * </p>
      */
     private static void addWorkerGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
         AUnitType worker = race.workerType();
@@ -131,7 +137,7 @@ public final class DynamicGoals {
         if (state.workers >= ABSOLUTE_WORKER_CAP)
             return;
 
-        if (state.workers >= WORKERS_PER_BASE * Math.max(1, state.bases))
+        if (state.workers >= WORKERS_PER_BASE * Math.max(1, Math.max(state.bases, state.basesExisting)))
             return;
 
         goals.add(new ProductionGoal(

@@ -602,6 +602,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (scheduler with two bases) or sim-side (no worker transfer to the
   natural), and whether it predates the exact-gate cutover. The opening
   gate stops at the BO end (horizon 30) until this is settled.
+  Worker-cap half fixed 2026-10-27: the pump saturated on standing
+  bases only, stalling the whole natural warp - a warping base counts
+  now, pinned `WorkerGoalCapTest` 3/3. Open: the no-enemy half (army
+  target met, nothing dies - needs the P3 scripted enemy) and the live
+  proof of pre-saturation.
 - **#218** V2 re-dispatch spam incl. the arrival-to-warp window (measured
   20261027_121013, V2 LIVE): Pylon pair warped 124f apart (f3619+f3743),
   per-frame `builder committed` stretches (f4754-4759, f6829-6838+). Root
