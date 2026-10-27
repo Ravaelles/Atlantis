@@ -32,12 +32,12 @@ public class PostureReasonsTest {
     private static PostureReasons.Verdict decideStrong(
         int ours, int dragoons, int strength, boolean dragoonMatchup, boolean wasAttacking, String matchup
     ) {
-        return decideFull(ours, dragoons, strength, dragoonMatchup, wasAttacking, matchup, false, 0, 1.0);
+        return decideFull(ours, dragoons, strength, dragoonMatchup, wasAttacking, matchup, false, 0, 1.0, false);
     }
 
     private static PostureReasons.Verdict decideFull(
         int ours, int dragoons, int strength, boolean dragoonMatchup, boolean wasAttacking, String matchup,
-        boolean vsTerran, int enemyDragoons, double eval
+        boolean vsTerran, int enemyDragoons, double eval, boolean vsZerg
     ) {
         PostureReasons.Input in = new PostureReasons.Input();
         in.ours = ours;
@@ -50,6 +50,7 @@ public class PostureReasonsTest {
         in.vsTerran = vsTerran;
         in.enemyDragoons = enemyDragoons;
         in.eval = eval;
+        in.vsZerg = vsZerg;
         return PostureReasons.decide(in);
     }
 
@@ -155,22 +156,22 @@ public class PostureReasonsTest {
     @Test
     public void terranEarlyPressureFromTwoUnitsOrOneGoon() {
         assertEquals(PostureReason.EARLY_TERRAN_PRESSURE,
-            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0).reason,
+            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0, false).reason,
             "vs Terran two units march");
         assertEquals(PostureReason.EARLY_TERRAN_PRESSURE,
-            decideFull(1, 1, 200, false, false, "vT", true, 0, 1.0).reason,
+            decideFull(1, 1, 200, false, false, "vT", true, 0, 1.0, false).reason,
             "vs Terran one finished Dragoon marches");
         assertEquals(PostureReason.HOLD_GROUND,
-            decideFull(2, 0, 100, false, false, "vT", true, 0, 1.0).reason,
+            decideFull(2, 0, 100, false, false, "vT", true, 0, 1.0, false).reason,
             "the shared strength floor holds even vs Terran");
         assertEquals(PostureReason.HOLD_GROUND,
-            decideFull(1, 0, 999, false, false, "vT", true, 0, 1.0).reason,
+            decideFull(1, 0, 999, false, false, "vT", true, 0, 1.0, false).reason,
             "one zealot is not pressure");
     }
 
     @Test
     public void mirrorDragoonsSendSmallLinesHome() {
-        PostureReasons.Verdict verdict = decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0);
+        PostureReasons.Verdict verdict = decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0, false);
 
         assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
         assertEquals(PostureReason.ENEMY_DRAGOONS_SO_COME_HOME, verdict.reason);
@@ -179,14 +180,33 @@ public class PostureReasonsTest {
     @Test
     public void mirrorDragoonsReleaseOnSuperiorityOrMass() {
         assertEquals(PostureReason.EARLY_STRENGTH,
-            decideFull(3, 1, 300, true, true, "vP", false, 2, 1.3).reason,
+            decideFull(3, 1, 300, true, true, "vP", false, 2, 1.3, false).reason,
             "eval 1.3+ lets the composition decide");
         assertEquals(PostureReason.EARLY_DRAGOONS_OK_SO_PRESSURE,
-            decideFull(4, 4, 300, true, true, "vP", false, 2, 1.0).reason,
+            decideFull(4, 4, 300, true, true, "vP", false, 2, 1.0, false).reason,
             "4 own Dragoons decide for themselves");
         assertEquals(PostureReason.HOLD_GROUND,
-            decideFull(3, 2, 100, true, false, "vZ", false, 0, 1.0).reason,
+            decideFull(3, 2, 100, true, false, "vZ", false, 0, 1.0, false).reason,
             "without enemy dragoons there is nothing to mirror");
+    }
+
+    @Test
+    public void zealotsHoldVsZergWithoutDragoons() {
+        assertEquals(PostureReason.ZEALOTS_HOLD_VS_ZERG,
+            decideFull(4, 0, 100, false, false, "vZ", false, 0, 1.0, true).reason,
+            "zealots leave only at 150+ or with a dragoon");
+        assertEquals(PostureReason.ZEALOTS_HOLD_VS_ZERG,
+            decideFull(4, 0, 149, false, false, "vZ", false, 0, 1.0, true).reason,
+            "149 is still holding");
+        assertEquals(PostureReason.EARLY_STRENGTH,
+            decideFull(4, 0, 150, false, false, "vZ", false, 0, 1.0, true).reason,
+            "150 opens the march");
+        assertEquals(PostureReason.EARLY_DRAGOONS_OK_SO_PRESSURE,
+            decideFull(4, 2, 200, true, false, "vZ", false, 0, 1.0, true).reason,
+            "a dragoon in the force releases the zealots");
+        assertEquals(PostureReason.HOLD_GROUND,
+            decideFull(4, 0, 100, false, false, "vP", false, 0, 1.0, false).reason,
+            "not vs Zerg, not this rule");
     }
 
     @Test
@@ -201,9 +221,11 @@ public class PostureReasonsTest {
             decideStrong(4, 2, 50, false, false, "vZ").text);
         assertEquals("No pair pressure (ranged vP)",
             decideStrong(2, 2, 999, false, false, "vP").text);
+        assertEquals("Zealots hold vs Zerg (100%, no dragoon)",
+            decideFull(4, 0, 100, false, false, "vZ", false, 0, 1.0, true).text);
         assertEquals("Early Terran pressure (2 units, 200%)",
-            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0).text);
+            decideFull(2, 0, 200, false, false, "vT", true, 0, 1.0, false).text);
         assertEquals("Enemy dragoons (2 goons, eval 1.0), coming home",
-            decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0).text);
+            decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0, false).text);
     }
 }

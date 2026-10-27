@@ -38,6 +38,13 @@ public enum PostureReason {
     EARLY_STRENGTH,
 
     /**
+     * Owner order 2026-10-27: vs Zerg, zealots leave the base only at
+     * 150%+ strength or with a Dragoon - unsupported zealots donate
+     * against lings and sunks.
+     */
+    ZEALOTS_HOLD_VS_ZERG,
+
+    /**
      * Owner order 2026-10-26: a dragoon pair kites instead of holding -
      * always vs Zerg, vs Protoss only with no known ranged enemy (an
      * unscouted map counts as ranged: never march blind into hydras).

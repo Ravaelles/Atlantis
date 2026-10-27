@@ -11,8 +11,8 @@ import atlantis.units.select.Select;
  * The old mission changer answered the same question with thirty
  * interleaved conditions and no owner; each reason below owns its
  * shape, its numbers carry their provenance, and the order is explicit:
- * the lost-attack fallback first, the standing headcount next, the
- * early-game flips next, hold last.
+ * the zealot-vs-Zerg hold first, the lost-attack fallback next,
+ * the standing headcount next, the early-game flips next, hold last.
  *
  * <p>Thresholds: the trapped line is sim-measured
  * ({@code TrappedDragoonsAttackOutTest}: hold loses dragoons at 6 and 8
@@ -101,6 +101,7 @@ public final class PostureReasons {
         public int gameSeconds;
         public int strength;
         public double eval = 1.0;
+        public boolean vsZerg;
         public boolean dragoonMatchup;
         public boolean wasAttacking;
         public boolean vsTerran;
@@ -120,6 +121,11 @@ public final class PostureReasons {
         if (in.wasAttacking && in.ourDragoons <= FALLBACK_MAX_DRAGOONS && in.strength <= FALLBACK_STRENGTH) {
             return new Verdict(PostureReason.OUTGUNNED_SO_COME_HOME, ClusterMission.Posture.DEFEND,
                 "Outgunned (" + in.ourDragoons + " goon, " + in.strength + "%), coming home");
+        }
+
+        if (in.vsZerg && in.ourDragoons < 1 && in.strength < 150) {
+            return new Verdict(PostureReason.ZEALOTS_HOLD_VS_ZERG, ClusterMission.Posture.DEFEND,
+                "Zealots hold vs Zerg (" + in.strength + "%, no dragoon)");
         }
 
         if (in.ours >= ClusterMission.ATTACK_ARMY_SIZE) {
@@ -195,6 +201,7 @@ public final class PostureReasons {
         in.eval = assessor == null ? 1.0 : assessor.eval();
         in.dragoonMatchup = vsZerg || vsTerran || protossWithoutRanged;
         in.wasAttacking = atlantis.battle.cluster.Missions.globalMission().isMissionAttack();
+        in.vsZerg = vsZerg;
         in.vsTerran = vsTerran;
         in.matchup = matchup;
         return decide(in);
