@@ -93,6 +93,7 @@ public final class SimGround {
      */
     public boolean hasPathBetween(HasPosition from, HasPosition to) {
         if (from == null || to == null) return false;
+
         int idA = regionIdAt(from.position().x() / 32, from.position().y() / 32);
         int idB = regionIdAt(to.position().x() / 32, to.position().y() / 32);
         if (idA < 0 || idB < 0) return false;
@@ -142,6 +143,7 @@ public final class SimGround {
                 if (dist[at] >= 0) continue;
                 dist[at] = dist[cur] + 1;
                 if (nx == dx && ny == dy) return dist[at];
+
                 open.add(at);
             }
         }
@@ -212,6 +214,7 @@ public final class SimGround {
             if (next == null) continue;
             for (int id : next) {
                 if (id == idB) return true;
+
                 if (seen.add(id)) open.add(id);
             }
         }

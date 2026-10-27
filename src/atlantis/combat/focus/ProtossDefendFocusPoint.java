@@ -172,6 +172,7 @@ public final class ProtossDefendFocusPoint {
                             );
                         case MAIN_CHOKE:
                             return mainStand;
+
                         case NATURAL_CHOKE:
                             return new AFocusPoint(
                                 naturalChoke.translateTilesTowards(5, natural),
@@ -204,6 +205,7 @@ public final class ProtossDefendFocusPoint {
     private static boolean enemyMeleeOnly() {
         try {
             atlantis.units.select.Selection foes = Select.enemy().combatUnits();
+
             return foes != null && foes.notEmpty() && foes.ranged().empty();
         } catch (RuntimeException ignored) {
             return false;

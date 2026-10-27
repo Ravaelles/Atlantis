@@ -26,6 +26,7 @@ public class PostureReasonsTest {
         in.enemyZealots = zealots;
         in.minerals = minerals;
         in.gameSeconds = seconds;
+
         return PostureReasons.decide(in);
     }
 
@@ -51,6 +52,7 @@ public class PostureReasonsTest {
         in.enemyDragoons = enemyDragoons;
         in.eval = eval;
         in.vsZerg = vsZerg;
+
         return PostureReasons.decide(in);
     }
 

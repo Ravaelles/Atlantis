@@ -65,6 +65,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (A.now() != 12) return;
+
             initSupply(100, 110);
 
             ReservedResources.reserveMinerals(500, "probe-stall");
@@ -92,6 +93,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (A.now() != 12) return;
+
             initSupply(100, 110);
 
             ReservedResources.reserveGas(300, "probe-stall");
@@ -124,6 +126,7 @@ public class RichBankBypassTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             if (A.now() != 12) return;
+
             initSupply(100, 110);
 
             Queue.get().allOrders().list().clear();

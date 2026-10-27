@@ -96,6 +96,7 @@ public final class SimConstructions {
 
     public boolean hasWork() {
         if (!training.isEmpty() || !research.isEmpty()) return true;
+
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction != null && !construction.status().isTerminal()) return true;
         }
@@ -107,6 +108,7 @@ public final class SimConstructions {
 
     private void advanceConstruction(SimFrame frame, Construction construction) {
         if (construction == null || construction.buildingType() == null) return;
+
         if (construction.status().isTerminal()) {
             sites.remove(construction);
 
@@ -142,6 +144,7 @@ public final class SimConstructions {
                 frame.driver().freeBuilder(site.builder);
                 ConstructionRequests.constructions.remove(construction);
                 sites.remove(construction);
+
                 return;
             }
             frame.bank().spend(type.mineralPrice(), type.gasPrice(), "warp " + type.name());
@@ -177,6 +180,7 @@ public final class SimConstructions {
         }
         FakeUnit builder = frame.driver().assignBuilder(construction.buildPosition());
         if (builder == null) return false;
+
         site.builder = builder;
         construction.setBuilder(builder);
 
@@ -190,6 +194,7 @@ public final class SimConstructions {
      */
     private boolean validateSite(SimFrame frame, Construction construction, Site site) {
         if (site.validated) return true;
+
         site.validated = true;
 
         AUnitType type = construction.buildingType();
@@ -210,6 +215,7 @@ public final class SimConstructions {
     private boolean coveredByStanding(SimFrame frame, AUnitType type, Construction construction) {
         APosition tile = construction.buildPosition();
         if (tile == null) return false;
+
         for (FakeUnit other : frame.driver().completedBuildings()) {
             if (other != null && other.isAlive()
                     && SimGround.footprintsOverlap(type, tile.tx(), tile.ty(), other)) {
@@ -222,6 +228,7 @@ public final class SimConstructions {
 
     private boolean arrived(Site site, Construction construction) {
         if (site.builder == null || construction.buildPosition() == null) return false;
+
         try {
             return site.builder.position().distTo(construction.buildPosition()) <= ARRIVE_TILES;
         } catch (RuntimeException ignored) {

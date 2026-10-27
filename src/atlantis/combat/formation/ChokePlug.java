@@ -65,6 +65,7 @@ public final class ChokePlug {
         try {
             APosition plug = choke.center().translateTilesTowards(PLUG_DEPTH_TILES, homeSide.position());
             if (plug == null) return null;
+
             if (!plug.isWalkable()) plug = plug.makeWalkable(6, 3, null);
 
             return plug;
@@ -121,6 +122,7 @@ public final class ChokePlug {
         double dy = plugY - foeY;
         double len = Math.hypot(dx, dy);
         if (len < 1) return;
+
         dx /= len;
         dy /= len;
 

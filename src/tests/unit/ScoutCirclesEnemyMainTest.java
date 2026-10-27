@@ -67,6 +67,7 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
     private FakeUnit[] oursWithScoutAt(double x, double y) {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, HOME_X, HOME_Y);
         FakeUnit scout = fake(AUnitType.Protoss_Probe, x, y);
+
         return new FakeUnit[]{nexus, scout};
     }
 
@@ -92,6 +93,7 @@ public class ScoutCirclesEnemyMainTest extends WorldStubForTests {
      */
     private void seedRoamRing() {
         if (!ScoutState.scoutingAroundBasePoints.empty()) return;
+
         atlantis.map.region.ARegion region = tests.fakes.FakeRegion.getByTxTy(117, 9);
         for (int k = 0; k < 8; k++) {
             double a = k * Math.PI / 4;

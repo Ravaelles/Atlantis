@@ -39,6 +39,7 @@ public class ForeignUnitSkippedTest extends WorldStubForTests {
 
         world(20, fakeOurs(dragoon, flipper, mate), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             atlantis.battle.cluster.Alpha.get().addUnit(dragoon);
             atlantis.battle.cluster.Alpha.get().addUnit(flipper);
             atlantis.battle.cluster.Alpha.get().addUnit(mate);

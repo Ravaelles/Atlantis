@@ -90,6 +90,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     // The army fought its way BEYOND the middle choke, then
@@ -133,6 +134,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     HasPosition out = APosition.create(140, 140);
@@ -165,6 +167,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     recordFightAt(Alpha.get().center());
@@ -198,6 +201,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     recordFightAt(Alpha.get().center());
@@ -237,6 +241,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     // "Even there" = the fight happened ON the middle line.
@@ -276,6 +281,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     // Fought beyond the middle, then pushed back past it: the
@@ -314,6 +320,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     HasPosition far = APosition.create(140, 140);
@@ -351,6 +358,7 @@ public class RetreatFloorTest extends WorldStubForTests {
 
             world(5, fakeOurs(concat(nexus, army)), fakeEnemies(), () -> {
                 if (A.now() != 2) return;
+
                 joinAlpha(army);
                 try {
                     recordFightAt(Alpha.get().center());

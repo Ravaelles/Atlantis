@@ -204,6 +204,7 @@ public final class PostureReasons {
         in.vsZerg = vsZerg;
         in.vsTerran = vsTerran;
         in.matchup = matchup;
+
         return decide(in);
     }
 }

@@ -51,6 +51,7 @@ public class TargetLadderTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, z), fakeEnemies(h, w), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             z.attackUnit(h);
 
             assertEquals(w.id(), idOf(AcquireTarget.acquire(z)),
@@ -75,6 +76,7 @@ public class TargetLadderTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, z), fakeEnemies(h, w), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             z.attackUnit(h);
 
             assertEquals(h.id(), idOf(AcquireTarget.acquire(z)),
@@ -94,6 +96,7 @@ public class TargetLadderTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, d), fakeEnemies(a), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             d.attackUnit(a);
 
             assertEquals(a.id(), idOf(AcquireTarget.acquire(d)),
@@ -118,6 +121,7 @@ public class TargetLadderTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, d), fakeEnemies(a, b), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             d.attackUnit(a);
 
             assertEquals(b.id(), idOf(AcquireTarget.acquire(d)),

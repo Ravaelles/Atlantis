@@ -378,6 +378,7 @@ public final class MapSnapshot {
             while (pos < text.length()) {
                 char c = text.charAt(pos++);
                 if (c == '"') return out.toString();
+
                 if (c == '\\') {
                     if (pos >= text.length()) break;
                     out.append(text.charAt(pos++));
@@ -418,6 +419,7 @@ public final class MapSnapshot {
             while (pos < text.length()) {
                 char c = text.charAt(pos);
                 if (c != ' ' && c != '\t' && c != '\n' && c != '\r') return;
+
                 pos++;
             }
         }

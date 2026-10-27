@@ -28,6 +28,7 @@ public class AlphaRosterHygieneTest extends WorldStubForTests {
 
         world(3, fakeOurs(a, b), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 1) return;
+
             assertTrue(Alpha.get().isEmpty(), "roster starts empty in a fresh world");
 
             Alpha.gather();

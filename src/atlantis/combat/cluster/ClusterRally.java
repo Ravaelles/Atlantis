@@ -83,6 +83,7 @@ public final class ClusterRally {
             APosition point = choke.center().translateTilesTowards(
                 atlantis.combat.strategy.ChokeStandoff.standoffTiles(choke), main.position());
             if (point == null) return null;
+
             if (!point.isWalkable()) point = point.makeWalkable(6, 3, null);
 
             return point;
@@ -116,6 +117,7 @@ public final class ClusterRally {
 
             APosition half = main.position().translatePercentTowards(50, choke.center());
             if (half == null) return null;
+
             if (!half.isWalkable()) half = half.makeWalkable(6, 3, null);
 
             if (holdsAtMain(main, half)) return main.position();
@@ -176,6 +178,7 @@ public final class ClusterRally {
      */
     public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor, FightOrFlight.Tactic tactic) {
         if (tactic == FightOrFlight.Tactic.FLEE) return spreadRallyPoint(unit, anchor);
+
         if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
             return leader;
         }
@@ -195,6 +198,7 @@ public final class ClusterRally {
 
     private static HasPosition spreadRallyPoint(AUnit unit, HasPosition anchor) {
         if (anchor == null) return null;
+
         try {
             double golden = Math.PI * (3.0 - Math.sqrt(5.0));
             double angle = (unit.id() * golden) % (Math.PI * 2);

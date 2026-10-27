@@ -84,6 +84,7 @@ public final class RetreatFloor {
 
             // Only a retreat that would CROSS the rung is stopped: a
             // rally already in front of it keeps its own destination.
+
             return dest.distTo(main.position()) < target.distTo(main.position()) ? target : dest;
         }
         catch (RuntimeException ignored) {

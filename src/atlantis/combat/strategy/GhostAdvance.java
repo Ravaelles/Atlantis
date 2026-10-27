@@ -162,6 +162,7 @@ public final class GhostAdvance {
             // remembered at all: hand the unit back, the formation and
             // the rally own it, not the ghost.
             if (freshContactFor(unit) != null) return true;
+
             forget(unit);
 
             return false;
@@ -536,8 +537,10 @@ public final class GhostAdvance {
                 return fresh;
             }
             if (!reached) return fresh;
+
             APosition older = ghostPointSkippingFresh(unit);
             if (older == null || unit.distTo(older) < REACHED_TILES) return older;
+
             if (freshFrame != null) departedAtFreshFrame.put(unit.id(), freshFrame);
 
             return older;

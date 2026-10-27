@@ -4,10 +4,10 @@ import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.workers.WorkerManager;
 import atlantis.units.workers.defence.WorkerDefenceManager;
 import atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits;
@@ -18,9 +18,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Worker defence: a probe next to enemy Zealots must be able to FIGHT or RUN

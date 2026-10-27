@@ -9,8 +9,8 @@ import tests.unit.sim.SimConfig;
 import java.util.Arrays;
 import java.util.List;
 
-import static tests.e2e.OpeningRunner.at;
 import static tests.e2e.OpeningRunner.Row;
+import static tests.e2e.OpeningRunner.at;
 
 /**
  * StarEngine opening gate: "Zealot into Goon" played from frame 1 to 50
@@ -76,7 +76,8 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
     @Test
     public void zealotIntoGoonReachesFiftySupplyInOrder() throws Exception {
         OpeningRunner.OpeningResult opening = OpeningRunner.playToSupply(
-            BUILD_ORDER, SimConfig.fast(), numbers(), SUPPLY_TARGET, BANK_HORIZON, FRAME_CAP);
+            BUILD_ORDER, SimConfig.fast(), numbers(), SUPPLY_TARGET, BANK_HORIZON, FRAME_CAP
+        );
 
         opening.assertReachedSupply(SUPPLY_TARGET);
         opening.assertWarpsMatch(BUILD_ORDER, GOLDEN_WARP_FRAMES);

@@ -85,6 +85,7 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
 
         world(20, fakeOurs(nexus, probe), fakeEnemies(), () -> {
             if (A.now() != 5) return;
+
             initSupply(10, 18);
 
             Construction construction = new Construction(AUnitType.Protoss_Pylon);
@@ -122,6 +123,7 @@ public class BuilderMinesWhileWaitingTest extends WorldStubForTests {
 
         world(20, fakeOurs(nexus, probe), fakeEnemies(), () -> {
             if (A.now() != 5) return;
+
             initSupply(10, 18);
 
             Construction construction = new Construction(AUnitType.Protoss_Pylon);

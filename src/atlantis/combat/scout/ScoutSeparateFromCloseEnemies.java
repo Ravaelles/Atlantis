@@ -142,6 +142,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
      */
     private boolean isHurt() {
         int killed = ScoutCommander.killedScouts();
+
         return unit.hp() < (killed == 0 ? 34 : (killed == 1 ? 37 : 40));
     }
 

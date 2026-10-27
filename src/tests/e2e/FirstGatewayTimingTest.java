@@ -18,9 +18,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Owner 2026-10-15: the first Gateway starts too late (Wine: BO row

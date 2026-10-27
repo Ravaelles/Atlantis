@@ -91,6 +91,7 @@ public class PylonNearToReasonTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Pylon, 27, 22)
         ), new FakeUnit[] {}, () -> {
             if (atlantis.game.A.now() != 5) return;
+
             initSupply(10, 11);
 
             PylonPosition.nearToForPylon(null);

@@ -92,6 +92,7 @@ public final class IdleWatch {
 
         Integer lastLog = lastLogFrame.get(unit.id());
         if (lastLog != null && now - lastLog < LOG_EVERY_FRAMES) return;
+
         lastLogFrame.put(unit.id(), now);
         log(unit, pos, still, now);
     }

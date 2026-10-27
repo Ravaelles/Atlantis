@@ -45,6 +45,7 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
 
     private static synchronized Fixture fixture() {
         if (fixture != null) return fixture;
+
         fixture = new Fixture();
 
         List<HoldEarlyDataset.Row> rows = HoldEarlyDataset.generate();
@@ -111,6 +112,7 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
             + " agreement=" + String.format("%.3f", fixture.agreement)
             + " majority=" + String.format("%.3f", fixture.majority)
             + " per-policy:" + per);
+
         return fixture;
     }
 
@@ -172,6 +174,7 @@ public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
             for (int i = 0; i < 600; i++) {
                 world.tick(() -> {
                     if (dragoon.hp <= 0 || zealot.hp <= 0) return;
+
                     boolean yield = useNet
                         ? gate.shouldYield(dragoon, zealot)
                         : DuelKite.shouldYield(dragoon, zealot);

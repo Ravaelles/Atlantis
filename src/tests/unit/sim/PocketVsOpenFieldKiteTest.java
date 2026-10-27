@@ -187,6 +187,7 @@ public class PocketVsOpenFieldKiteTest extends AbstractTestWithUnits {
     private int distParam(String line) {
         int at = line.indexOf("\"dist\":");
         if (at < 0) return -1;
+
         int start = at + 7;
         int end = start;
         while (end < line.length() && Character.isDigit(line.charAt(end))) end++;

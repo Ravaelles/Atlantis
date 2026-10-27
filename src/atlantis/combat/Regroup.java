@@ -81,6 +81,7 @@ public final class Regroup {
                     // re-issue a different formation order on the same frame
                     // the latch just refused, which is the churn with a new name.
                     if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, hold)) return;
+
                     if (unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
                         FightTarget.markRepositioned(unit);
 

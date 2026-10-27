@@ -20,6 +20,7 @@ public final class LearnedHoldEarlyGate {
     /** Net verdict at 0.5, or hold on anything unexpected. */
     public boolean shouldYield(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || net == null) return false;
+
         try {
             return net.predictProb(HoldEarlyDataset.features(unit, threat)) >= 0.5;
         } catch (Exception | Error ignored) {

@@ -36,6 +36,7 @@ public final class MapSnapshotDumper {
     /** Captures and writes the snapshot; true when the file landed. */
     public static boolean dumpOnce() {
         if (done) return true;
+
         done = true;
 
         if (!Env.isMapSnapshot()) return false;
@@ -239,6 +240,7 @@ public final class MapSnapshotDumper {
         try {
             java.util.List<bwapi.TilePosition> starts = Atlantis.game().getStartLocations();
             if (starts == null) return;
+
             for (bwapi.TilePosition start : starts) {
                 if (start == null) continue;
                 MapSnapshot.Pos pos = new MapSnapshot.Pos();

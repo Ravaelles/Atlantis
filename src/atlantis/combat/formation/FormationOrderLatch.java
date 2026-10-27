@@ -52,6 +52,7 @@ public final class FormationOrderLatch {
     public static boolean shouldIssue(AUnit unit, HasPosition dest) {
         if (currentPosture() != ClusterMission.Posture.DEFEND) {
             forget();
+
             return true;
         }
         if (unit == null || dest == null || dest.position() == null) return true;

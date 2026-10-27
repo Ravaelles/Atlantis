@@ -57,6 +57,7 @@ public class FleeReasonTest extends WorldStubForTests {
 
         world(3, fakeOurs(zealot), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
 
             RetreatFromLostFight.Verdict verdict = RetreatFromLostFight.decide(
@@ -78,6 +79,7 @@ public class FleeReasonTest extends WorldStubForTests {
 
         world(3, fakeOurs(dragoon, friendA, friendB), fakeEnemies(chewer), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
             Alpha.gather();
 
@@ -98,6 +100,7 @@ public class FleeReasonTest extends WorldStubForTests {
 
         world(3, fakeOurs(dragoon, friendA, friendB), fakeEnemies(presser), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
             Alpha.gather();
 
@@ -116,6 +119,7 @@ public class FleeReasonTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
 
             RetreatFromLostFight.Verdict verdict = RetreatFromLostFight.decide(

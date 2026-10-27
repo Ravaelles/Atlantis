@@ -244,6 +244,7 @@ public class NewConstructionRequest {
             if (near instanceof atlantis.units.AUnit) {
                 atlantis.units.AUnit unit = (atlantis.units.AUnit) near;
                 if (unit.position() == null) return unit.toString();
+
                 return "[" + unit.position().tx() + "," + unit.position().ty() + "]";
             }
             return String.valueOf(near);

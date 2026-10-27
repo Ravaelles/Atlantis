@@ -223,6 +223,7 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
         while (true) {
             int at = text.indexOf(needle, from);
             if (at < 0) return count;
+
             count++;
             from = at + needle.length();
         }
@@ -231,6 +232,7 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
     /** The cannon auto-acquires like the engine does: nearest ling in range. */
     private static void scriptCannon(FakeUnit cannon, List<FakeUnit> lings) {
         if (cannon.hp <= 0) return;
+
         FakeUnit target = null;
         double best = Double.MAX_VALUE;
         for (FakeUnit ling : lings) {
@@ -242,6 +244,7 @@ public class ProbesVsPackSimTest extends AbstractTestWithUnits {
             }
         }
         if (target == null) return;
+
         cannon.lastCommand = "AttackUnit";
         cannon.target = target;
         cannon.targetPosition = null;

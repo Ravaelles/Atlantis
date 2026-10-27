@@ -66,6 +66,7 @@ public final class SimMap {
     public void install() {
         Regions.useSource((tx, ty) -> {
             if (tx < 0 || ty < 0 || tx >= snap.w || ty >= snap.h) return null;
+
             int id = snap.regionOf.get(ty * snap.w + tx);
             for (SimRectRegion r : regions) {
                 if (r.name().equals("r" + id)) return r;
@@ -189,6 +190,7 @@ public final class SimMap {
      */
     public boolean hasPathBetween(atlantis.map.position.HasPosition from, atlantis.map.position.HasPosition to) {
         if (from == null || to == null) return false;
+
         try {
             int idA = regionIdAt(from.position().x() / 32, from.position().y() / 32);
             int idB = regionIdAt(to.position().x() / 32, to.position().y() / 32);
@@ -253,6 +255,7 @@ public final class SimMap {
 
     private boolean reachableByBfs(int idA, int idB) {
         if (idA == idB) return true;
+
         java.util.Map<Integer, java.util.List<Integer>> adj = new java.util.HashMap<>();
         for (MapSnapshot.Region r : snap.regions) adj.put(r.id, r.neighbors);
         java.util.Set<Integer> seen = new java.util.HashSet<>();
@@ -265,6 +268,7 @@ public final class SimMap {
             if (next == null) continue;
             for (int id : next) {
                 if (id == idB) return true;
+
                 if (seen.add(id)) open.add(id);
             }
         }

@@ -69,6 +69,7 @@ public final class RetreatEscapeRoute {
             if (escape != null) return escape;
 
             HasPosition step = localStep(unit, nearestFoe(unit, foes));
+
             return step != null ? step : home;
         }
         catch (RuntimeException ignored) {
@@ -149,6 +150,7 @@ public final class RetreatEscapeRoute {
         else if (t > 1) t = 1;
 
         double cx = ax + t * dx, cy = ay + t * dy;
+
         return Math.hypot(px - cx, py - cy) / 32.0;
     }
 
@@ -199,6 +201,7 @@ public final class RetreatEscapeRoute {
 
     private static HasPosition localStep(AUnit unit, AUnit threat) {
         if (unit == null || threat == null) return null;
+
         try {
             return atlantis.combat.escape.EscapeScoredStep.pickScored(unit, threat, 8);
         }
@@ -214,6 +217,7 @@ public final class RetreatEscapeRoute {
         try {
             atlantis.units.select.Selection enemies = Select.enemy().combatUnits();
             if (enemies == null || enemies.empty()) return foes;
+
             for (AUnit foe : enemies.list()) {
                 if (foe != null && foe.isAlive()) foes.add(foe);
             }
@@ -228,6 +232,7 @@ public final class RetreatEscapeRoute {
         try {
             List<AChoke> chokes = Chokes.chokes();
             if (chokes == null) return grounds;
+
             for (AChoke choke : chokes) {
                 HasPosition ground = groundOf(choke);
                 if (ground != null) grounds.add(ground);
@@ -242,6 +247,7 @@ public final class RetreatEscapeRoute {
         try {
             AUnit base = EnemyUnits.enemyBase();
             if (base != null && base.isAlive()) return base;
+
             return EnemyUnits.enemyMainBase();
         }
         catch (RuntimeException ignored) {

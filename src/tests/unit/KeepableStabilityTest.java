@@ -42,6 +42,7 @@ public class KeepableStabilityTest extends WorldStubForTests {
         world(120, fakeOurs(nexus, d), fakeEnemies(w, h1, h2), () -> {
             int now = atlantis.game.A.now();
             if (now < 1) return;
+
             AUnit t = AcquireTarget.acquire(d);
             if (t != null) ids.append(t.id()).append(",");
             if (now == 119) {

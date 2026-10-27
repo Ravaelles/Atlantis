@@ -118,12 +118,14 @@ public class PostFightFreezeSimTest extends AbstractTestWithUnits {
     private static int liveCount(List<FakeUnit> foes) {
         int n = 0;
         for (FakeUnit f : foes) if (f.hp > 0) n++;
+
         return n;
     }
 
     private static List<FakeUnit> liveFoes(List<FakeUnit> foes) {
         List<FakeUnit> live = new ArrayList<>();
         for (FakeUnit f : foes) if (f.hp > 0) live.add(f);
+
         return live;
     }
 }

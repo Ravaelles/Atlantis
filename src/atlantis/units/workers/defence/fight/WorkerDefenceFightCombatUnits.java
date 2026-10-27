@@ -228,6 +228,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (enemy == null) {
             AUnit raider = nearestSwarmableRaider(unit);
             if (raider == null) return false;
+
             if (enemyTooFarFromBase(raider)) {
                 unit.setTooltipTactical(TOO_FAR_FROM_BASE);
 

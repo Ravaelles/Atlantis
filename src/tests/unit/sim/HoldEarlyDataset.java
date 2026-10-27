@@ -69,6 +69,7 @@ public final class HoldEarlyDataset {
     public static double[] features(AUnit unit, AUnit threat) {
         double[] x = new double[FEATURES];
         if (unit == null || threat == null || !unit.isAlive() || !threat.isAlive()) return x;
+
         try {
             x[0] = unit.distTo(threat);
             x[1] = unit.cooldown() / Math.max(1.0, unit.cooldownAbsolute());
@@ -139,6 +140,7 @@ public final class HoldEarlyDataset {
             for (int i = 0; i < 200; i++) {
                 world.tick(() -> {
                     if (dragoon.hp <= 0 || zealot.hp <= 0) return;
+
                     rows.add(new Row(
                         features(dragoon, zealot),
                         DuelKite.shouldYield(dragoon, zealot) ? 1 : 0,
@@ -179,6 +181,7 @@ public final class HoldEarlyDataset {
     /** Chasers face us, kiters face away while retreating - the live meaning of facing. */
     static void orient(FakeUnit foe, FakeUnit dragoon, int policy) {
         if (foe == null || foe.hp <= 0 || dragoon.hp <= 0) return;
+
         double toward = Math.atan2(dragoon.y() - foe.y(), dragoon.x() - foe.x());
         if (policy == KITEBACK && "Move".equals(foe.lastCommand)) {
             foe.setAngle(toward + Math.PI);

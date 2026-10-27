@@ -43,6 +43,7 @@ public class ProductionPlacementIntegrationTest {
         // Fortification is a post-Forge concern (legacy gate): these pins
         // own the cannon behavior once a Forge stands, not the opening.
         snapshot.hasForge = true;
+
         return snapshot;
     }
 

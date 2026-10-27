@@ -181,6 +181,7 @@ public final class FormationSlots {
         double dy = anchor.ty() - center.ty();
         double len = Math.hypot(dx, dy);
         if (len < 1) return;
+
         double ahead = Math.min(LINE_AHEAD_TILES, len);
         double ax = center.tx() + dx / len * ahead;
         double ay = center.ty() + dy / len * ahead;

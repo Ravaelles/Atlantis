@@ -51,6 +51,7 @@ public class RetreatReengageTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, dragoon), fakeEnemies(l1, l2, l3, l4), () -> {
             if (A.now() != 1) return;
+
             Env.setLocalForTest(true);
             BattleCommander.clearForTests();
 
@@ -80,6 +81,7 @@ public class RetreatReengageTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, dragoon), fakeEnemies(l1, l2, l3, l4), () -> {
             if (A.now() != 1) return;
+
             Env.setLocalForTest(true);
             BattleCommander.clearForTests();
 
@@ -111,6 +113,7 @@ public class RetreatReengageTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, dragoon, mate), fakeEnemies(l1), () -> {
             if (A.now() != 1) return;
+
             Env.setLocalForTest(true);
             BattleCommander.clearForTests();
 

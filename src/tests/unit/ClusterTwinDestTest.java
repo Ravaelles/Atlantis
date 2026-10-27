@@ -105,6 +105,7 @@ public class ClusterTwinDestTest extends WorldStubForTests {
 
         world(32, fakeOurs(nexus, dragoon, mate), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 31) return;
+
             Env.setLocalForTest(true);
             try {
                 Alpha.gather();

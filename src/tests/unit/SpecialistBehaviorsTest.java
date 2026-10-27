@@ -41,6 +41,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
 
         world(20, fakeOurs(reaver), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             currentMinerals = 100;
 
             assertTrue(ProduceScarabs.act(reaver),
@@ -58,6 +59,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
 
         world(20, fakeOurs(full, busy), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             currentMinerals = 100;
 
             assertFalse(ProduceScarabs.act(full), "full magazine: nothing to do");
@@ -146,6 +148,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
 
         world(20, fakeOurs(dt), fakeEnemies(zealot), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             dt.unitState().setLastUnderAttack(atlantis.game.A.now());
 
             assertTrue(RunWhenAttacked.act(dt),
@@ -177,6 +180,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
 
         world(20, fakeOurs(dt), fakeEnemies(overlord), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             dt.unitState().setLastUnderAttack(atlantis.game.A.now());
 
             assertFalse(RunWhenAttacked.act(dt),
@@ -193,6 +197,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
 
         world(20, fakeOurs(nexus, dt), fakeEnemies(zealot), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             dt.unitState().setLastUnderAttack(atlantis.game.A.now());
 
             ordersOf(dt).clear();

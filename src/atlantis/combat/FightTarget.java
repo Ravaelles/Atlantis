@@ -134,6 +134,7 @@ public final class FightTarget {
             // the damage is committed - release the hold and let the
             // kite run instead of riding the animation out.
             if (DuelMemory.finishedShooting(unit)) return false;
+
             ShotTwin.holding(unit, target);
 
             return true;
@@ -158,6 +159,7 @@ public final class FightTarget {
             // instead of waiting out start + observed duration + 2.
             if (DuelMemory.finishedShooting(unit)) {
                 ShotTwin.released(unit, target);
+
                 return false;
             }
             if (unit.isAttackFrame() || unit.isStartingAttack()) {
@@ -291,6 +293,7 @@ public final class FightTarget {
             // canCmd/canMove): a refused order is not a step, name the
             // refusal state instead of misfiling it as nowhere-to-step.
             KiteTwin.refusedStep(unit, threat);
+
             return false;
         }
         return false;

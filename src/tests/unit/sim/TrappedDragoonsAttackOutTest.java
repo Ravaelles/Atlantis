@@ -81,6 +81,7 @@ public class TrappedDragoonsAttackOutTest extends AbstractTestWithUnits {
             System.err.println("TRAPPED marchOut=" + marchOut
                 + " dragoonsDead=" + outcome.dragoonsDead
                 + " zealotsDead=" + outcome.zealotsDead);
+
             return outcome;
         }
         finally {

@@ -276,6 +276,7 @@ public final class SimDriver {
 
     void freeBuilder(FakeUnit builder) {
         if (builder == null || !builder.isAlive()) return;
+
         builder.constructing = false;
         builder.lastCommand = "None";
         mining.assign(builder, SimMining.Job.MINING, frame);
@@ -283,6 +284,7 @@ public final class SimDriver {
 
     void moveBuilderToward(SimFrame simFrame, FakeUnit builder, APosition dest) {
         if (builder == null || dest == null) return;
+
         if (config.isFast()) {
             stepToward(builder, dest);
         }
@@ -308,6 +310,7 @@ public final class SimDriver {
     private FakeUnit freeFacilityFor(AUnitType type) {
         AUnitType producer = type.whatBuildsIt();
         if (producer == null) return null;
+
         for (FakeUnit unit : units.ours()) {
             if (unit == null || !unit.isAlive() || !unit.isCompleted()) continue;
             if (!producer.equals(unit.type())) continue;
@@ -421,8 +424,10 @@ public final class SimDriver {
 
     private void consumeTrain(AUnitType type) {
         if (type == null) return;
+
         FakeUnit facility = freeFacilityFor(type);
         if (facility == null || constructions.isTraining(facility.id())) return;
+
         SimOrder verdict = SimOrderValidator.validateTrain(facility, type, bank);
         if (!verdict.accepted()) {
             logRejected(verdict);
@@ -438,6 +443,7 @@ public final class SimDriver {
 
     private void consumeResearch(FakeUnit facility, String typeName, boolean isUpgrade) {
         if (constructions.isResearching(facility.id())) return;
+
         bwapi.UpgradeType upgrade = isUpgrade ? upgradeOf(typeName) : null;
         bwapi.TechType tech = !isUpgrade ? techOf(typeName) : null;
         if (upgrade == null && tech == null) {
@@ -489,6 +495,7 @@ public final class SimDriver {
         double dy = dest.y() - unit.position.y();
         double dist = Math.hypot(dx, dy);
         if (dist < 1.0) return;
+
         double step = Math.min(dist, speed);
         unit.position = unit.position.translateByPixels(
             (int) Math.round(dx / dist * step), (int) Math.round(dy / dist * step));
@@ -520,6 +527,7 @@ public final class SimDriver {
     private static List<AUnit> living(List<FakeUnit> list) {
         List<AUnit> alive = new ArrayList<>();
         if (list == null) return alive;
+
         for (FakeUnit unit : list) {
             if (unit == null || unit.hp <= 0) continue;
             if (!unit.isAlive()) continue;

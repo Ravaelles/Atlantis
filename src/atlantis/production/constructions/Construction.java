@@ -406,6 +406,7 @@ public class Construction implements Comparable<Construction> {
     public boolean isWarpHpStatic(int windowFrames, int nowFrame) {
         try {
             if (warpHpTrail.size() < 2) return false;
+
             int lo = Integer.MAX_VALUE;
             int hi = Integer.MIN_VALUE;
             int seen = 0;

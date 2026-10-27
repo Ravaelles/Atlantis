@@ -53,6 +53,7 @@ public class GatewaySpiralSkipsAcrossWallTileTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Pylon, 64, 30)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             AUnit builder = Select.ourWorkers().first();
             assertNotNull(builder);
 

@@ -130,6 +130,7 @@ public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits
     private static void scriptChewer(FakeUnit foe, FakeUnit dragoon) {
         if (foe.hp <= 0 || dragoon.hp <= 0) {
             foe.lastCommand = "Stop";
+
             return;
         }
         foe.lastCommand = foe.distTo(dragoon) <= SimWorld.reachTiles(foe, dragoon)

@@ -118,6 +118,7 @@ public class RetreatSplitChainTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, a, b, c, lone), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
             try {
                 clearAlpha();
@@ -149,6 +150,7 @@ public class RetreatSplitChainTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, a, b, c, lone), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
             try {
                 clearAlpha();
@@ -179,6 +181,7 @@ public class RetreatSplitChainTest extends WorldStubForTests {
 
         world(3, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
             if (atlantis.game.A.now() != 1) return;
+
             Env.setLocalForTest(true);
             try {
                 clearAlpha();

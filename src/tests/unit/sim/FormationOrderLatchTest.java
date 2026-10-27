@@ -173,6 +173,7 @@ public class FormationOrderLatchTest extends AbstractTestWithWorld {
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(foe, pack[0], pack[1], pack[2], pack[3], pack[4]), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             for (FakeUnit u : new FakeUnit[] { a, b, c }) Alpha.get().addUnit(u);
 
             try {

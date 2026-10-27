@@ -129,6 +129,7 @@ public class PostFightPursuitDurationSimTest extends AbstractTestWithUnits {
     private static int liveCount(List<FakeUnit> foes) {
         int n = 0;
         for (FakeUnit f : foes) if (f.hp > 0) n++;
+
         return n;
     }
 }

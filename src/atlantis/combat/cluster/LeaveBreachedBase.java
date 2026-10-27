@@ -28,6 +28,7 @@ public final class LeaveBreachedBase {
         // Mid-swing it waits one frame like every other move here: cancelling
         // the shot to flee is the same bug as cancelling it to kite.
         if (unit.groundDistToMain() < CombatTuning.current().getBreachLeaveMinDistTiles()) return false;
+
         if (
             ClusterBreach.breachForcesFight()
                 && !unit.isAttackFrame() && !unit.isStartingAttack()

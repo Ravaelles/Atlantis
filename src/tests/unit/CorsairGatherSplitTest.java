@@ -47,6 +47,7 @@ public class CorsairGatherSplitTest extends WorldStubForTests {
 
         world(3, fakeOurs(corsair, zealot), fakeEnemies(ling), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             drainRoster();
 
             Alpha.gather();
@@ -68,6 +69,7 @@ public class CorsairGatherSplitTest extends WorldStubForTests {
 
         world(3, fakeOurs(corsair, zealot), fakeEnemies(muta), () -> {
             if (atlantis.game.A.now() != 2) return;
+
             drainRoster();
 
             Alpha.gather();
