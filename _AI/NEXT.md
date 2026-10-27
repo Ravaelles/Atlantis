@@ -448,7 +448,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   mattering at 300 (150 supply or less) / 400 above, gas-free orders never
   wait on gas - a rich bank flows through reservations and D3 waiters alike,
   pinned in `RichBankBypassTest`. Live verdict needs owner data on minerals,
-  dominant twin rows, and Gateway count.
+  dominant twin rows, and Gateway count. Live datum 2026-10-27/28 (183253, 184042, 190104,
+  all V2 LIVE): the rich-and-idle deaths are NOT this mechanism - observed
+  causes are the covered-tile Pylon cancel loop (fixed, see #219), no 3rd
+  Gateway author (V2 demand goal landed, needs its own live proof), the
+  Nexus refresh chase (unfixed, needs #150), and an engine supply-refusal
+  the twin mislabels "no free facility". The WAIT+reserve interaction
+  itself was never observed to starve anything.
 - **#203** Zerg matchup: landed 2026-10-25 (commit ce4de4034) `ProduceZealot`
   brakes excess Zealots at >=200 gas when a Core exists and the minimum Zealot
   floor is met; initial Zealots remain allowed. Pinned by
@@ -605,13 +611,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   target met, nothing dies - needs the P3 scripted enemy) and the live
   proof of pre-saturation.
 - **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
-  20261027_183253, V2 LIVE, jar with the produced-count fix): f24730-28800,
-  1568 Pylon goal rows (796 build-order + 772 dynamic) and 120 `builder
-  committed` dispatches, no Pylon warp after f24617. Different shape from
-  the opening re-fire: likely siege replacement demand (dying Pylons)
-  that never fulfils. Open: which author dominates and where the builders
-  die - needs a builderLog game, not this trace (goal sources stop at the
-  provider id).
+  20261027_183253, V2 LIVE): f24730-28800, 1568 Pylon goal rows and 120
+  `builder committed` dispatches, no Pylon warp after f24617. CANCEL
+  COMPONENT CLOSED 2026-10-27/28 by the top-left overlap fix: 234528 and
+  000314 (both post-fix jars) show zero CONSTRUCTION_CANCEL in full games
+  (was 120 + 256), including an adjacent placement that warps (Pylon
+  [16,39] 2.0 tiles from standing [16,37], f27937 - the old math cancelled
+  exactly this shape). REMAINDER: per-frame re-fire while a Pylon is in
+  flight (000314: 481 late dispatches, 1 warp) - absorbed same-tile, no
+  cancel, no stall, just churn. Needs the builderLog game to confirm
+  zero-cancel persistence under siege pressure.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
