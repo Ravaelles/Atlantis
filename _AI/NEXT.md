@@ -594,6 +594,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   alternative vehicle is an owner call.
   Vehicle 2026-10-27 (owner): Wine + StarEngine only, OpenBW abandoned
   for now - parity and proofs ride Wine macros until further notice.
+- **#217** Sim post-expansion production stall (measured 2026-10-27 in
+  `SimOpeningToFiftyTest`, Zealot-into-Goon to 50): after the natural Nexus
+  warps (~f9393, supply 49) the sim builds one Probe in ~1800 frames while
+  the bank climbs to 849. Live 104542 keeps producing through the same
+  window (max bank below 50 is 178). Open: whether the stall is bot-side
+  (scheduler with two bases) or sim-side (no worker transfer to the
+  natural), and whether it predates the exact-gate cutover. The opening
+  gate stops at the BO end (horizon 30) until this is settled.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 

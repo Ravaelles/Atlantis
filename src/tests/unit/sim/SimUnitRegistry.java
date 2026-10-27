@@ -71,8 +71,8 @@ public final class SimUnitRegistry {
         reservedSupply = Math.max(0, reservedSupply - raw);
     }
 
-    /** Raw used supply: live units plus training reservations. */
-    public int supplyUsed() {
+    /** Raw used supply, in BWAPI units: live units plus training reservations. */
+    public int supplyUsedRaw() {
         int used = reservedSupply;
         for (FakeUnit unit : ours) {
             if (unit == null || !unit.isAlive() || !unit.isCompleted()) continue;
@@ -82,8 +82,19 @@ public final class SimUnitRegistry {
         return used;
     }
 
+    /**
+     * Used supply the way the bot reads it: halved, exactly like
+     * {@code AGame.supplyUsed()} ({@code self().supplyUsed() / 2}).
+     * The sim feeds this into the game-state seam, so build-order gates
+     * below see the same numbers as in a live game - raw counts here
+     * opened every row at half the intended army.
+     */
+    public int supplyUsed() {
+        return supplyUsedRaw() / 2;
+    }
+
     /** Raw total supply: completed providers only, exactly like the engine. */
-    public int supplyTotal() {
+    public int supplyTotalRaw() {
         int total = 0;
         for (FakeUnit unit : ours) {
             if (unit == null || !unit.isAlive() || !unit.isCompleted()) continue;
@@ -91,6 +102,11 @@ public final class SimUnitRegistry {
         }
 
         return total;
+    }
+
+    /** Total supply the way the bot reads it: halved, like {@code AGame}. */
+    public int supplyTotal() {
+        return supplyTotalRaw() / 2;
     }
 
     public int completedCount(AUnitType type) {
