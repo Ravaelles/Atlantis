@@ -95,7 +95,9 @@ OpenBW is owner-frozen, the old StarEngine economy sim is gone, and a
 suite). Over `BUILDINGS.json` + the `Use build order` line it asserts
 three things and exits 1 with evidence otherwise:
 
-1. the build-order rows appear in the played game as a subsequence;
+1. every build-order row is covered by a completion at or past its
+   supply gate (rows are gated goals, not a sequence - the file order is
+   intent, the gates are the rule);
 2. no finished building of a type absent from the build order completes
    before the first Gateway (the Forge-before-Gateway class);
 3. the mineral bank never tops 550 before supply 50.
@@ -108,7 +110,9 @@ bash scripts/parse-run.sh <run-dir> && bash scripts/assert-wine-opening.sh <run-
 
 The in-suite half of the same rule stays where seconds matter:
 `BuildOrderGoalsTest` (plan order) and `OpeningDoesNotHoardMineralsTest`
-(plan affordability).
+(plan affordability); the full opening played wall-clock lives in the
+scenario tier as `tests.e2e.SimOpeningToFiftyTest` (StarEngine, same
+coverage+gates+bank assertions over a simulated game to 50 supply).
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
 fixture and a `--add-opens` JVM flag - see its javadoc). **The suite is green**:
