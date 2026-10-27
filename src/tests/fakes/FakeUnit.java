@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Action;
 import bwapi.TechType;
+import bwapi.TilePosition;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
 
@@ -51,6 +52,18 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean constructing = false;
     private List<AUnitType> stubTrainingQueue = null;
     public int cooldown = 0;
+    /**
+     * Sim-owned remaining build/research/upgrade time (frames). The stub
+     * world never had these: {@code AUnit} reads them off {@code u()},
+     * which is null in tests, so any incomplete sim building crashed
+     * every reader ({@code LiveFacilityRegistry}, {@code LiveExistingItems},
+     * {@code GameStateSnapshot}). The sim driver writes them, the bot
+     * reads them - same contract as the engine. Default 0: completed
+     * units are due now, exactly like the live game reports them.
+     */
+    public int simRemainingBuildTime = 0;
+    public int simRemainingResearchTime = 0;
+    public int simRemainingUpgradeTime = 0;
     public boolean detected = true;
     public int energy = 0;
     public boolean effCloaked = false;
@@ -129,6 +142,19 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public APosition position() {
         return position;
+    }
+
+    /**
+     * Stub positions are top-left (the constructor takes tile coords),
+     * while the engine reports centers - so the center-based default
+     * shifts every stub building by half its footprint (a warping
+     * refinery read two tiles off its geyser). Answer the stored tile.
+     */
+    @Override
+    public TilePosition tilePosition() {
+        if (position == null) return null;
+
+        return new TilePosition(position.x() / 32, position.y() / 32);
     }
 
     @Override
@@ -238,6 +264,21 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public int scarabCount() {
         return scarabCount;
+    }
+
+    @Override
+    public int getRemainingBuildTime() {
+        return simRemainingBuildTime;
+    }
+
+    @Override
+    public int remainingResearchTime() {
+        return simRemainingResearchTime;
+    }
+
+    @Override
+    public int remainingUpgradeTime() {
+        return simRemainingUpgradeTime;
     }
 
     @Override
