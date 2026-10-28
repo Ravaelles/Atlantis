@@ -271,6 +271,26 @@ public final class DynamicGoals {
         if (army == null)
             return;
 
+        // Mid-game Dragoon pump (owner: no combat units stall past the mid
+        // game): evaluated INDEPENDENTLY of the floor below - the floor
+        // returns early once its count is met, and the pump must keep
+        // firing exactly then (a met floor with idle Gateways is the
+        // stall). Past the opening, a rich bank with a free Gateway trains
+        // Dragoons continuously: the bank is the governor (never starves
+        // tech), the free Gateway is the signal (never queues behind busy
+        // facilities). Symmetric with GatewayDemand (rich+busy->build):
+        // rich+free->train, and the two together form the self-regulating
+        // loop. Dragoon-only by construction (hasCore is Protoss-only).
+        if (!state.inEarlyGame && state.hasCore && state.gas >= 50
+            && state.minerals >= ARMY_RICH_MINERALS && state.gatewaysFree > 0) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(race.armyUnitTypeAdvanced()),
+                ProductionGoal.PRIORITY_MAINARMY,
+                1,
+                0,
+                TargetPlacement.anywhere()));
+        }
+
         int targetArmy = Math.max(1, state.workers / 4);
         int missing = targetArmy - have;
         if (missing <= 0)
@@ -283,6 +303,12 @@ public final class DynamicGoals {
             0,
             TargetPlacement.anywhere()));
     }
+
+    /**
+     * Rich-only rule, mirroring {@link #GATEWAY_BANK_MINERALS}: the pump
+     * never starves tech - a Dragoon plus tech headroom always stays banked.
+     */
+    private static final int ARMY_RICH_MINERALS = 400;
 
     /**
      * Tech: Singularity Charge once Dragoons exist. Mirrors the legacy

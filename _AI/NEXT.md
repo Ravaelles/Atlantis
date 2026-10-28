@@ -488,6 +488,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   f11017, 57 Dragoon `no free facility` blocks f17000-18500 = all-busy, supply
   59 past the 30 gate, under the 4 cap). 4th Gateway pending at game end
   (attempt f19950 engineAccepted, constructing, ended mid-warp f21030).
+  SIM HALF CLOSED 2026-10-28 (`LongGameToSeventyTest` to 70 supply): the
+  workers/4 army floor is a ceiling without a strategic raiser - rich sim
+  banked to 10k with idle Gateways while Dragoons trickled 6->16 in 12k
+  frames and GW#3 never fired (no demand ever saturates 2 Gates). Fix is
+  the Dragoon pump (`DynamicGoals.addArmyGoal` post-opening continuous
+  goal when rich with a free Gateway, symmetric with GatewayDemand) plus
+  a sim fidelity fix (training facilities mark `busy`, like the engine's
+  idle - without it `freeGateways` never drops in sim and the gateway
+  goal can never fire there). Pinned `DragoonPumpTest` 5/5.
 - **#194** `DefendedPlace`: the mission selects ground; the army decides how to
   stand. The resolver and focus are in `atlantis.combat.focus`; landed
   2026-10-25 (commit ce4de4034): MIDDLE priority and an absolute >10-Dragoon

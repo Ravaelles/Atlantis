@@ -354,6 +354,11 @@ public final class SimDriver {
         FakeUnit unit = units.spawn(type, at.tx() + 1, at.ty());
         units.releaseSupply(type.ut().supplyRequired());
         if (facility != null) facility.setTrainingQueue(new ArrayList<AUnitType>());
+        // Live parity: a training facility is busy (engine idle is false
+        // while orders are queued), so Count.freeGateways drops it until
+        // the unit hatches. Without this the sim never sees an all-busy
+        // Gateway pair and the mid-game Gateway demand can never fire.
+        if (facility != null) facility.busy = false;
         if (type.isWorker()) {
             unit.setAction(atlantis.units.actions.Actions.GATHER_MINERALS);
             mining.assign(unit, SimMining.Job.MINING, frame);
@@ -451,6 +456,7 @@ public final class SimDriver {
         bank.spend(type.mineralPrice(), type.gasPrice(), "train " + type.name());
         units.reserveSupply(type.ut().supplyRequired());
         facility.setTrainingQueue(java.util.Collections.singletonList(type));
+        facility.busy = true;
         constructions.startTraining(facility.id(), type);
         logTrain(type, facility);
     }
