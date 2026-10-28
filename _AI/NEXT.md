@@ -332,6 +332,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   choke without superiority; defend from a standoff so the enemy commits into
   the funnel. ChokePlug is sim-pinned for melee-only enemies; no-contact hold
   yields to formation. Open: live no-contact/choke proof, then bait/collapse.
+  DATUM 2026-10-28 (game 010715, VICTORY): 263/289 FIGHT rows with foe -1 -
+  the army holds forward ground ([53,114], enemy main [95,119]) without
+  contact for most of the game; the no-contact shape is present in bulk,
+  choke-funnel proof (bait/collapse) still open.
 - **#171** High-ground choke hold: high side is preferred by the sim-pinned
   `HighGround`/`ChokeStandoff` path; it correctly stays silent vs ranged
   enemies. Live proof still needs a melee-choke game.
@@ -356,6 +360,8 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#179** ZealDrag coordination/hold-fire is sim-pinned; live losses showed
   mobile units, not freezing or coordination failure. Open: winnability against
   real opponents (0/9 FFA wins; one weak positive with Dragoon mass).
+  DATUM 2026-10-28: game 010715 won vs the native AI with 24 Dragoons / 7
+  Zealots - mobile, no freeze; FFA winnability still open.
 - **#180** Per-unit telemetry samples HP, Zealot/Dragoon distances and nearby
   enemies every 24 frames. Diagnostic-only; thin it after #184's ladder lands.
 - **#181** Split-cluster reinforcement is sim-pinned (fresh-contact reinforce,
@@ -374,6 +380,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   HP is refreshed every frame. `DuelMemory` now latches battle-frame damage; it
   is a backstop, while VETO/guns-in-range usually decide first. The one active
   Protoss consumer migrated; remaining consumers are Terran-only or dormant.
+  VERIFIED 2026-10-28: zero production callers of `isUnderAttack()` outside
+  `AUnit` itself - the only `isUnderAttack(n)` reader is `UnitStateManager`
+  (the HP trail infrastructure, not a decision) plus Terran-only turret logic.
 - **#184** TargetLadder owns the explicit nine-rule order; five rules are
   extracted (chewer, keep-current, weakest-in-range, sticky, shared),
   four still delegate to legacy implementations. Sim-pinned slices
@@ -415,18 +424,28 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   defense (strength bled 340->118); combat quality, separate slice.
 - **#189** Log priority adoption is complete: console levels and event `lvl`
   follow CONVENTIONS §27; diagnostic event volume stays MED by design. TEMP
-  lines are session-only; latest source sweep found none.
+  lines are session-only; latest source sweep found none. SWEEP 2026-10-28:
+  zero `[TEMP]` lines in production code (only the mechanism docs); one stray
+  live-path `System.out.println("PvP Zealot dont")` found in
+  `ProtossTooBigBattleToRetreat` and removed (verified: full suite 1694/1694).
 - **#188** ClusterFlee overhaul: sim pins cover homeward rally, organized
   retreat, and fighting through a blocking army; live audits found no blocking
   instance or scatter. B136's earlier “blocking” reading was withdrawn; the
   observed shape was a cut-off rearguard at the attack destination. Open: live
   blocking-geometry proof and cohesion through a lost fight. MOVE_FAILED
   refusal twins are ready; unstick remains parked until the shape recurs.
+  DATUM 2026-10-28: game 010715 (VICTORY) carries zero MOVE_FAILED rows and
+  no scatter - the shape does not recur here either.
 - **#190** Swamped cutoff dragoons glued in place: lethal live instances were
   validated; the KITE twin distinguishes no-step from engine refusal. Sim-pinned
   escalation now rallies hopeless or stuck-and-chewed Dragoons through the shared
   retreat path, including FIGHT; Zealot last-stand is unchanged. Live adjudication
   of the new escalation rows remains open.
+  DATUM 2026-10-28 (game 010715, VICTORY): KITE fires live 482 rows
+  (stepped-aside 244, stuck-no-step 192, frozen-reset 46) with 20
+  ESCAPE_RALLY rows in the same fights - the twin vocabulary for the
+  adjudication exists; per-unit stuck-to-rally linkage still needs trace
+  work.
 - **#192** Gateway demand was repeatedly cancelled on null position during
   battle. Sim-pinned fixes cover self-overlap, ground-distance search, Pylon
   anchoring, completed-footprint overlap, and bounded WAIT (480 attempts; the
@@ -455,10 +474,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   scope green. Small-army main standoff and `guardSlotFor` remain
   follow-ups; `ClusterBreach`/`ClusterTactic`/`BlockingArmy` converted
   2026-10-26 (same pair, same answers - consumer pins green).
+  DATUM 2026-10-28: the absolute >10-Dragoon main-choke ban is PvP-only by
+  code (`We.protoss() && Count.dragoons() > 10` in
+  `ProtossDefendFocusPoint`) - game 010715 fielded 24 Dragoons vs ZERG, so
+  it cannot trigger the ban; the "longer game" it needs is a long PvP.
 - **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
   shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
   re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
-  remains open.
+  remains open. DATUM 2026-10-28 (game 010715, VICTORY): fleeReason fires
+  live (RALLY 73, ESCAPE_RALLY 20, STEP_CUTOFF 1 across 94 FLEE rows);
+  flee-clear to next-FIGHT gaps 31-248f, median 124, 12/25 within the 120f
+  latch window - consistent with the latch biting when eval allows and the
+  rally holding otherwise. Full proof needs eval in the twin.
 - **#196** Workers have a named 10-tile limit measured from the main for
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
@@ -475,7 +502,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   when the midpoint exceeds six tiles, leaving room for workers to join
   (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
   (#205): a dragoon build holds the main regardless of that count until its
-  first Dragoon is finished. Open: live proof.
+  first Dragoon is finished. Open: live proof. DATUM 2026-10-28: game 010715
+  (PvZ VICTORY) shows first shots at f9885 - no early-Zerg pressure at all,
+  so neither #200 nor #205 can be proved by this vehicle; stands with #196
+  (needs a livelier opponent than the native AI).
 - **#201** Corsairs trail the main army instead of hunting: they need their own
   (default solo) cluster, merging only when threatening air exists; the
   "numerous Wraiths" line becomes a named constant with a pin (AEC §31).
@@ -487,7 +517,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   mutation-proven both ways. The `Alpha.gather` split landed 2026-10-26:
   solo Corsairs stay out of Alpha (CorsairHunt still owns them), merging
   only when the rule fires, pinned `CorsairGatherSplitTest` 2/2. Open:
-  live proof the solo flight hunts.
+  live proof the solo flight hunts. DATUM 2026-10-28: game 010715 built 0
+  Corsairs (24 Dragoons / 7 Zealots, VICTORY) - the proof needs a game that
+  builds them.
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
@@ -506,7 +538,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#203** Zerg matchup: landed 2026-10-25 (commit ce4de4034) `ProduceZealot`
   brakes excess Zealots at >=200 gas when a Core exists and the minimum Zealot
   floor is met; initial Zealots remain allowed. Pinned by
-  `ZealotGasBankBrakeTest`; live proof remains.
+  `ZealotGasBankBrakeTest`; live proof remains. DATUM 2026-10-28 (010058):
+  gas banks 200+ only in the final 70 frames (880-888 at f14717-14747,
+  game ends f14785) - the mid-game brake window never presents, so this
+  vehicle cannot prove it; needs a gas-rich mid-game.
 - **#204** Retreat floor + choke standoff depth (owner orders 2026-10-25,
   after repeated losses to over-long retreats): (1) `RetreatFloor.clamp`
   stops a FLEE rally on the `MiddleFocusChoke` standing line, never behind
@@ -536,6 +571,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
     5/5 + `RetreatFloorTest` 8/8 (was 4), both mutation-proven (killing the
     middle rung fails 4 pins, dropping the hold guard fails 1). The owner's
     companion symptom "came home, then hid in the main" is #206.
+    LIVE SUPPORT 2026-10-28 (game 010715, VICTORY f15540): 94 FLEE rows hold
+    a constant forward focus [53,114] f9920-15035, never run home (39 home
+    rows are all pre-Attack early defense f3627-4805); strength rebuilds
+    315->667 mid-rally and the game is won. Rung identity ([53,114] = which
+    ladder rung) is not provable from the twin - the shape matches the floor
+    intent, the exact rung needs trace geometry.
 - **#205** First-Dragoon gate vs Zerg (owner order 2026-10-26): on a build
   that trains Dragoons the line defending home stays at the main base until
   the first Dragoon is finished - the early-Zerg small-army hold (#200) only
@@ -561,13 +602,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fight ends and the army must re-deploy: read the anchor/hold/posture rows
   in the frames after contact, name the latch that keeps it home, then one
   rule with a pin. Do not add a fourth home-pointer before that reading.
+  DATUM 2026-10-28: game 010715 never presents the shape - Attack f4818 to
+  victory, the only home rows are pre-Attack early defense; nothing came
+  home to hide.
 - **#207** Army forms as if the enemy were in a different base (owner live
   finding 2026-10-26): an enemy base is detected, yet the army positions
   toward a base the enemy is not in. Open: line the scout/enemy-base memory
   (`EnemyUnits`, last-seen positions) up against the anchor chosen in the
   same frames of one trace and decide whether the stale base or the anchor
   choice is at fault - fix whichever one the frames convict, with a pin.
-  Needs a game where both bases are known.
+  Needs a game where both bases are known. DATUM 2026-10-28: game 010715
+  (VICTORY) knew both mains from f3658 and formed AT the correct enemy base
+  [95,119] (96 rows) - the wrong-base shape did not occur.
 - **#208** Formation in our own base faces our own main (owner live finding
   2026-10-26): slots are laid out as if we were attacking our own Nexus -
   a sign/orientation error between the formation pivot and the threat
@@ -575,7 +621,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   no longer owns the pivot - `expectedDirectionPoint` faces outward past the
   army (at-anchor bunch and forward-anchor crescents unchanged), pinned in
   `ClusterRallyTest` (red-first: old slots arc at [31,20] around the main).
-  Open: the same orientation live.
+  Open: the same orientation live. DATUM 2026-10-28: game 010715 defends
+  home only pre-Attack (39 rows f3627-4805); the orientation question needs
+  trace geometry from a home-defense game, not twins.
 - **#209** Units deep in our own main stack on each other (owner live
   finding 2026-10-26): blocked units inside the base occupy the same
   ground instead of spreading, i.e. the unstick/holder logic assumes open
@@ -594,7 +642,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   callers hold instead of falling through (pinned `FormationOrderLatchTest`
   4/4, red-first on the deny path). Measured first: 120 identical orders
   per unit per 120 defended frames in the sim. Open: live proof the line
-  calms down.
+  calms down. DATUM 2026-10-28: no formation-order twin key exists, so the
+  calm cannot be read from EVENTS - needs trace geometry or a new row.
 - **#212** Worker acquisition strategy (owner call, surfaced in
   `CASE-STUDIES.md` #53): a worker held at a construction site that cannot
   start should return to mining (`ShouldNotTravelToConstructYet` covers
@@ -688,7 +737,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   with constructing=true; the game ended f21030 exactly one Gateway build
   time later, mid-warp. Churn, not stall. Remainder narrows to goal-layer
   re-fire frequency (a goal per frame while in flight), harmless while
-  same-tile dedup absorbs it.
+  same-tile dedup absorbs it. GATEWAY FLAVOR 2026-10-28 (game 010715,
+  VICTORY f15540): 1 CONSTRUCTION_CANCEL, `Gateway proximity finish:
+  standing Gateway covers [108,6]` f12960 - the same re-fire shape absorbed
+  by proximity finish instead of same-tile dedup; no stall, game won.
+  Zero-cover false positives remain at zero.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
