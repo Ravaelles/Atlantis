@@ -61,6 +61,9 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
                 assertEquals(ClusterMission.Posture.ATTACK,
                     ClusterMission.postureFor(Count.ourCombatUnits(), false),
                     "trapped shape marches out");
+                assertEquals(PostureReason.TRAPPED_BY_MASS_ZEALOTS,
+                    PostureReasons.decideLive().reason,
+                    "contact with the mass names the trap, not the mass rule");
             }
             if (now == 40) {
                 for (FakeUnit zealot : foes) zealot.hp = 0;
@@ -71,9 +74,17 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
                     "contact lost, but the flip holds its window");
             }
             if (now == 260) {
-                assertEquals(ClusterMission.Posture.DEFEND,
+                // Owner matchup doctrine (vs Protoss): the line marches once
+                // it has teeth (here: surviving Dragoons), blind or not - so
+                // there is no window after which a massed line comes home on
+                // its own. The trap reason is spent (contact is long gone);
+                // what marches now is the mass rule, and it says so.
+                assertEquals(ClusterMission.Posture.ATTACK,
                     ClusterMission.postureFor(Count.ourCombatUnits(), false),
-                    "window over: small army with no threat holds home");
+                    "massed line holds no home window vs Protoss");
+                assertEquals(PostureReason.PROTOSS_MASS_READY,
+                    PostureReasons.decideLive().reason,
+                    "the trap is over, the mass marches under its own name");
             }
         });
     }

@@ -647,6 +647,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fight ends and the army must re-deploy: read the anchor/hold/posture rows
   in the frames after contact, name the latch that keeps it home, then one
   rule with a pin. Do not add a fourth home-pointer before that reading.
+  MATCHUP DOCTRINE LANDED 2026-10-28 (owner order: vs Zerg hold, vs Terran
+  attack, vs Protoss wait for 3 zealots or a dragoon then attack):
+  `PostureReasons` carries `vsProtoss`/`ourZealots`, and a no-contact small
+  army with mass marches as PROTOSS_MASS_READY instead of holding for
+  blind strength; toothless lines hold. Contact shapes (trap), big armies,
+  Terran pressure and the dragoon pair all still answer first, so no
+  existing pin moved - the vsProtoss flag defaults off everywhere except
+  live. `PostureTrappedArmyTest` 260 now marches under the mass reason
+  (the old window-over-DEFEND was the pre-doctrine shape); the latch
+  still holds the 60-frame rally.
   ATTACK DECISION LANDED 2026-10-28 (owner order): `AttackSnapshot` (4
   nullable corners, engine-free) -> `AttackDecider.decide` (verbatim old
   chain) -> `AttackDecision{target, AttackReason}`; StarEngine pins every

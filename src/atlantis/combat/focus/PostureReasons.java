@@ -52,6 +52,14 @@ public final class PostureReasons {
      */
     public static final int TERRAN_EARLY_ARMY = 2;
     public static final int TERRAN_EARLY_GOONS = 1;
+
+    /**
+     * Owner matchup doctrine (vs Protoss): the line marches once it has
+     * teeth - this many zealots or this many dragoons. Below it the line
+     * waits at home, blind or not.
+     */
+    public static final int PROTOSS_MASS_ZEALOTS = 3;
+    public static final int PROTOSS_MASS_GOONS = 1;
     /**
      * Owner order 2026-10-27: a discovered enemy Dragoon mass outguns a
      * small line - below this many own Dragoons and below this eval the
@@ -115,14 +123,33 @@ public final class PostureReasons {
                 "Early dragoons ok (" + in.ourDragoons + " goons, " + in.strength + "%), pressure");
         }
 
-        if (in.ours >= EARLY_MARCH_ARMY_SIZE && in.strength >= EARLY_MARCH_STRENGTH) {
-            return new Verdict(PostureReason.EARLY_STRENGTH, ClusterMission.Posture.ATTACK,
-                "Early strength ok (" + in.ours + " units, " + in.strength + "%)");
-        }
-
         if (atlantis.combat.focus.TrappedByMassZealots.applies(in.ours, in.ourDragoons, in.enemyZealots, in.gameSeconds)) {
             return new Verdict(PostureReason.TRAPPED_BY_MASS_ZEALOTS, ClusterMission.Posture.ATTACK,
                 "Trapped by mass zealots (" + in.ours + " vs " + in.enemyZealots + ")");
+        }
+
+        // Owner matchup doctrine (vs Protoss, no contact): a small line
+        // holds until it has teeth - 3 zealots or a dragoon - then it
+        // marches. In contact the fight rules above own the unit, so the
+        // gate only answers the blind wait. Vs Zerg small lines already
+        // hold and vs Terran they already pressure above, so only Protoss
+        // reaches here; big armies march on headcount above. Contact
+        // shapes (trap above) and blind strength (below) bracket it: the
+        // trap wins contact, the blind march wins unmassed strength, the
+        // mass owns the no-contact rest.
+        if (!in.enemyKnown && in.vsProtoss && in.ours < ClusterMission.ATTACK_ARMY_SIZE) {
+            if (in.ourZealots >= PROTOSS_MASS_ZEALOTS || in.ourDragoons >= PROTOSS_MASS_GOONS) {
+                return new Verdict(PostureReason.PROTOSS_MASS_READY, ClusterMission.Posture.ATTACK,
+                    "Protoss mass ready (" + in.ourZealots + "z " + in.ourDragoons + "g), march");
+            }
+
+            return new Verdict(PostureReason.HOLD_GROUND, ClusterMission.Posture.DEFEND,
+                "Waiting for Protoss mass (" + in.ourZealots + "z " + in.ourDragoons + "g)");
+        }
+
+        if (in.ours >= EARLY_MARCH_ARMY_SIZE && in.strength >= EARLY_MARCH_STRENGTH) {
+            return new Verdict(PostureReason.EARLY_STRENGTH, ClusterMission.Posture.ATTACK,
+                "Early strength ok (" + in.ours + " units, " + in.strength + "%)");
         }
 
         return new Verdict(PostureReason.HOLD_GROUND, ClusterMission.Posture.DEFEND,
@@ -161,6 +188,9 @@ public final class PostureReasons {
         Input in = new Input();
         in.ours = Count.ourCombatUnits();
         in.ourDragoons = Count.dragoons();
+        in.ourZealots = Count.zealots();
+        in.vsProtoss = atlantis.game.player.Enemy.protoss();
+        in.enemyKnown = Select.enemy().combatUnits().notEmpty();
         in.enemyZealots = EnemyUnits.zealots();
         in.enemyDragoons = EnemyUnits.dragoons();
         in.minerals = A.minerals();
@@ -204,6 +234,9 @@ public final class PostureReasons {
     public static final class Input {
         public int ours;
         public int ourDragoons;
+        public int ourZealots;
+        public boolean vsProtoss;
+        public boolean enemyKnown;
         public int enemyZealots;
         public int enemyDragoons;
         public int minerals;

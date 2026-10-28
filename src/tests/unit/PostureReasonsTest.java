@@ -230,4 +230,62 @@ public class PostureReasonsTest {
         assertEquals("Enemy dragoons (2 goons, eval 1.0), coming home",
             decideFull(3, 2, 300, true, true, "vP", false, 2, 1.0, false).text);
     }
+
+    @Test
+    public void protossMassMarchesWithoutContact() {
+        // Owner matchup doctrine: vs Protoss with no contact, a line with
+        // teeth marches instead of holding for blind strength.
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 4;
+        in.ourDragoons = 4;
+        in.ourZealots = 0;
+        in.vsProtoss = true;
+        in.enemyKnown = false;
+        in.strength = 999;
+        in.gameSeconds = 100;
+
+        PostureReasons.Verdict verdict = PostureReasons.decide(in);
+
+        assertEquals(ClusterMission.Posture.ATTACK, verdict.posture);
+        assertEquals(PostureReason.PROTOSS_MASS_READY, verdict.reason);
+    }
+
+    @Test
+    public void protossToothlessLineWaitsEvenBlind() {
+        // Same blindness, no teeth: holding is the doctrine, not a weak
+        // blind march - 2 zealots see nothing and stay home.
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 2;
+        in.ourDragoons = 0;
+        in.ourZealots = 2;
+        in.vsProtoss = true;
+        in.enemyKnown = false;
+        in.strength = 999;
+        in.gameSeconds = 100;
+
+        PostureReasons.Verdict verdict = PostureReasons.decide(in);
+
+        assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
+        assertEquals(PostureReason.HOLD_GROUND, verdict.reason);
+    }
+
+    @Test
+    public void protossContactStillTrapsDespiteMass() {
+        // The gate never eats contact shapes: massed Dragoons chewing
+        // zealots still read TRAPPED, not mass-ready.
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 4;
+        in.ourDragoons = 4;
+        in.ourZealots = 0;
+        in.vsProtoss = true;
+        in.enemyKnown = true;
+        in.enemyZealots = 6;
+        in.strength = 200;
+        in.gameSeconds = 100;
+
+        PostureReasons.Verdict verdict = PostureReasons.decide(in);
+
+        assertEquals(ClusterMission.Posture.ATTACK, verdict.posture);
+        assertEquals(PostureReason.TRAPPED_BY_MASS_ZEALOTS, verdict.reason);
+    }
 }

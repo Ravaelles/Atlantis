@@ -36,6 +36,14 @@ public enum PostureReason {
     HOLD_GROUND,
 
     /**
+     * Owner matchup doctrine (vs Protoss): hold until the line has teeth -
+     * 3 zealots or a dragoon - then march, even blind. A toothless line
+     * never attacks; big armies march on headcount above, contact shapes
+     * (trap) answer above. Small armies only.
+     */
+    PROTOSS_MASS_READY,
+
+    /**
      * Owner order 2026-10-26: 3+ units at 140%+ relative strength march
      * instead of holding.
      */
