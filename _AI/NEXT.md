@@ -519,11 +519,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#197** Trapped-Dragoon posture is sim-calibrated and latched; the trapped
   rule lives in `atlantis.combat.focus` with #194. Open: live proof of an army
   attacking out of a trapped defense; inventory other posture reasons later.
+  DATUM 2026-10-28: postures observed live are only ATTACK/DEFEND (010715:
+  344/39; 012238: 312/103; 010058: 92/270) - no TRAPPED row ever surfaces
+  in the twin; the latch is silent or never triggers in these games.
 - **#198** Specialist behaviors landed sim-pinned: scarab production, Corsair
   hunting, attacked DT retreat, and High Templar storm selection (including
   deep-energy tiers and snipes). Observers use their own detector chain and fall
   through the specialist dispatch. The 195-energy single-target tier is rarely
   expressible in sim; live geometry remains its evidence path.
+  DATUM 2026-10-28: zero High Templar (also zero Corsairs/DT/Scouts) warped
+  in 3 audited V2 macro games (010715, 010058, 012238: Zealot/Dragoon-only
+  armies) - the whole specialist tier never presents; needs a build that
+  techs there, same vehicle problem as #85/#201.
 - **#200** Against early Zerg, fewer than five combat units hold at the main
   when the midpoint exceeds six tiles, leaving room for workers to join
   (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
