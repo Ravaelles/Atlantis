@@ -267,6 +267,7 @@ public final class GameStateSnapshot {
         snapshot.enemyLurkers = atlantis.information.enemy.EnemyUnits.lurkers();
         snapshot.combatUnits = Count.ourCombatUnits();
         snapshot.corsairs = Count.corsairs();
+        snapshot.observers = Count.observers();
         snapshot.hasStargate =
             Count.ofTypeWithUnfinished(AUnitType.Protoss_Stargate) > 0;
         snapshot.enemyCarrierTech =

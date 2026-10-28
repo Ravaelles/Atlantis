@@ -73,6 +73,7 @@ public final class DynamicGoals {
         addDetectionGoals(goals, state);
         addStargateGoal(goals, state);
         addCorsairGoal(goals, state);
+        addObserverPump(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
@@ -102,9 +103,6 @@ public final class DynamicGoals {
             ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Observatory),
-            ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
-        goals.add(new ProductionGoal(
-            UnitProducible.of(AUnitType.Protoss_Observer),
             ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
 
         if (!state.hasForge) {
@@ -178,6 +176,33 @@ public final class DynamicGoals {
 
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Corsair),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Observer pump (Protoss): eyes scale with the threat - three on the
+     * hidden-unit flag (or one per 40 supply, whichever is more), four
+     * against seen lurkers. Replaces the old single-Observer detection
+     * goal: the count rides the standing eyes (losses replaced, never
+     * stockpiled). Routine eyes without a flag (strength milestones,
+     * quite-late backstop) stay unported - the snapshot reads pressure,
+     * not the clock. Vs Terran the legacy want is one per 40 supply; the
+     * snapshot cannot tell Terran from unknown, so the flag formula
+     * answers (at most one eye over).
+     */
+    private static void addObserverPump(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.enemyHasHiddenUnits
+            && !(state.enemyIsZerg && state.enemyLurkers >= 1)) return;
+
+        int want = Math.max(1 + 2, state.supplyTotal / 40);
+        if (state.enemyIsZerg && state.enemyLurkers >= 1) {
+            want = Math.max(want, 4);
+        }
+        if (want - state.observers <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Observer),
             ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
     }
 
@@ -670,6 +695,12 @@ public final class DynamicGoals {
         public boolean hasStargate;
 
         /**
+         * Observers standing (the pump scales eyes with the threat and
+         * replaces losses, it never stockpiles).
+         */
+        public int observers;
+
+        /**
          * Saving for Dark Templar: hidden-units tech is warping
          * (Citadel or Archives unfinished) while the strategy goes hidden.
          * Basics wait below their floors instead of eating the DT bank.
@@ -783,6 +814,7 @@ public final class DynamicGoals {
             anchored.combatUnits = combatUnits;
             anchored.corsairs = corsairs;
             anchored.hasStargate = hasStargate;
+            anchored.observers = observers;
             anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;

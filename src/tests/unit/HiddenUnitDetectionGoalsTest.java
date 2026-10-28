@@ -103,6 +103,22 @@ public class HiddenUnitDetectionGoalsTest {
     }
 
     @Test
+    public void lurkersScaleEyesToFour() {
+        DynamicGoals.GameSnapshot snapshot = state(true, false);
+        snapshot.enemyLurkers = 2;
+
+        assertTrue(hasGoal(contribute(snapshot), AUnitType.Protoss_Observer),
+            "2 lurkers want 4 eyes, none standing: " + contribute(snapshot));
+
+        DynamicGoals.GameSnapshot full = state(true, false);
+        full.enemyLurkers = 2;
+        full.observers = 4;
+
+        assertFalse(hasGoal(contribute(full), AUnitType.Protoss_Observer),
+            "4 standing eyes hold the patrol: " + contribute(full));
+    }
+
+    @Test
     public void noSightingMeansNoDetectionGoals() {
         List<ProductionGoal> goals = contribute(state(false, false));
 

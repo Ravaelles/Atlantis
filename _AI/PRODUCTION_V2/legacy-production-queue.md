@@ -106,7 +106,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?)
 - [ ] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?)
 - [ ] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?)
-- [ ] Q76 `ProduceObserver.java` [PROTOSS] (P4-demand?)
+- [x] Q76 `ProduceObserver.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 observer pump (flag 3-or-1-per-40, lurkers 4, losses replaced; routine clock-eyes unported; HiddenUnitDetectionGoalsTest +1).
 - [ ] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?)
 - [ ] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?)
 - [ ] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?)
