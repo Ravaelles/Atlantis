@@ -1227,3 +1227,21 @@ ClearAllCaches; choke guard test widened to the scatter band (4.5).
 If red recurs, bisect with explicit --select-class lists in tree order
 (see /tmp/opencode/*.args pattern) - do NOT "fix" by resetting the
 global FakeUnit id counter.
+
+## Sweep 2026-10-28 late (owner-ordered legacy production deletion)
+- Owner order: move ALL old production code to `src-old/`, breakage
+  accepted ("even if the project does not compile"). Executed
+  2026-10-28: `production/dynamic/**`, `production/orders/**`,
+  `production/requests/**` (223 files) plus `AbstractDynamicUnits` and
+  `ProductionDecisionExecutor` moved to mirrored `src-old/` paths
+  (history preserved via `git mv`). Kept: `Construction/**` (V2 builder
+  actuator, incl. the Refresh/Cancel machinery), building management,
+  GoalBoard, twins, ForceExit, V2 entry points.
+- Measured breakage: 100 javac errors - `queue.order.ProductionOrder`
+  refs in `AUnit`/`AUnitOrders`/`Construction`, `orders.build` refs in
+  `AStrategy`, plus test refs (72 unit + 8 acceptance). No new behavior;
+  the tree does not compile until the actuator is re-pointed at V2 types.
+- Overruled alternative (§3): incremental #145->#147 deletions with a
+  game proof each; the owner chose the bulk move to end the
+  double-policy churn. Repair queue (in order): order-type refs in the
+  actuator, `AStrategy` build-order refs, test refs or deletions.
