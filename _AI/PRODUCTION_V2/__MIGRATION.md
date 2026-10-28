@@ -48,6 +48,12 @@ mechanism - numbers first.
 
 ## Phase 2 — single author (WO-144)
 
+STATUS 2026-10-28: the supply contract (`dynamic/supply/NeedDynamicSupply`
++ `ProtossNeedDynamicSupply`) is already board-consumed and pinned - no
+refactor needed. Open: convergence of the flat-4 V2 goal with the
+6/10/14 bands (WO-144 delta 1), then the legacy callers move; both need
+an owner-run Wine proof. Walk queue: `PRODUCTION_V2/legacy-production-queue.md`.
+
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +
 fallback to `src-old/` (step 4). Exit: one author, supply pumps

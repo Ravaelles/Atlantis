@@ -1,7 +1,7 @@
 # Legacy production walk queue
 
 Owner order 2026-10-28: every class in dynamic/, orders/, requests/ walked one by one along _AI/PRODUCTION_V2/__MIGRATION.md (queue deletion Phase 4 LAST). Protoss paths only; TERRAN/ZERG moved to src-old/ (excluded, never repaired); neutral core touched only when it blocks a Protoss step.
-Mark: [ ] todo, [x] done (commit hash), [~] excluded.
+Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open delta noted on the row.
 
 
 ## dynamic
@@ -116,8 +116,8 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded.
 - [ ] Q83 `ZealotInsteadDragoon.java` [PROTOSS] (P4-demand?)
 
 ## dynamic/supply
-- [ ] Q84 `NeedDynamicSupply.java` [neutral] (P2-authorship)
-- [ ] Q85 `ProtossNeedDynamicSupply.java` [neutral] (P2-authorship)
+- [>] Q84 `NeedDynamicSupply.java` [neutral] (P2-authorship) — walked 2026-10-28: pure contract, already board-consumed (`GoalBoardFeeder`), no engine deps; convergence with the flat-4 V2 goal open (WO-144 d1).
+- [>] Q85 `ProtossNeedDynamicSupply.java` [neutral-by-path, PROTOSS-by-content] (P2-authorship) — walked 2026-10-28: bands 6/10/14 + unfinished veto, pinned (`ProtossNeedDynamicSupplyTest`); no refactor needed until the WO-144 d1 game proof.
 
 ## dynamic/terran
 - [~] Q86 `TerranDynamicBuildingsCommander.java` [TERRAN] (P4?)
