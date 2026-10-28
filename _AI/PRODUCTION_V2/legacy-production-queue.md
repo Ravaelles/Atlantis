@@ -69,7 +69,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Reaver/Shuttle chain.
 - [ ] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
 - [x] Q48 `ProduceStargate.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 Stargate+Corsair goals (`StargateCorsairTest` 6/6).
-- [ ] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only vs Zerg; ports with the DT/HT chain.
+- [x] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Archives goal (mission + BO-permission clauses dropped, noted; `TemplarChainTest`).
 
 ## dynamic/protoss/decisions
 - [x] Q50 `AllowProduceDragoon.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 army gates (188 cap, 184 veto + rich bypass, DT-saving; `ArmyGatesTest` 7/7).
@@ -93,7 +93,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q62 `ResearchNow.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (issue-at-free-building is the V2 dispatcher seam).
 - [ ] Q63 `ResearchProtossGroundArmor.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; ports when the mid-game proves it needs armor (game proof first).
 - [ ] Q64 `ResearchProtossGroundWeapons.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; same gate as armor.
-- [ ] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Archives chain.
+- [x] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Storm goal (caster-standing gate; `TemplarChainTest` 7/7).
 - [x] Q66 `ResearchSingularityCharge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 tech goal).
 - [x] Q67 `TechResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
 - [ ] Q68 `TooWeakToTech.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: consumed only by the unported upgrade researchers; folds into their chunk.
@@ -103,9 +103,9 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Open micro-doctrine, needs value proof.
 - [ ] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (Tribunal standing, 2/5/2 caps); ports behind the Tribunal chain.
 - [x] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Corsair pump (Zerg branch; Wraith branch needs enemyIsTerran, unported).
-- [ ] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Archives chain (saving flag already V2).
+- [x] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 DT pump (tiered caps, bay-outranks-first, lifetime cap becomes loss replacement).
 - [x] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + pump + gates).
-- [ ] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
+- [x] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 HT pump (tiered caps 2/3/4/6); the upstream disable dies with the legacy caller.
 - [x] Q76 `ProduceObserver.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 observer pump (flag 3-or-1-per-40, lurkers 4, losses replaced; routine clock-eyes unported; HiddenUnitDetectionGoalsTest +1).
 - [ ] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (supply 70+, obs-before-reaver); ports with the SupportBay chain.
 - [ ] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only reaver rearming; ports with the Reaver chain.

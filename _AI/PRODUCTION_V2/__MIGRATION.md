@@ -65,6 +65,11 @@ ling mix ported (`ArmyGatesTest` 9/9), observer eyes scaled
 first), Archives/Storm + DT/HT, SupportBay + Reaver/Shuttle/Arbiter,
 per-base Pylons, Q70 proximity siting, Q82 dispatcher expediting,
 Q53 gateway rush tuning. Suite 1767/1767, arch advisory unchanged.
+Templar chain landed 2026-10-28 (Archives + HT + Storm + DT as V2
+goals, `TemplarChainTest` 7/7; mission-attack and BO-permission
+clauses dropped with notes, lifetime DT cap becomes loss replacement,
+free-Robo refinement stays behind). Suite 1774/1774, arch advisory
+unchanged.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

@@ -272,6 +272,11 @@ public final class GameStateSnapshot {
         snapshot.zerglings = atlantis.information.enemy.EnemyUnits.zerglings();
         snapshot.hasObservatory = Count.ofType(AUnitType.Protoss_Observatory) > 0;
         snapshot.hasCitadel = Have.citadel();
+        snapshot.hasArchives = Have.a(AUnitType.Protoss_Templar_Archives);
+        snapshot.highTemplar = Count.ht();
+        snapshot.darkTemplar = Count.darkTemplars();
+        snapshot.hasSupportBay = Count.ofType(AUnitType.Protoss_Robotics_Support_Bay) > 0;
+        snapshot.reavers = Count.reavers();
         snapshot.hasStargate =
             Count.ofTypeWithUnfinished(AUnitType.Protoss_Stargate) > 0;
         snapshot.enemyCarrierTech =

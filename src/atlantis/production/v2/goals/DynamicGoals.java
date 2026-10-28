@@ -76,6 +76,10 @@ public final class DynamicGoals {
         addObserverPump(goals, state);
         addCitadelGoal(goals, state);
         addLegEnhancementsGoal(goals, state);
+        addArchivesGoal(goals, state);
+        addHighTemplarGoal(goals, state);
+        addStormGoal(goals, state);
+        addDarkTemplarGoal(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
@@ -241,6 +245,89 @@ public final class DynamicGoals {
             1,
             0,
             TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Templar Archives (Protoss): the templar line opens vs Zerg once the
+     * bank or the supply says so - 90+ supply or 230+ gas, a line that can
+     * hold it (15+ combat units with 120+... 140+ strength, or 200/200 in
+     * hand). Dropped from the legacy read: the mission-attack clause (no
+     * mission signal rides the snapshot) and the BO transition permission
+     * (BOs own the opening only; the Archives is long past it). The
+     * Citadel prerequisite schedules itself.
+     */
+    private static void addArchivesGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.enemyIsZerg) return;
+        if (!(state.supplyUsed >= 90 || state.gas > 230)) return;
+        if ((state.combatUnits <= 15 || state.armyStrength <= 140)
+            && !(state.minerals >= 200 && state.gas >= 200)) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Templar_Archives),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * High Templar (Protoss): the storm casters the Archives trains, up to
+     * a supply-tiered cap (2/3/4/6). Count-1 pump while short, same shape
+     * as the Corsair and Observer pumps.
+     */
+    private static void addHighTemplarGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasArchives) return;
+
+        int want;
+        if (state.supplyUsed <= 145) want = 2;
+        else if (state.supplyUsed <= 160) want = 3;
+        else if (state.supplyUsed <= 180) want = 4;
+        else want = 6;
+        if (want - state.highTemplar <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_High_Templar),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Psionic Storm (Protoss): researched once a Templar stands to cast
+     * it. Research coverage is execution-side.
+     */
+    private static void addStormGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.highTemplar < 1) return;
+
+        goals.add(new ProductionGoal(
+            atlantis.production.v2.TechProducible.of(bwapi.TechType.Psionic_Storm),
+            ProductionGoal.PRIORITY_NORMAL,
+            1,
+            0,
+            TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Dark Templar (Protoss): the unseen blade, up to a supply-tiered cap
+     * (2/3/4/5/6). A Support Bay with no Reaver yet outranks the first DT
+     * (the gas builds the Reaver first); the free-Robo refinement stays
+     * behind - V2 never sees facility idleness. Lifetime-10 cap becomes
+     * loss replacement, the standing rule all the other pumps follow.
+     */
+    private static void addDarkTemplarGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasArchives) return;
+        if (state.hasSupportBay && state.reavers == 0) return;
+
+        int want;
+        if (state.supplyUsed <= 80) want = 2;
+        else if (state.supplyUsed <= 110) want = 3;
+        else if (state.supplyUsed <= 140) want = 4;
+        else if (state.supplyUsed <= 160) want = 5;
+        else want = 6;
+        if (want - state.darkTemplar <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Dark_Templar),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
     }
 
     /**
@@ -779,6 +866,18 @@ public final class DynamicGoals {
         public boolean hasCitadel;
 
         /**
+         * Templar chain inputs: Archives standing (HT/DT train at it),
+         * High Templar and Dark Templar standing, Support Bay standing
+         * with Reavers standing (a bay with no Reaver yet outranks the
+         * first DT - the gas builds the Reaver first).
+         */
+        public boolean hasArchives;
+        public int highTemplar;
+        public int darkTemplar;
+        public boolean hasSupportBay;
+        public int reavers;
+
+        /**
          * Saving for Dark Templar: hidden-units tech is warping
          * (Citadel or Archives unfinished) while the strategy goes hidden.
          * Basics wait below their floors instead of eating the DT bank.
@@ -897,6 +996,11 @@ public final class DynamicGoals {
             anchored.zerglings = zerglings;
             anchored.hasObservatory = hasObservatory;
             anchored.hasCitadel = hasCitadel;
+            anchored.hasArchives = hasArchives;
+            anchored.highTemplar = highTemplar;
+            anchored.darkTemplar = darkTemplar;
+            anchored.hasSupportBay = hasSupportBay;
+            anchored.reavers = reavers;
             anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;
