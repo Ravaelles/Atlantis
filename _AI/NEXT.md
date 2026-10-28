@@ -1227,39 +1227,23 @@ ClearAllCaches; choke guard test widened to the scatter band (4.5).
 If red recurs, bisect with explicit --select-class lists in tree order
 (see /tmp/opencode/*.args pattern) - do NOT "fix" by resetting the
 global FakeUnit id counter.
+## Sweep 2026-10-28 late (bulk legacy move REVERTED on owner order)
+- The owner judged the bulk move to `src-old/` (223 files) as too much:
+  it removed good classes V2 depends on (e.g. `Queue.refresh()` carries
+  a V2-LIVE guard). Reverted 2026-10-28; the tree is whole again.
+- New direction: per-class refactor along `_AI/__MIGRATION.md`
+  (queue deletion is Phase 4, LAST), Protoss classes first, other races
+  left out of the repair path. Tracker: `_AI/legacy-production-queue.md`
+  (every class in `dynamic/`, `orders/`, `requests/`, one line each).
 
-## Sweep 2026-10-28 late (owner-ordered legacy production deletion)
-- Owner order: move ALL old production code to `src-old/`, breakage
-  accepted ("even if the project does not compile"). Executed
-  2026-10-28: `production/dynamic/**`, `production/orders/**`,
-  `production/requests/**` (223 files) plus `AbstractDynamicUnits` and
-  `ProductionDecisionExecutor` moved to mirrored `src-old/` paths
-  (history preserved via `git mv`). Kept: `Construction/**` (V2 builder
-  actuator, incl. the Refresh/Cancel machinery), building management,
-  GoalBoard, twins, ForceExit, V2 entry points.
-- Measured breakage: 100 javac errors - `queue.order.ProductionOrder`
-  refs in `AUnit`/`AUnitOrders`/`Construction`, `orders.build` refs in
-  `AStrategy`, plus test refs (72 unit + 8 acceptance). No new behavior;
-  the tree does not compile until the actuator is re-pointed at V2 types.
-- Overruled alternative (§3): incremental #145->#147 deletions with a
-  game proof each; the owner chose the bulk move to end the
-  double-policy churn. Repair queue (in order): order-type refs in the
-  actuator, `AStrategy` build-order refs, test refs or deletions.
-
-- **#224** Actuator seam repair after the legacy move (owner order
-  2026-10-28, executes WO-147 queue half). Measured scope: 2000+ javac
-  errors (cap hit - true count higher), ~60 production files + tests.
-  Dominant refs: `queue.order` (164), `queue` (119),
-  `requests.produce` (32), `queue.add` (25), `orders.build` (18),
-  `dynamic.*` (~70). Repair direction (piecewise, SOLID): a V2-native
-  demand carrier (`atlantis.production.v2`, item + minSupply +
-  exact-position + modifier + id) replacing `ProductionOrder` at the
-  retained seam first (`Construction`, `AUnit`, `AUnitOrders`,
-  `GameOrderDirector.orderFor`), then position readers
-  (`CatalogueSiteAdapter`, `DefineExactPositionForNewConstruction`,
-  `RequestBuildingNear`, `NewConstructionRequest`), then listeners/
-  recorders/strategy responses. No legacy file returns from `src-old/`.
-  First slice must restore `javac` clean before any behavior pin runs.
+- **#224** Per-class legacy production refactor (owner order 2026-10-28,
+  per `_AI/__MIGRATION.md` phases 2-4). Protoss classes only, in
+  migration order: supply/queue authorship (Phase 2, WO-144), siting
+  chain (Phase 3, WO-145/146), queue + order types (Phase 4, WO-147).
+  Non-Protoss classes are excluded from repair (commented out in one
+  pass, never repaired). Each class: read, spec the V2-native shape,
+  stub-pin, refactor, suite green, game proof where the phase demands
+  it. Queue for the walk: `_AI/legacy-production-queue.md`.
 - **#225** Refresh-site churn (owner log 2026-10-28: Pylon
   [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
   Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit
@@ -1268,10 +1252,8 @@ global FakeUnit id counter.
   finder + cancel/re-request each pass a Nexus cannot issue. Fix
   direction: refresh only on completed-building footprint (units walk
   away - the builder issues when free), and a per-construction
-  cooldown after a re-site; the cancel+`AddToQueue` re-request path is
-  rewritten onto the V2 carrier from #224 (in V2 a cancelled site
-  refires from its goal - no explicit re-request). Needs the #224
-  carrier first, then a sim/game pin.
+  cooldown after a re-site. Rides the #224 siting slice, then a
+  sim/game pin.
 - **#226** Retreat to unwalkable ground (owner log 2026-10-28: Zealot
   [95,2] -> [55,22] refused in `AUnitOrders.move`, once-per-minute
   stack trace via `RetreatFromLostFight` M_FORMATION branch).
@@ -1281,6 +1263,7 @@ global FakeUnit id counter.
   the unit still counts as retreated. Fix direction: validity gate in
   `decide()` (the owned site, §31) - unscattered fallback to the
   anchor when standable, else `NOWHERE_TO_RUN` and fight; producers
-  fixed, the funnel keeps refusing. Needs #224 compile first, then a
+  fixed, the funnel keeps refusing. Rides the #224 queue, then a
   StarEngine sim pin (beaten unit, unwalkable anchor: fights instead
   of a refused order) + suite.
+
