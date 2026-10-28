@@ -345,7 +345,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   DATUM 2026-10-28 (game 010715, VICTORY): 263/289 FIGHT rows with foe -1 -
   the army holds forward ground ([53,114], enemy main [95,119]) without
   contact for most of the game; the no-contact shape is present in bulk,
-  choke-funnel proof (bait/collapse) still open.
+  choke-funnel proof (bait/collapse) still open. DATUM 2026-10-28 (game
+  012238, PvP Destination, loss): scout latch generalizes to the new map
+  (452/488 rows known from first sighting); Pylon siting clean (8 warps,
+  gates 8-63, no duplicates, no leak - naturals connected here as predicted
+  in #213); the single CONSTRUCTION_CANCEL is the known proximity-finish
+  absorption (Pylon [57,117]), zero cover false positives.
 - **#171** High-ground choke hold: high side is preferred by the sim-pinned
   `HighGround`/`ChokeStandoff` path; it correctly stays silent vs ranged
   enemies. Live proof still needs a melee-choke game.
@@ -491,6 +496,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   code (`We.protoss() && Count.dragoons() > 10` in
   `ProtossDefendFocusPoint`) - game 010715 fielded 24 Dragoons vs ZERG, so
   it cannot trigger the ban; the "longer game" it needs is a long PvP.
+  DATUM 2026-10-28 (game 012238, PvP Destination, loss): 10 Dragoons trained
+  / 8 died, live count never exceeds 10 - the ban stays correctly silent;
+  still no game masses >10 live Dragoons vs Protoss.
 - **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
   shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
   re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
@@ -503,6 +511,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
   The same livelier vehicle would help #192 calibration and #188b.
+  PARTIAL LIVE 2026-10-28 (game 012238, PvP): the vehicle exists after all -
+  enemy raiders killed 10 probes on the line f15086-15707. The rule engages
+  live and tagged: `#Attack_Unit/Swarm!` then ordered `-WorkerDefenceRun`
+  + `#Move/RunToDist` (units 171/190). The line still fell when overrun -
+  engagement proven, rescue unproven.
 - **#197** Trapped-Dragoon posture is sim-calibrated and latched; the trapped
   rule lives in `atlantis.combat.focus` with #194. Open: live proof of an army
   attacking out of a trapped defense; inventory other posture reasons later.
@@ -617,7 +630,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   rule with a pin. Do not add a fourth home-pointer before that reading.
   DATUM 2026-10-28: game 010715 never presents the shape - Attack f4818 to
   victory, the only home rows are pre-Attack early defense; nothing came
-  home to hide.
+  home to hide. DATUM 2026-10-28 (game 012238, PvP loss): army comes home on
+  Defend f14964 and dies FIGHTING there (shots from f14964, 10 probes lost
+  on the line) - defending under attack, not hiding; the latch shape still
+  unobserved.
 - **#207** Army forms as if the enemy were in a different base (owner live
   finding 2026-10-26): an enemy base is detected, yet the army positions
   toward a base the enemy is not in. Open: line the scout/enemy-base memory
@@ -684,7 +700,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   origins unchanged, pinned `FirstFourPylonsStayAtMainTest` (red-first:
   toMain=40/toNatural=0). Open: live proof on a two-base custom map -
   TauCross proves nothing (its natural detection holds, the leak never
-  fires there).
+  fires there). TRIGGER CHARACTERIZED 2026-10-28 from code
+  (`DefineNaturalBase`): natural is null iff no second base location is
+  ground-connected to the main (island starts, UMS) - so the proof vehicle
+  must be an island/UMS map, not just any 2-player ladder map (a (2)Destination
+  PvP game is running to re-verify siting generally, but its naturals are
+  connected, so it cannot trigger this leak).
 - **#214** Decision reasons in CherryVis (owner: VERY HIGH priority).
   Every big decision logs its reason; where a behavior is unattributed
   today, the reason row IS the fix. (a) Siting: every construction logs
