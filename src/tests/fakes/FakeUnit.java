@@ -50,6 +50,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean cloaked = false;
     public boolean completed = true;
     public boolean constructing = false;
+    public boolean stuckUnitForTests = false;
     public int cooldown = 0;
     /**
      * Sim-owned remaining build/research/upgrade time (frames). The stub
@@ -337,6 +338,17 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public boolean isConstructing() {
         return constructing;
+    }
+
+    @Override
+    public boolean isStuck() {
+        return stuckUnitForTests;
+    }
+
+    public FakeUnit setStuckForTests(boolean stuck) {
+        stuckUnitForTests = stuck;
+
+        return this;
     }
 
     public FakeUnit setConstructing(boolean constructing) {

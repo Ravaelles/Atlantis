@@ -916,7 +916,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   as the log row), so Task names what the army does. Manager-driven
   units untouched (their manager owns the slot, never overwritten).
   Pinned in `BuilderOrderLogTest` (mirror fires for the managerless,
-  never clobbers a manager). Live proof rides the next trace.
+  never clobbers a manager). LIVE PROOF 2026-10-28 (game 195338,
+  VICTORY f23160, first jar with the mirror): 98/98 units_updates units
+  carry manager rows and the top entries are army behaviors (ClusterForm,
+  ClusterCollapse, ClusterMove, ClusterReengage, ClusterKite, ClusterStandoff,
+  ClusterGhost, ClusterUnstick) - Task names what the army does, manager
+  rows unchanged in shape. Same game: single Core (walk-window fix holds),
+  no strength doubling (max 1.36x), 0 stale skips, ATTACK_DECISION x10.
   LIVE PROOF 2026-10-28 (game 013929, first jar with the channel): Task
   populates - 130 units in units_updates, tooltip-only rows for
   managerless units (army included). FLAP FINDING in the same game:
@@ -1160,3 +1166,54 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   unfinished) reads as a filter problem, a short raw map as never-wrapped.
   The next halving adjudicates itself. Pinned row-count only (shape is the
   twin's, tested where it changes). Suite 1731/1731 green.
+
+## Handoff 2026-10-28 ~20:40 (context saver - read this first next session)
+
+Landed and committed (see `git log --oneline -12`, all suite-green at commit):
+fog-heal loop + SHOW_HEAL twin, create-wrap, Task-mirror behavior rows
+(live-proven 195338: 98/98 units carry manager Tasks with behavior names),
+CATALOGUE_SITE WHERE, CLUSTER eval + transition rows, LATCH_HELD verdict,
+walk-window fix (inFlight counts IN_PROGRESS-without-unit; live: single
+Core f4246 in 195338), TargetPlacement near-coords, DragoonPumpTest.
+
+UNCOMMITTED - verify then commit (do NOT run tests while a Wine game runs):
+1. `LiveExistingItems.hasLiveComingBuilding`: in-flight counts only
+   constructions with a builder that is alive AND not engine-stuck
+   (`builder == null` still counts - a fresh request with no one assigned
+   yet). Fixes the 193634 stall shape (supply 49, bank 5k, zero Pylon
+   goals f8104-17223: a stuck site suppressed every later row).
+   + `FakeUnit.setStuckForTests` seam + dead-builder pin test.
+   STILL NEEDED: stuck-builder pin test, targeted run, FULL suite, commit.
+   NEXT lines for this are already in the tree (uncommitted _AI/NEXT.md).
+2. `ACherryVis_OrderWatcher.mirrorBehaviorAsTask` + BuilderOrderLogTest
+   pins: COMMITTED (93890a3). Task works live.
+3. Owner asks (verify live, in order): (a) Task column - DONE live;
+   (b) hidden-unit crisis response - harness-pinned (HiddenUnitResponseTest),
+   needs live lurker/DT game; (c) Pylons until 200 supply - no cap exists
+   in the goal; the block was in-flight suppression, now bounded by
+   builder liveness; (d) zealot fallback + worker 10/12 leash - DESIGNED
+   ONLY, not implemented: worker hard recall (>12 from main) in
+   WorkerDefenceStopFighting.applies + worker-side check in
+   processFightEnemyCombatUnits; zealot/small-army chase veto as a named
+   gate in BattleCommander.act with DuelMemory contact-forget. Needs
+   sim pins + full suite + game proof. Do NOT present as done.
+
+Live adjudication backlog (all read-only, no game needed): game 193634
+has 906 refused re-asks (584 Probe + 229 Dragoon + 93 Zealot, mostly
+"no free facility" with 4 gateways and ~17 lifetime units) - if the
+in-flight fix above does not unblock it, the next suspect is phantom-busy
+gateways (engine idle flag stuck), to be named with a per-reason twin,
+not guessed. STRENGTH_WATCH fogMapHp reads ~100k (non-combat wrappers
+summed; strength math unaffected - filtered out) - observation only.
+STRENGTH jumps persist where the fog lacks the unit (142713/151131/
+151814/180220 x2.0 on contact loss); loop repair + heal twin await a
+trigger game (zero SHOW_HEAL rows so far).
+
+Test-hygiene state: full suite green twice in a row (1738/0, 1733/0).
+Known order-fragility family (#222): stale .class files run from out/
+(deleted 3 Scratch* ones - never leave scratch .class behind, javac
+does not clean); battle/latch/twin statics now reset per test in
+ClearAllCaches; choke guard test widened to the scatter band (4.5).
+If red recurs, bisect with explicit --select-class lists in tree order
+(see /tmp/opencode/*.args pattern) - do NOT "fix" by resetting the
+global FakeUnit id counter.
