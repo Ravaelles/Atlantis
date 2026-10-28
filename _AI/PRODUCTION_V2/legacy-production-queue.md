@@ -72,8 +72,8 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only vs Zerg; ports with the DT/HT chain.
 
 ## dynamic/protoss/decisions
-- [ ] Q50 `AllowProduceDragoon.java` [PROTOSS] (P4-demand?)
-- [ ] Q51 `AllowProduceZealot.java` [PROTOSS] (P4-demand?)
+- [x] Q50 `AllowProduceDragoon.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 army gates (188 cap, 184 veto + rich bypass, DT-saving; `ArmyGatesTest` 7/7).
+- [x] Q51 `AllowProduceZealot.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 army gates (180/175 brakes, DT-saving; `ArmyGatesTest` 7/7).
 
 ## dynamic/protoss/prioritize
 - [ ] Q52 `PrioritizeCyberneticsOverZealotsAndGateways.java` [PROTOSS] (P4-demand?)

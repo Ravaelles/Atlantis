@@ -351,6 +351,12 @@ public final class DynamicGoals {
         if (state.supplyUsed < 12)
             return;
 
+        // Max-supply cap (legacy AllowProduce gates): basics never close the
+        // game out, so they stop at 188 while tech and eyes keep flowing
+        // through their own goals.
+        if (state.supplyUsed >= 188)
+            return;
+
         // Owner 2026-10-19: Dragoons ASAP. The moment the Core stands and
         // 50 gas is banked the advanced unit is wanted regardless of how
         // many Zealots stand - the old floor counted every army unit
@@ -358,7 +364,15 @@ public final class DynamicGoals {
         // army. Without gas for Dragoons, Zealots are a 275-mineral dump,
         // not a trickle - and pre-Core the opening Zealots flow ungated
         // (no mineral gate before the Core exists to save for).
-        boolean wantGoons = state.hasCore && state.gas >= 50;
+        //
+        // Tight-supply veto (legacy AllowProduceDragoon): at 184+ with no
+        // room (4 or less free) or no gas behind it (200 or less) the next
+        // Dragoon waits - unless the bank is rich (500+), which buys
+        // through any veto. Saving for Dark Templar vetoes below 350.
+        boolean wantGoons = state.hasCore && state.gas >= 50
+            && !(state.minerals < 500 && state.supplyUsed >= 184
+                && (state.supplyFree <= 4 || state.gas <= 200))
+            && !(state.savingForDarkTemplar && state.minerals < 350);
         AUnitType army;
         int have;
         if (wantGoons) {
@@ -367,6 +381,18 @@ public final class DynamicGoals {
         }
         else {
             if (state.hasCore && state.minerals < 275)
+                return;
+
+            // Late-game Zealot brakes (legacy AllowProduceZealot): at 180+
+            // with gas banked or an army standing the Zealot stops (tech
+            // eats the minerals instead), and at 175+ with no room the next
+            // one waits. Saving for Dark Templar vetoes at 300 or below.
+            if (state.supplyUsed >= 180
+                && (state.gas >= 100 || state.armyStrength >= 130))
+                return;
+            if (state.supplyUsed >= 175 && state.supplyFree <= 4)
+                return;
+            if (state.savingForDarkTemplar && state.minerals <= 300)
                 return;
 
             army = race.armyUnitType();
@@ -644,6 +670,13 @@ public final class DynamicGoals {
         public boolean hasStargate;
 
         /**
+         * Saving for Dark Templar: hidden-units tech is warping
+         * (Citadel or Archives unfinished) while the strategy goes hidden.
+         * Basics wait below their floors instead of eating the DT bank.
+         */
+        public boolean savingForDarkTemplar;
+
+        /**
          * The enemy showed or is going hidden combat units (lurkers, Dark
          * Templar: seen, or predicted from Citadel/Archives/HydraDen).
          * Only Zerg and Protoss own the hidden set, so a set flag always
@@ -750,6 +783,7 @@ public final class DynamicGoals {
             anchored.combatUnits = combatUnits;
             anchored.corsairs = corsairs;
             anchored.hasStargate = hasStargate;
+            anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;
         }

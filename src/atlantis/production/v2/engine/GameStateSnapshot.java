@@ -273,6 +273,12 @@ public final class GameStateSnapshot {
             atlantis.information.enemy.EnemyUnits.discovered().carriers().notEmpty()
                 || atlantis.information.enemy.EnemyUnits.discovered()
                     .ofType(AUnitType.Protoss_Fleet_Beacon).notEmpty();
+        // Basics yield the bank while hidden-units tech warps (Citadel or
+        // Archives unfinished on a hidden-units strategy).
+        snapshot.savingForDarkTemplar =
+            atlantis.information.strategy.Strategy.get().isGoingHiddenUnits()
+                && (Select.ourWithUnfinishedOfType(AUnitType.Protoss_Templar_Archives).notEmpty()
+                    || Select.ourWithUnfinishedOfType(AUnitType.Protoss_Citadel_of_Adun).notEmpty());
         // Hidden-unit sightings answer through the goal layer itself: the
         // legacy queue path never drains in V2 LIVE, so without this a
         // seen lurker orders nothing.
