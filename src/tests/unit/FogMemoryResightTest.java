@@ -151,4 +151,29 @@ public class FogMemoryResightTest extends WorldStubForTests {
                 "creation wraps the enemy it made, no sight event needed");
         });
     }
+
+    @Test
+    public void fogLoopWrapsVisibleEnemiesNobodyWrapped() {
+        // NEXT #2, belt and suspenders over show/create wrapping: whatever
+        // path skipped a visible enemy (missed discover, listener throw),
+        // the per-frame fog loop repairs it. A visible sunken with no
+        // wrapper is wrapped by the update alone - no event needed.
+        FakeUnit sunken = fake(AUnitType.Zerg_Sunken_Colony, 60, 60);
+        sunken.setEnemy();
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            fake(AUnitType.Protoss_Zealot, 12, 10)
+        ), fakeEnemies(sunken), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertNull(EnemyUnits.getFoggedUnit(sunken),
+                "nothing wrapped it yet");
+
+            EnemyUnitsUpdater.updateFoggedUnits();
+
+            assertNotNull(EnemyUnits.getFoggedUnit(sunken),
+                "the loop wraps what sight sees, event or no event");
+        });
+    }
 }

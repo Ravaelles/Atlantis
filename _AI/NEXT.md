@@ -798,6 +798,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   so a far-away warp names its origin without tile forensics. Pinned pure
   (`TargetPlacementNearTest` 4/4) + answered row shape (13/13 in
   `CatalogueSiteAdapterTest`); declined rows unchanged.
+  FOG-LOOP REPAIR LANDED 2026-10-28: whatever path skips a visible
+  enemy (missed discover, listener throw, new id with no create event),
+  the per-frame fog loop now wraps it - first wrap rides the discover path
+  with responses, guarded by the same gas exemption as the update. This
+  closes the never-wrapped hole behind show-heal (re-sight) and
+  create-wrap (new ids): sight without memory repairs itself every frame.
+  Pinned `FogMemoryResightTest` 5/5 (red-first: null after update).
   WALK-WINDOW RE-FIRE CLOSED 2026-10-28: the second Core of game 151131
   (dispatches f6139+f6281, warps f6297+f6400 on two tiles from one At-22
   row) is the scheduler's in-flight check missing IN_PROGRESS-without-unit

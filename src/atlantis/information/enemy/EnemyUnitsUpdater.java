@@ -31,7 +31,16 @@ public class EnemyUnitsUpdater {
         if (foggedUnit != null) {
             foggedUnit.updatePosition(enemy);
             foggedUnit.updateType(enemy);
+
+            return false;
         }
+
+        // NEXT #2: whatever path skipped a visible enemy (missed discover,
+        // listener throw, new id with no create event), the per-frame loop
+        // repairs it - a sighting with no memory wraps now. First wrap is
+        // first intel, so it rides the discover path (responses included),
+        // guarded by the same gas exemption as the update above.
+        weDiscoveredEnemyUnit(enemy);
 
         return false;
     }
