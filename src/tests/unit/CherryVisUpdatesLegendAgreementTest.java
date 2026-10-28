@@ -45,4 +45,25 @@ public class CherryVisUpdatesLegendAgreementTest {
             updates.contains("\"manager\":10000") && updates.contains("\"manager\":10001"),
             "updates must reference the same runtime ids, was: " + updates);
     }
+
+    @Test
+    public void everyTooltipIdInUpdatesResolvesInTheLegend() {
+        // NEXT #221: tooltip rows share the manager legend table - a viewer
+        // resolving one resolves the other, same runtime order.
+        ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
+        tests.fakes.FakeUnit zealot = tests.unit.AbstractTestWithUnits.fake(
+            atlantis.units.AUnitType.Protoss_Zealot, 10);
+        logger.tooltip(100, "ClusterKite", zealot);
+
+        ACherryVis_Strings strings = new ACherryVis_Strings();
+        String updates = ACherryVis_UnitLogs.build(logger, strings);
+        String legend = ACherryVisLogger_TraceJson.customNames(strings);
+
+        assertTrue(
+            legend.contains("\"10000\":\"ClusterKite\""),
+            "tooltip must resolve in the legend, was: " + legend);
+        assertTrue(
+            updates.contains("\"tooltip\":10000"),
+            "updates must reference the tooltip id, was: " + updates);
+    }
 }

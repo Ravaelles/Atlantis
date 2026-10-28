@@ -806,6 +806,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   tag army units with their cluster/mission behavior through
   `usedManager` (or wire the disabled tooltip channel change-only) -
   needs a trace-size check, not a guess. (Log half rides #214(c).)
+  LANDED 2026-10-28: the tooltip channel is wired change-only
+  (`ACherryVisUnitLogger.tooltip` with per-unit dedup, rendered into
+  `units_updates` as union frames with carry-forward, empty keys omitted
+  so the legend stays clean). Measured trace cost: behavior transitions
+  are hundreds of rows per game against a ~490KB trace - negligible.
+  Pinned in `CherryVisUnitLogsTest` + legend agreement. Live proof (Task
+  populated for army units in the viewer) rides the next macro.
 - **#222** Sim order-fragility (pre-existing, untouched): `CutoffSwampedRetreatTest`
   flips under suite order - razor margin (measured 7.01 vs threshold 8) with
   iteration order keyed off the global FakeUnit id hash, so a shifted id

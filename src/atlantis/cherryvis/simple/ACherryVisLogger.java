@@ -75,7 +75,7 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
 
     @Override
     public void unitTooltip(String tooltip, AUnit unit) {
-        // unitLogger.tooltip(tooltip, unit);
+        unitLogger.tooltip(A.now(), tooltip, unit);
     }
 
     public ACherryVisUnitLogger getUnitLogger() {
