@@ -307,7 +307,16 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   - **#145** Legacy site-finding chain → catalogue-only siting; delete the chain
     after cutover. The [119,12]/`Null position` storm mints here (no
     standing-cover check), so the cutover is the fix. `SITE_TOO_FAR` only rejects
-    absurd distances (`BuildSiteDistanceTest`).
+    absurd distances (`BuildSiteDistanceTest`). WO-145 STOP 2026-10-28 (A/B
+    game 104128, PLACEMENT=catalogue, TauCross): 3988 CONSTRUCTION_CANCELs,
+    stall-death f6900 supply 29 (flag-off games: 0-1 cancels, full games).
+    The catalogue returns COVERED tiles - Gateway warps at [94,112] f3841
+    then 2088 proximity-finish rows on the same tile, Pylon/Nexus rows die
+    builderless (1522+368 `looks bugged`: covered base tiles trip the
+    inRadius(12)>=4-workers builder refusal). Same missing standing-cover
+    check as #151, now measured on the catalogue arm itself. Per WO stop
+    rules: flip stopped, flag stays default-off; the ARM needs the cover
+    check first (spiral guard or planner-side exclusion), then a new A/B.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

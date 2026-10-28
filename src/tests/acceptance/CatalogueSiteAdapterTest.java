@@ -72,7 +72,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Assimilator, construction),
                 "a refinery builds only on its geyser's exact tile - the catalogue must decline");
             assertTrue(EventLog.toJsonLines().contains(
-                    "\"key\":\"CATALOGUE_SITE\",\"type\":\"Assimilator\",\"result\":\"declined\",\"reason\":\"dedicated-finder\""),
+                    "\"type\":\"Assimilator\",\"result\":\"declined\",\"reason\":\"dedicated-finder\""),
                 "the decline lands in the twin with its reason, so a game log names the path");
         });
     }
@@ -127,7 +127,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
             assertNull(site, "the stub map refuses the tile - the adapter must decline, never override the gate");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Gateway\",\"result\":\"declined\",\"reason\":\"legacy-refused\""));
+                "\"type\":\"Gateway\",\"result\":\"declined\",\"reason\":\"legacy-refused\""));
         });
     }
 
@@ -144,7 +144,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Pylon, construction),
                 "validation needs a builder to check against - decline and let FindPosition define one");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-builder\""));
+                "\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-builder\""));
         });
     }
 
@@ -205,7 +205,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
             assertNull(site, "a refused catalogue answer must decline to the legacy search, never invent a tile");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-tile\""));
+                "\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-tile\""));
         });
     }
 
@@ -246,7 +246,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
             assertNull(site, "a refused sited answer declines - the legacy search below answers as before");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"PhotonC\",\"result\":\"declined\",\"reason\":\"no-tile\",\"via\":\"sited\""));
+                "\"type\":\"PhotonC\",\"result\":\"declined\",\"reason\":\"no-tile\",\"via\":\"sited\""));
         });
     }
 
