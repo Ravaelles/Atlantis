@@ -70,7 +70,8 @@ public class GameOrderDirector implements OrderDirector {
             return "already training " + unitType.name() + " #" + producer.id();
         }
 
-        if (!producer.trainForced(unitType)) return "engine refused #" + producer.id() + facilityState(producer);
+        if (!producer.trainForced(unitType)) return "engine refused #" + producer.id() + facilityState(producer)
+            + " bank=" + atlantis.game.A.minerals() + "/" + atlantis.game.A.gas();
 
         markUsed(producer);
 
