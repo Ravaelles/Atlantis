@@ -58,10 +58,16 @@ public class ProtossChokeStandoffTest extends WorldStubForTests {
 
                 HasPosition dest = a.targetPosition();
                 assertNotNull(dest, "the retreat names a destination");
-                assertTrue(dest.distTo(standoff) <= 3.0,
+                // The rally scatter spreads units on a 2-4 tile ring around
+                // the anchor, keyed by unit id - so the exact dest moves
+                // with the global id counter (same family as #222: never
+                // gate a spread on an exact tile). What the doctrine owns
+                // is the ground, not the pixel: the rally holds at the
+                // choke, within the scatter band of the standoff - never
+                // a march across the map, never silent.
+                assertTrue(dest.distTo(standoff) <= 4.5,
                     "the rally stands off at the choke, not inside the base: dest "
-                        + dest + " vs standoff " + standoff
-                        + " (rally scatter: own standable point within 2 tiles)");
+                        + dest + " vs standoff " + standoff);
                 assertTrue(standoff.distTo(ClusterBreach.breachRallyPoint()) >= 1,
                     "standoff and breach-rally are different answers: " + standoff);
             } finally {

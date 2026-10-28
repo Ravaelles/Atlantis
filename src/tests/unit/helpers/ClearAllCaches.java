@@ -66,5 +66,16 @@ public class ClearAllCaches {
         if (Queue.get() != null) Queue.get().clearCache();
         ReservedResources.reset();
         Select.clearCache();
+
+        // Battle latches and twins are per-game state: a rung latched by one
+        // test's fight reroutes the next test's retreat, a held latch
+        // verdict silences the next test's first issue, a logged twin row
+        // breaks the next test's change-only assertions (measured: suite-only
+        // reds in production and choke tests with every prefix green).
+        // The per-game reset lives next to the other static resets
+        // (BattleCommander.reset); the harness runs it per test.
+        atlantis.combat.BattleCommander.clearForTests();
+        atlantis.combat.formation.FormationOrderLatch.clearForTests();
+        atlantis.combat.twins.StrengthWatch.clearForTests();
     }
 }

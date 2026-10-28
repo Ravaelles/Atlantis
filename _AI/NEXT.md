@@ -1102,3 +1102,19 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   until it hid and re-showed. The enemy half now wraps at creation
   (containsKey-guarded, known ids untouched). Pinned `FogMemoryResightTest`
   4/4 (red-first: the seam did not exist). Suite 1733/1733 green.
+
+## Sweep 2026-10-28 autonomous (suite hermeticity)
+- Order-fragility, same family as #222 (no global id reset; hermetic seams
+  instead). Measured: two production tests (Zealot/Dragoon pumps) failed ONLY
+  in the full scope (5+ runs, deterministic there) while every prefix, pair
+  and the tree-ordered prefix stayed green; stale scratch classes ran from
+  `out/` (deleted sources, never cleaned) and were deleted. The proven
+  mechanism for the choke twin: rally scatter keys its angle off the global
+  FakeUnit id (`unit.id * golden angle`), so the exact dest tile moves with
+  the suite's id counter - the test's 3.0-tile tolerance sat inside the
+  scatter's own 2-4 ring (`ProtossChokeStandoffTest` widened to the band).
+  Defense in depth: `ClearAllCaches.clearAll` now runs the per-game battle
+  resets (`BattleCommander.clearForTests`, `FormationOrderLatch`,
+  `StrengthWatch`) so latched rungs/verdicts/twin rows never leak across
+  tests. Suite green in full. The unit-suite builder set flips the same way
+  with composition and stays open.
