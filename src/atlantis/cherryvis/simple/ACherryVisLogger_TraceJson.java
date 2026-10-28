@@ -33,6 +33,7 @@ public class ACherryVisLogger_TraceJson {
         ACherryVis_Strings strings = new ACherryVis_Strings();
         // Generate updates first to populate strings
         String unitsUpdates = ACherryVis_UnitLogs.build(logger, strings);
+        String unitsTooltips = ACherryVis_UnitLogs.buildTooltips(logger, strings);
 
         /*
          * If it's per-unit → units_updates
@@ -59,7 +60,8 @@ public class ACherryVisLogger_TraceJson {
             + "\"units_logs\": {" + ACherryVis_UnitLogs.buildUnitLogs(logger) + "},"
             // + "\"units_logs\": {" + ACherryVis_UnitLogs.build(logger) + "},"
             // + emptyLineMap("units_updates")
-            + "\"units_updates\": {" + unitsUpdates + "}"
+            + "\"units_updates\": {" + unitsUpdates + "},"
+            + "\"units_tooltips\": {" + unitsTooltips + "}"
             + "}";
     }
 

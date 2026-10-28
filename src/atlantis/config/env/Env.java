@@ -18,6 +18,7 @@ public class Env {
     private static final java.util.Map<String, String> rawEnv = new java.util.HashMap<>();
     private static boolean firstRun = true;
     private static boolean cherryVisEnabled = false;
+    private static boolean cherryVisTooltips = false;
     private static boolean isBenchmark = false;
     private static boolean isLocal = false;
     private static boolean isTesting = false;
@@ -204,6 +205,10 @@ public class Env {
 
             case "CHERRYVIS_ENABLED":
                 cherryVisEnabled = parseBool(key, value, false);
+                return true;
+
+            case "CHERRYVIS_TOOLTIPS":
+                cherryVisTooltips = parseBool(key, value, false);
                 return true;
 
             case "MODIFY_BWAPI_INI":
@@ -550,5 +555,22 @@ public class Env {
 
     public static boolean cherryVisEnabled() {
         return cherryVisEnabled;
+    }
+
+    /**
+     * True when {@code CHERRYVIS_TOOLTIPS=1}: behavior tags land in the
+     * trace's {@code units_tooltips} section (NEXT #221). Off by default -
+     * callers flap tags per frame (formation Form/Move, scout Explore/Hold),
+     * so an always-on channel wrote 114k rows / 4.2MB in one game.
+     */
+    public static boolean cherryVisTooltips() {
+        return cherryVisTooltips;
+    }
+
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
+    public static void setCherryVisTooltipsForTest(boolean enabled) {
+        cherryVisTooltips = enabled;
     }
 }

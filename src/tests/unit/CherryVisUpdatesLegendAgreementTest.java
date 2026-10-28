@@ -56,14 +56,14 @@ public class CherryVisUpdatesLegendAgreementTest {
         logger.tooltip(100, "ClusterKite", zealot);
 
         ACherryVis_Strings strings = new ACherryVis_Strings();
-        String updates = ACherryVis_UnitLogs.build(logger, strings);
+        String tooltips = ACherryVis_UnitLogs.buildTooltips(logger, strings);
         String legend = ACherryVisLogger_TraceJson.customNames(strings);
 
         assertTrue(
             legend.contains("\"10000\":\"ClusterKite\""),
             "tooltip must resolve in the legend, was: " + legend);
         assertTrue(
-            updates.contains("\"tooltip\":10000"),
-            "updates must reference the tooltip id, was: " + updates);
+            tooltips.contains("[100,10000]"),
+            "updates must reference the tooltip id, was: " + tooltips);
     }
 }

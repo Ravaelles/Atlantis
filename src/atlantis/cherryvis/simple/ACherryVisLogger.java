@@ -75,7 +75,9 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
 
     @Override
     public void unitTooltip(String tooltip, AUnit unit) {
-        unitLogger.tooltip(A.now(), tooltip, unit);
+        if (atlantis.config.env.Env.cherryVisTooltips()) {
+            unitLogger.tooltip(A.now(), tooltip, unit);
+        }
     }
 
     public ACherryVisUnitLogger getUnitLogger() {

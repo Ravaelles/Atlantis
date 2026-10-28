@@ -3,12 +3,14 @@ package tests.unit;
 import atlantis.cherryvis.simple.ACherryVisUnitLogger;
 import atlantis.cherryvis.simple.ACherryVis_Strings;
 import atlantis.cherryvis.simple.ACherryVis_UnitLogs;
+import atlantis.config.env.Env;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 
@@ -39,10 +41,10 @@ public class CherryVisUnitLogsTest {
     }
 
     @Test
-    public void tooltipRowsRenderChangeOnlyWithCarryForward() {
-        // NEXT #221: the Task slot feed. Repeat sets of the same tag land
-        // once; a unit with no manager row anywhere still lands (that is
-        // the army gap - 10 of 26 combat units had no units_updates entry).
+    public void tooltipRowsRenderChangeOnlyAsCompactPairs() {
+        // NEXT #221, owner: grouped-by-key JSON, minimal info - one
+        // [frame, tooltipId] pair per transition, change-only (the repeat
+        // set at frame 20 lands once), managerless units included.
         ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
         FakeUnit first = fake(AUnitType.Protoss_Zealot, 10);
         FakeUnit second = fake(AUnitType.Protoss_Probe, 12);
@@ -53,18 +55,22 @@ public class CherryVisUnitLogsTest {
         logger.tooltip(15, "Gatherer!", second);
 
         ACherryVis_Strings strings = new ACherryVis_Strings();
-        String updates = ACherryVis_UnitLogs.build(logger, strings);
+        String tooltips = ACherryVis_UnitLogs.buildTooltips(logger, strings);
 
-        // Runtime string order: first-seen tooltips, managers untouched.
-        // Manager rows carry the carried-forward tooltip; the managerless
-        // unit still renders its tooltip row.
+        // Runtime string order: first-seen tooltips.
         assertEquals(
-            "\"" + first.id() + "\":{\"10\":{\"tooltip\":10000},"
-                + "\"30\":{\"tooltip\":10001}},"
-                + "\"" + second.id() + "\":{\"15\":{\"tooltip\":10002}}",
-            updates
+            "\"" + first.id() + "\":[[10,10000],[30,10001]],"
+                + "\"" + second.id() + "\":[[15,10002]]",
+            tooltips
         );
         assertTrue(strings.get("ClusterKite") == 10001,
             "tooltip ids come from the same runtime table as managers");
+    }
+
+    @Test
+    public void tooltipChannelIsOffByDefault() {
+        // Owner order: flapping callers wrote 114k rows / 4.2MB in one game,
+        // so the channel rides CHERRYVIS_TOOLTIPS=1, never by default.
+        assertFalse(Env.cherryVisTooltips());
     }
 }
