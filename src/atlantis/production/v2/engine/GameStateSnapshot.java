@@ -270,6 +270,8 @@ public final class GameStateSnapshot {
         snapshot.observers = Count.observers();
         snapshot.zealots = Count.zealots();
         snapshot.zerglings = atlantis.information.enemy.EnemyUnits.zerglings();
+        snapshot.hasObservatory = Count.ofType(AUnitType.Protoss_Observatory) > 0;
+        snapshot.hasCitadel = Have.citadel();
         snapshot.hasStargate =
             Count.ofTypeWithUnfinished(AUnitType.Protoss_Stargate) > 0;
         snapshot.enemyCarrierTech =

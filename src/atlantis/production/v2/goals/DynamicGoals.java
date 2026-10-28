@@ -74,6 +74,8 @@ public final class DynamicGoals {
         addStargateGoal(goals, state);
         addCorsairGoal(goals, state);
         addObserverPump(goals, state);
+        addCitadelGoal(goals, state);
+        addLegEnhancementsGoal(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
@@ -204,6 +206,41 @@ public final class DynamicGoals {
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Observer),
             ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Citadel of Adun (Protoss): the eyes get clearer before the templar
+     * line opens. Verbatim gates - supply 140+ with gas 180 behind it and
+     * an Observatory standing. Research coverage is execution-side, so no
+     * researched flag rides the snapshot.
+     */
+    private static void addCitadelGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.supplyUsed < 140 || state.gas < 180) return;
+        if (!state.hasObservatory) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Citadel_of_Adun),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Leg Enhancements (Protoss): zealot speed once the Citadel stands,
+     * past supply 90 with 4+ zealots on the field. The 30-second
+     * queue-history throttle stays behind - the scheduler dedups the
+     * re-fire the throttle used to eat.
+     */
+    private static void addLegEnhancementsGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasCitadel) return;
+        if (state.supplyUsed <= 90 || state.zealots <= 4) return;
+
+        goals.add(new ProductionGoal(
+            atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Leg_Enhancements),
+            ProductionGoal.PRIORITY_NORMAL,
+            1,
+            0,
+            TargetPlacement.anywhere()));
     }
 
     /**
@@ -734,6 +771,14 @@ public final class DynamicGoals {
         public int zerglings;
 
         /**
+         * Observatory standing (the Citadel wants clearer eyes first) and
+         * Citadel standing (Leg Enhancements research at it). Standing
+         * only, verbatim with the legacy gates.
+         */
+        public boolean hasObservatory;
+        public boolean hasCitadel;
+
+        /**
          * Saving for Dark Templar: hidden-units tech is warping
          * (Citadel or Archives unfinished) while the strategy goes hidden.
          * Basics wait below their floors instead of eating the DT bank.
@@ -850,6 +895,8 @@ public final class DynamicGoals {
             anchored.observers = observers;
             anchored.zealots = zealots;
             anchored.zerglings = zerglings;
+            anchored.hasObservatory = hasObservatory;
+            anchored.hasCitadel = hasCitadel;
             anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;

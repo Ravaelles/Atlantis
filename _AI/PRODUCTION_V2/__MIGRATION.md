@@ -58,6 +58,13 @@ Buildings group triaged 2026-10-28 (Q33-Q49): 10 rows covered by V2
 Corsairs ported as V2 goals (`StargateCorsairTest` 6/6), 5 rows open
 behind their unit chains (Citadel/Archives, SupportBay, Tribunal,
 per-base Pylons) and ShieldBattery dead upstream.
+Decisions/units/tech triaged 2026-10-28: AllowProduce gates and the
+ling mix ported (`ArmyGatesTest` 9/9), observer eyes scaled
+(`HiddenUnitDetectionGoalsTest` +1), Citadel + Legs ported
+(`CitadelLegsTest` 6/6). Open: armor/weapons ladders (game-proof
+first), Archives/Storm + DT/HT, SupportBay + Reaver/Shuttle/Arbiter,
+per-base Pylons, Q70 proximity siting, Q82 dispatcher expediting,
+Q53 gateway rush tuning. Suite 1767/1767, arch advisory unchanged.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

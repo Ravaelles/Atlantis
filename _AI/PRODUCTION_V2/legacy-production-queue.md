@@ -57,7 +57,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q34 `ProduceCannonAtMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
 - [x] Q35 `ProduceCannonAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
 - [x] Q36 `ProduceCannonAtNaturalOrMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (dispatcher over Q34/Q35).
-- [ ] Q37 `ProduceCitadelOfAdun.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (supply 70 + Obs); ports with the Archives/DT chain.
+- [x] Q37 `ProduceCitadelOfAdun.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Citadel goal (verbatim gates; throttle stays behind; `CitadelLegsTest`).
 - [x] Q38 `ProduceCyberneticsCore.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (scheduler pulls Core as Dragoon prereq).
 - [x] Q39 `ProduceFirstAssimilator.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 gas goal).
 - [x] Q40 `ProduceForge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (board ForgeGoal + detection Forge).
@@ -76,28 +76,28 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q51 `AllowProduceZealot.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 army gates (180/175 brakes, DT-saving; `ArmyGatesTest` 7/7).
 
 ## dynamic/protoss/prioritize
-- [ ] Q52 `PrioritizeCyberneticsOverZealotsAndGateways.java` [PROTOSS] (P4-demand?)
-- [ ] Q53 `PrioritizeGatewaysVsProtoss.java` [PROTOSS] (P4-demand?)
-- [ ] Q54 `PrioritizeProtossBuildingsOverCombatUnits.java` [PROTOSS] (P4-demand?)
-- [ ] Q55 `ProtossCriticalStuffInQueue.java` [PROTOSS] (P4-demand?)
+- [x] Q52 `PrioritizeCyberneticsOverZealotsAndGateways.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (first Core rides the BO; later Cores are scheduler prereqs).
+- [ ] Q53 `PrioritizeGatewaysVsProtoss.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: 6-gateway rush vs Protoss; V2 caps at 4 with all-busy fire. Tuning delta, needs a game proof - no blind port.
+- [x] Q54 `PrioritizeProtossBuildingsOverCombatUnits.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 priority bands order economy before army).
+- [x] Q55 `ProtossCriticalStuffInQueue.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (250 reserve for imminent tech is the wallet/reservation seam).
 
 ## dynamic/protoss/reinforce
-- [ ] Q56 `BuildPylonFirst.java` [PROTOSS] (P4-demand?)
-- [ ] Q57 `ProtossExtraEarlyCannonCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q58 `ProtossSecureBaseWithCannons.java` [PROTOSS] (P4-demand?)
-- [ ] Q59 `RequestCannonAt.java` [PROTOSS] (P4-demand?)
-- [ ] Q60 `ShouldSecureProtossBase.java` [PROTOSS] (P4-demand?)
+- [x] Q56 `BuildPylonFirst.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (power siting is the planner seam - PylonPowerSiting).
+- [x] Q57 `ProtossExtraEarlyCannonCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (early-cannon siting rides fortification + detection goals).
+- [x] Q58 `ProtossSecureBaseWithCannons.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (counts delegate to board CannonGoal; siting is the planner).
+- [x] Q59 `RequestCannonAt.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (exact-cannon construction is the planner seam).
+- [x] Q60 `ShouldSecureProtossBase.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (gates already answer through board CannonGoal).
 
 ## dynamic/protoss/tech
-- [ ] Q61 `ResearchLegEnhancements.java` [PROTOSS] (P4-demand?)
-- [ ] Q62 `ResearchNow.java` [PROTOSS] (P4-demand?)
-- [ ] Q63 `ResearchProtossGroundArmor.java` [PROTOSS] (P4-demand?)
-- [ ] Q64 `ResearchProtossGroundWeapons.java` [PROTOSS] (P4-demand?)
-- [ ] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?)
-- [ ] Q66 `ResearchSingularityCharge.java` [PROTOSS] (P4-demand?)
-- [ ] Q67 `TechResearchCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q68 `TooWeakToTech.java` [PROTOSS] (P4-demand?)
-- [ ] Q69 `UpgradeResearchCommander.java` [PROTOSS] (P4-demand?)
+- [x] Q61 `ResearchLegEnhancements.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Legs goal (Citadel + 90 + 4 zealots; `CitadelLegsTest` 6/6).
+- [x] Q62 `ResearchNow.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (issue-at-free-building is the V2 dispatcher seam).
+- [ ] Q63 `ResearchProtossGroundArmor.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; ports when the mid-game proves it needs armor (game proof first).
+- [ ] Q64 `ResearchProtossGroundWeapons.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; same gate as armor.
+- [ ] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Archives chain.
+- [x] Q66 `ResearchSingularityCharge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 tech goal).
+- [x] Q67 `TechResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
+- [ ] Q68 `TooWeakToTech.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: consumed only by the unported upgrade researchers; folds into their chunk.
+- [x] Q69 `UpgradeResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
 
 ## dynamic/protoss/units
 - [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Open micro-doctrine, needs value proof.
