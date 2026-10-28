@@ -5,11 +5,11 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 
 
 ## dynamic
-- [ ] Q1 `AbundanceCommander.java` [neutral] (P4?)
-- [ ] Q2 `DynamicBuildingsCommander.java` [neutral] (P4?)
-- [ ] Q3 `DynamicCommanderHelpers.java` [neutral] (P4?)
-- [ ] Q4 `DynamicProductionCommander.java` [neutral] (P4?)
-- [ ] Q5 `DynamicUnitAndTechProducerCommander.java` [neutral] (P4?)
+- [x] Q1 `AbundanceCommander.java` [neutral] (P4?) — walked 2026-10-28: legacy shell; economy abundance is the worker-goal seam.
+- [x] Q2 `DynamicBuildingsCommander.java` [neutral] (P4?) — walked 2026-10-28: Protoss-only; V2 engine owns policy (see Q26).
+- [x] Q3 `DynamicCommanderHelpers.java` [neutral] (P4?) — walked 2026-10-28: buildToHave helper; V2 goals emit directly.
+- [x] Q4 `DynamicProductionCommander.java` [neutral] (P4?) — walked 2026-10-28: legacy root shell; V2 engine owns policy (not registered in LIVE).
+- [x] Q5 `DynamicUnitAndTechProducerCommander.java` [neutral] (P4?) — walked 2026-10-28: Protoss-only; V2 engine owns policy (see Q28).
 
 ## dynamic/expansion
 - [ ] Q6 `ExpansionCommander.java` [neutral] (P5?)
@@ -67,7 +67,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q44 `ProducePylonNearEveryBase.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only per-base power (7min+); open, needs an expansion vehicle.
 - [x] Q45 `ProduceRoboticsFacility.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (detection chain).
 - [x] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Bay goal (verbatim minus Terran floor; `ReaverChainTest`).
-- [ ] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
+- [x] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?) — deleted 2026-10-28 (dead upstream, sole caller unhooked).
 - [x] Q48 `ProduceStargate.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 Stargate+Corsair goals (`StargateCorsairTest` 6/6).
 - [x] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Archives goal (mission + BO-permission clauses dropped, noted; `TemplarChainTest`).
 
@@ -211,62 +211,62 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [~] Q154 `ProduceZerglings.java` [ZERG] (P4?)
 
 ## orders/build
-- [ ] Q155 `ABuildOrder.java` [neutral] (P4-queue-last)
-- [ ] Q156 `ABuildOrderFactory.java` [neutral] (P4-queue-last)
-- [ ] Q157 `ABuildOrderLoader.java` [neutral] (P4-queue-last)
-- [ ] Q158 `BuildOrderFileNotFoundException.java` [neutral] (P4-queue-last)
-- [ ] Q159 `BuildOrderNotationConverter.java` [neutral] (P4-queue-last)
-- [ ] Q160 `BuildOrderOwnsGame.java` [neutral] (P4-queue-last)
-- [ ] Q161 `BuildOrderRowParser.java` [neutral] (P4-queue-last)
-- [ ] Q162 `BuildOrderSetting.java` [neutral] (P4-queue-last)
-- [ ] Q163 `BuildOrderSettings.java` [neutral] (P4-queue-last)
-- [ ] Q164 `CurrentBuildOrder.java` [neutral] (P4-queue-last)
-- [ ] Q165 `ProtossBuildOrder.java` [neutral] (P4-queue-last)
-- [ ] Q166 `TerranBuildOrder.java` [neutral] (P4-queue-last)
+- [>] Q155 `ABuildOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; V2 BuildOrderRow reads it via fromLegacy (do not touch).
+- [>] Q156 `ABuildOrderFactory.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; Protoss-only branches (do not touch).
+- [>] Q157 `ABuildOrderLoader.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; V2 consumes the memorized opening through it.
+- [>] Q158 `BuildOrderFileNotFoundException.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the loader.
+- [>] Q159 `BuildOrderNotationConverter.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the loader.
+- [>] Q160 `BuildOrderOwnsGame.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; opening-ownership gate read by both policies.
+- [>] Q161 `BuildOrderRowParser.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the loader.
+- [>] Q162 `BuildOrderSetting.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the loader.
+- [>] Q163 `BuildOrderSettings.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the loader.
+- [>] Q164 `CurrentBuildOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; V2 engine reads it, dies with the queue.
+- [>] Q165 `ProtossBuildOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; the opening the V2 timeline will own.
+- [>] Q166 `TerranBuildOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; dormant under D8, dies with the loader.
 - [~] Q167 `ZergBuildOrder.java` [neutral] (P4-queue-last) — moved to src-old/ with the Zerg exclusion.
 
 ## orders/production/queue
-- [ ] Q168 `AbstractQueue.java` [neutral] (P4-queue-last)
-- [ ] Q169 `ClearCountCache.java` [neutral] (P4-queue-last)
-- [ ] Q170 `CountInQueue.java` [neutral] (P4-queue-last)
-- [ ] Q171 `CurrentQueue.java` [neutral] (P4-queue-last)
-- [ ] Q172 `PriorityWaiters.java` [neutral] (P4-queue-last)
-- [ ] Q173 `Queue.java` [neutral] (P4-queue-last)
-- [ ] Q174 `QueueFactory.java` [neutral] (P4-queue-last)
-- [ ] Q175 `QueueInitializer.java` [neutral] (P4-queue-last)
-- [ ] Q176 `QueueLastStatus.java` [neutral] (P4-queue-last)
-- [ ] Q177 `RemoveFromQueue.java` [neutral] (P4-queue-last)
-- [ ] Q178 `ReservedResources.java` [neutral] (P4-queue-last)
-- [ ] Q179 `SoonInQueue.java` [neutral] (P4-queue-last)
+- [>] Q168 `AbstractQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, queue base type (do not touch).
+- [>] Q169 `ClearCountCache.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, count-cache hygiene dies with the queue.
+- [>] Q170 `CountInQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; still read by legacy gates, dies with them.
+- [>] Q171 `CurrentQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q172 `PriorityWaiters.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; spend-gate read by legacy producers, V2 wallet owns the seam.
+- [>] Q173 `Queue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; carries the V2-LIVE early-return guard, dies last.
+- [>] Q174 `QueueFactory.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q175 `QueueInitializer.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q176 `QueueLastStatus.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q177 `RemoveFromQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q178 `ReservedResources.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; reservation math moves to the V2 wallet.
+- [>] Q179 `SoonInQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
 
 ## orders/production/queue/add
-- [ ] Q180 `AddToQueue.java` [neutral] (P4-queue-last)
-- [ ] Q181 `AddToQueueToHave.java` [neutral] (P4-queue-last)
-- [ ] Q182 `History.java` [neutral] (P4-queue-last)
-- [ ] Q183 `IndexForNewOrder.java` [neutral] (P4-queue-last)
-- [ ] Q184 `OnlyOneAllowedOfType.java` [neutral] (P4-queue-last)
-- [ ] Q185 `PreventDuplicateOrders.java` [neutral] (P4-queue-last)
-- [ ] Q186 `TrimQueue.java` [neutral] (P4-queue-last)
+- [>] Q180 `AddToQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; V2 engine fallback touchpoint, dies with the queue.
+- [>] Q181 `AddToQueueToHave.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q182 `History.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q183 `IndexForNewOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q184 `OnlyOneAllowedOfType.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q185 `PreventDuplicateOrders.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q186 `TrimQueue.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
 
 ## orders/production/queue/events
-- [ ] Q187 `OrderStatusWasChanged.java` [neutral] (P4-queue-last)
+- [>] Q187 `OrderStatusWasChanged.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
 
 ## orders/production/queue/order
-- [ ] Q188 `ForcedDirectProductionOrder.java` [neutral] (P4-queue-last)
-- [ ] Q189 `OrderReservations.java` [neutral] (P4-queue-last)
-- [ ] Q190 `OrderStatus.java` [neutral] (P4-queue-last)
-- [ ] Q191 `Orders.java` [neutral] (P4-queue-last)
-- [ ] Q192 `OrdersFilters.java` [neutral] (P4-queue-last)
-- [ ] Q193 `ProductionOrder.java` [neutral] (P4-queue-last)
-- [ ] Q194 `ProductionOrderHandler.java` [neutral] (P4-queue-last)
-- [ ] Q195 `ProductionOrderPriority.java` [neutral] (P4-queue-last)
+- [>] Q188 `ForcedDirectProductionOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; direct-train record still minted by the shared order funnel.
+- [>] Q189 `OrderReservations.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; moves to the V2 wallet.
+- [>] Q190 `OrderStatus.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q191 `Orders.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q192 `OrdersFilters.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q193 `ProductionOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; the synthetic carrier GameOrderDirector mints - the seam to replace.
+- [>] Q194 `ProductionOrderHandler.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
+- [>] Q195 `ProductionOrderPriority.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; priority vocabulary maps onto V2 bands at deletion.
 
 ## orders/production/queue/updater
-- [ ] Q196 `IsOrderCompleted.java` [neutral] (P4-queue-last)
-- [ ] Q197 `IsOrderInProgress.java` [neutral] (P4-queue-last)
-- [ ] Q198 `QueueRefresher.java` [neutral] (P4-queue-last)
-- [ ] Q199 `ReadyToProduceOrder.java` [neutral] (P4-queue-last)
-- [ ] Q200 `ThisManyUnitsByDefault.java` [neutral] (P4-queue-last)
+- [>] Q196 `IsOrderCompleted.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; readiness polling is the V2 scheduler seam.
+- [>] Q197 `IsOrderInProgress.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; readiness polling is the V2 scheduler seam.
+- [>] Q198 `QueueRefresher.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; refresh polling is the V2 scheduler seam.
+- [>] Q199 `ReadyToProduceOrder.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4; readiness polling is the V2 scheduler seam.
+- [>] Q200 `ThisManyUnitsByDefault.java` [neutral] (P4-queue-last) — walked 2026-10-28: Phase 4, dies with the queue (do not touch).
 
 ## orders/requirements
 - [x] Q201 `AllowToProduceEarlyWithoutRequirements.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (door guard stays per WO-144 non-goals).

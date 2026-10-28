@@ -75,7 +75,10 @@ Arbiter as V2 goals, `ReaverChainTest` 8/8; Terran floors and
 mission-diversion dropped with notes, air-unprepared becomes
 eyes-first, lifetime caps become loss replacement; scarabs stay with
 the specialist behavior). Queue tally: 69 done, 61 open, 11
-Phase-gated, 82 excluded. Open: armor/weapons ladders, Archives/Storm
+Phase-gated, 82 excluded.
+Dead code cut 2026-10-28: ProduceShieldBatteryAtNatural (disabled
+upstream, sole caller unhooked) - first legacy file deleted, not
+moved. Queue tally now: 70 done. Open: armor/weapons ladders, Archives/Storm
 ports... (Storm landed), DT/HT (landed), SupportBay chain (landed),
 per-base Pylons, Q70 proximity, Q82 expediting, Q53 tuning, Q9/Q16
 expansion deltas, Phase-4 queue + produce-pipe + build-orders.
