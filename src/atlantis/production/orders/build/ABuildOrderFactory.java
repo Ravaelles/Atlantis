@@ -12,9 +12,6 @@ public abstract class ABuildOrderFactory {
         else if ("Terran".equals(race)) {
             return new TerranBuildOrder(name);
         }
-        else if ("Zerg".equals(race)) {
-            return new ZergBuildOrder(name);
-        }
         else {
             throw new RuntimeException("Invalid race: " + race);
         }

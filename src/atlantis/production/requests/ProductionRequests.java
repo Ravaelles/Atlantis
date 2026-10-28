@@ -1,8 +1,6 @@
 package atlantis.production.requests;
 
 import atlantis.map.position.APosition;
-import atlantis.production.requests.zerg.ZergRequests;
-import atlantis.util.We;
 
 
 public abstract class ProductionRequests {
@@ -11,15 +9,7 @@ public abstract class ProductionRequests {
 
     public static ProductionRequests getInstance() {
         if (instance == null) {
-            if (We.terran()) {
-                instance = new TerranRequests();
-            }
-            else if (We.protoss()) {
-                instance = new ProtossRequests();
-            }
-            else {
-                instance = new ZergRequests();
-            }
+            instance = new ProtossRequests();
         }
         return instance;
     }

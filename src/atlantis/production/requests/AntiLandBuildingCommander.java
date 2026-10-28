@@ -9,7 +9,6 @@ import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -69,10 +68,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     // =========================================================
     public static AntiLandBuildingCommander get() {
         if (instance == null) {
-            if (We.zerg()) {
-                return instance = new ZergSunkenColony();
-            }
-            else if (We.protoss()) {
+            if (We.protoss()) {
                 return instance = new ProtossPhotonCannonAntiLand();
             }
             else if (We.terran()) {
@@ -96,10 +92,6 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     }
 
     public boolean requestToBuildNewAntiLandCombatBuilding() {
-        if (We.zerg()) {
-            if (((ZergSunkenColony) instance).handleExistingCreepColonyIfNeeded()) return true;
-        }
-
         return shouldBuildNew() && requestOne(nextPosition());
     }
 

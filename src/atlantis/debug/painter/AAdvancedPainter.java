@@ -36,7 +36,6 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
-import atlantis.production.dynamic.terran.turrets.TurretsForMain;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -1732,17 +1731,6 @@ public class AAdvancedPainter extends APainter {
 //        }
 
 //        paintTurretsInMain();
-    }
-
-    private static void paintTurretsInMain() {
-        ArrayList<APosition> turrets = (new TurretsForMain()).positionsForTurretsNearMainBorder();
-        for (APosition turret : turrets) {
-            paintRectangle(turret, 34, 34, Color.Purple);
-            paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
-            paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);
-
-//            CameraCommander.centerCameraOn(turret);
-        }
     }
 
 //    public static void paintBuildingPosition(HasPosition position, String text) {

@@ -4,7 +4,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiAir;
-import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -17,10 +16,7 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
 
     public static AntiAirBuildingCommander get() {
         if (instance == null) {
-            if (We.zerg()) {
-                return instance = new ZergSporeColony();
-            }
-            else if (We.protoss()) {
+            if (We.protoss()) {
                 return instance = new ProtossPhotonCannonAntiAir();
             }
 //            else if (We.terran()) {

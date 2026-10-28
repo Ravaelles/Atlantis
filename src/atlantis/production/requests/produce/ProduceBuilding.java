@@ -15,7 +15,6 @@ import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -272,10 +271,7 @@ public class ProduceBuilding {
     public static boolean requestBuilding(AUnitType type, ProductionOrder order) {
         assert type.isABuilding();
 
-        if (type.isZerg()) {
-            return ProduceZergUnit.produceZergBuilding(type, order);
-        }
-        else if (type.isAddon()) {
+        if (type.isAddon()) {
             return ProduceAddon.produceAddon(type);
         }
         else {

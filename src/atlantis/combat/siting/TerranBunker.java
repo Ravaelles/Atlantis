@@ -2,7 +2,6 @@ package atlantis.combat.siting;
 
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.production.dynamic.terran.buildings.ProduceBunker;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 
@@ -23,7 +22,8 @@ public class TerranBunker extends AntiLandBuildingCommander {
 
     @Override
     public boolean shouldBuildNew() {
-        return ProduceBunker.shouldBuild();
+        // TERRAN EXCLUDED (owner 2026-10-28): race out of refactor scope, dormant under D8.
+        return false;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package atlantis.combat.siting;
 
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.terran.buildings.ShouldProduceNewBunker;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -18,12 +17,13 @@ public class NewBunker {
     }
 
     public boolean requestNewAndAutomaticallyDecidePosition() {
-        if (!(new ShouldProduceNewBunker()).shouldBuild()) return false;
+        // TERRAN EXCLUDED (owner 2026-10-28): race out of refactor scope, dormant under D8.
+        return false;
 
-        HasPosition approximatePositionAsUnspecified = (new NewBunkerApproximatePosition()).approximatePosition();
-        if (Count.existingOrPlannedBuildingsNear(what(), 7, approximatePositionAsUnspecified) > 0) return false;
-
-        return requestNewBunker(approximatePositionAsUnspecified);
+//        HasPosition approximatePositionAsUnspecified = (new NewBunkerApproximatePosition()).approximatePosition();
+//        if (Count.existingOrPlannedBuildingsNear(what(), 7, approximatePositionAsUnspecified) > 0) return false;
+//
+//        return requestNewBunker(approximatePositionAsUnspecified);
     }
 
     public boolean requestNewBunker(HasPosition positionToSecure) {

@@ -1,9 +1,7 @@
 package atlantis.information.strategy.response.terran;
 
-import atlantis.production.dynamic.terran.turrets.TerranSecureBaseWithTurrets;
-
 public class TerranAirDefence {
     public static void update() {
-        TerranSecureBaseWithTurrets.secureAllBases();
+        // TERRAN EXCLUDED (owner 2026-10-28): race out of refactor scope, dormant under D8.
     }
 }

@@ -15,7 +15,6 @@ import atlantis.production.orders.production.queue.order.ForcedDirectProductionO
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
-import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -208,10 +207,7 @@ public class AutoProduceWorkersCommander extends Commander {
         if (!A.canAfford(50, 0)) return false;
         if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
 
-        if (We.zerg() && ProduceZergUnit.produceZergUnit(
-            AtlantisRaceConfig.WORKER,
-            ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
-        )) return true;
+        if (We.protoss() && ProduceWorker.produceWorker()) return true;
 
         if (base != null) {
             boolean started = base.train(

@@ -5,17 +5,11 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossSpecificBuildingsCommander;
-import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
-import atlantis.production.dynamic.terran.TerranSpecificBuildingsCommander;
-import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
-import atlantis.production.dynamic.zerg.ZergNewGasBuildingCommander;
 import atlantis.util.We;
 
 public class DynamicBuildingsCommander extends Commander {
     public static Commander get() {
-        if (We.terran()) return (new TerranDynamicBuildingsCommander());
         if (We.protoss()) return (new ProtossDynamicBuildingsCommander());
-        if (We.zerg()) return (new ZergDynamicBuildingsCommander());
 
         return null;
     }
@@ -37,23 +31,13 @@ public class DynamicBuildingsCommander extends Commander {
         CommanderFactory[] generic = new CommanderFactory[]{
             ProtossSpecificBuildingsCommander::new,
 
-            TerranSpecificBuildingsCommander::new,
-
-            ZergNewGasBuildingCommander::new,
-
             ExpansionCommander::new,
         };
 
         CommanderFactory[] raceSpecific = new CommanderFactory[0];
 
-        if (We.terran()) raceSpecific = new CommanderFactory[]{
-            TerranDynamicBuildingsCommander::new,
-        };
-        else if (We.protoss()) raceSpecific = new CommanderFactory[]{
+        if (We.protoss()) raceSpecific = new CommanderFactory[]{
             ProtossDynamicBuildingsCommander::new,
-        };
-        else if (We.zerg()) raceSpecific = new CommanderFactory[]{
-            ZergDynamicBuildingsCommander::new,
         };
 
         return mergeCommanders(generic, raceSpecific);

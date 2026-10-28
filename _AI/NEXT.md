@@ -1243,7 +1243,12 @@ global FakeUnit id counter.
   Non-Protoss classes are excluded from repair (commented out in one
   pass, never repaired). Each class: read, spec the V2-native shape,
   stub-pin, refactor, suite green, game proof where the phase demands
-  it. Queue for the walk: `_AI/legacy-production-queue.md`.
+  it. Queue for the walk: `_AI/legacy-production-queue.md` (223 rows).
+  STATUS 2026-10-28: TERRAN/ZERG excluded - 81 classes plus
+  `ZergBuildOrder` and 2 Terran acceptance tests moved to `src-old/`;
+  17 files cut to Protoss-only (dispatchers, requests, siting stubs,
+  painter, factory). Compile green, suite 1745/1745, arch advisory
+  unchanged. Walk starts at the Protoss rows.
 - **#225** Refresh-site churn (owner log 2026-10-28: Pylon
   [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
   Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit

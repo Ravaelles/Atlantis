@@ -5,7 +5,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
@@ -44,7 +43,6 @@ public abstract class DynamicBuildingCommander {
     public HasPosition nextPosition() {
         if (We.terran()) return (new NewBunkerPositionFinder(null)).find();
         if (We.protoss()) return (new ProtossPhotonCannonAntiLand()).nextPosition();
-        if (We.zerg()) return (new ZergSunkenColony()).nextPosition();
 
         return null;
     }
