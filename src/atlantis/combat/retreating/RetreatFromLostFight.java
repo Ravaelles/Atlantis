@@ -8,6 +8,7 @@ import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.escape.EscapeScoredStep;
+import atlantis.combat.formation.FormationSlots;
 import atlantis.combat.formation.SharedEscape;
 import atlantis.combat.targeting.MeleeChewerTarget;
 import atlantis.game.A;
@@ -17,6 +18,8 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+
+import java.util.function.Function;
 
 /**
  * FLEE orders a retreat, or false when the unit falls through to fight.
@@ -174,7 +177,15 @@ public final class RetreatFromLostFight {
             // the shared anchor, goes through the clamp.
             if (tactic == FightOrFlight.Tactic.FLEE) point = RetreatFloor.clamp(point);
             if (point != null && unit.distTo(point) >= 0.2) {
-                return new Verdict(rerouted ? FleeReason.ESCAPE_RALLY : FleeReason.RALLY, point);
+                // The funnel refuses unwalkable destinations (once-a-minute
+                // stack trace) while the unit still counts as retreated -
+                // so an unstandable point never leaves this method: the
+                // unscattered anchor when it stands, a fight in place
+                // otherwise.
+                HasPosition valid = standableOrFallback(point, home, FormationSlots::isStandable);
+                if (valid != null) {
+                    return new Verdict(rerouted ? FleeReason.ESCAPE_RALLY : FleeReason.RALLY, valid);
+                }
             }
 
             return new Verdict(FleeReason.NOWHERE_TO_RUN, null);
@@ -182,6 +193,25 @@ public final class RetreatFromLostFight {
         if (noFleeOnBaselessUms) return new Verdict(FleeReason.STAY_BASELESS, null);
 
         return new Verdict(FleeReason.STAY_MID_SWING, null);
+    }
+
+    /**
+     * The funnel refuses unwalkable destinations, so validity is decided
+     * here, never at issue time: a standable rally marches, an unstandable
+     * one falls back to the unscattered anchor when it stands, and two bad
+     * points fight in place instead of a refused order. The walkability
+     * predicate injects (DIP) so the contract pins without a map.
+     */
+    public static HasPosition standableOrFallback(
+        HasPosition point, HasPosition anchor, Function<APosition, Boolean> standable
+    ) {
+        APosition pointPos = point == null ? null : point.position();
+        if (pointPos != null && Boolean.TRUE.equals(standable.apply(pointPos))) return point;
+
+        APosition anchorPos = anchor == null ? null : anchor.position();
+        if (anchorPos != null && Boolean.TRUE.equals(standable.apply(anchorPos))) return anchor;
+
+        return null;
     }
 
     private static boolean isChased(AUnit unit) {
