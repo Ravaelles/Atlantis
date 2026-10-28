@@ -22,10 +22,15 @@ public interface OrderDirector {
      * the plan could not name one - the implementation may then pick any free
      * facility of the type).
      *
-     * @return true when a command was actually issued (false when the unit
-     * could not take it now, e.g. it is already training the same thing)
+     * @return null when a command was actually issued, otherwise the denial
+     * reason in the twin's vocabulary ("no such facility", "facility
+     * unfinished", "already commanded", "already training {type}",
+     * "engine refused"). The boolean collapsed five different causes into
+     * one label and a 175-refusal stall read as one shape (measured live:
+     * bank 3800 behind 3 idle Gateways) - the reason tells which door is
+     * actually closed.
      */
-    boolean trainFacility(String typeId, int producerId, Producible item);
+    String trainFacility(String typeId, int producerId, Producible item);
 
     /**
      * Starts a research or an upgrade on one concrete facility.

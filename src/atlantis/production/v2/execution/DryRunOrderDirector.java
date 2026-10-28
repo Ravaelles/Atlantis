@@ -31,10 +31,10 @@ public final class DryRunOrderDirector implements OrderDirector {
     private final List<String> orders = new ArrayList<>();
 
     @Override
-    public boolean trainFacility(String typeId, int producerId, Producible item) {
+    public String trainFacility(String typeId, int producerId, Producible item) {
         orders.add("train " + item.id() + " at " + typeId + "#" + producerId);
 
-        return false;
+        return "dry-run";
     }
 
     @Override

@@ -72,7 +72,7 @@ public class AlreadyTrainingIsNotIssuedTest extends AbstractTestWithWorld {
             assertEquals(1, results.size());
             assertFalse(results.get(0).issued(),
                 "the Nexus trained nothing this frame - the Probe was already first in its queue");
-            assertEquals("no free facility", results.get(0).detail());
+            assertEquals("already training Probe", results.get(0).detail());
         });
     }
 }

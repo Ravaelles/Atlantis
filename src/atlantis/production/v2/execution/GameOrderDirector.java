@@ -46,13 +46,14 @@ public class GameOrderDirector implements OrderDirector {
     }
 
     @Override
-    public boolean trainFacility(String typeId, int producerId, Producible item) {
+    public String trainFacility(String typeId, int producerId, Producible item) {
         AUnitType unitType = resolveUnitType(item.id());
-        if (unitType == null) return false;
+        if (unitType == null) return "unknown unit";
 
         AUnit producer = resolveFacility(typeId, producerId);
-        if (producer == null || !producer.isCompleted()) return false;
-        if (commandsThisFrame.getOrDefault(producer.id(), 0) > 0) return false;
+        if (producer == null) return "no such facility";
+        if (!producer.isCompleted()) return "facility unfinished";
+        if (commandsThisFrame.getOrDefault(producer.id(), 0) > 0) return "already commanded";
 
         // The plan is recomputed every frame and the unit is still in the build
         // queue on the next one: the same order must not be queued twice. A
@@ -66,14 +67,14 @@ public class GameOrderDirector implements OrderDirector {
         if (producer.isTraining(unitType)) {
             markUsed(producer);
 
-            return false;
+            return "already training " + unitType.name();
         }
 
-        if (!producer.trainForced(unitType)) return false;
+        if (!producer.trainForced(unitType)) return "engine refused";
 
         markUsed(producer);
 
-        return true;
+        return null;
     }
 
     @Override

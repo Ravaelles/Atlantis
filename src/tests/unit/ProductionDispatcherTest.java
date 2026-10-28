@@ -117,7 +117,7 @@ public class ProductionDispatcherTest {
 
         assertEquals(1, results.size());
         assertFalse(results.get(0).issued(), "a command that did not leave is not 'issued'");
-        assertEquals("no free facility", results.get(0).detail());
+        assertEquals("refused", results.get(0).detail());
     }
 
     @Test
@@ -327,10 +327,10 @@ public class ProductionDispatcherTest {
         boolean trainsSucceed = true;
 
         @Override
-        public boolean trainFacility(String typeId, int producerId, Producible item) {
+        public String trainFacility(String typeId, int producerId, Producible item) {
             commands.add("train:" + item.id() + "@" + typeId + "#" + producerId);
 
-            return trainsSucceed;
+            return trainsSucceed ? null : "refused";
         }
 
         @Override

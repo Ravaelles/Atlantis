@@ -176,8 +176,8 @@ public final class ProductionDispatcher {
                 researched ? "researched" : "facility busy or missing");
         }
 
-        boolean ok = director.trainFacility(producerTypeId, item.producerId(), item.item());
-        return new DispatchResult(item, ok, ok ? "trained" : "no free facility");
+        String refusal = director.trainFacility(producerTypeId, item.producerId(), item.item());
+        return new DispatchResult(item, refusal == null, refusal == null ? "trained" : refusal);
     }
 
     private boolean isResearch(Producible item) {
