@@ -129,6 +129,8 @@ public final class ClusterTwin {
             .param("fleeReason", fleeReason)
             .log(A.now(), A.minSec());
 
+        StrengthWatch.sample(foeDist >= 0);
+
         noteArmyStall(center);
     }
 
