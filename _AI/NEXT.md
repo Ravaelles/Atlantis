@@ -135,7 +135,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   set as the `0b2198f29` baseline, so recent work regressed nothing.
   Runner-integrity holes closed (`3e7136a8e`). Open: whoever owns the 18
   re-runs the tier until green; `run-full-tests.sh` stays red until then
-  and that is honest.
+  and that is honest. MEGA-DATUM 2026-10-28: `run-acceptance-tests.sh`
+  at HEAD = 259 ok / 22 failed; the 6 classes outside #211's set
+  (Queue3+1, GasTileIsGeyserTile 2, Queue2 1, QueueInProgressInvariant 1,
+  ResourcesReserved 1, RequestBuildingNear delta 3->1) re-run on a pristine
+  worktree at `c3103aeb2` fail IDENTICALLY (8/8 same tests) - pre-existing,
+  zero regression from this session. (RequestBuildingNear 3->1 healed
+  between 2167421e7 and c3103aeb2, before this session - not claimed.)
 
 ## Architecture migration — stages E–J
 
@@ -191,7 +197,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
 - **#149** Causeless early exit: one occurrence was the hoard tripwire by design;
   the other clean, enemyless exits have no bot-side cause. Engine-side termination
-  remains open; keep `GAME_END` as witness. No recent recurrence.
+  remains open; keep `GAME_END` as witness. No recent recurrence: 9 retained
+  games 20261027_183253-20261028_004959 end as losses at various frames or
+  28800 time-ends, none clean-and-enemyless.
 
 - **#71** Readiness gate: still lacks the deciding 700 s+, one-base, low-bank
   run. Wine's default supply horizon prevents reaching it; a per-run horizon is
@@ -206,6 +214,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   remain healthy. `WarpStartedTwinTest` covers the builder path and siteless
   CANCELs carry cid/oid/reason. Open: verify STARTED-twin naming on a legacy-
   minted warp; the remaining re-request-door gap is per-warp, not per-game.
+  DATUM 2026-10-28: 0 legacy-minted warps in 4 audited V2 LIVE games
+  (003802, 000314, 183253, 004959 - every warp carries a V2 `At 0` order),
+  so the shape is unobservable in this mode; needs a non-V2 game or the
+  legacy path to mint one.
   → details: `WINE-MACRO-DATUMS.md` §5
 
 - **#74** Wine builder variance: observed stalls recover; alternating handoff
@@ -223,7 +235,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
 - **#92** Second Gateway lateness is intermittent; no blind patch. The stable
   pattern is a +1-supply lag on #2/#3, not a multi-minute delay; all three
-  Gateways warped in audited games.
+  Gateways warped in audited games. DATUM 2026-10-28 (10 retained games):
+  GW#1 f1963-2157 supply 10-11, GW#2 f2502-3458 supply 12-17 everywhere -
+  no multi-minute delay in any game; GW#3+ lands only in long games and is
+  now V2-dynamic (proved 003802, see #192).
   → details: `WINE-MACRO-DATUMS.md` §7
 
 - **#94** OpenBW combat remains blocked by engine-side enemy visibility: on
@@ -390,7 +405,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   the hit latches, plus a per-game `clear()` in `OnGameStarted`; pinned
   `lateDiscoveryStillLatchesTheMain` (red-first: null despite late
   discovery on the old code). Open: live proof that the main latches and
-  the army finally leaves.
+  the army finally leaves. LIVE PROOF 2026-10-28 (game 010058, first jar
+  with the fix): main latches f3658 at [95,119] (scout at [85,118]),
+  359/436 scout rows known thereafter. Mission flips Attack f4705 and the
+  army marches to the enemy main (92 CLUSTER rows anchor->focus [95,119],
+  contact foe 836 at f7502), returns on Defend f7547, holds home correctly
+  (foe -1, no latch - #206's hide-shape needs a post-contact redeploy case,
+  this game came home mission-ordered). Loss f14785 in the final home
+  defense (strength bled 340->118); combat quality, separate slice.
 - **#189** Log priority adoption is complete: console levels and event `lvl`
   follow CONVENTIONS §27; diagnostic event volume stays MED by design. TEMP
   lines are session-only; latest source sweep found none.
