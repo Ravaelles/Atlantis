@@ -40,6 +40,7 @@ public class ACherryVis_OrderWatcher {
             if (!command.equals(lastOrders.get(unit.id()))) {
                 lastOrders.put(unit.id(), command);
                 CV.unitLog(command + "@" + A.minSec(), unit);
+                mirrorBehaviorAsTask(unit);
             }
         }
     }
@@ -70,6 +71,24 @@ public class ACherryVis_OrderWatcher {
         if (behavior == null || behavior.isEmpty()) behavior = unit.tooltip();
 
         return behavior == null || behavior.isEmpty() ? "" : "/" + behavior;
+    }
+
+    /**
+     * Task for managerless units (NEXT #221 follow-up): the viewer reads
+     * Task from {@code units_updates[].manager}, which only manager-driven
+     * units ever wrote - every army row read None. On a behavior change
+     * the watcher mirrors the behavior there, so Task names what the unit
+     * does. Manager-driven units are untouched (their manager rows own
+     * the slot; overwriting them would flap Task). Change-only like the
+     * log row above, so no new volume.
+     */
+    private static void mirrorBehaviorAsTask(AUnit unit) {
+        String behavior = unit.behavior();
+        if (behavior == null || behavior.isEmpty()) behavior = unit.tooltip();
+        if (behavior == null || behavior.isEmpty()) return;
+        if (!(unit.manager() instanceof atlantis.battle.generic.DoNothing)) return;
+
+        CV.unitManager(behavior, unit);
     }
 
     /**

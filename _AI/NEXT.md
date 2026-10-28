@@ -909,6 +909,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   never erase it, and the order watcher keys on it with tooltip fallback.
   Units_updates tooltips ride the CHERRYVIS_TOOLTIPS flag (default off);
   the grouped units_tooltips section stays as the minimal machine format.
+  TASK MIRROR LANDED 2026-10-28 (owner: Task still None despite tagged
+  logs): the viewer reads only units_updates[].manager, and army units
+  never get manager rows. The order watcher now mirrors a managerless
+  unit's behavior change into the manager slot (change-only, same gate
+  as the log row), so Task names what the army does. Manager-driven
+  units untouched (their manager owns the slot, never overwritten).
+  Pinned in `BuilderOrderLogTest` (mirror fires for the managerless,
+  never clobbers a manager). Live proof rides the next trace.
   LIVE PROOF 2026-10-28 (game 013929, first jar with the channel): Task
   populates - 130 units in units_updates, tooltip-only rows for
   managerless units (army included). FLAP FINDING in the same game:
@@ -928,7 +936,20 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fix with a global FakeUnit id reset (reshuffles all order-sensitive
   expectations) and do NOT touch from the builder-log harness (world()-based
   setup perturbs global state and flips it - `BuilderOrderLogTest` uses
-  direct BaseSelect mocks for exactly this reason).
+  direct BaseSelect mocks for exactly this reason.
+- **#223** Hidden-unit crisis response (owner ask 2026-10-28: do we answer
+  lurkers and Dark Templar, and how does PurpleWave do it). PurpleWave
+  pumps Observers 1-vs-3 on lurker-likelihood (seen lurkers/eggs or burrow
+  tech) plus cannons at openings, behind the Robo chain; prediction rides
+  `enemyHasShown` evidence, including tech buildings. Ours answers the
+  same shape on first sight: lurker/egg/DT (or Citadel/Archives/HydraDen)
+  latches `HAS_HIDDEN_COMBAT_UNIT` and queues Forge (if missing) + 2
+  cannons with top priority alongside Core/Robo/Observatory/Observer.
+  VERIFIED 2026-10-28 in-harness, was unpinned and doubted: a seen lurker
+  queues the full chain (`HiddenUnitResponseTest` 2/2: Robo+Obs+Observer,
+  Forge+Cannons). Open: a live lurker/DT game proving the queue fires and
+  the Observer ships in time; PurpleWave's 3-vs-1 observer pump on
+  likelihood (vs our 1) is a doctrine delta, not a defect.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 

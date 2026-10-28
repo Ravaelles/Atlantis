@@ -151,4 +151,46 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         assertTrue(!rows.contains("/Pylon") && !rows.contains("/TravelToSite"),
             "no construction, no tooltip - no suffixes: " + rows);
     }
+
+    @Test
+    public void armyBehaviorMirrorsToTask() {
+        // NEXT #221 follow-up: the viewer reads Task from
+        // units_updates[].manager, which only manager-driven units wrote -
+        // every army row read None. A managerless unit with a behavior now
+        // mirrors it there on change, so Task names what it does.
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
+        zealot.setBehavior("ClusterKite");
+        showUnits(zealot);
+
+        atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
+
+        java.util.Map<Integer, String> managerRows =
+            unitLogger().unitsManagerLogs.get(zealot.id());
+        assertTrue(managerRows != null && managerRows.containsValue("ClusterKite"),
+            "a managerless behavior rides the manager slot (Task): " + managerRows);
+    }
+
+    @Test
+    public void managedUnitsKeepManagerTask() {
+        // The mirror never overwrites a manager row: a driven unit keeps
+        // its manager as Task, the behavior stays in the log half.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 20);
+        probe.setBehavior("Gatherer!");
+        probe.setManagerUsed(new atlantis.architecture.Manager(probe) {
+            @Override
+            protected atlantis.architecture.ManagerFactory[] managers() {
+                return new atlantis.architecture.ManagerFactory[0];
+            }
+        });
+        showUnits(probe);
+
+        atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
+
+        java.util.Map<Integer, String> managerRows =
+            unitLogger().unitsManagerLogs.get(probe.id());
+        assertTrue(managerRows != null && !managerRows.isEmpty(),
+            "a driven unit keeps a manager row: " + managerRows);
+        assertTrue(managerRows.values().stream().noneMatch("Gatherer!"::equals),
+            "the behavior never clobbers a manager Task: " + managerRows);
+    }
 }
