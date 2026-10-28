@@ -1245,3 +1245,42 @@ global FakeUnit id counter.
   game proof each; the owner chose the bulk move to end the
   double-policy churn. Repair queue (in order): order-type refs in the
   actuator, `AStrategy` build-order refs, test refs or deletions.
+
+- **#224** Actuator seam repair after the legacy move (owner order
+  2026-10-28, executes WO-147 queue half). Measured scope: 2000+ javac
+  errors (cap hit - true count higher), ~60 production files + tests.
+  Dominant refs: `queue.order` (164), `queue` (119),
+  `requests.produce` (32), `queue.add` (25), `orders.build` (18),
+  `dynamic.*` (~70). Repair direction (piecewise, SOLID): a V2-native
+  demand carrier (`atlantis.production.v2`, item + minSupply +
+  exact-position + modifier + id) replacing `ProductionOrder` at the
+  retained seam first (`Construction`, `AUnit`, `AUnitOrders`,
+  `GameOrderDirector.orderFor`), then position readers
+  (`CatalogueSiteAdapter`, `DefineExactPositionForNewConstruction`,
+  `RequestBuildingNear`, `NewConstructionRequest`), then listeners/
+  recorders/strategy responses. No legacy file returns from `src-old/`.
+  First slice must restore `javac` clean before any behavior pin runs.
+- **#225** Refresh-site churn (owner log 2026-10-28: Pylon
+  [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
+  Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit
+  on the tiles while no builder is committed, and the issue path
+  (`handleRefreshingPositionIfNeeded`, runs per frame) re-runs the
+  finder + cancel/re-request each pass a Nexus cannot issue. Fix
+  direction: refresh only on completed-building footprint (units walk
+  away - the builder issues when free), and a per-construction
+  cooldown after a re-site; the cancel+`AddToQueue` re-request path is
+  rewritten onto the V2 carrier from #224 (in V2 a cancelled site
+  refires from its goal - no explicit re-request). Needs the #224
+  carrier first, then a sim/game pin.
+- **#226** Retreat to unwalkable ground (owner log 2026-10-28: Zealot
+  [95,2] -> [55,22] refused in `AUnitOrders.move`, once-per-minute
+  stack trace via `RetreatFromLostFight` M_FORMATION branch).
+  Mechanism: `spreadRallyPoint` falls back to a possibly unwalkable
+  anchor, and neither the breach/choke/SharedEscape anchors nor the
+  floor clamp guarantee standability - while the funnel refuses and
+  the unit still counts as retreated. Fix direction: validity gate in
+  `decide()` (the owned site, §31) - unscattered fallback to the
+  anchor when standable, else `NOWHERE_TO_RUN` and fight; producers
+  fixed, the funnel keeps refusing. Needs #224 compile first, then a
+  StarEngine sim pin (beaten unit, unwalkable anchor: fights instead
+  of a refused order) + suite.
