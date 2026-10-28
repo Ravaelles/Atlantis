@@ -100,7 +100,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q69 `UpgradeResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
 
 ## dynamic/protoss/units
-- [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Open micro-doctrine, needs value proof.
+- [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Investigated 2026-10-28: the dispatcher trains at the scheduler-named producerId, so proximity needs a front readout in the scheduler (walk-time math per facility) - a new seam with boundary questions, not a port. Open micro-doctrine, needs value proof first.
 - [x] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Arbiter pump (cap 2; `ReaverChainTest`).
 - [x] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Corsair pump (Zerg branch; Wraith branch needs enemyIsTerran, unported).
 - [x] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 DT pump (tiered caps, bay-outranks-first, lifetime cap becomes loss replacement).
