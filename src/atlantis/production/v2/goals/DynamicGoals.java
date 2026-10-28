@@ -71,6 +71,8 @@ public final class DynamicGoals {
         addGasGoal(goals, state, race);
         addExpansionGoal(goals, state, race);
         addDetectionGoals(goals, state);
+        addStargateGoal(goals, state);
+        addCorsairGoal(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
@@ -119,6 +121,64 @@ public final class DynamicGoals {
                 ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0,
                 TargetPlacement.inNeighbourhood(state.mainBaseTileX, state.mainBaseTileY)));
         }
+    }
+
+    /**
+     * Stargate (Protoss): the board's matchup want, verbatim numbers.
+     * Against Zerg past supply 40 with an army behind it (or 70+, or
+     * mutas in the sky); against Protoss with 13+ Dragoons facing
+     * carrier tech; never against Terran (the legacy branch answers
+     * false - Wraiths are met by existing eyes, not a new building).
+     * Standing coverage is execution-side (existingItems), so the goal
+     * is a plain count-1 want - the scheduler dedups the re-fire.
+     */
+    private static void addStargateGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!stargateWanted(state)) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Stargate),
+            ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    private static boolean stargateWanted(GameSnapshot state) {
+        if (state.enemyIsProtoss) {
+            return state.dragoons > 12 && state.enemyCarrierTech;
+        }
+        if (!state.enemyIsZerg && !state.enemyIsProtoss) return false;
+
+        if (state.dragoons <= 1) return false;
+        if (state.armyStrength <= 115 && state.combatUnits <= 5 && state.cannonsAtMain <= 1) return false;
+        if (state.supplyUsed <= 40 && state.enemyHydras >= 10) return false;
+        if (state.supplyUsed <= 40) return false;
+        if (state.supplyUsed >= 70) return true;
+        if (state.supplyUsed >= 90 && state.armyStrength >= 95 && state.enemyLurkers <= 2) return true;
+
+        return state.enemyMutalisks > 0;
+    }
+
+    /**
+     * Corsairs (Protoss): the eyes the Stargate trains, pumped against
+     * Zerg air - a standing patrol plus one per two mutas. Fires only
+     * with a Stargate standing or warping (no eyes before the building),
+     * and only while standing eyes fall short of the want (the pump
+     * replaces losses, it never stockpiles). Vs Terran Wraiths needs an
+     * enemyIsTerran signal the snapshot does not carry yet - deliberately
+     * unported, not silently dropped (the legacy branch stays the record).
+     */
+    private static void addCorsairGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.enemyIsZerg) return;
+        if (!state.hasStargate) return;
+        if (state.minerals < 200) return;
+
+        int want = Math.max(2, state.supplyUsed / 36);
+        want = Math.max(want, state.enemyMutalisks / 2 + 2);
+        if (want - state.corsairs <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Corsair),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
     }
 
     /**
@@ -552,6 +612,38 @@ public final class DynamicGoals {
         public boolean hasForge;
 
         /**
+         * Enemy pressure the Stargate branch answers to (Zerg air play).
+         * Fed live from the discovered counts; zero when nothing is seen.
+         */
+        public int enemyHydras;
+        public int enemyLurkers;
+
+        /**
+         * Discovered carriers or a Fleet Beacon going up (the Protoss
+         * branch of the Stargate want). Collapsed to one bit, the way the
+         * board feeds it - consumers never run two unit queries.
+         */
+        public boolean enemyCarrierTech;
+
+        /**
+         * Own combat units standing (the Zerg branch refuses a Stargate
+         * for a toothless line even with the supply for it).
+         */
+        public int combatUnits;
+
+        /**
+         * Corsairs standing (the pump replaces losses, it never stockpiles
+         * eyes ahead of the want).
+         */
+        public int corsairs;
+
+        /**
+         * A Stargate standing or warping (Protoss; false blocks the whole
+         * Corsair chain - no eyes before the building that trains them).
+         */
+        public boolean hasStargate;
+
+        /**
          * The enemy showed or is going hidden combat units (lurkers, Dark
          * Templar: seen, or predicted from Citadel/Archives/HydraDen).
          * Only Zerg and Protoss own the hidden set, so a set flag always
@@ -652,6 +744,12 @@ public final class DynamicGoals {
             anchored.gatewaysFree = gatewaysFree;
             anchored.hasForge = hasForge;
             anchored.enemyHasHiddenUnits = enemyHasHiddenUnits;
+            anchored.enemyHydras = enemyHydras;
+            anchored.enemyLurkers = enemyLurkers;
+            anchored.enemyCarrierTech = enemyCarrierTech;
+            anchored.combatUnits = combatUnits;
+            anchored.corsairs = corsairs;
+            anchored.hasStargate = hasStargate;
 
             return anchored;
         }

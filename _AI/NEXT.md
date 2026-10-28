@@ -1249,6 +1249,10 @@ global FakeUnit id counter.
   17 files cut to Protoss-only (dispatchers, requests, siting stubs,
   painter, factory). Compile green, suite 1745/1745, arch advisory
   unchanged. Walk starts at the Protoss rows.
+  STARGATE 2026-10-28: buildings Q33-Q49 triaged (10 covered, 5 open
+  behind unit chains, ShieldBattery dead upstream); Stargate + Corsair
+  pump ported as V2 goals (`StargateCorsairTest` 6/6, full suite
+  1751/1751). Live proof rides a muta game.
 - **#225** Refresh-site churn (owner log 2026-10-28: Pylon
   [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
   Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit

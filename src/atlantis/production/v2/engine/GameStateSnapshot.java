@@ -261,6 +261,18 @@ public final class GameStateSnapshot {
         // ProtossSecureBasesCommander): without it a Cannon goal from frame
         // 0 plans an orphan Forge ahead of the Gateway.
         snapshot.hasForge = We.protoss() && Have.forge();
+        // Stargate chain inputs (the matchup want reads discovered air
+        // pressure, own line strength and standing eyes - zeros until seen).
+        snapshot.enemyHydras = atlantis.information.enemy.EnemyUnits.hydras();
+        snapshot.enemyLurkers = atlantis.information.enemy.EnemyUnits.lurkers();
+        snapshot.combatUnits = Count.ourCombatUnits();
+        snapshot.corsairs = Count.corsairs();
+        snapshot.hasStargate =
+            Count.ofTypeWithUnfinished(AUnitType.Protoss_Stargate) > 0;
+        snapshot.enemyCarrierTech =
+            atlantis.information.enemy.EnemyUnits.discovered().carriers().notEmpty()
+                || atlantis.information.enemy.EnemyUnits.discovered()
+                    .ofType(AUnitType.Protoss_Fleet_Beacon).notEmpty();
         // Hidden-unit sightings answer through the goal layer itself: the
         // legacy queue path never drains in V2 LIVE, so without this a
         // seen lurker orders nothing.

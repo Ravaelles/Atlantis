@@ -53,6 +53,11 @@ STATUS 2026-10-28: the supply contract (`dynamic/supply/NeedDynamicSupply`
 refactor needed. Open: convergence of the flat-4 V2 goal with the
 6/10/14 bands (WO-144 delta 1), then the legacy callers move; both need
 an owner-run Wine proof. Walk queue: `PRODUCTION_V2/legacy-production-queue.md`.
+Buildings group triaged 2026-10-28 (Q33-Q49): 10 rows covered by V2
+(board goals, scheduler prereqs, demand goals - no port), Stargate +
+Corsairs ported as V2 goals (`StargateCorsairTest` 6/6), 5 rows open
+behind their unit chains (Citadel/Archives, SupportBay, Tribunal,
+per-base Pylons) and ShieldBattery dead upstream.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

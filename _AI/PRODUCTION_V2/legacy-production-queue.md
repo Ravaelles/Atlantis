@@ -53,23 +53,23 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q32 `ProtossSpecificBuildingsCommander.java` [PROTOSS] (P4-demand?)
 
 ## dynamic/protoss/buildings
-- [ ] Q33 `ProduceArbiterTribunal.java` [PROTOSS] (P4-demand?)
-- [ ] Q34 `ProduceCannonAtMain.java` [PROTOSS] (P4-demand?)
-- [ ] Q35 `ProduceCannonAtNatural.java` [PROTOSS] (P4-demand?)
-- [ ] Q36 `ProduceCannonAtNaturalOrMain.java` [PROTOSS] (P4-demand?)
-- [ ] Q37 `ProduceCitadelOfAdun.java` [PROTOSS] (P4-demand?)
-- [ ] Q38 `ProduceCyberneticsCore.java` [PROTOSS] (P4-demand?)
-- [ ] Q39 `ProduceFirstAssimilator.java` [PROTOSS] (P4-demand?)
-- [ ] Q40 `ProduceForge.java` [PROTOSS] (P4-demand?)
-- [ ] Q41 `ProduceGateway.java` [PROTOSS] (P4-demand?)
-- [ ] Q42 `ProduceNaturalWallIn.java` [PROTOSS] (P4-demand?)
-- [ ] Q43 `ProduceObservatory.java` [PROTOSS] (P4-demand?)
-- [ ] Q44 `ProducePylonNearEveryBase.java` [PROTOSS] (P4-demand?)
-- [ ] Q45 `ProduceRoboticsFacility.java` [PROTOSS] (P4-demand?)
-- [ ] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?)
-- [ ] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?)
-- [ ] Q48 `ProduceStargate.java` [PROTOSS] (P4-demand?)
-- [ ] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?)
+- [ ] Q33 `ProduceArbiterTribunal.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only, dead without Arbiter demand; ports behind the Archives chain.
+- [x] Q34 `ProduceCannonAtMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
+- [x] Q35 `ProduceCannonAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
+- [x] Q36 `ProduceCannonAtNaturalOrMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (dispatcher over Q34/Q35).
+- [ ] Q37 `ProduceCitadelOfAdun.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (supply 70 + Obs); ports with the Archives/DT chain.
+- [x] Q38 `ProduceCyberneticsCore.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (scheduler pulls Core as Dragoon prereq).
+- [x] Q39 `ProduceFirstAssimilator.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 gas goal).
+- [x] Q40 `ProduceForge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (board ForgeGoal + detection Forge).
+- [x] Q41 `ProduceGateway.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 gateway demand).
+- [x] Q42 `ProduceNaturalWallIn.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (board WallInGoal gate).
+- [x] Q43 `ProduceObservatory.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (detection chain).
+- [ ] Q44 `ProducePylonNearEveryBase.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only per-base power (7min+); open, needs an expansion vehicle.
+- [x] Q45 `ProduceRoboticsFacility.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (detection chain).
+- [ ] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Reaver/Shuttle chain.
+- [ ] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
+- [x] Q48 `ProduceStargate.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 Stargate+Corsair goals (`StargateCorsairTest` 6/6).
+- [ ] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only vs Zerg; ports with the DT/HT chain.
 
 ## dynamic/protoss/decisions
 - [ ] Q50 `AllowProduceDragoon.java` [PROTOSS] (P4-demand?)
@@ -102,7 +102,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 ## dynamic/protoss/units
 - [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?)
 - [ ] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?)
-- [ ] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?)
+- [x] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Corsair pump (Zerg branch; Wraith branch needs enemyIsTerran, unported).
 - [ ] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?)
 - [ ] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?)
 - [ ] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?)
