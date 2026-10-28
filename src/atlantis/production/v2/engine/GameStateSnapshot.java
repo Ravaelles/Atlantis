@@ -277,6 +277,10 @@ public final class GameStateSnapshot {
         snapshot.darkTemplar = Count.darkTemplars();
         snapshot.hasSupportBay = Count.ofType(AUnitType.Protoss_Robotics_Support_Bay) > 0;
         snapshot.reavers = Count.reavers();
+        snapshot.hasRobo = Count.ofTypeWithUnfinished(AUnitType.Protoss_Robotics_Facility) > 0;
+        snapshot.shuttles = Count.shuttles();
+        snapshot.hasTribunal = Count.ofType(AUnitType.Protoss_Arbiter_Tribunal) > 0;
+        snapshot.arbiters = Count.ofType(AUnitType.Protoss_Arbiter);
         snapshot.hasStargate =
             Count.ofTypeWithUnfinished(AUnitType.Protoss_Stargate) > 0;
         snapshot.enemyCarrierTech =

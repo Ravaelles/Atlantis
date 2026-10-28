@@ -80,6 +80,11 @@ public final class DynamicGoals {
         addHighTemplarGoal(goals, state);
         addStormGoal(goals, state);
         addDarkTemplarGoal(goals, state);
+        addSupportBayGoal(goals, state);
+        addReaverGoal(goals, state);
+        addShuttleGoal(goals, state);
+        addTribunalGoal(goals, state);
+        addArbiterGoal(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
@@ -327,6 +332,105 @@ public final class DynamicGoals {
 
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Dark_Templar),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Robotics Support Bay (Protoss): the reaver line opens past supply
+     * 70 (80 with a 150+ line, or 500/180 banked) - Archives first vs
+     * Zerg, eyes first vs lurkers, a 120/140/2 line vs Protoss. Dropped
+     * with notes: the vs-Terran 90 floor (no Terran signal) and the 49
+     * floor below every other gate.
+     */
+    private static void addSupportBayGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.enemyIsZerg && !state.hasArchives) return;
+        if (state.enemyLurkers > 0 && state.observers == 0) return;
+        if (state.enemyIsProtoss
+            && (state.supplyUsed <= 120 || state.armyStrength <= 140 || state.observers <= 2)) return;
+
+        boolean want = state.supplyUsed >= (state.armyStrength >= 150 ? 80 : 120)
+            || (state.supplyUsed >= 70 && state.minerals >= 500 && state.gas >= 180);
+        if (!want) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Robotics_Support_Bay),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Reavers (Protoss): one first past 70, then one per 45 supply up to
+     * 4 - plus 2 when 200/200 is banked. Eyes first vs air (no Reaver
+     * into uncovered mutas). Standing and in-flight coverage is
+     * execution-side, so the goal is a count-1 pump while short.
+     */
+    private static void addReaverGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasRobo || !state.hasSupportBay) return;
+        if (state.supplyUsed <= 70) return;
+        if (state.enemyMutalisks > 0 && state.observers < 2 && state.corsairs < 2) return;
+        if (state.observers == 0 && state.enemyHasHiddenUnits) return;
+
+        int max = state.reavers == 0 ? 1
+            : Math.min(4 + (state.minerals >= 200 && state.gas >= 200 ? 2 : 0),
+                Math.max(0, 1 + state.supplyUsed / 45));
+        if (max - state.reavers <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Reaver),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Shuttles (Protoss): the first the moment Reavers stand (or a 650
+     * bank says so), then one per Reaver past 100 supply - never more
+     * Shuttles than Reavers, never into a weak toothless line, never
+     * blind into hidden units.
+     */
+    private static void addShuttleGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasRobo) return;
+        if (state.observers == 0 && state.enemyHasHiddenUnits) return;
+        if (state.armyStrength <= 120 && state.combatUnits <= 10) return;
+
+        boolean want = (state.shuttles == 0 && (state.reavers > 0 || state.minerals >= 650))
+            || (state.supplyUsed >= 100 && state.shuttles > 0 && state.reavers > state.shuttles);
+        if (!want) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Shuttle),
+            ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Arbiter Tribunal (Protoss): late bulk enabler past 170/180 supply
+     * (unknown reads late - the Terran 120 branch needs a signal the
+     * snapshot lacks), behind a standing Bay, with a line or a bank
+     * behind it.
+     */
+    private static void addTribunalGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasSupportBay) return;
+        if (state.supplyUsed < (state.enemyIsZerg ? 180 : state.enemyIsProtoss ? 170 : 180)) return;
+        if (state.armyStrength <= 130 && !(state.minerals >= 400 && state.gas >= 300)) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Arbiter_Tribunal),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Arbiters (Protoss): two behind a standing Tribunal (five vs
+     * Terran needs the same missing signal - capped at two). Losses
+     * replaced, never stockpiled.
+     */
+    private static void addArbiterGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasTribunal) return;
+        if (2 - state.arbiters <= 0) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Arbiter),
             ProductionGoal.PRIORITY_MAINARMY, 1, 0, TargetPlacement.anywhere()));
     }
 
@@ -878,6 +982,20 @@ public final class DynamicGoals {
         public int reavers;
 
         /**
+         * Reaver chain inputs: Robotics Facility standing or warping
+         * (Reavers and Shuttles train at it), Shuttles standing, Tribunal
+         * standing (Arbiters need it).
+         */
+        public boolean hasRobo;
+        public int shuttles;
+        public boolean hasTribunal;
+
+        /**
+         * Arbiters standing (two behind a Tribunal, losses replaced).
+         */
+        public int arbiters;
+
+        /**
          * Saving for Dark Templar: hidden-units tech is warping
          * (Citadel or Archives unfinished) while the strategy goes hidden.
          * Basics wait below their floors instead of eating the DT bank.
@@ -1001,6 +1119,10 @@ public final class DynamicGoals {
             anchored.darkTemplar = darkTemplar;
             anchored.hasSupportBay = hasSupportBay;
             anchored.reavers = reavers;
+            anchored.hasRobo = hasRobo;
+            anchored.shuttles = shuttles;
+            anchored.hasTribunal = hasTribunal;
+            anchored.arbiters = arbiters;
             anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;

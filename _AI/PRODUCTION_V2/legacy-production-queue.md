@@ -16,17 +16,17 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q7 `PendingNextBase.java` [neutral] (P5?)
 
 ## dynamic/expansion/decision
-- [ ] Q8 `CancelNotStartedBases.java` [neutral] (P5?)
-- [ ] Q9 `ExpansionUnderPressure.java` [neutral] (P5?)
-- [ ] Q10 `ShouldExpand.java` [neutral] (P5?)
+- [x] Q8 `CancelNotStartedBases.java` [neutral] (P5?) — walked 2026-10-28: covered by V2, no port. (in-flight suppression in every V2 goal).
+- [ ] Q9 `ExpansionUnderPressure.java` [neutral] (P5?) — walked 2026-10-28: defend-rush gate has no V2 counterpart; tuning delta, needs a game proof.
+- [x] Q10 `ShouldExpand.java` [neutral] (P5?) — walked 2026-10-28: covered by V2, no port. (Protoss-only; V2 expansion goal owns the timing).
 
 ## dynamic/expansion/protoss
-- [ ] Q11 `ProtossCancelExpansionCommander.java` [PROTOSS] (P5?)
-- [ ] Q12 `ProtossExpandNow.java` [PROTOSS] (P5?)
-- [ ] Q13 `ProtossExpansionCommander.java` [PROTOSS] (P5?)
-- [ ] Q14 `ProtossShouldExpand.java` [PROTOSS] (P5?)
-- [ ] Q15 `ProtossShouldExpandToNaturalBase.java` [PROTOSS] (P5?)
-- [ ] Q16 `ProtossShouldExpandToThirdAndLaterBase.java` [PROTOSS] (P5?)
+- [x] Q11 `ProtossCancelExpansionCommander.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (in-flight suppression kills re-fire).
+- [x] Q12 `ProtossExpandNow.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (V2 expansion goal).
+- [x] Q13 `ProtossExpansionCommander.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (V2 expansion goal).
+- [x] Q14 `ProtossShouldExpand.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (baseline timing; muta/rush/bank deltas stay open).
+- [x] Q15 `ProtossShouldExpandToNaturalBase.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (natural siting is the planner seam).
+- [x] Q16 `ProtossShouldExpandToThirdAndLaterBase.java` [PROTOSS] (P5?) — walked 2026-10-28: covered by V2, no port. (late-base siting is the planner seam; 4-cap vs 7-cap delta open).
 
 ## dynamic/expansion/secure/terran
 - [~] Q17 `SecuringBaseAsTerran.java` [TERRAN] (P5?)
@@ -44,16 +44,16 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [~] Q25 `ZergShouldExpand.java` [ZERG] (P5?)
 
 ## dynamic/protoss
-- [ ] Q26 `ProtossDynamicBuildingsCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q27 `ProtossDynamicTechResearch.java` [PROTOSS] (P4-demand?)
-- [ ] Q28 `ProtossDynamicUnitProductionCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q29 `ProtossNewGasBuildingCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q30 `ProtossProductionDiagnostics.java` [PROTOSS] (P4-demand?)
-- [ ] Q31 `ProtossSecureBasesCommander.java` [PROTOSS] (P4-demand?)
-- [ ] Q32 `ProtossSpecificBuildingsCommander.java` [PROTOSS] (P4-demand?)
+- [x] Q26 `ProtossDynamicBuildingsCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (commander shell; V2 engine owns policy).
+- [x] Q27 `ProtossDynamicTechResearch.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
+- [x] Q28 `ProtossDynamicUnitProductionCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (commander shell; V2 engine owns policy).
+- [x] Q29 `ProtossNewGasBuildingCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 gas goal).
+- [x] Q30 `ProtossProductionDiagnostics.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (idle-rich watchdog is the health-watcher seam).
+- [x] Q31 `ProtossSecureBasesCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection goals).
+- [x] Q32 `ProtossSpecificBuildingsCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (commander shell; V2 engine owns policy).
 
 ## dynamic/protoss/buildings
-- [ ] Q33 `ProduceArbiterTribunal.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only, dead without Arbiter demand; ports behind the Archives chain.
+- [x] Q33 `ProduceArbiterTribunal.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Tribunal goal (unknown reads late; `ReaverChainTest`).
 - [x] Q34 `ProduceCannonAtMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
 - [x] Q35 `ProduceCannonAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (fortification + detection cannons).
 - [x] Q36 `ProduceCannonAtNaturalOrMain.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (dispatcher over Q34/Q35).
@@ -66,7 +66,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q43 `ProduceObservatory.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (detection chain).
 - [ ] Q44 `ProducePylonNearEveryBase.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only per-base power (7min+); open, needs an expansion vehicle.
 - [x] Q45 `ProduceRoboticsFacility.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (detection chain).
-- [ ] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Reaver/Shuttle chain.
+- [x] Q46 `ProduceRoboticsSupportBay.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Bay goal (verbatim minus Terran floor; `ReaverChainTest`).
 - [ ] Q47 `ProduceShieldBatteryAtNatural.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
 - [x] Q48 `ProduceStargate.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as V2 Stargate+Corsair goals (`StargateCorsairTest` 6/6).
 - [x] Q49 `ProduceTemplarArchives.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Archives goal (mission + BO-permission clauses dropped, noted; `TemplarChainTest`).
@@ -101,15 +101,15 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 
 ## dynamic/protoss/units
 - [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Open micro-doctrine, needs value proof.
-- [ ] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (Tribunal standing, 2/5/2 caps); ports behind the Tribunal chain.
+- [x] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Arbiter pump (cap 2; `ReaverChainTest`).
 - [x] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Corsair pump (Zerg branch; Wraith branch needs enemyIsTerran, unported).
 - [x] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 DT pump (tiered caps, bay-outranks-first, lifetime cap becomes loss replacement).
 - [x] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + pump + gates).
 - [x] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 HT pump (tiered caps 2/3/4/6); the upstream disable dies with the legacy caller.
 - [x] Q76 `ProduceObserver.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 observer pump (flag 3-or-1-per-40, lurkers 4, losses replaced; routine clock-eyes unported; HiddenUnitDetectionGoalsTest +1).
-- [ ] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (supply 70+, obs-before-reaver); ports with the SupportBay chain.
-- [ ] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only reaver rearming; ports with the Reaver chain.
-- [ ] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (reaver-gated); ports with the SupportBay chain.
+- [x] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Reaver pump (eyes-first vs air; `ReaverChainTest` 8/8).
+- [x] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (per-reaver rearming is the specialist-behavior seam, already running).
+- [x] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Shuttle goal (reaver-follow + weak-line gates; `ReaverChainTest`).
 - [x] Q80 `ProduceZealot.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + gates + mix).
 - [x] Q81 `ProtossBuildingToProduce.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: train-at-best-building is what the V2 dispatcher does; nearest-enemy nuance rides Q70.
 - [ ] Q82 `TrainQueuedDragoonImmediately.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: queue-order expediting micro; verify the V2 dispatcher expedites before deleting.
@@ -196,7 +196,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [~] Q145 `ShouldProduceInfantry.java` [TERRAN] (P4?)
 
 ## dynamic/workers
-- [ ] Q146 `AutoProduceWorkersCommander.java` [neutral] (P5?)
+- [x] Q146 `AutoProduceWorkersCommander.java` [neutral] (P5?) — walked 2026-10-28: covered by V2, no port. (Protoss-only; V2 worker goal + dispatcher train).
 
 ## dynamic/zerg
 - [~] Q147 `ZergDynamicBuildingsCommander.java` [ZERG] (P4?)
@@ -223,7 +223,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q164 `CurrentBuildOrder.java` [neutral] (P4-queue-last)
 - [ ] Q165 `ProtossBuildOrder.java` [neutral] (P4-queue-last)
 - [ ] Q166 `TerranBuildOrder.java` [neutral] (P4-queue-last)
-- [ ] Q167 `ZergBuildOrder.java` [neutral] (P4-queue-last)
+- [~] Q167 `ZergBuildOrder.java` [neutral] (P4-queue-last) — moved to src-old/ with the Zerg exclusion.
 
 ## orders/production/queue
 - [ ] Q168 `AbstractQueue.java` [neutral] (P4-queue-last)
@@ -269,34 +269,34 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q200 `ThisManyUnitsByDefault.java` [neutral] (P4-queue-last)
 
 ## orders/requirements
-- [ ] Q201 `AllowToProduceEarlyWithoutRequirements.java` [neutral] (P4?)
-- [ ] Q202 `Requirements.java` [neutral] (P4?)
+- [x] Q201 `AllowToProduceEarlyWithoutRequirements.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (door guard stays per WO-144 non-goals).
+- [x] Q202 `Requirements.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (door guards stay per WO-144 non-goals).
 
 ## orders/zerg
 - [~] Q203 `ProduceZergUnit.java` [ZERG] (P4?)
 
 ## requests
-- [ ] Q204 `ADetectorRequest.java` [neutral] (P4?)
-- [ ] Q205 `AntiAirBuildingCommander.java` [neutral] (P4?)
-- [ ] Q206 `AntiLandBuildingCommander.java` [neutral] (P4?)
-- [ ] Q207 `DynamicBuildingCommander.java` [neutral] (P4?)
-- [ ] Q208 `ProductionRequests.java` [neutral] (P4?)
-- [ ] Q209 `ProtossRequests.java` [neutral] (P4?)
-- [ ] Q210 `RemoveExcessiveOrders.java` [neutral] (P4?)
-- [ ] Q211 `TerranRequests.java` [neutral] (P4?)
+- [>] Q204 `ADetectorRequest.java` [neutral] (P4?) — walked 2026-10-28: detector requests ride the detection chain; queue half waits for Phase 4.
+- [x] Q205 `AntiAirBuildingCommander.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (Protoss-only; doctrine ported as V2 cannon goals).
+- [x] Q206 `AntiLandBuildingCommander.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (Protoss-only; doctrine ported as V2 cannon goals).
+- [x] Q207 `DynamicBuildingCommander.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (Protoss-only branches; doctrine ported).
+- [x] Q208 `ProductionRequests.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (Protoss-only singleton; policy moved to goals).
+- [x] Q209 `ProtossRequests.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (request shell; policy moved to goals).
+- [>] Q210 `RemoveExcessiveOrders.java` [neutral] (P4?) — walked 2026-10-28: queue-trimming dies with the queue in Phase 4.
+- [x] Q211 `TerranRequests.java` [neutral] (P4?) — walked 2026-10-28: covered by V2, no port. (dormant under D8; never repaired).
 
 ## requests/produce
-- [ ] Q212 `BuildGate.java` [neutral] (P4-produce-pipe)
-- [ ] Q213 `BuildGates.java` [neutral] (P4-produce-pipe)
-- [ ] Q214 `ProduceAddon.java` [neutral] (P4-produce-pipe)
-- [ ] Q215 `ProduceBuilding.java` [neutral] (P4-produce-pipe)
-- [ ] Q216 `ProduceOrdersFromQueue.java` [neutral] (P4-produce-pipe)
-- [ ] Q217 `ProduceUnit.java` [neutral] (P4-produce-pipe)
-- [ ] Q218 `ProduceWorker.java` [neutral] (P4-produce-pipe)
+- [>] Q212 `BuildGate.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam, keep until Phase 4.
+- [>] Q213 `BuildGates.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam, keep until Phase 4.
+- [>] Q214 `ProduceAddon.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam, keep until Phase 4.
+- [>] Q215 `ProduceBuilding.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam (Protoss-only branches), keep until Phase 4.
+- [>] Q216 `ProduceOrdersFromQueue.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: legacy issue path, dies with the queue in Phase 4.
+- [>] Q217 `ProduceUnit.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam, keep until Phase 4.
+- [>] Q218 `ProduceWorker.java` [neutral] (P4-produce-pipe) — walked 2026-10-28: execution seam, keep until Phase 4.
 
 ## requests/protoss
-- [ ] Q219 `ProtossPhotonCannonAntiAir.java` [PROTOSS] (P4-demand?)
-- [ ] Q220 `ProtossPhotonCannonAntiLand.java` [PROTOSS] (P4-demand?)
+- [x] Q219 `ProtossPhotonCannonAntiAir.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (picked up by the ported AntiAir commander).
+- [x] Q220 `ProtossPhotonCannonAntiLand.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (picked up by the ported AntiLand commander).
 
 ## requests/zerg
 - [~] Q221 `ZergRequests.java` [ZERG] (P4?)
