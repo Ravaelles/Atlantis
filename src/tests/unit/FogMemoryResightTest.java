@@ -124,4 +124,28 @@ public class FogMemoryResightTest extends WorldStubForTests {
                     + atlantis.util.log.EventLog.toJsonLines());
         });
     }
+
+    @Test
+    public void createdEnemyWrapsWithoutAnySightEvent() {
+        // NEXT #2: a new enemy id born in continuous sight (morphed lurker,
+        // guardian, devourer) gets no discover (never left sight) and no
+        // show (never hidden) - creation is its only sight event.
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 60, 60);
+        lurker.setEnemy();
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            fake(AUnitType.Protoss_Zealot, 12, 10)
+        ), fakeEnemies(lurker), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertNull(EnemyUnits.getFoggedUnit(lurker),
+                "nothing seen yet, nothing remembered");
+
+            atlantis.game.listeners.OnUnitCreated.onEnemyUnitCreated(lurker);
+
+            assertNotNull(EnemyUnits.getFoggedUnit(lurker),
+                "creation wraps the enemy it made, no sight event needed");
+        });
+    }
 }

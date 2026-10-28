@@ -1094,3 +1094,11 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   f6297+f6400 - the goal re-fire gap the backstop does not cover);
   ATTACK_DECISION 2 rows, 0 cancels, 0 stale. GW#3 f7780 supply 41, GW#4
   f12476 supply 49, Core f6297, no expo.
+
+## Sweep 2026-10-28 autonomous (create wraps enemies)
+- Enemy creation wraps (NEXT #2): `onUnitCreate` handled our units only,
+  so an enemy born in continuous sight (new-id morphs: lurkers, guardians,
+  devourers) got no discover, no show, no wrap - visible-but-unwrapped
+  until it hid and re-showed. The enemy half now wraps at creation
+  (containsKey-guarded, known ids untouched). Pinned `FogMemoryResightTest`
+  4/4 (red-first: the seam did not exist). Suite 1733/1733 green.

@@ -36,6 +36,24 @@ public class OnUnitCreated {
         if (unit.isOur() && A.now() >= 2) {
             handleOurUnitCreated(unit);
         }
+
+        // A new enemy in continuous sight gets no discover (it never left
+        // sight) and no show (it was never hidden) - without this it stays
+        // visible-but-unwrapped until it hides and re-shows (NEXT #2:
+        // new-id morphs like lurkers, guardians and devourers).
+        else if (unit.isEnemy()) {
+            onEnemyUnitCreated(unit);
+        }
+    }
+
+    /**
+     * Test seam: the enemy half of creation, taking the wrapper directly
+     * (the engine entry takes a BWAPI unit the harness cannot feed it).
+     */
+    public static void onEnemyUnitCreated(AUnit unit) {
+        if (unit == null || !unit.isEnemy()) return;
+
+        atlantis.information.enemy.EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
     }
 
     private static void handleOurUnitCreated(AUnit unit) {
