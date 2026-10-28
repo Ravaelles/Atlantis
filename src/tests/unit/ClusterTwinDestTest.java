@@ -77,6 +77,45 @@ public class ClusterTwinDestTest extends WorldStubForTests {
     }
 
     @Test
+    public void leaderEvalRowsWithLeaderReading() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        FakeUnit mate = fake(AUnitType.Protoss_Dragoon, 29, 30);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 30);
+        ling.setEnemy();
+
+        world(32, fakeOurs(nexus, dragoon, mate), fakeEnemies(ling), () -> {
+            if (atlantis.game.A.now() != 31) return;
+
+            Alpha.gather();
+            int expected = (int) (Alpha.get().leader().eval() * 100);
+            ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, nexus.position());
+
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+            assertTrue(rows.contains("\"eval\":" + expected),
+                "the row carries the leader's eval x100 (the re-engage gate reads it): " + rows);
+        });
+    }
+
+    @Test
+    public void noLeaderRowsMinusOneEval() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 7, 44);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+
+        world(32, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() == 31) {
+                ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, nexus.position());
+            }
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"CLUSTER\""), "a CLUSTER row was sampled: " + rows);
+        assertTrue(rows.contains("\"eval\":-1"),
+            "no live leader reads -1, never a stale eval: " + rows);
+    }
+
+    @Test
     public void nearestFoePositionRowsWithDistance() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);

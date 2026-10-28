@@ -63,6 +63,7 @@ public final class ClusterTwin {
         int destY = -1;
         String fleeReason = "-";
         int strength = -1;
+        int eval = -1;
         String focus = "-";
         try {
             if (tactic == FightOrFlight.Tactic.FLEE) {
@@ -84,6 +85,11 @@ public final class ClusterTwin {
             }
             AUnit leader = Alpha.get().leader();
             if (leader != null && leader.isAlive()) {
+                // NEXT #195: the re-engage gate reads this number
+                // (eval > 1.1 re-attacks inside the 120f latch), so the
+                // row carries it - flee-to-FIGHT gaps adjudicate from
+                // EVENTS instead of trace geometry.
+                eval = (int) (leader.eval() * 100);
                 ghostSource = GhostAdvance.ghostSourceFor(leader);
                 APosition ghost = GhostAdvance.ghostPointFor(leader);
                 if (ghost != null) {
@@ -127,6 +133,7 @@ public final class ClusterTwin {
             .param("dtx", destX)
             .param("dty", destY)
             .param("fleeReason", fleeReason)
+            .param("eval", eval)
             .log(A.now(), A.minSec());
 
         StrengthWatch.sample(foeDist >= 0);

@@ -528,6 +528,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   flee-clear to next-FIGHT gaps 31-248f, median 124, 12/25 within the 120f
   latch window - consistent with the latch biting when eval allows and the
   rally holding otherwise. Full proof needs eval in the twin.
+  EVAL LANDED 2026-10-28: CLUSTER rows carry `eval` (leader's eval x100,
+  -1 with no live leader), so the next flee-to-FIGHT gap adjudicates
+  from EVENTS - eval > 110 inside 120f re-attacks, the rest holds the
+  rally. Pinned both ways in `ClusterTwinDestTest`.
 - **#196** Workers have a named 10-tile limit measured from the main for
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
