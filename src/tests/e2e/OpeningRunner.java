@@ -92,6 +92,108 @@ final class OpeningRunner {
         }
     }
 
+    /**
+     * Plays to the supply target, then keeps stepping {@code extraFrames}
+     * while sampling the post-opening economy every 100 frames (NEXT #217:
+     * the post-natural stall shows one Probe in ~1800 frames with the bank
+     * at 849). The table prints on failure - supply, bank, workers, Nexus
+     * busy count and warp deltas name the clog without guessing.
+     */
+    static PostFiftyResult playToSupplyThenExtra(
+        List<Row> rows, SimConfig config, BankAndSupply numbers,
+        int supplyTarget, int extraFrames, int frameCap) throws Exception {
+        atlantis.config.env.ProductionV2Mode previous = atlantis.config.env.Env.productionV2();
+        atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
+        atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+        try {
+            SimMap map = SimMap.load("src/tests/resources/taucross-snapshot.json");
+            map.install();
+            SimDriver driver = newSimDriver(map, config, numbers);
+            try {
+                driver.spawnResources();
+                driver.spawnBase(0, 4);
+                atlantis.production.orders.build.ABuildOrder previousOrder =
+                    CurrentBuildOrder.get();
+                CurrentBuildOrder.set(fakeBuildOrder(rows));
+                try {
+                    while (numbers.supplyUsed() < supplyTarget && driver.frame() < frameCap) {
+                        driver.step();
+                    }
+                    int markFrame = driver.frame();
+
+                    List<String> table = new ArrayList<>();
+                    int endFrame = markFrame + extraFrames;
+                    while (driver.frame() < endFrame && driver.frame() < frameCap) {
+                        driver.step();
+                        if (driver.frame() % 100 == 0) {
+                            table.add(samplePostFifty(driver, numbers));
+                        }
+                    }
+
+                    return new PostFiftyResult(markFrame, driver.frame(), table, driver.warpLog());
+                } finally {
+                    if (previousOrder != null) CurrentBuildOrder.set(previousOrder);
+                    else CurrentBuildOrder.clear();
+                }
+            } finally {
+                driver.close();
+            }
+        } finally {
+            atlantis.config.env.Env.setProductionV2ForTest(previous);
+            atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+        }
+    }
+
+    private static String samplePostFifty(
+        SimDriver driver, BankAndSupply numbers) {
+        int workers = 0, nexuses = 0, busyNexuses = 0;
+        int probes = 0, dragoons = 0, pylons = 0;
+        for (tests.fakes.FakeUnit unit : driver.units().ours()) {
+            if (!unit.isAlive()) continue;
+            if (unit.type().isWorker()) workers++;
+            if (unit.type().equals(atlantis.units.AUnitType.Protoss_Nexus)) {
+                nexuses++;
+                if (!unit.trainingQueue().isEmpty()) busyNexuses++;
+            }
+        }
+        for (SimDriver.WarpRecord record : driver.warpLog()) {
+            if (record.type.equals("Probe")) probes++;
+            else if (record.type.equals("Dragoon")) dragoons++;
+            else if (record.type.equals("Pylon")) pylons++;
+        }
+
+        return "f" + driver.frame()
+            + " supply=" + numbers.supplyUsed()
+            + " bank=" + numbers.minerals()
+            + " workers=" + workers
+            + " nexus=" + nexuses + "(busy " + busyNexuses + ")"
+            + " warps[P/D/Py]=" + probes + "/" + dragoons + "/" + pylons;
+    }
+
+    static final class PostFiftyResult {
+        final int markFrame;
+        final int endFrame;
+        final List<String> table;
+        final List<SimDriver.WarpRecord> log;
+
+        PostFiftyResult(
+            int markFrame, int endFrame, List<String> table, List<SimDriver.WarpRecord> log) {
+            this.markFrame = markFrame;
+            this.endFrame = endFrame;
+            this.table = table;
+            this.log = log;
+        }
+
+        int probeWarpsAfterMark() {
+            int count = 0;
+            for (SimDriver.WarpRecord record : log) {
+                if (record.frame > markFrame && record.type.equals("Probe")) count++;
+            }
+
+            return count;
+        }
+    }
+
     private static OpeningResult play(
         SimConfig config, BankAndSupply numbers, int supplyTarget, int bankHorizon, int frameCap)
         throws Exception {

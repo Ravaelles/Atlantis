@@ -745,7 +745,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   gate stops at the BO end (horizon 30) until this is settled.
   Worker-cap half fixed 2026-10-27: the pump saturated on standing
   bases only, stalling the whole natural warp - a warping base counts
-  now, pinned `WorkerGoalCapTest` 3/3. Open: the no-enemy half (army
+  now, pinned `WorkerGoalCapTest` 3/3. STALL HALF CLOSED 2026-10-28:
+  `PostFiftyProductionTest` plays the same opening to 50 then 2500 frames
+  more - probes 22->30 (~1/300f), supply 50->62, bank cycles on spends
+  (Pylon 6->7, Dragoons 6->7); the 1-probe/1800f + bank-849 shape is gone,
+  fixed by the saturation change. Open: the no-enemy half (army
   target met, nothing dies - needs the P3 scripted enemy) and the live
   proof of pre-saturation.
 - **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
