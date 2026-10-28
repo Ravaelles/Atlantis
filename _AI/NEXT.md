@@ -1273,16 +1273,3 @@ global FakeUnit id counter.
   away - the builder issues when free), and a per-construction
   cooldown after a re-site. Rides the #224 siting slice, then a
   sim/game pin.
-- **#226** Retreat to unwalkable ground (owner log 2026-10-28: Zealot
-  [95,2] -> [55,22] refused in `AUnitOrders.move`, once-per-minute
-  stack trace via `RetreatFromLostFight` M_FORMATION branch).
-  Mechanism: `spreadRallyPoint` falls back to a possibly unwalkable
-  anchor, and neither the breach/choke/SharedEscape anchors nor the
-  floor clamp guarantee standability - while the funnel refuses and
-  the unit still counts as retreated. Fix direction: validity gate in
-  `decide()` (the owned site, §31) - unscattered fallback to the
-  anchor when standable, else `NOWHERE_TO_RUN` and fight; producers
-  fixed, the funnel keeps refusing. Rides the #224 queue, then a
-  StarEngine sim pin (beaten unit, unwalkable anchor: fights instead
-  of a refused order) + suite.
-

@@ -86,6 +86,8 @@ Second dead cut 2026-10-28: PendingNextBase (zero callers).
 Queue tally now: 77 done, 7 open (all game-gated: Q9/Q16 expansion
 deltas, Q44 per-base power, Q53 gateway rush, Q63/64 armor/weapons,
 Q70 proximity siting), 11 Phase-gated, 82 excluded, rest covered.
+#226 landed 2026-10-28: retreat validity gate in decide()
+(`RetreatStandableTest` 5/5, DIP predicate). Suite 1787/1787.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +
