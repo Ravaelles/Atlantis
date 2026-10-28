@@ -18,7 +18,7 @@ AI assistant.
 | know **what to work on next** | `NEXT.md` (phase checklist, ordered next steps, and open work; the live verdicts stay here, per-game rows in `WINE-MACRO-DATUMS.md`) |
 | see the **whole road** | `NEXT.md` "Phases (the quarter)" (big phases in priority order, with exit criteria; detail in the linked documents) |
 | **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `CHALLENGES/PositionFinder.md`, `CHALLENGES/BuildingBlockers.md` (certain vs refuted vs open, per site) |
+| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PRODUCTION_V2/PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `CHALLENGES/PositionFinder.md`, `CHALLENGES/BuildingBlockers.md` (certain vs refuted vs open, per site) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
@@ -55,7 +55,7 @@ AI assistant.
   G0-G4 with falsification triggers, slice plan S1-S5, non-goals.
 - **`OPENBW-HANDOFF.md`** - the independent OpenBW engine-track task list and
   its done-signal protocol (`NEXT.md` #166).
-- **`PLACEMENT-CUTOVER-PLAN.md`** - superseded 2026-10-14 (read the banner at
+- **`PRODUCTION_V2/PLACEMENT-CUTOVER-PLAN.md`** - superseded 2026-10-14 (read the banner at
   the top first); the remaining cut-over lives in NEXT #45's deletion ordering.
 
 ## Reference documents (change rarely)

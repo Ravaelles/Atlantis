@@ -1,7 +1,7 @@
 # TODO — Atlantis (open issues)
 
 Single source of truth for open work. Direction: `_AI/00-GOAL-APPROACH.md`;
-execution order: `_AI/__MIGRATION.md`; operational learnings:
+execution order: `_AI/PRODUCTION_V2/__MIGRATION.md`; operational learnings:
 `_AI/NOTES.md`. Per-game evidence lives in `_AI/WINE-MACRO-DATUMS.md`;
 this backlog keeps current conclusions and open questions (CONVENTIONS §26).
 
@@ -16,7 +16,7 @@ this backlog keeps current conclusions and open questions (CONVENTIONS §26).
 - [ ] **3 — Combat cluster.** Structure done; behavior pending live proof.
   Blocked on #94 (no enemy on OpenBW).
 - [ ] **4 — Placement cutover.** Catalogue default, legacy finder deleted
-  (`PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`).
+  (`PRODUCTION_V2/PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`).
 - [ ] **5 — Production V2 LIVE + architecture migration.** V2 by default only
   after parity is established (#45; stages E–J below). One Wine victory showed
   stronger tech/army than same-day legacy, but parity remains unproven; open
@@ -1231,19 +1231,19 @@ global FakeUnit id counter.
 - The owner judged the bulk move to `src-old/` (223 files) as too much:
   it removed good classes V2 depends on (e.g. `Queue.refresh()` carries
   a V2-LIVE guard). Reverted 2026-10-28; the tree is whole again.
-- New direction: per-class refactor along `_AI/__MIGRATION.md`
+- New direction: per-class refactor along `_AI/PRODUCTION_V2/__MIGRATION.md`
   (queue deletion is Phase 4, LAST), Protoss classes first, other races
-  left out of the repair path. Tracker: `_AI/legacy-production-queue.md`
+  left out of the repair path. Tracker: `_AI/PRODUCTION_V2/legacy-production-queue.md`
   (every class in `dynamic/`, `orders/`, `requests/`, one line each).
 
 - **#224** Per-class legacy production refactor (owner order 2026-10-28,
-  per `_AI/__MIGRATION.md` phases 2-4). Protoss classes only, in
+  per `_AI/PRODUCTION_V2/__MIGRATION.md` phases 2-4). Protoss classes only, in
   migration order: supply/queue authorship (Phase 2, WO-144), siting
   chain (Phase 3, WO-145/146), queue + order types (Phase 4, WO-147).
   Non-Protoss classes are excluded from repair (commented out in one
   pass, never repaired). Each class: read, spec the V2-native shape,
   stub-pin, refactor, suite green, game proof where the phase demands
-  it. Queue for the walk: `_AI/legacy-production-queue.md` (223 rows).
+  it. Queue for the walk: `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows).
   STATUS 2026-10-28: TERRAN/ZERG excluded - 81 classes plus
   `ZergBuildOrder` and 2 Terran acceptance tests moved to `src-old/`;
   17 files cut to Protoss-only (dispatchers, requests, siting stubs,

@@ -1,6 +1,6 @@
 # Legacy production walk queue
 
-Owner order 2026-10-28: every class in dynamic/, orders/, requests/ walked one by one along _AI/__MIGRATION.md (queue deletion Phase 4 LAST). Protoss paths only; TERRAN/ZERG moved to src-old/ (excluded, never repaired); neutral core touched only when it blocks a Protoss step.
+Owner order 2026-10-28: every class in dynamic/, orders/, requests/ walked one by one along _AI/PRODUCTION_V2/__MIGRATION.md (queue deletion Phase 4 LAST). Protoss paths only; TERRAN/ZERG moved to src-old/ (excluded, never repaired); neutral core touched only when it blocks a Protoss step.
 Mark: [ ] todo, [x] done (commit hash), [~] excluded.
 
 
