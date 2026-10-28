@@ -93,6 +93,11 @@ footprints only (`RefreshOccupancyGateTest` 5/5, worker/warping/builder
 never block, standing building does; cooldown deliberately skipped -
 papers over refused-tile memory, which is #145). Suite 1792/1792, arch
 advisory unchanged.
+REGRESSION 2026-10-28 (game 235312, PvsZ, DEFEAT f14029): 4 warps
+then flood death; 176 honest unaffordable refusals, no stalls, no
+duplicates, zero refresh/unwalkable traces. The batch never fires
+meaningfully (death-rattle detection only). #225/#226 live proof
+still open - shapes unobserved.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +
