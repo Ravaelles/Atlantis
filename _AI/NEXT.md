@@ -1118,3 +1118,10 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   `StrengthWatch`) so latched rungs/verdicts/twin rows never leak across
   tests. Suite green in full. The unit-suite builder set flips the same way
   with composition and stays open.
+
+## Sweep 2026-10-28 autonomous (fog-map split)
+- STRENGTH_WATCH carries the raw map too (`fogMapN`/`fogMapHp` beside the
+  filtered `fogN`/`fogHp`): a wrapper the combat filter drops (stale type,
+  unfinished) reads as a filter problem, a short raw map as never-wrapped.
+  The next halving adjudicates itself. Pinned row-count only (shape is the
+  twin's, tested where it changes). Suite 1731/1731 green.

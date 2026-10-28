@@ -39,6 +39,19 @@ public final class StrengthWatch {
             new ArrayList<>(EnemyUnits.rawUnitsDiscovered()), "fogged").notDeadMan().combatUnits();
         Selection both = EnemyUnits.discoveredIncludingAddressless().combatUnits();
 
+        // Raw map, no filters: if fogMapN exceeds fogN the wrappers exist
+        // but the combat filter drops them (stale type, unfinished) - a
+        // filter problem, not a memory problem. If the raw map itself is
+        // short, the unit was never wrapped.
+        int fogMapN = EnemyUnits.rawUnitsDiscovered().size();
+        int fogMapHp = 0;
+        for (AUnit wrapper : EnemyUnits.rawUnitsDiscovered()) {
+            try {
+                fogMapHp += Math.max(0, wrapper.hp());
+            } catch (RuntimeException ignored) {
+            }
+        }
+
         EventLog.key(LogKey.STRENGTH_WATCH)
             .param("foeKnown", foeKnown)
             .param("ours", totalOf(Select.ourCombatUnits()))
@@ -47,6 +60,8 @@ public final class StrengthWatch {
             .param("visHp", visible.totalHp())
             .param("fogN", fogged.count())
             .param("fogHp", fogged.totalHp())
+            .param("fogMapN", fogMapN)
+            .param("fogMapHp", fogMapHp)
             .log(A.now(), A.minSec());
     }
 
