@@ -372,4 +372,104 @@ public class ClusterRallyTest extends WorldStubForTests {
             }
         });
     }
+
+    @Test
+    public void meleeOnlyAtMainChokePlugsTheMouth() {
+        // NEXT #194 follow-up: the guard answers the main choke against
+        // melee-only enemies - melee in, ranged behind - instead of the
+        // free crescent that forms up where the army stands.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 31, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 31, 19);
+        FakeUnit ling1 = fake(AUnitType.Zerg_Zergling, 55, 20);
+        ling1.setEnemy();
+        FakeUnit ling2 = fake(AUnitType.Zerg_Zergling, 56, 21);
+        ling2.setEnemy();
+        tests.fakes.FakeChoke choke =
+            new tests.fakes.FakeChoke(APosition.create(60, 20), 8);
+        atlantis.battle.advance.focus.AFocusPoint anchor =
+            new atlantis.battle.advance.focus.AFocusPoint(choke, APosition.create(20, 20), "MainChoke");
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
+
+            world(3, fakeOurs(nexus, a, b, c), fakeEnemies(ling1, ling2), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                Alpha.get().addUnit(a);
+                Alpha.get().addUnit(b);
+                Alpha.get().addUnit(c);
+                try {
+                    HasPosition slot = ClusterRally.formationSlotFor(
+                        a, a, anchor, FightOrFlight.Tactic.FIGHT);
+                    APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, nexus);
+                    APosition expected = atlantis.combat.formation.ChokePlug.slotFor(
+                        a, Alpha.get().selection(), plug, choke.center(), choke.width() / 2.0);
+
+                    assertNotNull(slot, "the guard answers a guarded choke");
+                    assertNotNull(expected, "the plug names the mouth in this scene");
+                    assertTrue(slot.tx() == expected.tx() && slot.ty() == expected.ty(),
+                        "melee-only at the main choke plugs the mouth, no crescent: "
+                            + slot + " vs " + expected);
+                } finally {
+                    Alpha.get().removeUnit(a);
+                    Alpha.get().removeUnit(b);
+                    Alpha.get().removeUnit(c);
+                }
+            });
+        }
+    }
+
+    @Test
+    public void rangedFoeReleasesThePlug() {
+        // The plug is the answer to melee-only: one ranged enemy and the
+        // line falls back to the crescent instead of waiting at the mouth.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 31, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 31, 19);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 55, 20);
+        ling.setEnemy();
+        FakeUnit goon = fake(AUnitType.Protoss_Dragoon, 56, 21);
+        goon.setEnemy();
+        tests.fakes.FakeChoke choke =
+            new tests.fakes.FakeChoke(APosition.create(60, 20), 8);
+        atlantis.battle.advance.focus.AFocusPoint anchor =
+            new atlantis.battle.advance.focus.AFocusPoint(choke, APosition.create(20, 20), "MainChoke");
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
+
+            world(3, fakeOurs(nexus, a, b, c), fakeEnemies(ling, goon), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                Alpha.get().addUnit(a);
+                Alpha.get().addUnit(b);
+                Alpha.get().addUnit(c);
+                try {
+                    HasPosition slot = ClusterRally.formationSlotFor(
+                        a, a, anchor, FightOrFlight.Tactic.FIGHT);
+                    APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, nexus);
+                    APosition plugSlot = atlantis.combat.formation.ChokePlug.slotFor(
+                        a, Alpha.get().selection(), plug, choke.center(), choke.width() / 2.0);
+
+                    assertNotNull(slot, "the crescent still answers");
+                    assertTrue(plugSlot == null
+                            || slot.tx() != plugSlot.tx() || slot.ty() != plugSlot.ty(),
+                        "a ranged foe releases the plug: the line takes the crescent: " + slot);
+                } finally {
+                    Alpha.get().removeUnit(a);
+                    Alpha.get().removeUnit(b);
+                    Alpha.get().removeUnit(c);
+                }
+            });
+        }
+    }
 }

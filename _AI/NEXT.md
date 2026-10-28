@@ -510,8 +510,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   expected direction) and `ProtossDefendFocusPoint` read through it
   instead of five copies of the same null-handling. Pinned
   `HomeGroundTest` 5/5, mutation-proven on `isComplete()`; full unit
-  scope green. Small-army main standoff and `guardSlotFor` remain
-  follow-ups; `ClusterBreach`/`ClusterTactic`/`BlockingArmy` converted
+  scope green. Small-army main standoff and `guardSlotFor` follow-ups
+  CLOSED 2026-10-28 as routing pins (`ClusterRallyTest` +2: melee-only
+  at a main-choke anchor plugs the mouth, one ranged foe releases it
+  to the crescent - the pair proves the routing, not a coincidence);
+  the plug march itself stays sim-pinned in `ChokePlugSimTest`.
+  `ClusterBreach`/`ClusterTactic`/`BlockingArmy` converted
   2026-10-26 (same pair, same answers - consumer pins green).
   DATUM 2026-10-28: the absolute >10-Dragoon main-choke ban is PvP-only by
   code (`We.protoss() && Count.dragoons() > 10` in
