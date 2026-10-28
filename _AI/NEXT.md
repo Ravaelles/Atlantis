@@ -233,10 +233,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#85** Armor research is independently gated from weapons L3 (stub-pinned);
   current thresholds are owner tuning, not a defect. Singularity fires live, but
   post-Forge L3 and a longer research window remain unobserved.
+  DATUM 2026-10-28: zero Forge warps in 9 retained games (183253 through
+  010715) - the whole Forge line never presents in these openings; needs a
+  build that takes one.
 
 - **#82** Terran off-site completion may leak (unobserved): the bot plays
-  Protoss-only (D8), so the shape cannot appear. Needs a game showing it. No
-  blind fix.
+  Protoss-only (D8), so the shape cannot appear. DATUM 2026-10-28: same
+  class as #84 - 11 V2 LIVE games audited, Terran never played, zero
+  off-site shapes; unobservable until a Terran game happens. Needs a game
+  showing it. No blind fix.
 
 - **#92** Second Gateway lateness is intermittent; no blind patch. The stable
   pattern is a +1-supply lag on #2/#3, not a multi-minute delay; all three
@@ -362,6 +367,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   attacker - but never break the line on open ground. Landed sim-first
   (`ZealotWithdrawSimTest`, mutation-proofed, `ZealotWithdrawTest` 5/5) and
   live (272 stepped-aside, zero standing deaths; no freeze in any later game).
+  HOLDS 2026-10-28: VICTORY 010715 loses 4 Zealots / 5 Dragoons in combat,
+  no standing-death shape; KITE frozen-reset fires 46x as the designed
+  recovery (not a freeze).
 - **#179** ZealDrag coordination/hold-fire is sim-pinned; live losses showed
   mobile units, not freezing or coordination failure. Open: winnability against
   real opponents (0/9 FFA wins; one weak positive with Dragoon mass).
@@ -689,6 +697,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Volume rule: transitions, never per-frame rows. Motivating game:
   14:25:25 Tomas Cere (TauCross, Defeat 95/86, 52 Dragoons lost, army
   never left the main - unattributed, no trace).
+  VERIFIED LIVE 2026-10-28 (game 010715, VICTORY): (b) lands in
+  board_updates change-only - AlphaStrength 233 rows, AlphaReason 207
+  (with numbers, e.g. "Early strength ok (4 units, 999%)"), AlphaTactic 13,
+  AlphaFocusName 8 (with tile); 461 updates over 15540 frames, never
+  per-frame. (c) log half lands (order-watcher `#Attack/<behavior>` tags);
+  Task half is #221. (a) half: CATALOGUE_SITE carries type/result/reason/via
+  but NO nearTo/chosen tile - the Pylon WHERE is still missing.
 - **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
   green): `run-openbw-e2e.sh` on TauCross attaches but the host never
   publishes frames. Same map + script played full openings on 10-18/21.
