@@ -100,20 +100,20 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [ ] Q69 `UpgradeResearchCommander.java` [PROTOSS] (P4-demand?)
 
 ## dynamic/protoss/units
-- [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?)
-- [ ] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?)
+- [ ] Q70 `GatewayClosestToEnemy.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: reinforce-at-nearest-Gateway; V2 registry picks earliest-available, no proximity. Open micro-doctrine, needs value proof.
+- [ ] Q71 `ProduceArbiters.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (Tribunal standing, 2/5/2 caps); ports behind the Tribunal chain.
 - [x] Q72 `ProduceCorsairs.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Corsair pump (Zerg branch; Wraith branch needs enemyIsTerran, unported).
-- [ ] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?)
-- [ ] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?)
-- [ ] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?)
+- [ ] Q73 `ProduceDarkTemplar.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only; ports with the Archives chain (saving flag already V2).
+- [x] Q74 `ProduceDragoon.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + pump + gates).
+- [ ] Q75 `ProduceHighTemplar.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: disabled upstream (`if (true) return false`); delete at phase exit.
 - [x] Q76 `ProduceObserver.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 observer pump (flag 3-or-1-per-40, lurkers 4, losses replaced; routine clock-eyes unported; HiddenUnitDetectionGoalsTest +1).
-- [ ] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?)
-- [ ] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?)
-- [ ] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?)
-- [ ] Q80 `ProduceZealot.java` [PROTOSS] (P4-demand?)
-- [ ] Q81 `ProtossBuildingToProduce.java` [PROTOSS] (P4-demand?)
-- [ ] Q82 `TrainQueuedDragoonImmediately.java` [PROTOSS] (P4-demand?)
-- [ ] Q83 `ZealotInsteadDragoon.java` [PROTOSS] (P4-demand?)
+- [ ] Q77 `ProduceReavers.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (supply 70+, obs-before-reaver); ports with the SupportBay chain.
+- [ ] Q78 `ProduceScarabs.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only reaver rearming; ports with the Reaver chain.
+- [ ] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only (reaver-gated); ports with the SupportBay chain.
+- [x] Q80 `ProduceZealot.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + gates + mix).
+- [x] Q81 `ProtossBuildingToProduce.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: train-at-best-building is what the V2 dispatcher does; nearest-enemy nuance rides Q70.
+- [ ] Q82 `TrainQueuedDragoonImmediately.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: queue-order expediting micro; verify the V2 dispatcher expedites before deleting.
+- [x] Q83 `ZealotInsteadDragoon.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 ling-flood mix (dead guard dropped; pump gated too; `ArmyGatesTest` +2).
 
 ## dynamic/supply
 - [>] Q84 `NeedDynamicSupply.java` [neutral] (P2-authorship) — walked 2026-10-28: pure contract, already board-consumed (`GoalBoardFeeder`), no engine deps; convergence with the flat-4 V2 goal open (WO-144 d1).

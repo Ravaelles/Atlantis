@@ -28,11 +28,19 @@ public class ArmyGatesTest {
     private static DynamicGoals.GameSnapshot state(
         int supplyUsed, int supplyFree, int minerals, int gas,
         int strength, boolean saving) {
+        return state(supplyUsed, supplyFree, minerals, gas, strength, saving, 0, 0, 0);
+    }
+
+    private static DynamicGoals.GameSnapshot state(
+        int supplyUsed, int supplyFree, int minerals, int gas,
+        int strength, boolean saving, int zealots, int dragoons, int lings) {
         DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
             24, 1, supplyUsed, supplyFree, supplyUsed + supplyFree, minerals,
-            false, 10, 1, 0, true, false, 0, gas, true, 6, 1, false, strength);
+            false, 10, 1, 0, true, false, 0, gas, true, dragoons, 1, false, strength);
         snapshot.savingForDarkTemplar = saving;
         snapshot.gatewaysFree = 1;
+        snapshot.zealots = zealots;
+        snapshot.zerglings = lings;
 
         return snapshot.atBase(100, 60);
     }
@@ -93,5 +101,26 @@ public class ArmyGatesTest {
     public void midGameFlows() {
         assertTrue(hasArmyGoal(contribute(state(60, 20, 500, 150, 200, false))),
             "the mid game still trains");
+    }
+
+    @Test
+    public void lingFloodWantsZealotsInstead() {
+        List<ProductionGoal> goals = contribute(state(60, 20, 500, 150, 200, false, 2, 4, 6));
+        String zealot = UnitProducible.of(AUnitType.Protoss_Zealot).id();
+        String dragoon = UnitProducible.of(AUnitType.Protoss_Dragoon).id();
+
+        assertTrue(goals.stream().anyMatch(goal -> goal.item().id().equals(zealot)),
+            "4 lings vs 4 goons and 2 zealots want Zealots: " + goals);
+        assertFalse(goals.stream().anyMatch(goal -> goal.item().id().equals(dragoon)),
+            "not another Dragoon into the flood: " + goals);
+    }
+
+    @Test
+    public void healthyRatioKeepsDragoons() {
+        List<ProductionGoal> goals = contribute(state(60, 20, 500, 150, 200, false, 10, 4, 6));
+        String dragoon = UnitProducible.of(AUnitType.Protoss_Dragoon).id();
+
+        assertTrue(goals.stream().anyMatch(goal -> goal.item().id().equals(dragoon)),
+            "10 zealots at ratio 2.4 keep the Dragoons coming: " + goals);
     }
 }

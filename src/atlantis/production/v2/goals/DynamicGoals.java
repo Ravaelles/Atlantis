@@ -398,6 +398,31 @@ public final class DynamicGoals {
             && !(state.minerals < 500 && state.supplyUsed >= 184
                 && (state.supplyFree <= 4 || state.gas <= 200))
             && !(state.savingForDarkTemplar && state.minerals < 350);
+
+        // Ling-flood mix (legacy ZealotInsteadDragoon): with 4+ Dragoons
+        // standing against 4+ lings the line wants Zealots instead - a
+        // 9-zealot head start, then ratio 0.8. The dead guard
+        // (zealots>=2 && dragoons<=2) never fires past the 4-Dragoon gate
+        // and stays out. The pump below reads the same flag: a mix frame
+        // trains Zealots, never Dragoons.
+        boolean mixZealot = wantGoons && state.enemyIsZerg && state.zerglings >= 4 && state.dragoons >= 4
+            && (state.zealots <= 9
+                || ((double) state.zealots) / (state.dragoons + 0.1) < 0.8);
+        if (mixZealot) {
+            wantGoons = false;
+        }
+        // The mix trains through its own goal (a replacement rule, not a
+        // floor top-up): while the flood holds, Zealots - never the
+        // Dragoon the pump would have trained. A free Gateway gates it
+        // for the same reason it gates the pump.
+        if (mixZealot && state.gatewaysFree > 0) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(race.armyUnitType()),
+                ProductionGoal.PRIORITY_MAINARMY,
+                1,
+                0,
+                TargetPlacement.anywhere()));
+        }
         AUnitType army;
         int have;
         if (wantGoons) {
@@ -436,7 +461,7 @@ public final class DynamicGoals {
         // facilities). Symmetric with GatewayDemand (rich+busy->build):
         // rich+free->train, and the two together form the self-regulating
         // loop. Dragoon-only by construction (hasCore is Protoss-only).
-        if (!state.inEarlyGame && state.hasCore && state.gas >= 50
+        if (!state.inEarlyGame && !mixZealot && state.hasCore && state.gas >= 50
             && state.minerals >= ARMY_RICH_MINERALS && state.gatewaysFree > 0) {
             goals.add(new ProductionGoal(
                 UnitProducible.of(race.armyUnitTypeAdvanced()),
@@ -701,6 +726,14 @@ public final class DynamicGoals {
         public int observers;
 
         /**
+         * Zealots standing and enemy zerglings seen: the vs-Zerg mix rule
+         * trains Zealots instead of Dragoons into ling floods (ratio 0.8
+         * with a 9-zealot head start once 4 Dragoons stand).
+         */
+        public int zealots;
+        public int zerglings;
+
+        /**
          * Saving for Dark Templar: hidden-units tech is warping
          * (Citadel or Archives unfinished) while the strategy goes hidden.
          * Basics wait below their floors instead of eating the DT bank.
@@ -815,6 +848,8 @@ public final class DynamicGoals {
             anchored.corsairs = corsairs;
             anchored.hasStargate = hasStargate;
             anchored.observers = observers;
+            anchored.zealots = zealots;
+            anchored.zerglings = zerglings;
             anchored.savingForDarkTemplar = savingForDarkTemplar;
 
             return anchored;
