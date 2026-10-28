@@ -344,6 +344,19 @@ public class AbstractTestWithUnits extends UnitTest {
 
         ReservedResources.reset();
 
+        // The train journal and the queue are global accumulators: without
+        // this a Terran test's Marines are still "ordered" when the next
+        // Protoss test counts its Dragoons, and a queued order from an
+        // earlier test answers the next one's count (measured: package-only
+        // failures with cross-race unit names in Protoss assertions).
+        // Clearing changes no boolean inside a run - every world starts
+        // empty, like every game.
+        tests.fakes.FakeUnitData.TRAIN.clear();
+        if (Queue.get() != null) {
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+        }
+
         // Refusal twins are throttled per guard+order id for game-log volume;
         // order ids restart small in every test, so without this the first
         // test to refuse a guard silences the same refusal in every later

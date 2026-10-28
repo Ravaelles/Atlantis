@@ -3,9 +3,12 @@ package tests.acceptance;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.focus.PostureReason;
 import atlantis.combat.focus.PostureReasons;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import bwapi.Race;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -21,6 +24,20 @@ public class PostureTrappedArmyTest extends WorldStubForTests {
     @Override
     public Race initRace() {
         return Race.Protoss;
+    }
+
+    @BeforeEach
+    public void resetLatch() {
+        // The latch is per-game state (its own test seam says never
+        // cross-test): without this a DEFEND latched by an earlier test
+        // holds past frame 12 and the flip never fires - order-dependent
+        // red, measured in the full acceptance package.
+        ClusterMission.resetForTests();
+    }
+
+    @AfterEach
+    public void clearLatch() {
+        ClusterMission.resetForTests();
     }
 
     @Test
