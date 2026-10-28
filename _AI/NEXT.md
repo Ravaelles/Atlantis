@@ -223,6 +223,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#74** Wine builder variance: observed stalls recover; alternating handoff
   and 1.4-tile parking remain unobserved. Builder twins require `BuilderLog`,
   so flag-off games cannot settle this.
+  DATUM 2026-10-28 (game 010715, BuilderLog ON, VICTORY): multi-builder
+  sites are sequential replacement over minutes (Pylon 109,17: 6 builders
+  f13950-15030, all IN_PROGRESS; no A-B-A alternation), 1.4-tile parking
+  present but rare (17 STARTING rows on 2 sites). Rapid alternation still
+  unobserved.
   → details: `WINE-MACRO-DATUMS.md` §6
 
 - **#85** Armor research is independently gated from weapons L3 (stub-pinned);
