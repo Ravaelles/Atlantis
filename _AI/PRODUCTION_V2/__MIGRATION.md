@@ -127,5 +127,7 @@ frozen store flipped to hard rules.
   explanation (§3a).
 - A twin that names no mechanism is write-only: instrument, game,
   decide, then code.
-- Game proofs and their re-runs belong to the owner on Wine; OpenBW
-  parity runs are autonomous; flagged Wine runs need explicit approval.
+- Game proofs: routine proof macros run autonomously (CONVENTIONS §30 -
+Wine needs no permission; StarEngine first, Wine when the sim cannot
+model it or must confirm). The owner runs only the adversarial /
+acceptance vehicles (7th_rav, micro battery, mission games).

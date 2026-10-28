@@ -1253,6 +1253,16 @@ global FakeUnit id counter.
   behind unit chains, ShieldBattery dead upstream); Stargate + Corsair
   pump ported as V2 goals (`StargateCorsairTest` 6/6, full suite
   1751/1751). Live proof rides a muta game.
+  BATCH 2026-10-28: templar chain (Archives/HT/Storm/DT), reaver chain
+  (Bay/Reaver/Shuttle/Tribunal/Arbiter), observer scaling, army gates
+  + ling mix, Citadel + Legs, 2 dead cuts. Suite 1782/1782 throughout.
+  Proof macro running (TauCross, V2 LIVE, supply-120); adjudication
+  lands here.
+  VERDICT 2026-10-28 (game 233317, PvsZ, DEFEAT f19741): 26 warps,
+  distinct tiles, zero duplicates; new goals dispatch live and refuse
+  cleanly (Citadel + detection chain), zero mineral impact, no crash.
+  16 Nexus dispatches / 0 warps is the pre-existing #150/#151 chase,
+  not this batch. Datum in WINE-MACRO-DATUMS.md.
 - **#225** Refresh-site churn (owner log 2026-10-28: Pylon
   [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
   Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit
