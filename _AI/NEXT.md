@@ -1047,3 +1047,23 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   enemy Nexus [95,119] - a rally-hold cycle, not the hide shape. The latch
   question needs a game with a clean post-contact window; this game never
   goes quiet.
+
+## Sweep 2026-10-28 autonomous (bleed + twin live proofs)
+- #217 no-enemy half CLOSED as a regression pin: bleeding one finished
+  Dragoon every 400 frames after supply 50 pulls a replacement for every
+  loss (6 bled, 7 replaced counting warps plus in-training, bank cycling
+  60-344, never hoarding). The plateau with no deaths is correct; the
+  loop answers losses. Pinned `PostFiftyBleedTest` (red-first on the
+  window edge: the last kill lands inside one training time of the run
+  end, so in-training Dragoons count as replacements). Harness seam:
+  `OpeningRunner.playToSupplyThenExtraHooked` with a per-frame hook;
+  existing callers unchanged. Suite 1731/1731 green.
+- Twin live proofs from game 144740 (DEFEAT f15387, contiguous EVENTS,
+  new jar proven by a 6-frame flee-to-fight gap - the transition rows
+  fire live): STRENGTH_WATCH steady across 3 contact losses (enemy 110
+  with vis 80 + fog 80, then fog alone holding 110 - no halving), so the
+  fog-heal fix holds the outcome even though no heal event is visible in
+  the twin (fogN steady - a wrapper-id param would make the next proof
+  decisive); ATTACK_DECISION 5 rows ENEMY_MAIN_KNOWN; 0 cancels, 0 stale
+  skips. Production: Core f4951, only 2 Gateways, 5 Zealots + 1 Dragoon,
+  no expo - died young, separate shape from the macro games.

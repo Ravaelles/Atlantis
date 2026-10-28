@@ -102,6 +102,22 @@ final class OpeningRunner {
     static PostFiftyResult playToSupplyThenExtra(
         List<Row> rows, SimConfig config, BankAndSupply numbers,
         int supplyTarget, int extraFrames, int frameCap) throws Exception {
+        return playToSupplyThenExtraHooked(
+            rows, config, numbers, supplyTarget, extraFrames, frameCap, null);
+    }
+
+    /**
+     * A per-frame seam for scripted scenarios (NEXT #217 no-enemy half:
+     * bleed the army mid-run and watch replacements flow). Null hook
+     * means the plain post-50 run - existing callers keep their shape.
+     */
+    interface FrameHook {
+        void afterStep(tests.unit.sim.SimDriver driver);
+    }
+
+    static PostFiftyResult playToSupplyThenExtraHooked(
+        List<Row> rows, SimConfig config, BankAndSupply numbers,
+        int supplyTarget, int extraFrames, int frameCap, FrameHook hook) throws Exception {
         atlantis.config.env.ProductionV2Mode previous = atlantis.config.env.Env.productionV2();
         atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
         atlantis.config.env.Env.setPlacementCatalogueForTest(false);
@@ -125,6 +141,7 @@ final class OpeningRunner {
                     int endFrame = markFrame + extraFrames;
                     while (driver.frame() < endFrame && driver.frame() < frameCap) {
                         driver.step();
+                        if (hook != null) hook.afterStep(driver);
                         if (driver.frame() % 100 == 0) {
                             table.add(samplePostFifty(driver, numbers));
                         }
@@ -188,6 +205,15 @@ final class OpeningRunner {
             int count = 0;
             for (SimDriver.WarpRecord record : log) {
                 if (record.frame > markFrame && record.type.equals("Probe")) count++;
+            }
+
+            return count;
+        }
+
+        int dragoonWarpsAfterMark() {
+            int count = 0;
+            for (SimDriver.WarpRecord record : log) {
+                if (record.frame > markFrame && record.type.equals("Dragoon")) count++;
             }
 
             return count;
