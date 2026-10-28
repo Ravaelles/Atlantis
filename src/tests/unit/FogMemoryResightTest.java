@@ -14,6 +14,7 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
@@ -46,12 +47,14 @@ public class FogMemoryResightTest extends WorldStubForTests {
     public void clearMemory() {
         EnemyUnits.clearCache();
         AbstractFoggedUnit.clearCache();
+        atlantis.util.log.EventLog.clearForTests();
     }
 
     @AfterEach
     public void clearMemoryAgain() {
         EnemyUnits.clearCache();
         AbstractFoggedUnit.clearCache();
+        atlantis.util.log.EventLog.clearForTests();
     }
 
     @Test
@@ -72,6 +75,9 @@ public class FogMemoryResightTest extends WorldStubForTests {
 
             assertNotNull(EnemyUnits.getFoggedUnit(sunken),
                 "re-sight heals the map: show wraps what it sees");
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"key\":\"SHOW_HEAL\""),
+                "the heal rows, so the mechanism proves itself live: "
+                    + atlantis.util.log.EventLog.toJsonLines());
         });
     }
 
@@ -89,6 +95,9 @@ public class FogMemoryResightTest extends WorldStubForTests {
 
             assertNull(EnemyUnits.getFoggedUnit(probe),
                 "show is for every unit - only enemies enter the fog map");
+            assertTrue(!atlantis.util.log.EventLog.toJsonLines().contains("\"key\":\"SHOW_HEAL\""),
+                "our units never heal the enemy map: "
+                    + atlantis.util.log.EventLog.toJsonLines());
         });
     }
 
@@ -110,6 +119,9 @@ public class FogMemoryResightTest extends WorldStubForTests {
 
             assertNotNull(EnemyUnits.getFoggedUnit(drone),
                 "known units stay remembered");
+            assertTrue(!atlantis.util.log.EventLog.toJsonLines().contains("\"key\":\"SHOW_HEAL\""),
+                "known re-sights stay silent - heals row only lost units: "
+                    + atlantis.util.log.EventLog.toJsonLines());
         });
     }
 }

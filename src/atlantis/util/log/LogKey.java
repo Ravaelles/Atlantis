@@ -181,6 +181,12 @@ public enum LogKey {
      */
     STRENGTH_WATCH,
     /**
+     * A re-sight healing the fog map: show wrapped an enemy no wrapper
+     * remembered (NEXT #2). Rare by construction - only a lost unit
+     * heals - so the mechanism proves itself live without volume.
+     */
+    SHOW_HEAL,
+    /**
      * The attack decision: where the army goes and why (NEXT #206 family).
      * Rows only when the decision changes - the same target re-asked is
      * not a new decision.

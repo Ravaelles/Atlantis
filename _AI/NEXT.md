@@ -1077,3 +1077,20 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   call issues, second absorbs and rows; a lone foe flips posture to
   ATTACK and forgets the latch by design, so the pin needs the pack).
   Suite 1732/1732 green.
+
+## Sweep 2026-10-28 autonomous (heal rows)
+- SHOW_HEAL twin: the fog heal now proves itself live. A re-sight that wraps
+  a previously lost enemy rows unit + type (rare by construction - only a
+  lost unit heals, known and own re-sights stay silent). Pinned 3/3 in
+  `FogMemoryResightTest` (heal rows, known stays silent, our stays out).
+  Suite 1732/1732 green.
+- Twin live proofs from game 151131 (DEFEAT f16120, contiguous EVENTS, clean
+  run, pre-heal jar): transition rows fire live (flee-to-fight gaps read
+  1/2/6/7/8/12/18/24/25f - the 31f floor is gone); eval spreads honestly
+  (987370/882/102/39/1 across FLEE rows - the exemption fires on the high
+  ones, holds on eval 1); strength never doubles (only a 0.73 dip - and the
+  fog errs the other way too: 295 visible vs 405 remembered, maxHp ghosts
+  by design); duplicate Core warps again (dispatches f6139+f6281, warps
+  f6297+f6400 - the goal re-fire gap the backstop does not cover);
+  ATTACK_DECISION 2 rows, 0 cancels, 0 stale. GW#3 f7780 supply 41, GW#4
+  f12476 supply 49, Core f6297, no expo.
