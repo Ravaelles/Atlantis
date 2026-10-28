@@ -261,6 +261,10 @@ public final class GameStateSnapshot {
         // ProtossSecureBasesCommander): without it a Cannon goal from frame
         // 0 plans an orphan Forge ahead of the Gateway.
         snapshot.hasForge = We.protoss() && Have.forge();
+        // Hidden-unit sightings answer through the goal layer itself: the
+        // legacy queue path never drains in V2 LIVE, so without this a
+        // seen lurker orders nothing.
+        snapshot.enemyHasHiddenUnits = atlantis.information.enemy.EnemyInfo.goesOrHasHiddenUnits();
         twinSuppressedSupply(snapshot);
 
         return DynamicGoals.contribute(snapshot, racePolicy, buildOrderOwnsProvider);

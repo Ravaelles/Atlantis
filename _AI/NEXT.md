@@ -953,9 +953,19 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   cannons with top priority alongside Core/Robo/Observatory/Observer.
   VERIFIED 2026-10-28 in-harness, was unpinned and doubted: a seen lurker
   queues the full chain (`HiddenUnitResponseTest` 2/2: Robo+Obs+Observer,
-  Forge+Cannons). Open: a live lurker/DT game proving the queue fires and
-  the Observer ships in time; PurpleWave's 3-vs-1 observer pump on
-  likelihood (vs our 1) is a doctrine delta, not a defect.
+  Forge+Cannons). V2 GOAL LAYER LANDED 2026-10-28: the legacy queue above
+  never drains in V2 LIVE (`ProductionOrdersCommander` returns after the
+  engine), so a seen lurker ordered nothing live despite the queue firing.
+  The snapshot carries `enemyHasHiddenUnits` (fed live from
+  `EnemyInfo.goesOrHasHiddenUnits()`), and `addDetectionGoals` emits
+  Robo/Observatory/Observer + Forge (unless standing) + 2 main-anchored
+  cannons at PRIORITY_BASEDEFENSE; the scheduler pulls missing prereqs
+  itself. Pinned `HiddenUnitDetectionGoalsTest` 5/5 (red-first: no goal
+  within 30 frames before the branch; `atBase()` also dropped every
+  post-construction field - now carried across). Open: a live lurker/DT
+  game proving the order dispatches and the Observer ships in time;
+  PurpleWave's 3-vs-1 observer pump on likelihood (vs our 1) is a doctrine
+  delta, not a defect.
 
 ## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
 

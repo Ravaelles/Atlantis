@@ -70,11 +70,55 @@ public final class DynamicGoals {
         addTechGoal(goals, state);
         addGasGoal(goals, state, race);
         addExpansionGoal(goals, state, race);
+        addDetectionGoals(goals, state);
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
 
         return goals;
+    }
+
+    /**
+     * Hidden-unit crisis response (Protoss): a seen lurker or Dark Templar
+     * - or the tech that predicts them - orders eyes and a shell the same
+     * frame. The scheduler pulls missing prerequisites itself (a Cannon
+     * goal warps its Forge, an Observatory goal its Robotics Facility),
+     * so the chain reads as plain goals: Robo into Observatory into
+     * Observer, a Forge unless one stands, and two cannons at the main
+     * while the chain spins up. The hasForge gate below stays a
+     * no-reason rule: with a reason the early Forge is the answer, not
+     * the intruder (measured LIVE: a seen lurker ordered nothing because
+     * the legacy queue path never drains in V2 LIVE and this branch did
+     * not exist).
+     */
+    private static void addDetectionGoals(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.enemyHasHiddenUnits) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Robotics_Facility),
+            ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Observatory),
+            ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Observer),
+            ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
+
+        if (!state.hasForge) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(AUnitType.Protoss_Forge),
+                ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0, TargetPlacement.anywhere()));
+        }
+
+        if (state.mainBaseTileX < 0) return;
+        int missingCannons = Math.max(0, 2 - state.cannonsAtMain);
+        for (int i = 0; i < missingCannons; i++) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
+                ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0,
+                TargetPlacement.inNeighbourhood(state.mainBaseTileX, state.mainBaseTileY)));
+        }
     }
 
     /**
@@ -507,6 +551,15 @@ public final class DynamicGoals {
          */
         public boolean hasForge;
 
+        /**
+         * The enemy showed or is going hidden combat units (lurkers, Dark
+         * Templar: seen, or predicted from Citadel/Archives/HydraDen).
+         * Only Zerg and Protoss own the hidden set, so a set flag always
+         * means one of those two. Set post-construction like
+         * {@link #supplyProvidersComing}.
+         */
+        public boolean enemyHasHiddenUnits;
+
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                             int supplyTotal, int minerals, boolean inEarlyGame) {
             this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
@@ -584,12 +637,23 @@ public final class DynamicGoals {
          * nothing rather than guess a location.
          */
         public GameSnapshot atBase(int tileX, int tileY) {
-            return new GameSnapshot(
+            GameSnapshot anchored = new GameSnapshot(
                 workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame,
                 armySize, basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
                 gas, hasCore, dragoons, gasBuildings, singularity, armyStrength,
                 tileX, tileY
             );
+
+            // A fresh construction drops the post-construction fields; carry
+            // them across, or an anchored snapshot silently forgets the
+            // Forge, the in-flight counts and the hidden-unit flag.
+            anchored.supplyProvidersComing = supplyProvidersComing;
+            anchored.gatewaysExisting = gatewaysExisting;
+            anchored.gatewaysFree = gatewaysFree;
+            anchored.hasForge = hasForge;
+            anchored.enemyHasHiddenUnits = enemyHasHiddenUnits;
+
+            return anchored;
         }
     }
 
