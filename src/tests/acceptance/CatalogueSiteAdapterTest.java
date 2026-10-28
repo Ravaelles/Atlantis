@@ -210,6 +210,30 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     @Test
+    public void anAnsweredRowNamesWhereItWasAsked() {
+        // NEXT #214a: the answer carries the request's nearTo next to the
+        // chosen tile, so a far-away warp names its origin without tile
+        // forensics. Pylon needs no power, so the stub validator passes it.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
+            ScriptedPlanner yes = new ScriptedPlanner(
+                atlantis.production.v2.PlacementReservation.success(30, 30, 0));
+
+            APosition site = CatalogueSiteAdapter.siteFor(yes, probe, AUnitType.Protoss_Pylon, construction);
+
+            assertNotNull(site, "a clear tile with a live builder answers");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"type\":\"Pylon\",\"result\":\"answered\",\"tx\":30,\"ty\":30,\"nearTx\":20,\"nearTy\":20"),
+                "the answer names the request origin next to the chosen tile: " + EventLog.toJsonLines());
+        });
+    }
+
+    @Test
     public void sitedSearchStaysLegacyWhenFlagIsOff() {
         atlantis.config.env.Env.setPlacementCatalogueForTest(false);
 

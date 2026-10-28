@@ -82,6 +82,29 @@ public final class TargetPlacement {
         return exactTileY;
     }
 
+    /**
+     * The tile this constraint asks near, for twins that name the WHERE
+     * behind a siting answer: the neighbourhood centre, or the exact tile
+     * when the order pins one. -1 when the constraint names no tile
+     * (anywhere, or a named area that resolves to ground later).
+     */
+    public int nearTileX() {
+        if (mode == Mode.NEIGHBOURHOOD) return tileX;
+        if (mode == Mode.EXACT_TILE) return exactTileX;
+
+        return -1;
+    }
+
+    /**
+     * See {@link #nearTileX()}.
+     */
+    public int nearTileY() {
+        if (mode == Mode.NEIGHBOURHOOD) return tileY;
+        if (mode == Mode.EXACT_TILE) return exactTileY;
+
+        return -1;
+    }
+
     @Override
     public String toString() {
         switch (mode) {

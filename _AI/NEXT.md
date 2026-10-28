@@ -785,6 +785,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   per-frame. (c) log half lands (order-watcher `#Attack/<behavior>` tags);
   Task half is #221. (a) half: CATALOGUE_SITE carries type/result/reason/via
   but NO nearTo/chosen tile - the Pylon WHERE is still missing.
+  WHERE LANDED 2026-10-28: answered rows carry nearTx/nearTy from the
+  request constraint (neighbourhood centre or exact pin, -1 otherwise),
+  so a far-away warp names its origin without tile forensics. Pinned pure
+  (`TargetPlacementNearTest` 4/4) + answered row shape (13/13 in
+  `CatalogueSiteAdapterTest`); declined rows unchanged.
 - **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
   green): `run-openbw-e2e.sh` on TauCross attaches but the host never
   publishes frames. Same map + script played full openings on 10-18/21.

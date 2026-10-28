@@ -115,7 +115,8 @@ public final class CatalogueSiteAdapter {
         if (building == null) return null;
 
         planner.startPass();
-        PlacementReservation reservation = propose(planner, builder, building, constraintForSited(nearTo), "sited");
+        TargetPlacement constraint = constraintForSited(nearTo);
+        PlacementReservation reservation = propose(planner, builder, building, constraint, "sited");
         if (reservation == null) {
             return null;
         }
@@ -125,7 +126,7 @@ public final class CatalogueSiteAdapter {
 
             return null;
         }
-        return answerWithTwin(site, building, "sited", reservation);
+        return answerWithTwin(site, building, "sited", reservation, constraint);
     }
 
     private static APosition siteForInner(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
@@ -145,19 +146,22 @@ public final class CatalogueSiteAdapter {
             return null;
         }
 
-        PlacementReservation reservation = propose(planner, builder, building, constraintFor(order, construction), "funnel");
+        TargetPlacement constraint = constraintFor(order, construction);
+        PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel");
         if (reservation == null) return null;
 
         return answerWithTwin(
-            APosition.create(reservation.tileX(), reservation.tileY()), building, "funnel", reservation);
+            APosition.create(reservation.tileX(), reservation.tileY()), building, "funnel", reservation,
+            constraint);
     }
 
     private static APosition answerWithTwin(APosition site, AUnitType building, String via) {
-        return answerWithTwin(site, building, via, null);
+        return answerWithTwin(site, building, via, null, TargetPlacement.anywhere());
     }
 
-    private static APosition answerWithTwin(APosition site, AUnitType building, String via, PlacementReservation reservation) {
-        SiteTwin.answered(building, site, via, reservation);
+    private static APosition answerWithTwin(APosition site, AUnitType building, String via,
+                                            PlacementReservation reservation, TargetPlacement constraint) {
+        SiteTwin.answered(building, site, via, reservation, constraint);
 
         return site;
     }

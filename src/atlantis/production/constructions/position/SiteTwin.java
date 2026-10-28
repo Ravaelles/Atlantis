@@ -60,7 +60,9 @@ final class SiteTwin {
             .log(frame, A.minSec());
     }
 
-    static void answered(AUnitType building, APosition site, String via, PlacementReservation reservation) {
+    static void answered(AUnitType building, APosition site, String via,
+                         PlacementReservation reservation,
+                         atlantis.production.v2.TargetPlacement constraint) {
         if (site == null) return;
 
         EventLog.Builder row = EventLog.key(LogKey.CATALOGUE_SITE)
@@ -68,6 +70,8 @@ final class SiteTwin {
             .param("result", "answered")
             .param("tx", site.tx())
             .param("ty", site.ty())
+            .param("nearTx", constraint == null ? -1 : constraint.nearTileX())
+            .param("nearTy", constraint == null ? -1 : constraint.nearTileY())
             .param("via", via);
         if (reservation != null && reservation.coversChoke() != null) {
             row.param("coversChoke", reservation.coversChoke());
