@@ -52,8 +52,8 @@ public class GameOrderDirector implements OrderDirector {
 
         AUnit producer = resolveFacility(typeId, producerId);
         if (producer == null) return "no such facility";
-        if (!producer.isCompleted()) return "facility unfinished";
-        if (commandsThisFrame.getOrDefault(producer.id(), 0) > 0) return "already commanded";
+        if (!producer.isCompleted()) return "facility unfinished #" + producer.id();
+        if (commandsThisFrame.getOrDefault(producer.id(), 0) > 0) return "already commanded #" + producer.id();
 
         // The plan is recomputed every frame and the unit is still in the build
         // queue on the next one: the same order must not be queued twice. A
@@ -67,14 +67,35 @@ public class GameOrderDirector implements OrderDirector {
         if (producer.isTraining(unitType)) {
             markUsed(producer);
 
-            return "already training " + unitType.name();
+            return "already training " + unitType.name() + " #" + producer.id();
         }
 
-        if (!producer.trainForced(unitType)) return "engine refused";
+        if (!producer.trainForced(unitType)) return "engine refused #" + producer.id() + facilityState(producer);
 
         markUsed(producer);
 
         return null;
+    }
+
+    /**
+     * The facility snapshot that tells busy from stuck: idle flag, whether
+     * anything trains, queue depth and head. Read-only, never decides.
+     */
+    private static String facilityState(AUnit producer) {
+        try {
+            String head = "?";
+            java.util.List<AUnitType> queue = producer.trainingQueue();
+            if (queue != null && !queue.isEmpty() && queue.get(0) != null) {
+                head = queue.get(0).name();
+            }
+
+            return " idle=" + producer.isIdle()
+                + " training=" + producer.isTrainingAnyUnit()
+                + " queue=" + (queue == null ? -1 : queue.size())
+                + " head=" + head;
+        } catch (RuntimeException ignored) {
+            return "";
+        }
     }
 
     @Override

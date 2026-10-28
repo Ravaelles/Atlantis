@@ -107,6 +107,9 @@ returns the branch reason ("no such facility" / "facility unfinished"
 / "already commanded" / "already training {type}" / "engine refused"),
 pinned in TrainRefusalReasonsTest 4/4 + updated dispatcher pins.
 Next live game adjudicates which branch dominates.
+FACILITY STATE 2026-10-29: denial details now carry the facility
+snapshot (id, idle flag, training flag, queue depth + head) so busy
+reads apart from stuck. Zero behavior change.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A V2 train that hits the already-training dedup issues no command, so it
@@ -72,7 +73,8 @@ public class AlreadyTrainingIsNotIssuedTest extends AbstractTestWithWorld {
             assertEquals(1, results.size());
             assertFalse(results.get(0).issued(),
                 "the Nexus trained nothing this frame - the Probe was already first in its queue");
-            assertEquals("already training Probe", results.get(0).detail());
+            assertTrue(results.get(0).detail().startsWith("already training Probe #"),
+                "the dedup names the facility: " + results.get(0).detail());
         });
     }
 }

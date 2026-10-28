@@ -110,7 +110,8 @@ public class TrainRefusalReasonsTest extends AbstractTestWithWorld {
                 new GameOrderDirector(), AUnitType.Protoss_Zealot, warping.id());
 
             assertFalse(results.get(0).issued());
-            assertEquals("facility unfinished", detailOf(results));
+            assertTrue(detailOf(results).startsWith("facility unfinished #"),
+                "the unfinished warp names itself: " + detailOf(results));
         });
     }
 
@@ -147,7 +148,8 @@ public class TrainRefusalReasonsTest extends AbstractTestWithWorld {
                 List<DispatchResult> second = dispatch(director, AUnitType.Protoss_Zealot, free.id());
 
                 assertFalse(second.get(0).issued());
-                assertEquals("already commanded", detailOf(second));
+                assertTrue(detailOf(second).startsWith("already commanded #"),
+                    "the same-frame double names itself: " + detailOf(second));
             } finally {
                 OrderFallback.useNoSink();
             }
@@ -171,7 +173,8 @@ public class TrainRefusalReasonsTest extends AbstractTestWithWorld {
                 new GameOrderDirector(), AUnitType.Protoss_Zealot, free.id());
 
             assertFalse(results.get(0).issued());
-            assertEquals("engine refused", detailOf(results));
+            assertTrue(detailOf(results).startsWith("engine refused #"),
+                "the engine refusal names the facility: " + detailOf(results));
         });
     }
 }
