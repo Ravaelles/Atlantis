@@ -643,7 +643,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   home to hide. DATUM 2026-10-28 (game 012238, PvP loss): army comes home on
   Defend f14964 and dies FIGHTING there (shots from f14964, 10 probes lost
   on the line) - defending under attack, not hiding; the latch shape still
-  unobserved.
+  unobserved. CAPABILITY HALF 2026-10-28 (StarEngine, owner order):
+  `MotionlessBaseRaidTest` - 12 Dragoons vs a motionless base (Nexus + 10
+  Zealots holdStill) - went red first (stood 13 tiles out in standoff
+  forever), fixed by the raid collapse in `Regroup.march` (dressed in slot
+  far beyond sight of a FIGHT anchor marches a walkable staging 5 short of
+  it, COLLAPSE tag), now green with the base killed. So the army CAN kill
+  a passive base when sent; the live question remains who sends it.
 - **#207** Army forms as if the enemy were in a different base (owner live
   finding 2026-10-26): an enemy base is detected, yet the army positions
   toward a base the enemy is not in. Open: line the scout/enemy-base memory

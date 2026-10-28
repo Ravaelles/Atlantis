@@ -99,6 +99,24 @@ public final class Regroup {
         // formation never stands into chews, with or without a target.
         if (!GhostAdvance.isVanguard(unit) && !FormationHold.hasCloseMeleeEnemy(unit)) {
             HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+            // Raid collapse (measured in the MotionlessBaseRaid sim: 12 Dragoons
+            // marched to 13 tiles of a passive base and stood in standoff
+            // forever - nothing pulls the line into an unseen base: no target,
+            // no ghost, no contact). Dressed in slot far beyond sight of an
+            // attack anchor, march the anchor itself instead of holding the
+            // standoff. FIGHT only; home anchors sit within sight so defense
+            // postures never take this branch. Ahead of the latch below: a
+            // throttled re-issue would stand (`else return`) and trap the
+            // collapse forever.
+            if (slot != null && shouldCollapseToAnchor(unit, slot, anchor, tactic)) {
+                APosition collapse = walkableCollapsePoint(unit, anchor);
+                if (collapse != null
+                    && unit.move(collapse, Actions.MOVE_ENGAGE, Behavior.COLLAPSE.tag())) {
+                    FightTarget.markRepositioned(unit);
+
+                    return;
+                }
+            }
             if (slot != null) {
                 // NEXT #210: same latch as the calm hold - a throttled
                 // advance stands instead of falling through to creep/gather
@@ -124,4 +142,62 @@ public final class Regroup {
             FightTarget.markRepositioned(unit);
         }
     }
+
+    /**
+     * True when the unit is dressed (in its slot) but the anchor is too far
+     * to see from it: holding the slot means holding standoff against
+     * nothing, forever. FIGHT only - retreats own their movement, and a
+     * home anchor is always within sight of a dressed line.
+     */
+    private static boolean shouldCollapseToAnchor(
+        AUnit unit, HasPosition point, HasPosition anchor, FightOrFlight.Tactic tactic
+    ) {
+        return tactic == FightOrFlight.Tactic.FIGHT
+            && anchor != null
+            && unit.distTo(point) < 1
+            && unit.distTo(anchor) > COLLAPSE_BEYOND_SIGHT_TILES;
+    }
+
+    /**
+     * Beyond any ground sight plus standoff slack: the sim raid stuck at 13
+     * tiles, Dragoon sight is 8. Below this the normal slot/ghost logic owns
+     * the unit.
+     */
+    private static final double COLLAPSE_BEYOND_SIGHT_TILES = 10;
+
+    /**
+     * Where the collapse marches: toward the anchor but stopping short of
+     * its tile, on walkable ground. Standing ON a building is not a legal
+     * order (the sim refuses it outright, the engine only slides), so the
+     * anchor tile itself is never the destination - staging 5 short puts
+     * the line inside sight on arrival and acquire takes over from there.
+     */
+    private static APosition walkableCollapsePoint(AUnit unit, HasPosition anchor) {
+        APosition target = anchor.position();
+        if (target == null) return null;
+
+        double dist = unit.distTo(target);
+        if (dist <= COLLAPSE_STAGING_SHORT + 1) return target;
+
+        double ratio = (dist - COLLAPSE_STAGING_SHORT) / dist;
+        int tx = (int) (unit.tx() + (target.tx() - unit.tx()) * ratio);
+        int ty = (int) (unit.ty() + (target.ty() - unit.ty()) * ratio);
+
+        APosition staged = APosition.create(tx, ty);
+        if (staged.isWalkable()) return staged;
+
+        for (int r = 1; r <= 3; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dy = -r; dy <= r; dy++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dy)) != r) continue;
+                    APosition candidate = APosition.create(tx + dx, ty + dy);
+                    if (candidate.isWalkable()) return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static final double COLLAPSE_STAGING_SHORT = 5;
 }
