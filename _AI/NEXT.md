@@ -463,7 +463,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (stepped-aside 244, stuck-no-step 192, frozen-reset 46) with 20
   ESCAPE_RALLY rows in the same fights - the twin vocabulary for the
   adjudication exists; per-unit stuck-to-rally linkage still needs trace
-  work.
+  work. LINKAGE CLOSED 2026-10-28 (game 013929, KITE twin carries unit ids):
+  7 units hit stuck-no-step, all 7 later stepped-aside or frozen-reset -
+  the escalation path resolves stuck Dragoons live. Hopeless-rally half
+  (ESCAPE_RALLY 2 rows) still thin.
 - **#192** Gateway demand was repeatedly cancelled on null position during
   battle. Sim-pinned fixes cover self-overlap, ground-distance search, Pylon
   anchoring, completed-footprint overlap, and bounded WAIT (480 attempts; the
@@ -670,6 +673,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `FormationSlots.valid` now refuses building tiles and the line spreads
   around them instead. Checked against #182's holder-unstick: displacing
   units never trip the wedge watch, and its pins stay green.
+  LIVE SUPPORT 2026-10-28 (game 012238, PvP home defense f14964-16370):
+  966 combat-unit telemetry samples, 5/586 pairs within 1 tile - the line
+  spreads at home, no stacking; wedge fix holds live.
 - **#210** Formation orders while defending at most once per 10 frames
   (owner order 2026-10-26): re-issuing formation orders every frame during
   a defense churns the line. Landed 2026-10-26: shared `FormationOrderLatch`
@@ -793,7 +799,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   VICTORY f15540): 1 CONSTRUCTION_CANCEL, `Gateway proximity finish:
   standing Gateway covers [108,6]` f12960 - the same re-fire shape absorbed
   by proximity finish instead of same-tile dedup; no stall, game won.
-  Zero-cover false positives remain at zero.
+  Zero-cover false positives remain at zero. Game 013929 (full-length loss
+  f28800): zero cancels, GW#3 warps f9989 supply 53 on the V2 order, zero
+  stale skips - the backstop still never fires because every dispatch has
+  a goal.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
@@ -816,10 +825,19 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   LANDED 2026-10-28: the tooltip channel is wired change-only
   (`ACherryVisUnitLogger.tooltip` with per-unit dedup, rendered into
   `units_updates` as union frames with carry-forward, empty keys omitted
-  so the legend stays clean). Measured trace cost: behavior transitions
-  are hundreds of rows per game against a ~490KB trace - negligible.
-  Pinned in `CherryVisUnitLogsTest` + legend agreement. Live proof (Task
-  populated for army units in the viewer) rides the next macro.
+  so the legend stays clean). Pre-live size estimate (hundreds of rows)
+  was wrong - callers flap tags per frame, so the first live game wrote
+  114k tooltip rows / 4.2MB raw (245KB zst); see FLAP FINDING below.
+  Pinned in `CherryVisUnitLogsTest` + legend agreement.
+  LIVE PROOF 2026-10-28 (game 013929, first jar with the channel): Task
+  populates - 130 units in units_updates, tooltip-only rows for
+  managerless units (army included). FLAP FINDING in the same game:
+  formation tags oscillate ClusterForm<->ClusterMove per frame (unit 141:
+  ~9800 tooltip rows vs 128 command rows - tag-writer disagreement, not
+  movement churn) and the scout re-issues Explore/HoldCourse constantly
+  (unit 3: 27k tooltip + 5.7k command rows); trace 0.5MB -> 4.2MB raw
+  (245KB zst). The channel is faithful; the callers flap. Fix direction:
+  single tag owner per unit per frame, or accept the volume.
 - **#222** Sim order-fragility (pre-existing, untouched): `CutoffSwampedRetreatTest`
   flips under suite order - razor margin (measured 7.01 vs threshold 8) with
   iteration order keyed off the global FakeUnit id hash, so a shifted id
