@@ -88,6 +88,11 @@ deltas, Q44 per-base power, Q53 gateway rush, Q63/64 armor/weapons,
 Q70 proximity siting), 11 Phase-gated, 82 excluded, rest covered.
 #226 landed 2026-10-28: retreat validity gate in decide()
 (`RetreatStandableTest` 5/5, DIP predicate). Suite 1787/1787.
+#225 landed 2026-10-28: refresh re-sites on completed-building
+footprints only (`RefreshOccupancyGateTest` 5/5, worker/warping/builder
+never block, standing building does; cooldown deliberately skipped -
+papers over refused-tile memory, which is #145). Suite 1792/1792, arch
+advisory unchanged.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

@@ -306,18 +306,17 @@ public class RefreshConstructionPosition {
         //     never builds ("took too long (45s) / buildable:false").
         //
         // Occupancy is the discriminator, and the live unit list is the one source
-        // that is right in both cases, so that is what decides: refresh only when a
-        // unit is actually standing on the tiles.
-        //
-        // The builder is passed in (NEXT.md #49) so the question asked here is the one
-        // the game enforces: the footprint may contain the unit that will build - the
-        // engine moves it onto the site - and nothing else. Without it, the builder
-        // arriving at its own site looked like "something is standing there", which would
-        // refresh the position out from under a construction that was about to start.
-        AUnit builder = construction.builder();
-
+        // that is right in both cases, so that is what decides: refresh only
+        // when a COMPLETED building stands on the tiles. A crossing worker
+        // is traffic, not a verdict (owner log: a Pylon re-placed twice in
+        // minutes, "Refresh Nexus position" spam for 4 minutes while miners
+        // crossed the site) - the builder issues when the tile is free.
+        // A warping building is the construction itself in progress, never
+        // a reason to move. The builder exclusion the old question needed
+        // dies with it: a unit never triggers a refresh anymore, so the
+        // arriving builder cannot trip its own site.
         if (buildingType != null && !buildingType.isGasBuilding() && !buildPosition.isBuildableIncludeBuildings()) {
-            return BuildingTilesAreOccupied.check(buildPosition, buildingType, builder);
+            return siteHopelesslyBlocked(buildPosition, buildingType);
         }
 
         // Same question on a timer, for the case where the tile was free when it was
@@ -326,6 +325,16 @@ public class RefreshConstructionPosition {
         // updated in-game), so occupancy is asked directly again.
         return A.everyNthGameFrame(23)
             && buildPosition.isPositionVisible()
-            && BuildingTilesAreOccupied.check(buildPosition, buildingType, builder);
+            && siteHopelesslyBlocked(buildPosition, buildingType);
+    }
+
+    /**
+     * The refresh discriminator, extracted as a seam so it pins without a
+     * map or a finder: true only when a completed building stands on the
+     * footprint. Units (crossing workers, the arriving builder) and
+     * warping buildings (the construction itself) never move a site.
+     */
+    public static boolean siteHopelesslyBlocked(APosition site, AUnitType type) {
+        return BuildingTilesAreOccupied.checkBuildingsOnly(site, type);
     }
 }

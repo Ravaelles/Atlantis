@@ -1263,13 +1263,3 @@ global FakeUnit id counter.
   cleanly (Citadel + detection chain), zero mineral impact, no crash.
   16 Nexus dispatches / 0 warps is the pre-existing #150/#151 chase,
   not this batch. Datum in WINE-MACRO-DATUMS.md.
-- **#225** Refresh-site churn (owner log 2026-10-28: Pylon
-  [7,47]->[8,54]->[12,55], "Refresh Nexus position" spam 6:13-10:23).
-  Mechanism: `shouldRefreshConstructionPosition` re-sites on ANY unit
-  on the tiles while no builder is committed, and the issue path
-  (`handleRefreshingPositionIfNeeded`, runs per frame) re-runs the
-  finder + cancel/re-request each pass a Nexus cannot issue. Fix
-  direction: refresh only on completed-building footprint (units walk
-  away - the builder issues when free), and a per-construction
-  cooldown after a re-site. Rides the #224 siting slice, then a
-  sim/game pin.
