@@ -98,6 +98,15 @@ then flood death; 176 honest unaffordable refusals, no stalls, no
 duplicates, zero refresh/unwalkable traces. The batch never fires
 meaningfully (death-rattle detection only). #225/#226 live proof
 still open - shapes unobserved.
+STUCK-GATEWAY SHAPE 2026-10-29 (game 001939, PvsZ, DEFEAT f24389):
+bank 1800->3800 with 175 refused Zealot + 23 Dragoon trains ("no free
+facility") while 3 Gateways stand idle - first refused twin split now
+lands: the dispatcher used to collapse 5 denial branches into one
+label, so a stall read as one shape. GameOrderDirector.trainFacility
+returns the branch reason ("no such facility" / "facility unfinished"
+/ "already commanded" / "already training {type}" / "engine refused"),
+pinned in TrainRefusalReasonsTest 4/4 + updated dispatcher pins.
+Next live game adjudicates which branch dominates.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +
