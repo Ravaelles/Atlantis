@@ -667,7 +667,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   forever), fixed by the raid collapse in `Regroup.march` (dressed in slot
   far beyond sight of a FIGHT anchor marches a walkable staging 5 short of
   it, COLLAPSE tag), now green with the base killed. So the army CAN kill
-  a passive base when sent; the live question remains who sends it.
+  a passive base when sent. ATTACK_DECISION LIVE 2026-10-28 (game 110910):
+  the twin fires - 1 row f4389 ENEMY_MAIN_KNOWN -> [119,10], same frame the
+  mission flips Defend->Attack (change-only, no repeats); raid collapse
+  fires live too (164 ClusterCollapse tags). The live question who sends
+  the army now reads off the twin instead of the orders.
 - **#207** Army forms as if the enemy were in a different base (owner live
   finding 2026-10-26): an enemy base is detected, yet the army positions
   toward a base the enemy is not in. Open: line the scout/enemy-base memory
