@@ -82,6 +82,10 @@ moved. Queue tally now: 70 done. Open: armor/weapons ladders, Archives/Storm
 ports... (Storm landed), DT/HT (landed), SupportBay chain (landed),
 per-base Pylons, Q70 proximity, Q82 expediting, Q53 tuning, Q9/Q16
 expansion deltas, Phase-4 queue + produce-pipe + build-orders.
+Second dead cut 2026-10-28: PendingNextBase (zero callers).
+Queue tally now: 77 done, 7 open (all game-gated: Q9/Q16 expansion
+deltas, Q44 per-base power, Q53 gateway rush, Q63/64 armor/weapons,
+Q70 proximity siting), 11 Phase-gated, 82 excluded, rest covered.
 
 Needs exactly one V2 LIVE game (step 3: which goal re-fires pairs -
 the V2_GOAL_SOURCE twin decides). Then move `SupplyCommander/**` +

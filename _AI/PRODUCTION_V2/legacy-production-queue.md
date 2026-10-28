@@ -12,8 +12,8 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q5 `DynamicUnitAndTechProducerCommander.java` [neutral] (P4?) — walked 2026-10-28: Protoss-only; V2 engine owns policy (see Q28).
 
 ## dynamic/expansion
-- [ ] Q6 `ExpansionCommander.java` [neutral] (P5?)
-- [ ] Q7 `PendingNextBase.java` [neutral] (P5?)
+- [x] Q6 `ExpansionCommander.java` [neutral] (P5?) — walked 2026-10-28: covered by V2 (Protoss-only shell; V2 expansion goal owns timing; last-expanded stamp is write-only).
+- [x] Q7 `PendingNextBase.java` [neutral] (P5?) — deleted 2026-10-28 (zero callers; expansion siting is the planner seam).
 
 ## dynamic/expansion/decision
 - [x] Q8 `CancelNotStartedBases.java` [neutral] (P5?) — walked 2026-10-28: covered by V2, no port. (in-flight suppression in every V2 goal).
@@ -112,7 +112,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q79 `ProduceShuttle.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Shuttle goal (reaver-follow + weak-line gates; `ReaverChainTest`).
 - [x] Q80 `ProduceZealot.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (floor + gates + mix).
 - [x] Q81 `ProtossBuildingToProduce.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: train-at-best-building is what the V2 dispatcher does; nearest-enemy nuance rides Q70.
-- [ ] Q82 `TrainQueuedDragoonImmediately.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: queue-order expediting micro; verify the V2 dispatcher expedites before deleting.
+- [x] Q82 `TrainQueuedDragoonImmediately.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by absence - no queue, no expediting; the dispatcher issues the top plan item every frame.
 - [x] Q83 `ZealotInsteadDragoon.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 ling-flood mix (dead guard dropped; pump gated too; `ArmyGatesTest` +2).
 
 ## dynamic/supply
