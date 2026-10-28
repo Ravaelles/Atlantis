@@ -38,6 +38,7 @@ public class ReaverChainTest {
         snapshot.shuttles = shuttles;
         snapshot.observers = observers;
         snapshot.hasTribunal = tribunal;
+        snapshot.combatUnits = combat;
         snapshot.arbiters = arbiters;
         snapshot.hasArchives = true;
 

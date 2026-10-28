@@ -110,4 +110,5 @@ about game logic. Read this before concluding that "the code does not run".
 3. Is the IDE artifact still enabled (build-on-make)? It should not be.
 4. `bash scripts/run-tests.sh` - does the suite still compile under
    `--release 8`?
-5. Only then start reading game logic.
+5. Only then start reading game logic.- `javac` caps at 100 errors (`-Xmaxerrs`): a bulk deletion looks like
+  20 errors until you raise the cap (measured 100 capped vs 2000+ real).

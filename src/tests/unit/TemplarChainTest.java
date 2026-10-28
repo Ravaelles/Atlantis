@@ -34,6 +34,7 @@ public class TemplarChainTest {
         snapshot.hasArchives = archives;
         snapshot.highTemplar = ht;
         snapshot.darkTemplar = dt;
+        snapshot.combatUnits = combat;
         snapshot.hasSupportBay = bay;
         snapshot.reavers = reavers;
 
@@ -68,6 +69,13 @@ public class TemplarChainTest {
         assertFalse(hasGoal(contribute(state(80, 100, 10, 100, false, 0, 0, false, 0)),
             AUnitType.Protoss_Templar_Archives),
             "supply 80 with 100 gas opens nothing");
+    }
+
+    @Test
+    public void bankedGasOpensArchivesDespiteSmallArmy() {
+        assertTrue(hasGoal(contribute(state(60, 250, 8, 120, false, 0, 0, false, 0)),
+            AUnitType.Protoss_Templar_Archives),
+            "gas bank over 230 with afford opens the line (live f7190 shape)");
     }
 
     @Test

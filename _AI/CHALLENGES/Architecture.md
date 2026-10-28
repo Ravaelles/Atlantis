@@ -203,3 +203,7 @@ micro); global knobs only for strategy scalars, never for micro.
   boundary enforcement; it is what lets a 600-class tree keep moving.
 - Learning: numbers inside profiles/policies only (PurpleWave tables
   direction), never decisions - decisions stay auditable by construction.
+- Copy-methods drop new fields silently: `atBase()` rebuilt the snapshot
+  without the post-construction fields (Forge flag, in-flight counts,
+  hidden-unit flag) - the goals read stale defaults. Carry them across
+  or construct once.
