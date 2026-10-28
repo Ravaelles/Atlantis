@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -96,6 +97,36 @@ public class ClusterTwinDestTest extends WorldStubForTests {
             assertTrue(rows.contains("\"eval\":" + expected),
                 "the row carries the leader's eval x100 (the re-engage gate reads it): " + rows);
         });
+    }
+
+    @Test
+    public void transitionsRowOffThrottleSteadyStatesStaySilent() {
+        // NEXT #195: the 31f throttle cannot resolve the 120f re-engage
+        // latch, so posture/tactic transitions row even off-throttle;
+        // steady states stay throttled (volume rule stands).
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+
+        world(32, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() != 30) return;
+
+            ClusterTwin.clearForTests();
+            ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, nexus.position());
+            ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT, nexus.position());
+            ClusterTwin.sample(ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FLEE, nexus.position());
+        });
+
+        String rows = EventLog.toJsonLines();
+        assertEquals(2, countRows(rows),
+            "transition in, steady silence, transition out - the latch reads off transitions: " + rows);
+    }
+
+    private static int countRows(String rows) {
+        int n = 0;
+        int at = -1;
+        while ((at = rows.indexOf("\"key\":\"CLUSTER\"", at + 1)) >= 0) n++;
+
+        return n;
     }
 
     @Test

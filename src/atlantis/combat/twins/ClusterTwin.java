@@ -39,17 +39,26 @@ public final class ClusterTwin {
      * Throttled: at most one row per 240 frames while it persists.
      */
     private static int lastStallLogFrame = -1000000;
+    private static ClusterMission.Posture lastPosture = null;
+    private static FightOrFlight.Tactic lastTactic = null;
 
     private ClusterTwin() {
     }
 
     /**
-     * Sample the cluster state; only every 31st frame writes a row.
+     * Sample the cluster state: every 31st frame, plus every posture or
+     * tactic transition (NEXT #195: the 31f throttle alone cannot resolve
+     * the 120f re-engage latch - flee-to-fight gaps read as 31f
+     * consecutive samples. Transitions are rare, so the volume rule
+     * stands: steady states stay throttled).
      */
     public static void sample(
         ClusterMission.Posture posture, FightOrFlight.Tactic tactic, HasPosition anchor
     ) {
-        if (!A.everyNthGameFrame(31)) return;
+        boolean transition = posture != lastPosture || tactic != lastTactic;
+        lastPosture = posture;
+        lastTactic = tactic;
+        if (!transition && !A.everyNthGameFrame(31)) return;
 
         HasPosition center = Alpha.get().center();
         int foeDist = -1;
@@ -224,6 +233,8 @@ public final class ClusterTwin {
 
     public static void clearForTests() {
         lastStallLogFrame = -1000000;
+        lastPosture = null;
+        lastTactic = null;
     }
 
     private static void noteArmyStall(HasPosition center) {

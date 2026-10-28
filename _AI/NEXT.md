@@ -1029,3 +1029,21 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   fast suite ran while it was live (out/ overlap). Its twin rows are void;
   its BUILDINGS facts stand (VICTORY f23850, Core f6504, GW#3 f10677,
   expo f15006, 0 cancels). No suite runs during a live game from here on.
+
+## Sweep 2026-10-28 autonomous (twin transitions)
+- CLUSTER rows on posture/tactic transitions (NEXT #195): the 31f throttle
+  turned every flee-to-fight gap into 31f consecutive samples, so the 120f
+  re-engage latch could never be adjudicated. Transitions now row even
+  off-throttle; steady states stay throttled (volume rule stands).
+  Pinned in `ClusterTwinDestTest` (transition in, steady silence,
+  transition out = exactly 2 rows). Suite 1731/1731 green. The eval domain
+  question is settled too: the twin renders raw leader eval x100 and the
+  unbounded scale stands per B-1 (no-enemy-near reads thousands, which is
+  exactly when the eval > 1.1 exemption should fire) - no clamp, no twin
+  change.
+- #206 adjudication from game 142713 (Attack f4347, Defend f12436, DEFEAT
+  f16693): post-Defend the army oscillates FLEE/FIGHT around [92-96,50-61]
+  with contact coming and going, strength flat ~70, focus steady on the
+  enemy Nexus [95,119] - a rally-hold cycle, not the hide shape. The latch
+  question needs a game with a clean post-contact window; this game never
+  goes quiet.
