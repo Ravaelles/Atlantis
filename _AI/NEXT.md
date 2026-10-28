@@ -647,6 +647,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fight ends and the army must re-deploy: read the anchor/hold/posture rows
   in the frames after contact, name the latch that keeps it home, then one
   rule with a pin. Do not add a fourth home-pointer before that reading.
+  ATTACK DECISION LANDED 2026-10-28 (owner order): `AttackSnapshot` (4
+  nullable corners, engine-free) -> `AttackDecider.decide` (verbatim old
+  chain) -> `AttackDecision{target, AttackReason}`; StarEngine pins every
+  branch without orders (`AttackDeciderTest` 5/5); `AttackFocusPoint`
+  builds the snapshot live and twins ATTACK_DECISION rows on change,
+  behavior identical (focus pins green). The army CAN kill a passive base
+  when sent (`MotionlessBaseRaidTest` + raid collapse); the live question
+  who sends it now reads off the twin instead of the orders. Live proof
+  rides the running macro.
   DATUM 2026-10-28: game 010715 never presents the shape - Attack f4818 to
   victory, the only home rows are pre-Attack early defense; nothing came
   home to hide. DATUM 2026-10-28 (game 012238, PvP loss): army comes home on
