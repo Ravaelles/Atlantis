@@ -169,6 +169,12 @@ public enum LogKey {
      */
     KITE,
     /**
+     * The attack decision: where the army goes and why (NEXT #206 family).
+     * Rows only when the decision changes - the same target re-asked is
+     * not a new decision.
+     */
+    ATTACK_DECISION,
+    /**
      * A hold decision: march, or which gate broke it (unit, target, tactic, verdict).
      */
     HOLD,

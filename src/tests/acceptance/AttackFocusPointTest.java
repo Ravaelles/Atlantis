@@ -13,6 +13,7 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * NEXT #194: the attack side owns its named home, mirroring the defend
@@ -84,5 +85,33 @@ public class AttackFocusPointTest extends WorldStubForTests {
                     "no enemy, no base, nowhere to march from - null, as before");
             });
         }
+    }
+
+    @Test
+    public void decisionTwinsTargetAndReasonOnce() {
+        FakeUnit foeNexus = fake(AUnitType.Protoss_Nexus, 100, 100);
+        foeNexus.setEnemy();
+
+        try (MockedStatic<EnemyUnits> enemies = Mockito.mockStatic(EnemyUnits.class)) {
+            enemies.when(EnemyUnits::enemyBase).thenReturn(foeNexus);
+            enemies.when(EnemyUnits::enemyMainBase).thenReturn(foeNexus.position());
+
+            world(8, fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 10, 10),
+                fake(AUnitType.Protoss_Probe, 9, 10)
+            ), fakeEnemies(foeNexus), () -> {
+                if (atlantis.game.A.now() < 2) return;
+
+                AttackFocusPoint.focusPoint();
+            });
+        }
+
+        String rows = atlantis.util.log.EventLog.toJsonLines();
+        int first = rows.indexOf("\"key\":\"ATTACK_DECISION\"");
+        assertTrue(first >= 0, "the march is twinned with its reason: " + rows);
+        assertTrue(rows.indexOf("\"key\":\"ATTACK_DECISION\"", first + 1) < 0,
+            "the same decision re-asked is not a new row");
+        assertTrue(rows.contains("\"reason\":\"ENEMY_BASE_SEEN\""),
+            "the row names why, was: " + rows);
     }
 }
