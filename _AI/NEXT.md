@@ -798,6 +798,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   so a far-away warp names its origin without tile forensics. Pinned pure
   (`TargetPlacementNearTest` 4/4) + answered row shape (13/13 in
   `CatalogueSiteAdapterTest`); declined rows unchanged.
+  WALK-WINDOW RE-FIRE CLOSED 2026-10-28: the second Core of game 151131
+  (dispatches f6139+f6281, warps f6297+f6400 on two tiles from one At-22
+  row) is the scheduler's in-flight check missing IN_PROGRESS-without-unit
+  constructions - between the builder's arrival and the warp the build
+  reads as missing and the row re-fires mid-walk. `LiveExistingItems`
+  counts them now (same optimistic estimate as a requested site); the row
+  fires once. Pinned `LiveExistingItemsTest` 2/2 (red-first: missing).
 - **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
   green): `run-openbw-e2e.sh` on TauCross attaches but the host never
   publishes frames. Same map + script played full openings on 10-18/21.

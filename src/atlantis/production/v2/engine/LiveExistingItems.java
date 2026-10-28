@@ -66,7 +66,14 @@ public final class LiveExistingItems implements ExistingItems {
             if (best < 0 || frame < best)
                 best = frame;
         }
-        if (best < 0 && type.isABuilding() && ConstructionRequests.countNotStartedOfType(type) > 0) {
+        // An attempted-but-unwarped building counts too: between the
+        // builder's arrival and the warp the construction is IN_PROGRESS
+        // with no unit yet, and without this the row re-fires mid-walk
+        // (live: one At-22 Core row warped twice, 142 frames apart, on two
+        // tiles). Same optimistic estimate as a requested site.
+        if (best < 0 && type.isABuilding()
+            && (ConstructionRequests.countNotStartedOfType(type) > 0
+                || ConstructionRequests.countInProgressWithoutUnitOfType(type) > 0)) {
             best = now + type.totalTrainTime();
         }
         return best;
