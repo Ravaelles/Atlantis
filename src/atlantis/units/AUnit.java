@@ -179,6 +179,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private boolean _isMilitaryBuildingAntiAir = false;
     private String tooltip;
     private String tooltipForManager;
+    /**
+     * The unit's active behavior, written by whoever drives it (a manager
+     * through {@link #setManagerUsed}, an order through the funnel's
+     * tooltip) and read by the CherryVis order watcher. Unlike the
+     * display tooltip it is never cleared to null by ordinary driving -
+     * once a unit has a behavior it keeps the last one, so the change
+     * detector always has something to compare.
+     */
+    private String behavior;
 
     // =========================================================
     private double _size = -1;
@@ -776,6 +785,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public AUnit setTooltip(String tooltip, boolean strategicLevel) {
+        setBehavior(tooltip);
+
         if (Env.isTournament()) return this;
 
         this.tooltip = tooltip;
@@ -804,6 +815,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     // Very specific auxiliary methods
 
     public boolean setTooltip(String tooltip) {
+        setBehavior(tooltip);
+
         if (Env.isTournament()) return true;
 
         this.tooltip = tooltip;
@@ -814,6 +827,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public String tooltip() {
         return tooltip;
+    }
+
+    /**
+     * Records the unit's active behavior (owner: behavior lives in the
+     * unit, updated by whoever drives it). Called by the driving funnel -
+     * {@code usedManager} names the manager, order tooltips name the
+     * behavior - so a unit that ever acted keeps naming what it does.
+     * Null clears nothing: an empty update never erases a known behavior.
+     */
+    public void setBehavior(String behavior) {
+        if (behavior == null || behavior.isEmpty()) return;
+
+        this.behavior = behavior;
+    }
+
+    /**
+     * The last behavior this unit was given, or null when no driver ever
+     * named one (fresh units read {@code #NO_COMMAND}, which is honest).
+     */
+    public String behavior() {
+        return behavior;
     }
 
     public String managerTooltip() {
@@ -3514,6 +3548,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public void setManagerUsed(Manager managerUsed, String message) {
+        // Owner order (NEXT #221): the unit remembers its active behavior -
+        // the manager that just took it, or the behavior tag it passed.
+        // The order watcher logs it on change; units that never had a
+        // manager keep whatever the order funnel set.
+        setBehavior(message != null && !message.isEmpty() ? message : managerUsed.toString());
+
         if (!manager.equals(managerUsed)) {
             String tooltipString = "";
             if (tooltip != null && !tooltip.isEmpty()) {

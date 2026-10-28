@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
+import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,5 +73,77 @@ public class CherryVisUnitLogsTest {
         // Owner order: flapping callers wrote 114k rows / 4.2MB in one game,
         // so the channel rides CHERRYVIS_TOOLTIPS=1, never by default.
         assertFalse(Env.cherryVisTooltips());
+    }
+
+    @Test
+    public void unionRowsCarryTooltipNextToManagerWhenFlagged() {
+        // The viewer reads units_updates: with the flag on, behavior tags
+        // ride alongside managers (carry-forward), so an army unit with no
+        // manager row still names what it does. Flag off: manager rows
+        // only, byte-identical to before.
+        boolean previous = Env.cherryVisTooltips();
+        Env.setCherryVisTooltipsForTest(true);
+        try {
+            ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
+            FakeUnit first = fake(AUnitType.Protoss_Zealot, 10);
+            FakeUnit second = fake(AUnitType.Protoss_Probe, 12);
+
+            logger.unitsManagerLogs.computeIfAbsent(first.id(), k -> new TreeMap<>()).put(10, "CombatManager");
+            logger.tooltip(10, "ClusterForm", first);
+            logger.tooltip(20, "ClusterKite", first);
+            logger.tooltip(15, "Gatherer!", second);
+
+            ACherryVis_Strings strings = new ACherryVis_Strings();
+            String updates = ACherryVis_UnitLogs.build(logger, strings);
+
+            assertEquals(
+                "\"" + first.id() + "\":{\"10\":{\"manager\":10000,\"tooltip\":10001},"
+                    + "\"20\":{\"tooltip\":10002}},"
+                    + "\"" + second.id() + "\":{\"15\":{\"tooltip\":10003}}",
+                updates);
+        } finally {
+            Env.setCherryVisTooltipsForTest(previous);
+        }
+    }
+
+    @Test
+    public void unitBehaviorSticksOnceDriven() {
+        // Owner order: the unit holds its active behavior; drivers name it,
+        // empty updates never erase it. The watcher keys on it, so a tagged
+        // unit never goes bare again.
+        FakeUnit unit = fake(AUnitType.Protoss_Zealot, 10);
+
+        assertEquals(null, unit.behavior());
+
+        unit.setBehavior("ClusterKite");
+        assertEquals("ClusterKite", unit.behavior());
+
+        unit.setBehavior("");
+        unit.setBehavior(null);
+        assertEquals("ClusterKite", unit.behavior());
+
+        unit.setTooltip("ClusterReengage", false);
+        assertEquals("ClusterReengage", unit.behavior(),
+            "order-funnel tags flow into the behavior field");
+    }
+
+    @Test
+    public void unionRowsStayManagerOnlyWhenFlagOff() {
+        boolean previous = Env.cherryVisTooltips();
+        Env.setCherryVisTooltipsForTest(false);
+        try {
+            ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
+            FakeUnit first = fake(AUnitType.Protoss_Zealot, 10);
+
+            logger.unitsManagerLogs.computeIfAbsent(first.id(), k -> new TreeMap<>()).put(10, "CombatManager");
+            logger.tooltip(10, "ClusterForm", first);
+
+            ACherryVis_Strings strings = new ACherryVis_Strings();
+            assertEquals(
+                "\"" + first.id() + "\":{\"10\":{\"manager\":10000}}",
+                ACherryVis_UnitLogs.build(logger, strings));
+        } finally {
+            Env.setCherryVisTooltipsForTest(previous);
+        }
     }
 }

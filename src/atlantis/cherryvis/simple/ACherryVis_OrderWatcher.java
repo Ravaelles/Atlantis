@@ -60,11 +60,16 @@ public class ACherryVis_OrderWatcher {
         return "/" + construction.buildingType().name();
     }
 
-    /** "/<tooltip>" - the behavior tag the bot last gave this unit. */
+    /** "/<behavior>" - the active behavior tag the bot last gave this unit.
+     * Reads the unit's behavior field first (set by whoever drives it -
+     * a manager or an order tag), falling back to the display tooltip so
+     * paths that only set tooltips keep working. Never bare while the unit
+     * has done anything nameable. */
     private static String behaviorTag(AUnit unit) {
-        String tooltip = unit.tooltip();
+        String behavior = unit.behavior();
+        if (behavior == null || behavior.isEmpty()) behavior = unit.tooltip();
 
-        return tooltip == null || tooltip.isEmpty() ? "" : "/" + tooltip;
+        return behavior == null || behavior.isEmpty() ? "" : "/" + behavior;
     }
 
     /**

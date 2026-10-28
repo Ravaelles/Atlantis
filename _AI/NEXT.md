@@ -876,6 +876,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   was wrong - callers flap tags per frame, so the first live game wrote
   114k tooltip rows / 4.2MB raw (245KB zst); see FLAP FINDING below.
   Pinned in `CherryVisUnitLogsTest` + legend agreement.
+  OWNER MECHANISM LANDED 2026-10-28: the unit itself holds its active
+  behavior (`AUnit.behavior`, set by whoever drives it - `usedManager`
+  names the manager, the order funnel names the tooltip), empty updates
+  never erase it, and the order watcher keys on it with tooltip fallback.
+  Units_updates tooltips ride the CHERRYVIS_TOOLTIPS flag (default off);
+  the grouped units_tooltips section stays as the minimal machine format.
   LIVE PROOF 2026-10-28 (game 013929, first jar with the channel): Task
   populates - 130 units in units_updates, tooltip-only rows for
   managerless units (army included). FLAP FINDING in the same game:
