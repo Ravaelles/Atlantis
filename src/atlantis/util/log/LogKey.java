@@ -169,6 +169,12 @@ public enum LogKey {
      */
     KITE,
     /**
+     * A wanted item the scheduler could not place: no placement tile, no
+     * affordable frame, no free producer. Transition-gated (one row per
+     * item per reason), so an 18k-frame stall names its door once.
+     */
+    SCHEDULE_REFUSED,
+    /**
      * Strength decomposition at contact transitions (NEXT #2 follow-up):
      * ours/enemy totals plus the visible-vs-remembered split, so a jump
      * on contact loss names which term moved. Rows only on transitions.
