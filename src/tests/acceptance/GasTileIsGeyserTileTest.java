@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * at the engine, then dies as "took too long / buildable:false" and - without
  * a requeue - never comes back).
  *
- * <p>FakeUnit positions are tile-exact, so the stub pins the contract: for a
- * 4x2 geyser centered at (86,114) the answer is its top-left (84,113).</p>
+ * <p>FakeUnit positions are top-left tile-exact, so the stub pins the
+ * contract: a geyser faked at (86,114) owns tile (86,114) - the answer
+ * is the stored tile, never a footprint shift.</p>
  */
 public class GasTileIsGeyserTileTest extends WorldStubForTests {
 
@@ -42,8 +43,8 @@ public class GasTileIsGeyserTileTest extends WorldStubForTests {
                 worker, AUnitType.Protoss_Assimilator, null, base.position(), 30
             );
 
-            assertEquals(GX - 2, tile.tx(), "refinery tile x");
-            assertEquals(GY - 1, tile.ty(), "refinery tile y");
+            assertEquals(GX, tile.tx(), "refinery tile x");
+            assertEquals(GY, tile.ty(), "refinery tile y");
         });
     }
 
@@ -61,8 +62,8 @@ public class GasTileIsGeyserTileTest extends WorldStubForTests {
                 APosition.create(80, 110), AUnitType.Protoss_Assimilator
             );
 
-            assertEquals(GX - 2, fixed.tx(), "snapped tile x");
-            assertEquals(GY - 1, fixed.ty(), "snapped tile y");
+            assertEquals(GX, fixed.tx(), "snapped tile x");
+            assertEquals(GY, fixed.ty(), "snapped tile y");
         });
     }
 }

@@ -33,6 +33,17 @@ public class CanPhysicallyBuildHere {
             return true;
         }
 
+        // A refinery builds on its geyser's OWN tile and on no other: the
+        // engine exempts geyser occupancy, but tile grids (and the harness
+        // stub, which counts every nearby unit as a blocker) read the
+        // geyser as occupying its tile. Exempt explicitly - without it the
+        // fix spiral walks a legal site to a buildable non-geyser tile
+        // (measured: GasTileIsGeyserTileTest, 2 off after the FakeUnit
+        // top-left change exposed the real tile).
+        if (building.isGasBuilding() && standsOnItsGeyser(building, position)) {
+            return true;
+        }
+
 //        if (building.isGasBuilding()) {
 //            AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
 //        }
@@ -79,6 +90,18 @@ public class CanPhysicallyBuildHere {
         }
 
         return true;
+    }
+
+    private static boolean standsOnItsGeyser(AUnitType building, APosition position) {
+        for (AUnit geyser : Select.geysers().list()) {
+            if (geyser == null || geyser.tilePosition() == null) continue;
+            if (position.tx() == geyser.tilePosition().getX()
+                && position.ty() == geyser.tilePosition().getY()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static boolean allowNearFirstUnfinishedPylon(AUnitType building, APosition position) {
