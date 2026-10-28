@@ -1002,3 +1002,30 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   plans run ahead of the bank; needs a proper measurement pass, not a
   guess. FAITHFUL full-opening + scripted enemy (P3) still open; WO-144–
   147 deletions now have sim gates to run against (not yet executed).
+
+## Sweep 2026-10-28 autonomous (fog memory + twin proofs)
+- Fog map heals on re-sight: live strength halved on contact loss (182 to
+  364, twice in game 142713, same shape as 110910/012238) while the
+  remembered part stood still - units the engine saw never entered the fog
+  map. A re-sight arrives as show, never discover, and show never wrapped,
+  so a lost unit stayed lost. `OnEnemyUnitShow` now wraps unknown enemies
+  (enemy-only, known ids untouched). Pinned `FogMemoryResightTest` 3/3
+  (red-first on the wrap, enemy-only, keep-known); `EnemyUnitsTest` still
+  green. Live proof rides the next macro (fogN must rise where it stood).
+- Twin proofs from game 142713 (DEFEAT f16693, contiguous EVENTS, clean run
+  with no suite overlap): STRENGTH_WATCH fires (20 rows; first row already
+  shows the fog gap foeKnown False, enemy 1), SCHEDULE_REFUSED fires
+  (Zealot unaffordable f2368 - real early bank, not a stall),
+  ATTACK_DECISION fires (5 rows, ENEMY_MAIN_KNOWN to [119,10]),
+  CATALOGUE_SITE answered rows carry nearTx/nearTy, CLUSTER rows carry
+  eval. Production: Core f6399, GW#3 f7565 supply 41, GW#4 f10440 supply
+  49, no expo, 0 cancels, 0 stale skips. Two notes: (a) most flee-to-fight
+  gaps read exactly 31f - the twin throttle, not the 120f latch, so #195
+  needs a game with longer fights, not more rows; (b) leader eval reads
+  987370 on 12/13 FLEE rows (one reads 1) - the raw eval domain, not the
+  twin math; whether that branch is honest is the next question, not this
+  commit.
+- Process note: game 142025's EVENTS lost frames ~4000-22000 because the
+  fast suite ran while it was live (out/ overlap). Its twin rows are void;
+  its BUILDINGS facts stand (VICTORY f23850, Core f6504, GW#3 f10677,
+  expo f15006, 0 cancels). No suite runs during a live game from here on.
