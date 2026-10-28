@@ -2,12 +2,11 @@ package atlantis.production.constructions.position.protoss;
 
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
-import atlantis.map.position.Positions;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 
 /**
  * A Protoss pylon is power <b>and</b> an expansion: without one, nothing can be
@@ -35,10 +34,16 @@ public class PylonTooFarFromBaseEarly {
         // Named, not silent: this rule kills whole search rings around far
         // bases, and an unnamed kill merges the previous candidate's _STATUS -
         // which is how a doctrine refusal once inflated "Can't physically
-        // build here" by hundreds (NEXT #81). Same boolean as before.
-//        if (Select.mainOrAnyUnit().groundDist(position) > 22) {
-        if (Positions.nearestToFrom(position, BaseLocations.baseLocations()).groundDist(position) > 25) {
-            AbstractPositionFinder._STATUS = "Pylon too far from base, too early";
+        // build here" by hundreds (NEXT #81).
+        // Anchored at the MAIN, not the nearest base location: the doctrine
+        // is "do not commit to a base far from home", and measuring to the
+        // nearest mapped expo answers a different question (a far expo with
+        // a nearby mineral patch would read as close). Restored 2026-10-28:
+        // the nearest-base measurement (8d1e7ce47) broke the pinned
+        // contract without the deliberate test edit e0efdbe6a demands.
+        if (Select.mainOrAnyUnit() != null
+            && Select.mainOrAnyUnit().groundDist(position) > 22) {
+            AbstractPositionFinder._STATUS = "Pylon too far from main, too early";
 
             return true;
         }
