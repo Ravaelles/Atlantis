@@ -144,4 +144,49 @@ public class HoldTwinTest extends WorldStubForTests {
             assertTrue(rows.contains("\"verdict\":\"DAMAGE\""), "got: " + rows);
         });
     }
+
+    @Test
+    public void absorbedReissueRowsLatchHeld() {
+        // NEXT #210: the latch absorbs identical formation re-issues, and
+        // the calm used to be invisible (no twin row on the deny path).
+        // Same geometry as the latch's own deny pin: first call issues,
+        // second is absorbed - and the absorbed one rows LATCH_HELD.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 21, 20);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 22, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 60, 20);
+        foe.setEnemy();
+        foe.hp = 100;
+        FakeUnit[] pack = new FakeUnit[]{
+            fake(AUnitType.Protoss_Zealot, 61, 20),
+            fake(AUnitType.Protoss_Zealot, 62, 20),
+            fake(AUnitType.Protoss_Zealot, 60, 21),
+            fake(AUnitType.Protoss_Zealot, 61, 21),
+            fake(AUnitType.Protoss_Zealot, 62, 21),
+        };
+        for (FakeUnit enemy : pack) enemy.setEnemy();
+
+        world(5, fakeOurs(nexus, a, b, c),
+            fakeEnemies(foe, pack[0], pack[1], pack[2], pack[3], pack[4]), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            for (FakeUnit u : new FakeUnit[]{a, b, c}) atlantis.battle.cluster.Alpha.get().addUnit(u);
+            try {
+                atlantis.map.position.APosition anchor =
+                    atlantis.map.position.APosition.create(30, 20);
+                assertTrue(FormationHold.holdIfCalm(
+                    a, foe, FightOrFlight.Tactic.FIGHT, a, anchor),
+                    "first deployment goes out");
+                assertTrue(FormationHold.holdIfCalm(
+                    a, foe, FightOrFlight.Tactic.FIGHT, a, anchor),
+                    "the denied re-issue still holds");
+                String rows = EventLog.toJsonLines();
+                assertTrue(rows.contains("\"verdict\":\"LATCH_HELD\""),
+                    "the absorbed re-issue names the calm: " + rows);
+            } finally {
+                for (FakeUnit u : new FakeUnit[]{a, b, c}) atlantis.battle.cluster.Alpha.get().removeUnit(u);
+            }
+        });
+    }
 }

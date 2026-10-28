@@ -1067,3 +1067,13 @@ kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
   decisive); ATTACK_DECISION 5 rows ENEMY_MAIN_KNOWN; 0 cancels, 0 stale
   skips. Production: Core f4951, only 2 Gateways, 5 Zealots + 1 Dragoon,
   no expo - died young, separate shape from the macro games.
+
+## Sweep 2026-10-28 autonomous (latch verdict)
+- #210 formation-order calm is now readable: the latch deny path rowed
+  nothing, so churn vs calm was indistinguishable. `holdIfCalm` rows
+  LATCH_HELD on the absorbed re-issue (new `HoldVerdict`), flip-gated
+  by the HOLD twin's change-only + heartbeat throttle. Pinned end to end
+  in `HoldTwinTest` (same deny geometry as the latch's own pin - first
+  call issues, second absorbs and rows; a lone foe flips posture to
+  ATTACK and forgets the latch by design, so the pin needs the pack).
+  Suite 1732/1732 green.

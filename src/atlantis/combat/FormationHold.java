@@ -235,7 +235,11 @@ public final class FormationHold {
         // NEXT #210: the unstick above is not a formation order, so the
         // latch guards only the march below - a wedged holder still trips
         // on its own cadence, a marching one stops churning the line.
+        // The absorbed re-issue rows as LATCH_HELD: the calm is a verdict
+        // in the twin, not an absence of rows.
         if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, slot)) {
+            HoldTwin.note(unit, target, tactic, HoldVerdict.LATCH_HELD);
+
             return true;
         }
         if (!unit.move(slot, Actions.MOVE_ENGAGE, Behavior.HOLD_FORMATION.tag())) {
@@ -341,6 +345,12 @@ public final class FormationHold {
         /**
          * Hold decided, but the unit never displaces: STOP once, fresh queue next frame.
          */
-        UNSTICK
+        UNSTICK,
+        /**
+         * Hold decided and the slot stands, but the latch absorbed the
+         * re-issue (NEXT #210): the calm has a name in the twin, so the
+         * next "line churns" report reads holds instead of forensics.
+         */
+        LATCH_HELD
     }
 }
