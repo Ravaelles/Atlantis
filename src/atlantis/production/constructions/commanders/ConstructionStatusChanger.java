@@ -206,10 +206,12 @@ public class ConstructionStatusChanger extends Commander {
      * twinned nothing and demoted nothing, and isOverdue never fires
      * for started constructions). Conservative by construction: older
      * than any legal warp, hp proven static across the window, not
-     * completed, and no live builder constructing it (Terran) or
-     * morphed into it (Zerg non-worker). A builder back on
-     * minerals/gas counts as gone. Healthy warps move hp every sample
-     * and never trip.
+     * completed, and no morphed builder (Zerg). A live builder ALWAYS
+     * moves hp inside 240f - even a slow Terran build - so static hp
+     * plus ancient age already prove no work is happening; the builder's
+     * flags are not consulted (a stale constructing flag shielded both
+     * branches for 11 minutes in game 232538 cid 11).
+     * Healthy warps move hp every sample and never trip.
      */
     private static boolean isFrozenWarpUnworked(
         Construction construction, AUnit builder, AUnit warping
@@ -220,32 +222,8 @@ public class ConstructionStatusChanger extends Commander {
             if (!construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now())) return false;
             // A morphed builder IS the building (Zerg) - never unworked.
             if (builder != null && !builder.isDead() && !builder.isWorker()) return false;
-            // A builder constructing AT the site works it (Terran) - but a
-            // "constructing" flag from far away is stale, not work (Wine
-            // 232538 cid 11: Nexus IN_PROGRESS 11+ minutes, builder gone
-            // untracked, wrapper still constructing, supply never recovered
-            // - the flag shielded both branches). Only nearby constructing
-            // counts; the no-entity elsewhere-constructing shield (busyStall
-            // pin) is untouched - this branch always has an entity on site.
-            if (builder != null && !builder.isDead() && builder.isConstructing()
-                && builderNearSite(construction, builder)) return false;
 
             return true;
-        } catch (Exception | Error ignored) {
-            return false;
-        }
-    }
-
-    /**
-     * True when the builder stands close enough to the site to actually
-     * work it (a Terran SCV builds from ~2 tiles). Fail-closed: an
-     * unreadable position keeps today's shield.
-     */
-    private static boolean builderNearSite(Construction construction, AUnit builder) {
-        try {
-            if (construction.buildPosition() == null) return false;
-
-            return builder.distTo(construction.buildPosition()) < 4.0;
         } catch (Exception | Error ignored) {
             return false;
         }

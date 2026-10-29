@@ -206,7 +206,7 @@ public class FrozenWarpDemoteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void constructingBuilderKeepsFrozenWarp() {
+    public void constructingBuilderWithProgressKeepsWarp() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit builder = constructor();
         FakeUnit warp = warpingPylon(100);
@@ -216,11 +216,14 @@ public class FrozenWarpDemoteTest extends AbstractTestWithWorld {
             if (now == 10) worked = inProgressPylonAt(builder, 12, 10);
             if (now != 2400 && now != 2450 && now != 2500) return;
 
+            if (now == 2450) warp.hp = 130;
+            if (now == 2500) warp.hp = 160;
+
             Construction construction = worked;
 
             assertFalse(
                 ConstructionStatusChanger.demoteStalledInProgress(construction, builder),
-                "a live constructing builder works it (Terran shape) - static hp alone never demotes");
+                "moving hp is live work at " + now + " - flags never matter, progress does");
             assertEquals(ConstructionOrderStatus.IN_PROGRESS, construction.status());
         });
     }
