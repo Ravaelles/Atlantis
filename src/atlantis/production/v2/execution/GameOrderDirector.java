@@ -70,8 +70,7 @@ public class GameOrderDirector implements OrderDirector {
             return "already training " + unitType.name() + " #" + producer.id();
         }
 
-        if (!producer.trainForced(unitType)) return "engine refused #" + producer.id() + facilityState(producer)
-            + " bank=" + atlantis.game.A.minerals() + "/" + atlantis.game.A.gas();
+        if (!producer.trainForced(unitType)) return trainRefused(producer, unitType);
 
         markUsed(producer);
 
@@ -82,6 +81,21 @@ public class GameOrderDirector implements OrderDirector {
      * The facility snapshot that tells busy from stuck: idle flag, whether
      * anything trains, queue depth and head. Read-only, never decides.
      */
+    /**
+     * Names the engine refusal at the door that is actually closed: no
+     * free supply first (the engine refuses any train while capped, and
+     * without this the refusal reads as a facility problem), then the
+     * facility snapshot that tells busy from stuck, then the live bank.
+     */
+    private static String trainRefused(AUnit producer, AUnitType unitType) {
+        if (atlantis.game.A.supplyFree() < Math.max(0, (unitType.ut().supplyRequired() + 1) / 2)) {
+            return "supply blocked";
+        }
+
+        return "engine refused #" + producer.id() + facilityState(producer)
+            + " bank=" + atlantis.game.A.minerals() + "/" + atlantis.game.A.gas();
+    }
+
     private static String facilityState(AUnit producer) {
         try {
             String head = "?";
