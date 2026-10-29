@@ -16,6 +16,21 @@ public final class WorkerStrayedFromBase {
     }
 
     /**
+     * True when this position is past the hard recall line from the main
+     * base. Null fails closed (no fight), unreadable ground fails open
+     * (the old shape, kept).
+     */
+    public static boolean beyondRecall(HasPosition where) {
+        if (where == null) return true;
+
+        try {
+            return where.distToMain() > WorkerDefenceFightCombatUnits.MAX_RECALL_DIST_TO_BASE_TILES;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
      * True when this position is further than the fight line from the
      * main base. Null fails closed (no fight), unreadable ground fails
      * open (the old shape, kept).

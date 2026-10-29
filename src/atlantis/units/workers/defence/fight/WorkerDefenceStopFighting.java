@@ -63,14 +63,18 @@ public class WorkerDefenceStopFighting extends Manager {
         if (!unit.isAttacking() && !isPursuingEnemy(unit)) return false;
         if (unit.isGatheringResources()) return false;
 
-        // Owner's hard line for trading blows: no worker fights at 10+
+        // Owner's hard line for trading blows: no worker fights past 12
         // tiles from base, however it got there (the entry gates read the
         // decision frame, the pursuit that follows does not re-ask them).
         // Same named reason as the attack gate (CONVENTIONS §31).
         // Pursuit below gets the narrower conjunction instead: walking to
         // a supported fight is joining it, not donating.
+        // The recall trips at 12, not 10 (owner 10/12 leash): a fight that
+        // started inside 10 may drift to 12 before the worker turns back -
+        // recalling on the 10 line flaps every boundary crossing, and the
+        // entry veto below already keeps anything new from starting past 10.
         if (unit.isAttacking()) {
-            if (WorkerStrayedFromBase.tooFarFromHome(unit)) return true;
+            if (WorkerStrayedFromBase.beyondRecall(unit)) return true;
         }
         else if (unsupportedPursuit(unit)) return true;
 

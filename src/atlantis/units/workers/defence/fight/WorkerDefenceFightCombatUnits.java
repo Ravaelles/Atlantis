@@ -27,6 +27,14 @@ public class WorkerDefenceFightCombatUnits extends Manager {
      */
     public static final double MAX_FIGHT_DIST_TO_BASE_TILES = 10;
     /**
+     * Hard recall line (owner 10/12 leash): a worker that ends up past 12
+     * tiles from the main - drifted out of a fight that started inside 10,
+     * or chased out - turns back unconditionally. Between 10 and 12 an
+     * ongoing fight rides (no flap on the boundary); nothing new starts
+     * past 10.
+     */
+    public static final double MAX_RECALL_DIST_TO_BASE_TILES = 12;
+    /**
      * The refusal reason for the line above, shared by the attack gate
      * here and the stop-fighting path: one named reason, not scattered
      * literals (CONVENTIONS §31). It rides the tactical tooltip, so the
@@ -136,6 +144,15 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // walk out to a raider far from base, even when the worker itself
         // still reads near. The entry gates above passed on the decision
         // frame; the pursuit that follows does not re-ask them.
+        // Worker-side mirror (owner 10/12 leash): a worker that somehow
+        // stands past the 12 recall line issues no attacks at all - the
+        // enemy-side check below reads the fight's address, this one reads
+        // the worker's own feet.
+        if (WorkerStrayedFromBase.beyondRecall(unit)) {
+            unit.setTooltipTactical(TOO_FAR_FROM_BASE);
+
+            return false;
+        }
         if (enemy != null && enemyTooFarFromBase(enemy)) {
             unit.setTooltipTactical(TOO_FAR_FROM_BASE);
 

@@ -94,7 +94,7 @@ public class WorkerFarFightTest extends WorldStubForTests {
     }
 
     @Test
-    public void stopFightingWhenWorkerDriftedBeyond10Tiles() {
+    public void driftInsideTheBufferKeepsSwinging() {
         enemyRaceInWorld = Race.Protoss;
 
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
@@ -108,10 +108,76 @@ public class WorkerFarFightTest extends WorldStubForTests {
 
             AUnit worker = Select.ourWorkers().first();
             worker.attackUnit(zealot);
+            assertFalse(new WorkerDefenceStopFighting(worker).applies(),
+                "11 tiles is drift inside the 10/12 buffer: a started fight keeps swinging");
+        });
+    }
+
+    @Test
+    public void stopFightingWhenWorkerDriftedPast12Tiles() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 33, 20);
+        probe.hp = 40;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, probe), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.attackUnit(zealot);
             assertTrue(new WorkerDefenceStopFighting(worker).applies(),
-                "an attacking worker 11 tiles from base stops, even mid-fight");
+                "past the 12 recall line an attacking worker turns back, even mid-fight");
             assertTrue(new WorkerDefenceStopFighting(worker).forceHandled(),
-                "the stop executes instead of letting the pursuit continue");
+                "the recall executes instead of letting the pursuit continue");
+        });
+    }
+
+    @Test
+    public void workerPast12IssuesNoAttack() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 33, 20);
+        probe.hp = 35;
+        FakeUnit mate = fake(AUnitType.Protoss_Probe, 33, 21);
+        mate.hp = 35;
+        FakeUnit third = fake(AUnitType.Protoss_Probe, 34, 20);
+        third.hp = 35;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, probe, mate, third), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            assertFalse(WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits(worker),
+                "the worker's own feet past 12 veto the attack even with the raider inside 10");
+        });
+    }
+
+    @Test
+    public void workerAt11StillAnswersTheRaid() {
+        enemyRaceInWorld = Race.Protoss;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 31, 20);
+        probe.hp = 35;
+        FakeUnit mate = fake(AUnitType.Protoss_Probe, 31, 21);
+        mate.hp = 35;
+        FakeUnit third = fake(AUnitType.Protoss_Probe, 32, 20);
+        third.hp = 35;
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 20);
+        zealot.setEnemy();
+
+        world(20, fakeOurs(nexus, probe, mate, third), fakeEnemies(zealot), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            assertTrue(WorkerDefenceFightCombatUnits.processFightEnemyCombatUnits(worker),
+                "11 tiles is inside the recall line: the raid is still answered");
         });
     }
 
