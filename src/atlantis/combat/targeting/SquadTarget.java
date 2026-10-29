@@ -21,10 +21,25 @@ public final class SquadTarget {
     }
 
     public static AUnit pick(AUnit unit) {
-        if (unit == null) return null;
+        if (unit == null || unit.squad() == null) return null;
 
         try {
-            return ASquadTargeting.useSquadTargetIfPossible(unit);
+            // Crowded neighbourhood picks its own focus (moved verbatim
+            // from the legacy squad-target helper, NEXT #184): the shared
+            // validity predicate below stays shared with rules 1-3.
+            if (unit.friendsNear().combatUnits().inRadius(6, unit).atLeast(6)) return null;
+
+            AUnit enemy = unit.squad().targeting().lastTargetIfAlive();
+
+            if (
+                ASquadTargeting.isValidTarget(unit, enemy)
+                    && unit.distTo(enemy) <= 9
+                    && unit.hasWeaponRangeToAttack(enemy, 0)
+            ) {
+                return enemy;
+            }
+
+            return null;
         } catch (Exception | Error ignored) {
             return null;
         }

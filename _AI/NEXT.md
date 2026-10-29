@@ -142,6 +142,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   worktree at `c3103aeb2` fail IDENTICALLY (8/8 same tests) - pre-existing,
   zero regression from this session. (RequestBuildingNear 3->1 healed
   between 2167421e7 and c3103aeb2, before this session - not claimed.)
+   DATUM 2026-10-29: two more acceptance failures verified pre-existing
+   on the pre-Phase-4 tree (identical stacks): DynamicProductionCommanderTest
+   NPE (null raceSpecific factory when not Protoss) and CommanderTest ctor -
+   both pin dead legacy commanders, die with Phase 4. Not regressions.
 
 ## Architecture migration — stages E–J
 

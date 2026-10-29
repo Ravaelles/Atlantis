@@ -5,40 +5,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ASquadTargeting {
-    public static AUnit useSquadTargetIfPossible(AUnit unit) {
-        if (unit == null || unit.squad() == null) return null;
-        if (unit.friendsNear().combatUnits().inRadius(6, unit).atLeast(6)) return null;
-
-        AUnit enemy = unit.squad().targeting().lastTargetIfAlive();
-
-        if (
-            isValidTarget(unit, enemy)
-                && unit.distTo(enemy) <= 9
-                && unit.hasWeaponRangeToAttack(enemy, allowThisManyTilesOutsideRange(unit))
-//                && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
-        ) {
-//            if (DEBUG) AConsole.println("SqL enemy = " + enemy.typeWithUnitId());
-
-            return enemy;
-        }
-
-        return null;
-    }
-
-    private static int allowThisManyTilesOutsideRange(AUnit unit) {
-        return 0;
-
-//        if (We.protoss()) {
-//            if (unit.hp() <= 35) {
-//                if (Enemy.protoss()) return 0;
-//
-//                return 0;
-//            }
-//        }
-//
-//        return unit.isRanged() ? 3 : 5;
-    }
-
     public static boolean isValidTarget(AUnit unit, AUnit enemy) {
         if (enemy == null) return false;
         // Positionless fogged memory is not a target (owner 2026-10-26:
