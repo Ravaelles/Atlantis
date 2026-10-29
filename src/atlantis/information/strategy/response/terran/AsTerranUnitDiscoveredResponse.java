@@ -4,8 +4,6 @@ package atlantis.information.strategy.response.terran;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
-import atlantis.information.strategy.response.enemy_base.WhenEnemyBaseDiscovered;
-import atlantis.information.strategy.response.enemy_cb.WhenCBDiscovered;
 import atlantis.information.strategy.response.enemy_hidden.EnemyHiddenUnits;
 import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -17,9 +15,8 @@ import atlantis.util.We;
 
 public class AsTerranUnitDiscoveredResponse {
     public static boolean updateEnemyUnitDiscovered(AUnit enemyUnit) {
-        if (enemyUnit.isBase()) WhenEnemyBaseDiscovered.whenBaseDiscovered(enemyUnit);
-        if (enemyUnit.isCombatBuilding()) WhenCBDiscovered.whenCBDiscovered(enemyUnit);
-
+        // Single policy (NEXT #228): the legacy base/CB discovery writes
+        // died with the drain - V2 expansion goals own that demand now.
         if (Strategy.get().isRushOrCheese()) {
             whenRushOrCheese(enemyUnit);
         }

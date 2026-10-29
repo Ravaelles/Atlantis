@@ -1,8 +1,11 @@
 package tests.unit;
 
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.v2.ProductionRacePolicy;
+import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -20,9 +23,13 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * detection - fast Robotics Facility into Observatory and Observer, or
  * Forge plus cannons when there is no time). PurpleWave answers the same
  * shape (observer pump 1-vs-3 on lurker-likelihood plus cannons at
- * openings, behind the Robo chain); ours queues both halves with top
- * priority on first sight. Unpinned until now - the owner asked whether
- * it works at all.
+ * openings, behind the Robo chain).
+ *
+ * <p>End to end, not goal-layer: a sighted lurker latches the flag, the V2
+ * engine plans from the live snapshot, and a detection construction exists
+ * within 30 frames. (The legacy queue half of this test died with the
+ * drain in Phase 4 - the queue is never drained in LIVE, so asserting its
+ * contents pinned a dead letter.)</p>
  */
 @Tag("production")
 public class HiddenUnitResponseTest extends WorldStubForTests {
@@ -33,63 +40,89 @@ public class HiddenUnitResponseTest extends WorldStubForTests {
     }
 
     @AfterEach
-    public void cleanQueueAndFlag() {
-        Queue.get().allOrders().list().clear();
-        Queue.get().clearCache();
+    public void cleanFlagAndConstructions() {
+        ConstructionRequests.constructions.clear();
         EnemyFlags.HAS_HIDDEN_COMBAT_UNIT = false;
     }
 
-    private static boolean queueHas(AUnitType type) {
-        return Queue.get().allOrders().list().stream()
-            .anyMatch(order -> type.equals(order.unitType()));
+    private static boolean constructionRequested(AUnitType type) {
+        return ConstructionRequests.constructions.stream()
+            .anyMatch(construction -> type.equals(construction.buildingType()));
+    }
+
+    private int runDetectionScenario(boolean withForge) {
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 60, 60);
+        lurker.setEnemy();
+
+        // Mirrors a proven live detection scene (PvP game 154822: Robo+Forge
+        // dispatched f6354): Core standing for the Robo, a Pylon for power,
+        // a Gateway so the snapshot reads a lived-in base.
+        FakeUnit[] ours;
+        if (withForge) {
+            ours = fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 10, 10),
+                fake(AUnitType.Protoss_Pylon, 12, 10),
+                fake(AUnitType.Protoss_Gateway, 14, 10),
+                fake(AUnitType.Protoss_Cybernetics_Core, 14, 12),
+                fake(AUnitType.Protoss_Forge, 11, 11),
+                fake(AUnitType.Protoss_Probe, 11, 10));
+        }
+        else {
+            ours = fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 10, 10),
+                fake(AUnitType.Protoss_Pylon, 12, 10),
+                fake(AUnitType.Protoss_Gateway, 14, 10),
+                fake(AUnitType.Protoss_Cybernetics_Core, 14, 12),
+                fake(AUnitType.Protoss_Probe, 11, 10));
+        }
+
+        currentMinerals = 800;
+        currentGas = 400;
+
+        ProductionEngine engine = new ProductionEngine(ProductionRacePolicy.forRace("Protoss"));
+        int[] firstResponseFrame = {-1};
+
+        world(60, ours, fakeEnemies(lurker), () -> {
+            if (A.now() == 10) {
+                EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurker);
+            }
+
+            if (A.now() >= 10) {
+                engine.updateFrame();
+
+                if (firstResponseFrame[0] < 0 && (
+                    constructionRequested(AUnitType.Protoss_Forge)
+                        || constructionRequested(AUnitType.Protoss_Robotics_Facility)
+                        || constructionRequested(AUnitType.Protoss_Photon_Cannon))) {
+                    firstResponseFrame[0] = A.now();
+                }
+            }
+        });
+
+        assertTrue(EnemyFlags.HAS_HIDDEN_COMBAT_UNIT,
+            "a seen lurker latches the hidden-unit flag");
+
+        return firstResponseFrame[0];
     }
 
     @Test
     public void lurkerSightRequestsDetectionChain() {
-        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 60, 60);
-        lurker.setEnemy();
+        int firstResponseFrame = runDetectionScenario(true);
 
-        world(30, fakeOurs(
-            fake(AUnitType.Protoss_Nexus, 10, 10),
-            fake(AUnitType.Protoss_Probe, 11, 10)
-        ), fakeEnemies(lurker), () -> {
-            if (atlantis.game.A.now() != 10) return;
-
-            Queue.get().allOrders().list().clear();
-            EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurker);
-
-            assertTrue(EnemyFlags.HAS_HIDDEN_COMBAT_UNIT,
-                "a seen lurker latches the hidden-unit flag");
-
-            assertTrue(queueHas(AUnitType.Protoss_Robotics_Facility),
-                "fast Robo first: " + Queue.get().allOrders().list());
-            assertTrue(queueHas(AUnitType.Protoss_Observatory),
-                "Observatory behind it: " + Queue.get().allOrders().list());
-            assertTrue(queueHas(AUnitType.Protoss_Observer),
-                "and the Observer itself: " + Queue.get().allOrders().list());
-        });
+        assertTrue(firstResponseFrame >= 10 && firstResponseFrame <= 40,
+            "a seen lurker orders detection within 30 frames - first at " + firstResponseFrame);
+        assertTrue(constructionRequested(AUnitType.Protoss_Robotics_Facility),
+            "fast Robo first (chain continuation is goal-pinned and live-proven)");
     }
 
     @Test
-    public void lurkerSightWithoutForgeRequestsForgeAndCannons() {
-        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 60, 60);
-        lurker.setEnemy();
+    public void lurkerSightWithoutForgeRequestsForgeFirst() {
+        int firstResponseFrame = runDetectionScenario(false);
 
-        world(30, fakeOurs(
-            fake(AUnitType.Protoss_Nexus, 10, 10),
-            fake(AUnitType.Protoss_Probe, 11, 10)
-        ), fakeEnemies(lurker), () -> {
-            if (atlantis.game.A.now() != 10) return;
-
-            Queue.get().allOrders().list().clear();
-            EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurker);
-
-            assertTrue(queueHas(AUnitType.Protoss_Forge),
-                "no time for tech without a Forge - it goes first: "
-                    + Queue.get().allOrders().list());
-            assertTrue(queueHas(AUnitType.Protoss_Photon_Cannon),
-                "cannons hold while the Robo chain spins up: "
-                    + Queue.get().allOrders().list());
-        });
+        assertTrue(firstResponseFrame >= 10 && firstResponseFrame <= 40,
+            "a seen lurker orders detection within 30 frames - first at " + firstResponseFrame);
+        assertTrue(constructionRequested(AUnitType.Protoss_Forge)
+            || constructionRequested(AUnitType.Protoss_Robotics_Facility),
+            "no time for tech without a Forge - it goes first, or the Robo chain");
     }
 }

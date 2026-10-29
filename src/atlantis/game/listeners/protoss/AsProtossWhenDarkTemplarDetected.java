@@ -2,7 +2,6 @@ package atlantis.game.listeners.protoss;
 
 import atlantis.game.A;
 import atlantis.production.constructions.cancelling.CancelNotStarted;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -16,10 +15,9 @@ public class AsProtossWhenDarkTemplarDetected {
                 ErrorLog.printMaxOncePerMinute("@@@@@@@@@@ DT detected - cancel nexus");
             }
 
-            if (Have.notEvenPlanned(AUnitType.Protoss_Forge)) {
-                ErrorLog.printMaxOncePerMinute("@@@@@@@@@@ DT detected - adding Forge to queue with highest priority");
-                AddToQueue.withHighestPriority(AUnitType.Protoss_Forge);
-            }
+            // Single policy (NEXT #228): the Forge order is the V2
+            // detection goal's job (addDetectionGoals) - the legacy queue
+            // write died with the drain, so it only phantom-planned.
         }
     }
 }

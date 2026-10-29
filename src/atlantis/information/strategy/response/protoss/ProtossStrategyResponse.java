@@ -37,7 +37,12 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
 
     @Override
     public boolean requestDetection(AUnit enemyUnit) {
-        return RequestProtossDetection.needDetectionAgainst(enemyUnit);
+        // Single policy (NEXT #228): the legacy queue writes died with the
+        // drain - nothing converts them into constructions, so they only
+        // polluted Have/planned reads. Detection orders come from the V2
+        // goal layer (addDetectionGoals, pinned HiddenUnitResponseTest),
+        // fed by the EnemyFlags latch the hidden-units handler sets.
+        return true;
     }
 
     @Override

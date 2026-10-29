@@ -524,6 +524,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   DATUM 2026-10-28 (game 012238, PvP Destination, loss): 10 Dragoons trained
   / 8 died, live count never exceeds 10 - the ban stays correctly silent;
   still no game masses >10 live Dragoons vs Protoss.
+  DATUM 2026-10-29 (game 154822, PvP Destination, DEFEAT 18/111): FIRST
+  LIVE TRIGGER - 20 dragoons dispatched, peak 13 live (f10559-13814
+  over-10 window). Ban correctly silent: all 109 CLUSTER rows in the
+  window focus the breach fight (EnemyBreachedBase/coords), never a choke
+  hold - nothing to veto. PvP vehicle: per-run ENEMY_RACE=Protoss env,
+  no source flip.
 - **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
   shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
   re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
@@ -1276,3 +1282,4 @@ global FakeUnit id counter.
 - **#228** Every used old file earns its verdict (owner order 2026-10-29). Per-class walk in `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows); this item closes the cross-cutting remainder: `Queue.get()` live readers (forecast, GoalBoard, Have, listeners), synthetic `ProductionOrder` on V2 constructions (replace with V2 demand carrier, WO-147), BO-file machinery around the kept .txt format, `constructions/**` refactor-in-place (retained actuator, one-line purpose per file), Tweaker engines keep-or-delete (owner call recorded here). Done = V2-native, `src-old/`, or retained-with-reason. Spec: Phase 6B.
 - **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
 - **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
+- **#231** Order-latency model in StarEngine (owner order 2026-10-29; third gap of Phase 6C). The sim applies orders the same tick; live shows once-per-minute stack traces the sim never reproduces. Model the engine's answer delay against the sim map (a fixed-frame issue latency per order family), pinned by a scenario that fails without it. Fidelity bar: a sim scenario whose twin names the latency live. Out of scope: JBWAPI exception shapes (twin live). Spec: Phase 6C.
