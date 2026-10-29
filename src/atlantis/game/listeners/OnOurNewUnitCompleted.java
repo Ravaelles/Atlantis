@@ -5,7 +5,6 @@ import atlantis.config.env.Env;
 import atlantis.game.CameraCommander;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -20,7 +19,6 @@ public class OnOurNewUnitCompleted {
 
         Count.clearCache();
         Select.clearCache();
-        Queue.get().refresh();
 
         // BATTLE CUTOVER: squad assignment is deleted - nothing assigns.
         boolean assigned = false;

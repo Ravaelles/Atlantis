@@ -8,7 +8,6 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.protoss.ProtossWarping;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.util.AConsole;
 
@@ -41,7 +40,6 @@ public class OnUnitMorph {
             // =========================================================
 
 //            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-            Queue.get().refresh();
 
             WarpedBuildingRecorder.record(unit);
 

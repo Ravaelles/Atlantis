@@ -74,8 +74,6 @@ public class OnOurUnitCreated {
 
         // =========================================================
 
-        Queue.get().refresh();
-
         // Buildings ledger (actual vs build-order supply at warp). Runs
         // after the order fallback above, so an order found late still
         // lands on the row. Flush-through: an interrupted game never

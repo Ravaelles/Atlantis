@@ -10,7 +10,6 @@ import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 
@@ -22,8 +21,6 @@ public class OnOurUnitDestroyed {
         RepairAssignments.removeRepairer(unit);
         OurWorkerWasKilled.onWorkedKilled(unit);
         if (unit.squad() != null) unit.squad().removeUnit(unit);
-
-        Queue.get().refresh();
 
         if (!unit.type().isGasBuilding()) {
             Atlantis.LOST++;
