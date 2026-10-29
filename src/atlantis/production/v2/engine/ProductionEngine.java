@@ -2,10 +2,7 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
-import atlantis.placement.core.SupportRequest;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.v2.*;
 import atlantis.production.v2.execution.*;
 import atlantis.production.v2.goals.BuildOrderGoals;
@@ -138,15 +135,6 @@ public final class ProductionEngine {
         List<DispatchResult> issued = new ProductionDispatcher(gameDirector).dispatch(plan, goals, state.frame(), LATENCY_FRAMES);
 
         logFrame(state.frame(), plan, issued);
-        // Bridge, not a layer break: the catalogue declares support, the
-        // engine (the only v2 class that knows the game exists) forwards
-        // it to the legacy queue, where V2 already reads coming providers
-        // from - so no cross-author duplicate. Dies with the queue (#147).
-        for (SupportRequest support : placementPlanner.drainSupportRequests()) {
-            AddToQueue.withHighPriority(
-                support.unitType(),
-                APosition.create(support.tileX(), support.tileY()));
-        }
 
         return plan;
     }
