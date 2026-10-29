@@ -254,7 +254,13 @@ public final class ClusterRally {
         HasPosition pivot = atlantis.combat.targeting.ASquadTargeting
             .nearestEngageableEnemy(leader, 30);
         if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {
-            pivot = expectedDirectionPoint(leader, anchor);
+            // Face the door, not the wall (owner 2026-10-29, Cere game):
+            // with the target in another region the direction point sits
+            // behind the army and the crescent forms up facing our own
+            // wall. The choke between our region and the target's is the
+            // only honest facing - contact keeps its own pivot below.
+            HasPosition door = regionDoorPivot(leader, anchor);
+            pivot = door != null ? door : expectedDirectionPoint(leader, anchor);
         }
         if (pivot == null) return null;
 
@@ -315,6 +321,31 @@ public final class ClusterRally {
             return atlantis.combat.formation.ChokePlug.slotFor(
                 unit, Alpha.get().selection(), plug, choke.center(), choke.width() / 2.0);
         } catch (RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * The door into the target's region, or null when it does not apply:
+     * same region both sides, an unresolvable region, or no choke between
+     * them. Null-safe by construction - every map call can miss, and a
+     * miss means the old direction point below owns the facing.
+     */
+    public static HasPosition regionDoorPivot(AUnit leader, HasPosition anchor) {
+        try {
+            if (leader == null || anchor == null) return null;
+
+            atlantis.map.region.ARegion ours =
+                atlantis.map.region.Regions.getRegion(leader.position());
+            atlantis.map.region.ARegion theirs =
+                atlantis.map.region.Regions.getRegion(anchor);
+            if (ours == null || theirs == null || ours.equals(theirs)) return null;
+
+            atlantis.map.choke.AChoke door = ours.chokeBetween(theirs);
+            if (door == null || door.center() == null) return null;
+
+            return door.center();
+        } catch (Exception ignored) {
             return null;
         }
     }
