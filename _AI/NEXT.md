@@ -533,9 +533,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   latch window - consistent with the latch biting when eval allows and the
   rally holding otherwise. Full proof needs eval in the twin.
   EVAL LANDED 2026-10-28: CLUSTER rows carry `eval` (leader's eval x100,
-  -1 with no live leader), so the next flee-to-FIGHT gap adjudicates
-  from EVENTS - eval > 110 inside 120f re-attacks, the rest holds the
-  rally. Pinned both ways in `ClusterTwinDestTest`.
+  -1 with no live leader), so the next flee-to-FIGHT gap adjudicates from
+  EVENTS - eval > 110 inside 120f re-attacks, the rest holds the rally.
+  Pinned both ways in `ClusterTwinDestTest`.
+  DATUM 2026-10-29 (game 151237, PvsZ TauCross, DEFEAT on 750s cap):
+  463/463 CLUSTER rows carry eval - the adjudication vehicle exists. Two
+  flee-to-FIGHT gaps on cluster 15 (8 FLEE rows: 3 RALLY + 5 ESCAPE_RALLY):
+  f16206->f16312 = 106f re-attack with FIGHT-row eval 176 (1.76 > 1.1,
+  latch-consistent); f16508->f16582 = 74f re-attack with FLEE-row eval 79
+  (0.79) but exploded FIGHT-row eval - the gate reads per-frame eval, so
+  gap2 neither confirms nor breaks the latch; partial proof, no behavior
+  change. Game loss was a mid-game army wipe (-1525 res), not a stall.
 - **#196** Workers have a named 10-tile limit measured from the main for
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
@@ -1266,5 +1274,5 @@ global FakeUnit id counter.
 
 - **#227** Kill every production version switch (owner order 2026-10-29: one solution, no "which is live" question). Enumerated sites: `ProductionCommander:26` (delete legacy branch), `ProductionOrdersCommander:52,61,67` (delete legacy drain + OFF witness + DRY_RUN), `ProductionEngine:107,147` (always live), `Queue:35` (dies with the queue, not a guard fix), `ProductionV2Mode` + ENV knob last. One commit per file, suite green each; DRY_RUN banks its WO-144 parity verdicts first. Spec: `_AI/PRODUCTION_V2/__MIGRATION.md` Phase 6A.
 - **#228** Every used old file earns its verdict (owner order 2026-10-29). Per-class walk in `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows); this item closes the cross-cutting remainder: `Queue.get()` live readers (forecast, GoalBoard, Have, listeners), synthetic `ProductionOrder` on V2 constructions (replace with V2 demand carrier, WO-147), BO-file machinery around the kept .txt format, `constructions/**` refactor-in-place (retained actuator, one-line purpose per file), Tweaker engines keep-or-delete (owner call recorded here). Done = V2-native, `src-old/`, or retained-with-reason. Spec: Phase 6B.
-- **#229** canBuild in StarEngine (gap with a live falsification behind it: #150/#225 class invisible in sim). Implement the engine's answer against the sim map (walkable + in-bounds + footprint-clear + powered + explored), returning the same refusal family the twin names live. Fidelity bar: replays game 133317's Nexus site with the same refusal reason. Out of scope: JBWAPI exception shapes (twin live instead). Spec: Phase 6C.
-- **#230** Basic fog-of-war in StarEngine (owner spec 2026-10-29). Every 15 frames, each known enemy unit is visible iff any of our units is within 8 tiles; otherwise fog memory with last-seen position. No cones, no occlusion, no detector differences - follow-ups only with their own pins after this one proves useful. Pin: 15-frame cadence + 7.9/8.1 boundary both ways. Spec: Phase 6C.
+- **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
+- **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
