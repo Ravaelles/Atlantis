@@ -250,6 +250,19 @@ public final class DuelMemory {
         lastContactFrame.put(unit.id(), A.now());
     }
 
+    /**
+     * Drop this unit's remembered contact (chase veto): the ghost creep
+     * and the baseless hunt read lastContact, so a vetoed far chase must
+     * also forget the address - otherwise the creep re-chases next frame
+     * what the veto just refused.
+     */
+    public static void forgetContact(AUnit unit) {
+        if (unit == null) return;
+
+        lastContactPos.remove(unit.id());
+        lastContactFrame.remove(unit.id());
+    }
+
     public static Integer lastStepFrame(AUnit unit) {
         return lastStepFrame.get(unit.id());
     }

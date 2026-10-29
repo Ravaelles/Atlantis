@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.DuelMemory;
 import atlantis.combat.BattleCommander;
+import atlantis.combat.FightTarget;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -10,6 +11,8 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -72,6 +75,31 @@ public class DuelMemoryTest extends WorldStubForTests {
                     assertFalse(DuelMemory.damagedLessThanAgo(dragoon, 45),
                         "no hp drop, no latch - a calm holder reads clean");
                 }
+            });
+        } finally {
+            BattleCommander.clearForTests();
+        }
+    }
+
+    @Test
+    public void forgettingContactBlindsGhostAndHunt() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 28, 24);
+        zealot.setEnemy();
+        BattleCommander.clearForTests();
+
+        try {
+            world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                BattleCommander.act(
+                    dragoon, atlantis.combat.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                if (A.now() != 2) return;
+
+                assertNotNull(FightTarget.lastContact(dragoon),
+                    "a visible fight snapshots contact (sight, not engagement)");
+                DuelMemory.forgetContact(dragoon);
+                assertNull(FightTarget.lastContact(dragoon), "vetoed chase forgets the address");
+                assertNull(DuelMemory.lastContactFrame(dragoon), "frame goes with it");
+                DuelMemory.forgetContact(null);
             });
         } finally {
             BattleCommander.clearForTests();

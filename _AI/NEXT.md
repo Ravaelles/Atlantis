@@ -1400,3 +1400,22 @@ global FakeUnit id counter.
   four quadrant rays (one golden-angle ray can point into our own base
   and collapse the verdict to NOWHERE_TO_RUN on the global unit id -
   this also explains the flaky GhostAdvanceTest, green since).
+
+## Sweep 2026-10-30 night II (autonomous: worker leash 10/12, contact-forget)
+
+- Worker 10/12 leash (owner spec): engage veto stays at 10 (nothing new
+  starts past it); the attacking recall moves 10 -> 12
+  (`MAX_RECALL_DIST_TO_BASE_TILES`, `WorkerStrayedFromBase.beyondRecall`)
+  so a fight that started inside 10 may drift to 12 before the worker
+  turns back. Worker-side 12 veto in `processFightEnemyCombatUnits`: past
+  the recall line no attack issues. Pins in `WorkerFarFightTest` (drift
+  keeps swinging at 11, recall + no-attack at 12/13, raid answered at
+  11); suite 1870/1870. Open: live pressure proof (native-AI macros give
+  no pressure). The zealot/small-army chase veto half stays DESIGNED
+  ONLY: no thresholds exist anywhere, so no gate was shipped.
+- Chase-veto mechanism landed: `DuelMemory.forgetContact` drops the
+  remembered address the ghost creep and the baseless hunt read, so a
+  future veto cannot be re-chased next frame. Pinned
+  (`forgettingContactBlindsGhostAndHunt`, null-safe). The veto gate
+  itself (how far is too far for a zealot/small army, which anchor reads
+  home) needs owner numbers - not implemented, not presented as done.
