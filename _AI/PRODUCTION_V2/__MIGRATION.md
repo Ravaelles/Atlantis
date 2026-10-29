@@ -98,6 +98,12 @@ then flood death; 176 honest unaffordable refusals, no stalls, no
 duplicates, zero refresh/unwalkable traces. The batch never fires
 meaningfully (death-rattle detection only). #225/#226 live proof
 still open - shapes unobserved.
+SUPPLY VERDICT 2026-10-29 (game 111114, PvsZ, loss on time f28800):
+296 supply-blocked rows, ZERO engine-refused (was 222+148). The stall
+was supply-edge churn, not phantom-busy gateways - the engine
+correctly refuses every train at 0 free supply while the Pylon
+pipeline lags. Fix is upstream (warp the Pylon sooner, #150/#151),
+not in the facilities. 61 warps, 3rd live Forge, full-length survival.
 STUCK-GATEWAY SHAPE 2026-10-29 (game 001939, PvsZ, DEFEAT f24389):
 bank 1800->3800 with 175 refused Zealot + 23 Dragoon trains ("no free
 facility") while 3 Gateways stand idle - first refused twin split now
