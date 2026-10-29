@@ -38,6 +38,20 @@ public final class SimMovement {
     private final Map<Integer, double[]> precise = new HashMap<>();
     private final Map<Integer, Integer> stuckFrames = new HashMap<>();
 
+    /**
+     * Issue latency in frames (NEXT #231): the engine's answer does not
+     * move units the tick it is issued. Zero by default - every existing
+     * scenario keeps immediate response; a scenario that needs the delay
+     * opts in. Counts from the frame the order last changed.
+     */
+    private int orderLatencyFrames = 0;
+    private final Map<Integer, String> lastOrder = new HashMap<>();
+    private final Map<Integer, Integer> orderFrame = new HashMap<>();
+
+    public void setOrderLatencyFrames(int frames) {
+        this.orderLatencyFrames = Math.max(0, frames);
+    }
+
     public SimMovement(SimArena arena) {
         this.arena = arena;
     }
@@ -54,11 +68,18 @@ public final class SimMovement {
 
     /**
      * Advances every living unit one tick toward its ordered velocity.
+     * A freshly issued order waits out the issue latency first: the unit
+     * brakes until its order is old enough, so a scenario with latency
+     * sees the engine's answer delay instead of same-tick response.
      */
     public void stepAll(List<FakeUnit> units) {
         for (FakeUnit unit : units) {
             if (unit == null || unit.hp <= 0) continue;
             ensureRegistered(unit);
+            if (orderTooFresh(unit)) {
+                brake(unit);
+                continue;
+            }
             double[] vel = velocity.get(unit.id());
             double[] desired = desiredVelocity(unit);
             if (desired == null) {
@@ -76,6 +97,57 @@ public final class SimMovement {
             }
             step(unit, vel);
         }
+    }
+
+    /**
+     * True while the unit's current order is younger than the issue
+     * latency: the engine answered, but the answer has not landed yet.
+     * A changed order re-arms the wait; an unchanged one counts down.
+     */
+    private boolean orderTooFresh(FakeUnit unit) {
+        if (orderLatencyFrames <= 0) return false;
+
+        try {
+            String order = orderKey(unit);
+            String previous = lastOrder.get(unit.id());
+            if (!order.equals(previous)) {
+                lastOrder.put(unit.id(), order);
+                orderFrame.put(unit.id(), atlantis.game.A.now());
+            }
+
+            return atlantis.game.A.now() - orderFrame.getOrDefault(unit.id(), 0) < orderLatencyFrames;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * What counts as "the same order": the command plus where to, so a
+     * re-issued march keeps counting down while a re-targeted one
+     * re-arms the wait. Target objects are identified by id, positions
+     * by tile - both cheap and stable within a scenario.
+     */
+    private static String orderKey(FakeUnit unit) {
+        String command = unit.lastCommand == null ? "" : unit.lastCommand;
+        String target = unit.targetPosition == null
+            ? "-"
+            : unit.targetPosition.tx() + "," + unit.targetPosition.ty();
+        String foe = unit.target == null ? "-" : String.valueOf(unit.target.id());
+
+        return command + "|" + target + "|" + foe;
+    }
+
+    private void brake(FakeUnit unit) {
+        double[] vel = velocity.get(unit.id());
+        if (vel == null) return;
+
+        vel[0] *= BRAKE;
+        vel[1] *= BRAKE;
+        if (Math.hypot(vel[0], vel[1]) < 0.05) {
+            vel[0] = 0;
+            vel[1] = 0;
+        }
+        step(unit, vel);
     }
 
     /**

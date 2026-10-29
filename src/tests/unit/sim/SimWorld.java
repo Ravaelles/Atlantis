@@ -170,6 +170,17 @@ public class SimWorld {
     }
 
     /**
+     * Issue latency in frames (NEXT #231): with 0 (default) orders move
+     * units the tick they are issued; a scenario that needs the engine's
+     * answer delay sets N and the first N frames after each order change
+     * only brake. Train/build/research families stay unmodeled until a
+     * twin names their latency live.
+     */
+    public void setOrderLatencyFrames(int frames) {
+        movement.setOrderLatencyFrames(frames);
+    }
+
+    /**
      * Teleports a unit (scenario use only): the sim owns positions, so a
      * bare write to {@code unit.position} is overwritten by the next step.
      * Updates both the published position and the precise accumulator,
