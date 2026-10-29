@@ -1343,6 +1343,9 @@ global FakeUnit id counter.
    forecasts now, and dropping it changes builder-travel timing game-wide
    (needs a live twin adjudication first). Terminal remainder: queue
    deletion + knob + mode tests + acceptance fallout.
+   UNIFIED RESERVE 2026-10-29: travel forecast reads constructions in
+   creation order (same as the door model) - EarlierReserveDivergenceTest
+   became AgreementTest; queue-position drift can no longer desync them.
    WARP-ORDER VERDICT 2026-10-29: queue-order-is-file-order does NOT transfer -
    V2 schedules by priority band (measured: Pylon,Gateway,Core first wave for a
    Pylon,Core,Gateway file). No V2 port of QueuedBuildingsBuildInOrderTest;

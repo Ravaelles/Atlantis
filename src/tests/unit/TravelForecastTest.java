@@ -4,7 +4,6 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.builders.ShouldNotTravelToConstructYet;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import bwapi.Race;
@@ -30,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TravelForecastTest extends AbstractTestWithWorld {
 
     private FakeUnit builder;
-    private ProductionOrder earlierOrder;
-    private ProductionOrder selfOrder;
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -50,8 +47,6 @@ public class TravelForecastTest extends AbstractTestWithWorld {
 
     @BeforeEach
     public void hermetic() {
-        earlierOrder = null;
-        selfOrder = null;
         if (Queue.get() != null) {
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
@@ -61,8 +56,6 @@ public class TravelForecastTest extends AbstractTestWithWorld {
 
     @AfterEach
     public void clean() {
-        earlierOrder = null;
-        selfOrder = null;
         if (Queue.get() != null) {
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
@@ -73,7 +66,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
     @Test
     public void goesWhenAffordableNow() {
         world(3, fixture(false), fakeEnemies(), () -> {
-            if (atlantis.game.A.now() == 1) seedQueue(false);
+            if (atlantis.game.A.now() == 1) seedConstructions(false);
             if (atlantis.game.A.now() != 2) return;
 
             currentSupplyUsed = 20;
@@ -88,7 +81,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
     @Test
     public void earlierUnpaidRowHoldsDispatch() {
         world(3, fixture(false), fakeEnemies(), () -> {
-            if (atlantis.game.A.now() == 1) seedQueue(true);
+            if (atlantis.game.A.now() == 1) seedConstructions(true);
             if (atlantis.game.A.now() != 2) return;
 
             currentSupplyUsed = 20;
@@ -106,7 +99,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
     @Test
     public void scopeBoundaryAboveFiftyUsesLegacy() {
         world(3, fixture(false), fakeEnemies(), () -> {
-            if (atlantis.game.A.now() == 1) seedQueue(true);
+            if (atlantis.game.A.now() == 1) seedConstructions(true);
             if (atlantis.game.A.now() != 2) return;
 
             currentMinerals = 150;
@@ -127,7 +120,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
     @Test
     public void syncBoundaryHoldThenGo() {
         world(3, fixture(true), fakeEnemies(), () -> {
-            if (atlantis.game.A.now() == 1) seedQueue(false);
+            if (atlantis.game.A.now() == 1) seedConstructions(false);
             if (atlantis.game.A.now() != 2) return;
 
             currentSupplyUsed = 20;
@@ -151,7 +144,7 @@ public class TravelForecastTest extends AbstractTestWithWorld {
     @Test
     public void beyondHorizonHolds() {
         world(3, fixture(false), fakeEnemies(), () -> {
-            if (atlantis.game.A.now() == 1) seedQueue(false);
+            if (atlantis.game.A.now() == 1) seedConstructions(false);
             if (atlantis.game.A.now() != 2) return;
 
             currentSupplyUsed = 20;
@@ -178,28 +171,28 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         return fakeOurs(ours);
     }
 
-    private void seedQueue(boolean withEarlier) {
-        Queue.get().allOrders().list().clear();
-        Queue.get().clearCache();
+    private void seedConstructions(boolean withEarlier) {
         ConstructionRequests.constructions.clear();
-        int position = 0;
+        selfConstruction = null;
         if (withEarlier) {
-            earlierOrder = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
-            Queue.get().addNew(position++, earlierOrder);
+            Construction earlier = new Construction(AUnitType.Protoss_Gateway);
+            earlier.setPositionToBuild(
+                atlantis.map.position.APosition.create(26, 22));
+            ConstructionRequests.addConstruction(earlier);
         }
-        selfOrder = new ProductionOrder(AUnitType.Protoss_Pylon, 16);
-        Queue.get().addNew(position, selfOrder);
     }
 
-    private Construction linkedPylon() {
-        Construction construction = new Construction(AUnitType.Protoss_Pylon);
-        construction.setProductionOrder(selfOrder);
-        selfOrder.setConstruction(construction);
-        construction.setPositionToBuild(
-            atlantis.map.position.APosition.create(26, 24));
-        construction.setBuilder(builder);
-        ConstructionRequests.addConstruction(construction);
+    private Construction selfConstruction = null;
 
-        return construction;
+    private Construction linkedPylon() {
+        if (selfConstruction == null) {
+            selfConstruction = new Construction(AUnitType.Protoss_Pylon);
+            selfConstruction.setPositionToBuild(
+                atlantis.map.position.APosition.create(26, 24));
+            selfConstruction.setBuilder(builder);
+            ConstructionRequests.addConstruction(selfConstruction);
+        }
+
+        return selfConstruction;
     }
 }

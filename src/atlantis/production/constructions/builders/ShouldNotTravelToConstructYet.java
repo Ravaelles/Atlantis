@@ -3,9 +3,7 @@ package atlantis.production.constructions.builders;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructions.Construction;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.order.OrderStatus;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.v2.EconomyModel;
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
@@ -107,7 +105,7 @@ public class ShouldNotTravelToConstructYet {
                 Select.ourWorkersMiningMinerals(false).count(), Math.max(1, Count.bases())),
             gasWorkers() * EconomyModel.GAS_PER_WORKER_FRAME);
 
-        int[] earlier = earlierUnpaid(construction.productionOrder());
+        int[] earlier = earlierUnpaid(construction);
         ResourceCost own = ResourceCost.of(building.mineralPrice(), building.gasPrice(), 0);
         int affordableAt = -1;
         for (int frame = now; frame < now + FORECAST_HORIZON_FRAMES; frame++) {
@@ -139,52 +137,58 @@ public class ShouldNotTravelToConstructYet {
     }
 
     /**
-     * PurpleWave's running balance over the legacy queue: every earlier
-     * unfinished, non-ignored row spends immediately on the forecast
-     * (full price, tail-deducted). Queue order is priority order - rows
-     * after the evaluated one do not deduct from it, so a far-future
-     * At-29 never blocks an At-16. Already-paid warps (live building
-     * unit) spend nothing: their minerals left the bank at warp start.
+     * PurpleWave's running balance over V2 demand, as a lump sum (NEXT #156:
+     * unified with the door model on creation order): every earlier unfinished
+     * construction's full price still has to be earned before this one.
+     * Creation order is priority order - constructions after the evaluated one
+     * do not count, so a far-future At-29 never blocks an At-16. Already-paid
+     * warps (live building unit) count nothing: their minerals left the bank
+     * at warp start. The balance itself is never mutated (V2's solvency assert
+     * owns allocate()), only read frame by frame against these totals.
      * Conservative on purpose: an early dispatch never spends a later
-     * row's minerals.
+     * construction's minerals.
      */
-    /**
-     * PurpleWave's running balance over the legacy queue, as a lump sum:
-     * every earlier unfinished, non-ignored row's full price still has to
-     * be earned before this one. Queue order is priority order - rows
-     * after the evaluated one do not count, so a far-future At-29 never
-     * blocks an At-16. Already-paid warps (live building unit) count
-     * nothing: their minerals left the bank at warp start. The balance
-     * itself is never mutated (V2's solvency assert owns allocate()),
-     * only read frame by frame against these totals.
-     */
-    private static int[] earlierUnpaid(ProductionOrder self) {
+    private static int[] earlierUnpaid(Construction self) {
         int minerals = 0;
         int gas = 0;
-        if (Queue.get() == null) return new int[]{minerals, gas};
-        // Queue order is priority order: stop at the evaluated row. An
-        // orderless construction (self not queued) counts everything -
-        // position unknown, hold rather than overspend.
-        for (ProductionOrder order : Queue.get().allOrders().list()) {
-            if (order == null) continue;
-            if (order == self) break;
-            if (order.isStatus(OrderStatus.FINISHED) || order.shouldIgnore()) continue;
-            if (order.construction() != null
-                && order.construction().buildingUnit() != null
-                && order.construction().buildingUnit().isAlive()) continue;
-            minerals += order.mineralPrice();
-            gas += order.gasPrice();
+        if (self == null) return new int[]{minerals, gas};
+        // Creation order is priority order: stop at the evaluated row. A self
+        // outside the list counts everything - position unknown, hold rather
+        // than overspend.
+        boolean seen = false;
+        for (Construction other : ConstructionRequests.notFinished()) {
+            if (other == null) continue;
+            if (other == self) {
+                seen = true;
+                break;
+            }
+            if (other.buildingType() == null) continue;
+            AUnit warp = other.buildingUnit();
+            if (warp != null && warp.isAlive()) continue;
+            minerals += other.buildingType().mineralPrice();
+            gas += other.buildingType().gasPrice();
+        }
+        if (!seen) {
+            for (Construction other : ConstructionRequests.notFinished()) {
+                if (other == null || other == self) continue;
+                if (other.buildingType() == null) continue;
+                AUnit warp = other.buildingUnit();
+                if (warp != null && warp.isAlive()) continue;
+                minerals += other.buildingType().mineralPrice();
+                gas += other.buildingType().gasPrice();
+            }
         }
         return new int[]{minerals, gas};
     }
 
     /**
-     * Test seam for the queue-position-ordered earlier-demand model
-     * (NEXT #156): what the travel forecast believes earlier rows still
-     * need. Orderless self counts everything (no position, hold rather
-     * than overspend); queued self counts only the rows ahead of it.
+     * Test seam for the creation-ordered earlier-demand model (NEXT #156):
+     * what the travel forecast believes earlier constructions still need.
+     * A self outside the list counts everything (no position, hold rather
+     * than overspend); a listed self counts only the constructions ahead
+     * of it.
      */
-    public static int[] earlierUnpaidForTests(ProductionOrder self) {
+    public static int[] earlierUnpaidForTests(Construction self) {
         return earlierUnpaid(self);
     }
 
