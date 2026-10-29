@@ -218,6 +218,7 @@ public class GameOrderDirector implements OrderDirector {
         construction.setNearTo(homePosition());
         construction.setMaxDistance(12);
         construction.setProductionOrder(orderFor(buildingType));
+        construction.setDemand(atlantis.production.v2.Demand.of(buildingType));
         construction.assignOptimalBuilder();
 
         // The legacy issue path twins every construction it mints; V2-direct
