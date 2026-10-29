@@ -37,7 +37,8 @@ public class SupplyGoalTest {
         ProductionGoal want = DynamicGoals.supplyGoal(atFour, ProductionRacePolicy.forRace("Protoss"));
 
         assertNotNull(want, "free supply 4 is the last level that still wants a provider");
-        assertEquals(ProductionGoal.PRIORITY_DEPOTS, want.priority());
+        assertEquals(ProductionGoal.PRIORITY_OPENING_SUPPLY, want.priority(),
+            "free supply 4 still wants a provider - as a precondition above the workers");
         assertNull(
             DynamicGoals.supplyGoal(atFive, ProductionRacePolicy.forRace("Protoss")),
             "free supply 5 wants nothing - the legacy commander also stands down above its worry band");

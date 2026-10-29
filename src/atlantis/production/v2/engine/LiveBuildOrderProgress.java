@@ -46,6 +46,11 @@ public final class LiveBuildOrderProgress implements BuildOrderProgress {
     }
 
     @Override
+    public int supplyFree() {
+        return A.supplyFree();
+    }
+
+    @Override
     public int produced(Producible item) {
         if (item instanceof UnitProducible)
             return producedUnits(((UnitProducible) item).type());

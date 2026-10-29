@@ -19,6 +19,12 @@ public interface BuildOrderProgress {
     int supplyUsed();
 
     /**
+     * Supply free now: total minus used. The urgency rule reads it - a
+     * supply row at 4 or less free is a precondition, not a depot.
+     */
+    int supplyFree();
+
+    /**
      * How many of this item count towards the build order: completed, in
      * production and pending construction, minus what the game started with
      * (the first base, the starting workers). For tech/upgrades: levels

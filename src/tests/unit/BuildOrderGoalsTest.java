@@ -88,6 +88,26 @@ public class BuildOrderGoalsTest {
                 + "building that unlocks production gets the higher band");
     }
 
+    @Test
+    public void blockedSupplyRowJumpsTheWorkerQueue() {
+        // Same row, one step from blocked: free supply at the worry line
+        // makes the row a precondition again, and it jumps the workers
+        // like the opening Pylon does (NEXT #52 class, measured live:
+        // DEPOTS-band dispatch waited for bank 152, the drain did 50-100).
+        Progress progress = new Progress(16).with(PYLON, 1).freeSupply(1);
+
+        List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), progress);
+
+        ProductionGoal laterPylon = goals.stream()
+            .filter(g -> g.item().id().equals(PYLON.id()))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("the supply-16 Pylon must be planned at supply 16"));
+
+        assertTrue(
+            laterPylon.priority() < ProductionGoal.PRIORITY_WORKERS,
+            "a supply row at the block line outranks workers: " + laterPylon.priority());
+    }
+
     /**
      * The opening rule reads the ROW's supply gate, not its position in the file. A build
      * order may list its Pylon anywhere; with line-number priority a Pylon on line 5 would
@@ -245,9 +265,16 @@ public class BuildOrderGoalsTest {
     private static final class Progress implements BuildOrderProgress {
         final Map<String, Integer> produced = new HashMap<>();
         int supply;
+        int free = 8;
 
         Progress(int supply) {
             this.supply = supply;
+        }
+
+        Progress freeSupply(int free) {
+            this.free = free;
+
+            return this;
         }
 
         Progress with(Producible item, int count) {
@@ -259,6 +286,13 @@ public class BuildOrderGoalsTest {
         @Override
         public int supplyUsed() {
             return supply;
+        }
+
+        @Override
+        public int supplyFree() {
+            // Plenty free by default: existing pins assert the unpressured
+            // shape; urgency gets its own pins with explicit low free.
+            return free;
         }
 
         @Override

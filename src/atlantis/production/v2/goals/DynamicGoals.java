@@ -549,9 +549,13 @@ public final class DynamicGoals {
 
         int priority = state.supplyFree <= 0
             ? ProductionGoal.PRIORITY_EMERGENCY
-            : state.supplyUsed <= BuildOrderGoals.OPENING_SUPPLY_THRESHOLD
-              ? ProductionGoal.PRIORITY_OPENING_SUPPLY
-              : ProductionGoal.PRIORITY_DEPOTS;
+            : ProductionGoal.PRIORITY_OPENING_SUPPLY;
+
+        // Any provider named here is a precondition, not a depot: the goal
+        // only fires at 4 or fewer free (or a build-order row), so it jumps
+        // the worker queue like the opening Pylon does (NEXT #52 class:
+        // a DEPOTS-band Pylon waited on worker leftovers until bank 152
+        // while the legacy drain dispatched at 50-100).
 
         return new ProductionGoal(UnitProducible.of(supplyProvider), priority, 1, 0, TargetPlacement.anywhere());
     }

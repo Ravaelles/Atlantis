@@ -85,7 +85,7 @@ public final class BuildOrderGoals {
 
             goals.add(new ProductionGoal(
                 row.item(),
-                priorityFor(row, line, supplyUsed),
+                priorityFor(row, line, supplyUsed, progress.supplyFree()),
                 missing,
                 0,
                 TargetPlacement.namedArea(row.positionModifier())));
@@ -154,8 +154,17 @@ public final class BuildOrderGoals {
      * anybody chose.
      * </p>
      */
-    private static int priorityFor(BuildOrderRow row, int line, int supplyUsed) {
+    private static int priorityFor(BuildOrderRow row, int line, int supplyUsed, int supplyFree) {
         if (isOpeningSupplyProvider(row, supplyUsed)) {
+            return ProductionGoal.PRIORITY_OPENING_SUPPLY;
+        }
+
+        // Below the worry line a supply row is a precondition, not a depot
+        // (same NEXT #52 class as the dynamic goal): it jumps the worker
+        // queue so the builder walks before the bank covers the price.
+        // The position-based rule above stays untouched - a supply-16 row
+        // with headroom is still a depot, only the block risk promotes it.
+        if (suppliesPopulation(row.item()) && supplyFree <= DynamicGoals.SUPPLY_WORRY_LEVEL) {
             return ProductionGoal.PRIORITY_OPENING_SUPPLY;
         }
 

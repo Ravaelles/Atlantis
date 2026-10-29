@@ -443,6 +443,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   forced finish on a 10-HP chewer donates the Dragoon, so a faithful finish rule
   waits for post-cut ladder work. Coordination preferences remain removal
   candidates, each requiring a sim no-regression proof.
+   DATUM 2026-10-29: rule 7 (squad target) migrated verbatim into
+   SquadTarget (shared isValidTarget stays); nearest/cover/breach
+   delegate to named seams (nearest-engageable primitive, CoverWithdraw,
+   ClusterBreach), not legacy - no migration. Remaining: faithful
+   finish rule + coordination removals.
 
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;
@@ -996,6 +1001,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   deterministic. DATUM 2026-10-28: solo 1/1 green, `tests.unit.sim` package
   108/108 green, full suite 1693/1693 green twice - no flip today. Do NOT
   fix with a global FakeUnit id reset (reshuffles all order-sensitive
+   expectations) - and none was needed: the 7.01-vs-8 wobble was cured by
+   committing to one escape direction (waypoint) plus a toward-rally bias
+   (DATUM 2026-10-29, suites stay green).
   expectations) and do NOT touch from the builder-log harness (world()-based
   setup perturbs global state and flips it - `BuilderOrderLogTest` uses
   direct BaseSelect mocks for exactly this reason.
@@ -1322,6 +1330,13 @@ global FakeUnit id counter.
 
 - **#227** Kill every production version switch (owner order 2026-10-29: one solution, no "which is live" question). Enumerated sites: `ProductionCommander:26` (delete legacy branch), `ProductionOrdersCommander:52,61,67` (delete legacy drain + OFF witness + DRY_RUN), `ProductionEngine:107,147` (always live), `Queue:35` (dies with the queue, not a guard fix), `ProductionV2Mode` + ENV knob last. One commit per file, suite green each; DRY_RUN banks its WO-144 parity verdicts first. Spec: `_AI/PRODUCTION_V2/__MIGRATION.md` Phase 6A.
 - **#228** Every used old file earns its verdict (owner order 2026-10-29). Per-class walk in `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows); this item closes the cross-cutting remainder: `Queue.get()` live readers (forecast, GoalBoard, Have, listeners), synthetic `ProductionOrder` on V2 constructions (replace with V2 demand carrier, WO-147), BO-file machinery around the kept .txt format, `constructions/**` refactor-in-place (retained actuator, one-line purpose per file), Tweaker engines keep-or-delete (owner call recorded here). Done = V2-native, `src-old/`, or retained-with-reason. Spec: Phase 6B.
+   STATUS 2026-10-29: demand carrier LANDED (Demand + dual-write; modifier,
+   constraint, warp-link readers migrated). Have/Count V2 reads verified
+   queue-free (snapshot uses units + constructions only). BO queue load
+   stays until the terminal slice: its rows feed only conservative
+   forecasts now, and dropping it changes builder-travel timing game-wide
+   (needs a live twin adjudication first). Terminal remainder: queue
+   deletion + knob + mode tests + acceptance fallout.
 - **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
 - **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
 - **#231** Order-latency model in StarEngine LANDED 2026-10-29: `SimMovement` holds a freshly issued order for N frames (`setOrderLatencyFrames`, default 0 - every existing scenario keeps same-tick response), re-armed by command or target change, so a re-issued march counts down while a re-targeted one waits again. Pinned `OrderLatencyTest` 3/3 (2-frame hold then march, zero-latency immediate, re-target re-arms). Train/build/research families stay unmodeled until a twin names their latency live. Spec: Phase 6C.

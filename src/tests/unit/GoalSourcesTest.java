@@ -167,14 +167,15 @@ public class GoalSourcesTest {
     }
 
     @Test
-    public void supplyGoalIsNormalWhenSlackIsSmallAndEmergencyWhenItIsGone() {
+    public void supplyGoalIsUrgentWhenSlackIsSmallAndEmergencyWhenItIsGone() {
         DynamicGoals.GameSnapshot normal = new DynamicGoals.GameSnapshot(10, 1, 30, 3, 33, 500, false);
         DynamicGoals.GameSnapshot emergency = new DynamicGoals.GameSnapshot(10, 1, 32, 0, 32, 500, false);
 
         ProductionGoal normalGoal = firstOf(DynamicGoals.contribute(normal, ProductionRacePolicy.forRace("Protoss")), supplyType());
         ProductionGoal emergencyGoal = firstOf(DynamicGoals.contribute(emergency, ProductionRacePolicy.forRace("Protoss")), supplyType());
 
-        assertEquals(ProductionGoal.PRIORITY_DEPOTS, normalGoal.priority());
+        assertEquals(ProductionGoal.PRIORITY_OPENING_SUPPLY, normalGoal.priority(),
+            "a provider at 3 free is a precondition, not a depot - it jumps the workers (NEXT #52 class)");
         assertEquals(ProductionGoal.PRIORITY_EMERGENCY, emergencyGoal.priority(),
             "supply block is an emergency - it outranks everything");
     }

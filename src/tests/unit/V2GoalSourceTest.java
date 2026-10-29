@@ -136,6 +136,13 @@ public class V2GoalSourceTest {
         }
 
         @Override
+        public int supplyFree() {
+            // Plenty free by default: existing pins assert the unpressured
+            // shape; urgency gets its own pins with explicit low free.
+            return 8;
+        }
+
+        @Override
         public int produced(Producible item) {
             return produced.getOrDefault(item.id(), 0);
         }
