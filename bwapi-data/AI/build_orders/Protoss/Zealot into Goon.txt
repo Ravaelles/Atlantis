@@ -19,7 +19,6 @@
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-8 - Nexus
 8 - Pylon
 10 - Gateway
 12 - Gateway
