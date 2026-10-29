@@ -72,7 +72,6 @@ public final class ProductionEngine {
      * </p>
      */
     private final PlacementPlanner placementPlanner = createPlacementPlanner();
-    private final DryRunOrderDirector dryRunDirector = new DryRunOrderDirector();
     private final GameOrderDirector gameDirector = new GameOrderDirector();
     /**
      * Race identities for goal generation, injected once (NEXT #8).
@@ -96,15 +95,6 @@ public final class ProductionEngine {
             return new atlantis.placement.engine.CataloguePlacementPlanner();
         }
         return new LegacyPlacementPlanner();
-    }
-
-    /**
-     * True when the engine is allowed to play; the game caller uses it to skip
-     * the work entirely rather than run a pipeline whose output it will throw
-     * away. Kept static so a debug painter can read it without an instance.
-     */
-    public static boolean enabled() {
-        return Env.productionV2().isEnabled();
     }
 
     /**
@@ -144,32 +134,19 @@ public final class ProductionEngine {
         plan = CommittedConstructions.mergeInto(plan, state.frame());
         lastPlan = plan;
 
-        boolean dryRun = Env.productionV2().isDryRun();
-        OrderDirector director = dryRun ? dryRunDirector : gameDirector;
         gameDirector.startFrame();
-        List<DispatchResult> issued = new ProductionDispatcher(director).dispatch(plan, goals, state.frame(), LATENCY_FRAMES);
+        List<DispatchResult> issued = new ProductionDispatcher(gameDirector).dispatch(plan, goals, state.frame(), LATENCY_FRAMES);
 
-        if (dryRun) {
-            dryRunDirector.logSummary(state.frame(), plan.size());
-            V2DispatchTwin.emit(state.frame(), issued);
-            for (SupportRequest support : placementPlanner.drainSupportRequests()) {
-                dryRunDirector.orders().add(
-                    "support " + support.unitType() + " at tile(" + support.tileX() + "," + support.tileY() + ")");
-            }
+        logFrame(state.frame(), plan, issued);
+        // Bridge, not a layer break: the catalogue declares support, the
+        // engine (the only v2 class that knows the game exists) forwards
+        // it to the legacy queue, where V2 already reads coming providers
+        // from - so no cross-author duplicate. Dies with the queue (#147).
+        for (SupportRequest support : placementPlanner.drainSupportRequests()) {
+            AddToQueue.withHighPriority(
+                support.unitType(),
+                APosition.create(support.tileX(), support.tileY()));
         }
-        else {
-            logFrame(state.frame(), plan, issued);
-            // Bridge, not a layer break: the catalogue declares support, the
-            // engine (the only v2 class that knows the game exists) forwards
-            // it to the legacy queue, where V2 already reads coming providers
-            // from - so no cross-author duplicate. Dies with the queue (#147).
-            for (SupportRequest support : placementPlanner.drainSupportRequests()) {
-                AddToQueue.withHighPriority(
-                    support.unitType(),
-                    APosition.create(support.tileX(), support.tileY()));
-            }
-        }
-        dryRunDirector.clear();
 
         return plan;
     }
