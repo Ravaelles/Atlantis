@@ -19,19 +19,29 @@ public final class Demand {
     private final AUnitType type;
     private final String modifier;
     private final HasPosition around;
+    private final boolean exact;
 
-    private Demand(AUnitType type, String modifier, HasPosition around) {
+    private Demand(AUnitType type, String modifier, HasPosition around, boolean exact) {
         this.type = type;
         this.modifier = modifier;
         this.around = around;
+        this.exact = exact;
     }
 
     public static Demand of(AUnitType type) {
-        return new Demand(type, null, null);
+        return new Demand(type, null, null, false);
     }
 
     public static Demand of(AUnitType type, String modifier, HasPosition around) {
-        return new Demand(type, modifier, around);
+        return new Demand(type, modifier, around, false);
+    }
+
+    /**
+     * Exact-tile demand (order's using-exact-position shape): site exactly
+     * here, not near here.
+     */
+    public static Demand exact(AUnitType type, HasPosition tile) {
+        return new Demand(type, null, tile, true);
     }
 
     public AUnitType type() {
@@ -48,6 +58,10 @@ public final class Demand {
 
     public HasPosition around() {
         return around;
+    }
+
+    public boolean isExact() {
+        return exact;
     }
 
     @Override

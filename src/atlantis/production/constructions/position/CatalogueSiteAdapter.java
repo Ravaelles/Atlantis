@@ -140,13 +140,16 @@ public final class CatalogueSiteAdapter {
         }
 
         ProductionOrder order = construction.productionOrder();
-        if (order == null) {
+        atlantis.production.v2.Demand demand = construction.demand();
+        if (order == null && demand == null) {
             SiteTwin.declined(building, "no-order", "funnel");
 
             return null;
         }
 
-        TargetPlacement constraint = constraintFor(order, construction);
+        TargetPlacement constraint = demand != null
+            ? constraintFor(demand, construction)
+            : constraintFor(order, construction);
         PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel");
         if (reservation == null) return null;
 
@@ -238,6 +241,28 @@ public final class CatalogueSiteAdapter {
     public static TargetPlacement constraintFor(ProductionOrder order, Construction construction) {
         if (order.isUsingExactPosition() && order.aroundPosition() != null) {
             APosition exact = APosition.create(order.aroundPosition());
+
+            return TargetPlacement.exactTile(exact.tx(), exact.ty());
+        }
+        HasPosition near = construction.nearTo();
+        if (near != null) {
+            APosition centre = APosition.create(near);
+
+            return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
+        }
+        return TargetPlacement.anywhere();
+    }
+
+    /**
+     * The demand's request as a catalogue constraint (NEXT #228, WO-147):
+     * same translation as the order above, read from the v2 carrier.
+     * The funnel prefers this overload; the order overload stays for the
+     * legacy path and its pins.
+     */
+    public static TargetPlacement constraintFor(atlantis.production.v2.Demand demand,
+                                                Construction construction) {
+        if (demand.isExact() && demand.around() != null) {
+            APosition exact = APosition.create(demand.around());
 
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
         }
