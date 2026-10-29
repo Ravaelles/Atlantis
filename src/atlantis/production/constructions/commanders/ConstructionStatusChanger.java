@@ -218,10 +218,34 @@ public class ConstructionStatusChanger extends Commander {
             if (warping == null || warping.isCompleted()) return false;
             if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return false;
             if (!construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now())) return false;
-            if (builder != null && !builder.isDead()
-                && (builder.isConstructing() || !builder.isWorker())) return false;
+            // A morphed builder IS the building (Zerg) - never unworked.
+            if (builder != null && !builder.isDead() && !builder.isWorker()) return false;
+            // A builder constructing AT the site works it (Terran) - but a
+            // "constructing" flag from far away is stale, not work (Wine
+            // 232538 cid 11: Nexus IN_PROGRESS 11+ minutes, builder gone
+            // untracked, wrapper still constructing, supply never recovered
+            // - the flag shielded both branches). Only nearby constructing
+            // counts; the no-entity elsewhere-constructing shield (busyStall
+            // pin) is untouched - this branch always has an entity on site.
+            if (builder != null && !builder.isDead() && builder.isConstructing()
+                && builderNearSite(construction, builder)) return false;
 
             return true;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * True when the builder stands close enough to the site to actually
+     * work it (a Terran SCV builds from ~2 tiles). Fail-closed: an
+     * unreadable position keeps today's shield.
+     */
+    private static boolean builderNearSite(Construction construction, AUnit builder) {
+        try {
+            if (construction.buildPosition() == null) return false;
+
+            return builder.distTo(construction.buildPosition()) < 4.0;
         } catch (Exception | Error ignored) {
             return false;
         }

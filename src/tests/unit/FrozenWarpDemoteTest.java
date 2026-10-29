@@ -72,6 +72,15 @@ public class FrozenWarpDemoteTest extends AbstractTestWithWorld {
         };
     }
 
+    private static FakeUnit distantConstructor() {
+        return new FakeUnit(AUnitType.Protoss_Probe, 30, 30) {
+            @Override
+            public boolean isConstructing() {
+                return true;
+            }
+        };
+    }
+
     private static FakeUnit warpingPylon(int hp) {
         FakeUnit warp = fake(AUnitType.Protoss_Pylon, 12, 10);
         warp.setCompleted(false);
@@ -118,6 +127,7 @@ public class FrozenWarpDemoteTest extends AbstractTestWithWorld {
     private Construction progressing;
     private Construction young;
     private Construction worked;
+    private Construction staleWorked;
     private Construction entityless;
 
     @Test
@@ -230,6 +240,35 @@ public class FrozenWarpDemoteTest extends AbstractTestWithWorld {
                 ConstructionStatusChanger.demoteStalledInProgress(construction, builder),
                 "a builder back on minerals is not travelling - no entity, old, re-arm");
             assertEquals(ConstructionOrderStatus.NOT_STARTED, construction.status());
+        });
+    }
+
+    @Test
+    public void staleConstructingFarFromSiteRearms() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit builder = distantConstructor();
+        FakeUnit warp = warpingPylon(100);
+
+        world(2600, units(nexus, builder, warp), new FakeUnit[0], () -> {
+            int now = A.now();
+            if (now == 10) staleWorked = inProgressPylonAt(builder, 12, 10);
+            if (now != 2400 && now != 2450 && now != 2500) return;
+
+            Construction construction = staleWorked;
+            boolean demoted = ConstructionStatusChanger.demoteStalledInProgress(construction, builder);
+            if (now < 2450) {
+                assertFalse(demoted,
+                    "hp trail too short to prove a freeze at " + now + " (fail-open)");
+            }
+            else if (now == 2450) {
+                assertTrue(demoted,
+                    "cid-11 shape: a constructing flag 20 tiles from a frozen warp is stale, not work");
+                assertEquals(ConstructionOrderStatus.NOT_STARTED, construction.status());
+            }
+            else {
+                assertFalse(demoted,
+                    "already re-armed: a NOT_STARTED construction never demotes again");
+            }
         });
     }
 }
