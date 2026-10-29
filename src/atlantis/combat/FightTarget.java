@@ -474,9 +474,64 @@ public final class FightTarget {
     }
 
     /**
+     * The enemy to shoot right now: the focus target when it can be hit,
+     * else the nearest engageable enemy inside our own ground range.
+     * A focus on something out of range never justifies holding fire
+     * while a chewer is in range - the shot goes to whoever can be hit.
+     */
+    private static AUnit shootableFoe(AUnit unit, AUnit target) {
+        try {
+            if (unit == null || !unit.isAlive()) return null;
+
+            if (isShootableNow(unit, target)) return target;
+
+            AUnit best = null;
+            double bestDist = Double.MAX_VALUE;
+            for (AUnit foe : unit.enemiesNear().list()) {
+                if (!isShootableNow(unit, foe)) continue;
+                double dist = unit.distTo(foe);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = foe;
+                }
+            }
+
+            return best;
+        }
+        catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static boolean isShootableNow(AUnit unit, AUnit foe) {
+        try {
+            if (foe == null || !foe.isAlive() || !foe.isDetected()) return false;
+            if (foe.position() == null) return false;
+
+            return unit.hasWeaponRangeToAttack(foe, 0);
+        }
+        catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
      * Out of range: glide to the max-range firing position with moves only.
      */
     private static boolean reengage(AUnit unit, AUnit target, int now, Integer lastStep) {
+        // Shoot instead of gliding (owner 2026-10-29): a ready weapon and
+        // a shootable foe means stop for the shot, not a march - gliding
+        // past (or into) an enemy that could be shot this frame is how
+        // re-engages walk into the pack and die there. Falls through to
+        // the re-arm below, which picks the shootable foe as its subject.
+        if (unit != null && unit.cooldown() <= 0) {
+            try {
+                if (shootableFoe(unit, target) != null) return false;
+            }
+            catch (Exception ignored) {
+            }
+        }
+
         // A melee unit has no firing position to hold -
         // with integer tile ranges its glide destination lands exactly
         // on the deadband at every distance (measured: Zealot range 0
@@ -573,6 +628,12 @@ public final class FightTarget {
         // Otherwise nothing issues this frame - the standing order
         // fires on its own the moment the weapon is ready (PurpleWave
         // Commander.attack: order on new/overdue target, else sleep).
+        // The subject stays the focus: the ladder owns who to shoot
+        // (chewer first), the gate above owns whether to glide. Retargeting
+        // here onto the nearest shootable foe hijacks squad focus fire and
+        // splits the pack standing - the pincer pin wipes only with the
+        // shared subject (DragoonPincerKiteTest). A far focus still chases
+        // with a standing attack order, never a naked glide.
         if (target.equals(unit.target())) return;
 
         ShotTwin.fired(unit, target);
