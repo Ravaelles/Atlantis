@@ -288,11 +288,40 @@ public class Construction implements Comparable<Construction> {
         // adoption) must see the same assignment the construction holds.
         // Cleared on every hand-over, so a freed builder never names a
         // dead order and a replaced one never keeps the old one.
-        if (this.builder != null) this.builder.setConstruction(null);
+        AUnit previous = this.builder;
+        if (previous != null) previous.setConstruction(null);
         this.builder = builder;
         if (builder != null) builder.setConstruction(this);
 
+        noteBuilderAssignment(previous, builder);
+
         return this;
+    }
+
+    /**
+     * Every builder hand-over twins once (change-gated per construction):
+     * an assigned builder that never travels, or a builder silently taken
+     * away, reads here instead of in a post-mortem (measured live: a Nexus
+     * held builder #167 from creation and never warped, with zero twin
+     * rows anywhere - the assignment was invisible).
+     */
+    private static final java.util.Map<Integer, Integer> lastBuilderByCid = new java.util.HashMap<>();
+
+    private void noteBuilderAssignment(AUnit previous, AUnit builder) {
+        Integer now = builder == null ? null : builder.id();
+        Integer before = lastBuilderByCid.get(id());
+        boolean changed = before == null ? now != null : !before.equals(now);
+        if (!changed) return;
+        if (now == null) lastBuilderByCid.remove(id());
+        else lastBuilderByCid.put(id(), now);
+
+        atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CONSTRUCTION_REQUESTED)
+            .param("type", buildingType.name())
+            .param("cid", id())
+            .param("tile", buildPosition() == null ? "-" : buildPosition().toString())
+            .param("builder", now)
+            .param("prev", previous == null ? null : previous.id())
+            .log(atlantis.game.A.now(), atlantis.game.A.minSec());
     }
 
     public AUnit reservedBuilder() {
