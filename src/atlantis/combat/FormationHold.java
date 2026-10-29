@@ -122,6 +122,7 @@ public final class FormationHold {
         try {
             if (!unit.isCombatUnit()) return HoldVerdict.OTHER;
             if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return HoldVerdict.OTHER;
+            if (calmStandoffAtChoke(unit)) return HoldVerdict.CALM_FAR;
             if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return HoldVerdict.DAMAGE;
             if (unit.hasWeaponRangeToAttack(target, 0)) return HoldVerdict.OTHER;
 
@@ -184,6 +185,41 @@ public final class FormationHold {
      * closed toward the old behavior - on any doubt (or any exception)
      * the unit counts as threatened and the normal gates decide.
      */
+    /**
+     * Calm standoff at a choke (owner 2026-10-29, Cere game): no cluster
+     * member attacked in the last 15 seconds, the nearest enemy farther
+     * than 15 tiles, we within 5 tiles of a chokepoint, and no enemy land
+     * combat unit anywhere. Forming up here parks the army facing the
+     * wall while the target sits in another region - march instead.
+     * Workers and weaponless enemies never count (combatUnits already
+     * excludes them). Fail-closed: any doubt keeps the old answer.
+     */
+    public static final int CALM_SECONDS_FRAMES = 15 * 24;
+    public static final double FAR_ENEMY_TILES = 15;
+    public static final double CHOKE_NEAR_TILES = 5;
+
+    public static boolean calmStandoffAtChoke(AUnit unit) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+            if (atlantis.units.select.Select.enemy().combatUnits().groundUnits().notEmpty()) return false;
+
+            AUnit nearest = nearestEnemyOf(unit);
+            if (nearest != null && unit.distTo(nearest) <= FAR_ENEMY_TILES) return false;
+
+            for (AUnit mate : atlantis.battle.cluster.Alpha.get().selection().list()) {
+                if (mate != null && mate.isAlive()
+                    && DuelMemory.damagedLessThanAgo(mate, CALM_SECONDS_FRAMES)) return false;
+            }
+
+            atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.nearestChoke(unit);
+            if (choke == null || choke.center() == null) return false;
+
+            return unit.distTo(choke.center()) < CHOKE_NEAR_TILES;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     static boolean isThreatened(AUnit unit) {
         try {
             if (unit == null || !unit.isAlive()) return true;
@@ -326,6 +362,12 @@ public final class FormationHold {
          * falling back to the cluster under pressure stays allowed.
          */
         GHOST,
+        /**
+         * Calm standoff at a choke (owner 2026-10-29): no cluster damage
+         * in 15s, enemy farther than 15, we within 5 of a choke, no enemy
+         * land combat - march instead of forming up facing the wall.
+         */
+        CALM_FAR,
         /**
          * Anything else that declines the hold (tactic, ranged enemy, ...).
          */
