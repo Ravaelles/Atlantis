@@ -272,7 +272,11 @@ public final class GameStateSnapshot {
         snapshot.zerglings = atlantis.information.enemy.EnemyUnits.zerglings();
         snapshot.hasObservatory = Count.ofType(AUnitType.Protoss_Observatory) > 0;
         snapshot.hasCitadel = Have.citadel();
+        snapshot.seconds = atlantis.game.A.seconds();
         snapshot.hasArchives = Have.a(AUnitType.Protoss_Templar_Archives);
+        snapshot.weaponsLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Weapons);
+        snapshot.armorLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Armor);
+        snapshot.enemyCombatBuildings = atlantis.information.enemy.EnemyInfo.combatBuildingsAntiLand();
         snapshot.highTemplar = Count.ht();
         snapshot.darkTemplar = Count.darkTemplars();
         snapshot.hasSupportBay = Count.ofType(AUnitType.Protoss_Robotics_Support_Bay) > 0;

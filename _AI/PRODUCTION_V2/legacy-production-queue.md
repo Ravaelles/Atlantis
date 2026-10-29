@@ -77,7 +77,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 
 ## dynamic/protoss/prioritize
 - [x] Q52 `PrioritizeCyberneticsOverZealotsAndGateways.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (first Core rides the BO; later Cores are scheduler prereqs).
-- [ ] Q53 `PrioritizeGatewaysVsProtoss.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: 6-gateway rush vs Protoss; V2 caps at 4 with all-busy fire. Tuning delta, needs a game proof - no blind port.
+- [x] Q53 `PrioritizeGatewaysVsProtoss.java` [PROTOSS] (P4-demand?) — walked 2026-10-28, ported 2026-10-29: 6-gateway cap vs unfortified Protoss (ordering half stays in V2 bands); `TechUpgradesTest` 3/3 cap pins.
 - [x] Q54 `PrioritizeProtossBuildingsOverCombatUnits.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 priority bands order economy before army).
 - [x] Q55 `ProtossCriticalStuffInQueue.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (250 reserve for imminent tech is the wallet/reservation seam).
 
@@ -91,8 +91,8 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 ## dynamic/protoss/tech
 - [x] Q61 `ResearchLegEnhancements.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Legs goal (Citadel + 90 + 4 zealots; `CitadelLegsTest` 6/6).
 - [x] Q62 `ResearchNow.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (issue-at-free-building is the V2 dispatcher seam).
-- [ ] Q63 `ResearchProtossGroundArmor.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; ports when the mid-game proves it needs armor (game proof first).
-- [ ] Q64 `ResearchProtossGroundWeapons.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: legacy-only level ladder; same gate as armor.
+- [x] Q63 `ResearchProtossGroundArmor.java` [PROTOSS] (P4-demand?) — ported 2026-10-29 as the V2 armor ladder (weapons-L1 gate, verbatim bank/weak gates; `TechUpgradesTest`).
+- [x] Q64 `ResearchProtossGroundWeapons.java` [PROTOSS] (P4-demand?) — ported 2026-10-29 as the V2 weapons ladder (verbatim gates, weak veto with minute-10 expiry; `TechUpgradesTest` 10/10).
 - [x] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Storm goal (caster-standing gate; `TemplarChainTest` 7/7).
 - [x] Q66 `ResearchSingularityCharge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 tech goal).
 - [x] Q67 `TechResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).

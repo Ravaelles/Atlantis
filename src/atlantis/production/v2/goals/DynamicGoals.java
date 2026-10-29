@@ -74,6 +74,8 @@ public final class DynamicGoals {
         addStargateGoal(goals, state);
         addCorsairGoal(goals, state);
         addObserverPump(goals, state);
+        addWeaponsGoal(goals, state);
+        addArmorGoal(goals, state);
         addCitadelGoal(goals, state);
         addLegEnhancementsGoal(goals, state);
         addArchivesGoal(goals, state);
@@ -565,19 +567,79 @@ public final class DynamicGoals {
         if (goal != null) goals.add(goal);
     }
 
+    private static boolean tooWeakToTech(GameSnapshot state) {
+        return state.armyStrength < 90 && state.seconds <= 600 && state.minerals <= 700;
+    }
+
+    /**
+     * Ground weapons ladder (Protoss): one level at a time past a Forge,
+     * with 10+ combat units and a bank behind it (700 minerals or a third
+     * base), never while too weak to tech (sub-90 strength on under 700).
+     * The last stretch needs gas in hand and either 500/200 banked or 17+
+     * combat units. Queue-history and already-queued guards stay behind:
+     * the scheduler dedups the re-fire they used to eat. Levels come from
+     * the snapshot; in-flight coverage is execution-side.
+     */
+    private static void addWeaponsGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasForge) return;
+        if (state.weaponsLevel >= 3) return;
+        if (state.combatUnits <= 10) return;
+        if (state.minerals < 700 && state.basesExisting <= 2) return;
+        if (tooWeakToTech(state)) return;
+
+        int gasNeed = 150 + (state.enemyIsZerg ? 80 : 0);
+        if (!(state.gas >= gasNeed && state.minerals >= 290)) return;
+        if (!(state.minerals >= 500 && state.gas >= 200) && state.combatUnits <= 17) return;
+
+        goals.add(new ProductionGoal(
+            atlantis.production.v2.UpgradeProducible.of(
+                bwapi.UpgradeType.Protoss_Ground_Weapons, state.weaponsLevel + 1),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Ground armor ladder (Protoss): weapons L1 first (vanilla has no
+     * cross requirement, and the old L3 gate held armor to the end of the
+     * tech path - dropped deliberately), then the same shape as weapons:
+     * 10+ combat units, 650 minerals or 400 gas or a second base, never
+     * while too weak, gas-heavy finish (270, +100 vs Protoss).
+     */
+    private static void addArmorGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (!state.hasForge) return;
+        if (state.weaponsLevel < 1) return;
+        if (state.combatUnits <= 10) return;
+        if (state.armorLevel >= 3) return;
+        if (state.minerals < 650 && state.gas < 400 && state.basesExisting < 2) return;
+        if (tooWeakToTech(state)) return;
+
+        int gasNeed = 270 + (state.enemyIsProtoss ? 100 : 0);
+        if (!(state.gas >= gasNeed && state.minerals >= 550)) return;
+        if (!(state.minerals >= 500 && state.gas >= 200) && state.combatUnits <= 17) return;
+
+        goals.add(new ProductionGoal(
+            atlantis.production.v2.UpgradeProducible.of(
+                bwapi.UpgradeType.Protoss_Ground_Armor, state.armorLevel + 1),
+            ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+    }
+
     /**
      * Mid-game Gateway demand: the build order owns the first two rows and
      * nothing else ever asks for a Gateway in V2 (measured live 183253:
      * 2 Gateways the whole game, bank to 7963 while Dragoon demand waited
      * on busy facilities). Fires only when rich and every Gateway is busy,
-     * past the opening and capped at four - never ahead of the bank, never
-     * instead of the BO rows.
+     * past the opening - capped at four, six vs Protoss without fortified
+     * enemies (legacy 6-gateway rush) - never ahead of the bank, never
+     * instead of the BO rows. The prioritize-over-expanding half is not
+     * ported: V2 priority bands already order economy before army.
      */
     private static void addGatewayGoal(List<ProductionGoal> goals, GameSnapshot state) {
         if (!We.protoss()) return;
         if (state.supplyUsed < GATEWAY_DEMAND_SUPPLY) return;
 
-        if (state.gatewaysExisting < 2 || state.gatewaysExisting >= 4) return;
+        int cap = state.enemyIsProtoss && state.enemyCombatBuildings == 0 ? 6 : 4;
+        if (state.gatewaysExisting < 2 || state.gatewaysExisting >= cap) return;
         if (state.gatewaysFree > 0) return;
         if (state.minerals < GATEWAY_BANK_MINERALS) return;
 
@@ -962,6 +1024,25 @@ public final class DynamicGoals {
         public int zerglings;
 
         /**
+         * Upgrade levels standing (Protoss ground weapons/armor ladders
+         * climb one level at a time; in-flight coverage is execution-side).
+         */
+        public int weaponsLevel;
+        public int armorLevel;
+
+        /**
+         * Enemy anti-land combat buildings (the PvP gateway rush yields to
+         * fortified enemies - same read the legacy prioritize used).
+         */
+        public int enemyCombatBuildings;
+
+        /**
+         * Game seconds (the too-weak-to-tech veto expires after minute 10 -
+         * a late small army still techs).
+         */
+        public int seconds;
+
+        /**
          * Observatory standing (the Citadel wants clearer eyes first) and
          * Citadel standing (Leg Enhancements research at it). Standing
          * only, verbatim with the legacy gates.
@@ -1112,6 +1193,10 @@ public final class DynamicGoals {
             anchored.observers = observers;
             anchored.zealots = zealots;
             anchored.zerglings = zerglings;
+            anchored.weaponsLevel = weaponsLevel;
+            anchored.armorLevel = armorLevel;
+            anchored.enemyCombatBuildings = enemyCombatBuildings;
+            anchored.seconds = seconds;
             anchored.hasObservatory = hasObservatory;
             anchored.hasCitadel = hasCitadel;
             anchored.hasArchives = hasArchives;

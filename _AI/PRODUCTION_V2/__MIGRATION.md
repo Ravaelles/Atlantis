@@ -104,6 +104,9 @@ was supply-edge churn, not phantom-busy gateways - the engine
 correctly refuses every train at 0 free supply while the Pylon
 pipeline lags. Fix is upstream (warp the Pylon sooner, #150/#151),
 not in the facilities. 61 warps, 3rd live Forge, full-length survival.
+UPGRADES 2026-10-29: weapons/armor ladders + PvP 6-gateway cap ported
+verbatim (`TechUpgradesTest` 10/10); too-weak veto keeps its minute-10
+expiry. Suite 1808/1808.
 STUCK-GATEWAY SHAPE 2026-10-29 (game 001939, PvsZ, DEFEAT f24389):
 bank 1800->3800 with 175 refused Zealot + 23 Dragoon trains ("no free
 facility") while 3 Gateways stand idle - first refused twin split now
