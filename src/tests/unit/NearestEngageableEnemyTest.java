@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -49,7 +49,7 @@ public class NearestEngageableEnemyTest extends AbstractTestWithWorld {
         ), fakeEnemies(ling, marine), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            AUnit target = ASquadTargeting.nearestEngageableEnemy(zealot, 9);
+            AUnit target = Engagement.nearestEngageableEnemy(zealot, 9);
             assertNotNull(target, "a Zealot with enemies at 2-4 tiles must engage");
             assertSame(ling, target, "nearest first - the squad-target path keeps focus order");
         });
@@ -67,7 +67,7 @@ public class NearestEngageableEnemyTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertNull(
-                ASquadTargeting.nearestEngageableEnemy(zealot, 9),
+                Engagement.nearestEngageableEnemy(zealot, 9),
                 "20 tiles away is march territory - no cross-map chase");
         });
     }
@@ -83,7 +83,7 @@ public class NearestEngageableEnemyTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertNull(
-                ASquadTargeting.nearestEngageableEnemy(zealot, 9),
+                Engagement.nearestEngageableEnemy(zealot, 9),
                 "empty battlefield keeps the anchor march");
         });
     }

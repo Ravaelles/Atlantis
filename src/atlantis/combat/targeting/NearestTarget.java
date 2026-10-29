@@ -24,7 +24,7 @@ public final class NearestTarget {
         if (unit == null) return null;
 
         try {
-            return ASquadTargeting.nearestEngageableEnemy(unit, NEAREST_TILES);
+            return Engagement.nearestEngageableEnemy(unit, NEAREST_TILES);
         } catch (Exception | Error ignored) {
             return null;
         }

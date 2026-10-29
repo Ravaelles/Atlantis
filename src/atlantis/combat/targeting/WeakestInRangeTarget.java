@@ -27,7 +27,7 @@ public final class WeakestInRangeTarget {
             double bestDist = Double.MAX_VALUE;
             for (AUnit enemy : enemies.list()) {
                 if (enemy == null || !enemy.isAlive()) continue;
-                if (!ASquadTargeting.isValidTarget(unit, enemy)) continue;
+                if (!Engagement.isValidTarget(unit, enemy)) continue;
                 if (!unit.hasWeaponRangeToAttack(enemy, 0)) continue;
 
                 int hp = enemy.hp() + enemy.shields();

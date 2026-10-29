@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.combat.targeting.AcquireTarget;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -38,7 +38,7 @@ public class UndetectedTargetTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 1) return;
 
             assertFalse(
-                ASquadTargeting.isValidTarget(dragoon, observer),
+                Engagement.isValidTarget(dragoon, observer),
                 "undetected observer is not a valid target - the engine refuses the order");
         });
     }
@@ -76,7 +76,7 @@ public class UndetectedTargetTest extends WorldStubForTests {
         world(3, fakeOurs(nexus, dragoon), fakeEnemies(observer), () -> {
             if (atlantis.game.A.now() != 1) return;
 
-            assertNull(ASquadTargeting.nearestEngageableEnemy(dragoon, 9), "no engageable enemy when the only near one is undetected");
+            assertNull(Engagement.nearestEngageableEnemy(dragoon, 9), "no engageable enemy when the only near one is undetected");
         });
     }
 
@@ -93,7 +93,7 @@ public class UndetectedTargetTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 1) return;
 
             assertFalse(
-                ASquadTargeting.isValidTarget(dragoon, observer),
+                Engagement.isValidTarget(dragoon, observer),
                 "validity refuses undetected");
             assertFalse(
                 dragoon.hasWeaponRangeToAttack(observer, 0),

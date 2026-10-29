@@ -77,7 +77,7 @@ public final class ClusterRally {
     public static HasPosition regroupRallyPoint(AUnit unit) {
         if (unit == null || !unit.isAlive()) return null;
 
-        AUnit threat = atlantis.combat.targeting.ASquadTargeting
+        AUnit threat = atlantis.combat.targeting.Engagement
             .nearestEngageableEnemy(unit, CombatTuning.current().getRegroupThreatTiles());
         if (threat == null) return null;
 
@@ -251,7 +251,7 @@ public final class ClusterRally {
         HasPosition guard = guardSlotFor(unit, anchor);
         if (guard != null) return guard;
 
-        HasPosition pivot = atlantis.combat.targeting.ASquadTargeting
+        HasPosition pivot = atlantis.combat.targeting.Engagement
             .nearestEngageableEnemy(leader, 30);
         if (pivot == null && tactic == FightOrFlight.Tactic.FIGHT) {
             // Face the door, not the wall (owner 2026-10-29, Cere game):

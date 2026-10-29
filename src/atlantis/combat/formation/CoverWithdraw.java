@@ -1,7 +1,7 @@
 package atlantis.combat.formation;
 
 import atlantis.battle.kite.CombatTuning;
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -92,7 +92,7 @@ public final class CoverWithdraw {
         Selection cluster = Select.ourCombatUnits();
         if (cluster == null || !FormationSlots.applies(cluster.count())) return null;
 
-        AUnit urgent = ASquadTargeting.nearestEngageableEnemy(healthy, 2.0);
+        AUnit urgent = Engagement.nearestEngageableEnemy(healthy, 2.0);
         if (urgent != null) return null;
 
         for (AUnit ally : cluster.list()) {

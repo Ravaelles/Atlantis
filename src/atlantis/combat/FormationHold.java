@@ -6,7 +6,7 @@ import atlantis.combat.cluster.ClusterBreach;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.kite.Kite;
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.combat.twins.HoldTwin;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -170,7 +170,7 @@ public final class FormationHold {
         try {
             if (unit == null || !unit.isAlive()) return false;
 
-            AUnit threat = ASquadTargeting.nearestEngageableEnemy(
+            AUnit threat = Engagement.nearestEngageableEnemy(
                 unit, CombatTuning.current().getKiteEnemyTiles());
 
             return threat != null && Kite.shouldKite(unit, threat);

@@ -20,7 +20,7 @@ public final class KeepCurrentTarget {
         try {
             AUnit target = unit.target();
             if (target == null || !target.isAlive()) return null;
-            if (!ASquadTargeting.isValidTarget(unit, target)) return null;
+            if (!Engagement.isValidTarget(unit, target)) return null;
             if (!unit.hasWeaponRangeToAttack(target, 0)) return null;
 
             return target;

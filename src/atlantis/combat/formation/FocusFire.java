@@ -1,6 +1,6 @@
 package atlantis.combat.formation;
 
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -14,7 +14,7 @@ import atlantis.units.select.Selection;
  * (sticky-first ordering in the caller, never here).
  *
  * <p>Validity reuses the squad target gate
- * ({@code ASquadTargeting.isValidTarget}: buildings, lings, workers,
+ * ({@code Engagement.isValidTarget}: buildings, lings, workers,
  * wounded, dead men and unhittable types stay excluded), so focus can
  * never aim at a {@code DeadMan} - the in-flight damage is already
  * spoken for. Single-enemy situations answer the same unit the nearest
@@ -43,7 +43,7 @@ public final class FocusFire {
             if (enemy == null || !enemy.isAlive()) continue;
             if (unit.distTo(enemy) > maxDist) continue;
             if (!unit.hasWeaponToAttackThisUnit(enemy)) continue;
-            if (!ASquadTargeting.isValidTarget(unit, enemy)) continue;
+            if (!Engagement.isValidTarget(unit, enemy)) continue;
             int hp = enemy.hp() + enemy.shields();
             int guns = coveringGuns(enemy, maxDist);
             if (hp < bestHp || (hp == bestHp && guns > bestGuns)) {

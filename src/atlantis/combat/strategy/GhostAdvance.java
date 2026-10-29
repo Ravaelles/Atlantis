@@ -150,7 +150,7 @@ public final class GhostAdvance {
         // visible target OUT of range does not: when acquisition
         // refuses it (imminent shot, formation hold), the creep is the
         // approach march that closes the distance instead of idling.
-        AUnit seen = atlantis.combat.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        AUnit seen = atlantis.combat.targeting.Engagement.nearestEngageableEnemy(unit, 9);
         if (seen != null) {
             try {
                 if (unit.hasWeaponRangeToAttack(seen, 0)) {
@@ -295,7 +295,7 @@ public final class GhostAdvance {
         // A visible target in weapon range belongs to the fight branch
         // above the caller - never shadow it with a creep order. Out of
         // range, the creep is the approach march (same rule as move()).
-        AUnit seenForPoint = atlantis.combat.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        AUnit seenForPoint = atlantis.combat.targeting.Engagement.nearestEngageableEnemy(unit, 9);
         if (seenForPoint != null) {
             try {
                 if (unit.hasWeaponRangeToAttack(seenForPoint, 0)) return null;

@@ -10,7 +10,7 @@ import atlantis.combat.kite.Kite;
 import atlantis.combat.kite.KiteTwin;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.DuelKite;
-import atlantis.combat.targeting.ASquadTargeting;
+import atlantis.combat.targeting.Engagement;
 import atlantis.combat.twins.FightTrace;
 import atlantis.combat.twins.HitTwin;
 import atlantis.combat.twins.ShotTwin;
@@ -120,7 +120,7 @@ public final class FightTarget {
         // is the nearest enemy inside the envelope, not necessarily
         // the focused target: focus fire must not pin a Dragoon that
         // is being shredded).
-        AUnit threat = ASquadTargeting.nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
+        AUnit threat = Engagement.nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
         HitTwin.sample(unit, threat != null ? threat : target);
         FightTrace.sample(unit, threat != null ? threat : target);
 

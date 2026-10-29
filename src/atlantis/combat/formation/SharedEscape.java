@@ -52,7 +52,7 @@ public final class SharedEscape {
         if (leader == null || !leader.isAlive()) return null;
         if (cluster == null || !FormationSlots.applies(cluster.count())) return null;
 
-        AUnit threat = atlantis.combat.targeting.ASquadTargeting
+        AUnit threat = atlantis.combat.targeting.Engagement
             .nearestEngageableEnemy(leader, threatTiles);
         if (threat == null) return null;
 

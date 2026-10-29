@@ -112,7 +112,7 @@ public final class ClusterTactic {
         double bestDist = Double.MAX_VALUE;
         for (AUnit unit : Alpha.get().selection().list()) {
             if (unit == null || !unit.isAlive()) continue;
-            AUnit foe = atlantis.combat.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 15);
+            AUnit foe = atlantis.combat.targeting.Engagement.nearestEngageableEnemy(unit, 15);
             if (foe == null) continue;
             double dist = unit.distTo(foe);
             if (dist < bestDist) {

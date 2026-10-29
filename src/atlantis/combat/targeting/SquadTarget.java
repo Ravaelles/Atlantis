@@ -32,7 +32,7 @@ public final class SquadTarget {
             AUnit enemy = unit.squad().targeting().lastTargetIfAlive();
 
             if (
-                ASquadTargeting.isValidTarget(unit, enemy)
+                Engagement.isValidTarget(unit, enemy)
                     && unit.distTo(enemy) <= 9
                     && unit.hasWeaponRangeToAttack(enemy, 0)
             ) {

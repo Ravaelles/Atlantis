@@ -4,7 +4,17 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
-public class ASquadTargeting {
+/**
+ * Engagement primitives for the target ladder (NEXT #184): what counts
+ * as a valid target and who is nearest engageable. Moved verbatim out of
+ * the legacy squad-targeting module so the four delegating rules read
+ * ladder code, not legacy code. Shared by the rules and the fight loop.
+ */
+public final class Engagement {
+
+    private Engagement() {
+    }
+
     public static boolean isValidTarget(AUnit unit, AUnit enemy) {
         if (enemy == null) return false;
         // Positionless fogged memory is not a target (owner 2026-10-26:

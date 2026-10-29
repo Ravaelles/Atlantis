@@ -233,7 +233,7 @@ public class ChewedDragoonReproTest extends AbstractTestWithUnits {
                         }
                         if (!chewed) continue;
                         try {
-                            atlantis.units.AUnit threat = atlantis.combat.targeting.ASquadTargeting
+                            atlantis.units.AUnit threat = atlantis.combat.targeting.Engagement
                                 .nearestEngageableEnemy(d, atlantis.battle.kite.CombatTuning
                                     .current().getKiteEnemyTiles());
                             if (threat != null
