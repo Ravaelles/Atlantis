@@ -721,6 +721,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fight ends and the army must re-deploy: read the anchor/hold/posture rows
   in the frames after contact, name the latch that keeps it home, then one
   rule with a pin. Do not add a fourth home-pointer before that reading.
+   DATUM 2026-10-29 (games 184529 + 200344): the army never comes home
+   in either (fights out, dies out) - the hide shape stays unobserved.
   MATCHUP DOCTRINE LANDED 2026-10-28 (owner order: vs Zerg hold, vs Terran
   attack, vs Protoss wait for 3 zealots or a dragoon then attack):
   `PostureReasons` carries `vsProtoss`/`ourZealots`, and a no-contact small
@@ -788,6 +790,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   LIVE SUPPORT 2026-10-28 (game 012238, PvP home defense f14964-16370):
   966 combat-unit telemetry samples, 5/586 pairs within 1 tile - the line
   spreads at home, no stacking; wedge fix holds live.
+   CLOSED 2026-10-29: fix verified in sim (pocket tiles refused) and live
+   (012238 home defense: 5/586 within 1 tile, no stacking).
 - **#210** Formation orders while defending at most once per 10 frames
   (owner order 2026-10-26): re-issuing formation orders every frame during
   a defense churns the line. Landed 2026-10-26: shared `FormationOrderLatch`
@@ -831,6 +835,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   must be an island/UMS map, not just any 2-player ladder map (a (2)Destination
   PvP game is running to re-verify siting generally, but its naturals are
   connected, so it cannot trigger this leak).
+   DATUM 2026-10-29 (games 184529 + 200344): no natural ever exists in either -
+   untriggered again. Needs a vetted island vehicle + a game that expands there.
 - **#214** Decision reasons in CherryVis (owner: VERY HIGH priority).
   Every big decision logs its reason; where a behavior is unattributed
   today, the reason row IS the fix. (a) Siting: every construction logs
@@ -1337,6 +1343,9 @@ global FakeUnit id counter.
    forecasts now, and dropping it changes builder-travel timing game-wide
    (needs a live twin adjudication first). Terminal remainder: queue
    deletion + knob + mode tests + acceptance fallout.
+   SUPPLY PRECONDITION 2026-10-29: any named provider jumps the workers
+   (dynamic goal + BO rows alike) - a DEPOTS-band Pylon waited for bank 152
+   while the legacy drain dispatched at 50-100.
 - **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
 - **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
 - **#231** Order-latency model in StarEngine LANDED 2026-10-29: `SimMovement` holds a freshly issued order for N frames (`setOrderLatencyFrames`, default 0 - every existing scenario keeps same-tick response), re-armed by command or target change, so a re-issued march counts down while a re-targeted one waits again. Pinned `OrderLatencyTest` 3/3 (2-frame hold then march, zero-latency immediate, re-target re-arms). Train/build/research families stay unmodeled until a twin names their latency live. Spec: Phase 6C.
