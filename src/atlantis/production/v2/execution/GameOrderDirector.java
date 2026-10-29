@@ -220,6 +220,14 @@ public class GameOrderDirector implements OrderDirector {
         construction.setProductionOrder(orderFor(buildingType));
         construction.assignOptimalBuilder();
 
+        // The legacy issue path twins every construction it mints; V2-direct
+        // orders bypassed it, so a warp-less construction was invisible -
+        // 44 issued Nexus dispatches with zero twin rows anywhere (live).
+        // Same row, same contract (once per construction, builder may be null).
+        atlantis.production.requests.produce.ProduceBuilding.noteStarted(
+            construction, construction.builder(), construction.buildPosition(),
+            construction.productionOrder());
+
         return construction;
     }
 
