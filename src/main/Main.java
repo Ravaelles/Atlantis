@@ -26,8 +26,22 @@ public class Main {
     }
 
     public static String enemyRace() {
+        if (enemyRaceOverride != null) return enemyRaceOverride;
+
 //        return "Protoss";
         return "Zerg";
+    }
+
+    /**
+     * Per-run enemy-race override (owner 2026-10-29: no more source flips
+     * for test vehicles). The ENV key {@code ENEMY_RACE} feeds this, so a
+     * PvP proof game passes {@code --env=} with {@code ENEMY_RACE=Protoss}
+     * and the source keeps saying Zerg. Null clears back to the default.
+     */
+    private static String enemyRaceOverride = null;
+
+    public static void setEnemyRaceOverride(String race) {
+        enemyRaceOverride = race;
     }
 
     // =========================================================

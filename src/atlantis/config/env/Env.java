@@ -7,6 +7,7 @@ import atlantis.information.decisions.GGForEnemy;
 import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
+import main.Main;
 
 import java.io.File;
 
@@ -203,6 +204,14 @@ public class Env {
                 endGameViaEngine = parseBool(key, value, false);
                 return true;
 
+            case "ENEMY_RACE":
+                // Per-run enemy-race override (owner 2026-10-29): a PvP
+                // proof game passes ENEMY_RACE=Protoss in its own --env=
+                // file instead of flipping Main's source. Unknown values
+                // are ignored so a typo cannot silently re-race a game.
+                Main.setEnemyRaceOverride(canonicalEnemyRace(value));
+                return true;
+
             case "CHERRYVIS_ENABLED":
                 cherryVisEnabled = parseBool(key, value, false);
                 return true;
@@ -358,6 +367,24 @@ public class Env {
 
             return -1;
         }
+    }
+
+    /**
+     * Canonical race name for the ENEMY_RACE override, or null when the
+     * value names no BWAPI race (a typo must not silently re-race a game -
+     * null clears back to Main's default).
+     */
+    public static String canonicalEnemyRace(String value) {
+        if (value == null) return null;
+
+        String want = value.trim();
+        for (String race : new String[]{
+            "Terran", "Protoss", "Zerg", "Random",
+            "RandomTP", "RandomTZ", "RandomPZ", "RandomTPZ"}) {
+            if (race.equalsIgnoreCase(want)) return race;
+        }
+
+        return null;
     }
 
     /**
