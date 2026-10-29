@@ -2,7 +2,6 @@ package tests.unit;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.config.env.Env;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
@@ -38,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UnitProductionPathTest {
 
     private Race raceBefore;
-    private atlantis.config.env.ProductionV2Mode modeBefore;
 
     private static String names(Commander commander) throws Exception {
         List<String> out = new ArrayList<>();
@@ -86,58 +84,28 @@ public class UnitProductionPathTest {
         // The tree is built in constructors, so the race must be set first -
         // the same ordering the game has (MY_RACE is assigned on game start).
         AtlantisRaceConfig.MY_RACE = Race.Protoss;
-        modeBefore = Env.productionV2();
     }
 
     @AfterEach
     public void restoreRace() {
         AtlantisRaceConfig.MY_RACE = raceBefore;
-        Env.setProductionV2ForTest(modeBefore);
     }
 
     // ---- helpers -----------------------------------------------------------
 
     @Test
     public void productionCommanderHasTheDynamicProducerInTheModeWeActuallyRun() throws Exception {
-        // The mode matters: ProductionCommander builds a DIFFERENT list when
-        // PRODUCTION_V2=LIVE (the v2 cutover drops the legacy dynamic
-        // commanders). Assert the expectation for the current configuration,
-        // whatever it is, so a mode switch cannot silently remove unit
-        // production from the tree.
+        // There is only one mode now: the unconditional list carries the
+        // v2 engine and no legacy dynamic commanders. Assert that shape
+        // directly, so a reintroduced legacy branch cannot silently take
+        // unit production back.
         ProductionCommander production = new ProductionCommander();
-        boolean live = Env.productionV2().isLive();
 
-        boolean hasDynamic = contains(production, DynamicProductionCommander.class);
-
-        if (live) {
-            assertFalse(hasDynamic,
-                "in LIVE the legacy dynamic producer is dropped on purpose");
-            assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
-                "in LIVE the v2 engine must be the one running production");
-        }
-        else {
-            assertTrue(hasDynamic,
-                "in OFF/DRY_RUN the legacy dynamic producer must be present -"
-                    + " without it nothing asks for units. Mode was " + Env.productionV2());
-        }
-    }
-
-    @Test
-    public void theLegacyChainIsIntactFromProductionDownToTheProtossProducer() throws Exception {
-        // Pins the legacy chain, so it runs in legacy mode whatever the
-        // default is (the mode-aware test above owns the LIVE shape).
-        Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.OFF);
-        ProductionCommander production = new ProductionCommander();
-        DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
-        assertNotNull(dynamic, "DynamicProductionCommander missing under ProductionCommander");
-
-        DynamicUnitAndTechProducerCommander unitProducer = find(dynamic, DynamicUnitAndTechProducerCommander.class);
-        assertNotNull(unitProducer,
-            "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
-
-        assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
-            "ProtossDynamicUnitProductionCommander missing - this is the node whose"
-                + " applies() the owner never sees fire");
+        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+            "the v2 engine must be the one running production");
+        assertFalse(contains(production, DynamicProductionCommander.class),
+            "the legacy dynamic producer is dropped on purpose - two policies"
+                + " over one economy is the double-ordering the cutover removed");
     }
 
     @Test

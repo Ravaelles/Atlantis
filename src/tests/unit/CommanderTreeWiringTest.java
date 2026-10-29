@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.production.ProductionCommander;
-import atlantis.production.dynamic.DynamicProductionCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.util.We;
@@ -120,10 +119,14 @@ public class CommanderTreeWiringTest {
     public void dynamicProducerIsInTheProductionTree() throws Exception {
         ProductionCommander production = new ProductionCommander();
 
-        assertTrue(contains(production, DynamicProductionCommander.class),
-            "DynamicProductionCommander is missing from ProductionCommander -"
+        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+            "ProductionOrdersCommander is missing from ProductionCommander -"
                 + " nothing would ever ask for a unit. Children: "
                 + childrenOf(production));
+        assertFalse(contains(production, atlantis.production.dynamic.DynamicProductionCommander.class),
+            "DynamicProductionCommander is back under ProductionCommander -"
+                + " two policies over one economy is the double-ordering the"
+                + " cutover removed. Children: " + childrenOf(production));
     }
 
     // ---- tree walking ------------------------------------------------------
@@ -131,27 +134,20 @@ public class CommanderTreeWiringTest {
     @Test
     public void protossProducerReachesThroughTheWholeChainFromTheTop() throws Exception {
         // The full path the game walks every frame:
-        // AtlantisGameCommander -> ProductionCommander -> DynamicProductionCommander
-        // -> DynamicUnitAndTechProducerCommander ->
-        // ProtossDynamicUnitProductionCommander
+        // AtlantisGameCommander -> ProductionCommander ->
+        // ProductionOrdersCommander (the v2 engine).
         // Each link is a constructor call, so a break anywhere is silent.
+        // (The legacy tail - DynamicProductionCommander and below - was
+        // cut over in the production-v2 cutover; it is pinned where it
+        // still exists, not from the live tree.)
         AtlantisGameCommander top = new AtlantisGameCommander();
 
         assertTrue(contains(top, ProductionCommander.class),
             "ProductionCommander missing from the top-level pipeline");
 
         ProductionCommander production = find(top, ProductionCommander.class);
-        assertTrue(contains(production, DynamicProductionCommander.class),
-            "DynamicProductionCommander missing under ProductionCommander");
-
-        DynamicProductionCommander dynamic = find(production, DynamicProductionCommander.class);
-        assertTrue(contains(dynamic, DynamicUnitAndTechProducerCommander.class),
-            "DynamicUnitAndTechProducerCommander missing under DynamicProductionCommander");
-
-        DynamicUnitAndTechProducerCommander unitProducer = find(dynamic,
-            DynamicUnitAndTechProducerCommander.class);
-        assertTrue(contains(unitProducer, ProtossDynamicUnitProductionCommander.class),
-            "ProtossDynamicUnitProductionCommander missing at the end of the chain -"
+        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+            "ProductionOrdersCommander missing under ProductionCommander -"
                 + " this is the exact break that stopped unit production");
     }
 
