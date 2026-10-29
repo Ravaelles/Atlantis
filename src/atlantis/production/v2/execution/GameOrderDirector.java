@@ -93,7 +93,8 @@ public class GameOrderDirector implements OrderDirector {
             return " idle=" + producer.isIdle()
                 + " training=" + producer.isTrainingAnyUnit()
                 + " queue=" + (queue == null ? -1 : queue.size())
-                + " head=" + head;
+                + " head=" + head
+                + " remaining=" + producer.remainingTrainTime();
         } catch (RuntimeException ignored) {
             return "";
         }
