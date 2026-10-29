@@ -33,6 +33,8 @@ public final class DuelMemory {
     private static final Map<Integer, Integer> lastContactFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastRetreatFrame = new HashMap<>();
+    private static final Map<Integer, APosition> retreatWaypoint = new HashMap<>();
+    private static final Map<Integer, Integer> retreatWaypointFrame = new HashMap<>();
     private static final Map<Integer, Integer> attackAnimOpenFrame = new HashMap<>();
     private static final Map<Integer, Integer> lastAttackStartFrame = new HashMap<>();
     private static final Map<Integer, Integer> attackSettleFrames = new HashMap<>();
@@ -136,12 +138,57 @@ public final class DuelMemory {
         lastContactFrame.clear();
         lastGhostFrame.clear();
         lastRetreatFrame.clear();
+        retreatWaypoint.clear();
+        retreatWaypointFrame.clear();
         attackAnimOpenFrame.clear();
         lastAttackStartFrame.clear();
         attackSettleFrames.clear();
         lastBattleHp.clear();
         battleDamage.clear();
         lastBattleDamageFrame.clear();
+    }
+
+    /**
+     * Committed escape direction for a stuck retreat (owner 2026-10-29):
+     * re-picking a local step every watch window oscillates the unit in
+     * place (measured sim: 7 tiles survived instead of 8+ escaped).
+     * The first pick commits - the unit marches the same waypoint until
+     * it arrives, then the watch re-arms for a fresh pick.
+     */
+    public static void noteRetreatWaypoint(AUnit unit, APosition waypoint) {
+        try {
+            if (unit == null || !unit.isAlive() || waypoint == null) return;
+
+            retreatWaypoint.put(unit.id(), waypoint);
+            retreatWaypointFrame.put(unit.id(), A.now());
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static APosition retreatWaypoint(AUnit unit) {
+        try {
+            return unit == null ? null : retreatWaypoint.get(unit.id());
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public static Integer retreatWaypointFrame(AUnit unit) {
+        try {
+            return unit == null ? null : retreatWaypointFrame.get(unit.id());
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public static void clearRetreatWaypoint(AUnit unit) {
+        try {
+            if (unit == null) return;
+
+            retreatWaypoint.remove(unit.id());
+            retreatWaypointFrame.remove(unit.id());
+        } catch (Exception ignored) {
+        }
     }
 
     /**

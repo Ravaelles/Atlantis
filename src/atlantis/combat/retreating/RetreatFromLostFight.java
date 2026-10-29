@@ -77,9 +77,31 @@ public final class RetreatFromLostFight {
      */
     public static final int STUCK_RETREAT_FRAMES = 48;
     public static final double STUCK_DISPLACE_TILES = 0.5;
+    static final int STUCK_WAYPOINT_STALE_FRAMES = 240;
 
     public static HasPosition stuckRetreatLocalStep(AUnit unit, HasPosition dest, int now) {
         try {
+            // Committed escape direction first: march the same waypoint
+            // until it arrives - re-picking every window oscillates the
+            // unit in place (sim: 7 tiles survived instead of 8+ escaped).
+            APosition committed = DuelMemory.retreatWaypoint(unit);
+            if (committed != null) {
+                if (unit.distTo(committed) <= 1.0) {
+                    DuelMemory.clearRetreatWaypoint(unit);
+                    DuelMemory.noteMoved(unit, now, unit.position());
+
+                    return dest;
+                }
+
+                Integer waypointFrame = DuelMemory.retreatWaypointFrame(unit);
+                if (waypointFrame == null || now - waypointFrame > STUCK_WAYPOINT_STALE_FRAMES) {
+                    DuelMemory.clearRetreatWaypoint(unit);
+                }
+                else {
+                    return committed;
+                }
+            }
+
             Integer lastMoved = DuelMemory.lastMovedFrame(unit);
             APosition lastPos = DuelMemory.lastMovedPos(unit);
             if (lastMoved == null || lastPos == null || unit.distTo(lastPos) >= STUCK_DISPLACE_TILES) {
@@ -92,8 +114,14 @@ public final class RetreatFromLostFight {
             AUnit threat = nearestEnemyCombatUnit(unit);
             if (threat != null && threat.isAlive()) {
                 APosition step = EscapeScoredStep.pickScored(unit, threat, 8);
-                if (step != null) {
-                    DuelMemory.forgetMotion(unit);
+                // Escape toward safety, never away from it: a local step
+                // that takes us farther from the rally than we stand is a
+                // detour, not an escape (measured sim: westward steps at
+                // the end of a homeward march cost a full tile of the
+                // displacement the cutoff pin demands). Rejected steps
+                // keep the rally - same as today, never worse.
+                if (step != null && !marchesAwayFrom(step, unit, dest)) {
+                    DuelMemory.noteRetreatWaypoint(unit, step);
 
                     return step;
                 }
@@ -102,6 +130,24 @@ public final class RetreatFromLostFight {
             return dest;
         } catch (Exception ignored) {
             return dest;
+        }
+    }
+
+    /**
+     * True when stepping there takes the unit farther from the rally than
+     * it stands (plus one tile of tolerance for lateral unpiling steps).
+     * Null destinations cannot judge - the step rides.
+     */
+    public static boolean marchesAwayFrom(APosition step, AUnit unit, HasPosition dest) {
+        try {
+            if (step == null || unit == null || dest == null) return false;
+
+            APosition destPos = dest.position();
+            if (destPos == null || unit.position() == null) return false;
+
+            return step.distTo(destPos) > unit.distTo(destPos) + 1.0;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 

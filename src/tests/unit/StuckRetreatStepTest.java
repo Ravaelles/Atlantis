@@ -13,6 +13,7 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -93,8 +94,23 @@ public class StuckRetreatStepTest extends WorldStubForTests {
     }
 
     @Test
-    public void stuckRetreatWithoutThreatKeepsTheRally() {
+    public void localStepMustNotMarchAwayFromTheRally() {
         FakeUnit dragoon = dragoon();
+        HasPosition rally = APosition.create(10, 10);
+
+        assertTrue(RetreatFromLostFight.marchesAwayFrom(
+            APosition.create(50, 20), dragoon, rally),
+            "a westward step with an eastern rally is a detour, not an escape");
+        assertFalse(RetreatFromLostFight.marchesAwayFrom(
+            APosition.create(22, 20), dragoon, rally),
+            "a step toward the rally rides");
+        assertFalse(RetreatFromLostFight.marchesAwayFrom(
+            APosition.create(50, 20), dragoon, null),
+            "no destination to judge against - the step rides");
+    }
+
+    @Test
+    public void stuckRetreatWithoutThreatKeepsTheRally() {        FakeUnit dragoon = dragoon();
         HasPosition rally = APosition.create(10, 10);
 
         world(60, fakeOurs(dragoon), fakeEnemies(), () -> {
