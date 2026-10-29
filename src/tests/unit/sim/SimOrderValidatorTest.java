@@ -111,6 +111,26 @@ public class SimOrderValidatorTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void engineRefusalBeyondSnapshotStaysOutOfScope() {
+        // Fidelity boundary, pinned on purpose: the live twin recorded an
+        // engine refusal for a Nexus site that is buildable by every
+        // snapshot check (game 133317, BUILD_REFUSED_WHY: terrain ok,
+        // powered, explored, affordable, reachable - canBuild false in
+        // all flag combos). The sim accepts it, because there is nothing
+        // left to check: occupancy-at-warp is validated separately, and
+        // engine internals stay live-twinned, never guessed.
+        // If a refusal cause ever becomes modelable, THIS test turns red
+        // first - that is its job.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 2, 2);
+
+        SimOrder order = SimOrderValidator.validateBuild(
+            ground(), probe, AUnitType.Protoss_Nexus, 0, 2, rich(), noBuildings(), true);
+
+        assertTrue(order.accepted(),
+            "snapshot-buildable means sim-accepted; the engine remainder is live-twinned: " + order);
+    }
+
+    @Test
     public void unpoweredProtossBuildingIsRefused() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 2, 2);
 
