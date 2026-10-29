@@ -117,7 +117,8 @@ public final class ProductionScheduler {
 
         for (int produced = 0; produced < wanted; produced++) {
             ProductionItem scheduled = scheduleItem(item, Math.max(earliest, prerequisitesReady), timeline, plan,
-                goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous());
+                goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous(),
+                goal.minSupply());
             if (scheduled == null) return;
         }
     }
@@ -189,7 +190,7 @@ public final class ProductionScheduler {
                 }
                 ProductionItem planned = scheduleItem(prerequisite, ownReady, timeline, plan,
                     TargetPlacement.anywhere(), true, ProductionGoal.NO_PRODUCER_LIMIT,
-                    new HashSet<Integer>(), false);
+                    new HashSet<Integer>(), false, 0);
                 if (planned == null) {
                     path.remove(item.id());
 
@@ -220,7 +221,8 @@ public final class ProductionScheduler {
 
     private ProductionItem scheduleItem(Producible item, int notBefore, ResourceTimeline timeline,
                                         ProductionPlan plan, TargetPlacement placement, boolean isPrerequisite,
-                                        int producerLimit, Set<Integer> usedProducers, boolean onlyFreeProducers) {
+                                        int producerLimit, Set<Integer> usedProducers, boolean onlyFreeProducers,
+                                        int minSupply) {
         ResourceCost cost = item.cost();
 
         ProducerFacility producer = null;
@@ -275,7 +277,8 @@ public final class ProductionScheduler {
         timeline.allocate(cost, start);
 
         ProductionItem scheduled = new ProductionItem(item, start, isPrerequisite, reservation,
-            producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER);
+            producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER,
+            minSupply);
         plan.add(scheduled);
         commit(item, scheduled, producer, timeline, usedProducers);
 

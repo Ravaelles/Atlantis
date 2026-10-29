@@ -88,7 +88,8 @@ public final class BuildOrderGoals {
                 priorityFor(row, line, supplyUsed, progress.supplyFree()),
                 missing,
                 0,
-                TargetPlacement.namedArea(row.positionModifier())));
+                TargetPlacement.namedArea(row.positionModifier()))
+                .withMinSupply(row.minSupply()));
         }
 
         goals.replaceAll(goal -> goal.withSource("build-order"));

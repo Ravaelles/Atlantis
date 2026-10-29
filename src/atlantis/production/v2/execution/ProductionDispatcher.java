@@ -157,7 +157,7 @@ public final class ProductionDispatcher {
             if (placement == null || !placement.isSuccessful()) {
                 return new DispatchResult(item, false, "no placement reservation");
             }
-            boolean ok = director.buildAt(item.item(), placement);
+            boolean ok = director.buildAt(item.item(), placement, item.minSupply());
             return new DispatchResult(item, ok, ok ? "builder committed" : "no placement");
         }
 

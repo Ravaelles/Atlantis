@@ -148,8 +148,7 @@ public class BuildOrderGoalsTest {
     }
 
     @Test
-    public void aRowAlreadyQueuedOrUnderConstructionIsNotEmittedAgain() {
-        // The first Pylon exists (pending, building or done - the port counts all).
+    public void aRowAlreadyQueuedOrUnderConstructionIsNotEmittedAgain() {        // The first Pylon exists (pending, building or done - the port counts all).
         Progress progress = new Progress(10).with(PYLON, 1);
 
         List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), progress);
@@ -187,6 +186,27 @@ public class BuildOrderGoalsTest {
         List<BuildOrderRow> late = Collections.singletonList(BuildOrderRow.of(ZEALOT, 24));
         assertTrue(BuildOrderGoals.from(late, new Progress(23)).isEmpty());
         assertEquals(1, BuildOrderGoals.from(late, new Progress(24)).size());
+    }
+
+    @Test
+    public void rowGateRidesTheGoalToTheOrder() {
+        // The twin writes "At N" from the order and the warp audit reads
+        // the planned supply off the same field - both go dark when the
+        // gate is dropped, so the row gate rides goal -> item -> order.
+        List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), new Progress(16));
+
+        ProductionGoal gateway = goals.stream()
+            .filter(g -> g.item().id().equals(GATEWAY.id()))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("gateway row open at 16: " + goals));
+        assertEquals(10, gateway.minSupply(), "the row gate, not 0");
+
+        ProductionGoal pylon = goals.stream()
+            .filter(g -> g.item().id().equals(PYLON.id()))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("second pylon row open at 16: " + goals));
+        assertEquals(8, pylon.minSupply(),
+            "the earliest outstanding row owns the goal, so its gate rides (dedup rule)");
     }
 
     @Test

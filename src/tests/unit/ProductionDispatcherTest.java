@@ -236,7 +236,7 @@ public class ProductionDispatcherTest {
 
         assertEquals(1, results.size());
         assertTrue(results.get(0).issued(), "a committed re-offer is never stale");
-        assertEquals("build:Pylon@42,18", director.commands.get(0));
+        assertEquals("build:Pylon@42,18%0", director.commands.get(0));
     }
 
     @Test
@@ -269,7 +269,26 @@ public class ProductionDispatcherTest {
 
         assertEquals(1, results.size());
         assertTrue(results.get(0).issued());
-        assertEquals("build:Pylon@42,18", director.commands.get(0));
+        assertEquals("build:Pylon@42,18%0", director.commands.get(0));
+    }
+
+    @Test
+    public void supplyGateRidesToTheDirector() {
+        // The build-order supply gate travels goal -> item -> director, so
+        // the synthetic order carries a planned supply instead of "At 0".
+        FakeProducible pylon = new FakeProducible("Pylon", true, "Probe");
+        PlacementReservation fresh = PlacementReservation.success(42, 18, 100);
+        ProductionPlan plan = planOf(new ProductionItem(
+            pylon, 100, false, fresh, ProductionItem.NO_PRODUCER, 22));
+
+        RecordingDirector director = new RecordingDirector();
+        List<DispatchResult> results = new ProductionDispatcher(director).dispatch(
+            plan, goalsOf(pylon), 100, LATENCY);
+
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).issued());
+        assertEquals("build:Pylon@42,18%22", director.commands.get(0),
+            "gate 22 reaches the director, not 0");
     }
 
     private static List<ProductionGoal> goalsOf(Producible... items) {
@@ -334,8 +353,9 @@ public class ProductionDispatcherTest {
         }
 
         @Override
-        public boolean buildAt(Producible building, PlacementReservation placement) {
-            commands.add("build:" + building.id() + "@" + placement.tileX() + "," + placement.tileY());
+        public boolean buildAt(Producible building, PlacementReservation placement, int minSupply) {
+            commands.add("build:" + building.id() + "@" + placement.tileX() + "," + placement.tileY()
+                + "%" + minSupply);
 
             return true;
         }

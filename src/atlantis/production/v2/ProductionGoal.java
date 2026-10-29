@@ -73,6 +73,14 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     private final int producerLimit;
 
     /**
+     * The build-order supply gate that authored this goal (0 when the goal
+     * carries none - dynamic goals fire on snapshots, not gates). Carried
+     * to the synthetic order so the warp audit reads a planned supply
+     * instead of "At 0".
+     */
+    private final int minSupply;
+
+    /**
      * Which generator declared this goal ("build-order", "dynamic",
      * "pull-forward", "unknown"). The scheduler treats two Pylon goals as
      * two buildings, so when a duplicate pair lands the twin answers which
@@ -99,9 +107,10 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
         this.placement = placement != null ? placement : TargetPlacement.anywhere();
         this.producerLimit = Math.max(1, producerLimit);
         this.source = "unknown";
+        this.minSupply = 0;
     }
 
-    private ProductionGoal(ProductionGoal other, String source) {
+    private ProductionGoal(ProductionGoal other, String source, int minSupply) {
         this.item = other.item;
         this.priority = other.priority;
         this.count = other.count;
@@ -109,6 +118,7 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
         this.placement = other.placement;
         this.producerLimit = other.producerLimit;
         this.source = source;
+        this.minSupply = Math.max(0, minSupply);
     }
 
     public static ProductionGoal emergency(Producible item) {
@@ -119,7 +129,22 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
      * Same goal, attributed to its emitting list. Lists tag, never hand-edit.
      */
     public ProductionGoal withSource(String source) {
-        return new ProductionGoal(this, source);
+        return new ProductionGoal(this, source, this.minSupply);
+    }
+
+    /**
+     * Same goal, gated at this supply (build-order rows only - dynamic
+     * goals keep 0, honestly gateless).
+     */
+    public ProductionGoal withMinSupply(int minSupply) {
+        return new ProductionGoal(this, this.source, minSupply);
+    }
+
+    /**
+     * The build-order supply gate that authored this goal, 0 when none.
+     */
+    public int minSupply() {
+        return minSupply;
     }
 
     /**

@@ -22,6 +22,12 @@ public final class ProductionItem {
      * Id of the facility that produces it; {@link #NO_PRODUCER} for buildings and when unknown.
      */
     private final int producerId;
+    /**
+     * The build-order supply gate that authored this, 0 when the goal
+     * carries none. Rides to the synthetic order so the warp audit
+     * reads a planned supply.
+     */
+    private final int minSupply;
 
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite) {
         this(item, startFrame, isPrerequisite, null, NO_PRODUCER);
@@ -38,12 +44,21 @@ public final class ProductionItem {
      */
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
                           PlacementReservation placement, int producerId) {
+        this(item, startFrame, isPrerequisite, placement, producerId, 0);
+    }
+
+    /**
+     * @param minSupply the build-order gate that authored this, 0 when none
+     */
+    public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
+                          PlacementReservation placement, int producerId, int minSupply) {
         this.item = item;
         this.producerId = producerId;
         this.startFrame = startFrame;
         this.completionFrame = startFrame + item.buildDurationFrames();
         this.isPrerequisite = isPrerequisite;
         this.placement = placement;
+        this.minSupply = Math.max(0, minSupply);
     }
 
     public Producible item() {
@@ -80,6 +95,13 @@ public final class ProductionItem {
      */
     public int producerId() {
         return producerId;
+    }
+
+    /**
+     * The build-order supply gate that authored this, 0 when none.
+     */
+    public int minSupply() {
+        return minSupply;
     }
 
     @Override

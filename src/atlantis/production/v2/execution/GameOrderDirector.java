@@ -115,7 +115,7 @@ public class GameOrderDirector implements OrderDirector {
     }
 
     @Override
-    public boolean buildAt(Producible building, PlacementReservation placement) {
+    public boolean buildAt(Producible building, PlacementReservation placement, int minSupply) {
         AUnitType buildingType = resolveUnitType(building.id());
         if (buildingType == null || placement == null || !placement.isSuccessful()) return false;
 
@@ -128,7 +128,7 @@ public class GameOrderDirector implements OrderDirector {
             }
         }
 
-        Construction construction = createConstruction(buildingType, placement, building);
+        Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
         ConstructionRequests.addConstruction(construction);
@@ -212,12 +212,12 @@ public class GameOrderDirector implements OrderDirector {
      * it had to be cancelled.
      */
     private Construction createConstruction(AUnitType buildingType, PlacementReservation placement,
-                                            Producible building) {
+                                            Producible building, int minSupply) {
         Construction construction = new Construction(buildingType);
         construction.setPositionToBuild(APosition.create(placement.tileX(), placement.tileY()));
         construction.setNearTo(homePosition());
         construction.setMaxDistance(12);
-        construction.setProductionOrder(orderFor(buildingType));
+        construction.setProductionOrder(orderFor(buildingType, minSupply));
         construction.setDemand(atlantis.production.v2.Demand.of(buildingType));
         construction.assignOptimalBuilder();
 
@@ -237,8 +237,8 @@ public class GameOrderDirector implements OrderDirector {
      * legacy {@code Queue} - only the construction reads it - so the v2 path
      * stays the only policy.
      */
-    private ProductionOrder orderFor(AUnitType type) {
-        ProductionOrder order = new ProductionOrder(type, 0);
+    private ProductionOrder orderFor(AUnitType type, int minSupply) {
+        ProductionOrder order = new ProductionOrder(type, minSupply);
         order.markAsNotDynamic();
 
         return order;

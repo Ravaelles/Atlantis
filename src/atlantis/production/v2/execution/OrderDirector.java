@@ -45,6 +45,6 @@ public interface OrderDirector {
      *
      * @return true when a builder was committed or was already committed
      */
-    boolean buildAt(Producible building, PlacementReservation placement);
+    boolean buildAt(Producible building, PlacementReservation placement, int minSupply);
 
 }

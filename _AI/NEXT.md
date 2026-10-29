@@ -175,7 +175,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
  2400f age cap are in place. Open: owner visual check of PREPARING, live
   overlap proof, and builder-dead freeze proof (`WO-150b`; HP trail wired).
   No retained game has shown FROZEN_WARP or recurrence of the old silent-stall
-  class. → details: `WINE-MACRO-DATUMS.md` §3
+  class. → details: `WINE-MACRO-DATUMS.md` §3. FROZEN DEMOTE 2026-10-30:
+  the builder-dead freeze proof is the mechanism, not just the twin - a
+  static-hp entity past 2400f with nobody working it demotes to
+  NOT_STARTED (game 184529 cid 10: 8-minute IN_PROGRESS Pylon froze
+  supply at 49/49). Open: live recovery proof.
    DATUM 2026-10-29 (game 184529, BuilderLog): 1 Nexus construction from
    3869 attempts / 388 reached, 0 warps, 0 cancels - one builder (#158), one tile
    ([91,115]), canBuild=false in all flag combos while affordable/explored/powered.
@@ -1356,3 +1360,43 @@ global FakeUnit id counter.
 - **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
 - **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
 - **#231** Order-latency model in StarEngine LANDED 2026-10-29: `SimMovement` holds a freshly issued order for N frames (`setOrderLatencyFrames`, default 0 - every existing scenario keeps same-tick response), re-armed by command or target change, so a re-issued march counts down while a re-targeted one waits again. Pinned `OrderLatencyTest` 3/3 (2-frame hold then march, zero-latency immediate, re-target re-arms). Train/build/research families stay unmodeled until a twin names their latency live. Spec: Phase 6C.
+
+## Sweep 2026-10-29 night (autonomous: supply block, gate plumbing)
+
+- **Supply hard-block root-caused (game 184529, PvsZ TauCross):** Pylon cid
+  10 warped 6:07 (oid 333, builder #30) and sat IN_PROGRESS 8+ minutes
+  while supply froze at 49/49 - builder gone mining, no death twin, no
+  cancel, no retry; the emergency Pylon goal stayed suppressed by the
+  phantom coming count. Same mechanism as the reported 33/33 (one Pylon
+  earlier). Two holes, both closed in
+  `ConstructionStatusChanger.demoteStalledInProgress`: (a) a warping
+  entity with static hp for 240f past the 2400f age with nobody working
+  it demotes to NOT_STARTED (`frozenWarp` twin) - before, the
+  entity-present branch only twinned a dead builder and never recovered;
+  (b) a gathering builder counts as gone in the no-entity branch
+  (stolen-builder doctrine), so a miner parked far away no longer shields
+  the stall as "travelling". Healthy warps move hp every sample, Terran
+  constructing and Zerg morphs stay shielded, completed warps never
+  demote. Pinned `FrozenWarpDemoteTest` 5/5 (frozen+mining re-arms,
+  progressing/young/constructing keep, mining-without-entity re-arms).
+  Suite 1865/1865. Open: live recovery proof (a game where a stall
+  re-arms and supply unblocks) - rides the next macro; #150's
+  builder-dead freeze proof is this mechanism.
+- **MinSupply rides goal -> item -> order:** V2 synthetic orders carried
+  minSupply 0, so every twin wrote "At 0" and `BuildOrderAudit.recordWarp`
+  skipped every V2 warp (expected <= 0). The BO row gate now travels
+  `BuildOrderRow -> ProductionGoal.withMinSupply -> ProductionItem ->
+  OrderDirector.buildAt(…, minSupply) -> synthetic order`; dynamic goals
+  keep 0 (honestly gateless, still skipped by the audit). Prerequisites
+  get 0. Pinned at both seams (`BuildOrderGoalsTest.rowGateRidesTheGoal
+  ToTheOrder`, `ProductionDispatcherTest.supplyGateRidesToTheDirector`);
+  suite 1867/1867.
+- **Evening combat slices (owner chat orders, landed before this sweep):**
+  re-engage stands an attack order instead of a naked glide (focus stays
+  the ladder subject - retargeting broke the pincer pin, reverted with
+  evidence); strong army never flees at 200%+ (`ClusterTactic`); no
+  CHOKE_HOLD/COLLAPSE at our main/natural under 2 bases at 150%+
+  (`BattleStrategies.breakoutFromHomeChoke`); rally scatter fans out to
+  four quadrant rays (one golden-angle ray can point into our own base
+  and collapse the verdict to NOWHERE_TO_RUN on the global unit id -
+  this also explains the flaky GhostAdvanceTest, green since).
