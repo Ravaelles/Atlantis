@@ -19,8 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Choke doctrine wiring (NEXT #170): with no contact, a BASED line near a
  * contested choke holds the standoff instead of bunching on the leader,
- * and one unit detaches as bait. Geometry is pinned so the contested
- * choke (28,18) is the unit's nearest: dragoons sit 11-13 tiles south of
+ * and one unit detaches as bait. The contested choke is the foreign
+ * (53,74) - never our main or natural - so the home-choke breakout
+ * (owner 2026-10-29) stays out of these pins. Geometry is pinned so
+ * that choke is the unit's nearest: dragoons sit 11-13 tiles south of
  * it (inside DETECT_TILES 15 but outside the oursNear 12 ring, so the
  * line holds instead of crushing), the zealot sits 7 tiles north-east of
  * it (inside CONTEST_TILES 12) but 15+ tiles from the dragoons (outside
@@ -54,10 +56,10 @@ public class ChokeStandoffTest extends WorldStubForTests {
     @Test
     public void crushingLineEngagesInsteadOfHolding() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 27, 29);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 28, 29);
-        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 29, 29);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 21);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 52, 85);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 53, 85);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 54, 85);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 54, 77);
         zealot.setEnemy();
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
@@ -75,10 +77,10 @@ public class ChokeStandoffTest extends WorldStubForTests {
     @Test
     public void crushingLineCollapsesOntoTheBait() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 27, 29);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 28, 29);
-        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 29, 29);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34, 14);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 52, 85);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 53, 85);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 54, 85);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 59, 70);
         zealot.setEnemy();
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
@@ -101,10 +103,10 @@ public class ChokeStandoffTest extends WorldStubForTests {
     @Test
     public void baitDetachesWhileLineHolds() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 31);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 31);
-        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 30, 30);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34, 14);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 53, 87);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 54, 87);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 55, 86);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 59, 70);
         zealot.setEnemy();
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
@@ -139,12 +141,12 @@ public class ChokeStandoffTest extends WorldStubForTests {
         // is inherently transient (walk out, contact, collapse). The
         // numbers stay non-crushing (3v2) so HOLD, not COLLAPSE, owns the
         // quiet phase; crushing lines collapse by design (pinned above).
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 28, 31);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 29, 31);
-        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 30, 30);
-        FakeUnit z1 = fake(AUnitType.Protoss_Zealot, 34, 14);
-        FakeUnit z2 = fake(AUnitType.Protoss_Zealot, 36, 15);
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 45, 76);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 53, 87);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 54, 87);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 55, 86);
+        FakeUnit z1 = fake(AUnitType.Protoss_Zealot, 59, 70);
+        FakeUnit z2 = fake(AUnitType.Protoss_Zealot, 61, 71);
         final APosition[] aStart = new APosition[1];
 
         world(150, fakeOurs(nexus, a, b, c), fakeEnemies(z1, z2), () -> {
@@ -154,8 +156,8 @@ public class ChokeStandoffTest extends WorldStubForTests {
             }
             if (now == 61) {
                 // The enemy commits into the funnel: contact from here on.
-                z1.position = APosition.createFromPixels(30 * 32, 16 * 32);
-                z2.position = APosition.createFromPixels(31 * 32, 15 * 32);
+                z1.position = APosition.createFromPixels(55 * 32, 72 * 32);
+                z2.position = APosition.createFromPixels(56 * 32, 71 * 32);
             }
             for (AUnit u : new AUnit[]{a, b, c}) {
                 BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, u);

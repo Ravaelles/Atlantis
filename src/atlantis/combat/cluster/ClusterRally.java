@@ -212,12 +212,23 @@ public final class ClusterRally {
 
         try {
             double golden = Math.PI * (3.0 - Math.sqrt(5.0));
-            double angle = (unit.id() * golden) % (Math.PI * 2);
-            for (double r = RALLY_SPREAD_TILES; r <= RALLY_SPREAD_TILES + 2; r += 1.0) {
-                APosition p = APosition.create(
-                    (int) (anchor.tx() + Math.cos(angle) * r),
-                    (int) (anchor.ty() + Math.sin(angle) * r));
-                if (FormationSlots.isStandable(p)) return p;
+            double base = (unit.id() * golden) % (Math.PI * 2);
+            // One ray can point straight into our own base: every id whose
+            // golden angle faces the main sees only footprint cells, and
+            // the unscattered anchor is footprint too - the verdict then
+            // collapses to NOWHERE_TO_RUN on an id number, not on the
+            // position (unit ids are a global counter, so any added test
+            // file flips which ids hit the wall). Fan out to all four
+            // quadrants before giving up: a blocked ray never vetoes the
+            // rally by itself. Deterministic per unit, same radii.
+            for (int k = 0; k < 4; k++) {
+                double angle = base + k * Math.PI / 2;
+                for (double r = RALLY_SPREAD_TILES; r <= RALLY_SPREAD_TILES + 2; r += 1.0) {
+                    APosition p = APosition.create(
+                        (int) (anchor.tx() + Math.cos(angle) * r),
+                        (int) (anchor.ty() + Math.sin(angle) * r));
+                    if (FormationSlots.isStandable(p)) return p;
+                }
             }
         } catch (RuntimeException ignored) {
         }
