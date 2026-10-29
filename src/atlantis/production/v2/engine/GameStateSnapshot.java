@@ -295,8 +295,14 @@ public final class GameStateSnapshot {
                     || Select.ourWithUnfinishedOfType(AUnitType.Protoss_Citadel_of_Adun).notEmpty());
         // Hidden-unit sightings answer through the goal layer itself: the
         // legacy queue path never drains in V2 LIVE, so without this a
-        // seen lurker orders nothing.
-        snapshot.enemyHasHiddenUnits = atlantis.information.enemy.EnemyInfo.goesOrHasHiddenUnits();
+        // seen lurker orders nothing. The latch joins the sighting memory:
+        // the legacy handler fires on the discovery event even in fog
+        // (morphing eggs), while goesOrHasHiddenUnits reads what sight
+        // still holds - without the latch the chain would drop mid-spin
+        // the moment contact lapses (measured live: crisis response fired
+        // 4x on eggs with zero V2 goals).
+        snapshot.enemyHasHiddenUnits = atlantis.information.enemy.EnemyFlags.HAS_HIDDEN_COMBAT_UNIT
+            || atlantis.information.enemy.EnemyInfo.goesOrHasHiddenUnits();
         twinSuppressedSupply(snapshot);
 
         return DynamicGoals.contribute(snapshot, racePolicy, buildOrderOwnsProvider);
