@@ -66,6 +66,15 @@ public final class ClusterTactic {
             return FightOrFlight.Tactic.FIGHT;
         }
 
+        // No early attacking vs Zerg without Dragoons while weak (owner
+        // 2026-10-29): an early trade without ranged units donates the
+        // game. Force the retreat instead of letting the evaluator trade.
+        if (weakEarlyVsZergWithoutDragoons()) {
+            if (fleeStartedAt < 0) fleeStartedAt = A.now();
+
+            return FightOrFlight.Tactic.FLEE;
+        }
+
         FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
         if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
             fleeStartedAt = A.now();
@@ -98,6 +107,27 @@ public final class ClusterTactic {
         if (center == null) return false;
 
         return center.distTo(main) < 2;
+    }
+
+    /**
+     * No early attacking vs Zerg without Dragoons while weak (owner
+     * 2026-10-29): Zerg x early game x zero standing Dragoons x hedged
+     * strength under 155 forces the retreat. Public as a seam, pinned
+     * without a game.
+     */
+    public static final int WEAK_EARLY_ZERG_STRENGTH = 155;
+
+    public static boolean weakEarlyVsZergWithoutDragoons() {
+        try {
+            if (!atlantis.game.player.Enemy.zerg()) return false;
+            if (!atlantis.information.strategy.GamePhase.isEarlyGame()) return false;
+            if (atlantis.units.select.Count.dragoons() > 0) return false;
+
+            return atlantis.information.generic.ArmyStrength.ourArmyRelativeStrength()
+                < WEAK_EARLY_ZERG_STRENGTH;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
