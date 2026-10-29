@@ -124,8 +124,15 @@ public class OnOurUnitCreated {
         return order;
     }
 
-    private static ProductionOrder defineProductionOrderForUnit(AUnit unit, ProductionOrder order) {
+    public static ProductionOrder defineProductionOrderForUnit(AUnit unit, ProductionOrder order) {
         if (unit.isABuilding()) {
+            // V2-direct link (NEXT #228, WO-147): the construction stapled
+            // to the unit at warp already carries the synthetic order -
+            // no queue involved. Legacy orders still match below.
+            if (unit.construction() != null && unit.construction().productionOrder() != null) {
+                return unit.construction().productionOrder();
+            }
+
             order = Queue.get().readyToProduceOrders().ofType(unit.type()).first();
             if (unit == null) order = Queue.get().inProgressOrders().ofType(unit.type()).first();
             if (unit == null) order = Queue.get().notStarted().ofType(unit.type()).first();
