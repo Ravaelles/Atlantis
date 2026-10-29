@@ -27,10 +27,24 @@ public class APositionFinder {
     }
 
     /**
+     * Siting modifier for this construction (NEXT #228, WO-147): the v2
+     * demand first, the synthetic order as fallback. The director mirrors
+     * both, so they agree wherever both exist; legacy constructions carry
+     * only the order.
+     */
+    public static String modifierFor(Construction construction) {
+        if (construction == null) return null;
+        if (construction.demand() != null) return construction.demand().modifier();
+
+        return construction.productionOrder() == null
+            ? null : construction.productionOrder().getModifier();
+    }
+
+    /**
      * Returns build position for next building of given type.
      */
     public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
-        if (construction == null || construction.productionOrder() == null) {
+        if (construction == null || (construction.productionOrder() == null && construction.demand() == null)) {
 //            ErrorLog.printMaxOncePerMinute(
 //                "construction = " + construction + "\n" +
 //                    "construction.productionOrder() = " + (construction != null ? construction.productionOrder() : "-")
@@ -52,7 +66,7 @@ public class APositionFinder {
 
 //        System.err.println("building = " + building + ", near = " + near);
 
-        String modifier = construction.productionOrder().getModifier();
+        String modifier = modifierFor(construction);
         if (near == null && modifier != null) {
             near = PositionModifier.toPosition(modifier, building, builder, construction);
         }
