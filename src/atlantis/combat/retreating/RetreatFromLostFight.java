@@ -48,16 +48,73 @@ public final class RetreatFromLostFight {
         Verdict verdict = decide(unit, tactic, anchor, leader);
         if (verdict.dest == null) return false;
 
+        // Displacement guarantee (owner 2026-10-29, Cere game): a retreat
+        // that does not displace is not a retreat - dragoons piled into
+        // each other for ~190f churning ClusterFlee/OrganizedRetreat/Kite
+        // while dying. A retreating unit stuck in place steps away locally
+        // (any walkable direction from the nearest threat) instead of
+        // re-marching a far rally it never reaches.
+        HasPosition dest = stuckRetreatLocalStep(unit, verdict.dest, A.now());
+
         if (isChased(unit)) {
-            unit.move(verdict.dest, Actions.RUN_ENEMY, Behavior.FLEE.tag());
+            unit.move(dest, Actions.RUN_ENEMY, Behavior.FLEE.tag());
         }
         else {
-            unit.move(verdict.dest, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
+            unit.move(dest, Actions.MOVE_FORMATION, Behavior.ORGANIZED_RETREAT.tag());
         }
 
         DuelMemory.noteRetreated(unit);
 
         return true;
+    }
+
+    /**
+     * Stuck-retreat escape (test seam): a unit that has not displaced for
+     * {@link #STUCK_RETREAT_FRAMES} while retreating gets a local step away
+     * from the nearest enemy combat unit instead of the far rally. Fresh
+     * and displacing units keep the rally; a stuck unit with no local
+     * step keeps it too (same as today, never worse).
+     */
+    public static final int STUCK_RETREAT_FRAMES = 48;
+    public static final double STUCK_DISPLACE_TILES = 0.5;
+
+    public static HasPosition stuckRetreatLocalStep(AUnit unit, HasPosition dest, int now) {
+        try {
+            Integer lastMoved = DuelMemory.lastMovedFrame(unit);
+            APosition lastPos = DuelMemory.lastMovedPos(unit);
+            if (lastMoved == null || lastPos == null || unit.distTo(lastPos) >= STUCK_DISPLACE_TILES) {
+                DuelMemory.noteMoved(unit, now, unit.position());
+
+                return dest;
+            }
+            if (now - lastMoved < STUCK_RETREAT_FRAMES) return dest;
+
+            AUnit threat = nearestEnemyCombatUnit(unit);
+            if (threat != null && threat.isAlive()) {
+                APosition step = EscapeScoredStep.pickScored(unit, threat, 8);
+                if (step != null) {
+                    DuelMemory.forgetMotion(unit);
+
+                    return step;
+                }
+            }
+
+            return dest;
+        } catch (Exception ignored) {
+            return dest;
+        }
+    }
+
+    /**
+     * Nearest enemy combat unit to this unit (unit-level enemies, not the
+     * global selection - the same source the chase check reads).
+     */
+    private static AUnit nearestEnemyCombatUnit(AUnit unit) {
+        try {
+            return unit.enemiesNear().combatUnits().nearestTo(unit);
+        } catch (RuntimeException ignored) {
+            return null;
+        }
     }
 
     /**
