@@ -57,6 +57,7 @@ public class SimWorld {
     private final Map<Integer, Integer> attackStartedAt = new HashMap<>();
 
     private int frame = 0;
+    private final SimFog fog = new SimFog();
     private int shotsFired = 0;
     private int ourShotsFired = 0;
     private int enemyShotsFired = 0;
@@ -153,9 +154,19 @@ public class SimWorld {
         decisions.run();
         movement.stepAll(all());
         combatAll();
+        fog.update(frame, Arrays.asList(ours), Arrays.asList(enemies));
         for (FakeUnit unit : all()) {
             if (unit.cooldown > 0) unit.cooldown--;
         }
+    }
+
+    /**
+     * Fog-of-war memory for this scenario: what the sim currently sees
+     * and what it remembers. Updated every tick, re-evaluated every
+     * {@link SimFog#UPDATE_EVERY_FRAMES} frames.
+     */
+    public SimFog fog() {
+        return fog;
     }
 
     /**
