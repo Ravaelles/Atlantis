@@ -187,10 +187,8 @@ public class FindPosition {
             APosition thePosition = (new NewBunkerPositionFinder(nearTo, builder)).find();
 
             if (Count.bunkers() <= 0 && thePosition != null && !thePosition.regionsMatch(MainRegion.mainRegion())) {
-                if (
-                    construction.productionOrder().getModifier() != null
-                        && construction.productionOrder().getModifier().equals("MAIN_CHOKE")
-                ) {
+                String modifier = APositionFinder.modifierFor(construction);
+                if ("MAIN_CHOKE".equals(modifier)) {
                     ErrorLog.printMaxOncePerMinute("Fix for first MAIN_CHOKE bunker, place it in main.");
 
                     return (new NewBunkerPositionFinder(Select.main(), builder)).find();

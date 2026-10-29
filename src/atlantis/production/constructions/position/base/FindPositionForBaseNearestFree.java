@@ -93,8 +93,7 @@ public class FindPositionForBaseNearestFree {
     }
 
     private static String modifier(Construction construction) {
-        return construction != null && construction.productionOrder() != null ?
-            construction.productionOrder().getModifier() : null;
+        return APositionFinder.modifierFor(construction);
     }
 
     private static APosition fallback() {
