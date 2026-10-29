@@ -28,6 +28,16 @@ public final class ClusterTactic {
     }
 
     public static FightOrFlight.Tactic decide() {
+        // Strong army never retreats (owner 2026-10-29): at double the
+        // enemy strength the cluster stands and fights. FLEE at 200% sat
+        // a finished army in the base, oscillating with the retreat
+        // instead of marching out.
+        if (strongArmyStands()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
         AUnit leader = Alpha.get().leader();
         AUnit assessor = nearestToFight(leader);
         double eval = assessor != null ? assessor.eval() : 0;
@@ -115,6 +125,21 @@ public final class ClusterTactic {
      * strength under 155 forces the retreat. Public as a seam, pinned
      * without a game.
      */
+    /**
+     * At or above this relative strength the cluster never flees (owner
+     * 2026-10-29): double the enemy means stand and fight. Public as a
+     * seam, pinned without a game.
+     */
+    public static final int STRONG_ARMY_NEVER_FLEE = 200;
+
+    public static boolean strongArmyStands() {
+        try {
+            return atlantis.information.generic.Army.strength() >= STRONG_ARMY_NEVER_FLEE;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     public static final int WEAK_EARLY_ZERG_STRENGTH = 155;
 
     public static boolean weakEarlyVsZergWithoutDragoons() {
