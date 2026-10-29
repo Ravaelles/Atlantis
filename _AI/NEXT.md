@@ -1343,6 +1343,10 @@ global FakeUnit id counter.
    forecasts now, and dropping it changes builder-travel timing game-wide
    (needs a live twin adjudication first). Terminal remainder: queue
    deletion + knob + mode tests + acceptance fallout.
+   WARP-ORDER VERDICT 2026-10-29: queue-order-is-file-order does NOT transfer -
+   V2 schedules by priority band (measured: Pylon,Gateway,Core first wave for a
+   Pylon,Core,Gateway file). No V2 port of QueuedBuildingsBuildInOrderTest;
+   band order is pinned at the goal layer instead.
    SUPPLY PRECONDITION 2026-10-29: any named provider jumps the workers
    (dynamic goal + BO rows alike) - a DEPOTS-band Pylon waited for bank 152
    while the legacy drain dispatched at 50-100.
