@@ -136,6 +136,14 @@ public class ConstructionStatusChanger extends Commander {
             construction.noteWarpHp(A.now(), warping.hp());
             twinFrozenWarp(construction, builder, warping);
 
+            if (isFrozenWarpUnworked(construction, builder, warping)) {
+                logDemote(construction, "frozenWarp");
+                twinDemote(construction, "frozenWarp");
+                construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+                return true;
+            }
+
             return false;
         }
         if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
@@ -146,7 +154,12 @@ public class ConstructionStatusChanger extends Commander {
         // IN_PROGRESS + no builder + no building + no recovery). Re-arm once
         // old enough that a real warp would have shown its building; the
         // NOT_STARTED state reassigns a builder on the next pass.
-        if (builder == null || builder.isDead() || !builder.isWorker()) {
+        // A builder back on minerals/gas is not travelling to this site
+        // (stolen-builder doctrine from isOverdue): without this a miner
+        // far away shields the stall as "travelling" until the age-cap.
+        boolean builderGone = builder == null || builder.isDead() || !builder.isWorker()
+            || builder.isGatheringMinerals() || builder.isGatheringGas();
+        if (builderGone) {
             if (construction.startedAgo() < STALLED_IN_PROGRESS_DEMOTE_FRAMES) return false;
 
             logDemote(construction, "builder gone");
@@ -184,6 +197,34 @@ public class ConstructionStatusChanger extends Commander {
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
 
         return true;
+    }
+
+    /**
+     * A warping entity that stopped progressing with nobody working it
+     * (Wine 184529 cid 10: Pylon warp IN_PROGRESS 8+ minutes, builder
+     * gone mining, supply frozen at 49/49 - the entity-present branch
+     * twinned nothing and demoted nothing, and isOverdue never fires
+     * for started constructions). Conservative by construction: older
+     * than any legal warp, hp proven static across the window, not
+     * completed, and no live builder constructing it (Terran) or
+     * morphed into it (Zerg non-worker). A builder back on
+     * minerals/gas counts as gone. Healthy warps move hp every sample
+     * and never trip.
+     */
+    private static boolean isFrozenWarpUnworked(
+        Construction construction, AUnit builder, AUnit warping
+    ) {
+        try {
+            if (warping == null || warping.isCompleted()) return false;
+            if (construction.startedAgo() < FROZEN_WARP_OBSERVED_FRAMES) return false;
+            if (!construction.isWarpHpStatic(FROZEN_WARP_STATIC_FRAMES, A.now())) return false;
+            if (builder != null && !builder.isDead()
+                && (builder.isConstructing() || !builder.isWorker())) return false;
+
+            return true;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     private static AUnit warpingNearSite(Construction construction) {
