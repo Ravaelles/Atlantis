@@ -486,8 +486,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    boundary pin decides: rule 5 stays. Covering 9.0 in rule 8 would mean
    touching the shared primitive (9 callers: kite, cover, ghost,
    regroup, tactic) - rejected as wider blast for a narrower need.
-   `SharedFocusSimTest` stays as its outcome pin. Remaining: faithful
-   finish rule + cover coordination.
+   `SharedFocusSimTest` stays as its outcome pin. COVER KEPT 2026-10-31:
+   rule 6's removal was attempted and withdrawn - without it the healthy
+   gun takes its nearest (L2) while L1 chews the withdrawer 5x longer
+   (l1DiedAt 9 vs 46, W leaves with 45 hp instead of 55). Load-bearing
+   for withdrawer protection, pinned `CoveringFireSimTest` (opens on the
+   chewer, W keeps most hp). Remaining: faithful finish rule only.
 
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;
@@ -1046,6 +1050,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   expectations) and do NOT touch from the builder-log harness (world()-based
   setup perturbs global state and flips it - `BuilderOrderLogTest` uses
   direct BaseSelect mocks for exactly this reason.
+   DATUM 2026-10-31: recurred byte-identical (7.015677199137657 vs 8,
+   "survived") in a full run carrying two new test files
+   (`CoveringFireSimTest`, `SharedFocusSimTest`) and green again solo
+   1/1; full suite WITHOUT the two files (sources moved + stale
+   `out/` classes deleted) is 1896/1896 green - the trigger is the
+   shifted global id counter, exactly the documented mechanism, not a
+   product regression (the slice carries zero production diff). Any new
+   test file can flip it; the durable fix stays hermetic seams, not id
+   resets.
 - **#223** Hidden-unit crisis response (owner ask 2026-10-28: do we answer
   lurkers and Dark Templar, and how does PurpleWave do it). PurpleWave
   pumps Observers 1-vs-3 on lurker-likelihood (seen lurkers/eggs or burrow
