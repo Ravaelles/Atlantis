@@ -33,6 +33,19 @@ public final class SimConstructions {
     static final double ARRIVE_TILES = 2.0;
     private final Map<Construction, Site> sites = new HashMap<>();
 
+    /**
+     * Test seam: frozen warps (engine-side stall, cid-10 shape). A held
+     * construction neither progresses nor completes until released - the
+     * re-arm path (demote to NOT_STARTED, new builder, new warp) then
+     * proves recovery instead of asserting a status in place.
+     */
+    private final java.util.Set<Construction> heldWarps = new java.util.HashSet<>();
+
+    public void holdWarp(Construction construction, boolean hold) {
+        if (hold) heldWarps.add(construction);
+        else heldWarps.remove(construction);
+    }
+
     /** Frames the sim first saw a construction, per building type name. */
     private final Map<String, java.util.List<Integer>> starts = new HashMap<>();
     private final Map<Integer, TrainingJob> training = new HashMap<>();
@@ -99,6 +112,7 @@ public final class SimConstructions {
 
             return;
         }
+        if (heldWarps.contains(construction)) return;
         Site site = sites.get(construction);
         if (site == null) {
             site = new Site();

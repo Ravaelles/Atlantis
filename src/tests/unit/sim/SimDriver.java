@@ -219,6 +219,15 @@ public final class SimDriver {
         return new ArrayList<>(cancels);
     }
 
+    /**
+     * Test seam: freeze a warp mid-flight (engine-side stall, cid-10
+     * shape) or release it. Delegates to the construction tracker, which
+     * owns the hold set.
+     */
+    public void holdWarp(atlantis.production.constructions.Construction construction, boolean hold) {
+        constructions.holdWarp(construction, hold);
+    }
+
     void logCancel(AUnitType type, APosition tile, String reason) {
         cancels.add("f" + frame + " cancel " + type.name()
             + " [" + tile.tx() + "," + tile.ty() + "] " + reason);

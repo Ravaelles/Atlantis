@@ -195,7 +195,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   the builder-dead freeze proof is the mechanism, not just the twin - a
   static-hp entity past 2400f with nobody working it demotes to
   NOT_STARTED (game 184529 cid 10: 8-minute IN_PROGRESS Pylon froze
-  supply at 49/49). Open: live recovery proof.
+  supply at 49/49). SIM CLOSED-LOOP 2026-10-30
+  (`StalledWarpRecoverySimTest`): a frozen mid-warp Pylon re-arms only
+  once the frozen branch proves it (2400f age + static hp) and a new
+  warp completes after release. Open: live recovery proof.
    DATUM 2026-10-29 (game 184529, BuilderLog): 1 Nexus construction from
    3869 attempts / 388 reached, 0 warps, 0 cancels - one builder (#158), one tile
    ([91,115]), canBuild=false in all flag combos while affordable/explored/powered.
