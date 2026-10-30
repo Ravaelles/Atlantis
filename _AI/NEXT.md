@@ -388,8 +388,21 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     `ProtossPlacementStrategy.availabilityVerdict` REFUSEs
     worker-covered tiles first (before power, so no support Pylon is
     ordered onto dead ground); pinned `CoveredTileAvailabilityTest`
-    2/2 (red-first). Open: re-run the catalogue arm (A/B III) -
-    cancels should collapse and the game should play past f6900.
+    2/2 (red-first). A/B III 2026-10-31 (catalogue arm 212746, same vehicle): ZERO
+    cancels (4214 -> 0, the storm is gone) BUT the game still dies f6900
+    supply 25 with 2172 banked and ZERO Gateways - Gateway `no-placement`
+    f1718, only Pylons/Nexus ever sited. The planner-side cover check
+    over-blocks: every near-base Gateway tile is worker-covered, so the
+    rank-time REFUSE leaves no tile and the bot dies rushable with a full
+    bank (LEG arm built 3 Gateways + Core + Forge + Robo). WITHDRAWN the
+    planner slice the same night (revert + pin test deleted with it;
+    suite back to 1900/1900 green). Lesson: the tile
+    property alone does not predict builderless death - covered tiles DO
+    get builders via the free pool, unreliably; the correct check needs
+    pool state, which is #156 territory (unify reservation models,
+    parked to 2026-11-09, no blind merge). The adapter gate stays (pinned,
+    legacy/refresh paths only). Open: pool-aware builder check per #156;
+    the WO-145 A/B vehicle stands ready (ENV-145-CAT/LEG, supply-120).
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
