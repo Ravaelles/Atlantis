@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
  * The fight-or-hold decision reads targeting as one call. Selection
  * itself lives in {@link TargetLadder}: an explicit ordered behavior
  * list (chewer, keep-current, weakest-in-range, sticky, shared, cover,
- * squad, nearest, breach). This class owns only the entry contract
+ * nearest, breach). This class owns only the entry contract
  * and the sight-memory side effect.
  */
 public final class AcquireTarget {

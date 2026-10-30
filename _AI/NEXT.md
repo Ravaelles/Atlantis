@@ -105,9 +105,10 @@ trade a measurement for an explanation (§3a).
    #34 (UMS opponent map).
 9. **Long-term ordering:** #45 deletion order, rewrite order #144-#147, #8 V2
    LIVE runs, stages E–J below.
-10. **Housekeeping:** drop the four stale worktrees (`w-zealot-gas`,
-    `w-anti-flap`, `w-regroup-march`, `w-middle-focus`) once their content is
-    confirmed inside commit ce4de4034; keep the box quiet between games.
+10. **Housekeeping:** SPENT 2026-10-30 - the four stale worktrees
+    (`w-zealot-gas`, `w-anti-flap`, `w-regroup-march`, `w-middle-focus`)
+    exist nowhere (no git worktree, no directory on any root);
+    nothing to drop.
 11. **Sweep of #144–#204** (owner order 2026-10-26: work the next 40
     positions as Senior Engineer, autonomous, long-term answers first).
     Triage of the whole range: everything that needs a game or owner data
@@ -469,8 +470,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    DATUM 2026-10-29: rule 7 (squad target) migrated verbatim into
    SquadTarget (shared isValidTarget stays); nearest/cover/breach
    delegate to named seams (nearest-engageable primitive, CoverWithdraw,
-   ClusterBreach), not legacy - no migration. Remaining: faithful
-   finish rule + coordination removals.
+   ClusterBreach), not legacy - no migration. SQUAD REMOVED 2026-10-30:
+   rule 7 was unreachable through the ladder (any squad-remembered target
+   inside 9 is inside enemiesNear 15 with the same validity, so rule 3
+   always owns the pick first - pinned `weakestOwnsPickDespiteSquadTarget`);
+   class + order slot + its two direct tests deleted, suite green. The 6+
+   crowd guard dies with the rule (relocating it would be a behavior change
+   - re-add with a pin if ever wanted). Remaining: faithful finish rule +
+   shared/cover coordination.
 
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;

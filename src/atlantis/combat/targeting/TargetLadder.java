@@ -15,8 +15,8 @@ import java.util.List;
  * <p>Order (chewer first, breach last): a melee unit with its shot
  * ready hits the chewer instead of walking past it; a committed unit
  * finishes its target (no restart churn); the weakest valid enemy in
- * range draws focus fire; then squad sharing, covering, squad-last
- * and nearest-engageable fallbacks; a breached base answers last.
+ * range draws focus fire; then squad sharing, covering and
+ * nearest-engageable fallbacks; a breached base answers last.
  * Reordering any two adjacent rules is a behavior change: the
  * order-sensitivity pins fail until the test names the intended
  * change.</p>
@@ -41,7 +41,6 @@ public final class TargetLadder {
             "sticky",
             "shared",
             "cover",
-            "squad",
             "nearest",
             "breach"
         );
@@ -70,9 +69,6 @@ public final class TargetLadder {
         if (target != null) return target;
 
         target = CoverTarget.pick(unit);
-        if (target != null) return target;
-
-        target = SquadTarget.pick(unit);
         if (target != null) return target;
 
         target = NearestTarget.pick(unit);

@@ -1,7 +1,6 @@
 package tests.unit;
 
 import atlantis.combat.targeting.AcquireTarget;
-import atlantis.combat.targeting.SquadTarget;
 import atlantis.combat.targeting.TargetLadder;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +31,7 @@ public class TargetLadderTest extends WorldStubForTests {
     public void orderIsExplicitAndStable() {
         assertEquals(
             Arrays.asList("chewer", "keepCurrent", "weakestInRange", "sticky",
-                "shared", "cover", "squad", "nearest", "breach"),
+                "shared", "cover", "nearest", "breach"),
             TargetLadder.order(),
             "the ladder order lives once, visibly - reorder only with the pins");
     }
@@ -178,7 +177,7 @@ public class TargetLadderTest extends WorldStubForTests {
     }
 
     @Test
-    public void squadTargetHoldsSharedPick() {
+    public void weakestOwnsPickDespiteSquadTarget() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit h = fake(AUnitType.Protoss_Dragoon, 30, 20);
         h.hp = 160;
@@ -193,37 +192,11 @@ public class TargetLadderTest extends WorldStubForTests {
             h.forceSetSquad(squad);
             squad.targeting().setLastTarget(z);
 
-            assertEquals(z.id(), idOf(SquadTarget.pick(h)),
-                "squad's living valid target in reach is shared");
-        });
-    }
-
-    @Test
-    public void squadTargetYieldsInCrowds() {
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
-        FakeUnit h = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        h.hp = 160;
-        FakeUnit z = fake(AUnitType.Protoss_Zealot, 33, 20);
-        z.setEnemy();
-        z.hp = 60;
-
-        world(3, fakeOurs(
-            nexus, h,
-            fake(AUnitType.Protoss_Dragoon, 29, 20),
-            fake(AUnitType.Protoss_Dragoon, 31, 20),
-            fake(AUnitType.Protoss_Dragoon, 30, 21),
-            fake(AUnitType.Protoss_Dragoon, 30, 19),
-            fake(AUnitType.Protoss_Dragoon, 28, 20),
-            fake(AUnitType.Protoss_Dragoon, 32, 20)
-        ), fakeEnemies(z), () -> {
-            if (atlantis.game.A.now() != 1) return;
-
-            atlantis.battle.cluster.Squad squad = new atlantis.battle.cluster.Squad("Alpha");
-            h.forceSetSquad(squad);
-            squad.targeting().setLastTarget(z);
-
-            assertEquals(-1, idOf(SquadTarget.pick(h)),
-                "6+ friendly combat units nearby pick their own focus");
+            assertEquals(z.id(), idOf(atlantis.combat.targeting.WeakestInRangeTarget.pick(h)),
+                "rule 3 sees the same squad-remembered target (enemiesNear 15 > 9)");
+            assertEquals(z.id(), idOf(AcquireTarget.acquire(h)),
+                "the ladder pick is rule 3's - the squad rule never owned"
+                    + " a pick rule 3 sees (NEXT #184 removal proof)");
         });
     }
 
@@ -240,8 +213,8 @@ public class TargetLadderTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 1) return;
 
             assertEquals(ling.id(), idOf(AcquireTarget.acquire(d)),
-                "rules 1-7 decline (not melee, nothing committed, ling "
-                    + "banned from focus and shared, nothing stuck, no squad, "
+                "rules 1-6 decline (not melee, nothing committed, ling "
+                    + "banned from focus and shared, nothing stuck, "
                     + "nothing withdrawing), so the nearest engageable enemy "
                     + "owns the pick - the march stops for chaff");
         });
@@ -260,7 +233,7 @@ public class TargetLadderTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 1) return;
 
             assertEquals(raider.id(), idOf(AcquireTarget.acquire(d)),
-                "rules 1-8 decline (nothing committed, raider out of every "
+                "rules 1-7 decline (nothing committed, raider out of every "
                     + "9-tile envelope, no squad, nothing withdrawing), so the "
                     + "breached-base answer owns the pick - last resort by design");
         });
