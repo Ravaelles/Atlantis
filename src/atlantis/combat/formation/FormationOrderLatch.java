@@ -65,6 +65,8 @@ public final class FormationOrderLatch {
         if (unit.id() == lastUnit
             && dest.tx() == lastTx && dest.ty() == lastTy
             && now - lastFrame < ISSUE_EVERY_FRAMES) {
+            atlantis.combat.twins.FormationOrderTwin.absorbed(unit, dest);
+
             return false;
         }
 
@@ -72,6 +74,7 @@ public final class FormationOrderLatch {
         lastTx = dest.tx();
         lastTy = dest.ty();
         lastFrame = now;
+        atlantis.combat.twins.FormationOrderTwin.issued(unit, dest);
 
         return true;
     }

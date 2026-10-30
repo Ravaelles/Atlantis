@@ -154,6 +154,7 @@ public class BattleCommander extends Commander {
         FrozenWatch.clearForTests();
         IdleWatch.clearForTests();
         atlantis.combat.twins.ClusterTwin.clearForTests();
+        atlantis.combat.twins.FormationOrderTwin.clearForTests();
         ArmyContact.clearForTests();
         atlantis.combat.retreating.RetreatLadder.reset();
         atlantis.combat.cluster.FirstDragoonGate.clearForTests();

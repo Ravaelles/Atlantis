@@ -271,6 +271,11 @@ public enum LogKey {
      */
     SUPPLY_OVERSTOCK,
     /**
+     * Formation order gate (#210): issued vs absorbed with dest, per-unit
+     * throttled (transition always, 150f heartbeat). Reads the calm.
+     */
+    FORMATION_ORDER,
+    /**
      * 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two.
      */
     PYLON_FLOOD,
