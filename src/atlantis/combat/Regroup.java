@@ -1,9 +1,12 @@
 package atlantis.combat;
 
+import atlantis.battle.cluster.Missions;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
+import atlantis.combat.cluster.HomeGround;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.GhostAdvance;
+import atlantis.combat.targeting.Engagement;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -90,6 +93,18 @@ public final class Regroup {
                 }
             }
         }
+        // Undressed far-leg of the attack march (one site with the dressed
+        // collapse below): a line that cannot dress still marches instead
+        // of chasing slots. All gates read, none owned - see the method.
+        if (shouldMarchUndressedToAnchor(unit, anchor, tactic, strategy)) {
+            APosition collapse = walkableCollapsePoint(unit, anchor);
+            if (collapse != null
+                && unit.move(collapse, Actions.MOVE_ENGAGE, Behavior.COLLAPSE.tag())) {
+                FightTarget.markRepositioned(unit);
+
+                return;
+            }
+        }
         // March in formation (owner 2026-10-26): the line takes slots
         // facing the expected enemy before anyone creeps - the vanguard
         // still detaches fast, everyone else advances as a line, never
@@ -156,6 +171,69 @@ public final class Regroup {
             && anchor != null
             && unit.distTo(point) < 1
             && unit.distTo(anchor) > COLLAPSE_BEYOND_SIGHT_TILES;
+    }
+
+    /**
+     * True when an undressed line still marches the attack anchor: FIGHT
+     * under the open-field approach, the anchor beyond sight, no ongoing
+     * fight to reinforce, no ghost in range to creep at, and the anchor
+     * not home (the no-contact hold above owns home ground). Every
+     * threshold is reused (sight slack, ghost envelope), never a new
+     * literal - this widens the collapse site above, it never opens one.
+     */
+    private static boolean shouldMarchUndressedToAnchor(
+        AUnit unit, HasPosition anchor, FightOrFlight.Tactic tactic, BattleStrategy strategy
+    ) {
+        if (tactic != FightOrFlight.Tactic.FIGHT) return false;
+        if (strategy != BattleStrategy.OPEN_FIELD) return false;
+        // The attack marches; this march is its far leg. On DEFEND the
+        // line holds (veto guards home, slots own the wait) - marching a
+        // defend anchor out abandons the base exactly like the vetoed
+        // chase does (same mission read as ChaseVeto, opposite side).
+        if (!Missions.isGlobalMissionAttack()) return false;
+        if (unit == null || anchor == null) return false;
+        try {
+            if (unit.distTo(anchor) <= COLLAPSE_BEYOND_SIGHT_TILES) return false;
+        } catch (Exception ignored) {
+            return false;
+        }
+        if (ArmyContact.isOngoingFight()) return false;
+        // Someone else owns the near-contact: the fight branch above, the
+        // creep below, or the slots holding the line (phalanx kites and
+        // trapped breakouts die when the march walks stragglers into the
+        // pack). Same warm-contact envelope the creep uses - inside it
+        // the march never owns the unit; outside it nobody else does.
+        try {
+            AUnit near = Engagement.nearestEngageableEnemy(unit, GhostAdvance.LOST_TILES);
+            if (near != null) return false;
+        } catch (Exception ignored) {
+            return false;
+        }
+        // A fresh personal contact still owns the line: the creep walks
+        // it (unreached) or holds it (reached). Marching a warm fight out
+        // abandons the kill/line for the anchor - the march owns only
+        // stale ground. Same staleness the creep uses, read not owned.
+        try {
+            APosition last = FightTarget.lastContact(unit);
+            Integer frame = FightTarget.lastContactFrame(unit);
+            if (last != null && frame != null
+                && A.now() - frame <= GhostAdvance.STALE_CONTACT_FRAMES) return false;
+        } catch (Exception ignored) {
+            return false;
+        }
+        try {
+            APosition ghost = GhostAdvance.effectiveGhostPointFor(unit);
+            if (ghost != null && unit.distTo(ghost) <= GhostAdvance.LOST_TILES) return false;
+        } catch (Exception ignored) {
+            return false;
+        }
+        try {
+            HomeGround home = HomeGround.resolve();
+            AUnit main = home != null ? home.main() : null;
+            if (ClusterRally.isHomeAnchor(anchor, main)) return false;
+        } catch (Exception ignored) {
+        }
+        return true;
     }
 
     /**

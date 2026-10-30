@@ -1380,6 +1380,7 @@ global FakeUnit id counter.
 - **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
 - **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
 - **#231** Order-latency model in StarEngine LANDED 2026-10-29: `SimMovement` holds a freshly issued order for N frames (`setOrderLatencyFrames`, default 0 - every existing scenario keeps same-tick response), re-armed by command or target change, so a re-issued march counts down while a re-targeted one waits again. Pinned `OrderLatencyTest` 3/3 (2-frame hold then march, zero-latency immediate, re-target re-arms). Train/build/research families stay unmodeled until a twin names their latency live. Spec: Phase 6C.
+- **#233** Attack-anchor march stalls mid-map (Wine 20261030_123059: ATTACK_ENEMY_BASE, anchor [33,8], army idled at (47-52,96-105) for 2000+f with ClusterMove/ClusterForm IDLE tags, zero displacement). Mechanism (sim-pinned): the line-slot assignment flaps (targets alternate slot/self, net zero), so the line never dresses; the dressed collapse needs dressed + beyond-sight and never fires; the slot fallback owns every frame so gather never marches. Fix LANDED: undressed far-leg in `Regroup` - same COLLAPSE tag + staging dest as the dressed site (one owner), gated on FIGHT + OPEN_FIELD + ATTACK mission + beyond-sight non-home anchor + no ongoing fight + no enemy in the creep envelope + no fresh personal contact + ghost out of range (every threshold reused, none new). First version regressed `TrappedDragoonsAttackOutTest` and `PhalanxVsPackSimTest` (marched stragglers into the pack / out of the kite line) - healed by the mission + envelope + fresh-contact gates. Pinned `AttackMarchResumesSimTest` 2/2 (contactless far-leg march; post-contact kill-site abandon + net anchor-ward). Open: live proof that an ATTACK march crosses mid-map; the sub-10-tile endgame handoff (slots/crescent) is unpinned.
 
 ## Sweep 2026-10-29 night (autonomous: supply block, gate plumbing)
 
@@ -1466,3 +1467,22 @@ global FakeUnit id counter.
   tuners/learners own leaf numbers, never nodes; decide() stays pure
   over explicit snapshots; pins assert categories, doubling as
   learned-policy regression gates.
+
+## Sweep 2026-10-30 (veto twin + ban board row, mission slices 1a/1b)
+
+- CHASE_VETO twin landed with the veto (transitions always, 150f
+  heartbeat): first live proof in the 20261030_123059 macro (28 rows,
+  all in the home-defense phase, zero during the ATTACK march - the
+  mission gate works). Vec: veto never verified on a real chase
+  refusal mid-field; the twin makes the next one adjudicable.
+- AlphaBan board row landed (NEXT #194): main-choke:N-dragoons or none,
+  change-only. Live proof needs the long PvP game (ban never triggered
+  in TauCross macros).
+- Mission slice 1a LANDED: ArmyMission enum + pure decide() + 11 pins
+  (HOLD_MAIN / MAIN_CHOKE / NATURAL_CHOKE / STAGE_MIDDLE / HOLD_MIDDLE
+  / ATTACK_ENEMY_BASE); shadow only, nothing reads it.
+- Mission slice 1b LANDED: shadow decider runs in the cluster handle
+  every frame with a MISSION_SHADOW twin (transitions + 300f
+  heartbeat). Live proof in the same macro that proved the veto twin
+  (60 rows: HOLD_MAIN to 3:12, ATTACK_ENEMY_BASE after; actuals
+  agreed - marched, fought, came home).
