@@ -476,8 +476,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    always owns the pick first - pinned `weakestOwnsPickDespiteSquadTarget`);
    class + order slot + its two direct tests deleted, suite green. The 6+
    crowd guard dies with the rule (relocating it would be a behavior change
-   - re-add with a pin if ever wanted). Remaining: faithful finish rule +
-   shared/cover coordination.
+   - re-add with a pin if ever wanted). SHARED KEPT 2026-10-31: rule 5's
+   removal was attempted and withdrawn - it is load-bearing at the 9.0
+   boundary (inclusive `<= 9` vs rule 8's strict `< 9` inside
+   `nearestEngageableEnemy`): without it the ladder acquires nothing at
+   exactly 9 tiles and `farOutwardChaseIsVetoedAndForgotten` +
+   `attackMissionChasesFreely` fail. Three sim geometries (static /
+   chasing / chasing + chaff) clear with no losses either way, but the
+   boundary pin decides: rule 5 stays. Covering 9.0 in rule 8 would mean
+   touching the shared primitive (9 callers: kite, cover, ghost,
+   regroup, tactic) - rejected as wider blast for a narrower need.
+   `SharedFocusSimTest` stays as its outcome pin. Remaining: faithful
+   finish rule + cover coordination.
 
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;
@@ -529,22 +539,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   refusal twins are ready; unstick remains parked until the shape recurs.
   DATUM 2026-10-28: game 010715 (VICTORY) carries zero MOVE_FAILED rows and
   no scatter - the shape does not recur here either.
-  validated; the KITE twin distinguishes no-step from engine refusal. Sim-pinned
-  escalation now rallies hopeless or stuck-and-chewed Dragoons through the shared
-  retreat path, including FIGHT; Zealot last-stand is unchanged. Live adjudication
-  of the new escalation rows remains open.
-  DATUM 2026-10-28 (game 010715, VICTORY): KITE fires live 482 rows
-  (stepped-aside 244, stuck-no-step 192, frozen-reset 46) with 20
-  ESCAPE_RALLY rows in the same fights - the twin vocabulary for the
-  adjudication exists; per-unit stuck-to-rally linkage still needs trace
-  work. LINKAGE CLOSED 2026-10-28 (game 013929, KITE twin carries unit ids):
-  7 units hit stuck-no-step, all 7 later stepped-aside or frozen-reset -
-  the escalation path resolves stuck Dragoons live. Hopeless-rally half
-  (ESCAPE_RALLY 2 rows) still thin.
-- **#192**  (ESCAPE_RALLY 2 rows) still thin.
-   DATUM 2026-10-29 (game 184529): 17 ESCAPE_RALLY rows f20503-20926,
-   strength 77->10 endgame death spiral, no re-FIGHT (game ended) - no gap
-   to adjudicate.
 - **#192** Gateway demand was repeatedly cancelled on null position during
   battle. Sim-pinned fixes cover self-overlap, ground-distance search, Pylon
   anchoring, completed-footprint overlap, and bounded WAIT (480 attempts; the
