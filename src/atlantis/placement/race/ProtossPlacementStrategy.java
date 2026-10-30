@@ -5,6 +5,7 @@ import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.RacePlacementStrategy;
 import atlantis.placement.core.SupportRequest;
+import atlantis.production.constructions.position.conditions.can_build_here.IsWorkerCovered;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -61,6 +62,16 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
 
     @Override
     public AvailabilityVerdict availabilityVerdict(int tx, int ty, String buildableTypeId) {
+        // Standing workers cover the tile first: the builder assigned to it
+        // would be refused and the site would die builderless (NEXT #145 -
+        // the catalogue A/B storm). Checked before power so an unpowered
+        // covered tile refuses outright instead of ordering a support Pylon
+        // onto ground no builder can walk to. Same numbers as the builder
+        // refusal, read not owned.
+        if (IsWorkerCovered.check(atlantis.map.position.APosition.create(tx, ty))) {
+            return AvailabilityVerdict.REFUSE;
+        }
+
         if (psiGating == null) return AvailabilityVerdict.AVAILABLE;
 
         PsiGating.PowerVerdict verdict = psiGating.verdictFor(tx, ty);

@@ -96,7 +96,7 @@ Mark: [ ] todo, [x] done (commit hash), [~] excluded, [>] walked with an open de
 - [x] Q65 `ResearchPsionicStorm.java` [PROTOSS] (P4-demand?) — ported 2026-10-28 as the V2 Storm goal (caster-standing gate; `TemplarChainTest` 7/7).
 - [x] Q66 `ResearchSingularityCharge.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (V2 tech goal).
 - [x] Q67 `TechResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
-- [ ] Q68 `TooWeakToTech.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: consumed only by the unported upgrade researchers; folds into their chunk.
+- [ ] Q68 `TooWeakToTech.java` [PROTOSS] (P4-demand?) — walked 2026-10-28; rechecked 2026-10-31: the researcher chunk is fully ported/covered (Q61-Q67, Q69 done; weak veto lives verbatim in the V2 ladders), but the legacy researchers still call this predicate, so it dies WITH them in Phase 4, not alone. No standalone slice.
 - [x] Q69 `UpgradeResearchCommander.java` [PROTOSS] (P4-demand?) — walked 2026-10-28: covered by V2, no port. (queue-then-issue is the V2 dispatcher seam).
 
 ## dynamic/protoss/units

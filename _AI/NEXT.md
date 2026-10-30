@@ -374,7 +374,22 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     search answers. Pinned `WorkerCoveredSiteTest` 2/2 (red-first: 4+
     workers serve the tile; builder counts as a worker; 3 pass). Open:
     the new A/B per WO stop rules (catalogue arm with cover check vs
-    legacy arm), then flip + chain deletion.
+    legacy arm), then flip + chain deletion. A/B II 2026-10-31
+    (catalogue arm 205637 vs legacy arm 205803, TauCross, supply-120):
+    catalogue arm storms IDENTICALLY (4214 CONSTRUCTION_CANCELs,
+    stall-death f6900 supply 33) - and carries ZERO `CATALOGUE_SITE`
+    twin rows, so the adapter funnel never runs in V2 LIVE: the engine
+    sits straight from its planner (silent `CataloguePlacementPlanner`
+    when the flag is on). The adapter gate covers only legacy/refresh
+    paths. Storm anatomy: 2065x `proximity finish: standing Gateway
+    covers [105,115]` (silently served building-covered tile) + 1529x
+    builderless `looks bugged` + 605x refresh-fail. COVER CHECK
+    LANDED 2026-10-31 (planner rank-time):
+    `ProtossPlacementStrategy.availabilityVerdict` REFUSEs
+    worker-covered tiles first (before power, so no support Pylon is
+    ordered onto dead ground); pinned `CoveredTileAvailabilityTest`
+    2/2 (red-first). Open: re-run the catalogue arm (A/B III) -
+    cancels should collapse and the game should play past f6900.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
