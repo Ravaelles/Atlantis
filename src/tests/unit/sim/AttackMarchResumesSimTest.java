@@ -220,6 +220,9 @@ public class AttackMarchResumesSimTest extends AbstractTestWithUnits {
 
             StringBuilder branches = new StringBuilder();
             StringBuilder trail = new StringBuilder();
+            double endSlotSum = 0;
+            double endAnchorSum = 0;
+            int endSamples = 0;
             for (int f = 0; f < 800; f++) {
                 final int now = f;
                 world.tick(() -> {
@@ -227,6 +230,16 @@ public class AttackMarchResumesSimTest extends AbstractTestWithUnits {
                         BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, anchor, a);
                     }
                 });
+                if (f >= 600) {
+                    for (FakeUnit u : ours) {
+                        atlantis.map.position.HasPosition slot =
+                            atlantis.combat.cluster.ClusterRally.formationSlotFor(
+                                u, a, anchor, FightOrFlight.Tactic.FIGHT);
+                        if (slot != null) endSlotSum += u.distTo(slot);
+                        endAnchorSum += u.distTo(anchor);
+                        endSamples++;
+                    }
+                }
                 if (f % 20 == 19) {
                     trail.append(f).append(':');
                     for (FakeUnit u : ours) {
@@ -277,10 +290,16 @@ public class AttackMarchResumesSimTest extends AbstractTestWithUnits {
             double endDist = 0;
             for (FakeUnit u : ours) endDist += u.distTo(anchor);
             endDist /= ours.size();
+            double endSlot = endSamples == 0 ? -1 : endSlotSum / endSamples;
+            double endAnchor = endSamples == 0 ? -1 : endAnchorSum / endSamples;
 
             assertTrue(endDist < 14.0,
                 "far attack anchor with no contact marches instead of redressing slots: "
                     + startDist + " -> " + endDist + " branches:" + branches + " trail:" + trail);
+            assertTrue(endSlot >= 0 && endSlot < 1.5 && endAnchor < 10.0,
+                "arrived line dresses at the attack anchor instead of hovering: endSlot="
+                    + String.format("%.2f", endSlot) + " endAnchor=" + String.format("%.2f", endAnchor)
+                    + " branches:" + branches + " trail:" + trail);
         } finally {
             world.close();
             BattleCommander.clearForTests();
