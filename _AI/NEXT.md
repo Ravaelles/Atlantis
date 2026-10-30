@@ -522,7 +522,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   refusal twins are ready; unstick remains parked until the shape recurs.
   DATUM 2026-10-28: game 010715 (VICTORY) carries zero MOVE_FAILED rows and
   no scatter - the shape does not recur here either.
-- **#190** Swamped cutoff dragoons glued in place: lethal live instances were
   validated; the KITE twin distinguishes no-step from engine refusal. Sim-pinned
   escalation now rallies hopeless or stuck-and-chewed Dragoons through the shared
   retreat path, including FIGHT; Zealot last-stand is unchanged. Live adjudication
@@ -616,6 +615,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (0.79) but exploded FIGHT-row eval - the gate reads per-frame eval, so
   gap2 neither confirms nor breaks the latch; partial proof, no behavior
   change. Game loss was a mid-game army wipe (-1525 res), not a stall.
+   DATUM 2026-10-30 (game 183036, PvsP TauCross, force-ended f9364):
+   KITE 406 (stepped-aside 50, stuck-no-step 341, frozen-reset 13,
+   escalated-run 2); unit 149 stuck x339 f7446 -> stepped-aside f8348,
+   unit 169 stuck -> escalated-run f9137; 3 ESCAPE_RALLY fleeReasons,
+   all re-FIGHT within 24f. Five flee-to-FIGHT gaps 6-24f, every
+   FLEE-row and FIGHT-row eval >1.1 (incl. the 987370 no-enemy
+   exemption) - latch-consistent re-attacks, same partial shape as
+   151237. The hold-when-weak half (low eval holding 120f) still
+   unobserved; no behavior change.
 - **#196** Workers have a named 10-tile limit measured from the main for
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
