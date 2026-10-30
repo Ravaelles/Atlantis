@@ -27,6 +27,13 @@ public enum Proximity {
     CONTACT(1.0),
 
     /**
+     * At a station: standing this close means holding it (home ground,
+     * choke mouths, middle staging). Matches the home-ground gate.
+     * Strictly less-than.
+     */
+    AT_STATION(2.0),
+
+    /**
      * The base zone: inside it a threat is engaged, outside it a chase
      * needs a mission. The breaching raider at 14 tiles is inside, the
      * open-field pack at 16 is outside - that exact boundary is pinned,
