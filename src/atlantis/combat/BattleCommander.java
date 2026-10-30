@@ -53,6 +53,15 @@ public class BattleCommander extends Commander {
 
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
+        if (target != null && atlantis.combat.targeting.ChaseVeto.veto(unit, target)) {
+            // Refused chase (owner 2026-10-30): marching out there is a
+            // donation, holding here is the mission. Forget the contact so
+            // the ghost creep cannot re-chase next frame what this frame
+            // refused - the unit falls through to hunt/regroup below.
+            DuelMemory.forgetContact(unit);
+
+            target = null;
+        }
         if (target != null) {
             ArmyContact.noteFight(unit, target, tactic);
             if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;

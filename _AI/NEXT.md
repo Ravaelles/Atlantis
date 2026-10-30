@@ -1438,3 +1438,20 @@ global FakeUnit id counter.
   (`forgettingContactBlindsGhostAndHunt`, null-safe). The veto gate
   itself (how far is too far for a zealot/small army, which anchor reads
   home) needs owner numbers - not implemented, not presented as done.
+
+## Sweep 2026-10-30 (chase veto in words, owner doctrine)
+
+- Zealot chase veto LANDED (`ChaseVeto` + `Proximity` word-enum):
+  zealots holding home do not march past the base zone (15) after far
+  targets; allowed: toe-to-toe contact, inside the zone, within close
+  of our buildings, ongoing fights, falling back onto a base-ward foe,
+  any ATTACK mission, any baseless map. Veto forgets the contact
+  (`DuelMemory.forgetContact`) so the ghost creep cannot re-chase.
+  First version broke 7 pins (screens, breach answer, lone-zealot
+  fights, sim phalanx) - healed by the baseless guard and the 15-tile
+  base zone instead of the 12 leash line (the breach raider at 14 must
+  engage). Pinned `ChaseVetoTest` 6/6; suite 1878/1878. Open:
+  small-army generalization (zealot-only for now); live chase proof.
+- `Proximity` enum answers the blast-radius worry structurally: one
+  entry per meaning (CLOSE_TO_BUILDING, CONTACT, BASE_ZONE), shared by
+  intent never by coincidence.
