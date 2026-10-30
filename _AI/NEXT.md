@@ -30,6 +30,9 @@ Work rules: never batch rewrites; never gate commits on full games; never
 trade a measurement for an explanation (§3a).
 
 ## Current owner priorities
+0. Mission-driven command (#232 - one named Mission owns the cluster;
+   posture/tactic/approach derive from it; blocked missions downgrade
+   explicitly, never silently).
 1. Decision reasons in CherryVis (#214 - the army dies without a trace).
 2. Fast, self-terminating OpenBW sims (§17).
 3. Production V2 (#45; `redesign/01_PRODUCTION.md`).
@@ -37,6 +40,19 @@ trade a measurement for an explanation (§3a).
 5. OpenBW/E2E testing (`IDEA-E2E-TESTS.md` §3.5).
 
 ## Process (normative)
+
+- **#232 — Mission-driven command (priority 0, DESIGN ONLY).** Full spec:
+  `_AI/MISSION-DRIVEN-COMMAND.md`. One named Mission owns the cluster
+  (HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE / STAGE_MIDDLE /
+  HOLD_MIDDLE / ATTACK_ENEMY_BASE); posture, tactic, approach and
+  behaviors derive from it instead of reading live state independently.
+  Technical fallbacks report upward and force re-decision; blocked
+  missions downgrade explicitly, never silently. Slices: shadow decider
+  + twin → divergence measurement → one mission enforced at a time →
+  fallbacks report upward → delete shadowed deciders. Each slice its
+  own commit, suite green, game proof where named. Includes the
+  post-mortem of how command scattered (7 mechanisms) and proposed
+  process rules P1–P7.
 
 - Every item has a **stable number** (`#1`, `#2`, ...). Numbers are never
   reused and never renumbered, so an old commit or chat answer can always be
