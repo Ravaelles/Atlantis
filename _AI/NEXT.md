@@ -1455,3 +1455,13 @@ global FakeUnit id counter.
 - `Proximity` enum answers the blast-radius worry structurally: one
   entry per meaning (CLOSE_TO_BUILDING, CONTACT, BASE_ZONE), shared by
   intent never by coincidence.
+
+## Sweep 2026-10-30 (veto twin + NN rule, owner doctrine)
+
+- CHASE_VETO twin rows vetoed chases (unit/target/dist, transition
+  always, 150f heartbeat) so refusals adjudicate live; re-decision
+  timing stays owner-delegated (bounded window, not same-frame).
+- NN compatibility decided as process rule P8 (design doc):
+  tuners/learners own leaf numbers, never nodes; decide() stays pure
+  over explicit snapshots; pins assert categories, doubling as
+  learned-policy regression gates.

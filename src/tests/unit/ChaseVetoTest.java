@@ -40,11 +40,14 @@ public class ChaseVetoTest extends WorldStubForTests {
     @BeforeEach
     public void defendByDefault() {
         Missions.followPosture(atlantis.combat.cluster.ClusterMission.Posture.DEFEND);
+        atlantis.util.log.EventLog.clearForTests();
+        BattleCommander.clearForTests();
     }
 
     @AfterEach
     public void restoreDefend() {
         Missions.followPosture(atlantis.combat.cluster.ClusterMission.Posture.DEFEND);
+        atlantis.util.log.EventLog.clearForTests();
         BattleCommander.clearForTests();
     }
 
@@ -74,6 +77,9 @@ public class ChaseVetoTest extends WorldStubForTests {
                 "a 9-tile march out is refused, not chased: " + ours.lastCommand);
             assertNull(FightTarget.lastContact(ours),
                 "the refused chase forgets the contact instead of feeding the ghost creep");
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"key\":\"CHASE_VETO\""),
+                "the refusal rows a twin (transitions always row): "
+                    + atlantis.util.log.EventLog.toJsonLines());
         });
     }
 

@@ -55,9 +55,12 @@ public class BattleCommander extends Commander {
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null && atlantis.combat.targeting.ChaseVeto.veto(unit, target)) {
             // Refused chase (owner 2026-10-30): marching out there is a
-            // donation, holding here is the mission. Forget the contact so
-            // the ghost creep cannot re-chase next frame what this frame
-            // refused - the unit falls through to hunt/regroup below.
+            // donation, holding here is the mission. Twin it (transitions
+            // always row, steady refusals heartbeat), then forget the
+            // contact so the ghost creep cannot re-chase next frame what
+            // this frame refused - the unit falls through to hunt/regroup
+            // below.
+            atlantis.combat.targeting.ChaseVetoTwin.vetoed(unit, target);
             DuelMemory.forgetContact(unit);
 
             target = null;
@@ -157,6 +160,7 @@ public class BattleCommander extends Commander {
         atlantis.combat.focus.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
+        atlantis.combat.targeting.ChaseVetoTwin.clearForTests();
     }
 
     @Override

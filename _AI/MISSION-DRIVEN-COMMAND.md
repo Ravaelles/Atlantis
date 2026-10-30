@@ -236,12 +236,21 @@ confirmation, not by this file alone.
   a time, each with its decide-pins and its congruence evidence.
   Deletions of shadowed deciders ride their own commits with game
   proof attached (WO-144/147 discipline).
+- **P8. Numbers are leaves, words are nodes.** Tuners and learners may
+  change leaf values (Proximity tiles, latch windows, margins); they
+  never rename nodes or rewire decisions. `decide()` stays pure over
+  explicit snapshots - that shape is both the test harness and the
+  learned-policy interface. Pins assert behavior categories, never
+  exact tuned values, so they double as regression gates for learned
+  parameters.
 
 ## 9. Open questions (owner)
 
-- Zealot/small-army chase veto thresholds: how far is too far, and
-  which anchor reads home. Mechanism (`forgetContact`) landed;
-  numbers explicitly withheld pending this decision.
+- Zealot chase veto: RESOLVED 2026-10-30 in words, not numbers - chase
+  only within CloseToBuilding of our buildings, inside the base zone
+  (15), toe-to-toe, ongoing, or falling back onto a base-ward foe;
+  veto forgets the contact (`ChaseVeto` + `forgetContact` + CHASE_VETO
+  twin). Small-army generalization still open.
 - Re-decide window length: proposed on the order of the 120f latch,
   per mission. Confirm or set.
 - Vocabulary changes: add/remove/rename missions only here, never in

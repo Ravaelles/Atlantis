@@ -169,6 +169,13 @@ public enum LogKey {
      */
     KITE,
     /**
+     * A refused chase (owner 2026-10-30): the zealot chase veto fired -
+     * unit and target ids, dist x10. Per-unit throttled (a standing
+     * refusal would otherwise row every frame); transitions (new veto)
+     * always row.
+     */
+    CHASE_VETO,
+    /**
      * A wanted item the scheduler could not place: no placement tile, no
      * affordable frame, no free producer. Transition-gated (one row per
      * item per reason), so an 18k-frame stall names its door once.
