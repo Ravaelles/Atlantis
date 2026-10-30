@@ -152,6 +152,13 @@ public enum LogKey {
      */
     MISSION,
     /**
+     * Shadow mission decision (owner #232, slice 1b): what the shadow
+     * decider answered plus the inputs that decided it. Transitions
+     * always row, steady states heartbeat - enforcement reads this,
+     * never the other way around.
+     */
+    MISSION_SHADOW,
+    /**
      * A Nexus train/queue attempt (supply, remaining, engine answer).
      */
     TRAIN_ATTEMPT,

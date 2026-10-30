@@ -161,6 +161,7 @@ public class BattleCommander extends Commander {
         FightTarget.clearForTests();
         StickyTarget.clearForTests();
         atlantis.combat.targeting.ChaseVetoTwin.clearForTests();
+        ArmyMission.clearForTests();
     }
 
     @Override
@@ -184,6 +185,11 @@ public class BattleCommander extends Commander {
         HasPosition anchor = ClusterAnchor.anchorFor(posture);
 
         ClusterTwin.sample(posture, tactic, anchor);
+
+        // Shadow mission (owner #232, slice 1b): compute and twin what
+        // the mission WOULD be. Reads nothing, steers nothing - the
+        // divergence read comes later, from these rows.
+        ArmyMission.sampleShadow(posture);
 
         atlantis.cherryvis.simple.ArmyBoard.publish(A.now(), posture, tactic, mission.text, anchor);
 

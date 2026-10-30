@@ -1,6 +1,14 @@
 package atlantis.combat.cluster;
 
+import atlantis.battle.cluster.Alpha;
+import atlantis.combat.ArmyContact;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.map.position.Proximity;
+import atlantis.units.AUnit;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 /**
  * One named job for the whole cluster (owner 2026-10-30, priority 0).
@@ -53,6 +61,121 @@ public enum ArmyMission {
         public double distToMiddleChoke = Double.MAX_VALUE;
         public boolean enemyBaseKnown;
         public double distToEnemyBase = Double.MAX_VALUE;
+    }
+
+    /**
+     * Shadow sampling (slice 1b): build the snapshot from live state,
+     * decide, twin the answer. Called from the cluster handle every
+     * frame; it never steers anything - enforcement is a later slice
+     * with its own game proof. Skips silently when the cluster has no
+     * readable center.
+     */
+    public static void sampleShadow(ClusterMission.Posture posture) {
+        try {
+            Snapshot in = readLive(posture);
+            if (in == null) return;
+
+            ArmyMission mission = decide(in);
+            ShadowTwin.row(mission, in);
+        } catch (Exception | Error ignored) {
+        }
+    }
+
+    public static void clearForTests() {
+        ShadowTwin.clear();
+    }
+
+    /**
+     * The shadow's twin (slice 1b): what the shadow decider answered,
+     * with the inputs that decided it. Change-only with a heartbeat:
+     * transitions always row, steady states remind every 300 frames.
+     */
+    static final class ShadowTwin {
+
+        private static ArmyMission lastTwinned;
+        private static int lastTwinFrame = -1000000;
+
+        private ShadowTwin() {
+        }
+
+        static void row(ArmyMission mission, Snapshot in) {
+            try {
+                int now = A.now();
+                boolean transition = lastTwinned != mission;
+                if (!transition && now - lastTwinFrame < 300) return;
+
+                lastTwinned = mission;
+                lastTwinFrame = now;
+                EventLog.key(LogKey.MISSION_SHADOW)
+                    .param("mission", mission.name())
+                    .param("posture", in.posture == null ? "-" : in.posture.name())
+                    .param("breach", in.breached)
+                    .param("contact", in.inContact)
+                    .param("dMain", (int) in.distToMain)
+                    .param("dChoke", (int) in.distToMainChoke)
+                    .param("transition", transition)
+                    .log(now, A.minSec());
+            } catch (Exception ignored) {
+            }
+        }
+
+        static void clear() {
+            lastTwinned = null;
+            lastTwinFrame = -1000000;
+        }
+    }
+
+    private static Snapshot readLive(ClusterMission.Posture posture) {
+        HasPosition center = Alpha.get().center();
+        if (center == null) return null;
+
+        Snapshot in = new Snapshot();
+        in.posture = posture;
+        in.inContact = ArmyContact.isOngoingFight();
+        in.breached = ClusterBreach.breachForcesFight();
+
+        try {
+            AUnit main = HomeGround.resolve().main();
+            if (main != null && main.position() != null) {
+                in.distToMain = center.distTo(main);
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        try {
+            atlantis.map.choke.AChoke choke = HomeGround.resolve().mainChoke();
+            if (choke != null && choke.center() != null) {
+                in.distToMainChoke = center.distTo(choke.center());
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        try {
+            atlantis.map.choke.AChoke natural = atlantis.map.choke.Chokes.natural();
+            if (natural != null && natural.center() != null) {
+                in.distToNaturalChoke = center.distTo(natural.center());
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        try {
+            atlantis.map.choke.AChoke middle = atlantis.combat.focus.MiddleFocusChoke.get();
+            if (middle != null && middle.center() != null) {
+                in.distToMiddleChoke = center.distTo(middle.center());
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        try {
+            APosition foeBase = atlantis.map.base.define.EnemyMainBase.get();
+            if (foeBase != null) {
+                in.enemyBaseKnown = true;
+                in.distToEnemyBase = center.distTo(foeBase);
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return in;
     }
 
     /**
