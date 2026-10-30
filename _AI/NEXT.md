@@ -97,9 +97,11 @@ trade a measurement for an explanation (§3a).
 6. **Second goal vocabulary** (Terran or midgame) triggers the `goals/` split;
    until then no new packages - the vocabulary grows on owner direction.
 7. **Live-proof queue** (one quiet game at a time, never alongside the suite):
-   #194 >10-Dragoon ban instance, #195 re-engage latch, #188 blocking
-   geometry, #190 escalation rows, #197 trapped-Dragoon break-out, #200 Zerg
-   main hold, undetected-target silence (needs a cloaked foe).
+   #194 >10-Dragoon ban instance, #188 blocking
+   geometry, #197 trapped-Dragoon break-out, #200 Zerg
+   main hold, undetected-target silence (needs a cloaked foe). Owner
+   2026-10-31: no opportunistic macros for rare shapes - games run on
+   call or with a certain vehicle only.
 8. **Owner data before live verdicts:** #202 (minerals at the stall, dominant
    twin rows, Gateway count/state), #96 (painter labels + missions game),
    #34 (UMS opponent map).
@@ -460,13 +462,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   VERIFIED 2026-10-28: zero production callers of `isUnderAttack()` outside
   `AUnit` itself - the only `isUnderAttack(n)` reader is `UnitStateManager`
   (the HP trail infrastructure, not a decision) plus Terran-only turret logic.
-- **#184** TargetLadder owns the explicit nine-rule order; five rules are
-  extracted (chewer, keep-current, weakest-in-range, sticky, shared),
-  four still delegate to legacy implementations. Sim-pinned slices
+- **#184** TargetLadder owns the explicit eight-rule order (nine minus
+  the removed squad rule); every rule is a named class, nearest/cover/
+  breach read named seams, never legacy. Sim-pinned slices
   cover chewer selection, re-arm/step interaction and undetected targets. A
   forced finish on a 10-HP chewer donates the Dragoon, so a faithful finish rule
-  waits for post-cut ladder work. Coordination preferences remain removal
-  candidates, each requiring a sim no-regression proof.
+  waits for post-cut ladder work. Shared and cover survived removal
+  attempts as load-bearing (boundary 9.0 and withdrawer protection) -
+  each with its sim pin now.
    DATUM 2026-10-29: rule 7 (squad target) migrated verbatim into
    SquadTarget (shared isValidTarget stays); nearest/cover/breach
    delegate to named seams (nearest-engageable primitive, CoverWithdraw,
@@ -597,38 +600,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   window focus the breach fight (EnemyBreachedBase/coords), never a choke
   hold - nothing to veto. PvP vehicle: per-run ENEMY_RACE=Protoss env,
   no source flip.
-- **#195** Flee reasons are named on CLUSTER rows; #190 escalation uses the
-  shared retreat decision. Landed 2026-10-25 (commit ce4de4034): 120f
-  re-engage latch, except eval > 1.1 (`RetreatReengageTest` 3/3). Live proof
-  remains open. DATUM 2026-10-28 (game 010715, VICTORY): fleeReason fires
-  live (RALLY 73, ESCAPE_RALLY 20, STEP_CUTOFF 1 across 94 FLEE rows);
-  flee-clear to next-FIGHT gaps 31-248f, median 124, 12/25 within the 120f
-  latch window - consistent with the latch biting when eval allows and the
-  rally holding otherwise. Full proof needs eval in the twin.
-  EVAL LANDED 2026-10-28: CLUSTER rows carry `eval` (leader's eval x100,
-  -1 with no live leader), so the next flee-to-FIGHT gap adjudicates from
-  EVENTS - eval > 110 inside 120f re-attacks, the rest holds the rally.
-  Pinned both ways in `ClusterTwinDestTest`.
-   SCALE NOTE 2026-10-29 (game 184529): CLUSTER eval reads 987370 through
-   a 17-row spiral with one 1 - the x100 ratio explodes at both ends; gap
-   adjudication must state which frame's eval the gate read.
-  DATUM 2026-10-29 (game 151237, PvsZ TauCross, DEFEAT on 750s cap):
-  463/463 CLUSTER rows carry eval - the adjudication vehicle exists. Two
-  flee-to-FIGHT gaps on cluster 15 (8 FLEE rows: 3 RALLY + 5 ESCAPE_RALLY):
-  f16206->f16312 = 106f re-attack with FIGHT-row eval 176 (1.76 > 1.1,
-  latch-consistent); f16508->f16582 = 74f re-attack with FLEE-row eval 79
-  (0.79) but exploded FIGHT-row eval - the gate reads per-frame eval, so
-  gap2 neither confirms nor breaks the latch; partial proof, no behavior
-  change. Game loss was a mid-game army wipe (-1525 res), not a stall.
-   DATUM 2026-10-30 (game 183036, PvsP TauCross, force-ended f9364):
-   KITE 406 (stepped-aside 50, stuck-no-step 341, frozen-reset 13,
-   escalated-run 2); unit 149 stuck x339 f7446 -> stepped-aside f8348,
-   unit 169 stuck -> escalated-run f9137; 3 ESCAPE_RALLY fleeReasons,
-   all re-FIGHT within 24f. Five flee-to-FIGHT gaps 6-24f, every
-   FLEE-row and FIGHT-row eval >1.1 (incl. the 987370 no-enemy
-   exemption) - latch-consistent re-attacks, same partial shape as
-   151237. The hold-when-weak half (low eval holding 120f) still
-   unobserved; no behavior change.
 - **#196** Workers have a named 10-tile limit measured from the main for
   entry/attack/stop/help-Cannon (`WorkerFarFightTest`). Open: a pressure game
   where raiders reach the mineral line; native-AI macros produced no pressure.
@@ -664,7 +635,7 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#201** Corsairs trail the main army instead of hunting: they need their own
   (default solo) cluster, merging only when threatening air exists; the
   "numerous Wraiths" line becomes a named constant with a pin (AEC §31).
-  Queued behind #195/#190; sim-first. Membership rule LANDED 2026-10-26
+  Sim-first (both queues spent). Membership rule LANDED 2026-10-26
   (commit `716a46142`): `CorsairCluster` in `atlantis.combat.cluster` -
   solo by default, merges on any visible non-Wraith air combat or
   `NUMEROUS_WRAITHS = 3` known Wraiths, pinned `CorsairClusterTest` 10/10
@@ -1058,7 +1029,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    shifted global id counter, exactly the documented mechanism, not a
    product regression (the slice carries zero production diff). Any new
    test file can flip it; the durable fix stays hermetic seams, not id
-   resets.
+   resets. Owner 2026-10-31: live with the flake (document recurrences),
+   durable fix with K-of-N data or a test-harness rebuild - not now.
 - **#223** Hidden-unit crisis response (owner ask 2026-10-28: do we answer
   lurkers and Dark Templar, and how does PurpleWave do it). PurpleWave
   pumps Observers 1-vs-3 on lurker-likelihood (seen lurkers/eggs or burrow
