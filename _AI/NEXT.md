@@ -823,8 +823,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   callers hold instead of falling through (pinned `FormationOrderLatchTest`
   4/4, red-first on the deny path). Measured first: 120 identical orders
   per unit per 120 defended frames in the sim. Open: live proof the line
-  calms down. DATUM 2026-10-28: no formation-order twin key exists, so the
-  calm cannot be read from EVENTS - needs trace geometry or a new row.
+  calms down. TWIN KEY LANDED 2026-10-30: FORMATION_ORDER rows
+  issued/absorbed with dest (transitions always, 150f heartbeat) - the
+  calm reads as absorbs, no trace geometry needed.
 - **#212** Worker acquisition strategy (owner call, surfaced in
   `CASE-STUDIES.md` #53): a worker held at a construction site that cannot
   start should return to mining (`ShouldNotTravelToConstructYet` covers

@@ -25,6 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("infra")
 public class ArmyBoardTest extends WorldStubForTests {
 
+    @Override
+    public bwapi.Race initRace() {
+        return bwapi.Race.Protoss;
+    }
+
     private static int countKeys(String json, String key) {
         int count = 0;
         int from = 0;
@@ -96,6 +101,51 @@ public class ArmyBoardTest extends WorldStubForTests {
             String namedBoard = ACherryVis_GlobalStates.build();
             assertTrue(namedBoard.contains("MiddleFocusChoke ["),
                 "the focus name carries its tile: " + namedBoard);
+        });
+    }
+
+    @Test
+    public void banRowNamesDragoonMass() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] goons = new FakeUnit[11];
+        for (int i = 0; i < goons.length; i++) {
+            goons[i] = fake(AUnitType.Protoss_Dragoon, 30 + (i % 4), 30 + (i / 4));
+        }
+        FakeUnit[] ours = new FakeUnit[goons.length + 1];
+        ours[0] = nexus;
+        System.arraycopy(goons, 0, ours, 1, goons.length);
+        APosition anchor = APosition.create(90, 20);
+
+        world(8, ours, new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() != 5) return;
+
+            ArmyBoard.publish(5, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FIGHT,
+                "Early strength ok (11 goons, 243%)", anchor);
+            String board = ACherryVis_GlobalStates.build();
+            assertTrue(board.contains("\"AlphaBan\":\"main-choke:11-dragoons\""),
+                "an 11-dragoon mass trips the absolute ban, named with its headcount: " + board);
+            assertEquals(1, countKeys(board, "AlphaBan"), "one ban row: " + board);
+
+            ArmyBoard.publish(6, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FIGHT,
+                "Early strength ok (11 goons, 243%)", anchor);
+            assertEquals(1, countKeys(ACherryVis_GlobalStates.build(), "AlphaBan"),
+                "an unchanged ban stays silent: " + board);
+        });
+    }
+
+    @Test
+    public void noBanRowNamesNone() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 30);
+        APosition anchor = APosition.create(90, 20);
+
+        world(8, fakeOurs(nexus, dragoon), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() != 5) return;
+
+            ArmyBoard.publish(5, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
+                "Not enough Goons (1/2) vZ", anchor);
+            assertTrue(ACherryVis_GlobalStates.build().contains("\"AlphaBan\":\"none\""),
+                "no ban in force still rows once, so lifting it later is visible");
         });
     }
 }

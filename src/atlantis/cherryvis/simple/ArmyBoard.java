@@ -26,6 +26,7 @@ public final class ArmyBoard {
     private static String lastAlphaReason = null;
     private static String lastAlphaFocus = null;
     private static String lastAlphaFocusName = null;
+    private static String lastAlphaBan = null;
     private static int lastAlphaStrength = Integer.MIN_VALUE;
     private static int lastValuesFrame = Integer.MIN_VALUE;
 
@@ -70,6 +71,12 @@ public final class ArmyBoard {
             ACherryVis_GlobalState.logNewState("AlphaFocusName", focusName);
         }
 
+        String ban = banState();
+        if (!ban.equals(lastAlphaBan)) {
+            lastAlphaBan = ban;
+            ACherryVis_GlobalState.logNewState("AlphaBan", ban);
+        }
+
         int strength;
         try {
             strength = Army.strength();
@@ -89,6 +96,22 @@ public final class ArmyBoard {
     }
 
     /**
+     * The main-choke ban, named with its headcount (NEXT #194): a Protoss
+     * dragoon mass over the ban never stages home. "none" when no ban
+     * stands, so the row also witnesses the ban lifting.
+     */
+    private static String banState() {
+        try {
+            if (atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBannedByDragoons()) {
+                return "main-choke:" + atlantis.units.select.Count.dragoons() + "-dragoons";
+            }
+        } catch (RuntimeException ignored) {
+        }
+
+        return "none";
+    }
+
+    /**
      * Test seam: the last-value cache is per-game state, never cross-test.
      */
     public static void clearForTests() {
@@ -97,6 +120,7 @@ public final class ArmyBoard {
         lastAlphaReason = null;
         lastAlphaFocus = null;
         lastAlphaFocusName = null;
+        lastAlphaBan = null;
         lastAlphaStrength = Integer.MIN_VALUE;
         lastValuesFrame = Integer.MIN_VALUE;
         ACherryVis_GlobalState.all.clear();
