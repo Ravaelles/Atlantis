@@ -18,6 +18,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GetOptimalBuilder {
+    /**
+     * A site this many of our workers stand on is not assigned a builder
+     * from the pool (the free pool in a young base is miners carrying
+     * loads): the catalogue reads the same numbers up front instead of
+     * serving a tile that dies builderless ({@code IsWorkerCovered}).
+     */
+    public static final double COVERED_RADIUS_TILES = 12;
+    public static final int COVERED_WORKERS = 4;
+
     public static AUnit forPosition(Construction construction, ProductionOrder order) {
         HasPosition positionToBuild = construction.buildPosition();
 
@@ -50,7 +59,7 @@ public class GetOptimalBuilder {
         if (!We.protoss()) return null;
         if (!A.hasFreeSupply(1)) return null;
         if (A.hasMinerals(600)) return null;
-        if (Select.ourWorkers().inRadius(12, positionToBuild).count() >= 4) return null;
+        if (Select.ourWorkers().inRadius(COVERED_RADIUS_TILES, positionToBuild).count() >= COVERED_WORKERS) return null;
 
         Selection candidates = Select.ourWorkers()
             .builders()

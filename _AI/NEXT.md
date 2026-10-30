@@ -367,6 +367,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     check as #151, now measured on the catalogue arm itself. Per WO stop
     rules: flip stopped, flag stays default-off; the ARM needs the cover
     check first (spiral guard or planner-side exclusion), then a new A/B.
+    COVER CHECK LANDED 2026-10-31: `IsWorkerCovered` (conditions/
+    can_build_here) mirrors `GetOptimalBuilder`'s refusal exactly (same
+    12/4 numbers, read not owned - thresholds extracted there once);
+    `propose()` declines "worker-covered" with a twin row and the legacy
+    search answers. Pinned `WorkerCoveredSiteTest` 2/2 (red-first: 4+
+    workers serve the tile; builder counts as a worker; 3 pass). Open:
+    the new A/B per WO stop rules (catalogue arm with cover check vs
+    legacy arm), then flip + chain deletion.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

@@ -8,6 +8,7 @@ import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
+import atlantis.production.constructions.position.conditions.can_build_here.IsWorkerCovered;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.PlacementPlanner;
@@ -214,6 +215,16 @@ public final class CatalogueSiteAdapter {
         // like the legacy chain, which refuses unpowered tiles at search.
         if (building.needsPower() && !IsPoweredByAPylon.check(site, building)) {
             SiteTwin.declined(building, "unpowered", via);
+
+            return null;
+        }
+        // Standing workers cover this tile: the builder assignment would
+        // refuse it and the builderless construction would die to the
+        // "looks bugged" cancel, then re-request the same tile (NEXT #145).
+        // Decline up front and let the legacy search answer - same numbers
+        // as the refusal, never worse than today.
+        if (IsWorkerCovered.check(site)) {
+            SiteTwin.declined(building, "worker-covered", via);
 
             return null;
         }
