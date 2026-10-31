@@ -167,7 +167,7 @@ public class AMap {
             areas = -1;
         }
 
-        System.out.println("MAP_ANALYSIS areas=" + areas + " chokes=" + chokes);
+        System.out.println("Detected areas:" + areas + ", chokes:" + chokes);
 
         boolean usable = areas > 0 && chokes > 0;
         if (usable) return;
