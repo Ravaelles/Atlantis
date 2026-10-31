@@ -39,4 +39,9 @@ final class SimBank implements OpeningRunner.BankAndSupply, tests.unit.sim.SimDr
     public int supplyUsed() {
         return harness.bankSupplyUsed();
     }
+
+    @Override
+    public int gas() {
+        return harness.bankGas();
+    }
 }

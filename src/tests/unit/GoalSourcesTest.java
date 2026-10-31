@@ -97,6 +97,10 @@ public class GoalSourcesTest {
         return UnitProducible.of(AUnitType.Protoss_Nexus).id();
     }
 
+    private static String gatewayType() {
+        return UnitProducible.of(AUnitType.Protoss_Gateway).id();
+    }
+
     private static AUnitType probe() {
         return AUnitType.Protoss_Probe;
     }
@@ -254,6 +258,24 @@ public class GoalSourcesTest {
 
         assertFalse(contains(DynamicGoals.contribute(building, ProductionRacePolicy.forRace("Protoss")), baseType()),
             "a base already coming is not missing - no sibling goal");
+    }
+
+    public void richAndBusyGatewaysWantAThird() {
+        DynamicGoals.GameSnapshot busy = new DynamicGoals.GameSnapshot(
+            40, 2, 70, 3, 79, 1000, false, 10, 2);
+        busy.gatewaysExisting = 2;
+        busy.gatewaysFree = 0;
+
+        assertTrue(contains(DynamicGoals.contribute(busy, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
+            "rich with every Gateway busy: a 3rd Gateway is wanted");
+
+        DynamicGoals.GameSnapshot idle = new DynamicGoals.GameSnapshot(
+            40, 2, 70, 3, 79, 1000, false, 10, 2);
+        idle.gatewaysExisting = 2;
+        idle.gatewaysFree = 1;
+
+        assertFalse(contains(DynamicGoals.contribute(idle, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
+            "rich but with a free Gateway: no 3rd, the free one takes the work");
     }
 
     public void expansionStopsAtFourBases() {

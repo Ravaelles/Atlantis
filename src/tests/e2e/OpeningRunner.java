@@ -135,7 +135,6 @@ final class OpeningRunner {
                 try {
                     while (numbers.supplyUsed() < supplyTarget && driver.frame() < frameCap) {
                         driver.step();
-                        if (hook != null) hook.afterStep(driver);
                     }
                     if (numbers.supplyUsed() < supplyTarget) {
                         throw new AssertionError(
@@ -160,9 +159,9 @@ final class OpeningRunner {
                             lastWarpCount = driver.warpLog().size();
                             stuckSinceFrame = driver.frame();
                         }
-                        // A banked 800 with nothing warping is the stall, not patience:
+                        // A banked 650 with nothing warping is the stall, not patience:
                         // fail fast with the diagnosis instead of running to the cap.
-                        if (numbers.minerals() >= 800
+                        if (numbers.minerals() >= 650
                             && driver.frame() - stuckSinceFrame >= 1500) {
                             throw new AssertionError(
                                 "bank-stuck: " + numbers.minerals() + " minerals banked and no warp for "
@@ -193,8 +192,8 @@ final class OpeningRunner {
 
     private static String samplePostFifty(
         SimDriver driver, BankAndSupply numbers) {
-        int workers = 0, nexuses = 0, busyNexuses = 0;
-        int probes = 0, dragoons = 0, pylons = 0;
+        int workers = 0, nexuses = 0, busyNexuses = 0, gateways = 0, busyGateways = 0;
+        int probes = 0, dragoons = 0, zealots = 0, pylons = 0;
         for (tests.fakes.FakeUnit unit : driver.units().ours()) {
             if (!unit.isAlive()) continue;
             if (unit.type().isWorker()) workers++;
@@ -202,19 +201,26 @@ final class OpeningRunner {
                 nexuses++;
                 if (!unit.trainingQueue().isEmpty()) busyNexuses++;
             }
+            if (unit.type().equals(atlantis.units.AUnitType.Protoss_Gateway)) {
+                gateways++;
+                if (!unit.trainingQueue().isEmpty()) busyGateways++;
+            }
         }
         for (SimDriver.WarpRecord record : driver.warpLog()) {
             if (record.type.equals("Probe")) probes++;
             else if (record.type.equals("Dragoon")) dragoons++;
+            else if (record.type.equals("Zealot")) zealots++;
             else if (record.type.equals("Pylon")) pylons++;
         }
 
         return "f" + driver.frame()
             + " supply=" + numbers.supplyUsed()
             + " bank=" + numbers.minerals()
+            + " gas=" + numbers.gas()
             + " workers=" + workers
             + " nexus=" + nexuses + "(busy " + busyNexuses + ")"
-            + " warps[P/D/Py]=" + probes + "/" + dragoons + "/" + pylons;
+            + " gates=" + gateways + "(busy " + busyGateways + ")"
+            + " warps[P/D/Z/Py]=" + probes + "/" + dragoons + "/" + zealots + "/" + pylons;
     }
 
     static final class PostFiftyResult {
@@ -454,6 +460,7 @@ final class OpeningRunner {
      * The number feeds the sim pushes into the harness fields every frame.
      */
     interface BankAndSupply {
+        int gas();
         void setMinerals(int minerals);
 
         void setGas(int gas);

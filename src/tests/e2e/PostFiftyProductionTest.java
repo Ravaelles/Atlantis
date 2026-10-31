@@ -51,7 +51,7 @@ public class PostFiftyProductionTest extends AbstractTestWithUnits {
     @Test
     public void economyKeepsProducingAfterFiftySupply() throws Exception {
         OpeningRunner.PostFiftyResult postFifty = OpeningRunner.playToSupplyThenExtra(
-            BUILD_ORDER, SimConfig.fast(), numbers(), 50, 2500, 30000);
+            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 2500, 30000);
 
         int probes = postFifty.probeWarpsAfterMark();
         if (probes < 6) {

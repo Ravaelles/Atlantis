@@ -131,11 +131,14 @@ at the end, never reused.
   is the behaviour-coverage goal - worth dozens of unit tests.
 - Budget: `scripts/run-tests.sh` stays well under 40 s (§12).
 
-## 12. Test runtime budget (owner's ruling, 2026-10-06)
+## 12. Test runtime budget (owner's ruling, 2026-10-06; re-measured 2026-10-31)
 
-- `scripts/run-tests.sh` = fast inner loop (unit minus `full-tier`,
-  advisory architecture, cheap e2e smokes). It **refuses** slow scopes
-  (`tests.e2e`, `tests.acceptance`, bare `tests root`) with exit 2.
+- `scripts/run-tests.sh` = fast inner loop, hard cap 20 s wall (measured
+  ~13 s: compile ~4 s, unit minus the tags below, advisory architecture).
+  Default excludes `full-tier`, `production`, `placement` - all three ride
+  the full suite; `--domain a,b` runs one area on demand.
+- Slow scopes stay out: `tests.e2e`, `tests.acceptance` and the bare
+  `tests` root are refused with exit 2 (`--allow-slow` for one-offs).
 - Slow scopes are **owner-only** (`scripts/run-full-tests.sh`).
 
 ## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
@@ -447,3 +450,22 @@ decompiled archives:
 - Content moved into §3 to end the two-section overlap; the number
   stays retired, never reused.
 
+## 35. Long-horizon sims assert at milestones, then stop (owner's ruling, 2026-10-31)
+
+- A sim that plays minutes of game is not a test that runs minutes: step
+  coarsely (`SimConfig.withStride`), sample on frame buckets (never bare
+  `% frame`, strides skip the exact multiple), and assert the moment the
+  question is answerable.
+- Milestones live in the test's frame hook, not in the runner: a list of
+  (supply threshold, predicate, demand sentence), each firing at most once
+  (`fired` flag). The first failure aborts the run on the spot with a
+  snapshot attached (bank, gas, supply, workers, buildings busy/idle, warp
+  deltas): a red verdict names the dead author, never just "expected X".
+  End-of-run asserts stay as backstop; they cost nothing.
+- Stuck is a verdict, not a hang: bank above threshold with no warps for
+  a window fails fast with the table; a frame cap ends runaway games the
+  same way. Never wait out a stall to prove it stalled.
+- Precedent: `LongGameToSeventyTest` (stride 60, ~15 s wall for ~20000
+  frames): gas/expansion/army/Gateway milestones in the hook, bank-stuck
+  (650 + 1500 silent frames) + frame-cap guards in the runner, one shared
+  `SimBank` harness instead of five anonymous copies.

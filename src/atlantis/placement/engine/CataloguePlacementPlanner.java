@@ -396,6 +396,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         PlacementReservation alreadyOrdered = carriedOver(unitType, targetFrame);
         if (alreadyOrdered != null) return alreadyOrdered;
 
+        // Gas branch (exact-geyser, never a search): a refinery is legal only
+        // on its geyser's own tile, which the terrain grid marks blocked (it
+        // is a resource). The generic rank would never serve it, so gas goes
+        // straight to the legacy exact-geyser rule and reserves that tile.
+        if (unitType.isGasBuilding()) {
+            return reserveGas(unitType, targetFrame);
+        }
+
         APosition centre = searchCentre(constraint);
         if (centre == null)
             return PlacementReservation.failure();
@@ -588,6 +596,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * exact-position bug in `_AI/POSITION-FINDER.md` §2.2, where a stored tile was
      * handed back verbatim long after something had been built on it.
      */
+    private PlacementReservation reserveGas(AUnitType unitType, int targetFrame) {
+        APosition tile = atlantis.production.constructions.position.GasBuildingPositionFinder
+            .findPositionForGasBuilding(unitType, passBuilder);
+        if (tile == null) return PlacementReservation.failure();
+
+        String key = tile.tx() + ":" + tile.ty();
+        if (reservedThisPass.contains(key)) return PlacementReservation.failure();
+        reservedThisPass.add(key);
+
+        return PlacementReservation.success(tile.tx(), tile.ty(), targetFrame);
+    }
+
     private PlacementReservation reserveExact(TargetPlacement constraint, AUnitType type, int targetFrame) {
         int x = constraint.exactTileX();
         int y = constraint.exactTileY();

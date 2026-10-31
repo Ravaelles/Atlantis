@@ -77,7 +77,7 @@ public class StalledWarpRecoverySimTest extends AbstractTestWithUnits {
 
     @Test
     public void frozenWarpRearmsAndSupplyRecovers() throws Exception {
-        OpeningRunner.playToSupplyThenExtraHooked(ROWS, SimConfig.fast(), numbers(), 50, 7000, 30000,
+        OpeningRunner.playToSupplyThenExtraHooked(ROWS, SimConfig.fast().withStride(60), numbers(), 50, 7000, 30000,
             driver -> {
                 int now = driver.frame();
                 hookFrames++;

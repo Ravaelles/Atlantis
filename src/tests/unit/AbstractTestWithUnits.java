@@ -96,6 +96,10 @@ public class AbstractTestWithUnits extends UnitTest {
     public int bankSupplyUsed() {
         return currentSupplyUsed;
     }
+
+    public int bankGas() {
+        return currentGas;
+    }
     protected int currentGas = 0;
     protected int currentSupplyUsed = 0;
     protected int currentSupplyTotal = 0;

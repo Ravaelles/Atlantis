@@ -46,15 +46,22 @@ public class PostFiftyBleedTest extends AbstractTestWithUnits {
     @Test
     public void bleedingArmyPullsReplacements() throws Exception {
         int[] kills = {0};
+        int[] lastBleedBucket = {-1};
         int[] maxBank = {0};
         tests.unit.sim.SimDriver[] lastDriver = {null};
 
         OpeningRunner.PostFiftyResult postFifty = OpeningRunner.playToSupplyThenExtraHooked(
-            BUILD_ORDER, SimConfig.fast(), numbers(), 50, 2500, 30000,
+            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 2500, 30000,
             driver -> {
                 lastDriver[0] = driver;
                 maxBank[0] = Math.max(maxBank[0], currentMinerals);
-                if (driver.frame() % 400 == 0 && bleedOneDragoon(driver)) kills[0]++;
+                // Bucketed, never modulo: a stride jumps over exact multiples,
+                // so an exact % check would silently never fire (vacuous pass).
+                int bucket = driver.frame() / 400;
+                if (bucket != lastBleedBucket[0]) {
+                    lastBleedBucket[0] = bucket;
+                    if (bleedOneDragoon(driver)) kills[0]++;
+                }
             });
 
         // A kill in the last training window is still in a Gateway when
