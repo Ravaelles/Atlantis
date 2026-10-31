@@ -1,11 +1,11 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.execution.DispatchResult;
-import atlantis.production.v2.execution.GameOrderDirector;
-import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.execution.DispatchResult;
+import atlantis.production.execution.GameOrderDirector;
+import atlantis.production.execution.ProductionDispatcher;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.OrderFallback;
@@ -87,7 +87,7 @@ public class TrainRefusalReasonsTest extends AbstractTestWithWorld {
 
             List<DispatchResult> results = dispatch(
                 new GameOrderDirector(), AUnitType.Protoss_Zealot,
-                atlantis.production.v2.ProductionItem.NO_PRODUCER);
+                atlantis.production.scheduling.ProductionItem.NO_PRODUCER);
 
             assertFalse(results.get(0).issued());
             assertEquals("no such facility", detailOf(results));

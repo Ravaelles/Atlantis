@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ public class TechUpgradesTest {
     }
 
     private static boolean hasUpgrade(List<ProductionGoal> goals, bwapi.UpgradeType type, int level) {
-        String id = atlantis.production.v2.UpgradeProducible.of(type, level).id();
+        String id = atlantis.production.producibles.UpgradeProducible.of(type, level).id();
 
         return goals.stream().anyMatch(goal -> goal.item().id().equals(id));
     }

@@ -1,8 +1,8 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

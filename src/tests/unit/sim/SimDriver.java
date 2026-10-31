@@ -2,7 +2,7 @@ package tests.unit.sim;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.engine.ProductionEngine;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;

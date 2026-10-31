@@ -1,11 +1,12 @@
 package tests.unit;
+import atlantis.production.execution.OrderDirector;
 
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.execution.DispatchResult;
-import atlantis.production.v2.execution.GameOrderDirector;
-import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.execution.DispatchResult;
+import atlantis.production.execution.GameOrderDirector;
+import atlantis.production.execution.ProductionDispatcher;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;

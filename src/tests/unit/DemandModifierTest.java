@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.v2.Demand;
+import atlantis.production.demand.Demand;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

@@ -1,0 +1,196 @@
+package atlantis.production.execution;
+import atlantis.production.placement.PlacementReservation;
+import atlantis.production.producibles.Producible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.producibles.TechProducible;
+import atlantis.production.producibles.UpgradeProducible;
+
+import atlantis.production.demand.*;
+import atlantis.production.placement.*;
+import atlantis.production.producibles.*;
+import atlantis.production.scheduling.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Layer 4 of the production redesign (M4 of
+ * _AI/redesign/01_PRODUCTION.md): turns a {@link ProductionPlan} into engine
+ * commands, <b>only</b> for the items whose moment has come.
+ *
+ * <p>
+ * Two time gates, both from Stardust's {@code issueOrders}:
+ * <ul>
+ * <li><b>Producing something</b> (training a unit, starting research) can be
+ * issued up to {@code latencyFrames} early - the order is queued by the
+ * engine and lands on the intended frame. Issuing later than the latency
+ * window drops the command, not the frame, so early is correct.</li>
+ * <li><b>Building something</b> is different: a builder must first walk to
+ * the tile, and the walk is frames spent not producing. That work is only
+ * started when the item is due <em>now</em> (or the plan says it is
+ * already late), never because it will be due this frame plus latency.
+ * In the legacy pipeline the same rule lived in
+ * {@code ShouldNotTravelToConstructYet}.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Pure logic (DIP): it never touches BWAPI, {@code AUnit} or {@code Select} -
+ * the director it holds is the only door to the engine. Everything here is
+ * therefore unit-tested with a recording fake, which is what makes the
+ * "execution timeliness" invariant (every committed item due inside the latency
+ * window is issued exactly once) a provable statement and not a hope.
+ * </p>
+ *
+ * <p>
+ * Within one frame the items are issued in start-frame order. That is not a
+ * detail: when funds only cover one of two due items, the one the schedule
+ * ordered first is the one that gets the command.
+ * </p>
+ */
+public final class ProductionDispatcher {
+
+    private final OrderDirector director;
+
+    public ProductionDispatcher(OrderDirector director) {
+        this.director = director;
+    }
+
+    /**
+     * Issues everything due at {@code currentFrame} and returns what was
+     * issued, in order.
+     *
+     * <p>Without a goal list there is nothing to revalidate against, so every
+     * due item is issued - the historical behavior the older tests pin.</p>
+     */
+    public List<DispatchResult> dispatch(ProductionPlan plan, int currentFrame, int latencyFrames) {
+        return dispatch(plan, null, currentFrame, latencyFrames);
+    }
+
+    /**
+     * Issues everything due at {@code currentFrame} that is still wanted by a
+     * goal of this frame, and returns what was issued, in order.
+     *
+     * <p>A non-prerequisite item whose producible no current-frame goal asks
+     * for is stale: the plan is rebuilt every frame, but a merged
+     * re-offer, a demoted construction or a goal that died between passes
+     * can leave one behind (measured live 000314: a second Pylon dispatch
+     * 337 frames after the first while the first builder was still walking).
+     * It is skipped, never issued - the twin names it {@code stale}, so the
+     * next live game shows whether the shape still occurs. Two things are
+     * never stale: prerequisites (auto-inserted unlocks have no goal of
+     * their own by design) and committed re-offers (same-tile idempotent
+     * builder replacement, the only path that recovers a dead builder).</p>
+     *
+     * @param goals this frame's goals, or null to skip revalidation
+     */
+    public List<DispatchResult> dispatch(
+        ProductionPlan plan, List<ProductionGoal> goals, int currentFrame, int latencyFrames) {
+        List<ProductionItem> due = itemsDue(plan, currentFrame, latencyFrames);
+
+        List<DispatchResult> issued = new ArrayList<>();
+        for (ProductionItem item : due) {
+            if (goals != null && isStale(item, goals)) {
+                issued.add(new DispatchResult(item, false, "stale: no live goal"));
+                continue;
+            }
+            issued.add(issue(item));
+        }
+        return issued;
+    }
+
+    /**
+     * The items of the plan whose command must leave now, ordered by start
+     * frame. Visible for tests and for the dry-run comparison log.
+     */
+    public List<ProductionItem> itemsDue(ProductionPlan plan, int currentFrame, int latencyFrames) {
+        List<ProductionItem> due = new ArrayList<>();
+        for (ProductionItem item : plan.items()) {
+            if (isDue(item, currentFrame, latencyFrames))
+                due.add(item);
+        }
+
+        Collections.sort(due, new Comparator<ProductionItem>() {
+            @Override
+            public int compare(ProductionItem a, ProductionItem b) {
+                return Integer.compare(a.startFrame(), b.startFrame());
+            }
+        });
+
+        return due;
+    }
+
+    private boolean isDue(ProductionItem item, int currentFrame, int latencyFrames) {
+        int earliestIssuable = item.startFrame() - latencyFrames;
+
+        if (!item.item().requiresPlacement()) {
+            return currentFrame >= earliestIssuable;
+        }
+
+        // A building in flight already has its builder; re-offering the tile is
+        // how the seam stays idempotent, and it is the only way a builder that
+        // died en route is replaced. The reservation reports the frame it was
+        // committed on (-1 while the builder is still walking).
+        PlacementReservation placement = item.placement();
+        if (placement != null && placement.committedAtFrame() >= 0
+            && placement.committedAtFrame() <= currentFrame) {
+            return true;
+        }
+
+        return currentFrame >= item.startFrame();
+    }
+
+    /**
+     * True when this item outlived its demand: no goal of this frame asks for
+     * its producible. Prerequisites and committed re-offers are never stale
+     * (see {@link #dispatch}).
+     */
+    private boolean isStale(ProductionItem item, List<ProductionGoal> goals) {
+        if (item.isPrerequisite()) return false;
+
+        PlacementReservation placement = item.placement();
+        if (placement != null && placement.committedAtFrame() >= 0) return false;
+
+        for (ProductionGoal goal : goals) {
+            if (goal.item().id().equals(item.item().id())) return false;
+        }
+        return true;
+    }
+
+    private DispatchResult issue(ProductionItem item) {
+        if (item.item().requiresPlacement()) {
+            PlacementReservation placement = item.placement();
+            if (placement == null || !placement.isSuccessful()) {
+                return new DispatchResult(item, false, "no placement reservation");
+            }
+            boolean ok = director.buildAt(item.item(), placement, item.minSupply());
+            return new DispatchResult(item, ok, ok ? "builder committed" : "no placement");
+        }
+
+        String producerTypeId = item.item().producerTypeId();
+        if (producerTypeId == null || producerTypeId.equals("Unknown")) {
+            return new DispatchResult(item, false, "no producer type");
+        }
+
+        // Tech and upgrades are researched, not trained: the facility answer is
+        // the same (producerTypeId), but the engine command is a different one.
+        // Without this branch a Dragoon's Singularity Charge would be sent to
+        // train(), which is how a research goal would silently do nothing.
+        if (isResearch(item.item())) {
+            boolean researched = director.researchOrUpgrade(producerTypeId, item.producerId(), item.item());
+            return new DispatchResult(item, researched,
+                researched ? "researched" : "facility busy or missing");
+        }
+
+        String refusal = director.trainFacility(producerTypeId, item.producerId(), item.item());
+        return new DispatchResult(item, refusal == null, refusal == null ? "trained" : refusal);
+    }
+
+    private boolean isResearch(Producible item) {
+        return item instanceof TechProducible || item instanceof UpgradeProducible;
+    }
+}

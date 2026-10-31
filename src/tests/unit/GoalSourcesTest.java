@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class GoalSourcesTest {
     }
 
     private static String singularityId() {
-        return atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge).id();
+        return atlantis.production.producibles.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge).id();
     }
 
     private static DynamicGoals.GameSnapshot gasState(int supply, int bases, int gas, int minerals,
@@ -302,16 +302,16 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot low = new DynamicGoals.GameSnapshot(10, 1, 29, 1, 30, 500, false);
 
         ProductionGoal fromDynamic = firstOf(DynamicGoals.contribute(low, ProductionRacePolicy.forRace("Protoss")), supplyType());
-        ProductionGoal fromPullForward = atlantis.production.v2.goals.PullForwardGoals.supplyGoal(
-            new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1, 29),
+        ProductionGoal fromPullForward = atlantis.production.demand.PullForwardGoals.supplyGoal(
+            new atlantis.production.demand.PullForwardGoals.Snapshot(1, 500, 10, 1, 1, 29),
             ProductionRacePolicy.forRace("Protoss"));
 
         assertNotNull(fromDynamic);
         assertEquals(fromDynamic.priority(), fromPullForward.priority(),
             "the pull-forward rule defers to the same one implementation");
-        assertFalse(contains(atlantis.production.v2.goals.PullForwardGoals.contribute(
-                    new atlantis.production.v2.ResourceTimeline(0, 500, 500, 0, 1, 30),
-                    new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 0, 1),
+        assertFalse(contains(atlantis.production.demand.PullForwardGoals.contribute(
+                    new atlantis.production.scheduling.ResourceTimeline(0, 500, 500, 0, 1, 30),
+                    new atlantis.production.demand.PullForwardGoals.Snapshot(1, 500, 10, 0, 1),
                     ProductionRacePolicy.forRace("Protoss")),
                 supplyType()),
             "and does not declare a second Pylon of its own");

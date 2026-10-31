@@ -1,9 +1,10 @@
 package tests.acceptance;
+import atlantis.production.engine.GameStateSnapshot;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 

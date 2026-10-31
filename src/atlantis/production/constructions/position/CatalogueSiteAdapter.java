@@ -11,10 +11,10 @@ import atlantis.production.constructions.position.conditions.can_build_here.IsPo
 import atlantis.production.constructions.position.conditions.can_build_here.IsWorkerCovered;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.v2.PlacementPlanner;
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
+import atlantis.production.placement.PlacementPlanner;
+import atlantis.production.placement.PlacementReservation;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.UnitProducible;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -141,7 +141,7 @@ public final class CatalogueSiteAdapter {
         }
 
         ProductionOrder order = construction.productionOrder();
-        atlantis.production.v2.Demand demand = construction.demand();
+        atlantis.production.demand.Demand demand = construction.demand();
         if (order == null && demand == null) {
             SiteTwin.declined(building, "no-order", "funnel");
 
@@ -270,7 +270,7 @@ public final class CatalogueSiteAdapter {
      * The funnel prefers this overload; the order overload stays for the
      * legacy path and its pins.
      */
-    public static TargetPlacement constraintFor(atlantis.production.v2.Demand demand,
+    public static TargetPlacement constraintFor(atlantis.production.demand.Demand demand,
                                                 Construction construction) {
         if (demand.isExact() && demand.around() != null) {
             APosition exact = APosition.create(demand.around());

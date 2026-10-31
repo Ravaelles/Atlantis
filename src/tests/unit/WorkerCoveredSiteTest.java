@@ -54,7 +54,7 @@ public class WorkerCoveredSiteTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             APosition tile = APosition.create(25, 25);
             ScriptedPlanner yes = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.success(25, 25, 0));
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
 
             assertNull(CatalogueSiteAdapter.siteFor(
                     yes, probe, AUnitType.Protoss_Gateway, gatewayOrderAt(tile)),
@@ -78,7 +78,7 @@ public class WorkerCoveredSiteTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             APosition tile = APosition.create(25, 25);
             ScriptedPlanner yes = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.success(25, 25, 0));
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
 
             APosition site = CatalogueSiteAdapter.siteFor(
                 yes, probe, AUnitType.Protoss_Gateway, gatewayOrderAt(tile));
@@ -90,10 +90,10 @@ public class WorkerCoveredSiteTest extends WorldStubForTests {
         });
     }
 
-    private static final class ScriptedPlanner implements atlantis.production.v2.PlacementPlanner {
-        private final atlantis.production.v2.PlacementReservation answer;
+    private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {
+        private final atlantis.production.placement.PlacementReservation answer;
 
-        ScriptedPlanner(atlantis.production.v2.PlacementReservation answer) {
+        ScriptedPlanner(atlantis.production.placement.PlacementReservation answer) {
             this.answer = answer;
         }
 
@@ -102,9 +102,9 @@ public class WorkerCoveredSiteTest extends WorldStubForTests {
         }
 
         @Override
-        public atlantis.production.v2.PlacementReservation reservePlacement(
-            atlantis.production.v2.Producible building,
-            atlantis.production.v2.TargetPlacement constraint, int targetFrame
+        public atlantis.production.placement.PlacementReservation reservePlacement(
+            atlantis.production.producibles.Producible building,
+            atlantis.production.placement.TargetPlacement constraint, int targetFrame
         ) {
             return answer;
         }

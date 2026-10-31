@@ -2,8 +2,8 @@ package tests.unit;
 
 import atlantis.game.A;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
@@ -95,13 +95,13 @@ public class MidGameStallReproTest extends WorldStubForTests {
         world(10, all, fakeEnemies(), () -> {
             if (A.now() != 5) return;
 
-            atlantis.production.v2.engine.GameStateSnapshot snap =
-                new atlantis.production.v2.engine.GameStateSnapshot(
+            atlantis.production.engine.GameStateSnapshot snap =
+                new atlantis.production.engine.GameStateSnapshot(
                     ProductionRacePolicy.forRace("Protoss"));
 
             assertTrue(snap.dynamicGoals(false).stream()
                 .anyMatch(g -> g.item().id().equals(
-                    atlantis.production.v2.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
+                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
                 "26 workers saturate the base - the natural must be wanted");
         });
     }
@@ -125,13 +125,13 @@ public class MidGameStallReproTest extends WorldStubForTests {
         world(10, ours, fakeEnemies(), () -> {
             if (A.now() != 5) return;
 
-            atlantis.production.v2.engine.GameStateSnapshot snap =
-                new atlantis.production.v2.engine.GameStateSnapshot(
+            atlantis.production.engine.GameStateSnapshot snap =
+                new atlantis.production.engine.GameStateSnapshot(
                     ProductionRacePolicy.forRace("Protoss"));
 
             assertTrue(snap.dynamicGoals(false).stream()
                 .noneMatch(g -> g.item().id().equals(
-                    atlantis.production.v2.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
+                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
                 "below 25 workers the base is not saturated - workers first, no Nexus");
         });
     }

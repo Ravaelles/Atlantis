@@ -1,6 +1,22 @@
 package tests.unit;
+import atlantis.production.producibles.ExistingItems;
+import atlantis.production.placement.PlacementPlanner;
+import atlantis.production.placement.PlacementReservation;
+import atlantis.production.producibles.ProducerFacility;
+import atlantis.production.producibles.ProducerFacilityRegistry;
+import atlantis.production.producibles.Producible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.scheduling.ProductionScheduler;
+import atlantis.production.producibles.ResourceCost;
+import atlantis.production.scheduling.ResourceTimeline;
+import atlantis.production.scheduling.ScheduleRefusal;
+import atlantis.production.placement.TargetPlacement;
 
-import atlantis.production.v2.*;
+import atlantis.production.demand.*;
+import atlantis.production.placement.*;
+import atlantis.production.producibles.*;
+import atlantis.production.scheduling.*;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

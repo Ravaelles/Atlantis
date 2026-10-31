@@ -1,4 +1,5 @@
 package tests.e2e;
+import atlantis.production.demand.BuildOrderGoals;
 
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.build.CurrentBuildOrder;

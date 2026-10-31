@@ -1,6 +1,6 @@
 package tests.unit.sim;
 
-import atlantis.production.v2.EconomyModel;
+import atlantis.production.scheduling.EconomyModel;
 import atlantis.units.actions.Actions;
 import tests.fakes.FakeUnit;
 

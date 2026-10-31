@@ -1,4 +1,6 @@
 package tests.e2e;
+import atlantis.production.scheduling.EconomyModel;
+import atlantis.production.engine.ProductionEngine;
 
 import atlantis.units.AUnitType;
 import bwapi.Race;

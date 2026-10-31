@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.production.v2.ResourceCost;
-import atlantis.production.v2.ResourceTimeline;
+import atlantis.production.producibles.ResourceCost;
+import atlantis.production.scheduling.ResourceTimeline;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -184,8 +184,8 @@ public class TimelineSlideTest {
     @Test
     public void planningTheOpeningSupplyProviderFirstRemovesTheSlide() {
         assertTrue(
-            atlantis.production.v2.ProductionGoal.PRIORITY_OPENING_SUPPLY
-                < atlantis.production.v2.ProductionGoal.PRIORITY_WORKERS,
+            atlantis.production.demand.ProductionGoal.PRIORITY_OPENING_SUPPLY
+                < atlantis.production.demand.ProductionGoal.PRIORITY_WORKERS,
             "precondition: the opening supply band must sort before the worker band"
         );
 

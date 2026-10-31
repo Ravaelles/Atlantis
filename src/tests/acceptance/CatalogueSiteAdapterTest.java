@@ -121,7 +121,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             order.markAsUsingExactPosition();
             Construction construction = constructionFor(AUnitType.Protoss_Gateway, order, null);
             ScriptedPlanner yes = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.success(25, 25, 0));
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
 
             APosition site = CatalogueSiteAdapter.siteFor(yes, probe, AUnitType.Protoss_Gateway, construction);
 
@@ -156,10 +156,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
         Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
 
-        atlantis.production.v2.TargetPlacement constraint =
+        atlantis.production.placement.TargetPlacement constraint =
             CatalogueSiteAdapter.constraintFor(order, construction);
 
-        assertEquals(atlantis.production.v2.TargetPlacement.Mode.NEIGHBOURHOOD, constraint.mode());
+        assertEquals(atlantis.production.placement.TargetPlacement.Mode.NEIGHBOURHOOD, constraint.mode());
         assertEquals(20, constraint.tileX());
         assertEquals(20, constraint.tileY());
     }
@@ -170,10 +170,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         order.markAsUsingExactPosition();
         Construction construction = constructionFor(AUnitType.Protoss_Gateway, order, null);
 
-        atlantis.production.v2.TargetPlacement constraint =
+        atlantis.production.placement.TargetPlacement constraint =
             CatalogueSiteAdapter.constraintFor(order, construction);
 
-        assertEquals(atlantis.production.v2.TargetPlacement.Mode.EXACT_TILE, constraint.mode());
+        assertEquals(atlantis.production.placement.TargetPlacement.Mode.EXACT_TILE, constraint.mode());
         assertEquals(25, constraint.exactTileX());
         assertEquals(25, constraint.exactTileY());
     }
@@ -183,10 +183,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
         Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, null);
 
-        atlantis.production.v2.TargetPlacement constraint =
+        atlantis.production.placement.TargetPlacement constraint =
             CatalogueSiteAdapter.constraintFor(order, construction);
 
-        assertEquals(atlantis.production.v2.TargetPlacement.Mode.ANYWHERE, constraint.mode());
+        assertEquals(atlantis.production.placement.TargetPlacement.Mode.ANYWHERE, constraint.mode());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
             Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
             ScriptedPlanner failing = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.failure());
+                atlantis.production.placement.PlacementReservation.failure());
 
             APosition site = CatalogueSiteAdapter.siteFor(failing, probe, AUnitType.Protoss_Pylon, construction);
 
@@ -222,7 +222,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
             Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
             ScriptedPlanner yes = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.success(30, 30, 0));
+                atlantis.production.placement.PlacementReservation.success(30, 30, 0));
 
             APosition site = CatalogueSiteAdapter.siteFor(yes, probe, AUnitType.Protoss_Pylon, construction);
 
@@ -263,7 +263,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             probe
         ), fakeEnemies(), () -> {
             ScriptedPlanner failing = new ScriptedPlanner(
-                atlantis.production.v2.PlacementReservation.failure());
+                atlantis.production.placement.PlacementReservation.failure());
 
             APosition site = CatalogueSiteAdapter.siteForSited(
                 failing, probe, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12);
@@ -330,10 +330,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     /**
      * A planner with a scripted answer: the seam for decline routing without map physics.
      */
-    private static final class ScriptedPlanner implements atlantis.production.v2.PlacementPlanner {
-        private final atlantis.production.v2.PlacementReservation answer;
+    private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {
+        private final atlantis.production.placement.PlacementReservation answer;
 
-        ScriptedPlanner(atlantis.production.v2.PlacementReservation answer) {
+        ScriptedPlanner(atlantis.production.placement.PlacementReservation answer) {
             this.answer = answer;
         }
 
@@ -342,9 +342,9 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         }
 
         @Override
-        public atlantis.production.v2.PlacementReservation reservePlacement(
-            atlantis.production.v2.Producible building,
-            atlantis.production.v2.TargetPlacement constraint, int targetFrame
+        public atlantis.production.placement.PlacementReservation reservePlacement(
+            atlantis.production.producibles.Producible building,
+            atlantis.production.placement.TargetPlacement constraint, int targetFrame
         ) {
             return answer;
         }

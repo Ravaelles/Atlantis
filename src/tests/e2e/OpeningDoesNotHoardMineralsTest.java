@@ -1,9 +1,9 @@
 package tests.e2e;
 
 import atlantis.game.A;
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.ProductionPlan;
-import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;

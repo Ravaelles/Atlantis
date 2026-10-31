@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class DragoonPumpTest {
         // them apart.
         return goals.stream().anyMatch(goal ->
             goal.item().id().equals(id)
-                && goal.priority() == atlantis.production.v2.ProductionGoal.PRIORITY_MAINARMY);
+                && goal.priority() == atlantis.production.demand.ProductionGoal.PRIORITY_MAINARMY);
     }
 
     private static List<ProductionGoal> contribute(DynamicGoals.GameSnapshot snapshot) {

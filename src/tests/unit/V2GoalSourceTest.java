@@ -1,7 +1,22 @@
 package tests.unit;
+import atlantis.production.demand.BuildOrderGoals;
+import atlantis.production.demand.BuildOrderProgress;
+import atlantis.production.demand.BuildOrderRow;
+import atlantis.production.demand.DynamicGoals;
+import atlantis.production.producibles.Producible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.demand.PullForwardGoals;
+import atlantis.production.scheduling.ResourceTimeline;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.demand.V2GoalSourceTwin;
 
-import atlantis.production.v2.*;
-import atlantis.production.v2.goals.*;
+import atlantis.production.demand.*;
+import atlantis.production.placement.*;
+import atlantis.production.policy.*;
+import atlantis.production.producibles.*;
+import atlantis.production.scheduling.*;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;

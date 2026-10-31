@@ -1,13 +1,13 @@
 package tests.unit;
 
 
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.BuildOrderGoals;
-import atlantis.production.v2.goals.BuildOrderProgress;
-import atlantis.production.v2.goals.BuildOrderRow;
+import atlantis.production.producibles.Producible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.demand.BuildOrderGoals;
+import atlantis.production.demand.BuildOrderProgress;
+import atlantis.production.demand.BuildOrderRow;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

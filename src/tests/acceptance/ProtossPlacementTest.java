@@ -3,9 +3,9 @@ package tests.acceptance;
 import atlantis.placement.blocks.BlockTemplates;
 import atlantis.placement.core.*;
 import atlantis.placement.policy.CannonFortificationPolicy;
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.UnitProducible;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 

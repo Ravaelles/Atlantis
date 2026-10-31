@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.production.SupplyBlockedTwin;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.v2.engine.GameStateSnapshot;
+import atlantis.production.engine.GameStateSnapshot;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;

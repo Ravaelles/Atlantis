@@ -1,10 +1,11 @@
 package tests.acceptance;
+import atlantis.production.placement.PlacementPlanner;
 
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.placement.engine.CataloguePlacementPlanner;
-import atlantis.production.v2.PlacementReservation;
-import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
+import atlantis.production.placement.PlacementReservation;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.UnitProducible;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 

@@ -1,12 +1,13 @@
 package tests.unit;
+import atlantis.production.demand.Demand;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.engine.ProductionEngine;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;

@@ -1,9 +1,22 @@
 package tests.unit;
+import atlantis.production.placement.PlacementReservation;
+import atlantis.production.producibles.Producible;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.scheduling.ProductionPlan;
+import atlantis.production.producibles.ResourceCost;
+import atlantis.production.placement.TargetPlacement;
+import atlantis.production.producibles.TechProducible;
+import atlantis.production.producibles.UpgradeProducible;
 
-import atlantis.production.v2.*;
-import atlantis.production.v2.execution.DispatchResult;
-import atlantis.production.v2.execution.OrderDirector;
-import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.production.demand.*;
+import atlantis.production.execution.*;
+import atlantis.production.placement.*;
+import atlantis.production.producibles.*;
+import atlantis.production.scheduling.*;
+import atlantis.production.execution.DispatchResult;
+import atlantis.production.execution.OrderDirector;
+import atlantis.production.execution.ProductionDispatcher;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

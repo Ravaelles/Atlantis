@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.TechProducible;
-import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.UpgradeProducible;
+import atlantis.production.producibles.Producible;
+import atlantis.production.producibles.TechProducible;
+import atlantis.production.producibles.UnitProducible;
+import atlantis.production.producibles.UpgradeProducible;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;

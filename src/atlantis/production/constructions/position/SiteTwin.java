@@ -3,7 +3,7 @@ package atlantis.production.constructions.position;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
-import atlantis.production.v2.PlacementReservation;
+import atlantis.production.placement.PlacementReservation;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
@@ -62,7 +62,7 @@ final class SiteTwin {
 
     static void answered(AUnitType building, APosition site, String via,
                          PlacementReservation reservation,
-                         atlantis.production.v2.TargetPlacement constraint) {
+                         atlantis.production.placement.TargetPlacement constraint) {
         if (site == null) return;
 
         EventLog.Builder row = EventLog.key(LogKey.CATALOGUE_SITE)

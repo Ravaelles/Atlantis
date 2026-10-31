@@ -1,4 +1,5 @@
 package atlantis.placement.policy;
+import atlantis.production.placement.TargetPlacement;
 
 /**
  * How many Photon Cannons a base should have, re-derived from the legacy

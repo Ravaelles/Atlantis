@@ -446,6 +446,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     CoveredTile + CommanderTreeWiring + PlacementSupport +
     ProductionEngineSmoke 10/10. Heavy SimOpeningToFifty re-golden
     follows (exceeds the 10-min run window here).
+    REORG 2026-11-01 (owner order: dissolve v2/): the 40 classes move one
+    level up into responsibility packages under `production/` - scheduling
+    (scheduler, timeline, economy, plan), demand (Demand, goals),
+    producibles (recipes, costs, facilities), policy (race identities),
+    engine (ProductionEngine + live adapters), execution (dispatcher,
+    directors), placement (the siting port). SOLID: demand owns WHAT,
+    scheduling owns WHEN, producibles own WHAT-IT-COSTS, engine owns the
+    live-game edge, execution owns issuance. Full gate 1887/1887, arch
+    unchanged (same 2 pre-existing advisories, no new violations).
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

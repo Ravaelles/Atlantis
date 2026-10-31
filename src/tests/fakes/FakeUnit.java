@@ -1,4 +1,7 @@
 package tests.fakes;
+import atlantis.production.engine.GameStateSnapshot;
+import atlantis.production.engine.LiveExistingItems;
+import atlantis.production.engine.LiveFacilityRegistry;
 
 import atlantis.game.ARandom;
 import atlantis.game.player.APlayer;

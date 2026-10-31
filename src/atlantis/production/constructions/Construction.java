@@ -64,7 +64,7 @@ public class Construction implements Comparable<Construction> {
     private HasPosition near;
     private double maxDistance;
     private ProductionOrder productionOrder;
-    private atlantis.production.v2.Demand demand;
+    private atlantis.production.demand.Demand demand;
     private ConstructionOrderStatus status;
 
     // =========================================================
@@ -397,11 +397,11 @@ public class Construction implements Comparable<Construction> {
      * order by the v2 dispatcher, read by nobody yet. Readers migrate here
      * one file per commit; the synthetic dies with the last reader.
      */
-    public atlantis.production.v2.Demand demand() {
+    public atlantis.production.demand.Demand demand() {
         return demand;
     }
 
-    public void setDemand(atlantis.production.v2.Demand demand) {
+    public void setDemand(atlantis.production.demand.Demand demand) {
         this.demand = demand;
     }
 

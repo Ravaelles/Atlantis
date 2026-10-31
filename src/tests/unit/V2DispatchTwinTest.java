@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.Producible;
-import atlantis.production.v2.ProductionItem;
-import atlantis.production.v2.execution.DispatchResult;
-import atlantis.production.v2.execution.V2DispatchTwin;
+import atlantis.production.producibles.Producible;
+import atlantis.production.scheduling.ProductionItem;
+import atlantis.production.execution.DispatchResult;
+import atlantis.production.execution.V2DispatchTwin;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -81,8 +81,8 @@ public class V2DispatchTwinTest {
         }
 
         @Override
-        public atlantis.production.v2.ResourceCost cost() {
-            return atlantis.production.v2.ResourceCost.of(100, 0, 2);
+        public atlantis.production.producibles.ResourceCost cost() {
+            return atlantis.production.producibles.ResourceCost.of(100, 0, 2);
         }
 
         @Override

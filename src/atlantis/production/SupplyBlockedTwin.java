@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.v2.engine.GameStateSnapshot;
+import atlantis.production.engine.GameStateSnapshot;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
@@ -40,7 +40,7 @@ public final class SupplyBlockedTwin {
             .param("free", supplyFree)
             .param("coming", supplyComing)
             .log(AGame.now(), A.minSec());
-        if (supplyFree > atlantis.production.v2.goals.DynamicGoals.SUPPLY_WORRY_LEVEL) return;
+        if (supplyFree > atlantis.production.demand.DynamicGoals.SUPPLY_WORRY_LEVEL) return;
         if (supplyComing <= 0) return;
 
         for (AUnit unit : atlantis.units.select.BaseSelect.ourUnitsWithUnfinishedList()) {

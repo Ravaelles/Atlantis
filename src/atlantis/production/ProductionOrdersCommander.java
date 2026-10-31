@@ -2,8 +2,8 @@ package atlantis.production;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.engine.ProductionEngine;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 

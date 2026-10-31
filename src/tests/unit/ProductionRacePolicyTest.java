@@ -1,9 +1,9 @@
 package tests.unit;
 
-import atlantis.production.v2.ProductionRacePolicy;
-import atlantis.production.v2.ProtossProductionRacePolicy;
-import atlantis.production.v2.TerranProductionRacePolicy;
-import atlantis.production.v2.ZergProductionRacePolicy;
+import atlantis.production.policy.ProductionRacePolicy;
+import atlantis.production.policy.ProtossProductionRacePolicy;
+import atlantis.production.policy.TerranProductionRacePolicy;
+import atlantis.production.policy.ZergProductionRacePolicy;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

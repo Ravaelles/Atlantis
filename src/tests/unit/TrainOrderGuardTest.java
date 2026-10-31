@@ -1,4 +1,5 @@
 package tests.unit;
+import atlantis.production.execution.GameOrderDirector;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class TrainOrderGuardTest {
     private static final Path GATEWAY = Paths
         .get("src/atlantis/production/dynamic/protoss/units/GatewayClosestToEnemy.java");
     private static final Path V2_DIRECTOR = Paths
-        .get("src/atlantis/production/v2/execution/GameOrderDirector.java");
+        .get("src/atlantis/production/execution/GameOrderDirector.java");
 
     private static String read(Path path) throws Exception {
         return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);

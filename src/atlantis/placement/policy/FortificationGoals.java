@@ -1,7 +1,7 @@
 package atlantis.placement.policy;
 
-import atlantis.production.v2.ProductionGoal;
-import atlantis.production.v2.TargetPlacement;
+import atlantis.production.demand.ProductionGoal;
+import atlantis.production.placement.TargetPlacement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public final class FortificationGoals {
      */
     public static List<ProductionGoal> forBase(
         CannonFortificationPolicy.Context context,
-        atlantis.production.v2.Producible cannon,
+        atlantis.production.producibles.Producible cannon,
         int nearBaseX, int nearBaseY) {
         List<ProductionGoal> goals = new ArrayList<>();
         int missing = CannonFortificationPolicy.missingCannons(context);

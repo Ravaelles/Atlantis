@@ -41,7 +41,7 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
 
     // (geometry inline: 20-tile walk, ~144f at 4px/f)
     private static final int PRICE = 100;
-    private static final double INCOME_PER_FRAME = 9 * atlantis.production.v2.EconomyModel.MINERALS_PER_WORKER_FRAME;
+    private static final double INCOME_PER_FRAME = 9 * atlantis.production.scheduling.EconomyModel.MINERALS_PER_WORKER_FRAME;
 
     private FakeUnit builder;
     private double bankFloat;
