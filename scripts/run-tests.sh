@@ -46,11 +46,25 @@ while [ "$i" -lt "${#args[@]}" ]; do
   i=$((i + 1))
 done
 
+# Unit scopes, enumerated explicitly (every test package named, so a new
+# subpackage cannot silently fall out of any gate).
+UNIT_PKGS=(
+  tests.unit
+  tests.unit.cache
+  tests.unit.decision
+  tests.unit.orders
+  tests.unit.sim
+  tests.unit.world
+)
+
 # --- domain run: --domain production,placement runs those areas' unit tests
 # (tag OR semantics: repeated --include-tag). No slow-refusal here: a domain
 # run is an explicit on-demand scope, and the full suite owns the slow ones.
 if [ -n "$DOMAIN" ]; then
-  JUNIT_ARGS=(--select-package tests.unit)
+  JUNIT_ARGS=()
+  for pkg in "${UNIT_PKGS[@]}"; do
+    JUNIT_ARGS+=(--select-package "$pkg")
+  done
   IFS=',' read -ra DOMAINS <<< "$DOMAIN"
   for d in "${DOMAINS[@]}"; do
     JUNIT_ARGS+=(--include-tag "$d")
@@ -59,9 +73,11 @@ fi
 
 # --- fast default when nothing else was asked for
 if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
-  JUNIT_ARGS=(
-    --select-package tests.unit
-    --select-package tests.architecture
+  JUNIT_ARGS=()
+  for pkg in "${UNIT_PKGS[@]}" tests.architecture; do
+    JUNIT_ARGS+=(--select-package "$pkg")
+  done
+  JUNIT_ARGS+=(
     --exclude-tag full-tier
     --exclude-tag production
     --exclude-tag placement
