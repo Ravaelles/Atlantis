@@ -59,6 +59,8 @@ public final class SimDriver {
     private int fundingRefusals;
     private int frame;
     private boolean gasAssigned;
+    private int lastWarpCount;
+    private int lastWarpFrame;
 
     public SimDriver(SimMap map, SimConfig config, SimFields fields, int startMinerals) {
         this.map = map;
@@ -197,6 +199,21 @@ public final class SimDriver {
             for (int i = 0; i < stride; i++) movement.stepAll(new ArrayList<FakeUnit>(units.ours()));
         }
         syncFields();
+        stallWatchdog();
+    }
+
+    /**
+     * The global harness: every sim, every step, no exceptions. Saving
+     * ends in a warp (which moves the frame marker); a silent hoard or
+     * an overlong run fails here instead of timing out somewhere mute.
+     */
+    private void stallWatchdog() {
+        if (warpLog.size() != lastWarpCount) {
+            lastWarpCount = warpLog.size();
+            lastWarpFrame = frame;
+            return;
+        }
+        SimStallException.check(frame, bank.minerals(), lastWarpFrame);
     }
 
     public int frame() {

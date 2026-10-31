@@ -462,10 +462,15 @@ decompiled archives:
   snapshot attached (bank, gas, supply, workers, buildings busy/idle, warp
   deltas): a red verdict names the dead author, never just "expected X".
   End-of-run asserts stay as backstop; they cost nothing.
-- Stuck is a verdict, not a hang: bank above threshold with no warps for
-  a window fails fast with the table; a frame cap ends runaway games the
-  same way. Never wait out a stall to prove it stalled.
+- Stuck is a verdict, never a hang - and it is GLOBAL, not per-test:
+  every `SimDriver.step()` ends in the watchdog (`SimStallException`, an
+  `AssertionError` so the run fails loudly instead of timing out mute).
+  Bank >= 800 with no warp for 1500 frames, or frame >= 36000 (20 game
+  minutes), aborts on the spot with frame/bank/silence in the message.
+  Per-test frame caps stay (they are shorter) but throw the same type.
+  Never wait out a stall to prove it stalled, and never let a new sim
+  run unguarded because its author forgot the guard.
 - Precedent: `LongGameToSeventyTest` (stride 60, ~15 s wall for ~20000
-  frames): gas/expansion/army/Gateway milestones in the hook, bank-stuck
-  (650 + 1500 silent frames) + frame-cap guards in the runner, one shared
+  frames): gas/expansion/army/Gateway milestones in the hook, bank-stuck (800 + 1500 silent frames, SimDriver-global) + frame-cap guards,
+  per-test caps throw the same `SimStallException` type, one shared
   `SimBank` harness instead of five anonymous copies.

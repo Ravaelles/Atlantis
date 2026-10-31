@@ -137,17 +137,15 @@ final class OpeningRunner {
                         driver.step();
                     }
                     if (numbers.supplyUsed() < supplyTarget) {
-                        throw new AssertionError(
-                            "sim hit the frame cap (" + frameCap + ") before supply "
-                                + supplyTarget + " - the opening never got there, see table");
+                        throw tests.unit.sim.SimStallException.timeLimit(driver.frame(), frameCap);
                     }
                     int markFrame = driver.frame();
 
+                    // The bank-stuck watch lives in SimDriver itself (global for
+                    // every sim, same thresholds): no local duplicate here.
                     List<String> table = new ArrayList<>();
                     int endFrame = markFrame + extraFrames;
                     int lastSampleBucket = driver.frame() / 100;
-                    int lastWarpCount = driver.warpLog().size();
-                    int stuckSinceFrame = driver.frame();
                     while (driver.frame() < endFrame && driver.frame() < frameCap) {
                         driver.step();
                         if (hook != null) hook.afterStep(driver);
@@ -155,25 +153,9 @@ final class OpeningRunner {
                             lastSampleBucket = driver.frame() / 100;
                             table.add(samplePostFifty(driver, numbers));
                         }
-                        if (driver.warpLog().size() != lastWarpCount) {
-                            lastWarpCount = driver.warpLog().size();
-                            stuckSinceFrame = driver.frame();
-                        }
-                        // A banked 650 with nothing warping is the stall, not patience:
-                        // fail fast with the diagnosis instead of running to the cap.
-                        if (numbers.minerals() >= 650
-                            && driver.frame() - stuckSinceFrame >= 1500) {
-                            throw new AssertionError(
-                                "bank-stuck: " + numbers.minerals() + " minerals banked and no warp for "
-                                    + (driver.frame() - stuckSinceFrame) + " frames (since f"
-                                    + stuckSinceFrame + ") - the build is not spending, see table:\n"
-                                    + String.join("\n", table));
-                        }
                     }
                     if (driver.frame() >= frameCap) {
-                        throw new AssertionError(
-                            "sim exceeded its frame cap (" + frameCap + " frames) - "
-                                + "the game never ended, see table:\n" + String.join("\n", table));
+                        throw tests.unit.sim.SimStallException.timeLimit(driver.frame(), frameCap);
                     }
 
                     return new PostFiftyResult(markFrame, driver.frame(), table, driver.warpLog());
