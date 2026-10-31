@@ -245,7 +245,7 @@ final class OpeningRunner {
                 return new OpeningResult(
                     numbers.supplyUsed(), driver.frame(), driver.warpLog(),
                     driver.invalidOrders(), driver.cancels(), maxBank,
-                    driver.constructionStarts());
+                    driver.constructionStarts(), driver.constructionStartTiles());
             } finally {
                 driver.close();
             }
@@ -334,16 +334,22 @@ final class OpeningRunner {
 
     /**
      * Duplicate-construction guard (live games duplicate Pylons and
-     * Gateways): during the opening every construction start must answer
+     * Gateways): every construction start during the opening must answer
      * a row. Occurrence matching alone would absorb a duplicate into the
      * next row's slot, and warp counting alone would miss the ones that
-     * die in cancels (the sim starts 6 Pylons for 4 rows) - so the starts
-     * are asserted. Units are excluded: the dynamic army goal legitimately
-     * trains past its rows.
+     * die in cancels - so the starts are asserted. A dynamic supply Pylon
+     * past the last BO row is legitimate demand (the BO owns no rows past
+     * it), so the count is not the contract: the churn shape is. A tile
+     * served twice for one type means the goal re-fired on a refused or
+     * cancelled site instead of moving on (measured: 17 same-tile Pylon
+     * starts on a standing-covered tile, each proximity-cancelled);
+     * dynamic demand always takes a fresh tile. Units are excluded: the
+     * dynamic army goal legitimately trains past its rows.
      */
     private static void assertNoExtraConstructions(
             List<Row> rows, List<RowDivergence> table,
-            Map<String, java.util.List<Integer>> starts, List<SimDriver.WarpRecord> log,
+            Map<String, java.util.List<Integer>> starts,
+            Map<String, java.util.List<String>> startTiles, List<SimDriver.WarpRecord> log,
             List<SimOrder> invalid, List<String> cancels) {
         int openingEnd = 0;
         for (RowDivergence row : table) openingEnd = Math.max(openingEnd, row.warpFrame);
@@ -353,23 +359,27 @@ final class OpeningRunner {
             expected.merge(row.type.name(), 1, Integer::sum);
         }
         List<String> extras = new ArrayList<>();
-        for (Map.Entry<String, Integer> need : expected.entrySet()) {
-            List<Integer> at = starts.getOrDefault(need.getKey(), new ArrayList<Integer>());
-            List<Integer> inWindow = new ArrayList<>();
-            for (int frame : at) {
-                if (frame <= openingEnd) inWindow.add(frame);
+        for (Map.Entry<String, java.util.List<Integer>> entry : starts.entrySet()) {
+            if (!expected.containsKey(entry.getKey())) {
+                for (int frame : entry.getValue()) {
+                    if (frame > openingEnd) continue;
+                    extras.add(entry.getKey() + " f" + frame + ": no row wants it");
+                }
+                continue;
             }
-            if (inWindow.size() > need.getValue()) {
-                extras.add(need.getKey() + ": " + inWindow.size() + " starts for "
-                    + need.getValue() + " rows (frames " + inWindow + ")");
+            List<String> tiles = startTiles.getOrDefault(entry.getKey(), new ArrayList<String>());
+            java.util.Set<String> seenInWindow = new java.util.HashSet<>();
+            List<Integer> frames = entry.getValue();
+            for (int i = 0; i < frames.size() && i < tiles.size(); i++) {
+                if (frames.get(i) > openingEnd) continue;
+                if (!seenInWindow.add(tiles.get(i))) {
+                    extras.add(entry.getKey() + ": tile " + tiles.get(i) + " served twice"
+                        + " (re-fire on a refused site, not demand)");
+                }
             }
         }
-        for (Map.Entry<String, java.util.List<Integer>> entry : starts.entrySet()) {
-            if (expected.containsKey(entry.getKey())) continue;
-            for (int frame : entry.getValue()) {
-                if (frame > openingEnd) continue;
-                extras.add(entry.getKey() + " f" + frame + ": no row wants it");
-            }
+        for (String cancel : cancels) {
+            extras.add("proximity cancel during the opening: " + cancel);
         }
         if (!extras.isEmpty()) {
             fail("extra constructions during the opening: " + extras
@@ -440,11 +450,13 @@ final class OpeningRunner {
         private final List<String> cancels;
         private final int maxBank;
         private final Map<String, java.util.List<Integer>> starts;
+        private final Map<String, java.util.List<String>> startTiles;
 
         OpeningResult(
             int supplyReached, int frames, List<SimDriver.WarpRecord> log,
             List<SimOrder> invalid, List<String> cancels, int maxBank,
-            Map<String, java.util.List<Integer>> starts) {
+            Map<String, java.util.List<Integer>> starts,
+            Map<String, java.util.List<String>> startTiles) {
             this.supplyReached = supplyReached;
             this.frames = frames;
             this.log = log;
@@ -452,6 +464,7 @@ final class OpeningRunner {
             this.cancels = cancels;
             this.maxBank = maxBank;
             this.starts = starts;
+            this.startTiles = startTiles;
         }
 
         List<SimDriver.WarpRecord> warpLog() {
@@ -513,7 +526,7 @@ final class OpeningRunner {
                 System.out.println("SimOpening: late rows (delta>=2, tuning watch):\n  "
                     + String.join("\n  ", late));
             }
-            assertNoExtraConstructions(rows, table, starts, log, invalid, cancels);
+            assertNoExtraConstructions(rows, table, starts, startTiles, log, invalid, cancels);
         }
 
         /**

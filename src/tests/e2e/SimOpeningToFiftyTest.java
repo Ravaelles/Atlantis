@@ -51,10 +51,13 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
      * Golden warp frames, one per row above, from the first green run.
      * The sim is deterministic: same code, same frames. A drift means the
      * bot or the sim changed - update deliberately, never to make red
-     * green (same contract as the arch store).
+     * green (same contract as the arch store). Re-goldened 2026-11-01 for
+     * the EconomyModel re-rate (owner numbers: 8 minerals per 300 frames
+     * per worker, was 8 per ~180): every warp lands later, order and gates
+     * unchanged - slower income, same decisions.
      */
     private static final int[] GOLDEN_WARP_FRAMES = {
-        1218, 2274, 3419, 3175, 3187, 3836, 4436, 4444, 6024, 4784, 5175,
+        2050, 3928, 6485, 5294, 4271, 6118, 7041, 5448, 8926, 7693, 7199,
     };
 
     /**

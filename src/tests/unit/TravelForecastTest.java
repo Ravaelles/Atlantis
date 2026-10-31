@@ -129,15 +129,15 @@ public class TravelForecastTest extends AbstractTestWithWorld {
             currentMinerals = 60;
             assertTrue(
                 ShouldNotTravelToConstructYet.check(construction, builder, 5.0),
-                "money lands ~89f out, boots in ~39: walking now donates mining");
+                "money lands ~150f out, boots in ~32: walking now donates mining");
             assertFalse(
                 ShouldNotTravelToConstructYet.check(AUnitType.Protoss_Pylon, 5.0),
                 "documents the delta: the legacy margin walks at bank 60");
 
-            currentMinerals = 82;
+            currentMinerals = 88;
             assertFalse(
                 ShouldNotTravelToConstructYet.check(construction, builder, 5.0),
-                "money lands ~40f out, boots in ~39: walk now, wait at the site");
+                "money lands ~45f out, boots in ~32: walk now, wait at the site");
         });
     }
 

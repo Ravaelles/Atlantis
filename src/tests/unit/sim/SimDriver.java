@@ -215,6 +215,11 @@ public final class SimDriver {
         return constructions.starts();
     }
 
+    /** First-sight tiles per building type, parallel to {@link #starts}. */
+    public java.util.Map<String, java.util.List<String>> constructionStartTiles() {
+        return constructions.startTiles();
+    }
+
     public List<String> cancels() {
         return new ArrayList<>(cancels);
     }

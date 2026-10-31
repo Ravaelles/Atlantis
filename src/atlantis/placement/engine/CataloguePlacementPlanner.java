@@ -4,6 +4,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.*;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.v2.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -356,6 +357,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             RacePlacementStrategy.AvailabilityVerdict availability = availabilityVerdict(unitType, candidate);
             if (availability == RacePlacementStrategy.AvailabilityVerdict.REFUSE) continue;
 
+            // A tile a standing building already covers never hosts a warp:
+            // serving it burns a builder walk plus a proximity-finish cancel
+            // every frame while the need persists (NEXT #145: 17 same-tile
+            // Pylon re-fires in the opening sim, 2065x on live [105,115]).
+            // Completed buildings only - warping ones still finish and free
+            // the tile (same rule as the sim's coveredByStanding and the
+            // refresh path's blockingCompletedBuilding).
+            if (standsOnCompletedBuilding(candidate, unitType)) continue;
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to
@@ -483,6 +493,22 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return RacePlacementStrategy.AvailabilityVerdict.AVAILABLE;
         }
         return strategy.availabilityVerdict(candidate.tileX(), candidate.tileY(), unitType.name());
+    }
+
+    /**
+     * True when a standing completed building already covers this tile.
+     * One shared predicate with the resite/adopt guards and the legacy
+     * physical check (no second idea of "covered"). Null-safe by
+     * construction: with no game running there are no standing buildings
+     * to collide with.
+     */
+    private boolean standsOnCompletedBuilding(BuildLocation candidate, AUnitType unitType) {
+        try {
+            return OverlapsOurStandingBuilding.check(APosition.create(candidate.tileX(), candidate.tileY()), unitType);
+        }
+        catch (RuntimeException ignored) {
+            return false;
+        }
     }
 
     /**

@@ -48,6 +48,9 @@ public final class SimConstructions {
 
     /** Frames the sim first saw a construction, per building type name. */
     private final Map<String, java.util.List<Integer>> starts = new HashMap<>();
+    /** First-sight tiles ("tx,ty"), parallel to {@link #starts}: a tile served
+     * twice for one type is a re-fire on a refused site, not demand. */
+    private final Map<String, java.util.List<String>> startTiles = new HashMap<>();
     private final Map<Integer, TrainingJob> training = new HashMap<>();
     private final Map<Integer, ResearchJob> research = new HashMap<>();
 
@@ -94,6 +97,15 @@ public final class SimConstructions {
         return copy;
     }
 
+    /** First-sight tiles per building type, parallel to {@link #starts}. */
+    public Map<String, java.util.List<String>> startTiles() {
+        Map<String, java.util.List<String>> copy = new HashMap<>();
+        for (Map.Entry<String, java.util.List<String>> e : startTiles.entrySet()) {
+            copy.put(e.getKey(), new java.util.ArrayList<String>(e.getValue()));
+        }
+        return copy;
+    }
+
     public boolean hasWork() {
         if (!training.isEmpty() || !research.isEmpty()) return true;
 
@@ -120,6 +132,10 @@ public final class SimConstructions {
             if (construction.buildingType() != null) {
                 starts.computeIfAbsent(construction.buildingType().name(),
                     k -> new java.util.ArrayList<Integer>()).add(frame.frame());
+                APosition at = construction.buildPosition();
+                startTiles.computeIfAbsent(construction.buildingType().name(),
+                    k -> new java.util.ArrayList<String>())
+                    .add(at == null ? "-" : (at.tx() + "," + at.ty()));
             }
         }
 

@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * modeled, dispatch fires when the affordable frame meets the arrival
  * frame - and the wait, when there is one, happens AT the site.
  *
- * <p>Synthetic world, real gates: 9 miners (0.405 minerals/frame), a
+ * <p>Synthetic world, real gates: 9 miners (0.24 minerals/frame), a
  * 20-tile walk, 100-mineral Pylon. The walk takes ~144f, the money
- * ~247f, so the builder leaves around frame 79 and arrives with the
+ * ~417f, so the builder leaves around frame 249 and arrives with the
  * bank 1-16 short of the price - never 50 early, never after a full
  * bank sat idle. Asserted on outcomes (orders, positions, bank), not
  * on internals.</p>
@@ -41,7 +41,7 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
 
     // (geometry inline: 20-tile walk, ~144f at 4px/f)
     private static final int PRICE = 100;
-    private static final double INCOME_PER_FRAME = 9 * 0.045;
+    private static final double INCOME_PER_FRAME = 9 * atlantis.production.v2.EconomyModel.MINERALS_PER_WORKER_FRAME;
 
     private FakeUnit builder;
     private double bankFloat;
@@ -110,7 +110,7 @@ public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
         final int[] arrivedAt = new int[]{-1};
         final double[] speedTiles = new double[]{-1};
 
-        world(400, fakeOurs(ours), fakeEnemies(), () -> {
+        world(700, fakeOurs(ours), fakeEnemies(), () -> {
             int now = atlantis.game.A.now();
             if (now == 1) {
                 Queue.get().allOrders().list().clear();

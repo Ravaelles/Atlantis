@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.AbstractPositionFinder;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -25,6 +26,20 @@ public class CanPhysicallyBuildHere {
         }
         if (builder == null) {
             AbstractPositionFinder._STATUS = "BUILDER IS NULL";
+
+            return false;
+        }
+
+        // A standing completed building owns its footprint: the engine
+        // refuses the tile and the proximity finish would cancel a warp
+        // there the same frame, so the tile must never leave the search
+        // (NEXT #145: 17 same-tile Pylon re-fires in the opening sim,
+        // 2065x live on [105,115] - the goal re-fires because nothing is
+        // ever in flight). Footprint overlap, not nearness: an adjacent
+        // packed sibling (touching edges, disjoint footprints) stays
+        // legal, and unfinished warps never block (they adopt on position).
+        if (OverlapsOurStandingBuilding.check(position, building)) {
+            AbstractPositionFinder._STATUS = "Standing building covers the tile";
 
             return false;
         }
