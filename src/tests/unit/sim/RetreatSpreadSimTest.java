@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * pursuer - FLEE still never forms up).</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class RetreatSpreadSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

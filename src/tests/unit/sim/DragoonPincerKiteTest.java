@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * reports until the model earns it (NEXT #186 tuning, with live proof).</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class DragoonPincerKiteTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

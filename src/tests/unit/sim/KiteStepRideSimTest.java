@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * goes stale and cornered units still trade.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class KiteStepRideSimTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 

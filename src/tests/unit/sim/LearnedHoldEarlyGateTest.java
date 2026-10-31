@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the net replaces the hand gate 1:1 downstream.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class LearnedHoldEarlyGateTest extends AbstractTestWithUnits {
 
     private static Fixture fixture;

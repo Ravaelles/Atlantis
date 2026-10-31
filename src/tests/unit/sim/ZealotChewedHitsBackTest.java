@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * targets or marching.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ZealotChewedHitsBackTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

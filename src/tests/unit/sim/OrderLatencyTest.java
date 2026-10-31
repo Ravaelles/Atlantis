@@ -22,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * keeps every existing scenario immediate.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class OrderLatencyTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

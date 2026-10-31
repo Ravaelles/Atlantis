@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * rule. Pure geometry + bank - no world, no game, milliseconds.
  */
 @Tag("production")
+@Tag("full-tier")
 public class SimOrderValidatorTest extends AbstractTestWithUnits {
 
     /**

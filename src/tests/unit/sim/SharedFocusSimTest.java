@@ -27,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * fast with both Dragoons alive.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class SharedFocusSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

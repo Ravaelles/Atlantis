@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * behavior, not the branch.)</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class BlockingForceSimTest extends tests.unit.AbstractTestWithUnits {
 
     private static final int TILE = 32;

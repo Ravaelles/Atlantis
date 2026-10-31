@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * spacing answer and the unstick do not fight.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PocketSpreadSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

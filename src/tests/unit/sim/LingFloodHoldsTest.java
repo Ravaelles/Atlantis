@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * this goes red - that is the finding, not a bad assertion.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class LingFloodHoldsTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

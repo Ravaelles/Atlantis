@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * difference between the arms, everything else identical.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class TrappedDragoonsAttackOutTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

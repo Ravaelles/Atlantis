@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * FIGHT via the kite-site escalation into the same retreat net.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PocketGluedDragoonTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

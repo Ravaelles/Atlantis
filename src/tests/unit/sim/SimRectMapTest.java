@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * line walks at region centers instead of standing).
  */
 @Tag("combat")
+@Tag("full-tier")
 public class SimRectMapTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

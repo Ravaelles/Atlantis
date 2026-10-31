@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * BEFORE ordering and slides to the nearest walkable tile.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class GhostCreepWalkableTest extends tests.acceptance.WorldStubForTests {
 
     private static List<double[]> moveDests(FakeUnit u) {

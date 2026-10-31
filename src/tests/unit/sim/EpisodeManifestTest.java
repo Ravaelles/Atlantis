@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The learner reads this text, never the sim internals.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class EpisodeManifestTest extends tests.acceptance.WorldStubForTests {
 
     @Test

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * contract; the caller already handles null.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class WalkableRegroupPointsTest extends WorldStubForTests {
 
     private static final int TILE = 32;

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * contract is yield-while-trading, the same bar the dragoon pins meet.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ZealotWithdrawSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

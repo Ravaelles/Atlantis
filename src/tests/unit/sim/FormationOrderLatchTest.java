@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * scatter the line the latch is calming.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class FormationOrderLatchTest extends AbstractTestWithWorld {
 
     private static int moveOrders(FakeUnit d) {

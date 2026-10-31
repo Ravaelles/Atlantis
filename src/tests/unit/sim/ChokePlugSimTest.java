@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * it stands and let the pack run by the flank.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ChokePlugSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

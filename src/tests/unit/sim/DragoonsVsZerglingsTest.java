@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * decisions - this one tests movement, not micro).
  */
 @Tag("combat")
+@Tag("full-tier")
 public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

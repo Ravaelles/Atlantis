@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * unknown. The learner gates on these rows (NEXT #185 Stage C).
  */
 @Tag("combat")
+@Tag("full-tier")
 public class BattleFeaturesTest extends WorldStubForTests {
 
     @Test

@@ -26,6 +26,7 @@ import java.util.List;
  * can be measured against it. No pass/fail on the bug itself yet.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ChewedDragoonReproTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 

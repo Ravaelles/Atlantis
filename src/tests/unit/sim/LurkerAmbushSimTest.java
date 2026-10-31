@@ -31,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * (detectors, cloak rules) stay live-twinned, never guessed here.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class LurkerAmbushSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

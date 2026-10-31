@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * must displace toward them well before the stale window ends.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PostFightFreezeSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

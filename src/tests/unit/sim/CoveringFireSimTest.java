@@ -27,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * the chewer and W must keep most of its hp.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class CoveringFireSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

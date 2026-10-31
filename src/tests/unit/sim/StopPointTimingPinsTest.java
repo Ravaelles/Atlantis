@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * not remembered constants.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class StopPointTimingPinsTest extends WorldStubForTests {
 
     @Test

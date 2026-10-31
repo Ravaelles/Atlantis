@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * rows decide the fix.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class CutoffSwampedRetreatTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * distance first, win rate over N games later.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ArcRetreatSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

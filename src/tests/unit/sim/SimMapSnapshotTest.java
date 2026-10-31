@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * proves the same path on real data.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class SimMapSnapshotTest extends AbstractTestWithUnits {
 
     static String microJson() {

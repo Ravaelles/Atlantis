@@ -21,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * its last-seen position. No cones, no occlusion, no detector types.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class SimFogTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * reproducible and gates cannot silently overfit one script.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ZombiePoliciesTest extends tests.unit.AbstractTestWithUnits {
 
     private static FakeUnit ling(double tx, double ty, int hp) {

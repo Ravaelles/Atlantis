@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * pixel and the march strings out into a line.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class MarchFormationSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

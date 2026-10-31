@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * every dragoon issues attack orders instead of only marching.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PhalanxVsPackSimTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 

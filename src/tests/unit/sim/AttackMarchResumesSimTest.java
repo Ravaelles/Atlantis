@@ -29,6 +29,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * attack anchor and no contact marches instead of bunching in place.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class AttackMarchResumesSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

@@ -338,16 +338,11 @@ architecture ~1 s, e2e smoke classes 0.5 s after moving the 2.2 s
 
 Every unit test carries a JUnit `@Tag` area (`production`,
 `combat`, `placement`, `map`, `infra` - by subject, not fixtures)
-plus `@Tag("full-tier")` when it belongs to the full tier only.
-`run-tests.sh` excludes `full-tier` in its default set only; an
-explicit selector runs exactly what was asked, tags included.
-The full tier (`scripts/run-full-tests.sh`) runs everything and runs
-at the end of every finished feature, not per edit.
-
-A test earns `full-tier` when it is slow (roughly, alone over ~0.3 s)
-AND its area is settled. Actively migrated areas stay in the fast
-loop no matter the cost: production/placement/map are mid-migration
-(#144-#147), so the only full-tier test today is
-`OpenBWLauncherTest` (fake hosting seams, 1.0 s). When a migration
-lands, move its area's slowest tests out. Targeted runs use the area
-tags, e.g. `--select-package tests.unit -t combat`.
+plus `@Tag("full-tier")` when it is slow (roughly, alone over ~0.3 s:
+the whole `tests.unit.sim` package). The default gate
+(`scripts/run-tests.sh`, <=20 s) excludes `full-tier`, `production`
+and `placement`; an explicit selector runs exactly what was asked,
+excluded tags included. The full tier (`scripts/run-full-tests.sh`)
+runs everything and runs at the end of every finished feature, not
+per edit. On-demand areas: `--domain production,placement` (tag OR;
+`--domain combat` includes the sim package).

@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * naive order dies proving it.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class KeepableFinishEfficacyTest extends tests.unit.AbstractTestWithUnits {
 
     private static final int TILE = 32;

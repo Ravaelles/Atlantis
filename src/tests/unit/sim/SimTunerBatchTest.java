@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * manifest records.
  */
 @Tag("infra")
+@Tag("full-tier")
 public class SimTunerBatchTest extends AbstractTestWithUnits {
 
     private static boolean columnEquals(String header, String row, String column, String expected) {

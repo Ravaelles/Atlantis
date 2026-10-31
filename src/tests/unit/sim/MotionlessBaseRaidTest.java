@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * straight trade against motionless defenders would fail here first.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class MotionlessBaseRaidTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

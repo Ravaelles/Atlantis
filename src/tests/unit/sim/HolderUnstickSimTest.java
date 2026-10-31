@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * queue exactly - move orders issued, position never changes.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class HolderUnstickSimTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 

@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code AbstractTestWithUnits.setUp}.</p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PocketVsOpenFieldKiteTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
     private static final int TICKS = 600;

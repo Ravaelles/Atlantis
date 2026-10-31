@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * up directly as clear time.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class PostFightPursuitDurationSimTest extends AbstractTestWithUnits {
 
     /**

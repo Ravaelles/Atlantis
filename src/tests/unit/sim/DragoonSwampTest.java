@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the capped 2.0 step.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class DragoonSwampTest extends WorldStubForTests {
 
     private static FakeUnit dragoon(double tx, double ty) {

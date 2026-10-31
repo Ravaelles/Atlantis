@@ -5,23 +5,18 @@
 # this script compiles every source file and runs JUnit via the standalone
 # console launcher.
 #
-# Speed policy (owner's ruling 2026-10-06, re-measured 2026-10-20):
-# this script is the model-facing inner loop and must finish well under
-# 40 s total. Measured (wall): compile 4.4 s, tests.unit 7.7 s
-# (combat 0.7 s, production 2.6 s, placement/map 0.5 s, misc 2.4 s),
-# tests.architecture ~1 s, e2e smokes 0.5 s. Total ~13-14 s.
-# The 2.2 s QuickEconomySmokeTest (1 test) lives in the full tier only;
-# the other 5 smoke classes cost 0.5 s together and stay as the
-# one-of-each-kind tripwires. The unit scope is NOT split into
-# stable/churn tiers: production/placement/map are mid-migration
-# (#144-#147) and the split would unplug proof from the files being
-# rewritten - revisit when they settle; the combat half costs 0.7 s,
-# so keeping it is free. The slow scopes (acceptance, full e2e) are refused
-# here on purpose: they belong to scripts/run-full-tests.sh, which the owner
-# runs manually. Pass --allow-slow to override (e.g. for a one-off debug).
+# Speed policy (owner's ruling 2026-10-26, re-measured 2026-11-01):
+# this script is the model-facing inner loop and must finish in 20 s total.
+# Measured (wall): compile ~4 s, default unit gate ~10 s (fast combat +
+# infra + map + untagged; architecture ~1 s). Production (930 s), sim
+# (100 s) and e2e scenarios live in scripts/run-full-tests.sh; run them
+# on demand with --domain (e.g. --domain production,placement), which
+# selects tests.unit by area tag (OR semantics, slow-refusal bypassed).
 #
 # Usage (from anywhere):
-#   bash scripts/run-tests.sh                       # unit + architecture
+#   bash scripts/run-tests.sh                       # fast gate, <=20 s
+#   bash scripts/run-tests.sh --domain production,placement
+#   bash scripts/run-tests.sh --domain combat       # combat incl. sim
 #   bash scripts/run-tests.sh --select-package tests.unit
 #   bash scripts/run-tests.sh --allow-slow --select-package tests
 #   bash scripts/run-tests.sh --select-class tests.architecture.ArchitectureBoundaryTest
@@ -31,35 +26,56 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-# --- argument preprocessing: pull --allow-slow out of the junit args
+# --- argument preprocessing: pull --allow-slow and --domain out of the junit args
 ALLOW_SLOW=0
+DOMAIN=""
 JUNIT_ARGS=()
-for arg in "$@"; do
-  if [ "$arg" = "--allow-slow" ]; then ALLOW_SLOW=1; else JUNIT_ARGS+=("$arg"); fi
+args=("$@")
+i=0
+while [ "$i" -lt "${#args[@]}" ]; do
+  arg="${args[$i]}"
+  case "$arg" in
+    --allow-slow) ALLOW_SLOW=1 ;;
+    --domain=*) DOMAIN="${arg#--domain=}" ;;
+    --domain)
+      i=$((i + 1))
+      DOMAIN="${args[$i]:-}"
+      [ -z "$DOMAIN" ] && { echo "[tests] --domain needs a value: --domain production,placement" >&2; exit 2; } ;;
+    *) JUNIT_ARGS+=("$arg") ;;
+  esac
+  i=$((i + 1))
 done
+
+# --- domain run: --domain production,placement runs those areas' unit tests
+# (tag OR semantics: repeated --include-tag). No slow-refusal here: a domain
+# run is an explicit on-demand scope, and the full suite owns the slow ones.
+if [ -n "$DOMAIN" ]; then
+  JUNIT_ARGS=(--select-package tests.unit)
+  IFS=',' read -ra DOMAINS <<< "$DOMAIN"
+  for d in "${DOMAINS[@]}"; do
+    JUNIT_ARGS+=(--include-tag "$d")
+  done
+fi
 
 # --- fast default when nothing else was asked for
 if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
   JUNIT_ARGS=(
     --select-package tests.unit
     --select-package tests.architecture
-    --select-class tests.e2e.ProductionEngineSmokeTest
-    --select-class tests.e2e.WorkerProductionTest
-    --select-class tests.e2e.OpeningDoesNotHoardMineralsTest
-    --select-class tests.e2e.WorkerDefenceTest
-    --select-class tests.e2e.WorkerSwarmTest
     --exclude-tag full-tier
+    --exclude-tag production
+    --exclude-tag placement
   )
-  # NOTE: --exclude-tag applies only to this default set. An explicit
-  # selector (--select-class/--select-package on the command line) runs
-  # exactly what was asked, full-tier tags included.
+  # NOTE: excludes apply only to this default set. An explicit selector
+  # (--select-class/--select-package/--domain on the command line) runs
+  # exactly what was asked, excluded tags included.
 fi
 
 if [ "$ALLOW_SLOW" -eq 0 ]; then
   for arg in "${JUNIT_ARGS[@]}"; do
     case "$arg" in
       *tests.e2e|*tests.acceptance)
-        echo "[tests] REFUSED: '$arg' is a slow scope and would blow the 40 s budget." >&2
+        echo "[tests] REFUSED: '$arg' is a slow scope and would blow the 20 s budget." >&2
         echo "[tests] Slow scopes are owner-only: bash scripts/run-full-tests.sh" >&2
         echo "[tests] (or re-run with --allow-slow if you really must this once)." >&2
         exit 2

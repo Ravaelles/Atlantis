@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * </p>
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ProbesVsPackSimTest extends AbstractTestWithUnits {
 
     private static final int TILE = 32;

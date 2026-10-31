@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * proof the policies are not dead helpers but the loop's opponents.
  */
 @Tag("combat")
+@Tag("full-tier")
 public class ZombieSimLoopTest extends tests.acceptance.WorldStubForTests {
 
     @Test

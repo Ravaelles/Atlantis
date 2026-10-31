@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.combat.strategy.ProtossAttackHoldToShoot;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * R* (plus a hold margin for order-issue slop): stand and wait.
  * Otherwise keep kiting.
  */
+@Tag("combat")
 public class ProtossAttackHoldToShootTest {
 
     @Test
