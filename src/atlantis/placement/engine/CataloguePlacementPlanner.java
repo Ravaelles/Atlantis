@@ -298,6 +298,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         reservedThisPass.clear();
         supportThisPass.clear();
         passBuilder = null;
+        passBuilderPosition = null;
 
         // A caller-supplied grid is reused as-is across passes (terrain is
         // null, so there is nothing to rebuild from): drop the reservation
@@ -342,6 +343,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * worker to our base. One per pass (not per building) so two candidates in one
      * frame cannot disagree about travel time.
      */
+    /**
+     * The pass builder's position, fetched once per pass. The ranker asks
+     * travel for every candidate (~10k per building goal) - re-reading the
+     * live unit object there costs a full stub round-trip each time in the
+     * sim, for an answer that cannot change mid-pass (the game is frozen
+     * while the plan computes).
+     */
+    private APosition passBuilderPosition;
+
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
             if (!gameContext.inGame()) return null;
@@ -487,9 +497,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private int builderTravelEstimate(AUnit builder, BuildLocation candidate) {
         if (builder == null) return 0;
 
-        double tiles = builder.groundDist(
-            APosition.create(candidate.tileX(), candidate.tileY())
-        );
+        APosition dest = APosition.create(candidate.tileX(), candidate.tileY());
+        double tiles;
+        if (atlantis.map.AMap.bwem() == null) {
+            if (passBuilderPosition == null) passBuilderPosition = builder.position();
+            APosition from = passBuilderPosition;
+            tiles = (from == null || from.position() == null || dest == null)
+                ? 999
+                : atlantis.map.position.PositionUtil.distanceTo(from.position().p(), dest.position().p());
+        }
+        else {
+            tiles = builder.groundDist(dest);
+        }
 
         // A Probe moves ~0.7 tiles/s at the default speed; 30 frames/s, so about
         // 43 frames per tile. Rounded up, with a 20-frame floor for "already there".
@@ -604,7 +623,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         }
 
         return new BuildLocationRanker(
-            neighbourhoods,
             false,
             BuildLocationRanker.isTechBuilding(unitType)
         );

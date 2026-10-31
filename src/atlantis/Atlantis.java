@@ -137,7 +137,7 @@ public class Atlantis implements BWEventListener {
         // prints, the BWAPI client is attached and the bot is actually playing.
         // The Wine launcher kills SC+Chaos when it does NOT appear in time
         // (see WineClientSupervisor), so silence has a loud consequence.
-        AConsole.println("HELLO_ATLANTIS - BWAPI ok, Atlantis starts playing!");
+        AConsole.println("HELLO_ATLANTIS - Atlantis starts playing!");
 
         // Force the game out of StarCraft's pause. Without this a fresh game
         // sits paused until a human presses a key (owner report, twice:

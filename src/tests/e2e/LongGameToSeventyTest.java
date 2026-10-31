@@ -48,11 +48,11 @@ public class LongGameToSeventyTest extends AbstractTestWithUnits {
 
     @Test
     public void reachesSeventySupplyWithThirdGatewayArmyAndExpansion() throws Exception {
-        // Designed length ~12 game-minutes (opening ~11800 frames at sim pace
-        // plus 10000 extra): the frame cap only catches hangs - the bank-stuck
+        // Designed length ~11 game-minutes (opening ~11800 frames at sim pace
+        // plus 8000 extra): the frame cap only catches hangs - the bank-stuck
         // guard still fails a stalled economy fast.
         OpeningRunner.PostFiftyResult game = OpeningRunner.playToSupplyThenExtra(
-            BUILD_ORDER, SimConfig.fast().withStride(120), numbers(), 50, 10000, 24000);
+            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 8000, 24000);
 
         int gateways = game.warpsOfType("Gateway");
         int dragoonsAfterFifty = game.dragoonWarpsAfterMark();

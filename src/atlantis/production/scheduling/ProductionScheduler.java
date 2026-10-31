@@ -269,8 +269,8 @@ public final class ProductionScheduler {
         // Placement BEFORE allocation: a failed reservation leaves the timeline as it was.
         PlacementReservation reservation = null;
         if (item.requiresPlacement()) {
-            reservation = placementPlanner.reservePlacement(item, placement, start);
-            if (reservation == null || !reservation.isSuccessful()) {
+                reservation = placementPlanner.reservePlacement(item, placement, start);
+                if (reservation == null || !reservation.isSuccessful()) {
                 ScheduleRefusal.note(item, "no-placement");
                 return null;
             }

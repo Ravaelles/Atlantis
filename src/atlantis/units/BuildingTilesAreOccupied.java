@@ -33,6 +33,48 @@ import atlantis.units.select.Select;
 public class BuildingTilesAreOccupied {
 
     /**
+     * X-&gt;Y-&gt;Z: callers ask per tile per goal, but the unit list only
+     * changes per frame. The first check in a frame snapshots every unit
+     * into plain footprint rects (Z); the rest of the frame reads Z, never
+     * Select, never a mock. Same answers, one scan per frame.
+     */
+    private static int memoFrame = Integer.MIN_VALUE;
+    private static Object memoGame = null;
+    private static java.util.List<int[]> memoFootprints = java.util.Collections.emptyList();
+
+    /**
+     * One rect per live unit: left, top, right, bottom, id, flags
+     * (1 = building, 2 = completed, 4 = ground unit).
+     */
+    private static void memo(int frame) {
+        Object game = atlantis.Atlantis.game();
+        if (frame == memoFrame && game == memoGame) return;
+        memoFrame = frame;
+        memoGame = game;
+
+        java.util.List<int[]> rects = new java.util.ArrayList<>();
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            TilePosition leftTop = unit.tilePosition();
+            if (leftTop == null) continue;
+            AUnitType type = unit.type();
+            if (type == null) continue;
+            int flags = 0;
+            if (unit.isABuilding()) flags |= 1;
+            if (unit.isCompleted()) flags |= 2;
+            if (unit.isGroundUnit()) flags |= 4;
+            rects.add(new int[]{leftTop.getX(), leftTop.getY(),
+                leftTop.getX() + type.getTilesWidth(), leftTop.getY() + type.getTilesHeights(),
+                unit.id(), flags});
+        }
+        memoFootprints = rects;
+    }
+
+    private static boolean rectOverlaps(int[] r, int left, int top, int right, int bottom) {
+        return r[0] < right && r[2] > left && r[1] < bottom && r[3] > top;
+    }
+
+    /**
      * Returns true if any building (ours or the enemy's) overlaps any tile the
      * given building type would occupy if placed with its top-left at
      * {@code position}.
@@ -83,17 +125,17 @@ public class BuildingTilesAreOccupied {
         if (position == null || buildingType == null)
             return false;
 
-        for (AUnit unit : Select.all().list()) {
-            if (unit == null || !unit.isAlive())
-                continue;
-            if (builder != null && unit.id() == builder.id())
-                continue;
-            if (!unit.isABuilding() && !unit.isGroundUnit())
-                continue;
+        memo(atlantis.game.A.now());
+        int builderId = builder == null ? -1 : builder.id();
+        int left = position.tx();
+        int top = position.ty();
+        int right = left + buildingType.getTilesWidth();
+        int bottom = top + buildingType.getTilesHeights();
 
-            if (overlaps(unit, position, buildingType))
-
-                return true;
+        for (int[] r : memoFootprints) {
+            if (r[4] == builderId) continue;
+            if ((r[5] & 5) == 0) continue;
+            if (rectOverlaps(r, left, top, right, bottom)) return true;
         }
 
         return false;
@@ -111,55 +153,18 @@ public class BuildingTilesAreOccupied {
         if (position == null || buildingType == null)
             return false;
 
-        for (AUnit unit : Select.all().list()) {
-            if (unit == null || !unit.isAlive())
-                continue;
-            // Only completed buildings count: a warping one is not a
-            // verdict, it is the construction itself in progress -
-            // counting it cancels our own warp every 23 frames and
-            // re-requests the same tile until something else breaks the
-            // loop (measured: 15x Gateway cancel/re-request at [112,19]
-            // while its own warp stood there). An unfinished overlap
-            // waits (the warp settles it, B-41 adopts); a completed one
-            // kills the tile and the caller moves on.
-            if (!unit.isABuilding() || !unit.isCompleted())
-                continue;
+        memo(atlantis.game.A.now());
+        int left = position.tx();
+        int top = position.ty();
+        int right = left + buildingType.getTilesWidth();
+        int bottom = top + buildingType.getTilesHeights();
 
-            if (overlaps(unit, position, buildingType))
-
-                return true;
+        for (int[] r : memoFootprints) {
+            if ((r[5] & 3) != 3) continue;
+            if (rectOverlaps(r, left, top, right, bottom)) return true;
         }
 
         return false;
     }
 
-    /**
-     * Tile-rectangle overlap between the unit and the building placed at
-     * {@code position}.
-     */
-    private static boolean overlaps(AUnit unit, APosition position, AUnitType buildingType) {
-        int buildingLeft = position.tx();
-        int buildingTop = position.ty();
-        int buildingRight = buildingLeft + buildingType.getTilesWidth();
-        int buildingBottom = buildingTop + buildingType.getTilesHeights();
-
-        // Top-left on both sides: tx()/ty() read the CENTER tile on
-        // live units (engine pixels) while sites are top-left, so an even
-        // footprint reads one tile off and an adjacent site looks covered
-        // (measured live: Pylon [95,121] cancelled 256x in a row against
-        // standing [93,121]). tilePosition() is top-left in both worlds
-        // (engine truth live, stored tile on fakes).
-        TilePosition leftTop = unit.tilePosition();
-        if (leftTop == null) return false;
-
-        int unitLeft = leftTop.getX();
-        int unitTop = leftTop.getY();
-        int unitRight = unitLeft + unit.type().getTilesWidth();
-        int unitBottom = unitTop + unit.type().getTilesHeights();
-
-        return unitLeft < buildingRight
-            && unitRight > buildingLeft
-            && unitTop < buildingBottom
-            && unitBottom > buildingTop;
-    }
 }

@@ -338,6 +338,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     (f6547, no doubles, 0 cancels, game to f10200) - legacy
     `ProtossExpansionCommander` + `ProtossExpandNow` + their 2 tests deleted,
     V2 anti-double pinned in `GoalSourcesTest`. Board-completion gate done.
+  - **#234** V2 mid-game army stall (mega test `LongGameToSeventyTest`, 19 s):
+    no 3rd Gateway, zero Dragoons past 50 supply, in sim AND live
+    (f10200 Wine game: Zealots only). The test fails fast with the table;
+    fix the demand, not the test.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

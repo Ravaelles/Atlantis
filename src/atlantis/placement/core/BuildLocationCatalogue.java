@@ -46,6 +46,13 @@ public final class BuildLocationCatalogue {
     private final TileAvailabilityGrid grid;
     private final List<BlockFactory> blockFactories;
     private final List<BuildLocation> all = new ArrayList<>();
+    /**
+     * Footprint index over {@link #all} (`"wxh" -&gt; locations`, insertion
+     * order): the planner asks one footprint per building, so scanning every
+     * footprint on every siting is pure waste. Same elements, same order as
+     * filtering {@code all} - just O(1) to reach.
+     */
+    private final java.util.Map<String, java.util.List<BuildLocation>> byFootprint = new java.util.HashMap<>();
 
     /**
      * Start-block anchoring (C4). Null in the minimal constructor, in which case no
@@ -124,12 +131,11 @@ public final class BuildLocationCatalogue {
      * Candidates of an exact footprint, best first.
      */
     public List<BuildLocation> candidates(int tileWidth, int tileHeight, LocationScorer scorer) {
-        List<BuildLocation> matching = new ArrayList<>();
-        for (BuildLocation location : all) {
-            if (location.tileWidth() == tileWidth && location.tileHeight() == tileHeight) {
-                matching.add(location);
-            }
-        }
+        java.util.List<BuildLocation> bucket =
+            byFootprint.get(tileWidth + "x" + tileHeight);
+        List<BuildLocation> matching = bucket == null
+            ? new ArrayList<>()
+            : new ArrayList<>(bucket);
         if (scorer != null)
             Collections.sort(matching, scorer);
 
@@ -142,9 +148,19 @@ public final class BuildLocationCatalogue {
      */
     public void rebuild() {
         all.clear();
+        byFootprint.clear();
         stampStartBlocks();
         stampBlocks();
         scanFreeTilesNotCoveredByBlocks();
+        for (BuildLocation location : all) {
+            String key = location.tileWidth() + "x" + location.tileHeight();
+            java.util.List<BuildLocation> bucket = byFootprint.get(key);
+            if (bucket == null) {
+                bucket = new java.util.ArrayList<>();
+                byFootprint.put(key, bucket);
+            }
+            bucket.add(location);
+        }
     }
 
     /**

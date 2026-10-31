@@ -25,13 +25,10 @@ package atlantis.placement.core;
  */
 public final class BuildLocationRanker implements BuildLocationCatalogue.LocationScorer {
 
-    private final NeighbourhoodRegistry neighbourhoods;
     private final boolean preferAwayFromExit;
     private final boolean forTechBuilding;
 
-    public BuildLocationRanker(
-        NeighbourhoodRegistry neighbourhoods, boolean preferAwayFromExit, boolean forTechBuilding) {
-        this.neighbourhoods = neighbourhoods;
+    public BuildLocationRanker(boolean preferAwayFromExit, boolean forTechBuilding) {
         this.preferAwayFromExit = preferAwayFromExit;
         this.forTechBuilding = forTechBuilding;
     }
@@ -71,7 +68,11 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
     private int score(BuildLocation location) {
         int travel = location.builderFrames() * 2;
 
-        int distance = exitDistance(location);
+        // The refined location already carries the exit distance the planner
+        // computed once per candidate - recomputing it here costs a
+        // neighbourhood lookup per *comparison* (~130k per sort), for the
+        // identical number.
+        int distance = location.distanceToExit();
         if (distance == Integer.MAX_VALUE) {
             // No known exit: fall back to travel only, so a base without a mapped
             // choke still gets usable placements instead of nothing.
@@ -84,12 +85,4 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
         return away ? travel - distance : travel + distance;
     }
 
-    private int exitDistance(BuildLocation location) {
-        if (neighbourhoods == null)
-            return Integer.MAX_VALUE;
-
-        NeighbourhoodRegistry.Neighbourhood area = neighbourhoods.forTile(location.tileX(), location.tileY());
-
-        return NeighbourhoodRegistry.distanceToExit(area, location.tileX(), location.tileY());
-    }
 }
