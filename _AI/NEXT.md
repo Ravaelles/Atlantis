@@ -1,9 +1,11 @@
 # TODO — Atlantis (open issues)
 
 Single source of truth for open work. Direction: `_AI/00-GOAL-APPROACH.md`;
-execution order: `_AI/PRODUCTION_V2/__MIGRATION.md`; operational learnings:
-`_AI/NOTES.md`. Per-game evidence lives in `_AI/WINE-MACRO-DATUMS.md`;
-this backlog keeps current conclusions and open questions (CONVENTIONS §26).
+operational learnings: `_AI/NOTES.md`. Per-game evidence lives in the
+gitignored `_AI/WINE-MACRO-DATUMS.md`; this backlog keeps current conclusions
+and open questions (CONVENTIONS §26). Production V2 migration docs are deleted
+(the system is live by default); remainders are #146 (resite chain) and #147
+(stateless demand).
 
 ## Phases (the quarter)
 
@@ -15,12 +17,12 @@ this backlog keeps current conclusions and open questions (CONVENTIONS §26).
   proof each; exit: one issuer, one log. (Next steps 1–2, #91.)
 - [ ] **3 — Combat cluster.** Structure done; behavior pending live proof.
   Blocked on #94 (no enemy on OpenBW).
-- [ ] **4 — Placement cutover.** Catalogue default, legacy finder deleted
-  (`PRODUCTION_V2/PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`).
-- [ ] **5 — Production V2 LIVE + architecture migration.** V2 by default only
-  after parity is established (#45; stages E–J below). One Wine victory showed
-  stronger tech/army than same-day legacy, but parity remains unproven; open
-  gaps include expansion siting (#150) and dual-authored Pylon demand (#144).
+- [x] **4 — Placement cutover.** Catalogue default since 2026-11-01
+  (A/B III: 0 cancels vs 4214; confirming game 20261031_124722: 0 cancels),
+  legacy planner in `src-old/`. Remainder: resite chain (#146).
+- [x] **5 — Production V2 LIVE.** V2 is the default (no OFF path); dynamic
+  commanders deleted. Open gaps ride their own items: expansion siting
+  (#150), dual-authored Pylon demand (#144), stateless demand (#147).
 - [ ] **6 — Measurement and learning.** Scenario battery + parameter search;
   exit: an unattended tuning loop that improves a frozen table (#185).
 - [ ] **7 — Expansion.** Second goal vocabulary, sweeps vs real bots. Nothing
@@ -35,9 +37,7 @@ trade a measurement for an explanation (§3a).
    explicitly, never silently).
 1. Decision reasons in CherryVis (#214 - the army dies without a trace).
 2. Fast, self-terminating OpenBW sims (§17).
-3. Production V2 (#45; `redesign/01_PRODUCTION.md`).
-4. Placement cut-over (`redesign/03_PLACEMENT.md`).
-5. OpenBW/E2E testing (`IDEA-E2E-TESTS.md` §3.5).
+3. OpenBW/E2E testing (`IDEA-E2E-TESTS.md` §3.5).
 
 ## Process (normative)
 
@@ -70,15 +70,8 @@ trade a measurement for an explanation (§3a).
 
 ## Next steps (ordered - this section survives context compression)
 
-1. **Retreat floor + choke standoff doctrine** (owner orders 2026-10-25):
-   LANDED 2026-10-25 as #204 - (a) a retreat stops at the
-   `MiddleFocusChoke` standing line, never behind it; (b) every choke
-   standoff stands RADIUS + 6 tiles off the center (a 9-tile radius =>
-   15 tiles). Pinned `RetreatFloorTest` 4/4 and `ChokeStandoffDistanceTest`
-   3/3. Graded 2026-10-26 into the **retreat ladder** (commit `e06adb27d`,
-   #204) - the floor now reads the ground the army last fought on instead
-   of a single line - pins `RetreatLadderTest` 5/5 + `RetreatFloorTest` 8/8.
-   Live proof still rides the next quiet game.
+1. **Retreat doctrine live proof** (#204, landed + pinned): the next quiet
+   game proves the retreat ladder in combat.
 2. **Per-gate legacy deletions**, one game of proof each: no candidate yet.
    Deletions wait for routine feeder coverage; board-invisible production
    (Forge, cannons) is capability, not duplication. Latest verdict: no routine
@@ -107,26 +100,10 @@ trade a measurement for an explanation (§3a).
    #34 (UMS opponent map).
 9. **Long-term ordering:** #45 deletion order, rewrite order #144-#147, #8 V2
    LIVE runs, stages E–J below.
-10. **Housekeeping:** SPENT 2026-10-30 - the four stale worktrees
-    (`w-zealot-gas`, `w-anti-flap`, `w-regroup-march`, `w-middle-focus`)
-    exist nowhere (no git worktree, no directory on any root);
-    nothing to drop.
-11. **Sweep of #144–#204** (owner order 2026-10-26: work the next 40
-    positions as Senior Engineer, autonomous, long-term answers first).
-    Triage of the whole range: everything that needs a game or owner data
-    stays in the one-game queue (step 7) or the owner-data queue (step 8);
-    what is executable now runs in this order, each its own commit:
-    (a) #211 suite attribution so the gate is honest [LANDED 2026-10-26:
-    runner-integrity commit `3e7136a8e` + attribution correction], (b) #194's
-    shared anchor/rally input resolver [LANDED 2026-10-26: `HomeGround`,
-    commit `ea378db7f`], (c) #201 Corsair cluster sim-first [LANDED
-    2026-10-26: membership rule `716a46142`, the `Alpha.gather` split
-    stays open], (d) #184 one TargetLadder rule at a time with a sim
-    no-regression proof, (e) sim-only slices of #188/#190/#192.
-    #156 stays parked until 2026-11-09 (owner: no blind merge), #144–#147
-    wait on parity runs (review 2026-11-09), #160/#185 wait on K-of-N data
-    (review 2026-11-09). #206–#210 are new owner findings
-    from the 2026-10-26 games and slot into the same queues.
+11. **Sweep remainder:** executable slices land one commit each;
+   game-proof and owner-data shapes wait in steps 7-8. #156 parked to
+   2026-11-09; #144–#147 wait on parity runs (review 2026-11-09); #160/#185
+   wait on K-of-N data (review 2026-11-09).
 
 ## Goal board track (active)
 
@@ -335,16 +312,6 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
 ## Design and strategy
 
-- **#45** Production V2 deletion order: prove LIVE parity before default flip;
-  delete dynamic commanders only after tech/race-army coverage, `Queue/**` and
-  order types last; retain `Construction/**` (V2 delegates builders). Tech, gas,
-  Singularity and Dragoon demand fire live; the owner-ordered ASAP Dragoon rule
-  is in `DynamicGoals.addArmyGoal`. SUPERSEDED 2026-10-29: V2 LIVE is
-  the default since the #227 cutover (no OFF path remains); parity
-  evidence banked in WO-144 verdicts, dynamic commanders deleted.
-  “Rich but idle” half: engine exonerated in-harness from the
-  59/65+900-bank state (trains + saturated-Nexus goals fire,
-  `MidGameStallReproTest` 3/3) - the live stall needs twin rows.
 - **#145–#147** Rewrite order, clean-room: each lands specced, stub-pinned,
   default-flipped with a game proof, then the legacy files move to `src-old/`.
   (#144 closed by e203c6121 with the 104542 VICTORY proof. WO-144 supply-gate
@@ -354,107 +321,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   (legacy built Gateway#1 in 183253, V2 in 190104/192937) - mixed operation
   in LIVE mode stands, it is WO-147's question. Deletions per the WO order
   are the owner's call.)
-  - **#145** Legacy site-finding chain → catalogue-only siting; delete the chain
-    after cutover. The [119,12]/`Null position` storm mints here (no
-    standing-cover check), so the cutover is the fix. `SITE_TOO_FAR` only rejects
-    absurd distances (`BuildSiteDistanceTest`). WO-145 STOP 2026-10-28 (A/B
-    game 104128, PLACEMENT=catalogue, TauCross): 3988 CONSTRUCTION_CANCELs,
-    stall-death f6900 supply 29 (flag-off games: 0-1 cancels, full games).
-    The catalogue returns COVERED tiles - Gateway warps at [94,112] f3841
-    then 2088 proximity-finish rows on the same tile, Pylon/Nexus rows die
-    builderless (1522+368 `looks bugged`: covered base tiles trip the
-    inRadius(12)>=4-workers builder refusal). Same missing standing-cover
-    check as #151, now measured on the catalogue arm itself. Per WO stop
-    rules: flip stopped, flag stays default-off; the ARM needs the cover
-    check first (spiral guard or planner-side exclusion), then a new A/B.
-    COVER CHECK LANDED 2026-10-31: `IsWorkerCovered` (conditions/
-    can_build_here) mirrors `GetOptimalBuilder`'s refusal exactly (same
-    12/4 numbers, read not owned - thresholds extracted there once);
-    `propose()` declines "worker-covered" with a twin row and the legacy
-    search answers. Pinned `WorkerCoveredSiteTest` 2/2 (red-first: 4+
-    workers serve the tile; builder counts as a worker; 3 pass). Open:
-    the new A/B per WO stop rules (catalogue arm with cover check vs
-    legacy arm), then flip + chain deletion. A/B II 2026-10-31
-    (catalogue arm 205637 vs legacy arm 205803, TauCross, supply-120):
-    catalogue arm storms IDENTICALLY (4214 CONSTRUCTION_CANCELs,
-    stall-death f6900 supply 33) - and carries ZERO `CATALOGUE_SITE`
-    twin rows, so the adapter funnel never runs in V2 LIVE: the engine
-    sits straight from its planner (silent `CataloguePlacementPlanner`
-    when the flag is on). The adapter gate covers only legacy/refresh
-    paths. Storm anatomy: 2065x `proximity finish: standing Gateway
-    covers [105,115]` (silently served building-covered tile) + 1529x
-    builderless `looks bugged` + 605x refresh-fail. COVER CHECK
-    LANDED 2026-10-31 (planner rank-time):
-    `ProtossPlacementStrategy.availabilityVerdict` REFUSEs
-    worker-covered tiles first (before power, so no support Pylon is
-    ordered onto dead ground); pinned `CoveredTileAvailabilityTest`
-    2/2 (red-first). A/B III 2026-10-31 (catalogue arm 212746, same vehicle): ZERO
-    cancels (4214 -> 0, the storm is gone) BUT the game still dies f6900
-    supply 25 with 2172 banked and ZERO Gateways - Gateway `no-placement`
-    f1718, only Pylons/Nexus ever sited. The planner-side cover check
-    over-blocks: every near-base Gateway tile is worker-covered, so the
-    rank-time REFUSE leaves no tile and the bot dies rushable with a full
-    bank (LEG arm built 3 Gateways + Core + Forge + Robo). WITHDRAWN the
-    planner slice the same night (revert + pin test deleted with it;
-    suite back to 1900/1900 green). Lesson: the tile
-    property alone does not predict builderless death - covered tiles DO
-    get builders via the free pool, unreliably; the correct check needs
-    pool state, which is #156 territory (unify reservation models,
-    parked to 2026-11-09, no blind merge). The adapter gate stays (pinned,
-    legacy/refresh paths only). REFRAMED 2026-11-01: no more blind
-    catalogue-vs-legacy A/Bs - 1249 requests in the CAT game are 1226x
-    Pylon + 21x Gateway + 2x CyberneticsC while all 1620 V2 goal rows
-    are Pylon, so the Gateway storm loop (2065x proximity-finish on
-    building-covered [105,115]) is legacy-BO re-fire, not V2 siting.
-    A/B III 2026-11-01 (catalogue arm 212746 WITH the standing-cover
-    exclusion): 0 CONSTRUCTION_CANCELs (was 4214), game to f11100
-    (was stall-death f6900 supply 33), builds flowed (Pylon x9, Gateway
-    x2, Nexus x2 = expanded, Core x1), zero KITE stuck-no-step, no
-    over-blocking. Loss f11100 is combat-side (wipe at 74/74), not a
-    production stall. WO-145 A/B verdict: the catalogue arm is healthy -
-    READY FOR THE FLIP DECISION (owner call) + #146 chain deletion after.
-    SIM CHURN MECHANIZED
-    2026-11-01 (owner: worker-count income + conservative rates;
-    EconomyModel now 8/300f minerals, 8/210f gas - live measures
-    ~0.03/worker/frame): under realistic income the opening sim re-fires
-    Pylon 17x on the SAME tile ([7,44], inside the standing Nexus
-    footprint) - each attempt dies to a proximity-finish cancel (82 twin
-    rows: "standing building covers the site"), the goal re-fires on the
-    still-unmet need, and the planner serves the same tile again because
-    nothing excludes covered ground. Same family as the live 2065x loop
-    on [105,115]. Fix: rank-time exclusion of building-covered tiles
-    (footprint overlap with standing completed buildings); then the
-    opening gate's extra-starts assert goes green and A/B III re-runs
-    clean. LANDED 2026-11-01 below (CanPhysicallyBuildHere +
-    catalogue-planner rank check, both pinned).
-    FLIPPED 2026-11-01 (owner order: full cutover): `placementCatalogue`
-    defaults to true - the catalogue planner is the only siting path in
-    V2 LIVE, the legacy finder stays reachable only via explicit
-    `PLACEMENT=legacy`. The flip exposed game-less construction:
-    `new ProductionEngine` builds the planner eagerly, which needs a
-    live map - fixed by lazy grid build + fail-closed reserve when no
-    game is present (pinned: CommanderTreeWiringTest green again).
-    #146 next: delete the now-unreferenced legacy siting files.
-    CUTOVER 2026-11-01 (owner order: full cutover): `createPlacementPlanner`
-    is unconditional catalogue - `LegacyPlacementPlanner` +
-    `PylonPlacementScore` + `PylonPowerSiting` + their three dedicated
-    tests moved to mirrored `src-old/` paths (git mv, history kept);
-    `OpeningRunner` forces catalogue (was legacy) so the sim exercises
-    the default path end-to-end. `APositionFinder`/`FindPosition` chain
-    stays: the catalogue declines and the resite path still answers via
-    legacy (that is #146, explicitly out of scope). Fast bundle green:
-    CoveredTile + CommanderTreeWiring + PlacementSupport +
-    ProductionEngineSmoke 10/10. Heavy SimOpeningToFifty re-golden
-    follows (exceeds the 10-min run window here).
-    REORG 2026-11-01 (owner order: dissolve v2/): the 40 classes move one
-    level up into responsibility packages under `production/` - scheduling
-    (scheduler, timeline, economy, plan), demand (Demand, goals),
-    producibles (recipes, costs, facilities), policy (race identities),
-    engine (ProductionEngine + live adapters), execution (dispatcher,
-    directors), placement (the siting port). SOLID: demand owns WHAT,
-    scheduling owns WHEN, producibles own WHAT-IT-COSTS, engine owns the
-    live-game edge, execution owns issuance. Full gate 1887/1887, arch
-    unchanged (same 2 pre-existing advisories, no new violations).
+  - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
+    `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
+    Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
+    0 cancels; suite 1887/1887. Open remainder: (1) resite-not-cancel on
+    proximity-finish with standing sibling, (2) SimOpeningToFifty re-golden
+    on catalogue, (3) chain deletion is #146.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
@@ -1142,428 +1014,3 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   game proving the order dispatches and the Observer ships in time;
   PurpleWave's 3-vs-1 observer pump on likelihood (vs our 1) is a doctrine
   delta, not a defect.
-
-## Session ledger (owner-ordered handoff file, 2026-10-27; context saver)
-
-Landed this sweep (all suite-green at commit, arch baseline unchanged):
-posture thresholds+fallback+Terran/mirror/Input (`4a89f42c`, `63ab38b9`),
-reason texts + Reason board key + §34, CLUSTER strength+focus twin +
-ArmyBoard game-values (`3d51a57b`, `f7c3ac7f0`), EnemyStrength
-addressless fix (#215, `25c78b9b5`), Pylon nearTo branch codes +
-PylonSite board (`e5483f96b`), ladder rules 6-9 (#184 complete:
-`af5fbb01`, `28f36a2`, `efbf2b1`, `91e0531`), retreat rally scatter,
-march line abreast, Alpha* board keys + FocusName tile (`c60035171`),
-kill-leftovers stale-lock guard, cherryvis-start.sh, Closes #199,
-#212-2 parked, #216 OpenBW hands-off, #212 parked, vehicle=Wine.
-- Open: WO-144 step 3 needs a full V2 LIVE verdict (running below);
-  #213 needs a two-base custom-map game; #215 needs a post-fix game
-  with foe-unseen stretches; #214a catalogue arm pending #145;
-  stance-from-focus rewiring (retreat rally/standoff read main-choke
-  geometry, not DefendedPlace Kind - confirmed by reading, needs
-  sim pins + game proof, NOT started); #212-2 parked to a stall game;
-  #211 acceptance tier red (owner-only scope); #156/#160/#185 parked
-  to dates/K-of-N; #144-147 wait on WO-144 step 3 + WO-145.
-- Running now: Wine V2 LIVE long macro, TauCross, supply-120 env
-  (`/tmp/opencode/ENV-WINE-V2LIVE`), super-fast headless, detached
-  (setsid, survives tool timeouts). Read its verdict next: no supply
-  blocks 17/17+25/25, no duplicate Pylon warps, SUPPLY_BLOCKED
-  samples, tech timing, PylonSite rows, strength curve sanity.
-- Next after verdict: adjudicate WO-144 step 3 (flip or name the
-  blocker with twin evidence) → WO-145 A/B on Wine → WO-146/147
-  deletion checklist → stance-from-focus sim pins.
-
-## Sweep 2026-10-27 midday (both owner-reported, both landed suite-green)
-- Retreat owns an escape route (`7e6db92da`, 6 pins): FLEE no longer
-  marches home through the enemy - road within 6 tiles of an enemy
-  combat unit reroutes to the farthest clear choke (farthest from the
-  enemy army + enemy base; into-enemy and through-enemy candidates
-  refused; all-roads-crossed steps locally). New verdict reason
-  ESCAPE_RALLY tells reroutes apart in telemetry.
-- Forge-before-Gateway fixed (`aeaf49bfd`, 3 pins): V2 fortification
-  emitted a Cannon goal from frame 0 (expectedCannons >= 1 always),
-  dropping legacy's Have.forge() + supply80/min200/2bases/mutas gates
-  - the Cannon's Forge [pre] got dispatched while the Cannon itself
-  never scheduled (0 Cannon dispatches in runs 104542/110507/115321;
-  Forge f2112-2746 before Gateway, never in BO). No Forge standing =
-  no Cannon goals now; baseline cannon returns once a Forge stands.
-- REMAINDER (not started): scheduler still leaves a planned prereq
-  behind when its parent goal fails to schedule (orphan mechanism
-  above - needs timeline-dealloc design); V2 has no legitimate
-  Forge/Cannon author (port ForgeGoal + CannonGoal board timing).
-- WO-145 A/B: catalogue arm 115321 done - DEFEAT f4500 to ling flood,
-  4 buildings, 1126 benign proximity-finish cancels (same shape as the
-  healthy game's 668), env mechanism verified (placementCatalogue=true
-  from ENV-WINE-V2CAT, V2 provably live in its log). Legacy arm
-  (ENV-WINE-V2LIVE, same supply-120 conditions) RUNNING now, detached,
-  log /tmp/opencode/wine-v2legacy.log - adjudicate A/B when it lands.
-
-## Sweep 2026-10-27 late (StarEngine P0-P2 + gates, 6 commits, all green)
-- P0 map ground (`7784c158a`): snapshot v2 (bases + regionReach, loader
-  verifies matrix vs BFS), golden TauCross re-dumped. Found en route:
-  the dumper passed tile coords to BWAPI isWalkable (walk coords) and
-  scrambled the whole walkability grid - fixed by mirroring the bot's
-  own *4 rule; buildable '.' 6227 -> 11263 (recorded in
-  _AI/CHALLENGES/MapSnapshots.md). Without this no Gateway fit within
-  12 tiles of the sim base.
-- Ground truth + validation (`db9145086`): SimGround (single tile
-  authority), SimOrder verdicts + OpenBW-derived checks, 9/9 pins.
-- Arch (`abaae9f72`): SimWorld movement extracted byte-identical to
-  SimMovement (one transcription slip caught by the sim itself: swapped
-  atan2 args made builders flee - method-diff verified after the fix).
-- FakeUnit sim-safety (`5cba72977`): sim-owned remaining-time fields,
-  top-left tilePosition (center-based math put warps 4 tiles off; the
-  refinery missed its geyser by a tile). e2e shows only the 3 failures
-  that fail identically on unmodified HEAD (stash-proven pre-existing).
-- Opening gate, sim (`dedba5ebe`): SimDriver plays Zealot-into-Goon
-  to 100 raw supply through the real ProductionEngine - 11/11 BO rows
-  covered at/after their gates, no non-BO building before Gateway,
-  bank <= 550 below raw 50, zero invalid orders, exact golden warp
-  frames. FAITHFUL builder walks the tile map (mover reused).
-- Opening gate, Wine (`ed7e6f7cd`): strict file-order dropped, the gate
-  asserts coverage at/after each row's gate (V2 emits gated goals, not
-  a sequence - both retained live games interleave Assimilator too).
-  104542/110507 fail ONLY on the real Forge intruder; 115321 fails
-  honestly (died f4500).
-- Open questions (measured, not verdicts): live mining runs ~0.03/miner/
-  frame vs EconomyModel 0.045 (two Wine windows) - if the model is hot,
-  plans run ahead of the bank; needs a proper measurement pass, not a
-  guess. FAITHFUL full-opening + scripted enemy (P3) still open; WO-144–
-  147 deletions now have sim gates to run against (not yet executed).
-
-## Sweep 2026-10-28 autonomous (fog memory + twin proofs)
-- Fog map heals on re-sight: live strength halved on contact loss (182 to
-  364, twice in game 142713, same shape as 110910/012238) while the
-  remembered part stood still - units the engine saw never entered the fog
-  map. A re-sight arrives as show, never discover, and show never wrapped,
-  so a lost unit stayed lost. `OnEnemyUnitShow` now wraps unknown enemies
-  (enemy-only, known ids untouched). Pinned `FogMemoryResightTest` 3/3
-  (red-first on the wrap, enemy-only, keep-known); `EnemyUnitsTest` still
-  green. Live proof rides the next macro (fogN must rise where it stood).
-- Twin proofs from game 142713 (DEFEAT f16693, contiguous EVENTS, clean run
-  with no suite overlap): STRENGTH_WATCH fires (20 rows; first row already
-  shows the fog gap foeKnown False, enemy 1), SCHEDULE_REFUSED fires
-  (Zealot unaffordable f2368 - real early bank, not a stall),
-  ATTACK_DECISION fires (5 rows, ENEMY_MAIN_KNOWN to [119,10]),
-  CATALOGUE_SITE answered rows carry nearTx/nearTy, CLUSTER rows carry
-  eval. Production: Core f6399, GW#3 f7565 supply 41, GW#4 f10440 supply
-  49, no expo, 0 cancels, 0 stale skips. Two notes: (a) most flee-to-fight
-  gaps read exactly 31f - the twin throttle, not the 120f latch, so #195
-  needs a game with longer fights, not more rows; (b) leader eval reads
-  987370 on 12/13 FLEE rows (one reads 1) - the raw eval domain, not the
-  twin math; whether that branch is honest is the next question, not this
-  commit.
-- Process note: game 142025's EVENTS lost frames ~4000-22000 because the
-  fast suite ran while it was live (out/ overlap). Its twin rows are void;
-  its BUILDINGS facts stand (VICTORY f23850, Core f6504, GW#3 f10677,
-  expo f15006, 0 cancels). No suite runs during a live game from here on.
-
-## Sweep 2026-10-28 autonomous (twin transitions)
-- CLUSTER rows on posture/tactic transitions (NEXT #195): the 31f throttle
-  turned every flee-to-fight gap into 31f consecutive samples, so the 120f
-  re-engage latch could never be adjudicated. Transitions now row even
-  off-throttle; steady states stay throttled (volume rule stands).
-  Pinned in `ClusterTwinDestTest` (transition in, steady silence,
-  transition out = exactly 2 rows). Suite 1731/1731 green. The eval domain
-  question is settled too: the twin renders raw leader eval x100 and the
-  unbounded scale stands per B-1 (no-enemy-near reads thousands, which is
-  exactly when the eval > 1.1 exemption should fire) - no clamp, no twin
-  change.
-- #206 adjudication from game 142713 (Attack f4347, Defend f12436, DEFEAT
-  f16693): post-Defend the army oscillates FLEE/FIGHT around [92-96,50-61]
-  with contact coming and going, strength flat ~70, focus steady on the
-  enemy Nexus [95,119] - a rally-hold cycle, not the hide shape. The latch
-  question needs a game with a clean post-contact window; this game never
-  goes quiet.
-
-## Sweep 2026-10-28 autonomous (bleed + twin live proofs)
-- #217 no-enemy half CLOSED as a regression pin: bleeding one finished
-  Dragoon every 400 frames after supply 50 pulls a replacement for every
-  loss (6 bled, 7 replaced counting warps plus in-training, bank cycling
-  60-344, never hoarding). The plateau with no deaths is correct; the
-  loop answers losses. Pinned `PostFiftyBleedTest` (red-first on the
-  window edge: the last kill lands inside one training time of the run
-  end, so in-training Dragoons count as replacements). Harness seam:
-  `OpeningRunner.playToSupplyThenExtraHooked` with a per-frame hook;
-  existing callers unchanged. Suite 1731/1731 green.
-- Twin live proofs from game 144740 (DEFEAT f15387, contiguous EVENTS,
-  new jar proven by a 6-frame flee-to-fight gap - the transition rows
-  fire live): STRENGTH_WATCH steady across 3 contact losses (enemy 110
-  with vis 80 + fog 80, then fog alone holding 110 - no halving), so the
-  fog-heal fix holds the outcome even though no heal event is visible in
-  the twin (fogN steady - a wrapper-id param would make the next proof
-  decisive); ATTACK_DECISION 5 rows ENEMY_MAIN_KNOWN; 0 cancels, 0 stale
-  skips. Production: Core f4951, only 2 Gateways, 5 Zealots + 1 Dragoon,
-  no expo - died young, separate shape from the macro games.
-
-## Sweep 2026-10-28 autonomous (latch verdict)
-- #210 formation-order calm is now readable: the latch deny path rowed
-  nothing, so churn vs calm was indistinguishable. `holdIfCalm` rows
-  LATCH_HELD on the absorbed re-issue (new `HoldVerdict`), flip-gated
-  by the HOLD twin's change-only + heartbeat throttle. Pinned end to end
-  in `HoldTwinTest` (same deny geometry as the latch's own pin - first
-  call issues, second absorbs and rows; a lone foe flips posture to
-  ATTACK and forgets the latch by design, so the pin needs the pack).
-  Suite 1732/1732 green.
-
-## Sweep 2026-10-28 autonomous (heal rows)
-- SHOW_HEAL twin: the fog heal now proves itself live. A re-sight that wraps
-  a previously lost enemy rows unit + type (rare by construction - only a
-  lost unit heals, known and own re-sights stay silent). Pinned 3/3 in
-  `FogMemoryResightTest` (heal rows, known stays silent, our stays out).
-  Suite 1732/1732 green.
-- Twin live proofs from game 151131 (DEFEAT f16120, contiguous EVENTS, clean
-  run, pre-heal jar): transition rows fire live (flee-to-fight gaps read
-  1/2/6/7/8/12/18/24/25f - the 31f floor is gone); eval spreads honestly
-  (987370/882/102/39/1 across FLEE rows - the exemption fires on the high
-  ones, holds on eval 1); strength never doubles (only a 0.73 dip - and the
-  fog errs the other way too: 295 visible vs 405 remembered, maxHp ghosts
-  by design); duplicate Core warps again (dispatches f6139+f6281, warps
-  f6297+f6400 - the goal re-fire gap the backstop does not cover);
-  ATTACK_DECISION 2 rows, 0 cancels, 0 stale. GW#3 f7780 supply 41, GW#4
-  f12476 supply 49, Core f6297, no expo.
-
-## Sweep 2026-10-28 autonomous (create wraps enemies)
-- Enemy creation wraps (NEXT #2): `onUnitCreate` handled our units only,
-  so an enemy born in continuous sight (new-id morphs: lurkers, guardians,
-  devourers) got no discover, no show, no wrap - visible-but-unwrapped
-  until it hid and re-showed. The enemy half now wraps at creation
-  (containsKey-guarded, known ids untouched). Pinned `FogMemoryResightTest`
-  4/4 (red-first: the seam did not exist). Suite 1733/1733 green.
-
-## Sweep 2026-10-28 autonomous (suite hermeticity)
-- Order-fragility, same family as #222 (no global id reset; hermetic seams
-  instead). Measured: two production tests (Zealot/Dragoon pumps) failed ONLY
-  in the full scope (5+ runs, deterministic there) while every prefix, pair
-  and the tree-ordered prefix stayed green; stale scratch classes ran from
-  `out/` (deleted sources, never cleaned) and were deleted. The proven
-  mechanism for the choke twin: rally scatter keys its angle off the global
-  FakeUnit id (`unit.id * golden angle`), so the exact dest tile moves with
-  the suite's id counter - the test's 3.0-tile tolerance sat inside the
-  scatter's own 2-4 ring (`ProtossChokeStandoffTest` widened to the band).
-  Defense in depth: `ClearAllCaches.clearAll` now runs the per-game battle
-  resets (`BattleCommander.clearForTests`, `FormationOrderLatch`,
-  `StrengthWatch`) so latched rungs/verdicts/twin rows never leak across
-  tests. Suite green in full. The unit-suite builder set flips the same way
-  with composition and stays open.
-
-## Sweep 2026-10-28 autonomous (fog-map split)
-- STRENGTH_WATCH carries the raw map too (`fogMapN`/`fogMapHp` beside the
-  filtered `fogN`/`fogHp`): a wrapper the combat filter drops (stale type,
-  unfinished) reads as a filter problem, a short raw map as never-wrapped.
-  The next halving adjudicates itself. Pinned row-count only (shape is the
-  twin's, tested where it changes). Suite 1731/1731 green.
-
-## Handoff 2026-10-28 ~20:40 (context saver - read this first next session)
-
-Landed and committed (see `git log --oneline -12`, all suite-green at commit):
-fog-heal loop + SHOW_HEAL twin, create-wrap, Task-mirror behavior rows
-(live-proven 195338: 98/98 units carry manager Tasks with behavior names),
-CATALOGUE_SITE WHERE, CLUSTER eval + transition rows, LATCH_HELD verdict,
-walk-window fix (inFlight counts IN_PROGRESS-without-unit; live: single
-Core f4246 in 195338), TargetPlacement near-coords, DragoonPumpTest.
-
-UNCOMMITTED - verify then commit (do NOT run tests while a Wine game runs):
-1. `LiveExistingItems.hasLiveComingBuilding`: in-flight counts only
-   constructions with a builder that is alive AND not engine-stuck
-   (`builder == null` still counts - a fresh request with no one assigned
-   yet). Fixes the 193634 stall shape (supply 49, bank 5k, zero Pylon
-   goals f8104-17223: a stuck site suppressed every later row).
-   + `FakeUnit.setStuckForTests` seam + dead-builder pin test.
-   STILL NEEDED: stuck-builder pin test, targeted run, FULL suite, commit.
-   NEXT lines for this are already in the tree (uncommitted _AI/NEXT.md).
-2. `ACherryVis_OrderWatcher.mirrorBehaviorAsTask` + BuilderOrderLogTest
-   pins: COMMITTED (93890a3). Task works live.
-3. Owner asks (verify live, in order): (a) Task column - DONE live;
-   (b) hidden-unit crisis response - harness-pinned (HiddenUnitResponseTest),
-   needs live lurker/DT game; (c) Pylons until 200 supply - no cap exists
-   in the goal; the block was in-flight suppression, now bounded by
-   builder liveness; (d) zealot fallback + worker 10/12 leash - DESIGNED
-   ONLY, not implemented: worker hard recall (>12 from main) in
-   WorkerDefenceStopFighting.applies + worker-side check in
-   processFightEnemyCombatUnits; zealot/small-army chase veto as a named
-   gate in BattleCommander.act with DuelMemory contact-forget. Needs
-   sim pins + full suite + game proof. Do NOT present as done.
-
-Live adjudication backlog (all read-only, no game needed): game 193634
-has 906 refused re-asks (584 Probe + 229 Dragoon + 93 Zealot, mostly
-"no free facility" with 4 gateways and ~17 lifetime units) - if the
-in-flight fix above does not unblock it, the next suspect is phantom-busy
-gateways (engine idle flag stuck), to be named with a per-reason twin,
-not guessed. STRENGTH_WATCH fogMapHp reads ~100k (non-combat wrappers
-summed; strength math unaffected - filtered out) - observation only.
-STRENGTH jumps persist where the fog lacks the unit (142713/151131/
-151814/180220 x2.0 on contact loss); loop repair + heal twin await a
-trigger game (zero SHOW_HEAL rows so far).
-
-Test-hygiene state: full suite green twice in a row (1738/0, 1733/0).
-Known order-fragility family (#222): stale .class files run from out/
-(deleted 3 Scratch* ones - never leave scratch .class behind, javac
-does not clean); battle/latch/twin statics now reset per test in
-ClearAllCaches; choke guard test widened to the scatter band (4.5).
-If red recurs, bisect with explicit --select-class lists in tree order
-(see /tmp/opencode/*.args pattern) - do NOT "fix" by resetting the
-global FakeUnit id counter.
-## Sweep 2026-10-28 late (bulk legacy move REVERTED on owner order)
-- The owner judged the bulk move to `src-old/` (223 files) as too much:
-  it removed good classes V2 depends on (e.g. `Queue.refresh()` carries
-  a V2-LIVE guard). Reverted 2026-10-28; the tree is whole again.
-- New direction: per-class refactor along `_AI/PRODUCTION_V2/__MIGRATION.md`
-  (queue deletion is Phase 4, LAST), Protoss classes first, other races
-  left out of the repair path. Tracker: `_AI/PRODUCTION_V2/legacy-production-queue.md`
-  (every class in `dynamic/`, `orders/`, `requests/`, one line each).
-
-- **#224** Per-class legacy production refactor (owner order 2026-10-28,
-  per `_AI/PRODUCTION_V2/__MIGRATION.md` phases 2-4). Protoss classes only, in
-  migration order: supply/queue authorship (Phase 2, WO-144), siting
-  chain (Phase 3, WO-145/146), queue + order types (Phase 4, WO-147).
-  Non-Protoss classes are excluded from repair (commented out in one
-  pass, never repaired). Each class: read, spec the V2-native shape,
-  stub-pin, refactor, suite green, game proof where the phase demands
-  it. Queue for the walk: `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows).
-  STATUS 2026-10-28: TERRAN/ZERG excluded - 81 classes plus
-  `ZergBuildOrder` and 2 Terran acceptance tests moved to `src-old/`;
-  17 files cut to Protoss-only (dispatchers, requests, siting stubs,
-  painter, factory). Compile green, suite 1745/1745, arch advisory
-  unchanged. Walk starts at the Protoss rows.
-  STARGATE 2026-10-28: buildings Q33-Q49 triaged (10 covered, 5 open
-  behind unit chains, ShieldBattery dead upstream); Stargate + Corsair
-  pump ported as V2 goals (`StargateCorsairTest` 6/6, full suite
-  1751/1751). Live proof rides a muta game.
-  BATCH 2026-10-28: templar chain (Archives/HT/Storm/DT), reaver chain
-  (Bay/Reaver/Shuttle/Tribunal/Arbiter), observer scaling, army gates
-  + ling mix, Citadel + Legs, 2 dead cuts. Suite 1782/1782 throughout.
-  Proof macro running (TauCross, V2 LIVE, supply-120); adjudication
-  lands here.
-  VERDICT 2026-10-28 (game 233317, PvsZ, DEFEAT f19741): 26 warps,
-  distinct tiles, zero duplicates; new goals dispatch live and refuse
-  cleanly (Citadel + detection chain), zero mineral impact, no crash.
-  16 Nexus dispatches / 0 warps is the pre-existing #150/#151 chase,
-  not this batch. Datum in WINE-MACRO-DATUMS.md.
-
-- **#227** Kill every production version switch (owner order 2026-10-29: one solution, no "which is live" question). Enumerated sites: `ProductionCommander:26` (delete legacy branch), `ProductionOrdersCommander:52,61,67` (delete legacy drain + OFF witness + DRY_RUN), `ProductionEngine:107,147` (always live), `Queue:35` (dies with the queue, not a guard fix), `ProductionV2Mode` + ENV knob last. One commit per file, suite green each; DRY_RUN banks its WO-144 parity verdicts first. Spec: `_AI/PRODUCTION_V2/__MIGRATION.md` Phase 6A.
-- **#228** Every used old file earns its verdict (owner order 2026-10-29). Per-class walk in `_AI/PRODUCTION_V2/legacy-production-queue.md` (223 rows); this item closes the cross-cutting remainder: `Queue.get()` live readers (forecast, GoalBoard, Have, listeners), synthetic `ProductionOrder` on V2 constructions (replace with V2 demand carrier, WO-147), BO-file machinery around the kept .txt format, `constructions/**` refactor-in-place (retained actuator, one-line purpose per file), Tweaker engines keep-or-delete (owner call recorded here). Done = V2-native, `src-old/`, or retained-with-reason. Spec: Phase 6B.
-   STATUS 2026-10-29: demand carrier LANDED (Demand + dual-write; modifier,
-   constraint, warp-link readers migrated). Have/Count V2 reads verified
-   queue-free (snapshot uses units + constructions only). BO queue load
-   stays until the terminal slice: its rows feed only conservative
-   forecasts now, and dropping it changes builder-travel timing game-wide
-   (needs a live twin adjudication first). Terminal remainder: queue
-   deletion + knob + mode tests + acceptance fallout.
-   UNIFIED RESERVE 2026-10-29: travel forecast reads constructions in
-   creation order (same as the door model) - EarlierReserveDivergenceTest
-   became AgreementTest; queue-position drift can no longer desync them.
-   WARP-ORDER VERDICT 2026-10-29: queue-order-is-file-order does NOT transfer -
-   V2 schedules by priority band (measured: Pylon,Gateway,Core first wave for a
-   Pylon,Core,Gateway file). No V2 port of QueuedBuildingsBuildInOrderTest;
-   band order is pinned at the goal layer instead.
-   SUPPLY PRECONDITION 2026-10-29: any named provider jumps the workers
-   (dynamic goal + BO rows alike) - a DEPOTS-band Pylon waited for bank 152
-   while the legacy drain dispatched at 50-100.
-- **#229** canBuild in StarEngine CLOSED 2026-10-29 as a fidelity-boundary pin, not a full engine port: the validator already covered footprint/reachability/psi/geyser/bank + warp-start overlap, so the missing piece was a statement of what it deliberately does NOT model. `SimOrderValidatorTest.engineRefusalBeyondSnapshotStaysOutOfScope` pins that a snapshot-buildable Nexus site is sim-ACCEPTED even though the live twin recorded an engine refusal for the analogous site (game 133317): engine internals stay live-twinned (BUILD_REFUSED_WHY), never guessed. Suite 1809/1809. Spec: Phase 6C.
-- **#230** Basic fog-of-war in StarEngine LANDED 2026-10-29 (owner spec): `SimFog` (SIGHT_TILES=8, UPDATE_EVERY_FRAMES=15, last-seen frame+tile), wired into `SimWorld.tick` with a `world.fog()` accessor, pinned `SimFogTest` 3/3 (15f cadence, 7.81/8.0 vs 8.49 boundary both ways, fog memory keeps frame+tile). No cones, no occlusion, no detector types - follow-ups only with their own pins. Suite 1813/1813. Spec: Phase 6C.
-- **#231** Order-latency model in StarEngine LANDED 2026-10-29: `SimMovement` holds a freshly issued order for N frames (`setOrderLatencyFrames`, default 0 - every existing scenario keeps same-tick response), re-armed by command or target change, so a re-issued march counts down while a re-targeted one waits again. Pinned `OrderLatencyTest` 3/3 (2-frame hold then march, zero-latency immediate, re-target re-arms). Train/build/research families stay unmodeled until a twin names their latency live. Spec: Phase 6C.
-
-## Sweep 2026-10-29 night (autonomous: supply block, gate plumbing)
-
-- **Supply hard-block root-caused (game 184529, PvsZ TauCross):** Pylon cid
-  10 warped 6:07 (oid 333, builder #30) and sat IN_PROGRESS 8+ minutes
-  while supply froze at 49/49 - builder gone mining, no death twin, no
-  cancel, no retry; the emergency Pylon goal stayed suppressed by the
-  phantom coming count. Same mechanism as the reported 33/33 (one Pylon
-  earlier). Two holes, both closed in
-  `ConstructionStatusChanger.demoteStalledInProgress`: (a) a warping
-  entity with static hp for 240f past the 2400f age with nobody working
-  it demotes to NOT_STARTED (`frozenWarp` twin) - before, the
-  entity-present branch only twinned a dead builder and never recovered;
-  (b) a gathering builder counts as gone in the no-entity branch
-  (stolen-builder doctrine), so a miner parked far away no longer shields
-  the stall as "travelling". Healthy warps move hp every sample, Terran
-  constructing and Zerg morphs stay shielded, completed warps never
-  demote. Pinned `FrozenWarpDemoteTest` 5/5 (frozen+mining re-arms,
-  progressing/young/constructing keep, mining-without-entity re-arms).
-  Suite 1865/1865. Open: live recovery proof (a game where a stall
-  re-arms and supply unblocks) - rides the next macro; #150's
-  builder-dead freeze proof is this mechanism.
-- **MinSupply rides goal -> item -> order:** V2 synthetic orders carried
-  minSupply 0, so every twin wrote "At 0" and `BuildOrderAudit.recordWarp`
-  skipped every V2 warp (expected <= 0). The BO row gate now travels
-  `BuildOrderRow -> ProductionGoal.withMinSupply -> ProductionItem ->
-  OrderDirector.buildAt(…, minSupply) -> synthetic order`; dynamic goals
-  keep 0 (honestly gateless, still skipped by the audit). Prerequisites
-  get 0. Pinned at both seams (`BuildOrderGoalsTest.rowGateRidesTheGoal
-  ToTheOrder`, `ProductionDispatcherTest.supplyGateRidesToTheDirector`);
-  suite 1867/1867.
-- **Evening combat slices (owner chat orders, landed before this sweep):**
-  re-engage stands an attack order instead of a naked glide (focus stays
-  the ladder subject - retargeting broke the pincer pin, reverted with
-  evidence); strong army never flees at 200%+ (`ClusterTactic`); no
-  CHOKE_HOLD/COLLAPSE at our main/natural under 2 bases at 150%+
-  (`BattleStrategies.breakoutFromHomeChoke`); rally scatter fans out to
-  four quadrant rays (one golden-angle ray can point into our own base
-  and collapse the verdict to NOWHERE_TO_RUN on the global unit id -
-  this also explains the flaky GhostAdvanceTest, green since).
-
-## Sweep 2026-10-30 night II (autonomous: worker leash 10/12, contact-forget)
-
-- Worker 10/12 leash (owner spec): engage veto stays at 10 (nothing new
-  starts past it); the attacking recall moves 10 -> 12
-  (`MAX_RECALL_DIST_TO_BASE_TILES`, `WorkerStrayedFromBase.beyondRecall`)
-  so a fight that started inside 10 may drift to 12 before the worker
-  turns back. Worker-side 12 veto in `processFightEnemyCombatUnits`: past
-  the recall line no attack issues. Pins in `WorkerFarFightTest` (drift
-  keeps swinging at 11, recall + no-attack at 12/13, raid answered at
-  11); suite 1870/1870. Open: live pressure proof (native-AI macros give
-  no pressure). The zealot/small-army chase veto half stays DESIGNED
-  ONLY: no thresholds exist anywhere, so no gate was shipped.
-- Chase-veto mechanism landed: `DuelMemory.forgetContact` drops the
-  remembered address the ghost creep and the baseless hunt read, so a
-  future veto cannot be re-chased next frame. Pinned
-  (`forgettingContactBlindsGhostAndHunt`, null-safe). The veto gate
-  itself (how far is too far for a zealot/small army, which anchor reads
-  home) needs owner numbers - not implemented, not presented as done.
-
-## Sweep 2026-10-30 (chase veto in words, owner doctrine)
-
-- Zealot chase veto LANDED (`ChaseVeto` + `Proximity` word-enum):
-  zealots holding home do not march past the base zone (15) after far
-  targets; allowed: toe-to-toe contact, inside the zone, within close
-  of our buildings, ongoing fights, falling back onto a base-ward foe,
-  any ATTACK mission, any baseless map. Veto forgets the contact
-  (`DuelMemory.forgetContact`) so the ghost creep cannot re-chase.
-  First version broke 7 pins (screens, breach answer, lone-zealot
-  fights, sim phalanx) - healed by the baseless guard and the 15-tile
-  base zone instead of the 12 leash line (the breach raider at 14 must
-  engage). Pinned `ChaseVetoTest` 6/6; suite 1878/1878. Open:
-  small-army generalization (zealot-only for now); live chase proof.
-- `Proximity` enum answers the blast-radius worry structurally: one
-  entry per meaning (CLOSE_TO_BUILDING, CONTACT, BASE_ZONE), shared by
-  intent never by coincidence.
-
-## Sweep 2026-10-30 (veto twin + NN rule, owner doctrine)
-
-- CHASE_VETO twin rows vetoed chases (unit/target/dist, transition
-  always, 150f heartbeat) so refusals adjudicate live; re-decision
-  timing stays owner-delegated (bounded window, not same-frame).
-- NN compatibility decided as process rule P8 (design doc):
-  tuners/learners own leaf numbers, never nodes; decide() stays pure
-  over explicit snapshots; pins assert categories, doubling as
-  learned-policy regression gates.
-
-## Sweep 2026-10-30 (veto twin + ban board row, mission slices 1a/1b)
-
-- CHASE_VETO twin landed with the veto (transitions always, 150f
-  heartbeat): first live proof in the 20261030_123059 macro (28 rows,
-  all in the home-defense phase, zero during the ATTACK march - the
-  mission gate works). Vec: veto never verified on a real chase
-  refusal mid-field; the twin makes the next one adjudicable.
-- AlphaBan board row landed (NEXT #194): main-choke:N-dragoons or none,
-  change-only. Live proof needs the long PvP game (ban never triggered
-  in TauCross macros).
-- Mission slice 1a LANDED: ArmyMission enum + pure decide() + 11 pins
-  (HOLD_MAIN / MAIN_CHOKE / NATURAL_CHOKE / STAGE_MIDDLE / HOLD_MIDDLE
-  / ATTACK_ENEMY_BASE); shadow only, nothing reads it.
-- Mission slice 1b LANDED: shadow decider runs in the cluster handle
-  every frame with a MISSION_SHADOW twin (transitions + 300f
-  heartbeat). Live proof in the same macro that proved the veto twin
-  (60 rows: HOLD_MAIN to 3:12, ATTACK_ENEMY_BASE after; actuals
-  agreed - marched, fought, came home).
