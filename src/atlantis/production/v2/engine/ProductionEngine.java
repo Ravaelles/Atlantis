@@ -88,10 +88,7 @@ public final class ProductionEngine {
     }
 
     private static PlacementPlanner createPlacementPlanner() {
-        if (atlantis.config.env.Env.placementCatalogue()) {
-            return new atlantis.placement.engine.CataloguePlacementPlanner();
-        }
-        return new LegacyPlacementPlanner();
+        return new atlantis.placement.engine.CataloguePlacementPlanner();
     }
 
     /**

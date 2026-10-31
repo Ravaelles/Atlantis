@@ -64,7 +64,7 @@ final class OpeningRunner {
     static void assertFaithfulBuilderWalksToFirstPylon(BankAndSupply numbers) throws Exception {
         atlantis.config.env.ProductionV2Mode previous = atlantis.config.env.Env.productionV2();
         atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
-        atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+        atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         try {
             SimMap map = SimMap.load("src/tests/resources/taucross-snapshot.json");
             map.install();
@@ -88,7 +88,7 @@ final class OpeningRunner {
             }
         } finally {
             atlantis.config.env.Env.setProductionV2ForTest(previous);
-            atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+            atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         }
     }
 
@@ -120,7 +120,7 @@ final class OpeningRunner {
         int supplyTarget, int extraFrames, int frameCap, FrameHook hook) throws Exception {
         atlantis.config.env.ProductionV2Mode previous = atlantis.config.env.Env.productionV2();
         atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
-        atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+        atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         try {
             SimMap map = SimMap.load("src/tests/resources/taucross-snapshot.json");
             map.install();
@@ -157,7 +157,7 @@ final class OpeningRunner {
             }
         } finally {
             atlantis.config.env.Env.setProductionV2ForTest(previous);
-            atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+            atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         }
     }
 
@@ -225,7 +225,7 @@ final class OpeningRunner {
         throws Exception {
         atlantis.config.env.ProductionV2Mode previous = atlantis.config.env.Env.productionV2();
         atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
-        atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+        atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         try {
             SimMap map = SimMap.load("src/tests/resources/taucross-snapshot.json");
             map.install();
@@ -251,7 +251,7 @@ final class OpeningRunner {
             }
         } finally {
             atlantis.config.env.Env.setProductionV2ForTest(previous);
-            atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+            atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         }
     }
 

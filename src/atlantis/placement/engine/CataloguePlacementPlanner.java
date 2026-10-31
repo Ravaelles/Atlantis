@@ -24,7 +24,7 @@ import java.util.Set;
  * <p>
  * It answers the same seam the scheduler already consumes, so nothing outside
  * this class changes as the stages land. What it adds over
- * {@link LegacyPlacementPlanner} - which returned one tile from
+ * the legacy spiral planner - which returned one tile from
  * {@code APositionFinder} - is a <b>ranked list of validated candidates</b>: the
  * catalogue knows every tile on the map a footprint fits on (Blocks first, then a
  * per-tile scan), and the planner picks from it.

@@ -435,6 +435,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     live map - fixed by lazy grid build + fail-closed reserve when no
     game is present (pinned: CommanderTreeWiringTest green again).
     #146 next: delete the now-unreferenced legacy siting files.
+    CUTOVER 2026-11-01 (owner order: full cutover): `createPlacementPlanner`
+    is unconditional catalogue - `LegacyPlacementPlanner` +
+    `PylonPlacementScore` + `PylonPowerSiting` + their three dedicated
+    tests moved to mirrored `src-old/` paths (git mv, history kept);
+    `OpeningRunner` forces catalogue (was legacy) so the sim exercises
+    the default path end-to-end. `APositionFinder`/`FindPosition` chain
+    stays: the catalogue declines and the resite path still answers via
+    legacy (that is #146, explicitly out of scope). Fast bundle green:
+    CoveredTile + CommanderTreeWiring + PlacementSupport +
+    ProductionEngineSmoke 10/10. Heavy SimOpeningToFifty re-golden
+    follows (exceeds the 10-min run window here).
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
