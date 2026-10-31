@@ -327,6 +327,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     0 cancels; suite 1887/1887. Open remainder: (1) resite-not-cancel on
     proximity-finish with standing sibling, (2) SimOpeningToFifty re-golden
     on catalogue, (3) chain deletion is #146.
+  - **#233** Expansion timing follows the bank doctrine in V2 demand (owner
+    2026-11-01: the 1700-frame banked stall is timing, not siting - the base
+    built fine at [94,112]). `ExpansionTiming` (one pure predicate, legacy
+    numbers verbatim) is read by legacy `ProtossShouldExpand`, board
+    `ExpansionGoal` and V2 `addExpansionGoal` (WANT_BANK fires the 777 rule
+    with NATURAL siting for the 2nd base; THICKET keeps old behavior).
+    Pinned: `ExpansionStoryTest` 7/7 + `ExpansionGoalTest` + legacy expansion
+    suites green. Open: Wine proof (Nexus ~f4200, no doubles), then delete
+    legacy `ProtossExpansionCommander` (board-completion gate).
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

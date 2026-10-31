@@ -247,6 +247,11 @@ public class GoalSourcesTest {
     public void expansionStopsAtFourBases() {
         DynamicGoals.GameSnapshot fourBases =
             new DynamicGoals.GameSnapshot(100, 4, 180, 20, 200, 2000, false);
+        fourBases.basesTotal = 4;
+        fourBases.basesInProduction = 0;
+        fourBases.basesPlanned = 4;
+        fourBases.basesUnfinished = 0;
+        fourBases.seconds = 600;
 
         assertFalse(contains(DynamicGoals.contribute(fourBases, ProductionRacePolicy.forRace("Protoss")), baseType()),
             "four bases is the cap of this generator");

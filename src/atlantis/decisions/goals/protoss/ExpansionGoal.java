@@ -22,56 +22,57 @@ public final class ExpansionGoal implements Goal {
     public static final int EXPANSION_MIN_WORKERS = 12;
 
     /**
-     * The legacy top-level matrix, in legacy order. Stub states decide
-     * in milliseconds; the numbers are the legacy's, never re-tuned.
+     * The legacy top-level matrix, in legacy order. Delegates to
+     * {@code ExpansionTiming} (the one doctrine all three authors read);
+     * THICKET keeps the board's standing simplification (second base yes
+     * when nothing is unfinished, third+ silent here). The worker and
+     * under-attack gates are the board's own, kept as they were.
      */
     public static boolean wanted(BoardState state) {
-        if (state.minerals < 300) return false;
         if (state.workerCount < EXPANSION_MIN_WORKERS) return false;
         if (state.baseUnderAttack) return false;
 
-        if (state.minerals >= 777 && state.basesPlanned <= 3) return true;
-
-        if (veto(state) != null) return false;
-
-        if (state.baseCount >= 7) return false;
+        atlantis.production.demand.ExpansionTiming.Snapshot in = snapshot(state);
+        atlantis.production.demand.ExpansionTiming.Verdict verdict =
+            atlantis.production.demand.ExpansionTiming.decide(in);
+        if (verdict == atlantis.production.demand.ExpansionTiming.Verdict.WANT_BANK) return true;
+        if (verdict == atlantis.production.demand.ExpansionTiming.Verdict.HOLD) return false;
 
         return state.baseCount <= 1 && state.basesUnfinished == 0;
     }
 
     /**
-     * Names the veto, or null when no veto fires. Public as a seam: the
-     * saturation veto never flips wanted() on its own today (an
-     * unfinished base also closes the second-base row and the third+
-     * thicket is still legacy's), so it pins here instead - and a named
-     * veto is what a twin will read when the thicket lands.
+     * Names the veto, or null when no veto fires. The board twin reads
+     * the short name (no parenthetical detail); the legacy log reads the
+     * full reason from the doctrine.
      */
     public static String veto(BoardState state) {
-        if (dontExpandAgainstMutas(state)) return "DontExpandAgainstMutas";
-        if (defendRush(state)) return "DefendRush";
-        if (tooManyInProgress(state)) return "HasInProgress";
+        atlantis.production.demand.ExpansionTiming.Snapshot in = snapshot(state);
+        atlantis.production.demand.ExpansionTiming.Verdict verdict =
+            atlantis.production.demand.ExpansionTiming.decide(in);
+        String veto = atlantis.production.demand.ExpansionTiming.vetoOf(in);
+        if (veto == null) return null;
 
-        return null;
+        int open = veto.indexOf('(');
+        return open < 0 ? veto : veto.substring(0, open);
     }
 
-    private static boolean dontExpandAgainstMutas(BoardState state) {
-        if (!"Zerg".equals(state.enemyRace)) return false;
-        if (state.enemyMutalisks == 0) return false;
-
-        return state.minerals >= 800 || state.basesUnfinished * 3 >= state.cannonCount;
-    }
-
-    private static boolean defendRush(BoardState state) {
-        if (state.minerals >= 384) return false;
-        if (state.secondsElapsed >= 9 * 60) return false;
-
-        return state.armyStrength <= 115;
-    }
-
-    private static boolean tooManyInProgress(BoardState state) {
-        if (state.basesUnfinished == 0) return false;
-
-        return (double) (state.minerals / (400 * state.basesUnfinished)) <= 1.15;
+    private static atlantis.production.demand.ExpansionTiming.Snapshot snapshot(BoardState state) {
+        atlantis.production.demand.ExpansionTiming.Snapshot in =
+            new atlantis.production.demand.ExpansionTiming.Snapshot();
+        in.minerals = state.minerals;
+        in.basesTotal = Math.max(state.baseCount, state.basesPlanned);
+        in.basesInProduction = state.basesUnfinished;
+        in.basesPlanned = state.basesPlanned;
+        in.basesUnfinished = state.basesUnfinished;
+        in.enemyZerg = "Zerg".equals(state.enemyRace);
+        in.enemyProtoss = "Protoss".equals(state.enemyRace);
+        in.enemyTerran = "Terran".equals(state.enemyRace);
+        in.enemyMutalisks = state.enemyMutalisks;
+        in.cannons = state.cannonCount;
+        in.armyStrength = state.armyStrength;
+        in.seconds = state.secondsElapsed;
+        return in;
     }
 
     @Override

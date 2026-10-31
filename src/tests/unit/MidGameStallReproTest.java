@@ -107,7 +107,7 @@ public class MidGameStallReproTest extends WorldStubForTests {
     }
 
     @Test
-    public void unsaturatedOneBaseDoesNotExpand() {
+    public void poorOneBaseDoesNotExpandButBankedOneDoes() {
         FakeUnit[] ours = fakeOurs(
             fake(AUnitType.Protoss_Nexus, 10, 10),
             fake(AUnitType.Protoss_Pylon, 12, 10),
@@ -119,7 +119,7 @@ public class MidGameStallReproTest extends WorldStubForTests {
         options.set("supplyUsed", 59);
         options.set("supplyTotal", 65);
         initSupply(59, 65);
-        currentMinerals = 900;
+        currentMinerals = 200;
         currentGas = 150;
 
         world(10, ours, fakeEnemies(), () -> {
@@ -132,7 +132,16 @@ public class MidGameStallReproTest extends WorldStubForTests {
             assertTrue(snap.dynamicGoals(false).stream()
                 .noneMatch(g -> g.item().id().equals(
                     atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
-                "below 25 workers the base is not saturated - workers first, no Nexus");
+                "a poor base holds: 200 minerals is no windfall");
+
+            currentMinerals = 900;
+            snap = new atlantis.production.engine.GameStateSnapshot(
+                ProductionRacePolicy.forRace("Protoss"));
+
+            assertTrue(snap.dynamicGoals(false).stream()
+                .anyMatch(g -> g.item().id().equals(
+                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Nexus).id())),
+                "a 777 bank expands now - the old 25-worker wait was the stall");
         });
     }
 }

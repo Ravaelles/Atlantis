@@ -282,6 +282,15 @@ public final class GameStateSnapshot {
         snapshot.hasObservatory = Count.ofType(AUnitType.Protoss_Observatory) > 0;
         snapshot.hasCitadel = Have.citadel();
         snapshot.seconds = atlantis.game.A.seconds();
+        // Expansion doctrine inputs (ProtossShouldExpand, verbatim counts):
+        // the goal layer never counts bases itself.
+        snapshot.basesTotal =
+            Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
+        snapshot.basesInProduction =
+            Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
+        snapshot.basesPlanned = Count.basesWithPlanned();
+        snapshot.basesUnfinished = Count.basesWithUnfinished();
+        snapshot.enemyIsTerran = Enemy.terran();
         snapshot.hasArchives = Have.a(AUnitType.Protoss_Templar_Archives);
         snapshot.weaponsLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Weapons);
         snapshot.armorLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Armor);

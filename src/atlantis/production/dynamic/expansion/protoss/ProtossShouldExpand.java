@@ -34,14 +34,20 @@ public class ProtossShouldExpand {
 //        basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
         basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
+        // === One doctrine, three readers (owner 2026-11-01) =====================
+        // The top-level matrix lives in ExpansionTiming; this method only maps
+        // live game onto its snapshot and keeps the legacy side-effects (yes/no
+        // set the reason, no() cancels not-started bases when poor). The thicket
+        // below is untouched: second base and third+ still run their files.
+        atlantis.production.demand.ExpansionTiming.Snapshot in = readTimingSnapshot();
+        atlantis.production.demand.ExpansionTiming.Verdict verdict =
+            atlantis.production.demand.ExpansionTiming.decide(in);
+        if (verdict == atlantis.production.demand.ExpansionTiming.Verdict.WANT_BANK)
+            return yes(atlantis.production.demand.ExpansionTiming.reason);
+        if (verdict == atlantis.production.demand.ExpansionTiming.Verdict.HOLD)
+            return no(atlantis.production.demand.ExpansionTiming.reason);
+        // THICKET falls through to the files below.
         // =========================================================
-
-        if (A.hasMinerals(777) && Count.basesWithPlanned() <= 3) return yes("LimitedBases");
-
-        if (dontExpandAgainstMutas()) return no("DontExpandAgainstMutas");
-
-        if (!A.hasMinerals(384) && defendRush()) return no("DefendRush");
-        if (tooManyInProgress()) return no("HasInProgress(" + basesInProduction + ")");
 
         // === Second base ===========================================
 
@@ -56,49 +62,26 @@ public class ProtossShouldExpand {
         return ProtossShouldExpandToThirdAndLaterBase.forThirdAndLaterBases();
     }
 
-    private static boolean dontExpandAgainstMutas() {
-        if (!Enemy.zerg()) return false;
-        if (EnemyUnits.mutas() == 0) return false;
-
-        return A.minerals() >= 800 || basesInProduction * 3 >= Count.cannons();
-    }
-
-    // =========================================================
-
-    private static boolean defendRush() {
-        if (defendVsProtossRush()) return true;
-        if (defendVsTerranRush()) return true;
-
-        return defendVsZergRush();
-    }
-
-    private static boolean defendVsTerranRush() {
-        if (!Enemy.terran()) return false;
-        if (A.s >= 9 * 60) return false;
-
-        return Army.strength() <= 115;
-    }
-
-    private static boolean defendVsProtossRush() {
-        if (!Enemy.protoss()) return false;
-        if (A.s >= 9 * 60) return false;
-
-        return Army.strength() <= 115;
-    }
-
-    private static boolean defendVsZergRush() {
-        if (!Enemy.zerg()) return false;
-        if (A.s >= 9 * 60) return false;
-
-        return Army.strength() <= 115;
-    }
-
-    private static boolean tooManyInProgress() {
-        if (basesInProduction == 0) return false;
-
-        int minerals = A.minerals();
-
-        return (double) (minerals / (400 * basesInProduction)) <= 1.15;
+    /**
+     * Live game onto the doctrine snapshot. Same reads the matrix always
+     * used - Count/Enemy/Army/strategy numbers, never re-tuned here.
+     */
+    private static atlantis.production.demand.ExpansionTiming.Snapshot readTimingSnapshot() {
+        atlantis.production.demand.ExpansionTiming.Snapshot in =
+            new atlantis.production.demand.ExpansionTiming.Snapshot();
+        in.minerals = A.minerals();
+        in.basesTotal = bases;
+        in.basesInProduction = basesInProduction;
+        in.basesPlanned = Count.basesWithPlanned();
+        in.basesUnfinished = Count.basesWithUnfinished();
+        in.enemyZerg = Enemy.zerg();
+        in.enemyProtoss = Enemy.protoss();
+        in.enemyTerran = Enemy.terran();
+        in.enemyMutalisks = EnemyUnits.mutas();
+        in.cannons = Count.cannons();
+        in.armyStrength = Army.strength();
+        in.seconds = A.s;
+        return in;
     }
 
     protected static boolean yes(String reason) {

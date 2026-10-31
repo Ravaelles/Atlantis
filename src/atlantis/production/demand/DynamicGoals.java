@@ -861,16 +861,52 @@ public final class DynamicGoals {
         if (base == null)
             return;
 
-        if (state.workers < WORKERS_PER_BASE * state.bases)
-            return;
-
-        if (state.bases >= 4)
-            return;
-
         // A base already under construction is not missing: without this the
         // generator asks for a second Nexus every frame while the first is
         // being built.
         if (state.basesExisting > state.bases)
+            return;
+
+        // One doctrine, three readers (owner 2026-11-01): the Protoss bank
+        // rule fires here, not only in the legacy commander - a banked 777
+        // used to sit until 25 workers arrived (measured live: 1700 banked
+        // frames before the f5952 Nexus). WANT names the natural for the
+        // second base, anywhere after; THICKET keeps the old saturation
+        // rule; HOLD stays silent.
+        ExpansionTiming.Snapshot timing = new ExpansionTiming.Snapshot();
+        timing.minerals = state.minerals;
+        timing.basesTotal = state.basesTotal;
+        timing.basesInProduction = state.basesInProduction;
+        timing.basesPlanned = state.basesPlanned;
+        timing.basesUnfinished = state.basesUnfinished;
+        timing.enemyZerg = state.enemyIsZerg;
+        timing.enemyProtoss = state.enemyIsProtoss;
+        timing.enemyTerran = state.enemyIsTerran;
+        timing.enemyMutalisks = state.enemyMutalisks;
+        timing.cannons = state.cannonsAtMain;
+        timing.armyStrength = state.armyStrength;
+        timing.seconds = state.seconds;
+        ExpansionTiming.Verdict verdict = ExpansionTiming.decide(timing);
+
+        if (verdict == ExpansionTiming.Verdict.HOLD)
+            return;
+
+        if (verdict == ExpansionTiming.Verdict.WANT_BANK) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(base),
+                ProductionGoal.PRIORITY_NORMAL,
+                1,
+                0,
+                state.bases < 2
+                    ? TargetPlacement.namedArea("NATURAL")
+                    : TargetPlacement.anywhere()));
+            return;
+        }
+
+        if (state.workers < WORKERS_PER_BASE * state.bases)
+            return;
+
+        if (state.bases >= 4)
             return;
 
         goals.add(new ProductionGoal(
@@ -960,6 +996,18 @@ public final class DynamicGoals {
          * Dragoon demand waited on busy facilities).
          */
         public int gatewaysExisting;
+
+        /**
+         * Expansion doctrine inputs (ProtossShouldExpand, verbatim): total
+         * bases, in-production-or-queued, planned, unfinished. Set
+         * post-construction like {@code gatewaysExisting}; the goal layer
+         * never counts them itself.
+         */
+        public int basesTotal;
+        public int basesInProduction;
+        public int basesPlanned;
+        public int basesUnfinished;
+        public boolean enemyIsTerran;
 
         /**
          * Gateways free to take an order right now (same post-construction
@@ -1185,6 +1233,11 @@ public final class DynamicGoals {
             // Forge, the in-flight counts and the hidden-unit flag.
             anchored.supplyProvidersComing = supplyProvidersComing;
             anchored.gatewaysExisting = gatewaysExisting;
+            anchored.basesTotal = basesTotal;
+            anchored.basesInProduction = basesInProduction;
+            anchored.basesPlanned = basesPlanned;
+            anchored.basesUnfinished = basesUnfinished;
+            anchored.enemyIsTerran = enemyIsTerran;
             anchored.gatewaysFree = gatewaysFree;
             anchored.hasForge = hasForge;
             anchored.enemyHasHiddenUnits = enemyHasHiddenUnits;
