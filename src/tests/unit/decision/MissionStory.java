@@ -60,6 +60,14 @@ public final class MissionStory {
         next("the army advances to the main choke mouth");
     }
 
+    /** The line walks out to the natural choke mouth. */
+    public void holdsPositionAtNaturalChoke() {
+        in.distToMain = 15;
+        in.distToMainChoke = far();
+        in.distToNaturalChoke = at();
+        next("the army advances to the natural choke mouth");
+    }
+
     /** Command switches the posture to attack. */
     public void isOrderedToAttack() {
         in.posture = ClusterMission.Posture.ATTACK;

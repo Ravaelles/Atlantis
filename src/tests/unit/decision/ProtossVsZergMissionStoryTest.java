@@ -57,6 +57,15 @@ public class ProtossVsZergMissionStoryTest {
     }
 
     @Test
+    public void naturalChokeHoldsItsMouth() {
+        MissionStory story = MissionStory.protossAgainstZerg();
+
+        story.holdsPositionAtNaturalChoke();
+        story.theMissionIs(ArmyMission.HOLD_NATURAL_CHOKE,
+            "at the natural mouth the line holds it, same as home");
+    }
+
+    @Test
     public void raidersInTheBaseCancelEverything() {
         MissionStory story = MissionStory.protossAgainstZerg();
 
