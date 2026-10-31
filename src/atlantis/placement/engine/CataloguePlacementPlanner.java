@@ -122,8 +122,26 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this.neighbourhoods = neighbourhoods;
         this.withBlocks = true;
         this.gameContext = LIVE_GAME;
-        this.grid = new TileAvailabilityGrid(terrain);
-        this.catalogue = buildCatalogue();
+        // No game, no grid: constructing the planner must never touch the
+        // live map (unit tests build the whole commander tree with no
+        // game running). The first real startPass() builds it instead;
+        // until then every reserve fails closed. The try covers stub games
+        // that are present but incomplete (map dims without units) - a real
+        // game is always complete, so this never triggers live.
+        try {
+            if (LIVE_GAME.inGame()) {
+                this.grid = new TileAvailabilityGrid(terrain);
+                this.catalogue = buildCatalogue();
+            }
+            else {
+                this.grid = null;
+                this.catalogue = null;
+            }
+        }
+        catch (RuntimeException ignored) {
+            this.grid = null;
+            this.catalogue = null;
+        }
     }
 
     /**
@@ -281,13 +299,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // the fresh TileAvailabilityGrid is what clears the previous pass's
         // markUsed reservations - dropping it was measured to let a footprint
         // overlap a tile a building already took (PlacementPlannerTest).
-        if (terrain != null) {
-            this.grid = new TileAvailabilityGrid(terrain);
+        try {
+            if (terrain != null && (gameContext == null || gameContext.inGame())) {
+                this.grid = new TileAvailabilityGrid(terrain);
+            }
+            else if (grid != null) {
+                grid.clearUsed();
+            }
         }
-        else if (grid != null) {
-            grid.clearUsed();
+        catch (RuntimeException ignored) {
+            this.grid = null;
         }
-        this.catalogue = buildCatalogue();
+        this.catalogue = grid == null ? null : buildCatalogue();
     }
 
     /**
@@ -319,6 +342,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (unitType.getTilesWidth() <= 0 || unitType.getTilesHeights() <= 0) {
             return PlacementReservation.failure();
         }
+
+        // No map, no siting: the planner was constructed without a game
+        // (unit tests own the commander tree game-less) and no pass has
+        // built the grid yet. Fail closed instead of dereferencing nulls.
+        if (grid == null || catalogue == null)
+            return PlacementReservation.failure();
 
         if (constraint.mode() == TargetPlacement.Mode.EXACT_TILE) {
             return reserveExact(constraint, unitType, targetFrame);

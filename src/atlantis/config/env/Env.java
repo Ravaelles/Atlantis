@@ -52,9 +52,12 @@ public class Env {
      */
     private static String envFileOverride = null;
     /**
-     * PLACEMENT=CATALOGUE selects the rewritten planner; false keeps legacy.
+     * The catalogue planner is the default since the WO-145 A/B III verdict
+     * (2026-11-01: zero cancels vs 4214 on the legacy arm, game plays past
+     * f6900). PLACEMENT=LEGACY keeps the old spiral as an escape hatch;
+     * anything else (or absent) means catalogue.
      */
-    private static boolean placementCatalogue = false;
+    private static boolean placementCatalogue = true;
     /**
      * BUILDER_LOG=1 prints, every frame, each builder's active manager, its last
      * issued command and its target position.
@@ -253,12 +256,13 @@ public class Env {
 
             case "PLACEMENT":
                 // Which placement implementation answers the scheduler's seam:
-                // CATALOGUE selects the rewritten planner (_AI/redesign/03_PLACEMENT.md),
-                // anything else (or absent) keeps the legacy APositionFinder.
+                // catalogue is the default since the WO-145 A/B III verdict
+                // (2026-11-01); PLACEMENT=LEGACY keeps the old spiral as an
+                // escape hatch, anything else (or absent) means catalogue.
                 // Read here rather than from the process environment: ENV is a FILE
                 // parsed by this class, so System.getenv never sees it (measured
                 // 2026-10-08 - the flag was written to ENV and silently ignored).
-                placementCatalogue = "CATALOGUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                placementCatalogue = !"LEGACY".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
 
             case "GAME_LAUNCHER":
@@ -439,9 +443,9 @@ public class Env {
     }
 
     /**
-     * True when {@code PLACEMENT=CATALOGUE} selected the rewritten placement
-     * planner. False (the default) keeps the legacy {@code APositionFinder}, so a
-     * build with no flag behaves exactly as before.
+     * True unless {@code PLACEMENT=LEGACY} explicitly kept the old spiral.
+     * Catalogue is the default since the WO-145 A/B III verdict
+     * (2026-11-01) - a build with no flag plays catalogue.
      */
     public static boolean placementCatalogue() {
         return placementCatalogue;

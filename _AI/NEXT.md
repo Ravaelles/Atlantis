@@ -406,9 +406,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     Pylon + 21x Gateway + 2x CyberneticsC while all 1620 V2 goal rows
     are Pylon, so the Gateway storm loop (2065x proximity-finish on
     building-covered [105,115]) is legacy-BO re-fire, not V2 siting.
-    Next slices in order: (1) resite (not cancel) on proximity-finish
-    when a standing sibling covers the site, (2) pool-aware builder
-    assignment per #156 (parked to 2026-11-09). SIM CHURN MECHANIZED
+    A/B III 2026-11-01 (catalogue arm 212746 WITH the standing-cover
+    exclusion): 0 CONSTRUCTION_CANCELs (was 4214), game to f11100
+    (was stall-death f6900 supply 33), builds flowed (Pylon x9, Gateway
+    x2, Nexus x2 = expanded, Core x1), zero KITE stuck-no-step, no
+    over-blocking. Loss f11100 is combat-side (wipe at 74/74), not a
+    production stall. WO-145 A/B verdict: the catalogue arm is healthy -
+    READY FOR THE FLIP DECISION (owner call) + #146 chain deletion after.
+    SIM CHURN MECHANIZED
     2026-11-01 (owner: worker-count income + conservative rates;
     EconomyModel now 8/300f minerals, 8/210f gas - live measures
     ~0.03/worker/frame): under realistic income the opening sim re-fires
@@ -422,6 +427,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     opening gate's extra-starts assert goes green and A/B III re-runs
     clean. LANDED 2026-11-01 below (CanPhysicallyBuildHere +
     catalogue-planner rank check, both pinned).
+    FLIPPED 2026-11-01 (owner order: full cutover): `placementCatalogue`
+    defaults to true - the catalogue planner is the only siting path in
+    V2 LIVE, the legacy finder stays reachable only via explicit
+    `PLACEMENT=legacy`. The flip exposed game-less construction:
+    `new ProductionEngine` builds the planner eagerly, which needs a
+    live map - fixed by lazy grid build + fail-closed reserve when no
+    game is present (pinned: CommanderTreeWiringTest green again).
+    #146 next: delete the now-unreferenced legacy siting files.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
