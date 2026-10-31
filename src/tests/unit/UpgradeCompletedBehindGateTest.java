@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.dynamic.protoss.tech.ResearchProtossGroundArmor;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;

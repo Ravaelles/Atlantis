@@ -1,4 +1,4 @@
-package atlantis.production;
+package atlantis.production.constructions;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;

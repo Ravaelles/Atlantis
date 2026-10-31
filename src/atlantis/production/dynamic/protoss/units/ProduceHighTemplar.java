@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
+import static atlantis.production.dynamic.AbstractDynamicUnits.buildToHave;
 
 public class ProduceHighTemplar {
     public static boolean ht() {

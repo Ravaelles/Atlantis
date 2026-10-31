@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.config.env.Env;
-import atlantis.production.ForceExitAtSupply;
+import atlantis.production.forceexit.ForceExitAtSupply;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;

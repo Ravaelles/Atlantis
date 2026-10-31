@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.decisions.board.BoardState;
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;

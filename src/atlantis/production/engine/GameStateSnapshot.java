@@ -329,7 +329,7 @@ public final class GameStateSnapshot {
      * Throttled: suppression is a state, not an event.
      */
     private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
-        atlantis.production.SupplyBlockedTwin.sample(
+        atlantis.production.dynamic.supply.SupplyBlockedTwin.sample(
             racePolicy.supplyProviderType(), snapshot.supplyFree, snapshot.supplyProvidersComing);
     }
 

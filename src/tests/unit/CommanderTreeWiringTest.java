@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AtlantisGameCommander;
-import atlantis.production.ProductionCommander;
+import atlantis.production.constructions.ProductionCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.util.We;
@@ -119,7 +119,7 @@ public class CommanderTreeWiringTest {
     public void dynamicProducerIsInTheProductionTree() throws Exception {
         ProductionCommander production = new ProductionCommander();
 
-        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+        assertTrue(contains(production, atlantis.production.engine.ProductionOrdersCommander.class),
             "ProductionOrdersCommander is missing from ProductionCommander -"
                 + " nothing would ever ask for a unit. Children: "
                 + childrenOf(production));
@@ -146,7 +146,7 @@ public class CommanderTreeWiringTest {
             "ProductionCommander missing from the top-level pipeline");
 
         ProductionCommander production = find(top, ProductionCommander.class);
-        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+        assertTrue(contains(production, atlantis.production.engine.ProductionOrdersCommander.class),
             "ProductionOrdersCommander missing under ProductionCommander -"
                 + " this is the exact break that stopped unit production");
     }

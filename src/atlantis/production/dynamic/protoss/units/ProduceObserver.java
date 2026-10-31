@@ -15,7 +15,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
+import static atlantis.production.dynamic.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceObserver {

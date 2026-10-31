@@ -119,7 +119,7 @@ public class OnGameStarted {
 
         // Single decision door: every issued production decision executes
         // through the domain executor from here on (__PLAN-DECISIONS).
-        atlantis.production.ProductionDecisionExecutor.register();
+        atlantis.production.dynamic.ProductionDecisionExecutor.register();
 
         // Remember enemy race - could be broken for UMS maps
         EnemyRace.enemyRace();

@@ -1,4 +1,5 @@
 package tests.acceptance;
+import atlantis.production.constructions.ProductionCommander;
 
 import atlantis.combat.BattleCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;

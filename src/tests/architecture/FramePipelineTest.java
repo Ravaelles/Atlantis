@@ -1,4 +1,6 @@
 package tests.architecture;
+import atlantis.production.constructions.BuildingsCommander;
+import atlantis.production.constructions.ProductionCommander;
 
 import atlantis.application.FramePipeline;
 import atlantis.architecture.Commander;

@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.production.BuildingsCommander;
+import atlantis.production.constructions.BuildingsCommander;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;

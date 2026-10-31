@@ -1,7 +1,7 @@
 package atlantis.production.requests.produce;
 
 import atlantis.game.A;
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.PriorityWaiters;

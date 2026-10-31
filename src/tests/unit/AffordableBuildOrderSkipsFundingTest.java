@@ -2,7 +2,7 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.map.position.APosition;
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;

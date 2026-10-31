@@ -369,7 +369,7 @@ public class AbstractTestWithUnits extends UnitTest {
         // from an earlier test closes the funding veto for dynamic rows in
         // the next one (measured: suite-only funding refusals at banks that
         // pass in isolation). Fail-open by default, every test.
-        atlantis.production.GoalBoardFeeder.clearForTests();
+        atlantis.production.goalboard.GoalBoardFeeder.clearForTests();
 
         // Base-queue throttle is wall-clock state: a Nexus queued by an
         // earlier test would silence the next test's expansion for 5

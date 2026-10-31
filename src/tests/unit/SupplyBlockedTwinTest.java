@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.production.SupplyBlockedTwin;
+import atlantis.production.dynamic.supply.SupplyBlockedTwin;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.engine.GameStateSnapshot;

@@ -1,4 +1,4 @@
-package atlantis.production;
+package atlantis.production.dynamic;
 
 import atlantis.game.A;
 import atlantis.game.AGame;

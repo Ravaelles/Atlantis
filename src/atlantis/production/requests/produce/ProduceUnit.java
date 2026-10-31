@@ -4,7 +4,7 @@ import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.DecisionDispatcher;
 import atlantis.decisions.goals.protoss.ArmyQuestion;
 import atlantis.game.A;
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -13,7 +13,7 @@ public class ProduceUnit {
     // See ProduceWorker: the executor registers on first wrapper load,
     // game root or test alike.
     static {
-        atlantis.production.ProductionDecisionExecutor.register();
+        atlantis.production.dynamic.ProductionDecisionExecutor.register();
     }
 
     public static boolean produceUnit(AUnitType type, ProductionOrder order) {

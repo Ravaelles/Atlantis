@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.config.env.Env;
-import atlantis.production.ForceExitWhenOpeningProven;
+import atlantis.production.forceexit.ForceExitWhenOpeningProven;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;

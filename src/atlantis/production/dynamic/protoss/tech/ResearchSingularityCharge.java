@@ -95,7 +95,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         // NEXT #93 absorption track: the trio reads posture off the board.
         // Same numbers, new home - the plain gates below keep the field.
         atlantis.decisions.board.BoardState board =
-            atlantis.production.GoalBoardAdvisor.snapshot();
+            atlantis.production.goalboard.GoalBoardAdvisor.snapshot();
 
         Boolean want;
         if ((want = forForgeExpand(board)) != null) return want;

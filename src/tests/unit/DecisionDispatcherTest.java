@@ -20,7 +20,7 @@ public class DecisionDispatcherTest {
     @AfterEach
     public void clean() {
         DecisionLog.clearForTests();
-        atlantis.production.ProductionDecisionExecutor.register();
+        atlantis.production.dynamic.ProductionDecisionExecutor.register();
         executed = false;
     }
 

@@ -14,7 +14,7 @@ import tests.unit.DynamicMockOurUnits;
 
 import java.util.ArrayList;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
+import static atlantis.production.dynamic.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

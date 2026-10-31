@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
-import static atlantis.production.AbstractDynamicUnits.trainNowIfHaveWhatsRequired;
+import static atlantis.production.dynamic.AbstractDynamicUnits.trainNowIfHaveWhatsRequired;
 
 public class ProduceArbiters {
     public static void arbiters() {

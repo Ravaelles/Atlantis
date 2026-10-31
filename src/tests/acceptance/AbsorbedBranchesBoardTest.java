@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.buildings.ProduceStargate;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;

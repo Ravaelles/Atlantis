@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
+import static atlantis.production.dynamic.AbstractDynamicUnits.buildToHave;
 
 public class ProduceCorsairs {
     private static int produced = 0;

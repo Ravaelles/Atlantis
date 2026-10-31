@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.config.env.Env;
-import atlantis.production.ForceExitLocallyInOpenBW;
+import atlantis.production.forceexit.ForceExitLocallyInOpenBW;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;

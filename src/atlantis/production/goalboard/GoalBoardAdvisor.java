@@ -1,4 +1,4 @@
-package atlantis.production;
+package atlantis.production.goalboard;
 
 
 import atlantis.architecture.Commander;

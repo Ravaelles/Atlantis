@@ -1,4 +1,7 @@
 package atlantis.units.special;
+import atlantis.production.forceexit.ForceExitWhenOpeningProven;
+import atlantis.production.forceexit.ForceExitLocallyInOpenBW;
+import atlantis.production.constructions.ProductionCommander;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;

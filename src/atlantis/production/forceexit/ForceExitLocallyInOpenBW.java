@@ -1,4 +1,4 @@
-package atlantis.production;
+package atlantis.production.forceexit;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;

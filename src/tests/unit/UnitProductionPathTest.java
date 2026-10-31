@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AtlantisGameCommander;
-import atlantis.production.ProductionCommander;
+import atlantis.production.constructions.ProductionCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
@@ -101,7 +101,7 @@ public class UnitProductionPathTest {
         // unit production back.
         ProductionCommander production = new ProductionCommander();
 
-        assertTrue(contains(production, atlantis.production.ProductionOrdersCommander.class),
+        assertTrue(contains(production, atlantis.production.engine.ProductionOrdersCommander.class),
             "the v2 engine must be the one running production");
         assertFalse(contains(production, DynamicProductionCommander.class),
             "the legacy dynamic producer is dropped on purpose - two policies"

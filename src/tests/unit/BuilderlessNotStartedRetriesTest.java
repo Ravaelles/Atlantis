@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;

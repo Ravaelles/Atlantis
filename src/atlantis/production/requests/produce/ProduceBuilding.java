@@ -6,7 +6,7 @@ import atlantis.decisions.goals.protoss.BuildingQuestion;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
@@ -45,7 +45,7 @@ public class ProduceBuilding {
     // See ProduceWorker: the executor registers on first wrapper load,
     // game root or test alike.
     static {
-        atlantis.production.ProductionDecisionExecutor.register();
+        atlantis.production.dynamic.ProductionDecisionExecutor.register();
     }
 
     private static boolean refuse(AUnitType type, ProductionOrder order, String guard) {

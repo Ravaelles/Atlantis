@@ -3,7 +3,7 @@ package atlantis.production.dynamic.protoss.reinforce;
 import atlantis.decisions.goals.protoss.CannonGoal;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnit;

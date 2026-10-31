@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.production.ProductionHealthWatcher;
+import atlantis.production.dynamic.supply.ProductionHealthWatcher;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;

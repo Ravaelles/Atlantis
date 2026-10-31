@@ -1,4 +1,5 @@
 package tests.unit;
+import atlantis.production.constructions.ProductionCommander;
 
 import atlantis.Atlantis;
 import atlantis.config.AtlantisRaceConfig;

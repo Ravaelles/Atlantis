@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
 import bwapi.Race;

@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.decisions.board.BoardState;
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;

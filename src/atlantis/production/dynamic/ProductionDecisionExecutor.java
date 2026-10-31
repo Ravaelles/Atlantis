@@ -1,4 +1,4 @@
-package atlantis.production;
+package atlantis.production.dynamic;
 
 import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.DecisionExecutor;

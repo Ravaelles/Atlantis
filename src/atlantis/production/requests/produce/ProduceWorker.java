@@ -7,7 +7,7 @@ import atlantis.decisions.board.DecisionDispatcher;
 import atlantis.decisions.goals.protoss.WorkerQuestion;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.goalboard.GoalBoardAdvisor;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -22,7 +22,7 @@ public class ProduceWorker {
     // including in tests, which never run the game root (OnGameStarted).
     // Idempotent: re-registration only swaps an identical executor.
     static {
-        atlantis.production.ProductionDecisionExecutor.register();
+        atlantis.production.dynamic.ProductionDecisionExecutor.register();
     }
 
     public static boolean produceWorker() {

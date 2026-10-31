@@ -10,7 +10,7 @@ import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.production.GoalBoardFeeder;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.orders.build.BuildOrderOwnsGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
