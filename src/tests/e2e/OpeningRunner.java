@@ -135,17 +135,46 @@ final class OpeningRunner {
                 try {
                     while (numbers.supplyUsed() < supplyTarget && driver.frame() < frameCap) {
                         driver.step();
+                        if (hook != null) hook.afterStep(driver);
+                    }
+                    if (numbers.supplyUsed() < supplyTarget) {
+                        throw new AssertionError(
+                            "sim hit the frame cap (" + frameCap + ") before supply "
+                                + supplyTarget + " - the opening never got there, see table");
                     }
                     int markFrame = driver.frame();
 
                     List<String> table = new ArrayList<>();
                     int endFrame = markFrame + extraFrames;
+                    int lastSampleBucket = driver.frame() / 100;
+                    int lastWarpCount = driver.warpLog().size();
+                    int stuckSinceFrame = driver.frame();
                     while (driver.frame() < endFrame && driver.frame() < frameCap) {
                         driver.step();
                         if (hook != null) hook.afterStep(driver);
-                        if (driver.frame() % 100 == 0) {
+                        if (driver.frame() / 100 != lastSampleBucket) {
+                            lastSampleBucket = driver.frame() / 100;
                             table.add(samplePostFifty(driver, numbers));
                         }
+                        if (driver.warpLog().size() != lastWarpCount) {
+                            lastWarpCount = driver.warpLog().size();
+                            stuckSinceFrame = driver.frame();
+                        }
+                        // A banked 800 with nothing warping is the stall, not patience:
+                        // fail fast with the diagnosis instead of running to the cap.
+                        if (numbers.minerals() >= 800
+                            && driver.frame() - stuckSinceFrame >= 1500) {
+                            throw new AssertionError(
+                                "bank-stuck: " + numbers.minerals() + " minerals banked and no warp for "
+                                    + (driver.frame() - stuckSinceFrame) + " frames (since f"
+                                    + stuckSinceFrame + ") - the build is not spending, see table:\n"
+                                    + String.join("\n", table));
+                        }
+                    }
+                    if (driver.frame() >= frameCap) {
+                        throw new AssertionError(
+                            "sim exceeded its frame cap (" + frameCap + " frames) - "
+                                + "the game never ended, see table:\n" + String.join("\n", table));
                     }
 
                     return new PostFiftyResult(markFrame, driver.frame(), table, driver.warpLog());
@@ -200,6 +229,15 @@ final class OpeningRunner {
             this.endFrame = endFrame;
             this.table = table;
             this.log = log;
+        }
+
+        int warpsOfType(String type) {
+            int count = 0;
+            for (SimDriver.WarpRecord record : log) {
+                if (record.type.equals(type)) count++;
+            }
+
+            return count;
         }
 
         int probeWarpsAfterMark() {

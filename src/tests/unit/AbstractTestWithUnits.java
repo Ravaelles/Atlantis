@@ -71,6 +71,31 @@ public class AbstractTestWithUnits extends UnitTest {
     public static MockedStatic<Main> main;
     public Game game;
     protected int currentMinerals = 0;
+
+    /**
+     * Sim income lands here (one shared SimBank writes, A.* stubs read).
+     * Public because the bank lives in tests.e2e; behavior unchanged.
+     */
+    public void setBankMinerals(int minerals) {
+        currentMinerals = minerals;
+    }
+
+    public void setBankGas(int gas) {
+        currentGas = gas;
+    }
+
+    public void setBankSupply(int used, int total) {
+        currentSupplyUsed = used;
+        currentSupplyTotal = total;
+    }
+
+    public int bankMinerals() {
+        return currentMinerals;
+    }
+
+    public int bankSupplyUsed() {
+        return currentSupplyUsed;
+    }
     protected int currentGas = 0;
     protected int currentSupplyUsed = 0;
     protected int currentSupplyTotal = 0;

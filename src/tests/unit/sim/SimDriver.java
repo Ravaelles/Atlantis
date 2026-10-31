@@ -180,18 +180,22 @@ public final class SimDriver {
         for (FakeUnit geyser : map.geysers()) units.addNeutral(geyser);
     }
 
+
     public void step() {
-        frame++;
+        int stride = config.stride();
+        frame += stride;
         A.setNow(frame, frame / 30);
 
-        mining.earn(bank, units, frame, bases());
+        mining.earn(bank, units, frame, bases(), stride);
         syncFields();
 
         engine.updateFrame();
 
         consumeSink();
-        constructions.advance(new SimFrame(this, frame));
-        if (!config.isFast()) movement.stepAll(new ArrayList<FakeUnit>(units.ours()));
+        constructions.advance(new SimFrame(this, frame), stride);
+        if (!config.isFast()) {
+            for (int i = 0; i < stride; i++) movement.stepAll(new ArrayList<FakeUnit>(units.ours()));
+        }
         syncFields();
     }
 
@@ -314,7 +318,7 @@ public final class SimDriver {
         if (builder == null || dest == null) return;
 
         if (config.isFast()) {
-            stepToward(builder, dest);
+            for (int i = 0; i < config.stride(); i++) stepToward(builder, dest);
         }
         else if (!"Move".equals(builder.lastCommand)) {
             builder.lastCommand = "Move";

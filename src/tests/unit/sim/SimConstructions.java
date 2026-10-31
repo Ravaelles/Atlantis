@@ -79,12 +79,12 @@ public final class SimConstructions {
      * and completed; the driver owns movement, banking and spawning
      * through the frame context.
      */
-    public void advance(SimFrame frame) {
+    public void advance(SimFrame frame, int stride) {
         for (Construction construction : new ArrayList<>(ConstructionRequests.constructions)) {
-            advanceConstruction(frame, construction);
+            advanceConstruction(frame, construction, stride);
         }
-        advanceTraining(frame);
-        advanceResearch(frame);
+        advanceTraining(frame, stride);
+        advanceResearch(frame, stride);
     }
 
     /** Start frames observed so far, per building type name. */
@@ -116,7 +116,7 @@ public final class SimConstructions {
         return false;
     }
 
-    private void advanceConstruction(SimFrame frame, Construction construction) {
+    private void advanceConstruction(SimFrame frame, Construction construction, int stride) {
         if (construction == null || construction.buildingType() == null) return;
 
         if (construction.status().isTerminal()) {
@@ -179,7 +179,7 @@ public final class SimConstructions {
             frame.driver().logWarp(construction.buildingType(), construction.buildPosition());
         }
 
-        site.warpFramesLeft--;
+        site.warpFramesLeft -= stride;
         if (site.warpUnit != null) {
             site.warpUnit.simRemainingBuildTime = Math.max(0, site.warpFramesLeft);
         }
@@ -257,10 +257,10 @@ public final class SimConstructions {
         }
     }
 
-    private void advanceTraining(SimFrame frame) {
+    private void advanceTraining(SimFrame frame, int stride) {
         for (Map.Entry<Integer, TrainingJob> entry : new ArrayList<>(training.entrySet())) {
             TrainingJob job = entry.getValue();
-            job.framesLeft--;
+            job.framesLeft -= stride;
             FakeUnit facility = frame.driver().unitById(entry.getKey());
             if (facility != null) {
                 facility.setTrainingQueue(Collections.singletonList(job.type));
@@ -271,10 +271,10 @@ public final class SimConstructions {
         }
     }
 
-    private void advanceResearch(SimFrame frame) {
+    private void advanceResearch(SimFrame frame, int stride) {
         for (Map.Entry<Integer, ResearchJob> entry : new ArrayList<>(research.entrySet())) {
             ResearchJob job = entry.getValue();
-            job.framesLeft--;
+            job.framesLeft -= stride;
             if (job.framesLeft > 0) continue;
             research.remove(entry.getKey());
             frame.driver().completeResearch(entry.getKey(), job.isUpgrade, job.name);

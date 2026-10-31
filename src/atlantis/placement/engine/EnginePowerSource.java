@@ -76,6 +76,35 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         return Math.max(0, remaining);
     }
 
+    /**
+     * Frame-keyed memo, same pattern as the terrain source: rank asks every
+     * candidate for every building goal in one update, but pylons do not move
+     * mid-update. One Select scan per frame, pure rectangle checks after.
+     */
+    private static int memoFrame = Integer.MIN_VALUE;
+    private static Object memoGame = null;
+    private static java.util.List<AUnit> memoPylons = java.util.Collections.emptyList();
+    private static java.util.List<AUnit> memoUnfinished = java.util.Collections.emptyList();
+    private static final java.util.Map<Long, Boolean> memoPowered = new java.util.HashMap<>();
+    private static final java.util.Map<Long, java.util.List<Integer>> memoIncoming = new java.util.HashMap<>();
+    private static final java.util.Map<Long, Boolean> memoCoverable = new java.util.HashMap<>();
+
+    private static long key(int tx, int ty) {
+        return (((long) tx) << 32) | (ty & 0xffffffffL);
+    }
+
+    private static void memo(int frame) {
+        Object game = atlantis.Atlantis.game();
+        if (frame == memoFrame && game == memoGame) return;
+        memoFrame = frame;
+        memoGame = game;
+        memoPylons = new java.util.ArrayList<>(Select.ourOfType(AUnitType.Protoss_Pylon).list());
+        memoUnfinished = new java.util.ArrayList<>(Select.ourWithUnfinished(AUnitType.Protoss_Pylon).list());
+        memoPowered.clear();
+        memoIncoming.clear();
+        memoCoverable.clear();
+    }
+
     @Override
     public boolean isPowered(int tx, int ty) {
         // No game attached (a unit test): there are no Pylons, so nothing is
@@ -83,28 +112,41 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         // Pylons" true everywhere, instead of throwing from a cache inside Select.
         if (atlantis.Atlantis.game() == null) return false;
 
-        for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
+        memo(atlantis.game.A.now());
+        Boolean hit = memoPowered.get(key(tx, ty));
+        if (hit != null) return hit;
+
+        boolean powered = false;
+        for (AUnit pylon : memoPylons) {
             // Tile-point approximation (no footprint at this call site): the
             // legacy path tests the exact footprint center, so the two agree
             // everywhere except sub-tile razor boundaries. The verdict layer
             // degrades a miss to NEEDS_NEW_PYLON, not to a deadlock.
-            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1)) return true;
+            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1)) { powered = true; break; }
         }
 
-        return false;
+        memoPowered.put(key(tx, ty), powered);
+        return powered;
     }
 
     @Override
     public List<Integer> incomingPowerFrames(int tx, int ty) {
-        List<Integer> frames = new ArrayList<>();
+        if (atlantis.Atlantis.game() == null) return java.util.Collections.emptyList();
 
-        for (AUnit pylon : Select.ourWithUnfinished(AUnitType.Protoss_Pylon).list()) {
+        memo(atlantis.game.A.now());
+        long k = key(tx, ty);
+        List<Integer> hit = memoIncoming.get(k);
+        if (hit != null) return hit;
+
+        List<Integer> frames = new ArrayList<>();
+        for (AUnit pylon : memoUnfinished) {
             if (pylon.isCompleted()) continue;
             if (!withinPowerRadius(pylon, tx, ty)) continue;
 
             frames.add(framesUntilComplete(pylon));
         }
 
+        memoIncoming.put(k, frames);
         return frames;
     }
 
@@ -121,6 +163,19 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
      */
     @Override
     public boolean canBeCoveredByNewPylon(int tx, int ty) {
+        if (atlantis.Atlantis.game() == null) return false;
+
+        memo(atlantis.game.A.now());
+        long k = key(tx, ty);
+        Boolean hit = memoCoverable.get(k);
+        if (hit != null) return hit;
+
+        boolean coverable = canBeCoveredByNewPylonRaw(tx, ty);
+        memoCoverable.put(k, coverable);
+        return coverable;
+    }
+
+    private static boolean canBeCoveredByNewPylonRaw(int tx, int ty) {
         int reach = PYLON_RADIUS_TILES + 1;
 
         for (int x = tx - reach; x <= tx + reach; x += 2) {

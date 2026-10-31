@@ -47,18 +47,16 @@ public class LongGameToSeventyTest extends AbstractTestWithUnits {
     }
 
     @Test
-    public void midGameBuildsThirdGatewayTrainsPast47AndExpands() throws Exception {
+    public void reachesSeventySupplyWithThirdGatewayArmyAndExpansion() throws Exception {
+        // Designed length ~12 game-minutes (opening ~11800 frames at sim pace
+        // plus 10000 extra): the frame cap only catches hangs - the bank-stuck
+        // guard still fails a stalled economy fast.
         OpeningRunner.PostFiftyResult game = OpeningRunner.playToSupplyThenExtra(
-            BUILD_ORDER, SimConfig.fast(), numbers(), 50, 12000, 60000);
+            BUILD_ORDER, SimConfig.fast().withStride(120), numbers(), 50, 10000, 24000);
 
-        int gateways = 0;
-        int dragoonsAfterFifty = 0;
-        int expands = 0;
-        for (tests.unit.sim.SimDriver.WarpRecord record : game.log) {
-            if (record.kind.equals("building") && record.type.equals("Gateway")) gateways++;
-            if (record.kind.equals("building") && record.type.equals("Nexus")) expands++;
-            if (record.frame > game.markFrame && record.type.equals("Dragoon")) dragoonsAfterFifty++;
-        }
+        int gateways = game.warpsOfType("Gateway");
+        int dragoonsAfterFifty = game.dragoonWarpsAfterMark();
+        int expands = game.warpsOfType("Nexus");
 
         StringBuilder table = new StringBuilder();
         for (String row : game.table) table.append(row).append("\n");
@@ -73,32 +71,6 @@ public class LongGameToSeventyTest extends AbstractTestWithUnits {
     }
 
     private OpeningRunner.BankAndSupply numbers() {
-        return new OpeningRunner.BankAndSupply() {
-            @Override
-            public void setMinerals(int minerals) {
-                currentMinerals = minerals;
-            }
-
-            @Override
-            public void setGas(int gas) {
-                currentGas = gas;
-            }
-
-            @Override
-            public void setSupply(int used, int total) {
-                currentSupplyUsed = used;
-                currentSupplyTotal = total;
-            }
-
-            @Override
-            public int minerals() {
-                return currentMinerals;
-            }
-
-            @Override
-            public int supplyUsed() {
-                return currentSupplyUsed;
-            }
-        };
+        return new SimBank(this);
     }
 }

@@ -139,6 +139,18 @@ public final class TileAvailabilityGrid {
     }
 
     /**
+     * Drops every reservation mark (USED and its BORDER ring) while keeping
+     * the terrain ones: the reuse path in the planner deliberately skips
+     * the terrain rescan, so the ring must go here - otherwise reservations
+     * accumulate and the catalogue shrinks pass after pass.
+     */
+    public void clearReservations() {
+        for (int i = 0; i < flags.length; i++) {
+            flags[i] &= ~(USED | BORDER);
+        }
+    }
+
+    /**
      * Can a {@code w x h} building start at this tile? Every covered tile must be
      * free of every flag - the same "the whole footprint fits" rule as
      * Stardust's {@code checkTile}.

@@ -108,32 +108,6 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
      * The number feeds the sim pushes into the harness fields every frame.
      */
     private OpeningRunner.BankAndSupply numbers() {
-        return new OpeningRunner.BankAndSupply() {
-            @Override
-            public void setMinerals(int minerals) {
-                currentMinerals = minerals;
-            }
-
-            @Override
-            public void setGas(int gas) {
-                currentGas = gas;
-            }
-
-            @Override
-            public void setSupply(int used, int total) {
-                currentSupplyUsed = used;
-                currentSupplyTotal = total;
-            }
-
-            @Override
-            public int minerals() {
-                return currentMinerals;
-            }
-
-            @Override
-            public int supplyUsed() {
-                return currentSupplyUsed;
-            }
-        };
+        return new SimBank(this);
     }
 }

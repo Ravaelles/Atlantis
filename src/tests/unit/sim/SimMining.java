@@ -68,10 +68,10 @@ public final class SimMining {
     /**
      * Applies one frame of income to the bank.
      */
-    public void earn(SimBank bank, SimUnitRegistry units, int frame, int bases) {
+    public void earn(SimBank bank, SimUnitRegistry units, int frame, int bases, int stride) {
         bank.earn(
-            EconomyModel.mineralRate(effectiveMiners(units, frame), bases),
-            gasMiners(units) * EconomyModel.GAS_PER_WORKER_FRAME);
+            EconomyModel.mineralRate(effectiveMiners(units, frame), bases) * stride,
+            gasMiners(units) * EconomyModel.GAS_PER_WORKER_FRAME * stride);
     }
 
     /**

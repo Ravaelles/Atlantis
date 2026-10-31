@@ -67,6 +67,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private final RacePlacementStrategy strategy;
     private final NeighbourhoodRegistry neighbourhoods;
     private final boolean withBlocks;
+    /**
+     * Passes since the last terrain rescan. The terrain (buildability,
+     * resources, depots) barely moves between passes, while the rescan
+     * costs a full map walk (measured ~370 ms in sim) - so passes reuse
+     * the grid via {@code clearReservations()} and rescan every 30th.
+     * A stale window of at most 30 frames only ever blocks conservatively
+     * (a depleted patch stays blocked a moment longer, never the reverse).
+     */
+    private int passesSinceTerrainRefresh = 0;
+    private static final int TERRAIN_REFRESH_EVERY = 30;
     private final GameContext gameContext;
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
@@ -307,7 +317,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // overlap a tile a building already took (PlacementPlannerTest).
         try {
             if (terrain != null && (gameContext == null || gameContext.inGame())) {
-                this.grid = new TileAvailabilityGrid(terrain);
+                if (grid == null || passesSinceTerrainRefresh >= TERRAIN_REFRESH_EVERY) {
+                    this.grid = new TileAvailabilityGrid(terrain);
+                    this.catalogue = buildCatalogue();
+                    passesSinceTerrainRefresh = 0;
+                }
+                else {
+                    passesSinceTerrainRefresh++;
+                    grid.clearReservations();
+                }
             }
             else if (grid != null) {
                 grid.clearUsed();
@@ -316,7 +334,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         catch (RuntimeException ignored) {
             this.grid = null;
         }
-        this.catalogue = grid == null ? null : buildCatalogue();
+        if (grid == null) this.catalogue = null;
     }
 
     /**
