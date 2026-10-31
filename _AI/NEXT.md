@@ -340,12 +340,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     V2 anti-double pinned in `GoalSourcesTest`. Board-completion gate done.
   - **#234** V2 mid-game equilibrium stall (mega test `LongGameToSeventyTest`,
     14 s, milestone pipeline): gas branch landed, so Dragoons flow (14) and
-    Zealots mix in on lings - but two stalls remain. (a) No 3rd Gateway:
-    the rich-plus-busy conjunction (`gatewaysFree == 0` + bank) almost
-    never holds in one update (live f10200 HAS gate 3; sim f19800 does
-    not). Decide: latch busyness (busy recently, not busy now) or accept
-    the simmer faithfully. (b) Single-base equilibrium: capped workers
-    (25) + sub-777 bank + trickle army = no expansion, no probes, flat
+    Zealots mix in on lings. The gate3 verdict went green via a 10 s busy
+    latch (proven load-bearing by on/off A/B at stride 60: latched green,
+    unlatched red on the same tree) because simultaneity (`gatewaysFree == 0`
+    + rich bank in one update) almost never holds under coarse dispatch.
+    (b) Single-base equilibrium: capped workers (25) + sub-777 bank +
+    trickle army = no expansion, no probes, flat
     bank ~200 forever (`PostFiftyProductionTest`: 4 probes in 2500f).
     Decide: save-for-expansion doctrine vs trickle-army. Evidence: the
     milestone snapshot (bank/gas/busy counts per 100f).

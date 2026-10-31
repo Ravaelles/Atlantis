@@ -261,21 +261,35 @@ public class GoalSourcesTest {
     }
 
     public void richAndBusyGatewaysWantAThird() {
-        DynamicGoals.GameSnapshot busy = new DynamicGoals.GameSnapshot(
-            40, 2, 70, 3, 79, 1000, false, 10, 2);
-        busy.gatewaysExisting = 2;
-        busy.gatewaysFree = 0;
-
+        DynamicGoals.GameSnapshot busy = gateState(500, 0);
         assertTrue(contains(DynamicGoals.contribute(busy, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
             "rich with every Gateway busy: a 3rd Gateway is wanted");
+    }
 
-        DynamicGoals.GameSnapshot idle = new DynamicGoals.GameSnapshot(
+    public void latchedBusySurvivesAFreeGap() {
+        // Same update never sees rich and busy together under coarse sampling
+        // (stride 60 re-issues up to a minute late): a 10 s memory of the last
+        // all-busy frame keeps the verdict, an older one does not.
+        DynamicGoals.GameSnapshot busy = gateState(500, 0);
+        assertTrue(contains(DynamicGoals.contribute(busy, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
+            "all busy now: wanted");
+
+        DynamicGoals.GameSnapshot justFreed = gateState(505, 1);
+        assertTrue(contains(DynamicGoals.contribute(justFreed, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
+            "one free 5 s after an all-busy frame: still wanted (latch)");
+
+        DynamicGoals.GameSnapshot longIdle = gateState(900, 1);
+        assertFalse(contains(DynamicGoals.contribute(longIdle, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
+            "free for minutes: no 3rd, the free one takes the work");
+    }
+
+    private static DynamicGoals.GameSnapshot gateState(int seconds, int freeGateways) {
+        DynamicGoals.GameSnapshot state = new DynamicGoals.GameSnapshot(
             40, 2, 70, 3, 79, 1000, false, 10, 2);
-        idle.gatewaysExisting = 2;
-        idle.gatewaysFree = 1;
-
-        assertFalse(contains(DynamicGoals.contribute(idle, ProductionRacePolicy.forRace("Protoss")), gatewayType()),
-            "rich but with a free Gateway: no 3rd, the free one takes the work");
+        state.gatewaysExisting = 2;
+        state.gatewaysFree = freeGateways;
+        state.seconds = seconds;
+        return state;
     }
 
     public void expansionStopsAtFourBases() {

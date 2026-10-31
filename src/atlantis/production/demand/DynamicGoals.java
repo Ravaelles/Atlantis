@@ -644,7 +644,12 @@ public final class DynamicGoals {
 
         int cap = state.enemyIsProtoss && state.enemyCombatBuildings == 0 ? 6 : 4;
         if (state.gatewaysExisting < 2 || state.gatewaysExisting >= cap) return;
-        if (state.gatewaysFree > 0) return;
+
+        boolean allBusy = state.gatewaysFree == 0;
+        if (allBusy) lastAllBusySecond = state.seconds;
+        if (!allBusy
+            && (lastAllBusySecond < 0 || state.seconds - lastAllBusySecond > 10)) return;
+
         if (state.minerals < GATEWAY_BANK_MINERALS) return;
 
         goals.add(new ProductionGoal(
@@ -654,6 +659,21 @@ public final class DynamicGoals {
 
     /** Third Gateway no earlier than this: the BO owns the opening. */
     private static final int GATEWAY_DEMAND_SUPPLY = 30;
+
+    /**
+     * The last game-second every Gateway stood busy. The rich-plus-busy gate
+     * below fires on this, not only on a simultaneously-busy snapshot: with
+     * coarse evaluation (sim strides, re-issue gaps) the all-busy instant
+     * rarely lands on the same frame as a rich bank, while per-frame live
+     * play sees it constantly (measured: stride-60 sim never fires, stride-1
+     * sim fires - same game, same rules). A 10 s window keeps the intent
+     * (demand exceeds capacity) without demanding simultaneity.
+     */
+    private static int lastAllBusySecond = Integer.MIN_VALUE;
+
+    public static void clearLatchForTests() {
+        lastAllBusySecond = Integer.MIN_VALUE;
+    }
 
     /** Rich-only rule: a new Gateway never starves tech or units. */
     private static final int GATEWAY_BANK_MINERALS = 400;

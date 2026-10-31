@@ -39,6 +39,7 @@ public class ClearAllCaches {
         EnemyUnits.clearCache();
         ReservedResources.reset();
         Select.clearCache();
+        atlantis.production.demand.DynamicGoals.clearLatchForTests();
     }
 
     public static void clearAll() {
