@@ -58,8 +58,14 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
      * per worker, was 8 per ~180): every warp lands later, order and gates
      * unchanged - slower income, same decisions.
      */
+    /**
+     * Re-goldened 2026-11-01 for the stride-60 fast sim: the same rows in
+     * the same order, every frame on the 60-frame grid (all slightly
+     * earlier - less re-plan dither per decision). Same contract as ever:
+     * order, gates and no-churn pin the opening, not the clock.
+     */
     private static final int[] GOLDEN_WARP_FRAMES = {
-        2050, 3928, 6485, 5294, 4271, 6118, 7041, 5448, 8926, 7693, 7199,
+        1980, 3720, 6360, 5280, 4200, 6000, 6780, 5400, 8760, 7680, 7140,
     };
 
     /**
@@ -83,7 +89,7 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
     @Test
     public void zealotIntoGoonReachesFiftySupplyInOrder() throws Exception {
         OpeningRunner.OpeningResult opening = OpeningRunner.playToSupply(
-            BUILD_ORDER, SimConfig.fast(), numbers(), SUPPLY_TARGET, BANK_HORIZON, FRAME_CAP
+            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), SUPPLY_TARGET, BANK_HORIZON, FRAME_CAP
         );
 
         opening.assertReachedSupply(SUPPLY_TARGET);
