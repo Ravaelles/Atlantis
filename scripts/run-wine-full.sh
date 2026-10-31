@@ -16,7 +16,7 @@
 #      running attaches to a match that is already over
 #      (Connection successful -> failed, disconnecting).
 #   3. The game must run with W-MODE doublesize for a usable window (see
-#      _AI/LOCAL-STARCRAFT.md); run-wine-game.sh already sets that up.
+#      _AI/GUIDES/LOCAL-STARCRAFT.md); run-wine-game.sh already sets that up.
 #
 # Usage:
 #   scripts/run-wine-full.sh [map-name]        # default: 1a2a3a Micro 2.scx

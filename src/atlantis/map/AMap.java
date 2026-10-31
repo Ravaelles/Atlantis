@@ -98,7 +98,7 @@ public class AMap {
      * </p>
      *
      * <p>
-     * Superseded advice: {@code _AI/LOCAL-STARCRAFT.md} said to continue with an
+     * Superseded advice: {@code _AI/GUIDES/LOCAL-STARCRAFT.md} said to continue with an
      * uninitialised BWEM and treat "fake natural / fake choke" as the only working
      * path. That is withdrawn - measured 2026-10-10, BWEM does initialise on
      * TauCross (a real {@code Choke{[67,114], width=2}} was produced), so a failure

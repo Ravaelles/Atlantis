@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * JBWEB is a JNI library whose natives do not exist on Linux; {@code InitJBWEB}
  * fails and {@code AMap} catches it and continues
- * ({@code _AI/LOCAL-STARCRAFT.md} 187-189). That left
+ * ({@code _AI/GUIDES/LOCAL-STARCRAFT.md} 187-189). That left
  * {@code MapTiles.canBuildHere} with only the engine's own composite answer -
  * which {@code MapTiles} documents as refusing valid tiles on OpenBW - plus the
  * occupancy guard, which can only ever say "not occupied". So a free, valid

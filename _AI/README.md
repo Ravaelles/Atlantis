@@ -2,7 +2,7 @@
 
 Session start (every session, no exceptions): read this file, then
 `CONVENTIONS.md`, then `NEXT.md`. To run the game locally, start at
-`LOCAL-STARCRAFT.md` (Wine/StarCraft setup + what OpenBW covers).
+`GUIDES/LOCAL-STARCRAFT.md` (Wine/StarCraft setup + what OpenBW covers).
 
 Where the working knowledge of this project lives. If you are picking the work up
 cold, read this file first; it says which document answers which question and
@@ -20,9 +20,9 @@ AI assistant.
 | know **what to work on next** | `NEXT.md` (phase checklist, ordered next steps, and open work; the live verdicts stay here, per-game rows in `WINE-MACRO-DATUMS.md`) |
 | see the **whole road** | `NEXT.md` "Phases (the quarter)" (big phases in priority order, with exit criteria; detail in the linked documents) |
 | work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `CHALLENGES/PositionFinder.md`, `CHALLENGES/BuildingBlockers.md` (certain vs refuted vs open, per site) |
-| run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
+| run or fix an **OpenBW game** | `GUIDES/PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
-| run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
+| run the bot on **Linux / Wine / IDE** | `GUIDES/LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
 | know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit — read §3a before continuing a long investigation) |
 | understand a **resolved defect's cause** | `CASE-STUDIES.md`, then `CHALLENGES/` for the system-level traps |
 | understand **why the architecture is like this** | `redesign/STARDUST_VS_ATLANTIS.md`, then `DOCS/adr/` |
@@ -57,6 +57,17 @@ AI assistant.
 - **`OPENBW-HANDOFF.md`** - the independent OpenBW engine-track task list and
   its done-signal protocol (`NEXT.md` #166).
 
+## `GUIDES/` (how to run things - start here for setup)
+
+- **`GUIDES/LOCAL-STARCRAFT.md`** - Wine/StarCraft setup and what OpenBW does and does not
+  provide (e.g. the JBWEB JNI gap).
+- **`GUIDES/PLAN-OPENBW.md`** - how to run OpenBW: the two hard limits, the scenario
+  assertions, and what OpenBW cannot do.
+- **`GUIDES/CHERRYVIS-DOCKER.md`** - the Docker viewer setup
+  (Ravaelles/cherryvis-docker): build/run/reload, the `.diff` patch pattern
+  for viewer fixes, and the links.
+- **`GUIDES/TOOLS.md`** - built tools worth having: what each answers and where it lives.
+
 ## Reference documents (change rarely)
 
 - **`CONVENTIONS.md`** - normative rules. Numbered sections; other files cite
@@ -66,13 +77,6 @@ AI assistant.
   in CONVENTIONS §5 (architecture) and §21 (domain vs machinery).
 - **`CHALLENGES/PositionFinder.md`** - short: why the old finder was rewritten, and the
   traps the rewrite had to avoid.
-- **`LOCAL-STARCRAFT.md`** - Wine/StarCraft setup and what OpenBW does and does not
-  provide (e.g. the JBWEB JNI gap).
-- **`PLAN-OPENBW.md`** - how to run OpenBW: the two hard limits, the scenario
-  assertions, and what OpenBW cannot do.
-- **`CHERRYVIS-DOCKER.md`** - the Docker viewer setup we use
-  (Ravaelles/cherryvis-docker): build/run/reload, the `.diff` patch pattern
-  for viewer fixes, and the links.
 - **`PLAN-REGION-DETECTION.md`** - why the first Pylon is refused (engine regions),
   what Stardust/PurpleWave do instead, and the staged plan for our own reachability.
   Stages 1-3 are done; stage 4 moved to its own file.
@@ -120,5 +124,5 @@ steal, what to skip, and why).
 - One file per topic, and a file is named after the **system**, not the bug.
 - A long narrative belongs in the commit message; the file keeps the fact.
 - If a document's advice is superseded, say so **at the top** of it, as
-  `IDEA-E2E-TESTS.md` and `PLAN-OPENBW.md` do - do not leave a reader to
+  `IDEA-E2E-TESTS.md` and `GUIDES/PLAN-OPENBW.md` do - do not leave a reader to
   discover it halfway down.

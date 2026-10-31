@@ -100,7 +100,7 @@ public class Env {
      * Why it exists: a replay is written by the engine in {@code onGameEnd()}, which the
      * launcher calls only after its game loop exits - and a bot that {@code System.exit}s
      * (the {@code LOCAL=true} path) is killed from under it first, so a bounded run
-     * produces no {@code .rep} (measured 2026-10-10, {@code _AI/PLAN-OPENBW.md}). Letting
+     * produces no {@code .rep} (measured 2026-10-10, {@code _AI/GUIDES/PLAN-OPENBW.md}). Letting
      * the engine end the game is what makes the file appear.
      * </p>
      *

@@ -16,7 +16,7 @@
 # server pairs <name>.rep with a sibling <name>.rep.cvis/ directory, so
 # stage the trace first:
 #   bash scripts/stage-cvis.sh ~/.scbw/games/<GAME>
-# (then open the `cvis` container - see _AI/CHERRYVIS-DOCKER.md). Needs
+# (then open the `cvis` container - see _AI/GUIDES/CHERRYVIS-DOCKER.md). Needs
 # one quiet box: never run alongside the test suite or another game
 # (CONVENTIONS one-game rule).
 

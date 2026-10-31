@@ -675,7 +675,7 @@ if [ "$SAVE_REPLAY" -eq 1 ]; then
   #
   # NOTE: the engine setting arrives, but a bounded run still produces NO .rep, because
   # the launcher kills the host before its game loop reaches onGameEnd() - the full
-  # explanation and the three ways to fix it are in _AI/PLAN-OPENBW.md (
+  # explanation and the three ways to fix it are in _AI/GUIDES/PLAN-OPENBW.md (
   # "--save-replay"). The flag is kept because it is correct as far as it goes and is
   # the half that needs no policy decision.
   REPLAY_ENV=(BWAPI_CONFIG_AUTO_MENU__SAVE_REPLAY="$REPLAY_FILE")

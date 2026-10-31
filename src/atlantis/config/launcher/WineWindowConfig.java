@@ -86,7 +86,7 @@ public final class WineWindowConfig {
      * are alternatives for the same job, so exactly one may be on. W-MODE wins
      * because it is the only thing on Wine that can scale the game.
      * (An earlier note here claimed the opposite - that W-MODE hid the game -
-     * that claim was wrong and is retracted in {@code _AI/LOCAL-STARCRAFT.md}.)</p>
+     * that claim was wrong and is retracted in {@code _AI/GUIDES/LOCAL-STARCRAFT.md}.)</p>
      *
      * <p>The BWAPI injector is deliberately untouched - without it there is no
      * bot at all.</p>

@@ -195,7 +195,7 @@ first three each looked like "the bot mines and does nothing":
    and the client loops on `No server proc ID`.
 
 **Do not re-investigate the attach.** It works; the detail is in `CHALLENGES/OpenBW.md`
-and `PLAN-OPENBW.md` §9.
+and `GUIDES/PLAN-OPENBW.md` §9.
 
 ## #44 — superseded before it was acted on
 

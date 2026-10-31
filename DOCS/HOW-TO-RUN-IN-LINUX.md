@@ -89,7 +89,7 @@ JAR_OUT=/tmp/x.jar bash scripts/run-wine-full.sh                # build elsewher
 - `scripts/run-wine-game.sh` only **starts the game** (no bot) — useful when you
   want to attach a client by hand; it prints the command to start one.
 - `scripts/run-openbw-e2e.sh` is the **headless** path (no Wine, no window) —
-  see `_AI/PLAN-OPENBW.md`.
+  see `_AI/GUIDES/PLAN-OPENBW.md`.
 
 ---
 

@@ -127,7 +127,7 @@ JNI natives absent on Linux; the placement path must never depend on it
 when one is not met: `EXPECT_MIN_INGAME_SECONDS`, `EXPECT_MIN_KILLED`,
 `EXPECT_MAX_KILLED`, `EXPECT_MIN_RESOURCE_BALANCE`. They read the facts
 `GameSummary` already prints, so no scenario file is needed - see
-`PLAN-OPENBW.md` for the table and an example.
+`GUIDES/PLAN-OPENBW.md` for the table and an example.
 
 What is still missing from a real harness: a scenario *file* (one place per
 scenario instead of env vars), and a deliberately broken bot that must fail the
@@ -270,7 +270,7 @@ scbw tier's tables live in `_AI/e2e/` and are governed by its own README.
 - https://github.com/JavaBWAPI/JBWAPI - the binding Atlantis plays with.
 - `DOCS/HOW-TESTS-WORK.md` - the Stardust runner, read before touching
   `StardustDevEnvironment/`.
-- `_AI/PLAN-OPENBW.md`, `_AI/CHALLENGES/OpenBW.md` - how the attach was solved.
+- `_AI/GUIDES/PLAN-OPENBW.md`, `_AI/CHALLENGES/OpenBW.md` - how the attach was solved.
 - `_AI/CHALLENGES/PositionFinder.md` - why placement fails, and the plan to rewrite it.
 
 ---

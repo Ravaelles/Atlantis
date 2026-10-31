@@ -25,7 +25,7 @@
 # games and suites, not about copying files).
 #
 # To actually watch: the `cvis` container must be running and the replay
-# pattern must be recursive - see _AI/CHERRYVIS-DOCKER.md and
+# pattern must be recursive - see _AI/GUIDES/CHERRYVIS-DOCKER.md and
 # DOCS/CherryVis.md (`/my-replays/**`).
 
 set -euo pipefail
@@ -120,5 +120,5 @@ fi
 
 if [ "$staged" -gt 0 ]; then
     echo "[stage-cvis] watch it in the \`cvis\` container (recursive pattern:" \
-        "'/my-replays/**/*.rep' - see _AI/CHERRYVIS-DOCKER.md)"
+        "'/my-replays/**/*.rep' - see _AI/GUIDES/CHERRYVIS-DOCKER.md)"
 fi
