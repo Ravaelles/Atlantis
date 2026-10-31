@@ -15,6 +15,10 @@ import atlantis.units.select.Selection;
  * ground too (a formed line shoots first) and gives observable range
  * without committing the army. The bait is deterministic (lowest id), so
  * every holder picks the same unit and exactly one detaches.
+ *
+ * <p>No bait without a line to hold it: fewer than 6 combat units, or no
+ * Dragoon among them, and the squad stays formed (owner 2026-11-01 - a lone
+ * bait with nothing behind it is feeding, not pulling).</p>
  */
 public final class SquadScout {
 
@@ -35,7 +39,8 @@ public final class SquadScout {
         if (BattleSetup.enemiesNear(choke.center(), ChokeStandoff.CONTEST_TILES) == 0) return false;
 
         Selection ours = Select.ourCombatUnits();
-        if (ours == null || ours.count() < 3) return false;
+        if (ours == null || ours.count() < 6) return false;
+        if (ours.dragoons().isEmpty()) return false;
 
         AUnit bait = pickBait(ours);
 

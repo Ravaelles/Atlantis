@@ -103,17 +103,20 @@ public class ChokeStandoffTest extends WorldStubForTests {
     @Test
     public void baitDetachesWhileLineHolds() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 53, 87);
-        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 54, 87);
-        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 55, 86);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 50, 87);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 52, 88);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 54, 88);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 56, 88);
+        FakeUnit e = fake(AUnitType.Protoss_Dragoon, 58, 87);
+        FakeUnit f = fake(AUnitType.Protoss_Dragoon, 60, 86);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 59, 70);
         zealot.setEnemy();
 
-        world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
+        world(5, fakeOurs(nexus, a, b, c, d, e, f), fakeEnemies(zealot), () -> {
             AUnit bait = atlantis.combat.strategy.SquadScout
                 .pickBait(atlantis.units.select.Select.ourCombatUnits());
             assertNotNull(bait, "someone volunteers");
-            for (AUnit u : new AUnit[]{a, b, c}) {
+            for (AUnit u : new AUnit[]{a, b, c, d, e, f}) {
                 BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, null, u);
             }
             APosition choke = a.nearestChoke().center();
@@ -121,12 +124,47 @@ public class ChokeStandoffTest extends WorldStubForTests {
             assertNotNull(baitDest, "bait walks into the funnel mouth");
             assertTrue(baitDest.distTo(choke) < 5,
                 "bait at the mouth, not wandering: " + baitDest + " vs " + choke);
-            for (AUnit u : new AUnit[]{a, b, c}) {
+            for (AUnit u : new AUnit[]{a, b, c, d, e, f}) {
                 if (u.id() == bait.id()) continue;
                 APosition hold = ((FakeUnit) u).targetPosition;
                 assertNotNull(hold, "holders take the standoff, not the bunch");
                 assertTrue(hold.distTo(choke) >= 7, "holders keep their distance: " + hold);
             }
+        });
+    }
+
+    @Test
+    public void fiveUnitsHoldWithoutABait() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 53, 87);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 54, 87);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 55, 86);
+        FakeUnit d = fake(AUnitType.Protoss_Dragoon, 52, 87);
+        FakeUnit e = fake(AUnitType.Protoss_Dragoon, 53, 86);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 59, 70);
+        zealot.setEnemy();
+
+        world(5, fakeOurs(nexus, a, b, c, d, e), fakeEnemies(zealot), () -> {
+            assertFalse(atlantis.combat.strategy.SquadScout.applies(a, null),
+                "5 units is no line to hold a bait with - the squad stays formed");
+        });
+    }
+
+    @Test
+    public void noDragoonMeansNoBait() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 53, 87);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 54, 87);
+        FakeUnit c = fake(AUnitType.Protoss_Zealot, 55, 86);
+        FakeUnit d = fake(AUnitType.Protoss_Zealot, 52, 87);
+        FakeUnit e = fake(AUnitType.Protoss_Zealot, 53, 86);
+        FakeUnit f = fake(AUnitType.Protoss_Zealot, 54, 86);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 59, 70);
+        zealot.setEnemy();
+
+        world(5, fakeOurs(nexus, a, b, c, d, e, f), fakeEnemies(zealot), () -> {
+            assertFalse(atlantis.combat.strategy.SquadScout.applies(a, null),
+                "no Dragoon in the line: the bait play needs a ranged anchor");
         });
     }
 
