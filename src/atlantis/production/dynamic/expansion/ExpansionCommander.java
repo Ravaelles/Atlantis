@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.protoss.ProtossCancelExpansionCommander;
-import atlantis.production.dynamic.expansion.protoss.ProtossExpansionCommander;
 import atlantis.production.orders.production.queue.Queue;
 
 public class ExpansionCommander extends Commander {
@@ -26,7 +25,6 @@ public class ExpansionCommander extends Commander {
     @Override
     protected CommanderFactory[] subcommanders() {
         return new CommanderFactory[]{
-            ProtossExpansionCommander::new,
             ProtossCancelExpansionCommander::new,
         };
     }

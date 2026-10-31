@@ -244,6 +244,18 @@ public class GoalSourcesTest {
     }
 
     @Test
+    public void inFlightBaseSuppressesReemission() {
+        DynamicGoals.GameSnapshot building = new DynamicGoals.GameSnapshot(
+            100, 1, 180, 20, 200, 2000, false, 0, 2);
+        building.basesTotal = 2;
+        building.basesInProduction = 1;
+        building.basesPlanned = 2;
+        building.basesUnfinished = 1;
+
+        assertFalse(contains(DynamicGoals.contribute(building, ProductionRacePolicy.forRace("Protoss")), baseType()),
+            "a base already coming is not missing - no sibling goal");
+    }
+
     public void expansionStopsAtFourBases() {
         DynamicGoals.GameSnapshot fourBases =
             new DynamicGoals.GameSnapshot(100, 4, 180, 20, 200, 2000, false);

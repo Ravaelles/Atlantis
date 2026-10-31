@@ -334,8 +334,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     `ExpansionGoal` and V2 `addExpansionGoal` (WANT_BANK fires the 777 rule
     with NATURAL siting for the 2nd base; THICKET keeps old behavior).
     Pinned: `ExpansionStoryTest` 7/7 + `ExpansionGoalTest` + legacy expansion
-    suites green. Open: Wine proof (Nexus ~f4200, no doubles), then delete
-    legacy `ProtossExpansionCommander` (board-completion gate).
+    suites green. Wine proof 20261031_161221: V2 issued the only Nexus
+    (f6547, no doubles, 0 cancels, game to f10200) - legacy
+    `ProtossExpansionCommander` + `ProtossExpandNow` + their 2 tests deleted,
+    V2 anti-double pinned in `GoalSourcesTest`. Board-completion gate done.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
