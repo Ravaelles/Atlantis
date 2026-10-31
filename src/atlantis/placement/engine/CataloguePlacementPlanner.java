@@ -437,6 +437,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // refresh path's blockingCompletedBuilding).
             if (standsOnCompletedBuilding(candidate, unitType)) continue;
 
+            // A mineral-crowding tile never hosts a warp either: same shape as
+            // the standing-cover check above, evaluated through the shared
+            // legacy predicate so the two paths cannot disagree on it.
+            // (Owner 2026-11-01: no Pylon within 5 tiles of minerals.)
+            if (atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(
+                unitType, APosition.create(candidate.tileX(), candidate.tileY())
+            )) continue;
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to

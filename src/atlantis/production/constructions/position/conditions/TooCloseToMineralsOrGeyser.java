@@ -11,6 +11,60 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class TooCloseToMineralsOrGeyser {
+
+    /**
+     * X-&gt;Y-&gt;Z, same as the siting core: the legacy spiral and the
+     * catalogue rank loop ask per tile, but minerals and geysers do not move
+     * mid-frame. One Select scan per frame, plain loops after that.
+     */
+    private static int memoFrame = Integer.MIN_VALUE;
+    private static Object memoGame = null;
+    private static java.util.List<AUnit> memoMinerals = java.util.Collections.emptyList();
+    private static java.util.List<AUnit> memoGas = java.util.Collections.emptyList();
+
+    private static void memo(int frame) {
+        Object game = atlantis.Atlantis.game();
+        if (frame == memoFrame && game == memoGame) return;
+        memoFrame = frame;
+        memoGame = game;
+        memoMinerals = new java.util.ArrayList<>(Select.minerals().list());
+        memoGas = new java.util.ArrayList<>(Select.geysersAndGasBuildings().list());
+    }
+
+    private static int countMineralsWithin(double dist, APosition position) {
+        memo(atlantis.game.A.now());
+        int count = 0;
+        int left = position.tx(), top = position.ty();
+        for (AUnit mineral : memoMinerals) {
+            if (mineral == null) continue;
+            if (mineral.distTo(position) <= dist) count++;
+        }
+        return count;
+    }
+
+    private static boolean anyMineralWithin(double dist, APosition position) {
+        memo(atlantis.game.A.now());
+        for (AUnit mineral : memoMinerals) {
+            if (mineral == null) continue;
+            if (mineral.distTo(position) <= dist) return true;
+        }
+        return false;
+    }
+
+    private static AUnit nearestGas(APosition position) {
+        memo(atlantis.game.A.now());
+        AUnit nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+        for (AUnit gas : memoGas) {
+            if (gas == null) continue;
+            double d = gas.distTo(position);
+            if (d < nearestDist) {
+                nearestDist = d;
+                nearest = gas;
+            }
+        }
+        return nearest;
+    }
     /**
      * Minimum tile distance from a mineral patch for a Protoss building that is not
      * a Cannon - the owner's ruling, 2026-10-10 (ideally one tile edge-to-edge).
@@ -53,14 +107,12 @@ public class TooCloseToMineralsOrGeyser {
 
         double dist;
 
-        Selection allMinerals = Select.minerals();
-        int minerals = allMinerals.countInRadius(dist = minDistToMineral(building, position), position);
-//        if (minerals > 0 && !allowCloseToBase(nearestBase, building, position)) {
-        if (minerals > 0) {
+        dist = minDistToMineral(building, position);
+        if (anyMineralWithin(dist, position)) {
             return failed("Too close to mineral (" + (int) dist + ")");
         }
 
-        AUnit gasBuilding = Select.geysersAndGasBuildings().nearestTo(position);
+        AUnit gasBuilding = nearestGas(position);
         if (
             gasBuilding != null
                 && (dist = gasBuilding.distTo(position)) <= minDistToGeyser(building)
@@ -71,10 +123,9 @@ public class TooCloseToMineralsOrGeyser {
 
         if (
             building.isCannon()
-                && allMinerals.notEmpty()
                 && Bases.natural() != null
                 && (dist = position.distTo(Bases.natural())) <= 7
-                && allMinerals.countInRadius(4, position) > 0
+                && countMineralsWithin(4, position) > 0
         ) {
             return failed("Cannon too close natural minerals (" + (int) dist + ")");
         }
@@ -127,6 +178,10 @@ public class TooCloseToMineralsOrGeyser {
             if (A.supplyTotal() >= 40 && Select.ourBuildings().countInRadius(10, position) <= 1) return 5.2;
 
             if (building.isPylon() && position.distToMain() >= 15) return 6.5;
+
+            // Pylons never sit closer than 5 tiles (owner 2026-11-01): the
+            // opening Pylon at 3.1 crowded the workers' path and looked wrong.
+            if (building.isPylon()) return 5.0;
 
             // Cannons sit closer on purpose; everything else keeps a worker-wide gap.
             if (building.isCannon()) {
