@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.builders.RefreshConstructionPosition;
+import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -84,5 +85,24 @@ public class RefreshOccupancyGateTest extends WorldStubForTests {
     public void emptySiteNeverBlocks() {
         check(false, APosition.create(50, 50),
             "an empty site is never hopeless");
+    }
+
+    @Test
+    public void geyserDoesNotBlockItsOwnRefinery() {
+        // #237, live root cause (twin named VespeneG@7,39#82 as the
+        // blocker): the overlap guard ran before the geyser exemption,
+        // so every gas site read as blocked by its own geyser and the
+        // refresh cancelled it into a 100-frame loop with zero gas.
+        // The exemption owns gas tiles; overlap owns everything else.
+        neutralInWorld = new FakeUnit[]{ fake(AUnitType.Resource_Vespene_Geyser, 40, 40) };
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 38, 38);
+
+        world(3, fakeOurs(fake(AUnitType.Protoss_Nexus, 30, 30), probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(
+                CanPhysicallyBuildHere.check(probe, AUnitType.Protoss_Assimilator, APosition.create(40, 40)),
+                "the geyser IS the site, not an obstacle standing on it");
+        });
     }
 }

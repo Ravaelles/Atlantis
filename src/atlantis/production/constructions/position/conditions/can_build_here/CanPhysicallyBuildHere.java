@@ -30,6 +30,19 @@ public class CanPhysicallyBuildHere {
             return false;
         }
 
+        // A refinery builds on its geyser's OWN tile and on no other: the
+        // engine exempts geyser occupancy, but tile grids (and the harness
+        // stub, which counts every nearby unit as a blocker) read the
+        // geyser as occupying its tile. Exempt explicitly - and FIRST:
+        // the overlap guard below reads the geyser itself as a standing
+        // building on the site and would refuse every gas build before
+        // this line ever runs (measured live 2026-11-01, #237: 70
+        // requests, 32 "Can't build here" cancels, zero gas - the
+        // blocker twin named the geyser's own tile).
+        if (building.isGasBuilding() && standsOnItsGeyser(building, position)) {
+            return true;
+        }
+
         // A standing completed building owns its footprint: the engine
         // refuses the tile and the proximity finish would cancel a warp
         // there the same frame, so the tile must never leave the search
@@ -38,6 +51,8 @@ public class CanPhysicallyBuildHere {
         // ever in flight). Footprint overlap, not nearness: an adjacent
         // packed sibling (touching edges, disjoint footprints) stays
         // legal, and unfinished warps never block (they adopt on position).
+        // (Gas buildings on their own geyser return above - the geyser
+        // is the site there, not an obstacle.)
         if (OverlapsOurStandingBuilding.check(position, building)) {
             AbstractPositionFinder._STATUS = "Standing building covers the tile";
 
@@ -45,17 +60,6 @@ public class CanPhysicallyBuildHere {
         }
 
         if (ProtossAllowHereEarlyEvenWithoutRequirements.allow(builder, building, position)) {
-            return true;
-        }
-
-        // A refinery builds on its geyser's OWN tile and on no other: the
-        // engine exempts geyser occupancy, but tile grids (and the harness
-        // stub, which counts every nearby unit as a blocker) read the
-        // geyser as occupying its tile. Exempt explicitly - without it the
-        // fix spiral walks a legal site to a buildable non-geyser tile
-        // (measured: GasTileIsGeyserTileTest, 2 off after the FakeUnit
-        // top-left change exposed the real tile).
-        if (building.isGasBuilding() && standsOnItsGeyser(building, position)) {
             return true;
         }
 

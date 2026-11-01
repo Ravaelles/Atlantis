@@ -626,6 +626,20 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   cancel with builder id + stillness + isConstructing, then one
   vehicle; do NOT touch B1 (V2 authored correctly: 1 Core dispatch ->
   warp f4296-4355, 3 Pylons on time, all from V2).
+  ROOT CAUSE FOUND 2026-11-01 (vehicles 20261101_220526 + 221437,
+  `REFRESH_CANCEL`/`GHOST_DARK_SKIP`-style twins added for this):
+  `REFRESH_CANCEL` named the blocker as the geyser itself
+  (`VespeneG@7,39#82`) - `OverlapsOurStandingBuilding` runs BEFORE
+  the geyser exemption in `CanPhysicallyBuildHere.check`, so every
+  gas site reads as blocked by its own geyser: 25 cancels in one
+  game with `engine=true`, builder attached but still and never
+  constructing. FIXED 2026-11-01: the geyser exemption moved above
+  the overlap guard (dead code made live), pinned red-first
+  (`geyserDoesNotBlockItsOwnRefinery`: red pre-fix, green post-fix;
+  gas batch 29/0). The builder-stillness half is unproven but moot
+  now - with the site legal the refresh stops cancelling and the
+  normal issue path owns the builder. Open: proof vehicle (gas
+  warps on the frozen jar).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
