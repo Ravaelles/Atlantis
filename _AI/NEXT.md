@@ -554,7 +554,7 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   Assimilator 30/85 via the legacy door). Exotics (Arbiter/Reaver/
   Shuttle/DT/Archon/Scout/Carrier) have 0 warps AND 0 dispatches but
   stay - ReaverChainTest/TemplarChainTest pin them; deletion needs
-  the V2-goal home first. B1-PYLON LANDED 2026-11-01: the legacy
+  the V2-goal home first. B1-PYLON LANDED 2026-11-01: the legacy: the legacy
   per-base Pylon producer (`ProducePylonNearEveryBase`, minted with no
   supply-need gating) is deleted; openings stay on BO rows, blocks on
   the V2 supply-pylon goal (pinned `blockedSupplyFeedsTopPylon`), and
@@ -571,6 +571,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   not supply-logic failure. OPEN: expansion-power half (no natural
   taken this game - support-Pylon at a natural still needs a live
   expansion game).
+  B1-FORGE LANDED 2026-11-01: the V2 home (`ForgeGoal`, row-for-row
+  mirror of the legacy timing table) now funds the row - `GOAL_TYPES`
+  serves `forge`, pinned `hiddenThreatFeedsForgeRow` (DT evidence +
+  no Forge + EnforcePylonFirst satisfied = standard-priority row; the pin
+  caught a real door rule: power-needing buildings need a Pylon first).
+  `ProduceForge.produce()` call + class deleted (sole caller was the
+  dynamic commander). 27/0. Open: game proof (a DT-threat or timing
+  game where the V2 row warps the Forge - opportunistic).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
