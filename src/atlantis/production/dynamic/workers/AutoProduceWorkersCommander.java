@@ -14,7 +14,6 @@ import atlantis.production.orders.production.queue.*;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
-import atlantis.production.orders.production.queue.updater.ReadyToProduceOrder;
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,7 +25,6 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 import static atlantis.units.AUnitType.Protoss_Pylon;
-import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
 public class AutoProduceWorkersCommander extends Commander {
     /**
@@ -100,38 +98,9 @@ public class AutoProduceWorkersCommander extends Commander {
 
         }
 
-        // === Terran ===========================================
-
-        if (We.terran()) {
-            if (
-                A.hasGas(50) && SoonInQueue.have(AUnitType.Terran_Comsat_Station, 1)
-            ) return dont("Wait4Comsat");
-        }
-
         // =========================================================
 
         if (workers <= 20 && A.seconds() >= 600) return true;
-
-        // === Zerg ===========================================
-
-        if (We.zerg()) {
-            if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return dont("EarlyReserved");
-            if (Have.spawningPoolWithUnfinished() && Count.zerglingsWithUnfinished() <= 3)
-                return A.hasMinerals(100) && Count.larvas(3);
-
-            if (!A.hasMinerals(75 * Count.creepColonies())) return dont("CreepColonies");
-            if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
-                ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
-                if (order != null && ReadyToProduceOrder.supplyAllows(order)) {
-                    return dont("Not250Min");
-                }
-            }
-
-            if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
-                int zerglingsInQueue = CountInQueue.count(AUnitType.Zerg_Zergling, 2);
-                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) return dont("TooFewMin");
-            }
-        }
 
         // =========================================================
 
