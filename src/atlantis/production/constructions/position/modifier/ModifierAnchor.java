@@ -10,47 +10,62 @@ import atlantis.units.select.Select;
 /**
  * Migration A4b (owner #146): the legacy order modifiers ("NATURAL",
  * "MAIN", choke names...) as catalogue neighbourhood anchors. The
- * spiral used to re-derive these per search ({@code PositionModifier});
- * the catalogue needs only the anchor - validation ranks the tiles.
- * Pure lookup, no search: an unresolvable modifier (bunkers, unknown
- * names, missing map knowledge) answers null and the caller keeps its
- * legacy path. Never throws: a bad anchor must decline, never crash
- * siting.
+ * spiral used to re-derive these per search; the catalogue needs only
+ * the anchor - validation ranks the tiles.
+ * Pure lookup, no search: an unresolvable modifier (unknown names,
+ * missing map knowledge) answers null and the caller keeps its legacy
+ * path. Never throws: a bad anchor must decline, never crash siting.
+ *
+ * <p>Since A4e the vocabulary lives here, not in the deleted
+ * {@code PositionModifier}: same strings, same anchors, no search.</p>
  */
 public final class ModifierAnchor {
+
+    /** Base at the nearest free expansion. */
+    public static final String BASE_AT_NEAREST_FREE = "NEAREST_FREE";
+    /** Building in the main base region. */
+    public static final String MAIN = "MAIN";
+    public static final String MAIN_MINERALS = "MAIN_MINERALS";
+    /** Building at the main choke. */
+    public static final String MAIN_CHOKE = "MAIN_CHOKE";
+    public static final String NATURAL_CHOKE = "NATURAL_CHOKE";
+    /** Building at the natural expansion. */
+    public static final String NATURAL = "NATURAL";
+    public static final String MAP_CENTER = "MAP_CENTER";
+    public static final String ENEMY_NATURAL = "ENEMY_NATURAL";
+    public static final String ENEMY_MAIN = "ENEMY_MAIN";
 
     private ModifierAnchor() {
     }
 
     /**
      * The anchor a modifier names, or null when it names nothing usable.
-     * Mirrors the {@code PositionModifier} vocabulary anchor-for-anchor;
-     * the search around it is the catalogue's job, not this method's.
+     * The search around it is the catalogue's job, not this method's.
      */
     public static HasPosition resolve(String modifier) {
         if (modifier == null) return null;
 
         try {
             switch (modifier) {
-                case PositionModifier.NATURAL:
+                case NATURAL:
                     return BaseLocations.natural();
-                case PositionModifier.MAIN:
+                case MAIN:
                     return Select.main();
-                case PositionModifier.MAIN_CHOKE: {
+                case MAIN_CHOKE: {
                     AChoke choke = Chokes.mainChoke();
                     return choke == null ? null : choke.center();
                 }
-                case PositionModifier.NATURAL_CHOKE: {
+                case NATURAL_CHOKE: {
                     AChoke choke = Chokes.natural();
                     return choke == null ? null : choke.center();
                 }
-                case PositionModifier.ENEMY_NATURAL:
+                case ENEMY_NATURAL:
                     return BaseLocations.enemyNatural();
-                case PositionModifier.ENEMY_MAIN:
+                case ENEMY_MAIN:
                     return atlantis.information.enemy.EnemyUnits.enemyBase();
-                case PositionModifier.MAP_CENTER:
+                case MAP_CENTER:
                     return mapCenter();
-                case PositionModifier.MAIN_MINERALS:
+                case MAIN_MINERALS:
                     return mainMinerals();
                 default:
                     return null;

@@ -485,6 +485,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   + `ZergStrategyResponse` deleted, We.zerg() branches pruned; enemy
   Zerg is handled by the Protoss response, which stays): fast gate
   1058/1058. No game proof needed: same untakable-branch argument.
+  A4e LANDED 2026-11-01 (dead bunker siting path deleted:
+  `DefineExact` bunker block + `definePosition` + whole legacy
+  modifier package except `ModifierAnchor` (`PositionModifier`,
+  `BunkerPositionModifier`, `PositionAtMain/NaturalChoke`); the
+  vocabulary constants moved to `ModifierAnchor`): 0 bunker warps in
+  98 retained+proof games, no live or test callers left. Fast gate
+  1058/1058. No game proof needed: uncalled code cannot fire.
   A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
   modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
   anchor the catalogue neighbourhood instead of anywhere).

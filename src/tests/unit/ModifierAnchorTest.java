@@ -5,7 +5,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.constructions.position.modifier.ModifierAnchor;
-import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.placement.TargetPlacement;
 import atlantis.units.AUnitType;
@@ -57,7 +56,7 @@ public class ModifierAnchorTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
-            HasPosition anchor = ModifierAnchor.resolve(PositionModifier.MAIN);
+            HasPosition anchor = ModifierAnchor.resolve(ModifierAnchor.MAIN);
 
             assertTrue(anchor != null, "MAIN names our main base");
             assertEquals(Select.main().position(), anchor.position(),
@@ -83,7 +82,7 @@ public class ModifierAnchorTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Nexus, 20, 20)
         ), fakeEnemies(), () -> {
             assertEquals(atlantis.map.base.BaseLocations.natural(),
-                ModifierAnchor.resolve(PositionModifier.NATURAL),
+                ModifierAnchor.resolve(ModifierAnchor.NATURAL),
                 "NATURAL is whatever the base index names - wiring, not geography");
         });
     }
@@ -95,7 +94,7 @@ public class ModifierAnchorTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
-            order.setModifier(PositionModifier.MAIN);
+            order.setModifier(ModifierAnchor.MAIN);
             Construction construction = new Construction(AUnitType.Protoss_Pylon);
             construction.setProductionOrder(order);
 
