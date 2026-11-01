@@ -18,9 +18,9 @@
 #   3. The game must run with W-MODE doublesize for a usable window (see
 #      _AI/GUIDES/LOCAL-STARCRAFT.md); run-wine-game.sh already sets that up.
 #
-# Usage:
-#   scripts/run-wine-full.sh [map-name]        # default: 1a2a3a Micro 2.scx
-#   scripts/run-wine-full.sh [map-name] --headless    # Xvfb :99, invisible
+# Usage (owner-gated: exceptional use only, see the banner at the top):
+#   scripts/run-wine-full.sh [map-name] --force-this-bad-practice
+#   scripts/run-wine-full.sh [map-name] --headless --force-this-bad-practice
 #
 # Visible by default (owner 2026-10-21: IDE runs must show the game).
 # One Wine game per box, enforced by a lock:
@@ -44,6 +44,35 @@
 # Exit code 0 = HELLO_ATLANTIS seen (bot attached). Non-zero otherwise; on
 # failure everything is killed so no stray process survives.
 set -u
+
+# Owner order 2026-11-01: the exceptional-use gate below applies ONLY to
+# autonomous agent runs (ATLANTIS_AGENT_RUN=1, set by the agent's own
+# invocations). It must NEVER fire for the owner's IDE/local runs -
+# measured 2026-11-01: it blocked the owner's own launches with REFUSED.
+# Agents keep passing --force-this-bad-practice explicitly.
+FORCE_THIS_BAD_PRACTICE=0
+_CLEAN_ARGS=()
+for _arg in "$@"; do
+    case "$_arg" in
+        --force-this-bad-practice) FORCE_THIS_BAD_PRACTICE=1 ;;
+        *) _CLEAN_ARGS+=("$_arg") ;;
+    esac
+done
+if [ "${ATLANTIS_AGENT_RUN:-0}" = "1" ]; then
+cat >&2 <<'SLOW_EOF'
+[wine-full] SLOW: a real game under Wine takes ~15+ minutes on a locked box
+[wine-full] (jar rebuild included) and blocks every other Wine run meanwhile.
+[wine-full] Default to the StarEngine sim instead: scripts/run-tests.sh for the
+[wine-full] fast gate, --domain production|placement|combat|map|infra for areas,
+[wine-full] scripts/run-full-tests.sh for everything. Run a real game ONLY for
+[wine-full] live proof the sim cannot give (owner order: exceptional use).
+SLOW_EOF
+if [ "$FORCE_THIS_BAD_PRACTICE" != "1" ]; then
+    echo "[wine-full] REFUSED without --force-this-bad-practice (see above)" >&2
+    exit 2
+fi
+fi
+set -- "${_CLEAN_ARGS[@]}"
 
 say() { echo "[wine-full] $*"; }
 
