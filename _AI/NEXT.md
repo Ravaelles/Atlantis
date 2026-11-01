@@ -136,6 +136,14 @@ Do not store suite counts here; measure with `scripts/run-tests.sh` when needed.
 Before cleaning `out/`, inspect it: it can contain archived game logs as well
 as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 
+- FirstPylonTiming/FirstGatewayTiming superseded and deleted 2026-11-01
+  (30-issue package): they drive `produceBuilding` directly, bypassing the
+  V2 engine that feeds the dispatcher chain live - green only with leaked
+  engine state, red solo. Same behavior is pinned through the live flow:
+  site pick-ahead by `V2EarlyBuilderDispatchTest` (headroom bank window),
+  warp timing by `SimOpeningToFiftyTest` goldens (Pylon f1980, Gateway
+  f3720), bank discipline by the bank-cap assert.
+
 - **#211** The acceptance tier is red at HEAD `2167421e7` (18 of 294 failing,
   measured 2026-10-26): CatalogueSiteAdapter 5, RequestBuildingNear 3,
   ProtossDynamicUnitProduction 2, ProtossDragoonProduction 2,
