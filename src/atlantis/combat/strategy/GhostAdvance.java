@@ -400,7 +400,6 @@ public final class GhostAdvance {
             return null;
         }
     }
-
     /**
      * This unit's own contact, only while fresh: a stale tile belongs to
      * fogged memory or exploration, never to the creep. Null-safe by
@@ -437,13 +436,28 @@ public final class GhostAdvance {
     private static final double SEAT_TILES = 6.0;
 
     /**
-     * True when an enemy nobody can hit sits on the fresh seat and no
-     * detector covers our unit: the seat is dark, the creep stays out.
-     * Unreadable state fails open to the old behavior, never to a
-     * frozen army.
+     * The route envelope: arrival stands the line within REACHED_TILES
+     * of a region center, inside spine range of anything sitting on
+     * it. A dark center is no destination - the sweep rotates past it
+     * instead of feeding it.
+     */
+    private static final double ROUTE_DARK_TILES = 8.0;
+
+    /**
+     * The fresh seat through the shared destination check.
      */
     private static boolean seatIsDark(AUnit unit, APosition seat) {
-        if (unit == null || seat == null) return false;
+        return isDarkDestination(unit, seat, SEAT_TILES);
+    }
+
+    /**
+     * True when an enemy nobody can hit sits on the destination and no
+     * detector covers our unit: the destination is dark, the creep stays
+     * out. Unreadable state fails open to the old behavior, never to a
+     * frozen army.
+     */
+    private static boolean isDarkDestination(AUnit unit, APosition point, double radiusTiles) {
+        if (unit == null || point == null) return false;
 
         try {
             Selection seen = EnemyUnits.discovered();
@@ -458,11 +472,11 @@ public final class GhostAdvance {
                 if (!foe.hasPosition() || foe.position() == null) continue;
                 double dist;
                 try {
-                    dist = foe.position().distTo(seat);
+                    dist = foe.position().distTo(point);
                 } catch (Exception ignored) {
                     continue;
                 }
-                if (dist <= SEAT_TILES && isUnhittable(foe)) {
+                if (dist <= radiusTiles && isUnhittable(foe)) {
                     dark = true;
                     break;
                 }
@@ -547,6 +561,7 @@ public final class GhostAdvance {
                     continue;
                 }
                 if (dist < REACHED_TILES) continue;
+                if (isDarkDestination(unit, region.center(), ROUTE_DARK_TILES)) continue;
                 if (dist < bestDist) {
                     bestDist = dist;
                     best = region;
@@ -701,11 +716,14 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
         }
         APosition unseen = unexploredDestinationFor(unit);
-        if (unseen != null) return unseen;
+        if (unseen != null && !isDarkDestination(unit, unseen, ROUTE_DARK_TILES)) return unseen;
         // Blind and the map is explored: sweep region centers instead
         // of standing (owner 2026-10-26, timeout anatomy) - the nearest
         // center beyond reach, so arriving rotates to the next one on
-        // its own, with no per-unit memory to drift.
+        // its own, with no per-unit memory to drift. Measured 2026-11-01
+        // on P_v_Lurkers2: every CLUSTER row marched at sweep centers
+        // sitting inside the lurker group - a dark center rotates past
+        // instead of feeding (same cover rule as the seat).
 
         return sweepDestinationFor(unit);
     }

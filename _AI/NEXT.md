@@ -1585,3 +1585,20 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   game at a time was violated by overlap; agent discipline from now:
   `pgrep -x StarCraft.exe` + lock check before ANY launch, never
   alongside the suite or an owner game.
+  DATUM 2026-11-01 (vehicle game 20261101_190800 on P_v_Lurkers2.scx,
+  POST-fix-1, 23 s loss, 8 dead to Lurker#103, zero lurker kills):
+  the instrument (not a guess) names the march: EVERY CLUSTER row
+  reads `ghost: sweep` at region centers (61,55)/(37,57)/(74,76) with
+  the foe closing 68->2 tiles onto them. The lurker-memory guards
+  never fired because the ghost was never a memory - the UMS sweep
+  marched at centers sitting inside the lurker group, arrival stood
+  the army in the spines (flee only f533, `STAY_BASELESS`). FIXED
+  2026-11-01: the destination gets the same darkness check as the
+  memory - a dark center (unhittable memory within 8 tiles, no
+  detector at the fight) is skipped: unexplored falls through to the
+  sweep, the sweep rotates to the next safe center. Pinned
+  (unexplored-dark-null + sweep-skips-dark + cover-revalidates,
+  GhostAdvance 25/0, combat batch 16/0). Open: post-fix-2 vehicle
+  (expect `ghost:` rows avoiding (61,55), stand-off instead of
+  stand-in-spines); the PATH through dark ground stays uncovered -
+  only destinations are guarded.

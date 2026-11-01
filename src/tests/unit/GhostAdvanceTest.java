@@ -695,4 +695,98 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 "detector cover revalidates the fresh seat too");
         });
     }
+
+    @Test
+    public void unexploredCenterOnDarkMemoryIsNotMarched() {
+        // Measured 2026-11-01 on P_v_Lurkers2 (vehicle 190800): every
+        // CLUSTER row marched at sweep centers sitting inside the lurker
+        // group (ghost "sweep", foe closing 68->2) while memory guards
+        // saw no lurker ghost at all. The destination needs the same
+        // darkness check as the memory: a dark center is no address.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 50, 30);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(region);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(lurker), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertNull(GhostAdvance.effectiveGhostPointFor(dragoon),
+                    "unexplored center on a dark memory is no destination - stand instead of feeding");
+            });
+        }
+    }
+
+    @Test
+    public void sweepSkipsDarkCentersForTheNextSafeOne() {
+        // The sweep rotates PAST a dark center instead of feeding it:
+        // nearest dark center skipped, next safe one marched.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 50, 30);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        atlantis.map.region.ARegion dark = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(dark.center()).thenReturn(APosition.create(50, 30));
+        atlantis.map.region.ARegion safe = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(safe.center()).thenReturn(APosition.create(20, 60));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(null);
+            regions.when(atlantis.map.region.Regions::regions)
+                .thenReturn(java.util.Arrays.asList(dark, safe));
+
+            world(3, fakeOurs(dragoon), fakeEnemies(lurker), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(APosition.create(20, 60), GhostAdvance.effectiveGhostPointFor(dragoon),
+                    "sweep rotates past the dark center to the next safe one");
+            });
+        }
+    }
+
+    @Test
+    public void sweepDarkCenterIsMarchedWithDetectorCover() {
+        // Same dark center, Observer at the fight: the march is valid
+        // again - the army may close to kill what the detector shows.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit observer = fake(AUnitType.Protoss_Observer, 29, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 50, 30);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        atlantis.map.region.ARegion dark = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(dark.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                 org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(null);
+            regions.when(atlantis.map.region.Regions::regions)
+                .thenReturn(java.util.Collections.singletonList(dark));
+
+            world(3, fakeOurs(dragoon, observer), fakeEnemies(lurker), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(APosition.create(50, 30), GhostAdvance.effectiveGhostPointFor(dragoon),
+                    "detector cover revalidates the dark center too");
+            });
+        }
+    }
 }
