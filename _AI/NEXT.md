@@ -498,6 +498,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   feature/episode CSV and an S1 learned hold-early gate. Limitation: held-out
   runner behavior needs runner examples in training. Open: feature export is
   test-side only; fidelity Stage A precedes any production learner.
+  DATUM 2026-11-01 (30-issue package): test-side export verified green
+  (`EpisodeManifestTest` + `LearnedHoldEarlyGateTest` 5/5); the learner
+  waits on Stage A fidelity (owner direction on what it measures).
 
 - **#186** `ProtossAttackHoldToShoot`: sim-pinned stop-point model accounts for
   braking, windup, latency and chaser commitment. Live 1Drag retained wins and
