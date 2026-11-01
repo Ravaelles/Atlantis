@@ -485,6 +485,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   + `ZergStrategyResponse` deleted, We.zerg() branches pruned; enemy
   Zerg is handled by the Protoss response, which stays): fast gate
   1058/1058. No game proof needed: same untakable-branch argument.
+  A4g LANDED 2026-11-01 (legacy precedence restored + dead
+  `modifierFor` deleted): constraints read exact > nearTo > modifier >
+  anywhere (was modifier-first since A4b - a silent reorder the legacy
+  spiral never had; nearTo names the tile, modifier the class).
+  `DemandModifierTest` rewritten as `ConstraintPrecedenceTest` (the
+  precedence contract lives where it is enforced now). Pins 25/25 +
+  fast gate 1058/1058. No new game proof: ordering fix inside the
+  already-proven funnel (A4b's game stands).
   A4f LANDED 2026-11-01 (dead race-special siting deleted:
   `FindPosition` bunker + creep branches, `SpecificConstructionRequests`
   Terran/Zerg methods (now unconditional null),

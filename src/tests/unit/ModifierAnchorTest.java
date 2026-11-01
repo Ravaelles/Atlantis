@@ -128,4 +128,27 @@ public class ModifierAnchorTest extends WorldStubForTests {
             assertEquals(30, constraint.tileY());
         });
     }
+
+    @Test
+    public void explicitNearToBeatsTheGenericModifier() {
+        // Legacy precedence (A4g): the spiral read nearTo first and the
+        // modifier only when no near was set - an explicitly placed site
+        // beats the generic neighbourhood class.
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20)
+        ), fakeEnemies(), () -> {
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            order.setModifier(ModifierAnchor.MAIN);
+            Construction construction = new Construction(AUnitType.Protoss_Pylon);
+            construction.setProductionOrder(order);
+            construction.setNearTo(APosition.create(30, 30));
+
+            TargetPlacement constraint =
+                CatalogueSiteAdapter.constraintFor(order, construction);
+
+            assertEquals(TargetPlacement.Mode.NEIGHBOURHOOD, constraint.mode());
+            assertEquals(30, constraint.tileX());
+            assertEquals(30, constraint.tileY());
+        });
+    }
 }

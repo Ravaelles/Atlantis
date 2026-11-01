@@ -261,15 +261,14 @@ public final class CatalogueSiteAdapter {
         // @MAIN, choke names...) anchor the neighbourhood instead of
         // degrading to anywhere. The spiral used to re-derive these per
         // search; the catalogue ranks around the same anchor.
-        HasPosition anchor = ModifierAnchor.resolve(order.getModifier());
+        // Legacy precedence (A4g): an explicitly set nearTo wins over the
+        // generic modifier - the modifier names a neighbourhood class,
+        // nearTo names the tile. Same order as the spiral used.
+        HasPosition anchor = construction.nearTo() != null
+            ? construction.nearTo()
+            : ModifierAnchor.resolve(order.getModifier());
         if (anchor != null) {
             APosition centre = APosition.create(anchor);
-
-            return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
-        }
-        HasPosition near = construction.nearTo();
-        if (near != null) {
-            APosition centre = APosition.create(near);
 
             return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
         }
@@ -289,16 +288,13 @@ public final class CatalogueSiteAdapter {
 
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
         }
-        // Same modifier anchoring as the order overload (A4b).
-        HasPosition anchor = ModifierAnchor.resolve(demand.modifier());
+        // Same modifier anchoring as the order overload (A4b), same
+        // legacy precedence (A4g): explicit nearTo wins.
+        HasPosition anchor = construction.nearTo() != null
+            ? construction.nearTo()
+            : ModifierAnchor.resolve(demand.modifier());
         if (anchor != null) {
             APosition centre = APosition.create(anchor);
-
-            return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
-        }
-        HasPosition near = construction.nearTo();
-        if (near != null) {
-            APosition centre = APosition.create(near);
 
             return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
         }
