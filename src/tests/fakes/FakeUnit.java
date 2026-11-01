@@ -675,6 +675,19 @@ public class FakeUnit extends AUnit implements Serializable {
         return this;
     }
 
+    public boolean burrowing = false;
+
+    @Override
+    public boolean isBurrowing() {
+        return burrowing;
+    }
+
+    public FakeUnit setBurrowing(boolean burrowing) {
+        this.burrowing = burrowing;
+
+        return this;
+    }
+
     @Override
     public boolean isMorphing() {
         return morphing;

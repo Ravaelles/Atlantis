@@ -27,6 +27,8 @@ public class AvoidLurkers extends Manager {
         allLurkers = unit.enemiesNear().lurkers();
         if (allLurkers.empty()) return false;
 
+        if (zealotMustFleeBurrowing()) return true;
+
         lurkersToAvoid = lurkersToAvoid();
         lurker = lurkersToAvoid.inRadius(radius(), unit).nearestTo(unit);
 //        if (lurker == null) lurker = allLurkers.inRadius(7.2, unit).nearestTo(unit);
@@ -45,6 +47,27 @@ public class AvoidLurkers extends Manager {
     private boolean meleeUnitAndNoMobileDetectorsNear() {
         return unit.isMelee()
             && lurker.enemiesNear().mobileDetectors().countInRadius(7.5, unit) == 0;
+    }
+
+    /**
+     * Owner UMS Lurkers2: a Lurker that STARTED burrowing is already
+     * unhittable without a detector over it (engage only when it is
+     * {@code effVisible}), and Zealots standing next to it die during
+     * the transition - the burrowed-only filter below never sees it
+     * coming. A burrowing Lurker nearby means Zealots leave,
+     * unconditionally: no hp/army/cannon bravery vetoes apply. The
+     * only exception is detector cover AT the unit (then it stays
+     * hittable and the normal rules own the call).
+     */
+    private boolean zealotMustFleeBurrowing() {
+        if (!unit.isZealot()) return false;
+
+        AUnit burrowing = allLurkers.burrowing().inRadius(radius(), unit).nearestTo(unit);
+        if (burrowing == null) return false;
+
+        lurker = burrowing;
+
+        return unit.friendsNear().mobileDetectors().countInRadius(7.5, unit) == 0;
     }
 
     private Selection lurkersToAvoid() {

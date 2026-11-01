@@ -1591,6 +1591,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   launch with `BUILD=0`, and a `GHOST_DARK_SKIP` twin (change-gated)
   names every dark-destination refusal so the vehicle adjudicates the
   filter instead of the clock.
+  DATUM 2026-11-01 (owner: burrowing transition + unconditional Zealot
+  flee): the avoid filter only knew burrowed Lurkers - a burrowING one
+  (still detected, not yet burrowed) passed every gate and Zealots
+  stood into the transition. FIXED 2026-11-01 in
+  `AvoidLurkers.zealotMustFleeBurrowing`: a burrowing Lurker within
+  radius means Zealots leave, before all bravery vetoes; detector
+  cover at the unit is the only exception (it stays hittable =
+  `effVisible`, the engage gate the owner named). Pinned
+  (`AvoidLurkersTest` 4/4, red shown with the branch behind the null
+  gate; combat batch 34/0). Faka `setBurrowing` added alongside
+  `setBurrowed`. Open: vehicle proof Zealots break off as burrowing
+  starts instead of dying in place.
   DATUM 2026-11-01 (vehicle game 20261101_190800 on P_v_Lurkers2.scx,
   POST-fix-1, 23 s loss, 8 dead to Lurker#103, zero lurker kills):
   the instrument (not a guess) names the march: EVERY CLUSTER row
