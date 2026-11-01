@@ -1614,6 +1614,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (`armyZealotBreaksOffThroughBattlePipeline`: `RUN_ENEMY` move, no
   `ClusterGhost`; `AvoidLurkersTest` 6/6 + combat batch 36/0).
   Open: vehicle proof on P_v_Lurkers2 with the wiring live.
+  PROOF 2026-11-01 (vehicle game 20261101_202007 on P_v_Lurkers2.scx,
+  frozen jar WITH the wiring, win f827): ZERO deaths (vs 8 in every
+  prior vehicle), 35 `AVOID_LURKER` rows across 5 Zealots vs Lurkers
+  #101/#102 - the branch fires live, always with `burrowed: False`,
+  i.e. exactly the transition the owner named. Army kites and shoots
+  around the transition (259 KITE / 236 SHOT) instead of standing in
+  it. `GHOST_DARK_SKIP` silent, `GHOST_TARGET` absent - no dark
+  marches, no blind engagements. The Lurkers2 feeding chain is
+  CLOSED sim-side and live-side: memory guard + seat guard +
+  destination guard + unconditional Zealot flee + army wiring.
   DATUM 2026-11-01 (vehicle game 20261101_190800 on P_v_Lurkers2.scx,
   POST-fix-1, 23 s loss, 8 dead to Lurker#103, zero lurker kills):
   the instrument (not a guess) names the march: EVERY CLUSTER row
