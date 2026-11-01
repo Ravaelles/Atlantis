@@ -650,4 +650,49 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 "detector cover at the fight revalidates the remembered Lurker");
         });
     }
+
+    @Test
+    public void freshSeatGoneDarkIsNotMarchedWithoutDetectorCover() {
+        // Second half of the Lurkers2 feeding (owner vehicle): the enemy
+        // seen here has since gone dark - a burrowed Lurker never leaves
+        // its seat, so marching back onto the fresh point replays the
+        // feeding and arrival stands the army inside the spines.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 28, 26);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        world(3, fakeOurs(nexus, dragoon), fakeEnemies(lurker), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            atlantis.battle.DuelMemory.snapshotContact(dragoon, lurker.position());
+
+            assertNull(GhostAdvance.effectiveGhostPointFor(dragoon),
+                "the seat went dark with no detector at the fight - no march back onto it");
+        });
+    }
+
+    @Test
+    public void freshSeatGoneDarkIsMarchedWithDetectorCover() {
+        // Same seat, Observer at the fight: the fresh point is a
+        // destination again - the army may close to kill what it sees.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit observer = fake(AUnitType.Protoss_Observer, 29, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 28, 26);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        world(3, fakeOurs(nexus, dragoon, observer), fakeEnemies(lurker), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            atlantis.battle.DuelMemory.snapshotContact(dragoon, lurker.position());
+
+            assertEquals(lurker.position(), GhostAdvance.effectiveGhostPointFor(dragoon),
+                "detector cover revalidates the fresh seat too");
+        });
+    }
 }

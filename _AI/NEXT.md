@@ -1567,3 +1567,21 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `ClusterGhost` rows vs Lurker#152 are fresh-contact approach (seen
   seconds ago), not fogged-march feeding. Full chain (Observer in
   time, zero-feeding kill) still open - no Robo exists in a 44 s UMS.
+  FOLLOW-UP 2026-11-01 (owner: flap persists on his runs, f393-500):
+  his `185102`/`185223` games built pre-fix jars (18:51-52, fix
+  committed 18:58:01) - the log is the old build, not a fix failure.
+  But it exposed the second half of the same hole: the FRESH branch
+  (`freshContactFor`) had no detection check - a Lurker seen, then
+  burrowed, kept its seat as destination for up to 240 frames, and
+  arrival STANDS the army inside the spines. FIXED 2026-11-01:
+  a fresh seat with an unhittable memory within 6 tiles (the spine
+  envelope - burrowed Lurkers never drift) is suppressed without
+  detector cover at the fight (`seatIsDark`), same 8.5-tiles rule.
+  Pinned (`freshSeatGoneDarkIsNotMarched...` + cover twin, GhostAdvance
+  22/0, combat batch 16/0 incl. `LurkerAmbushSimTest`). Needs a
+  post-fix vehicle game on P_v_Lurkers2.
+  PROCESS NOTE 2026-11-01: owner's `185223` has no GAME_END - it was
+  still running when the agent's `185829` start killed leftovers. One
+  game at a time was violated by overlap; agent discipline from now:
+  `pgrep -x StarCraft.exe` + lock check before ANY launch, never
+  alongside the suite or an owner game.

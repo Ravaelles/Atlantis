@@ -404,7 +404,12 @@ public final class GhostAdvance {
     /**
      * This unit's own contact, only while fresh: a stale tile belongs to
      * fogged memory or exploration, never to the creep. Null-safe by
-     * construction (no frame recorded means no contact).
+     * construction (no frame recorded means no contact). A fresh seat
+     * the enemy has since gone dark on (burrowed Lurker that never
+     * moved, or a hp:0 fogged snapshot) is not fresh anymore without a
+     * detector at the fight - marching back onto the seat replays the
+     * feeding the fogged-branch guard removed, and arrival stands the
+     * army inside the spines.
      */
     private static APosition freshContactFor(AUnit unit) {
         if (unit == null) return null;
@@ -419,7 +424,55 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return null;
         }
+        if (seatIsDark(unit, last)) return null;
+
         return last;
+    }
+
+    /**
+     * The spine envelope: a burrowed Lurker never drifts off its seat,
+     * so an unhittable memory this close to the fresh point IS the
+     * point's enemy. Arrival would stand the line inside its range.
+     */
+    private static final double SEAT_TILES = 6.0;
+
+    /**
+     * True when an enemy nobody can hit sits on the fresh seat and no
+     * detector covers our unit: the seat is dark, the creep stays out.
+     * Unreadable state fails open to the old behavior, never to a
+     * frozen army.
+     */
+    private static boolean seatIsDark(AUnit unit, APosition seat) {
+        if (unit == null || seat == null) return false;
+
+        try {
+            Selection seen = EnemyUnits.discovered();
+            if (seen == null) return false;
+
+            Selection foes = seen.combatUnits();
+            if (foes == null) return false;
+
+            boolean dark = false;
+            for (AUnit foe : foes.list()) {
+                if (foe == null || foe.isVisibleUnitOnMap()) continue;
+                if (!foe.hasPosition() || foe.position() == null) continue;
+                double dist;
+                try {
+                    dist = foe.position().distTo(seat);
+                } catch (Exception ignored) {
+                    continue;
+                }
+                if (dist <= SEAT_TILES && isUnhittable(foe)) {
+                    dark = true;
+                    break;
+                }
+            }
+            if (!dark) return false;
+
+            return !detectionCovers(unit);
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**
