@@ -369,22 +369,7 @@ public final class FightTarget {
      * returns the step unchanged unless the sim or the tuner asks for the
      * arc - bit-identical straight kiting until then. Far units (beyond the
      * squad radius) and squadless units keep the straight step.
-     *
-     * <p>Contact-aware (NEXT #175): a chewed unit never bends - curving the
-     * step while a melee enemy is on top of it trades separation for shape.
-     * The kite owns contact; the arc owns the open field. Same chew veto
-     * as the formation hold (one definition of "too close to maneuver").</p>
      */
-    public static boolean bendApplies(AUnit unit) {
-        if (unit == null || !unit.isAlive()) return false;
-        try {
-            if (atlantis.combat.FormationHold.hasCloseMeleeEnemy(unit)) return false;
-        } catch (Exception ignored) {
-            return false;
-        }
-        return true;
-    }
-
     private static APosition bendTowardSquad(AUnit unit, APosition dest) {
         double blend;
         try {
@@ -393,7 +378,6 @@ public final class FightTarget {
             return dest;
         }
         if (!(blend > 0)) return dest;
-        if (!bendApplies(unit)) return dest;
 
         try {
             // Own squad first; Alpha roster as the fallback (units never

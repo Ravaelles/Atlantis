@@ -235,6 +235,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   f16700 at [103,37] supply 49 (not the cursed tile), died, rebuilt f20715
   same tile. Fix needs engine-validated siting or refused-tile memory,
   both in #145's scope - deliberately untouched here.
+  DATUM 2026-11-01 (30-issue package): the #145.1 resite covers the
+  standing-cover half of this (covered site moves instead of looping);
+  the engine-refusal half (tile reads buildable, engine says no) still
+  wants refused-tile memory + a live game showing no recurrence.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
 
 - **#152** Dragoon kiting: instrumentation, targeting, escape and tuner are in
@@ -451,12 +455,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   per-cycle standstill lever, not step amplitude. Open: live walled-pocket
   engagement and whether a deflectee glues.
 - **#175** Arc retreat toward the squad (low priority): sim-pinned and
-  tuner-controlled (`EscapeArcBlend`), default blend 0. CONTACT-AWARE
-  2026-11-01 (30-issue package): a chewed unit never bends
-  (`FightTarget.bendApplies` - same chew veto as the formation hold);
-  the kite owns contact, the arc owns the open field. Pinned
-  `BendAppliesTest` 2/2 (decision, not the 400-tick sims). No live value
-  is selected (tuner).
+  tuner-controlled (`EscapeArcBlend`), default blend 0. CONTACT-ATTEMPT
+  2026-11-01 WITHDRAWN (30-issue package): a chew veto on bending broke
+  the pinned arc sims (`ArcRetreatSimTest` x3 fail byte-identical - the
+  veto fires exactly where the arc is load-bearing). The arc bends INTO
+  contact by design; "don't bend when chewed" contradicts it. Contact
+  handling stays where it was; no live value is selected (tuner).
 - **#178** Zealot kiting: zealots never yield, so against faster attackers they
   stand through the cooldown and bleed. Rule: after attacking with cooldown
   left, withdraw a step when wounded, locally outnumbered, or facing a faster
@@ -656,7 +660,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   only when the rule fires, pinned `CorsairGatherSplitTest` 2/2. Open:
   live proof the solo flight hunts. DATUM 2026-10-28: game 010715 built 0
   Corsairs (24 Dragoons / 7 Zealots, VICTORY) - the proof needs a game that
-  builds them.
+  builds them. DATUM 2026-11-01 (30-issue package): 2 retained runs built
+  Corsairs (20261026_222936: 2, 20261029_115405: 3 in a 148-supply loss) -
+  and all vanish from every record (no telemetry, no order tags, no deaths,
+  no attacks). A build alone proves nothing; the hunt still needs a game
+  where Corsairs actually engage.
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
@@ -934,6 +942,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   reads as missing and the row re-fires mid-walk. `LiveExistingItems`
   counts them now (same optimistic estimate as a requested site); the row
   fires once. Pinned `LiveExistingItemsTest` 2/2 (red-first: missing).
+  REMAINDER 2026-11-01 (30-issue package): all three halves landed
+  ((a) siting+WHERE+declined-nearTo, (b) army board+tooltips, (c) Task
+  mirror); what remains is a fresh live game proving an unattributed
+  death is now attributed (the Tomas Cere shape) - owner-gated vehicle.
 - **#216** OpenBW melee hosts no game (handshake loop, zero frames; UMS smoke
   green): `run-openbw-e2e.sh` on TauCross attaches but the host never
   publishes frames. Same map + script played full openings on 10-18/21.
@@ -1127,4 +1139,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   post-construction field - now carried across). Open: a live lurker/DT
   game proving the order dispatches and the Observer ships in time;
   PurpleWave's 3-vs-1 observer pump on likelihood (vs our 1) is a doctrine
-  delta, not a defect.
+  delta, not a defect. DATUM 2026-11-01 (30-issue package): game
+  20261027_110507 (PRE-fix) lost 2 Dragoons to lurker 210 at f17027/17062
+  with an early Forge standing and zero detection chain after - the shape
+  the V2 goal layer answers. No post-fix lurker game in retained runs;
+  still needs the vehicle.
