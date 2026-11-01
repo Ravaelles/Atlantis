@@ -1584,7 +1584,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   still running when the agent's `185829` start killed leftovers. One
   game at a time was violated by overlap; agent discipline from now:
   `pgrep -x StarCraft.exe` + lock check before ANY launch, never
-  alongside the suite or an owner game.
+  alongside the suite or an owner game. JAR-RACE 2026-11-01: the
+  background jar rebuild races game start (both `185829` and `191233`
+  may have run pre-fix code - unverifiable post-hoc). Agent games now:
+  synchronous `build-bot-jar.sh` + `check-jar-freshness.sh` FIRST,
+  launch with `BUILD=0`, and a `GHOST_DARK_SKIP` twin (change-gated)
+  names every dark-destination refusal so the vehicle adjudicates the
+  filter instead of the clock.
   DATUM 2026-11-01 (vehicle game 20261101_190800 on P_v_Lurkers2.scx,
   POST-fix-1, 23 s loss, 8 dead to Lurker#103, zero lurker kills):
   the instrument (not a guess) names the march: EVERY CLUSTER row

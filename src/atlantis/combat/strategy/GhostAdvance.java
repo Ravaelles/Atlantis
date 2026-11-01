@@ -10,6 +10,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +111,8 @@ public final class GhostAdvance {
     private static final Map<Integer, Integer> firstGhostFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastCreepPos = new HashMap<>();
     private static final Map<Integer, Integer> lastCreepFrame = new HashMap<>();
+    private static final Map<Integer, String> lastDarkTwin = new HashMap<>();
+    private static final Map<Integer, Integer> lastDarkTwinFrame = new HashMap<>();
 
     /**
      * Fresh-contact frame at which the unit departed a reached kill
@@ -174,6 +178,8 @@ public final class GhostAdvance {
         firstGhostFrame.clear();
         lastCreepPos.clear();
         lastCreepFrame.clear();
+        lastDarkTwin.clear();
+        lastDarkTwinFrame.clear();
         departedAtFreshFrame.clear();
     }
 
@@ -423,7 +429,11 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
             return null;
         }
-        if (seatIsDark(unit, last)) return null;
+        if (seatIsDark(unit, last)) {
+            twinDarkSkip(unit, last, "seat");
+
+            return null;
+        }
 
         return last;
     }
@@ -448,6 +458,36 @@ public final class GhostAdvance {
      */
     private static boolean seatIsDark(AUnit unit, APosition seat) {
         return isDarkDestination(unit, seat, SEAT_TILES);
+    }
+
+    /**
+     * Names the refusal (owner 2026-11-01): a dark destination that
+     * leaves no twin is indistinguishable from no memory at all -
+     * which is exactly the blindness the Lurkers2 vehicles exposed.
+     * Change-gated per unit with a 300-frame heartbeat, same shape
+     * as the mission twins.
+     */
+    private static void twinDarkSkip(AUnit unit, APosition point, String why) {
+        try {
+            if (unit == null || point == null) return;
+
+            int id = unit.id();
+            String row = why + "@" + point.tx() + "," + point.ty();
+            int now = atlantis.game.A.now();
+            boolean transition = !row.equals(lastDarkTwin.get(id));
+            if (!transition && now - lastDarkTwinFrame.getOrDefault(id, -1000000) < 300) return;
+
+            lastDarkTwin.put(id, row);
+            lastDarkTwinFrame.put(id, now);
+            EventLog.key(LogKey.GHOST_DARK_SKIP)
+                .param("unit", id)
+                .param("tx", point.tx())
+                .param("ty", point.ty())
+                .param("why", why)
+                .param("transition", transition)
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 
     /**
@@ -561,7 +601,10 @@ public final class GhostAdvance {
                     continue;
                 }
                 if (dist < REACHED_TILES) continue;
-                if (isDarkDestination(unit, region.center(), ROUTE_DARK_TILES)) continue;
+                if (isDarkDestination(unit, region.center(), ROUTE_DARK_TILES)) {
+                    twinDarkSkip(unit, region.center(), "sweep");
+                    continue;
+                }
                 if (dist < bestDist) {
                     bestDist = dist;
                     best = region;
@@ -716,7 +759,12 @@ public final class GhostAdvance {
         } catch (Exception ignored) {
         }
         APosition unseen = unexploredDestinationFor(unit);
-        if (unseen != null && !isDarkDestination(unit, unseen, ROUTE_DARK_TILES)) return unseen;
+        if (unseen != null) {
+            if (isDarkDestination(unit, unseen, ROUTE_DARK_TILES)) {
+                twinDarkSkip(unit, unseen, "unexplored");
+            }
+            else return unseen;
+        }
         // Blind and the map is explored: sweep region centers instead
         // of standing (owner 2026-10-26, timeout anatomy) - the nearest
         // center beyond reach, so arriving rotates to the next one on

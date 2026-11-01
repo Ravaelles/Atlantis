@@ -266,6 +266,13 @@ public enum LogKey {
      */
     GHOST_TARGET,
     /**
+     * A ghost destination refused as dark (unit, tile, why): the seat or
+     * region center sits on an unhittable memory with no detector at the
+     * fight, so the creep stands off instead of marching in. Change-gated
+     * per unit with a heartbeat - presence proves the filter fires.
+     */
+    GHOST_DARK_SKIP,
+    /**
      * A supply provider wanted but suppressed by coming (unfinished) ones: who blocks.
      */
     SUPPLY_BLOCKED,
