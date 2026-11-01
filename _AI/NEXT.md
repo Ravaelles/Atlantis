@@ -605,6 +605,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     (max@warp 674) - spent, not hoarded; the single-base hoard-to-849
     shape does not reproduce here. Supports save-for-expansion (bank
     moves), pre-saturation window proof still open.
+    DATUM 2026-11-01 (game 153615, VICTORY): natural warps f6254 at bank
+    232 supply 34 (2nd Nexus f10759 bank 1288) - expansion fires early
+    on a thin bank while production flows, the save-for-expansion shape
+    live (no 849-hoard-then-expand). Still not the PostFifty window
+    verbatim, but the doctrine's live half strengthens with every
+    natural before the worker cap.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
@@ -1184,6 +1190,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Needs a game where both bases are known. DATUM 2026-10-28: game 010715
   (VICTORY) knew both mains from f3658 and formed AT the correct enemy base
   [95,119] (96 rows) - the wrong-base shape did not occur.
+  DATUM 2026-11-01 (98 retained + 12 proof games audited): no game shows
+  the army forming toward a known-wrong base - every known-both-mains
+  game forms at the enemy main or holds home by mission. The
+  fault-attribution this item asks for still waits for its vehicle.
 - **#208** Formation in our own base faces our own main (owner live finding
   2026-10-26): slots are laid out as if we were attacking our own Nexus -
   a sign/orientation error between the formation pivot and the threat
@@ -1256,6 +1266,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    Destination + 11 singletons (7th_rav, ProtossBaseB, Micro_2, LingsUpg2)
    - ZERO island/UMS maps, so the null-natural trigger cannot fire anywhere
    in the tree. Vehicle still missing; no code touched.
+   DATUM 2026-11-01 (game 20261101_171213, (2)Benzene headless, loss
+   f16479): Benzene is NOT the island vehicle - the ground scout reaches
+   the enemy main [119,14] f3627 and holds it (415/491 scout rows with
+   sighting), so the map is connected and the null-natural trigger cannot
+   fire here either. No natural taken all game (0 Nexus warps, single base
+   to the f16479 home-defense loss). Conclusion: the trigger is
+   unreachable on the entire vetted map library; proving it needs an
+   island/UMS map that does not exist here - owner call (same class
+   as #34).
 - **#214** Decision reasons in CherryVis (owner: VERY HIGH priority).
   Every big decision logs its reason; where a behavior is unattributed
   today, the reason row IS the fix. (a) Siting: every construction logs
