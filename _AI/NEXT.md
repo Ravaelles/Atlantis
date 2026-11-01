@@ -185,6 +185,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    ProtossDynamicUnitProduction (2), QueueInProgressInvariant,
    ResourcesReserved, DynamicProductionCommander. Full triage rides the
    30-issue package.
+   DATUM 2026-11-01 (audit v4, full suite on the resite HEAD): EXIT 0,
+   budget PASS (only mega `SimOpeningToFiftyTest` 32.9 s listed, within
+   40 s; mega count 2/3), suite wall ~224 s, 2172 ok / 15 failed across
+   10 classes (BusyGateway, ArchBoundary, RequestBuildingNear,
+   ProtossDynamicCombat, ProtossDragoon x2, AUnit, GasTileIsGeyser,
+   CountInQueue, Queue3) - the known pre-existing set, zero
+   resite-related failures. Fast gate + resite pins green solo.
 
 ## Architecture migration — stages E–J
 
@@ -225,6 +232,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   (`StalledWarpRecoverySimTest`): a frozen mid-warp Pylon re-arms only
   once the frozen branch proves it (2400f age + static hp) and a new
   warp completes after release. Open: live recovery proof.
+  DATUM 2026-11-01 (game 010715, V2 LIVE VICTORY): demote->re-arm->warp
+  RECOVERED live - Gateway cid3/oid98 DEMOTE_STALLED f5447
+  (stalledAge=2400f, [112,17]) then BUILDING_STARTED f5671 (+224f,
+  [111,17] builder133, same oid) - the stalled demand re-arms and warps
+  instead of dying silent. HP-trail + builder-dead freeze proof (WO-150b)
+  still open; the recovery half is now live-proven.
    DATUM 2026-10-29 (game 184529, BuilderLog): 1 Nexus construction from
    3869 attempts / 388 reached, 0 warps, 0 cancels - one builder (#158), one tile
    ([91,115]), canBuild=false in all flag combos while affordable/explored/powered.
@@ -263,6 +276,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   remains open; keep `GAME_END` as witness. No recent recurrence: 9 retained
   games 20261027_183253-20261028_004959 end as losses at various frames or
   28800 time-ends, none clean-and-enemyless.
+  DATUM 2026-11-01 (94 retained runs): 2 clean enemyless early exits, both
+  without foe rows or CLUSTER rows - 20261027_115321 f4500 loss and
+  20261027_140305 f1920 WIN (supply 10). The f1920 win is the cleanest
+  enemyless witness on record; engine-side termination still open, no
+  bot-side cause to fix.
 
 - **#71** Readiness gate: still lacks the deciding 700 s+, one-base, low-bank
   run. Wine's default supply horizon prevents reaching it; a per-run horizon is
@@ -271,6 +289,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    DATUM 2026-10-29 (game 184529): 872 in-game seconds one-base vehicle
    delivered, but the bank ran RICH (7516 max) - the low-bank deciding run
    still open.
+   DATUM 2026-11-01 (94 retained runs, BUILDINGS+GAME_END): 32 one-base
+   games reach f16800+; end-bank median 4577, only 2 wins among them.
+   The low-bank long vehicle EXISTS now: game 20261029_154822 (Destination,
+   loss f24095 ~1000 s, 1 Nexus, end bank 15 gas 420, 68/111 deaths are
+   probes post-f18000 with 3 Dragoons/2 Zealots lost late) - one base,
+   700 s+, low bank. Readiness-gate adjudication on this run is owner-side;
+   no tuning without the verdict.
 
 - **#81** Corner-stall Pylon search: evidence favors tile doctrine, not leash
   relaxation; corner Pylons land and supply unblocks. Last-resort ladder is
@@ -284,6 +309,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   (003802, 000314, 183253, 004959 - every warp carries a V2 `At 0` order),
   so the shape is unobservable in this mode; needs a non-V2 game or the
   legacy path to mint one.
+  DATUM 2026-11-01 (retained legacy games): the vehicle EXISTS - 16
+  pre-V2 runs carry no V2_DISPATCH rows (10/24-10/27: 173811, 190446,
+  194356, 101834, 103451, 134423, 150342, 151521, 161816, 170444, 122015,
+  122342, 133232, 203339, 222936, 121013). Legacy-minted STARTED naming
+  VERIFIED: 173811 Pylon cid1/oid1 [112,29] builder13, Gateway cid45/oid2,
+  Core cid47/oid5; 101834 9 warps with cid/oid/tile/builder; 122342 3
+  warps + CONSTRUCTION_CANCEL. Every legacy STARTED row carries
+  cid+oid+tile+builder+supply+minerals - the naming gap is closed. Open:
+  only the per-warp re-request-door gap.
   → details: `WINE-MACRO-DATUMS.md` §5
 
 - **#74** Wine builder variance: observed stalls recover; alternating handoff
@@ -310,6 +344,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    DATUM 2026-10-29 (game 184529): detection goals fire once at f20940 on
    Hydra-Den evidence (correct trigger, 5 frames before the end) - Forge/Robo/Obs
    never warp all game. Still needs a mid-game trigger.
+   DATUM 2026-11-01 (94 retained runs, BUILDINGS): 21 runs warp a Forge
+   (10586-26350), only ONE warps an Observatory (115405 f21433, with 3
+   Corsairs), ZERO warp Robotics_Facility / Observer / Cannon /
+   Citadel / Archives anywhere. The Forge line presents; the full
+   detection chain still never completes in any retained game.
 
 - **#82** Terran off-site completion may leak (unobserved): the bot plays
   Protoss-only (D8), so the shape cannot appear. DATUM 2026-10-28: same
@@ -424,12 +463,19 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   gates remain stub-pinned by design. Live resite proof rows are oid-linked;
   adopt/warp tile offsets are coordinate conventions, not resites.
   → details: `WINE-MACRO-DATUMS.md` §9.
+  VERIFIED 2026-11-01 at HEAD: `BuildGates.all()` is the single ordered
+  registry (`BuildGate` interface + `BuildGates` list, evaluated in order in
+  `ProduceBuilding`); no ad-hoc gate bypasses it. No code change.
 - **#156** Unify the four reservation models behind one queue-position ordering
   and one paid-work exclusion (a building unit exists). Duplicate-Pylon races
   currently read different sums. This belongs to #145/#147; no blind merge.
 - **#157** Semantic `ConstructionOrderStatus` queries are in place; all
   PREPARING readers use `isWaiting()` and `setStatus` is the sole writer.
   Behavior-neutral migration; reader proofs ride normal macros.
+  VERIFIED 2026-11-01 at HEAD: zero `== PREPARING` / `!= PREPARING` reads
+  outside `isWaiting()` itself (all live changes flow through `setStatus`;
+  remaining `== IN_PROGRESS` / `== NOT_STARTED` reads name different states,
+  not the aimed-future). No code change.
 - **#160** Automated tuner selection machinery is implemented and pinned,
   including objective, hall of fame, promotion, manifests, gradient and sim
   batch. Efficacy remains unproven; duel noise dominates at K=3. Require K-of-N
@@ -491,6 +537,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   real opponents (0/9 FFA wins; one weak positive with Dragoon mass).
   DATUM 2026-10-28: game 010715 won vs the native AI with 24 Dragoons / 7
   Zealots - mobile, no freeze; FFA winnability still open.
+  DATUM 2026-11-01 (94 retained runs, GAME_END won=true): 16 wins, ALL vs
+  the native AI (none FFA, none vs real bots) - 6 short (~f1700-5400, supply
+  3-19, micro/FFA maps) + 10 macro (f8640-25050, supply 51-123, TauCross).
+  Winnability vs real opponents stays unproven; no live value selected.
 - **#181** Split-cluster reinforcement is sim-pinned (fresh-contact reinforce,
   ghost-contact rejection, ongoing-fight priority). Timeouts were the Regions
   path. Open: live recurrence of the park-while-fighting shape.
@@ -638,12 +688,19 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   live and tagged: `#Attack_Unit/Swarm!` then ordered `-WorkerDefenceRun`
   + `#Move/RunToDist` (units 171/190). The line still fell when overrun -
   engagement proven, rescue unproven.
+  DATUM 2026-11-01 (94 retained runs, UNIT_DIED probes pre-f6000): 12
+  pressure games - strongest 20261026_122342 (14 probes dead from f638,
+  ProtossBaseB) + 115321 (7 from f3990), 212230 (7 from f3961), 184529
+  (6 from f4013), 003802 (6 from f3847). The native-AI pressure vehicle
+  exists in bulk; #200/#205 hold-at-main proof rides the same queue.
 - **#197** Trapped-Dragoon posture is sim-calibrated and latched; the trapped
   rule lives in `atlantis.combat.focus` with #194. Open: live proof of an army
   attacking out of a trapped defense; inventory other posture reasons later.
   DATUM 2026-10-28: postures observed live are only ATTACK/DEFEND (010715:
   344/39; 012238: 312/103; 010058: 92/270) - no TRAPPED row ever surfaces
   in the twin; the latch is silent or never triggers in these games.
+  DATUM 2026-11-01 (94 retained runs): TRAPPED=0 everywhere - zero rows
+  in any EVENTS file. Live proof still needs the vehicle, not a fix.
 - **#198** Specialist behaviors landed sim-pinned: scarab production, Corsair
   hunting, attacked DT retreat, and High Templar storm selection (including
   deep-energy tiers and snipes). Observers use their own detector chain and fall
@@ -653,6 +710,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   in 3 audited V2 macro games (010715, 010058, 012238: Zealot/Dragoon-only
   armies) - the whole specialist tier never presents; needs a build that
   techs there, same vehicle problem as #85/#201.
+  DATUM 2026-11-01 (94 retained runs): zero High Templar warps anywhere,
+  zero Psionic_Storm rows, Corsairs in only 2 runs (222936: 2, 115405: 3
+  with Observatory at f21433) - and all vanish from every record (no
+  telemetry, no order tags, no deaths). Full expression unproven; needs a
+  game that techs there AND fights with it.
 - **#200** Against early Zerg, fewer than five combat units hold at the main
   when the midpoint exceeds six tiles, leaving room for workers to join
   (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
@@ -661,6 +723,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (PvZ VICTORY) shows first shots at f9885 - no early-Zerg pressure at all,
   so neither #200 nor #205 can be proved by this vehicle; stands with #196
   (needs a livelier opponent than the native AI).
+  DATUM 2026-11-01: the vehicle queue is now named - 122342 (14 probes
+  dead from f638), 115321 (7 from f3990), 212230 (7 from f3961), 184529
+  (6 from f4013) all pre-f6000 (see #196). Hold-at-main (#200) and
+  first-Dragoon-gate (#205) proof rides the next quiet run over one of
+  these, not a new search.
 - **#201** Corsairs trail the main army instead of hunting: they need their own
   (default solo) cluster, merging only when threatening air exists; the
   "numerous Wraiths" line becomes a named constant with a pin (AEC §31).
@@ -709,6 +776,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   gas banks 200+ only in the final 70 frames (880-888 at f14717-14747,
   game ends f14785) - the mid-game brake window never presents, so this
   vehicle cannot prove it; needs a gas-rich mid-game.
+  DATUM 2026-11-01 (94 retained runs, BUILDINGS gas@warp): the window
+  presents in bulk - 17 games warp mid-game Zealots at gas 200+ (e.g.
+  121013 f6420 g216, 222936 f9109 g204, 000314 f6175 g216, 134145 f8996
+  g268, 192200 f7863 g242). Brake-consistent cases: 010715 (Core + 5
+  Zealots pre-gas, then ZERO Zealots f5424-14605 across the whole gas-rich
+  Dragoon phase, 2 only very late at g624/786) and 184529 (7 pre-gas,
+  then none until gas spent to 62). Counter-shape: 122342 warps 2 Zealots
+  at g508/482 - initial-floor Zealots, allowed by design. Full live proof
+  (brake row vs warp row attribution) still wants the twin, not just the
+  counts - but the vehicle is no longer missing.
 - **#204** Retreat floor + choke standoff depth (owner orders 2026-10-25,
   after repeated losses to over-long retreats): (1) `RetreatFloor.clamp`
   stops a FLEE rally on the `MiddleFocusChoke` standing line, never behind
@@ -744,6 +821,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
     315->667 mid-rally and the game is won. Rung identity ([53,114] = which
     ladder rung) is not provable from the twin - the shape matches the floor
     intent, the exact rung needs trace geometry.
+   DATUM 2026-11-01 (games 154822 + 202204): neither proves the floor -
+   154822 runs home and dies there (last Defend f23333, dead f24095, no
+   stop at the middle), 202204 flaps with no contact at all (the #232
+   indecision shape, not a losing fight). The losing-fight-stops-at-middle
+   game is still missing.
 - **#205** First-Dragoon gate vs Zerg (owner order 2026-10-26): on a build
   that trains Dragoons the line defending home stays at the main base until
   the first Dragoon is finished - the early-Zerg small-army hold (#200) only
@@ -775,6 +857,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    f23808, re-Attack f23815 (20 s later) - the line re-attacks instead of
    coming home; still no home-hide shape. Ends f28800 rich-idle (bank
    8084, gas 52, supply 53/65 - see #202).
+   DATUM 2026-11-01 (games 154822 + 202204): 154822 fights/flees home and
+   dies there (68/111 deaths are probes post-f18000, last mission Defend
+   f23333, 762 frames to the f24095 end) - home death under pressure, not
+   hiding; 202204 flaps Attack/Defend every ~100f f13981-f18085 with no
+   contact (the #232 indecision shape). The hide-after-contact latch still
+   unobserved in all three.
   MATCHUP DOCTRINE LANDED 2026-10-28 (owner order: vs Zerg hold, vs Terran
   attack, vs Protoss wait for 3 zealots or a dragoon then attack):
   `PostureReasons` carries `vsProtoss`/`ourZealots`, and a no-contact small
@@ -879,6 +967,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   calms down. TWIN KEY LANDED 2026-10-30: FORMATION_ORDER rows
   issued/absorbed with dest (transitions always, 150f heartbeat) - the
   calm reads as absorbs, no trace geometry needed.
+  DATUM 2026-11-01 (game 202204): anti-calm, not calm - 417
+  FORMATION_ORDER rows f13981-f18085 (reform ~every 10f) riding the
+  Attack/Defend flap with no contact. The latch fires as designed; the
+  calm-defense game is still missing.
 - **#212** Worker acquisition strategy (owner call, surfaced in
   `CASE-STUDIES.md` #53): a worker held at a construction site that cannot
   start should return to mining (`ShouldNotTravelToConstructYet` covers
@@ -914,6 +1006,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   connected, so it cannot trigger this leak).
    DATUM 2026-10-29 (games 184529 + 200344): no natural ever exists in either -
    untriggered again. Needs a vetted island vehicle + a game that expands there.
+   DATUM 2026-11-01 (94 retained runs, dir census): 78 TauCross + 5
+   Destination + 11 singletons (7th_rav, ProtossBaseB, Micro_2, LingsUpg2)
+   - ZERO island/UMS maps, so the null-natural trigger cannot fire anywhere
+   in the tree. Vehicle still missing; no code touched.
 - **#214** Decision reasons in CherryVis (owner: VERY HIGH priority).
   Every big decision logs its reason; where a behavior is unattributed
   today, the reason row IS the fix. (a) Siting: every construction logs
