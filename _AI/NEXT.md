@@ -463,16 +463,23 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   cut the old production and the old placement, then the full decision
   system, testable throughout. Slice plan (one commit each, suite green,
   game proof where named):
-  Phase A (placement, #146): A1 `Construction.findPositionForNewBuilding`
-  delegates catalogue-direct (testing random-tile seam preserved at the
-  seam; all 6 call sites null-safe on decline; `placementCatalogue` flag
-  is constant-true, setter dead) - pins: SiblingCover + adopt/resite
-  tests + suite + siting game. A2 base-siting users (NextBasePosition,
-  FindPositionForBase*, NearestFreeBase). A3 modifiers + FindPosition +
-  ASpecialPositionFinder + Terran depot (Protoss-only: verify dead).
-  A4 delete `APositionFinder` to `src-old/`.
-  Phase B (demand, #147): B0 read-only flow map (which legacy producers
-  still mint game-reaching orders vs V2), then slices from the map.
+  Phase A (placement, #146) LANDED A1 (construction seam catalogue-direct),
+  A2 (base seam + scope lift), A2b/c? no - A3 (dead Terran depot +
+  nextPosition), A4a (StatusChanger seam), A4b (modifier anchoring),
+  A4c (pure-catalogue base + fallback-chain deletion), A4d (dead
+  findPositionForNew), A4e (dead bunker path + modifier package),
+  A4f (dead bunker/creep/Zerg branches), A4g (precedence + dead
+  modifierFor). OPEN: sited-fallback removal ATTEMPTED + REVERTED
+  (load-bearing - waits B-phase sited ownership); APositionFinder
+  class deletion (blocked on the same + cannon path); cannon
+  catalogue migration (no cannon vehicle in 98 games).
+  Phase B (demand, #147): B0 flow map + B1a/B1b dead-race dispatch
+  deleted. NEXT: B1c first live producer family (needs per-gate game
+  proof) or B2 reader migration; owner call on family order.
+  #232 slice 3a LANDED (enforcement gate + twin + pins; live proof
+  OPEN - trigger never fired). #201 Corsair driver LANDED (sim/world
+  pins; game proof needs a Stargate game). #203 brake twin LANDED.
+  #223 V2_DETECTION_GOALS twin LANDED (attribution instrument).
   B0 LANDED 2026-11-01 + B1a/B1b dead-race dispatch deleted.
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
