@@ -24,6 +24,16 @@ public class AKeyboard implements NativeKeyListener {
     public static final int MS_DELAY_FIX = 25;
 
     /**
+     * Set the moment Escape starts tearing the game down. The hook thread
+     * outlives the game classes: late key events arriving mid-shutdown
+     * (class loaders closing, jars killed first) resolve against dead
+     * code and answer with linkage noise instead of an action. Once this
+     * is set, dispatch drops everything silently - exit was already
+     * requested, there is nothing left to do.
+     */
+    private static volatile boolean exiting = false;
+
+    /**
      * True when this JVM is the bot itself - the one running under Wine with the
      * game attached (it has BWAPI, so speed/camera shortcuts can work). The Linux
      * supervisor JVM starts with no game and stays without one.
@@ -70,6 +80,18 @@ public class AKeyboard implements NativeKeyListener {
         }
 
         GlobalScreen.addNativeKeyListener(new AKeyboard());
+
+        // Best effort: resolve the exit action now, on this thread, while
+        // the classes are alive. The dispatch thread may run with a context
+        // class loader that cannot see game classes later (measured:
+        // NoClassDefFoundError for the exit action on a late Escape during
+        // teardown) - an already-loaded class never needs resolving again.
+        // Failure here is silent: the exiting flag below owns shutdown noise.
+        try {
+            Class.forName("atlantis.keyboard.actions.Exit");
+        }
+        catch (Throwable ignored) {
+        }
     }
 
     private static void turnOffLibraryLogging() {
@@ -99,13 +121,18 @@ public class AKeyboard implements NativeKeyListener {
         dispatchKeyCode(keyCode, 1);
     }
 
-    public static void dispatchKeyCode(int keyCode, int keyLocation) {        // The supervisor JVM (no game attached) cannot execute game actions -
+    public static void dispatchKeyCode(int keyCode, int keyLocation) {
+        // Late hook events during teardown die here, silently: exit was
+        // already requested and the game classes may be gone already.
+        if (exiting) return;
+
+        // The supervisor JVM (no game attached) cannot execute game actions -
         // but its hook is the one that sees global keystrokes (the bot's hook
         // under Wine only sees keys typed into Wine windows). Forward everything
         // to the bot through the relay file; Escape stays here, because killing
         // the game is exactly the supervisor's job.
         if (!isBotJvm()) {
-            if (keyCode == 1) Exit.handle();       // Escape
+            if (keyCode == 1) safeExit();       // Escape
             else KeyRelay.send(keyCode, keyLocation);
 
             return;
@@ -116,7 +143,7 @@ public class AKeyboard implements NativeKeyListener {
             // ######### EXIT GAME #########
             case 1:
                 // Key "Escape"
-                Exit.handle();
+                safeExit();
                 break;
 
             // ######### SPEED - SLOWER #########
@@ -225,6 +252,24 @@ public class AKeyboard implements NativeKeyListener {
         }
     }
 
+    /**
+     * Escape during teardown: the flag goes up before the action runs, so a
+     * second Escape (or any late key) landing mid-shutdown is dropped by the
+     * guard above instead of resolving game classes that are already gone.
+     * A {@link LinkageError} (the measured shape: the dispatch thread's
+     * loader cannot see the exit action while jars are being killed) is
+     * swallowed quietly - exit was requested, the noise helps nobody.
+     * Anything else propagates as before.
+     */
+    private static void safeExit() {
+        exiting = true;
+        try {
+            Exit.handle();
+        }
+        catch (LinkageError ignored) {
+        }
+    }
+
     private static void gameSpeedFaster() {
         changeGameSpeed(1);
     }
@@ -277,7 +322,15 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         consumeEvent(e);
-        dispatchKeyCode(e.getKeyCode(), e.getKeyLocation());
+        try {
+            dispatchKeyCode(e.getKeyCode(), e.getKeyLocation());
+        }
+        catch (LinkageError | RuntimeException thrown) {
+            // Shutdown owns this noise (see safeExit): once exit started,
+            // late events die silently. Anything earlier keeps the old
+            // behaviour - it propagates to the hook thread as before.
+            if (!exiting) throw thrown;
+        }
     }
 
     @Override
