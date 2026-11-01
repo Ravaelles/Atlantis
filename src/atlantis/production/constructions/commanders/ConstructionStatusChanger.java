@@ -7,7 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.units.AUnit;
@@ -728,9 +728,11 @@ public class ConstructionStatusChanger extends Commander {
         // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
             if (construction.buildPosition() == null) {
-                APosition positionToBuild = APositionFinder.findPositionForNew(
-                    construction.builder(), construction.buildingType(), construction
-                );
+                // Migration A4a (owner #146): the construction seam, not
+                // the legacy finder directly - catalogue-first with the
+                // same null contract (a null site stays null, the caller
+                // already tolerates it). Same testing seam as everywhere.
+                APosition positionToBuild = construction.findPositionForNewBuilding();
                 construction.setPositionToBuild(positionToBuild);
             }
         }

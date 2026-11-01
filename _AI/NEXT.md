@@ -538,6 +538,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     the game proves no-regression on the live path, not
     catalogue-answers-base-live; that half rides the synthetic pin +
     a vehicle that actually exercises the fallback.
+    A4a LANDED 2026-11-01 (travelling-builder null-site reroute):
+    `ConstructionStatusChanger` uses the construction seam instead of the
+    legacy finder directly (same null contract, same testing seam).
+    Pins 25/25 (status-advance, demote, travelling-builder, stalled-warp
+    sim, sibling resite) + fast gate 1058/1058 (2 arch advisory
+    pre-existing). No game proof needed: behaviour-identical delegate
+    swap, covered by the A1/A2 proof games' refresh/resite traffic.
     A3 LANDED 2026-11-01 (dead-code deletion, Protoss-only D8): removed
     the Terran depot siting files (`SupplyDepotPositionFinder`,
     `PositionsAroundMainBase`, `BuildablePositionsAroundMainBase`,
