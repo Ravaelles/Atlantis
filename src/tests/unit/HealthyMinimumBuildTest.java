@@ -147,14 +147,14 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
         atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         try {
             tests.unit.sim.SimMap map = tests.unit.sim.SimMap.load(
-                "src/tests/resources/taucross-snapshot.json");
+                "out/map-snapshots/ums_rav_7th_rav.scx.json");
             map.install();
             Numbers numbers = new Numbers();
             tests.unit.sim.SimDriver driver = new tests.unit.sim.SimDriver(
                 map, tests.unit.sim.SimConfig.fast().withStride(60), numbers, 50);
             try {
                 driver.spawnResources();
-                driver.spawnBase(0, 4);
+                driver.spawnBase(1, 4);
                 // No build-order mock: pure V2 demand, exactly like the live
                 // game that failed ("At 10 Gateway*" with source=DYNAMIC).
                 // A fake BO here would test the BO path the e2e gate
