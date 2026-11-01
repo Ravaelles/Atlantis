@@ -474,6 +474,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   DynamicGoals. So #147 = (B1) producers→V2 goals per family, (B2)
   readers→V2 state, (B3) delete Queue/** + order types. Each slice
   suite-green + game proof where the twin names the author.
+  B1a LANDED 2026-11-01 (dead Terran response dispatch deleted:
+  `AsTerranUnitDiscoveredResponse`, `TerranResponseEnemyHiddenUnits`,
+  `TerranStrategyResponse`, `TerranAirDefence` stub + the We.terran()
+  branches in `EnemyUnitDiscoveredResponse` and
+  `RaceStrategyResponseFactory`; Protoss-only D8): fast gate 1058/1058
+  (2 arch advisory pre-existing). No game proof needed: dispatch
+  branches the bot never takes (We.terran() is false in every game).
   A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
   modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
   anchor the catalogue neighbourhood instead of anywhere).
