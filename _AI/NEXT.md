@@ -142,6 +142,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    on the pre-Phase-4 tree (identical stacks): DynamicProductionCommanderTest
    NPE (null raceSpecific factory when not Protoss) and CommanderTest ctor -
    both pin dead legacy commanders, die with Phase 4. Not regressions.
+   DATUM 2026-11-01 (#211 triage): `DynamicProductionCommanderTest` deleted
+   (pins a Terran world on Protoss-only factories - unreachable live since
+   the bot plays Protoss-only; the commander itself stays for #91);
+   `CommanderTest` declares Protoss (race rule, same NPE root);
+   `RequestBuildingNear` x3 fixed solo (catalogue success path now names
+   "OK" like the legacy path did - behavior was already right, only the
+   twin was stale); placement NPEs fixed (`TooCloseToMineralsOrGeyser`
+   null-game guard, 9/9). Remainder mapped, not touched: AUnit x2
+   (mission-default semantics -> #232 slices), ProtossDynamicUnit x2
+   (gateway thicket -> #91 game proof), QueueInProgressInvariant +
+   ResourcesReserved (legacy queue semantics -> #147 deletion wave).
    DATUM 2026-11-01 (time-budget stage): catalogue-flip fallout, fixed -
    `PlacementSupportTest` + 4 `PlacementPlannerTest` NPEs
    (`TooCloseToMineralsOrGeyser` reads live supply with no game running).

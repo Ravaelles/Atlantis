@@ -116,6 +116,12 @@ public class RequestBuildingNear {
         Construction construction = NewConstructionRequest.requestConstructionOf(type, exact, order);
         if (construction == null) return error("RequestBuildingNear - Empty construction of " + type + " at " + exact);
 
+        // The verdict twin lives on the legacy finder (_STATUS), but sited
+        // demand reaches the catalogue first now - which never writes it.
+        // Name the success the same way the legacy path did, or every
+        // pin on "who sited this and why" reads stale "Init" forever.
+        atlantis.production.constructions.position.AbstractPositionFinder._STATUS = "OK";
+
 //        System.err.println("RequestBuilding OK - " + type + " at " + exact);
 
         // Phase A (__PLAN-DECISIONS): sited requests (cannons, forward
