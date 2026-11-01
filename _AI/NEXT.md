@@ -579,6 +579,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   `ProduceForge.produce()` call + class deleted (sole caller was the
   dynamic commander). 27/0. Open: game proof (a DT-threat or timing
   game where the V2 row warps the Forge - opportunistic).
+  B1-CORE LANDED 2026-11-01: `CyberneticsCoreGoal` (gateway standing,
+  no Core) already had a feeder home (`core` served); pinned
+  `gatewayExistsFeedsCoreRow` (goal-to-queue). The #58 requeue and the
+  one-Core dedup are rewritten onto V2 (feeder feeds a missing Core,
+  `inFlight` covers PREPARING sites - stronger than the old guards,
+  which were blind to picked-early sites). `ProduceCyberneticsCore`
+  call + class + dead assimilator-blocked diagnostic deleted. 14/0.
+  Behavior note: V2 fires on Gateway+bank where legacy waited for
+  supply/mineral gates - earlier Core possible; game proof watches
+  the timing. Open: game proof (Core timing + expansion-Pylon +
+  live #204 in one macro vehicle).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
