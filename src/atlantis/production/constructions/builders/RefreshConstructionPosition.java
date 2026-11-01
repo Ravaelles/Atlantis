@@ -110,6 +110,7 @@ public class RefreshConstructionPosition {
             int btx = -1, bty = -1, bdist = -1, gtx = -1, gty = -1;
             boolean overlaps = false, earlyAllow = false, onGeyser = false;
             boolean engineOk = false;
+            String blocker = "-";
             try {
                 if (builder != null && builder.position() != null) {
                     btx = builder.tx();
@@ -129,6 +130,19 @@ public class RefreshConstructionPosition {
             try {
                 overlaps = atlantis.production.constructions.position.conditions
                     .OverlapsOurStandingBuilding.check(buildPosition, type);
+                if (overlaps && buildPosition != null && type != null) {
+                    int w = type.getTilesWidth(), h = type.getTilesHeights();
+                    for (atlantis.units.AUnit u : atlantis.units.select.Select.all().list()) {
+                        if (u == null || !u.isAlive() || !u.isABuilding() || !u.isCompleted()) continue;
+                        if (u.tilePosition() == null || u.type() == null) continue;
+                        int ux = u.tilePosition().getX(), uy = u.tilePosition().getY();
+                        if (ux < buildPosition.tx() + w && ux + u.type().getTilesWidth() > buildPosition.tx()
+                            && uy < buildPosition.ty() + h && uy + u.type().getTilesHeights() > buildPosition.ty()) {
+                            blocker = u.type().name() + "@" + ux + "," + uy + "#" + u.id();
+                            break;
+                        }
+                    }
+                }
             } catch (Exception ignored) {
             }
             try {
@@ -159,6 +173,7 @@ public class RefreshConstructionPosition {
                 .param("gtx", gtx)
                 .param("gty", gty)
                 .param("overlaps", overlaps)
+                .param("blocker", blocker)
                 .param("earlyAllow", earlyAllow)
                 .param("onGeyser", onGeyser)
                 .param("engineOk", engineOk)
