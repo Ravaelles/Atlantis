@@ -648,6 +648,23 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   DynamicGoals. So #147 = (B1) producers→V2 goals per family, (B2)
   readers→V2 state, (B3) delete Queue/** + order types. Each slice
   suite-green + game proof where the twin names the author.
+  B2 SCOPED 2026-11-01 (read-only inventory, no code): Queue readers
+  outside `orders/queue/` fall in three buckets. (a) V2's own reads -
+  KEEP (`GoalBoardFeeder.inFlight`, `GoalBoardAdvisor` core-await,
+  `NewConstructionRequest` funnel checks, `ProductionHealthWatcher`
+  diagnostics, `Count.*InQueue` as the in-flight set). (b) Legacy
+  decision reads - migrate per family, owner-gated like B1:
+  `BuildOrderOwnsGame` (BO-vs-V2 ownership over notFinished rows),
+  `CancelNotStartedBases` (stuck-base queue surgery),
+  `ExpansionCommander` (mineral/queue-size gate),
+  `AutoProduceWorkersCommander` (gateway queue scan + a dead Zerg
+  Spawning-Pool/Zergling branch - Protoss-only candidate),
+  `Produce*` guards (zealot next-2, critical-stuff notStarted,
+  gateway ready-queue), `OnOurUnitCreated` (ready/in-progress/
+  notStarted matching). (c) Dead on arrival: the Zerg-pool check in
+  `AutoProduceWorkersCommander` (We.protoss-only game). Next: owner
+  picks the first B2 family, then per-family slice like B1 (V2 home +
+  pin + delete + game proof).
   B1a LANDED 2026-11-01 (dead Terran response dispatch deleted:
   `AsTerranUnitDiscoveredResponse`, `TerranResponseEnemyHiddenUnits`,
   `TerranStrategyResponse`, `TerranAirDefence` stub + the We.terran()
