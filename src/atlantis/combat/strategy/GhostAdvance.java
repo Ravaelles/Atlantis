@@ -6,6 +6,7 @@ import atlantis.combat.cluster.FightOrFlight;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -120,6 +121,53 @@ public final class GhostAdvance {
     private static final Map<Integer, Integer> departedAtFreshFrame = new HashMap<>();
 
     private GhostAdvance() {
+    }
+
+    /**
+     * A remembered enemy is a destination only while it answers to fire:
+     * detector relevance radius (mirrors the enemy-detector convention in
+     * {@code ProtossDontAvoid}: a detector matters when it stands at the
+     * fight, not parked at home).
+     */
+    private static final double DETECTOR_COVER_TILES = 8.5;
+
+    /**
+     * True when our squad can actually see through this memory: a mobile
+     * detector standing at the fight. Static home detection (cannons)
+     * never covers a ghost march.
+     */
+    private static boolean detectionCovers(AUnit unit) {
+        if (unit == null) return false;
+
+        try {
+            if (Select.ourOfType(AUnitType.Protoss_Observer)
+                .countInRadius(DETECTOR_COVER_TILES, unit) > 0) return true;
+            if (Select.ourOfType(AUnitType.Terran_Science_Vessel)
+                .countInRadius(DETECTOR_COVER_TILES, unit) > 0) return true;
+
+            return Select.ourOfType(AUnitType.Zerg_Overlord)
+                .countInRadius(DETECTOR_COVER_TILES, unit) > 0;
+        }
+        catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * True when the remembered enemy cannot be hit: effectively undetected
+     * (burrowed/cloaked with no cover, or a hp:0 fogged snapshot - both
+     * read {@code effUndetected} in {@code AUnit}). Unreadable state
+     * fails open to the old behavior, never to a frozen army.
+     */
+    private static boolean isUnhittable(AUnit foe) {
+        if (foe == null) return false;
+
+        try {
+            return foe.effUndetected();
+        }
+        catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     public static void clearForTests() {
@@ -581,6 +629,15 @@ public final class GhostAdvance {
             for (AUnit foe : foes.list()) {
                 if (foe == null || foe.isVisibleUnitOnMap()) continue;
                 if (!foe.hasPosition() || foe.position() == null) continue;
+                // Owner UMS Lurkers2 (P_v_Lurkers2.scx): never march the
+                // line onto a remembered position of something we cannot
+                // hit. The fight branch rightly ignores undetected enemies
+                // (Engagement filters !isDetected), but the ghost used to
+                // serve them as destinations - burrowed Lurkers ate the
+                // creep alive while the log flapped Regroup<->GhostAdvance
+                // and no attack ever issued. Covered by a detector at the
+                // fight, the ghost is valid again.
+                if (isUnhittable(foe) && !detectionCovers(unit)) continue;
                 double dist = unit.distTo(foe);
                 if (dist < best) {
                     best = dist;

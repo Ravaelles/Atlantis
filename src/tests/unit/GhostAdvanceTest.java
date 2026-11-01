@@ -606,4 +606,48 @@ public class GhostAdvanceTest extends WorldStubForTests {
                 "standoff ring wins over the ghost creep: " + dest + " vs " + choke);
         });
     }
+
+    @Test
+    public void undetectedGhostIsNotMarchedWithoutDetectorCover() {
+        // Owner UMS Lurkers2 (P_v_Lurkers2.scx): the line walked onto
+        // remembered burrowed Lurkers and died there - the fight branch
+        // rightly ignores them (Engagement filters !isDetected) while
+        // the ghost served them as destinations, flapping
+        // Regroup<->GhostAdvance with no attack ever issued. A ghost
+        // nobody can hit is no destination; covered by a detector at
+        // the fight, it is valid again.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 28, 24);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        world(3, fakeOurs(nexus, dragoon), fakeEnemies(lurker), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertNull(GhostAdvance.effectiveGhostPointFor(dragoon),
+                "no detector at the fight means no march onto the undetected memory");
+        });
+    }
+
+    @Test
+    public void undetectedGhostIsMarchedWithDetectorCover() {
+        // The other half: an Observer standing at the fight revalidates
+        // the memory - detection lives where the squad is, not at home.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit observer = fake(AUnitType.Protoss_Observer, 29, 29);
+        FakeUnit lurker = fake(AUnitType.Zerg_Lurker, 28, 24);
+        lurker.setEnemy();
+        lurker.isVisibleUnitOnMap = false;
+        lurker.setEffCloaked(true);
+
+        world(3, fakeOurs(nexus, dragoon, observer), fakeEnemies(lurker), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertEquals(lurker.position(), GhostAdvance.effectiveGhostPointFor(dragoon),
+                "detector cover at the fight revalidates the remembered Lurker");
+        });
+    }
 }

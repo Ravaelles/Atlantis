@@ -1541,3 +1541,20 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   contact-only units (like lurker #234, visible solely in CLUSTER rows)
   have no discovery path to `hasHiddenUnits` except the fog-loop repair.
   The twin gap is confirmed tree-wide, not per-game.
+  DATUM 2026-11-01 (owner vehicle `ums/rav/protoss/P_v_Lurkers2.scx`
+  + live Orders log): units walk into invisible Lurkers and die there
+  with a `ClusterForm/Regroup <-> ClusterGhost/GhostAdvance` flap every
+  ~12 frames and NO attack ever issued. Root cause in code: the fight
+  branch rightly ignores undetected enemies (`Engagement` filters
+  `!isDetected`) but `GhostAdvance.ghostPointSkippingFresh` served
+  their remembered positions as destinations (no detection check) -
+  the creep marched onto the spines while Regroup pulled back, forever.
+  FIXED 2026-11-01: an `effUndetected` ghost (burrowed/cloaked with no
+  cover, or a hp:0 fogged snapshot - both read `effUndetected` in
+  `AUnit.java:1412`) is skipped unless a mobile detector (Observer/
+  Vessel/Overlord) stands within 8.5 tiles of the unit - the
+  enemy-detector convention mirrored. Pinned
+  (`undetectedGhostIsNotMarchedWithoutDetectorCover` +
+  `undetectedGhostIsMarchedWithDetectorCover`, GhostAdvance 24/0).
+  Open: vehicle game on P_v_Lurkers2 (stand-off, then Observer, then
+  kill - the #198/#223 full chain proof).
