@@ -265,6 +265,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   engine-refusal half (tile reads buildable, engine says no) still
   wants refused-tile memory + a live game showing no recurrence.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
+  DATUM 2026-11-01 (94 retained runs): explicit BUILD_REFUSED rows are
+  rare and early-era (11 games, max 31 in 151521, all pre-V2 openings) -
+  no new repeat-tile chase exhibit; the documented exhibits (184529 Nexus
+  3869 attempts, 003802 [119,12] 171 BUILD_BREAKDOWN) stand alone.
 
 - **#152** Dragoon kiting: instrumentation, targeting, escape and tuner are in
   place; the latency ladder improved hits while retaining wins. Open: 0–2-hit
@@ -300,6 +304,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#81** Corner-stall Pylon search: evidence favors tile doctrine, not leash
   relaxation; corner Pylons land and supply unblocks. Last-resort ladder is
   pinned but has not fired in retained games.
+  DATUM 2026-11-01 (94 retained runs, BUILDINGS): 624 Pylons warped, 238
+  near-edge (x<15 or y<15) - corner/edge Pylons land in bulk, supply
+  unblocks. Tile doctrine holds; the stall that would need the leash
+  still never presents.
 
 - **#84** Wine Pylon issuance: observed stalls self-recover; pipeline audits
   remain healthy. `WarpStartedTwinTest` covers the builder path and siteless
@@ -333,6 +341,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    Pylons sequential across 2 builders (replacement, not A-B-A). STUCK_WORKER
    1105 rows are one parked scout probe, not a builder stall. 1.4-tile parking
    unobserved (Nexus parks at 1.7).
+   DATUM 2026-11-01 (94 retained runs): 32 games carry builder twins
+   (BUILDER_STATE/BuilderLog), 62 are flag-off and cannot settle variance.
+   No new handoff/parking shape in the twinned set beyond the two
+   documented games; the unobservable majority stays unobservable.
   → details: `WINE-MACRO-DATUMS.md` §6
 
 - **#85** Armor research is independently gated from weapons L3 (stub-pinned);
@@ -355,6 +367,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   class as #84 - 11 V2 LIVE games audited, Terran never played, zero
   off-site shapes; unobservable until a Terran game happens. Needs a game
   showing it. No blind fix.
+  DATUM 2026-11-01 (94 retained runs): ZERO games mention Terran units
+  anywhere in EVENTS - the shape is unobservable in the full tree, not
+  just the 11 audited games.
 
 - **#92** Second Gateway lateness is intermittent; no blind patch. The stable
   pattern is a +1-supply lag on #2/#3, not a multi-minute delay; all three
@@ -431,6 +446,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     absorb, travelling builders keep the old path per #53; pinned
     `SiblingCoverResitesInsteadOfFinishingTest`), (2) DONE (re-goldened for
     the stride-60 sim, green in the mega-test), (3) chain deletion is #146.
+    DATUM 2026-11-01 (audit v4, full suite on the resite HEAD): none of
+    the 10 failing classes is resite/placement/proximity-related
+    (BusyGateway, ArchBoundary, RequestBuildingNear, ProtossDynamicCombat,
+    ProtossDragoon x2, AUnit, GasTileIsGeyser, CountInQueue, Queue3) -
+    zero resite regressions; resite pins green solo + in fast gate.
   - **#234** V2 mid-game equilibrium stall (mega test `LongGameToSeventyTest`,
     14 s, milestone pipeline): gas branch landed, so Dragoons flow (14) and
     Zealots mix in on lings. The gate3 verdict went green via a 10 s busy
@@ -445,6 +465,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     fails the rewritten test: Nexus warps after the mark AND probes resume
     after it. Bleed covers the pressured half (replacements flow there).
     Open: live proof of the pre-saturation window.
+    DATUM 2026-11-01 (game 154822, one-base loss f24095): ends bank 15
+    (max@warp 674) - spent, not hoarded; the single-base hoard-to-849
+    shape does not reproduce here. Supports save-for-expansion (bank
+    moves), pre-saturation window proof still open.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
@@ -619,12 +643,19 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   refusal twins are ready; unstick remains parked until the shape recurs.
   DATUM 2026-10-28: game 010715 (VICTORY) carries zero MOVE_FAILED rows and
   no scatter - the shape does not recur here either.
+  DATUM 2026-11-01 (94 retained runs): 93 games carry zero MOVE_FAILED
+  rows - the blocking/scatter shape does not recur anywhere in the tree;
+  unstick stays parked.
 - **#192** Gateway demand was repeatedly cancelled on null position during
   battle. Sim-pinned fixes cover self-overlap, ground-distance search, Pylon
   anchoring, completed-footprint overlap, and bounded WAIT (480 attempts; the
   stuck-loop guard is delayed, not removed). WAIT engaged live; orders survived
   failed searches and warped. Longer-siege calibration remains open; reservation
-  release while waiting is tracked in #202. LIVE PROOF 2026-10-28 (game 003802,
+  release while waiting is tracked in #202. DATUM 2026-11-01 (94 retained
+  runs): max GAME_END is f28800 (183253) - Wine's horizon caps every game
+  at 20 in-game minutes, so longer-than-28800 sieges are unobservable in
+  this tree; calibration past the cap needs a longer-horizon vehicle.
+  LIVE PROOF 2026-10-28 (game 003802,
   V2 LIVE): 3rd Gateway warped f18424 at supply 59 on a V2 `At 0` order - the
   BO owns only two Gateway rows and standing Gateways suppress prereq orphans,
   so the only remaining author is the V2 dynamic demand goal (bank 807 at
@@ -1088,6 +1119,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    pin), deterministic in a fresh JVM. Suspect stride-60 fallout (the
    dispatch that fixed it predates the stride cutover); the hunt rides
    the 30-issue package, the test is time-clean (12 s solo).
+   DATUM 2026-11-01 (audit v4, isolated e2e): PostFiftyProductionTest
+   6.8 s + PostFiftyBleedTest 6.6 s, both exit 0 - time-clean and green
+   in isolation; the solo-red/suite-green flip does not reproduce as an
+   OVER here.
 - **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
   20261027_183253, V2 LIVE): f24730-28800, 1568 Pylon goal rows and 120
   `builder committed` dispatches, no Pylon warp after f24617. CANCEL
@@ -1216,6 +1251,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    test file can flip it; the durable fix stays hermetic seams, not id
    resets. Owner 2026-10-31: live with the flake (document recurrences),
    durable fix with K-of-N data or a test-harness rebuild - not now.
+   DATUM 2026-11-01 (audit v4, with the new `SiblingCover` test file in
+   tree): CutoffSwampedTest green (absent from the 10-class FAIL list) -
+   the documented trigger (new test file shifts the global id counter)
+   did NOT flip it this time. Flake stays lived-with, recurrences
+   documented.
    DATUM 2026-11-01 (time-budget stage): the same one-JVM runs slow sims
    5-11x vs solo (Bleed 11->63 s, Stalled 13->134 s, LongGame 13->65 s)
    and flip reds both ways (LongGame @65 red in suite, green solo;
@@ -1266,3 +1306,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   cannons (bank 4577). Needs: verify discovered() contents for contact-
   only units, or add the discovery twin; plus a gas-available lurker
   game for the full chain.
+  DATUM 2026-11-01 (94 retained runs): ZERO DISCOVER-mention rows in any
+  EVENTS file - no first-sight twin key exists anywhere in the tree, so
+  contact-only units (like lurker #234, visible solely in CLUSTER rows)
+  have no discovery path to `hasHiddenUnits` except the fog-loop repair.
+  The twin gap is confirmed tree-wide, not per-game.
