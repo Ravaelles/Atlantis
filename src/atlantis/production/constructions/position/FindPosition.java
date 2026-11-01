@@ -2,6 +2,7 @@ package atlantis.production.constructions.position;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.map.ReachableTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
@@ -103,6 +104,23 @@ public class FindPosition {
                     "[LVL=HIGH] SITE_TOO_FAR " + building + " at " + standardPosition
                         + " is " + ((int) standardPosition.groundDist(nearTo))
                         + " ground tiles from " + nearTo + " (cap " + ((int) cap) + ") - not built"
+                );
+
+                return null;
+            }
+
+            // Owner 2026-11-01: the main base must reach the site by ground.
+            // Last and once per search (reachability is the costly query): a
+            // disconnected region (UMS/island pocket, no BWEM areas so the
+            // per-ring ground guard above fell back to Euclidean) declines
+            // instead of stranding the builder. Skipped when no base stands
+            // yet - there is nothing to measure from.
+            AUnit main = Select.mainOrAnyBuilding();
+            if (main != null && main.position() != null
+                && !ReachableTiles.between(main.position(), standardPosition)) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "[LVL=HIGH] SITE_UNREACHABLE " + building + " at " + standardPosition
+                        + " has no ground path from the main - not built"
                 );
 
                 return null;

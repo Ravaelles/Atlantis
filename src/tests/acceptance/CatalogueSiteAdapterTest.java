@@ -378,6 +378,40 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     /**
+     * Owner 2026-11-01: the main base must reach the site by ground.
+     * Last and once per proposal (reachability is the costly query): a
+     * disconnected region (UMS/island pocket, measured as a first Pylon
+     * ~35 tiles from the main with no land path) declines to the legacy
+     * spiral instead of stranding the builder.
+     */
+    @Test
+    public void disconnectedRegionDeclinesToLegacy() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            atlantis.map.ReachableTiles.useReachability(
+                (fromTx, fromTy, toTx, toTy) -> false, "test-disconnected");
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+                Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
+                ScriptedPlanner planner = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.success(55, 55, 0));
+
+                APosition site = CatalogueSiteAdapter.siteFor(planner, probe, AUnitType.Protoss_Pylon, construction);
+
+                assertNull(site, "no land path from the main means no catalogue tile - the legacy search owns it");
+                assertTrue(EventLog.toJsonLines().contains("\"reason\":\"unreachable\""),
+                    "the decline names itself in the twin: " + EventLog.toJsonLines());
+            }
+            finally {
+                atlantis.map.ReachableTiles.reset();
+            }
+        });
+    }
+
+    /**
      * A planner with a scripted answer: the seam for decline routing without map physics.
      */
     private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {

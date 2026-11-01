@@ -319,6 +319,28 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   a new row and both proceed - the 20261101_165023 pressure vehicle
   is the natural witness, unplayed since the fix).
 
+- **#236** Unreachable build sites (owner live report 2026-11-01): the
+  first Pylon sited ~35 tiles from the main in a region with no land
+  path (UMS `P_v_Lurkers.scx` via owner's `Main.java` map pick, also
+  seen on `7th_rav.scx` as Pylon [105,68] + Nexus [121,114] with zero
+  `CATALOGUE_SITE` rows). Two holes combined: (1) neither siting path
+  checked ground connectivity - the legacy spiral's per-ring
+  `groundDistanceTo` guard falls back to Euclidean when BWEM has no
+  areas (UMS), and the catalogue ranker (`BuildLocationRanker`: travel
+  + exit only, `ANYWHERE` centre unused) never checked it at all;
+  (2) a corner base + boundary/mineral refusals walk the search far
+  out (spiral radius up to 66). FIXED 2026-11-01: one final
+  `ReachableTiles.between(main, site)` check at the end of each path,
+  once per search (the costly query, after all cheap gates) -
+  `CatalogueSiteAdapter.propose` declines `unreachable` to legacy,
+  `FindPosition.findForBuildingRaw` declines `SITE_UNREACHABLE` to
+  null; skipped when no base stands yet. Pinned
+  (`disconnectedRegionDeclinesToLegacy`) + 48/48 placement pins
+  green. Open: live proof on a real map (UMS maps have no BWEM areas
+  by construction - expect declines there, not placements); the "why
+  35 tiles" half (near-ring refusals pushing the search out) still
+  needs a `BuilderLog=1` game with `CATALOGUE_SITE`/`PylonSite` rows.
+
 - **#152** Dragoon kiting: instrumentation, targeting, escape and tuner are in
   place; the latency ladder improved hits while retaining wins. Open: 0–2-hit
   goal via #186, wall-aware steps after production, macro proof with attributable

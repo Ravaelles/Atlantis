@@ -16,8 +16,10 @@ import atlantis.production.placement.PlacementPlanner;
 import atlantis.production.placement.PlacementReservation;
 import atlantis.production.placement.TargetPlacement;
 import atlantis.production.producibles.UnitProducible;
+import atlantis.map.ReachableTiles;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 
 /**
  * Legacy site search answered from the catalogue planner: two entries
@@ -237,6 +239,19 @@ public final class CatalogueSiteAdapter {
             SiteTwin.declined(building, "worker-covered", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
+        }
+        // Owner 2026-11-01: the main base must reach the site by ground.
+        // Last and once per proposal (reachability is the costly query):
+        // a disconnected region (UMS/island pocket) declines to the legacy
+        // spiral instead of stranding the builder. Skipped when no base
+        // stands yet (first frame) - there is nothing to measure from.
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main != null && main.position() != null) {
+            if (!ReachableTiles.between(main.position(), site)) {
+                SiteTwin.declined(building, "unreachable", via, constraint.nearTileX(), constraint.nearTileY());
+
+                return null;
+            }
         }
         return reservation;
     }
