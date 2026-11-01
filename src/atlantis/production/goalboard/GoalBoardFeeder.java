@@ -54,6 +54,7 @@ public final class GoalBoardFeeder {
     static {
         GOAL_TYPES.put("supply-pylon", AUnitType.Protoss_Pylon);
         GOAL_TYPES.put("gateway", AUnitType.Protoss_Gateway);
+        GOAL_TYPES.put("forge", AUnitType.Protoss_Forge);
         GOAL_TYPES.put("core", AUnitType.Protoss_Cybernetics_Core);
         GOAL_TYPES.put("assimilator", AUnitType.Protoss_Assimilator);
         GOAL_TYPES.put("sustained-zealot", AUnitType.Protoss_Zealot);

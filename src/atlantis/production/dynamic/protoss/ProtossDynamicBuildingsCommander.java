@@ -109,8 +109,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         // The commented ProduceCannon.* calls (dead since 2024, class gone
         // from the tree) were deleted rather than re-enabled.
         if (
-            ProduceForge.produce()
-                || (gatewaysEarly && ProduceGateway.produce())
+            (gatewaysEarly && ProduceGateway.produce())
                 || ProduceNaturalWallIn.produce()
                 || ProduceTemplarArchives.produce()
                 || ProduceCitadelOfAdun.produce()

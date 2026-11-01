@@ -76,8 +76,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void healthySupplyFeedsNoPylon() {
-        currentSupplyUsed = 25;
+    public void healthySupplyFeedsNoPylon() {        currentSupplyUsed = 25;
         currentSupplyTotal = 33;
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
@@ -392,6 +391,48 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             assertFalse(
                 GoalBoardFeeder.inFlightIds().contains("core"),
                 "nothing Core-ish is going on");
+        });
+    }
+
+    @Test
+    public void hiddenThreatFeedsForgeRow() {
+        // B1 Forge family: the V2 home must serve what the deleted legacy
+        // producer served - DT evidence with no Forge funds a Forge row.
+        // The stub base holds a Pylon: the queue door rightly refuses
+        // power-needing buildings with no power anywhere (EnforcePylonFirst).
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Pylon, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            BoardState dtThreat = BoardState.builder()
+                .minerals(500).gas(200).supply(45, 50)
+                .workers(10).bases(1).gateways(2).army(8)
+                .forge(false).hiddenUnits(true)
+                .seconds(400)
+                .build();
+            String fed = GoalBoardFeeder.ensure(dtThreat);
+            assertTrue(GoalBoardFeeder.wantedGoal("forge"),
+                "DT evidence must want the Forge goal");
+            assertTrue(GoalBoardFeeder.adoptionAllowed(AUnitType.Protoss_Forge),
+                "the Forge goal must be funded, not just wanted");
+
+            assertTrue(fed.contains("forge"), "fed ids name the goal, got: " + fed
+                + " | lastStatus=" + atlantis.production.orders.production.queue.QueueLastStatus.status());
+            boolean forgeRow = false;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().isForge()) {
+                    forgeRow = true;
+                    break;
+                }
+            }
+            assertTrue(forgeRow, "DT evidence with no Forge feeds one Forge row");
         });
     }
 }
