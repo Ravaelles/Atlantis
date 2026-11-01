@@ -87,6 +87,9 @@ public class RefreshConstructionPosition {
      * every ~100 frames, gas 0.0 all game). The twin carries the
      * discriminator: which builder (or none), whether it had moved
      * recently, and whether the engine thought it was constructing.
+     * Extended with the builder's tile, its distance to the site, and
+     * the nearest geyser tile: a builder parked ON the geyser reads
+     * identically to a wrong site without them.
      */
     private static void twinRefreshCancel(
         AUnit unit, Construction construction, AUnitType type, APosition buildPosition, AUnit builder
@@ -104,6 +107,23 @@ public class RefreshConstructionPosition {
             } catch (Exception ignored) {
                 constructing = false;
             }
+            int btx = -1, bty = -1, bdist = -1, gtx = -1, gty = -1;
+            try {
+                if (builder != null && builder.position() != null) {
+                    btx = builder.tx();
+                    bty = builder.ty();
+                    if (buildPosition != null) bdist = (int) (builder.distTo(buildPosition) * 10);
+                }
+                if (type != null && type.isGasBuilding()) {
+                    atlantis.units.AUnit geyser =
+                        atlantis.units.select.Select.geysers().nearestTo(buildPosition);
+                    if (geyser != null && geyser.tilePosition() != null) {
+                        gtx = geyser.tilePosition().getX();
+                        gty = geyser.tilePosition().getY();
+                    }
+                }
+            } catch (Exception ignored) {
+            }
             EventLog.key(LogKey.REFRESH_CANCEL)
                 .param("unit", unit == null ? -1 : unit.id())
                 .param("type", type == null ? "-" : type.name())
@@ -111,6 +131,11 @@ public class RefreshConstructionPosition {
                 .param("builder", builder == null ? -1 : builder.id())
                 .param("still", still)
                 .param("constructing", constructing)
+                .param("btx", btx)
+                .param("bty", bty)
+                .param("bdist", bdist)
+                .param("gtx", gtx)
+                .param("gty", gty)
                 .log(A.now(), A.minSec());
         } catch (Exception ignored) {
         }
