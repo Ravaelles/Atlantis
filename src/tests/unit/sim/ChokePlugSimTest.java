@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Choke plug (owner, PurpleWave SquadDefendBase guard port): against a
- * melee-only enemy the line waits AT the mouth - melee in, dragoons in
- * the row behind - instead of wherever the crescent happens to form.
- * The funnel staging decides it: the army starts a dozen tiles back,
- * the plug marches it to the mouth; the crescent would form up where
- * it stands and let the pack run by the flank.
+ * Choke crescents (owner verdict #194): crescents on all three chokes,
+ * rest unchanged. The old mouth plug (melee in, dragoons behind, marched
+ * to the mouth) is gone from the wiring - at a choke station the line
+ * dresses a crescent around the pivot and stands off instead of feeding
+ * or bunching. The plug geometry helpers stay (focus + unit pins read
+ * them); this sim proves the dressed line holds the arc.
  */
 @Tag("combat")
 @Tag("full-tier")
@@ -36,7 +36,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
     private static final int TILE = 32;
 
     @Test
-    public void lineWaitsAtTheMouthMeleeFirst() {
+    public void lineDressesTheCrescentAndStandsOff() {
         aGame.when(AGame::isUms).thenReturn(false);
 
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 5, 20);
@@ -58,7 +58,7 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
 
         List<FakeUnit> foes = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            FakeUnit ling = fake(AUnitType.Zerg_Zergling, 34 + (i % 3), 19 + (i / 3));
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, 16 + (i % 2), 19 + (i / 2));
             ling.setEnemy();
             foes.add(ling);
         }
@@ -83,27 +83,12 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
                 Alpha.gather();
 
-                // Phase 1: staging, no contact yet - the sentry holds still.
-                for (int i = 0; i < 200; i++) {
-                    final List<FakeUnit> foesNow = foes;
-                    final List<FakeUnit> oursNow = ours;
-                    world.tick(() -> {
-                        for (FakeUnit u : oursNow) {
-                            if (u.hp > 0 && u.isCombatUnit()) {
-                                BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, anchor, d1);
-                            }
-                        }
-                        ZombiePolicies.holdStill(foesNow, oursNow);
-                    });
-                }
-
+                // Plug geometry from the deterministic setup positions
+                // (pre-march): the helper still names the mouth and rows
+                // melee in front - the wiring just doesn't march it.
                 APosition plug = atlantis.combat.formation.ChokePlug.plugPointFor(choke, nexus);
-                assertNotNull(plug, "the plug names the mouth");
-                double plugX = plug.x();
+                assertNotNull(plug, "the plug still names the mouth (geometry helper stays)");
 
-                // Row order, read off the assigned slots (deterministic,
-                // march-independent): every zealot slot sits nearer the
-                // foe than every dragoon slot.
                 double zealotSlotFoe = -1;
                 double dragoonSlotFoe = Double.MAX_VALUE;
                 for (FakeUnit z : new FakeUnit[]{z1, z2, z3}) {
@@ -127,22 +112,39 @@ public class ChokePlugSimTest extends AbstractTestWithUnits {
                 assertTrue(zealotSlotFoe < dragoonSlotFoe,
                     "melee rows sit nearer the foe than the ranged rows");
 
-                // March discipline: the line actually walks to the mouth.
-                double dragoonEast = Double.MAX_VALUE;
-                double zealotEast = -1;
-                for (FakeUnit d : new FakeUnit[]{d1, d2, d3}) {
-                    if (d.hp > 0) dragoonEast = Math.min(dragoonEast, d.x());
+                // Phase 1: staging, no contact yet - the sentry holds still.
+                for (int i = 0; i < 200; i++) {
+                    final List<FakeUnit> foesNow = foes;
+                    final List<FakeUnit> oursNow = ours;
+                    world.tick(() -> {
+                        for (FakeUnit u : oursNow) {
+                            if (u.hp > 0 && u.isCombatUnit()) {
+                                BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, anchor, d1);
+                            }
+                        }
+                        ZombiePolicies.holdStill(foesNow, oursNow);
+                    });
                 }
-                for (FakeUnit z : new FakeUnit[]{z1, z2, z3}) {
-                    if (z.hp > 0) zealotEast = Math.max(zealotEast, z.x());
-                }
-                System.out.println("PLUG staged zealotEast=" + zealotEast / TILE
-                    + " dragoonEast=" + dragoonEast / TILE + " plugX=" + plugX / TILE);
 
-                assertTrue(zealotEast > plugX - 2 * TILE,
-                    "melee takes the mouth, not the backyard: zealotEast=" + zealotEast / TILE);
-                assertTrue(dragoonEast > plugX - 6 * TILE,
-                    "second row stays at shooting distance, not home: " + dragoonEast / TILE);
+                // Crescent discipline (owner verdict #194): no plug march -
+                // the line dresses the arc around the pivot and stands off
+                // instead of feeding it or bunching home. Killing the pack
+                // outright also passes - better dressed than standing.
+                int foesAlive = 0;
+                for (FakeUnit foe : foes) if (foe.hp > 0) foesAlive++;
+                for (FakeUnit u : new FakeUnit[]{z1, z2, z3, d1, d2, d3}) {
+                    assertTrue(u.hp > 0, "the dressed line takes no free hits: " + u);
+                    if (foesAlive == 0) continue;
+                    double nearest = Double.MAX_VALUE;
+                    for (FakeUnit foe : foes) {
+                        if (foe.hp <= 0) continue;
+                        nearest = Math.min(nearest, u.distTo(foe));
+                    }
+                    assertTrue(nearest >= 3.0,
+                        "no suicide into the pack - stands off: " + u + " at " + nearest);
+                    assertTrue(nearest <= 14.0,
+                        "no bunching home - dresses at the station: " + u + " at " + nearest);
+                }
             }
         } finally {
             for (atlantis.units.AUnit u : Alpha.get().selection().list()) Alpha.get().removeUnit(u);

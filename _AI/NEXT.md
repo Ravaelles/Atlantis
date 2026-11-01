@@ -967,6 +967,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   the plug march itself stays sim-pinned in `ChokePlugSimTest`.
   `ClusterBreach`/`ClusterTactic`/`BlockingArmy` converted
   2026-10-26 (same pair, same answers - consumer pins green).
+  FORMATION VERDICT LANDED 2026-11-01 (owner: crescents on all three
+  chokes, rest unchanged): the main-choke mouth plug is OUT of the
+  `formationSlotFor` wiring - `guardSlotFor` deleted, `ChokePlug`
+  geometry kept (focus + unit pins still read it). Pinned sim-side:
+  `chokeKindsTakeTheCrescent` (Main/Middle/Natural anchors all arc
+  around the pivot, melee-only included) + `ChokePlugSimTest`
+  rewritten to the crescent contract (dress + stand off, no mouth
+  march; plug geometry still pinned pre-march). Combat batch 44/0.
+  Revert in one commit if the plug's flank argument returns - the
+  deletion is flagged here deliberately. Open: game proof (a choke
+  station dresses the arc live - the pressure vehicle below).
   DATUM 2026-10-28: the absolute >10-Dragoon main-choke ban is PvP-only by
   code (`We.protoss() && Count.dragoons() > 10` in
   `ProtossDefendFocusPoint`) - game 010715 fielded 24 Dragoons vs ZERG, so
