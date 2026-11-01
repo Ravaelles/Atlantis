@@ -309,6 +309,20 @@ public class Construction implements Comparable<Construction> {
         // dead order and a replaced one never keeps the old one.
         AUnit previous = this.builder;
         if (previous != null) previous.setConstruction(null);
+        if (builder != null) {
+            // Exclusive ownership (NEXT #235): a builder taken by this row
+            // stops naming the row it came from. Without this, two rows
+            // drive one worker forever - the old row never re-arms (it
+            // still "has" a builder) and the new row is never driven
+            // (readers resolve the old row first). Measured live
+            // 2026-11-01 vs Steamhammer: a Gateway and a Pylon both held
+            // builder #27, #Move forever, zero builds.
+            for (Construction other : ConstructionRequests.constructions) {
+                if (other != this && builder.equals(other.builder())) {
+                    other.setBuilder(null);
+                }
+            }
+        }
         this.builder = builder;
         if (builder != null) builder.setConstruction(this);
 

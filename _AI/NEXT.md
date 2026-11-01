@@ -301,6 +301,24 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   no new repeat-tile chase exhibit; the documented exhibits (184529 Nexus
   3869 attempts, 003802 [119,12] 171 BUILD_BREAKDOWN) stand alone.
 
+- **#235** Builder double-link deadlock (owner live game 2026-11-01 vs
+  Steamhammer, TauCross, loss f7296): a Gateway held builder #27 from
+  f1917 and never warped while a Pylon took the same builder at f3279 -
+  neither construction ever built, #Move forever, zero #Build, zero
+  cancels, supply frozen at the first Pylon. Root cause in code:
+  `Construction.setBuilder` never unlinked the old construction, so
+  two rows named one worker and every reader disagreed forever (the
+  observed Manager↔Waiting 1-frame flap is
+  `travelWhenReady` alternating on the disagreement).
+  FIXED 2026-11-01: exclusive ownership enforced at the seam (old row
+  unlinked on handover, re-arms through the normal builderless path -
+  `ConstructionStatusChanger` re-arms builderless rows, overdue
+  re-arms the rest), pinned red-first
+  (`BuilderHandoverUnlinksOldConstructionTest`) + fast gate green.
+  Open: live no-recurrence proof (a game that hands a busy builder to
+  a new row and both proceed - the 20261101_165023 pressure vehicle
+  is the natural witness, unplayed since the fix).
+
 - **#152** Dragoon kiting: instrumentation, targeting, escape and tuner are in
   place; the latency ladder improved hits while retaining wins. Open: 0–2-hit
   goal via #186, wall-aware steps after production, macro proof with attributable
