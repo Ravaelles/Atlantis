@@ -359,6 +359,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    (BUILDER_STATE/BuilderLog), 62 are flag-off and cannot settle variance.
    No new handoff/parking shape in the twinned set beyond the two
    documented games; the unobservable majority stays unobservable.
+   DATUM 2026-11-01 (BUILDER_STATE streak census, 32 twinned games,
+   13364 rows): 16 SUSTAINED 1.4-parks (same builder+site, >=10
+   consecutive rows at groundDist 1.2-1.6, never constructing).
+   Strongest: game 130749 probe #124 holds Nexus site [91,115]
+   motionless f6690-24180 (~17k frames, 580/584 rows still, all
+   STARTING, 0 construction) - the game ends with the builder parked;
+   195338 probe #138 same shape f12000-16950 (159/165 still); 200344
+   probe #121 60 rows at the [119,12] storm tile. NO alternation in any
+   streak (one builder per site throughout) - handoff unobserved in all
+   32 games; parking proven common, not rare. Open: why it never issues
+   (parking vs engine-refused tile - [91,115]/[119,12] smell refused).
   → details: `WINE-MACRO-DATUMS.md` §6
 
 - **#85** Armor research is independently gated from weapons L3 (stub-pinned);
@@ -462,6 +473,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   A4 delete `APositionFinder` to `src-old/`.
   Phase B (demand, #147): B0 read-only flow map (which legacy producers
   still mint game-reaching orders vs V2), then slices from the map.
+  B0 LANDED 2026-11-01 + B1a/B1b dead-race dispatch deleted.
+  NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
+  allowed): pressure-vehicle game first (one game feeds #232
+  enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
+  #204 floor proof, #196 rescue, #188 blocking, #181 park,
+  #203 brake twin + #203 attribution vehicle), then lurker hunt
+  (#223 full chain + discovery twin), island vehicle (#213), long
+  horizon (#192), Corsair driver fix (#201 traced), brake twin
+  (#203), refused-tile memory (#151), Stage B scenarios (#186),
+  retained datums (#74 parking census, #208 twin geometry, #234,
+  #207), #214 blocked-vehicle note, #194 doctrine question to owner.
   B0 LANDED 2026-11-01 (read-only inventory, no code): 43 files mint
   legacy orders via AddToQueue (13 dynamic/protoss/buildings, 8
   requests/*, 6 strategy responses, rest scattered); ~20 files read
@@ -885,6 +907,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   ProtossBaseB) + 115321 (7 from f3990), 212230 (7 from f3961), 184529
   (6 from f4013), 003802 (6 from f3847). The native-AI pressure vehicle
   exists in bulk; #200/#205 hold-at-main proof rides the same queue.
+  DATUM 2026-11-01 (game 20261101_165023, ProtossBaseB UMS, on-demand
+  vehicle): raiders kill 3 probes + the whole home defense (2 pre-placed
+  Zealots + 1 Dragoon) f242-714, loss f4812. NO WorkerDefenceRun/order
+  tags fire (contrast 012238's tagged defence) - engagement untagged
+  here; #205 N/A (no BO in UMS, gate correctly scoped to BO dragoon
+  builds); #200 home-fight happened (warped zealots died at home)
+  but unattributable post-hoc. #232: shadow STAGE_MIDDLE/HOLD_MAIN
+  only, 0 MISSION_ENFORCED - enforcement still unproven.
 - **#197** Trapped-Dragoon posture is sim-calibrated and latched; the trapped
   rule lives in `atlantis.combat.focus` with #194. Open: live proof of an army
   attacking out of a trapped defense; inventory other posture reasons later.
@@ -1157,6 +1187,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Open: the same orientation live. DATUM 2026-10-28: game 010715 defends
   home only pre-Attack (39 rows f3627-4805); the orientation question needs
   trace geometry from a home-defense game, not twins.
+  DATUM 2026-11-01 (same window re-audited): 376 rows, anchor=focus=Nexus
+  throughout, ZERO formation/slot/direction twin rows in the window;
+  UNIT_TELEMETRY carries unit pos + foe DISTANCE only (no foe bearing,
+  no slot dest, no facing). The pivot-vs-threat question is unanswerable
+  from twins by construction - viewer trace still required.
 - **#210** Formation orders while defending at most once per 10 frames
   (owner order 2026-10-26): re-issuing formation orders every frame during
   a defense churns the line. Landed 2026-10-26: shared `FormationOrderLatch`
