@@ -108,6 +108,8 @@ public class RefreshConstructionPosition {
                 constructing = false;
             }
             int btx = -1, bty = -1, bdist = -1, gtx = -1, gty = -1;
+            boolean overlaps = false, earlyAllow = false, onGeyser = false;
+            boolean engineOk = false;
             try {
                 if (builder != null && builder.position() != null) {
                     btx = builder.tx();
@@ -124,6 +126,26 @@ public class RefreshConstructionPosition {
                 }
             } catch (Exception ignored) {
             }
+            try {
+                overlaps = atlantis.production.constructions.position.conditions
+                    .OverlapsOurStandingBuilding.check(buildPosition, type);
+            } catch (Exception ignored) {
+            }
+            try {
+                earlyAllow = atlantis.production.constructions.position.conditions
+                    .can_build_here.ProtossAllowHereEarlyEvenWithoutRequirements
+                    .allow(builder, type, buildPosition);
+            } catch (Exception ignored) {
+            }
+            try {
+                onGeyser = type != null && type.isGasBuilding() && buildPosition != null
+                    && gtx == buildPosition.tx() && gty == buildPosition.ty();
+            } catch (Exception ignored) {
+            }
+            try {
+                engineOk = atlantis.map.MapTiles.canBuildHere(builder, type, buildPosition);
+            } catch (Exception | Error ignored) {
+            }
             EventLog.key(LogKey.REFRESH_CANCEL)
                 .param("unit", unit == null ? -1 : unit.id())
                 .param("type", type == null ? "-" : type.name())
@@ -136,6 +158,10 @@ public class RefreshConstructionPosition {
                 .param("bdist", bdist)
                 .param("gtx", gtx)
                 .param("gty", gty)
+                .param("overlaps", overlaps)
+                .param("earlyAllow", earlyAllow)
+                .param("onGeyser", onGeyser)
+                .param("engineOk", engineOk)
                 .log(A.now(), A.minSec());
         } catch (Exception ignored) {
         }
