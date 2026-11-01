@@ -247,8 +247,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   same tile. Fix needs engine-validated siting or refused-tile memory,
   both in #145's scope - deliberately untouched here.
   DATUM 2026-11-01 (30-issue package): the #145.1 resite covers the
-  standing-cover half of this (covered site moves instead of looping);
-  the engine-refusal half (tile reads buildable, engine says no) still
+  standing-cover half of this (sibling-covered site resites at
+  proximity-finish time instead of absorbing or looping); the
+  engine-refusal half (tile reads buildable, engine says no) still
   wants refused-tile memory + a live game showing no recurrence.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
 
@@ -384,11 +385,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
     0 cancels; suite 1887/1887. Open remainder: (1) DONE 2026-11-01 -
-    resite-not-cancel on standing-covered sites at issue time
-    (`handleRefreshingPositionIfNeeded` resites via the adopt seam instead
-    of cancelling + same-tile re-request; pinned
-    `IssueRefreshResitesCoveredSiteTest`), (2) DONE (re-goldened for the
-    stride-60 sim, green in the mega-test), (3) chain deletion is #146.
+    resite-not-cancel on proximity-finish with standing sibling
+    (`shouldProximityFinish` resites instead of absorbing when the cover
+    is a same-type sibling on overlapping - not identical - tiles and a
+    live non-travelling builder is attached; exact duplicates still
+    absorb, travelling builders keep the old path per #53; pinned
+    `SiblingCoverResitesInsteadOfFinishingTest`), (2) DONE (re-goldened for
+    the stride-60 sim, green in the mega-test), (3) chain deletion is #146.
   - **#234** V2 mid-game equilibrium stall (mega test `LongGameToSeventyTest`,
     14 s, milestone pipeline): gas branch landed, so Dragoons flow (14) and
     Zealots mix in on lings. The gate3 verdict went green via a 10 s busy
@@ -410,7 +413,7 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     but 267 SCHEDULE_REFUSED no-placement + proximity finishes (standing
     Gateway x3k, Pylon x1.6k, "bugged" Pylon/Nexus x3.4k, refresh-still-bad
     610). The absorptions are by design; the refused/never-sited remainder
-    is the bar. Note: the #145.1 issue-resite rides the legacy
+    is the bar. Note: the #145.1 proximity resite rides the legacy
     `findPositionForNewBuilding` seam (same as adopt) - #146 migrates both
     to the catalogue together. Deletion stays owner-gated (WO order).
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
@@ -1155,3 +1158,15 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   with an early Forge standing and zero detection chain after - the shape
   the V2 goal layer answers. No post-fix lurker game in retained runs;
   still needs the vehicle.
+  DATUM 2026-11-01 (30-issue package, POST-fix game 20261029_122910):
+  lurker #234 breached f18946, fought in contact to the f28800 loss -
+  and the chain answered PARTIALLY: Forge warped f19800 (+850f), ONE
+  RoboticsF dispatch (never warped - gas ended at 8), ZERO cannon/
+  Observatory/Observer dispatches or warps, ZERO HIDDEN/detection twin
+  rows. The lurker appears only in CLUSTER rows (never a discovery row -
+  no DISCOVER/first-sight twin key exists). Suspect: never entered
+  `EnemyUnits.discovered()` (no create-event) so `hasHiddenUnits` stayed
+  false and the snapshot flag with it - despite mineral affordability for
+  cannons (bank 4577). Needs: verify discovered() contents for contact-
+  only units, or add the discovery twin; plus a gas-available lurker
+  game for the full chain.

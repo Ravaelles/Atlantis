@@ -212,35 +212,6 @@ public class RefreshConstructionPosition {
                     + blocker.type().name() + " at [" + blocker.tx() + "," + blocker.ty() + "]");
             }
 
-            // Owner 2026-11-01 (NEXT #145.1): a standing-covered site
-            // resites, it is not cancelled. Cancelling + re-requesting
-            // spins forever against a standing sibling (street-grid
-            // adjacency - measured: same-tile Gateway re-picks, Pylon
-            // re-fires, the [105,115] chase). The adopt door already resites
-            // this shape (adopt-resited); the issue door mirrors it here,
-            // where the covered cancel actually fires. Only resites when a
-            // fresh free tile exists; otherwise the cancel below stands.
-            // Refresh-once semantics are unchanged: a tile that keeps
-            // failing re-enters this same gate next pass.
-            if (prevPosition != null) {
-                APosition fresh = construction.findPositionForNewBuilding();
-                if (fresh != null
-                    && !atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding.check(
-                        fresh, buildingType)
-                    && !atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding.check(
-                        fresh, buildingType)) {
-                    construction.setPositionToBuild(fresh);
-                    EventLog.key(LogKey.POSITION_REFRESH)
-                        .param("type", buildingType.name())
-                        .param("result", "issue-resited")
-                        .param("prevTile", prevPosition.toString())
-                        .param("tile", fresh.toString())
-                        .log(A.now(), A.minSec());
-
-                    return fresh;
-                }
-            }
-
             construction.cancel(buildingType + " position still not good after refresh");
 
             // A completed building on the site kills the tile forever -

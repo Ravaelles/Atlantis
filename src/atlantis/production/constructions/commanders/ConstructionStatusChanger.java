@@ -8,6 +8,8 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
+import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -293,7 +295,11 @@ public class ConstructionStatusChanger extends Commander {
     /**
      * Public as a seam: tests pin the finish-vs-churn contract here (a
      * waiting PREPARING site next to a sibling building is owed demand,
-     * not a duplicate) rather than through a game.
+     * not a duplicate) rather than through a game. Since #145.1 the
+     * contract is finish-vs-resite-vs-churn: a cover that is only a
+     * street-grid sibling (footprint overlap, different tile) resites
+     * the demand instead of absorbing it, provided a live builder is
+     * attached and not mid-walk.
      */
     public static boolean shouldProximityFinish(Construction construction) {
         if (construction.status().isTerminal()) return false;
@@ -306,7 +312,81 @@ public class ConstructionStatusChanger extends Commander {
         if (finishedBuildingOnSameTiles(construction)) return true;
         if (unworkedAdoption(construction)) return false;
 
+        // #145.1: overlap with a standing sibling is live street-grid
+        // demand at a shifted site, not a fulfilled duplicate - resite
+        // instead of absorbing (which silently dropped the demand) or
+        // cancelling (which churned re-requests). Exact-tile duplicates
+        // stay above: same tile means the same demand already stands.
+        // Only when someone is attached to do the work, nobody is
+        // mid-walk (#53: the site must not move out from under a walk)
+        // and nothing is already warping there. Without a fresh free
+        // tile, fall through to the absorb below.
+        if (resitableSiblingCover(construction)) {
+            APosition fresh = construction.findPositionForNewBuilding();
+            AUnitType type = construction.buildingType();
+            if (fresh != null
+                && !OverlapsOurStandingBuilding.check(
+                    fresh, type)
+                && !OverlapsOurUnfinishedBuilding.check(
+                    fresh, type)) {
+                APosition prev = construction.buildPosition();
+                construction.setPositionToBuild(fresh);
+                Construction.clearCache();
+                EventLog.key(LogKey.POSITION_REFRESH)
+                    .param("type", type == null ? "-" : type.name())
+                    .param("result", "proximity-resited")
+                    .param("prevTile", prev == null ? "-" : prev.toString())
+                    .param("tile", fresh.toString())
+                    .log(A.now(), A.minSec());
+
+                return false;
+            }
+        }
+
         return buildingFinishedAtSite(construction);
+    }
+
+    /**
+     * Standing same-type cover on overlapping (but not identical) tiles:
+     * a street-grid sibling that drifted onto the site, not the demand
+     * itself fulfilled. Exact-tile duplicates stay with
+     * {@link #finishedBuildingOnSameTiles}.
+     */
+    private static boolean coveredByStandingSibling(Construction construction) {
+        return buildingFinishedAtSite(construction) && !finishedBuildingOnSameTiles(construction);
+    }
+
+    /**
+     * Resite applies when someone is attached to do the work, nobody is
+     * mid-walk and nothing is already warping there. Builderless sites
+     * are absorbed as before (nothing to reassign, no walk to save);
+     * a travelling builder keeps its walk (#53); an in-progress warp
+     * keeps its record. Everything else falls through to the old
+     * absorb below.
+     */
+    private static boolean resitableSiblingCover(Construction construction) {
+        if (!coveredByStandingSibling(construction)) return false;
+        AUnit live = construction.buildingUnit();
+        if (live != null && live.isAlive()) return false;
+        AUnit builder = construction.builder();
+        if (builder == null || !builder.isAlive()) return false;
+        return !builderTravellingToSite(construction);
+    }
+
+    /**
+     * A builder walking to the site pins it: moving the target
+     * mid-walk splits walker from work (#53). A stuck, arrived or
+     * absent builder is safe to re-site around.
+     */
+    private static boolean builderTravellingToSite(Construction construction) {
+        AUnit builder = construction.builder();
+        APosition site = construction.buildPosition();
+        if (builder == null || !builder.isAlive() || site == null) return false;
+        try {
+            return builder.isMoving() && builder.distTo(site) > 3.5;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     private static boolean unworkedAdoption(Construction construction) {
