@@ -40,7 +40,15 @@ public final class RetreatFloor {
      */
     private static final double NO_MIDDLE_LINE = -1;
 
+    private static Rung lastTwinnedRung = null;
+    private static int lastTwinFrame = -1000000;
+
     private RetreatFloor() {
+    }
+
+    public static void clearForTests() {
+        lastTwinnedRung = null;
+        lastTwinFrame = -1000000;
     }
 
     /**
@@ -82,14 +90,51 @@ public final class RetreatFloor {
 
             // A rung ahead of the army is held, never marched onto (a
             // fleeing army must not be ordered back into the enemy).
-            if (target.distTo(main.position()) > armyDepth) return center;
+            if (target.distTo(main.position()) > armyDepth) {
+                twinFloor(rung, center, "ahead-hold");
+
+                return center;
+            }
 
             // Only a retreat that would CROSS the rung is stopped: a
             // rally already in front of it keeps its own destination.
 
-            return dest.distTo(main.position()) < target.distTo(main.position()) ? target : dest;
+            if (dest.distTo(main.position()) < target.distTo(main.position())) {
+                twinFloor(rung, target, "clamped");
+
+                return target;
+            }
+
+            return dest;
         } catch (RuntimeException ignored) {
             return dest;
+        }
+    }
+
+    /**
+     * Slice 4: the floor reports its overrides upward - a clamped rally
+     * is a re-decide (the retreat wanted deeper), not a silent sideways
+     * stop. Change-gated per rung with a 300-frame heartbeat, same shape
+     * as the mission twins.
+     */
+    private static void twinFloor(Rung rung, HasPosition at, String why) {
+        try {
+            if (rung == null || at == null || at.position() == null) return;
+
+            int now = atlantis.game.A.now();
+            boolean transition = lastTwinnedRung != rung;
+            if (!transition && now - lastTwinFrame < 300) return;
+
+            lastTwinnedRung = rung;
+            lastTwinFrame = now;
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.RETREAT_FLOOR)
+                .param("rung", rung.name())
+                .param("tx", at.tx())
+                .param("ty", at.ty())
+                .param("why", why)
+                .param("transition", transition)
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception ignored) {
         }
     }
 }

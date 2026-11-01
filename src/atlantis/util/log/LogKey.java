@@ -291,6 +291,12 @@ public enum LogKey {
      */
     SUPPLY_BLOCKED,
     /**
+     * The retreat floor clamped a rally (rung, tile, why): the losing
+     * fight stops on the choke line instead of running home. Change-gated
+     * per rung with a heartbeat - presence proves the floor owns a retreat.
+     */
+    RETREAT_FLOOR,
+    /**
      * The collapse-march latch changed (unit, state, anchor): latched when
      * a dressed line commits to a far attack anchor, released on arrival,
      * dropped when the tactic/anchor stops qualifying. The latch IS the

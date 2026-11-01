@@ -121,6 +121,9 @@ public class RetreatFloorTest extends WorldStubForTests {
                     assertTrue(clamped.distTo(nexus) > deep.distTo(nexus),
                         "stopped short of the deep rally: " + clamped.distTo(nexus)
                             + " vs " + deep.distTo(nexus));
+                    assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"rung\":\"MIDDLE\""),
+                        "the floor reports its override upward (RETREAT_FLOOR MIDDLE): "
+                            + atlantis.util.log.EventLog.toJsonLines());
                 } finally {
                     leaveAlpha(army);
                 }

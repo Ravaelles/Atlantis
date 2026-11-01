@@ -206,6 +206,7 @@ public class BattleCommander extends Commander {
         atlantis.combat.twins.FormationOrderTwin.clearForTests();
         ArmyContact.clearForTests();
         atlantis.combat.retreating.RetreatLadder.reset();
+        atlantis.combat.retreating.RetreatFloor.clearForTests();
         atlantis.combat.cluster.FirstDragoonGate.clearForTests();
         atlantis.combat.focus.ProtossDefendFocusPoint.clearForTests();
         FightTarget.clearForTests();
