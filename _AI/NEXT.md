@@ -1558,3 +1558,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `undetectedGhostIsMarchedWithDetectorCover`, GhostAdvance 24/0).
   Open: vehicle game on P_v_Lurkers2 (stand-off, then Observer, then
   kill - the #198/#223 full chain proof).
+  DATUM 2026-11-01 (vehicle game 20261101_185829 on P_v_Lurkers2.scx,
+  POST-fix, loss-of-6 in a 124-foe UMS pit, f1058 scenario end):
+  the shape flipped - 206 SHOT / 33 HIT / 108 KITE rows and kill
+  orders through the FIGHT branch (`Attack:Lurker#103/#152/
+  ClusterReinforce`, +Reengage/Kite/Hunt) instead of the pre-fix pure
+  `Regroup<->GhostAdvance` flap with zero attacks. The 2 remaining
+  `ClusterGhost` rows vs Lurker#152 are fresh-contact approach (seen
+  seconds ago), not fogged-march feeding. Full chain (Observer in
+  time, zero-feeding kill) still open - no Robo exists in a 44 s UMS.
