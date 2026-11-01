@@ -187,6 +187,16 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    (mission-default semantics -> #232 slices), ProtossDynamicUnit x2
    (gateway thicket -> #91 game proof), QueueInProgressInvariant +
    ResourcesReserved (legacy queue semantics -> #147 deletion wave).
+   RE-TRIAGE 2026-11-01 (post-migration, solo runs): ProtossDynamic*Test
+   green solo (3/3 + 1/1) - suite-only reds, i.e. the order-flake
+   mechanism, not product. QueueInProgressInvariant + ResourcesReserved
+   FAIL SOLO (2 failed) on Queue.refresh()/order-status paths this
+   session never touched (grep-verified: no findPositionForNewBuilding,
+   resite, adopt, refresh-position or validatePosition calls) -
+   confirmed pre-existing, still #147's deletion wave. AUnit x2 FAIL
+   SOLO on squadless-unit mission defaults (isMissionAttack true->false)
+   - real semantic drift toward #232, needs the mission-default slice,
+   not a pin tweak.
    DATUM 2026-11-01 (time-budget stage): catalogue-flip fallout, fixed -
    `PlacementSupportTest` + 4 `PlacementPlannerTest` NPEs
    (`TooCloseToMineralsOrGeyser` reads live supply with no game running).
