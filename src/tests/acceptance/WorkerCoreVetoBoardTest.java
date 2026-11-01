@@ -123,4 +123,28 @@ public class WorkerCoreVetoBoardTest extends WorldStubForTests {
     protected FakeUnit[] generateEnemies() {
         return null;
     }
+
+    @Test
+    public void snapshotNamesCoreRemainingSeconds() {
+        // B1 assimilator timing: the snapshot sees an unfinished Core's
+        // least remaining warp seconds (-1 when none is warping), so the
+        // V2 goal can queue gas as the Core lands instead of after it.
+        FakeUnit core = fake(AUnitType.Protoss_Cybernetics_Core, 20, 24);
+        core.setCompleted(false);
+        core.simRemainingBuildTime = 40 * 30;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            fake(AUnitType.Protoss_Probe, 11, 11),
+            core
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3 || fired) return;
+
+            fired = true;
+            assertEquals(40, GoalBoardAdvisor.snapshot().coreRemainingSeconds,
+                "unfinished Core with 40 warp seconds left");
+        });
+
+        assertTrue(fired, "the frame was reached - else this test proves nothing");
+    }
 }

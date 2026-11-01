@@ -55,6 +55,7 @@ public class GoalBoardAdvisor extends Commander {
             .army(Count.ourCombatUnits())
             .core(Have.cyberneticsCore())
             .coreAwaitingSupply(coreAwaitingSupply())
+            .coreRemainingSeconds(coreRemainingSeconds())
             .assimilator(Have.assimilator())
             .forge(Have.forge())
             .cannons(Count.cannons())
@@ -144,6 +145,28 @@ public class GoalBoardAdvisor extends Commander {
         ProductionOrder order = Queue.get().notFinished().ofType(AUnitType.Protoss_Cybernetics_Core).first();
 
         return order != null && ReadyToProduceOrder.supplyAllows(order);
+    }
+
+    /**
+     * Least remaining warp seconds among unfinished Cores, -1 when none
+     * is warping. Mirrors the legacy first-Assimilator gate (queue when
+     * the Core is near completion): the V2 goal needs the same sight or
+     * the Assimilator slips a full warp behind the legacy timing.
+     */
+    private static int coreRemainingSeconds() {
+        try {
+            int best = -1;
+            for (atlantis.units.AUnit core : atlantis.units.select.Select
+                .ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core).list()) {
+                if (core == null || core.isCompleted()) continue;
+                int seconds = core.getRemainingBuildTimeInSeconds();
+                if (seconds < 0) continue;
+                if (best < 0 || seconds < best) best = seconds;
+            }
+            return best;
+        } catch (Exception | Error ignored) {
+            return -1;
+        }
     }
 
     @Override

@@ -395,8 +395,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void hiddenThreatFeedsForgeRow() {
-        // B1 Forge family: the V2 home must serve what the deleted legacy
+    public void hiddenThreatFeedsForgeRow() {        // B1 Forge family: the V2 home must serve what the deleted legacy
         // producer served - DT evidence with no Forge funds a Forge row.
         // The stub base holds a Pylon: the queue door rightly refuses
         // power-needing buildings with no power anywhere (EnforcePylonFirst).
@@ -470,6 +469,44 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
                 }
             }
             assertTrue(coreRow, "a standing Gateway funds one Core row, got: " + fed);
+        });
+    }
+
+    @Test
+    public void nearCompletionCoreFeedsAssimilatorRow() {
+        // B1 Assimilator timing: the legacy producer queued gas once the
+        // Core was nearly done (under 80 warp seconds left) - the V2 goal
+        // must fire on the same sight, not only after completion.
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Pylon, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            BoardState finishing = BoardState.builder()
+                .minerals(400).gas(100).supply(30, 32)
+                .workers(10).bases(1).gateways(2).army(6)
+                .assimilator(false).coreRemainingSeconds(40)
+                .seconds(400)
+                .build();
+            String fed = GoalBoardFeeder.ensure(finishing);
+            assertTrue(GoalBoardFeeder.wantedGoal("assimilator"),
+                "Core 40 warp seconds out wants the Assimilator");
+            assertTrue(fed.contains("assimilator"), "fed names the goal, got: " + fed);
+
+            boolean assimRow = false;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().isGasBuilding()) {
+                    assimRow = true;
+                    break;
+                }
+            }
+            assertTrue(assimRow, "near-completion Core funds one Assimilator row");
         });
     }
 }

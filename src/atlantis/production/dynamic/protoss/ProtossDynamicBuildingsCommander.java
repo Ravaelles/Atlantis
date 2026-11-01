@@ -28,8 +28,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (!Have.assimilator() && Have.cyberneticsCore()) {
             atlantis.util.log.ErrorLog.printMaxOncePerMinute(
                 "First Assimilator diagnostic: commander=" + gate
-                    + " producer=" + ProduceFirstAssimilator.reason
-            );
+                    + " (V2 goal owns the row now, see GOAL_TYPES=assimilator)");
         }
         return false;
     }
@@ -37,7 +36,6 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     private static boolean topPriority() {
         TrimQueue.trimIfTooBig(CurrentQueue.get());
 
-        if (ProduceFirstAssimilator.produce()) return true;
         if (ProduceObservatory.produce()) return true;
 
         return ProduceRoboticsFacility.produce();
@@ -57,7 +55,6 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     @Override
     public boolean applies() {
-        ProduceFirstAssimilator.reason = "NotChecked";
         if (!We.protoss()) return false;
         if (!AGame.everyNthGameFrame(17)) return rejectForAssimilator("Throttle");
         if (!(A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4))

@@ -289,6 +289,11 @@ public class FakeUnit extends AUnit implements Serializable {
     }
 
     @Override
+    public int getRemainingBuildTimeInSeconds() {
+        return simRemainingBuildTime / 30;
+    }
+
+    @Override
     public int remainingResearchTime() {
         return simRemainingResearchTime;
     }

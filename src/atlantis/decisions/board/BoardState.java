@@ -19,6 +19,13 @@ public final class BoardState {
     public final int combatUnits;
     public final boolean hasCyberneticsCore;
     public final boolean coreAwaitingSupply;
+    /**
+     * Least remaining warp seconds among unfinished Cores, -1 when none
+     * is warping (B1 assimilator timing: the legacy producer queued the
+     * first Assimilator once the Core was near completion, not after it
+     * finished - the V2 goal needs the same sight).
+     */
+    public final int coreRemainingSeconds;
     public final boolean hasAssimilator;
     public final boolean hasForge;
     public final int cannonCount;
@@ -56,6 +63,7 @@ public final class BoardState {
         this.combatUnits = builder.combatUnits;
         this.hasCyberneticsCore = builder.hasCyberneticsCore;
         this.coreAwaitingSupply = builder.coreAwaitingSupply;
+        this.coreRemainingSeconds = builder.coreRemainingSeconds;
         this.hasAssimilator = builder.hasAssimilator;
         this.hasForge = builder.hasForge;
         this.cannonCount = builder.cannonCount;
@@ -106,6 +114,7 @@ public final class BoardState {
         private int combatUnits;
         private boolean hasCyberneticsCore;
         private boolean coreAwaitingSupply;
+        private int coreRemainingSeconds = -1;
         private boolean hasAssimilator;
         private boolean hasForge;
         private int cannonCount;
@@ -188,6 +197,12 @@ public final class BoardState {
 
         public Builder coreAwaitingSupply(boolean coreAwaitingSupply) {
             this.coreAwaitingSupply = coreAwaitingSupply;
+
+            return this;
+        }
+
+        public Builder coreRemainingSeconds(int coreRemainingSeconds) {
+            this.coreRemainingSeconds = coreRemainingSeconds;
 
             return this;
         }
