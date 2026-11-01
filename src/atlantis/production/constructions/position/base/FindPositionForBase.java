@@ -12,10 +12,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.cache.Cache;
 
 public class FindPositionForBase {
-    protected static Cache<APosition> cache = new Cache<>();
 
     // =========================================================
 
@@ -26,20 +24,15 @@ public class FindPositionForBase {
             }
         }
 
-        // Migration A2 (owner #146): the catalogue answers base siting
-        // first, constrained to the natural neighbourhood (the demand
-        // already names it: V2 expansion goals carry NATURAL). The legacy
-        // search below stays as the fallback until a game proves the
-        // catalogue answers - the twin names which path fired, so the
-        // mix reads off the log, not off a guess. Gas keeps its dedicated
-        // finder (single geyser tile, no search); bases are searchable
-        // ground, which is exactly what the catalogue ranks.
+        // Migration A4c (owner #146): pure catalogue. The legacy spiral
+        // fallback is gone - a declined base retries through the demand
+        // (no construction is minted on null, so nothing churns), and the
+        // twin names every decline. The natural anchor below is the same
+        // one the spiral used; only the search around it changed.
         APosition natural = BaseLocations.natural();
         if (natural != null && construction != null) construction.setNearTo(natural);
-        APosition site = CatalogueSiteAdapter.siteFor(builder, building, construction);
-        if (site != null) return site;
 
-        return FindPositionForBaseNearestFree.find(building, builder, construction);
+        return CatalogueSiteAdapter.siteFor(builder, building, construction);
     }
 
     public static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction construction) {

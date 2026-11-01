@@ -465,6 +465,22 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
   modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
   anchor the catalogue neighbourhood instead of anywhere).
+  A4b LANDED 2026-11-01 (modifier→constraint translation landed with
+  pins+gate; answered-live half rides a wall-in vehicle - game 155312
+  showed 0 funnel rows).
+  A4c LANDED 2026-11-01 (pure-catalogue base siting, fallback chain
+  deleted: `FindPositionForBaseNearestFree`, `NearestFreeBase`,
+  `ASpecialPositionFinder`; base test rewritten to
+  `BaseSitingCatalogueTest` - neighbourhood, not exact tile): pins
+  25/25 + fast gate 1058/1058. GAME 20261101_160757 (TauCross PvZ,
+  VICTORY f11370, supply-80 exit via `atlantis.sh` headless): 0 building
+  cancels, 2 natural warps f6430/f11143 - again 0 CATALOGUE_SITE rows
+  (V2-director bypasses the funnel entirely). All post-flip proof games
+  agree: the legacy door fires at most once per game while V2-direct
+  sites everything. The funnel is a safety net, not the pipeline -
+  which is why the fallback could go: a decline retries through the
+  demand (no construction minted, no churn), and the twin names every
+  decline. 51x Assimilator cancels on one tile = known gas-storm shape.
   - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
