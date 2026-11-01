@@ -202,6 +202,48 @@ public class ConstructionStatusChanger extends Commander {
     }
 
     /**
+     * Demote an ancient parked STARTING construction back to NOT_STARTED,
+     * builder released.
+     *
+     * <p>Public as a seam so the rule is assertable without running a game,
+     * the same way {@link #demoteStalledInProgress} pins the way back.
+     * Every demote path reads IN_PROGRESS only - a builder that never
+     * issues (parked, leashed, refusing tile) holds STARTING forever:
+     * measured 20261102_003832, a Core STARTING f5154 with 0 warps /
+     * cancels / demotes in ~10k frames, zero Dragoons all game, loss.
+     * The NOT_STARTED state re-arms through the normal machinery (a fresh
+     * builder next pass, then resite/cancel); releasing the parked builder
+     * is what gives the re-arm a different worker. Healthy travellers
+     * never trip: walking changes position every frame, issuing is the
+     * advancer's case, and a recent issue attempt holds fire.</p>
+     *
+     * @return true when the construction was demoted.
+     */
+    public static boolean demoteParkedStarting(Construction construction, AUnit builder) {
+        if (construction == null) return false;
+        if (construction.status() != ConstructionOrderStatus.STARTING) return false;
+        if (construction.buildPosition() == null) return false;
+        if (builder == null || builder.isDead() || !builder.isWorker()) return false;
+        if (builder.isConstructing()) return false;
+        if (builder.isMoving()) return false;
+        if (!builder.lastPositionChangedMoreThanAgo(FROZEN_WARP_OBSERVED_FRAMES)) return false;
+        if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
+
+        String detail = "startingParked=" + builder.lastPositionChangedAgo() + "f";
+        logDemote(construction, detail);
+        twinDemote(construction, detail);
+        construction.setBuilder(null);
+        // Hold-fire stamp, not an issue: without it the re-arm refines
+        // straight back to STARTING on the same frozen standstill clock
+        // and demotes again the next frame. 150f of quiet for the fresh
+        // builder to prove movement; a still-parked row re-demotes after.
+        construction.setLastBuildAttemptNow();
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+        return true;
+    }
+
+    /**
      * A warping entity that stopped progressing with nobody working it
      * (Wine 184529 cid 10: Pylon warp IN_PROGRESS 8+ minutes, builder
      * gone mining, supply frozen at 49/49 - the entity-present branch
@@ -718,6 +760,13 @@ public class ConstructionStatusChanger extends Commander {
 
         if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
             demoteStalledInProgress(construction, builder);
+        }
+
+        // STARTING with a live builder is travelling - unless the builder
+        // parked anciently without ever issuing (NEXT #150, 003832 Core):
+        // then the row re-arms instead of holding the site forever.
+        if (construction.status() == ConstructionOrderStatus.STARTING) {
+            demoteParkedStarting(construction, builder);
         }
 
         if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)

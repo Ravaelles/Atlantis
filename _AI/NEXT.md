@@ -267,13 +267,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    CyberneticsC STARTED f5154 [94,113], then 0 completions / 0 cancels /
    0 demotes in ~10k frames (17 further dispatches deduped to the same
    stuck row - 1 start all game). Zero Dragoons all game while gas
-   banked to 1008; zealot-only army overrun f14274+. STALL rows park
-   one builder at [94,117] f6107-6355 (still 253-501f), but no
-   BUILDER_STATE twin (flag off) names the attachment - the demote
-   gate (2400f + static hp + nobody working) never fires, consistent
-   with a builder ATTACHED-but-useless loophole. Needs a BuilderLog
-   game to name the mechanism; HP-trail (WO-150b) would distinguish
-   frozen-warp from never-arrived.
+   banked to 1008; zealot-only army overrun f14274+. The demote gate
+   never fires because every demote path requires IN_PROGRESS and the
+   row never flips (no builder death either, else the re-arm would
+   have named a new builder). Builder fate is unattributed from twins
+   (no BUILDER_STATE flag; STALL rows are army-idle, not builder) -
+   needs a BuilderLog game to name the mechanism; HP-trail (WO-150b)
+   would distinguish frozen-warp from never-arrived.
    DATUM 2026-10-29 (game 184529, BuilderLog): 1 Nexus construction from
    3869 attempts / 388 reached, 0 warps, 0 cancels - one builder (#158), one tile
    ([91,115]), canBuild=false in all flag combos while affordable/explored/powered.
