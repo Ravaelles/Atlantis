@@ -599,6 +599,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   supply/mineral gates - earlier Core possible; game proof watches
   the timing. Open: game proof (Core timing + expansion-Pylon +
   live #204 in one macro vehicle).
+  PROOF 2026-11-01 (vehicle game 20261101_215027 TauCross PvZ, frozen
+  jar WITH B1-Pylon/Forge/Core/Assim, WIN f8640): Core V2-dispatched
+  f4296, warping f4355 (Gateway f2445 -> Core ~31 s later - healthy,
+  no legacy wait needed); all 3 Pylons V2 on time; natural Nexus
+  f6190 (expansion taken); Assimilator 70 requests / 33 starts / 0
+  completions / gas 0.0 = #237 live hole above (NOT a B1 regression -
+  same siting door pre/post). Forge untriggered (no DT evidence) -
+  still open. #204: no losing fight, no floor rows - still open.
 - **#237** Assimilator never warps despite 70 requests (vehicle
   20261101_215027 TauCross, B1-batch game, WIN f8640): 70
   CONSTRUCTION_REQUESTED + 33 BUILDING_STARTED on the same tile
