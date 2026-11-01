@@ -462,6 +462,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   A4 delete `APositionFinder` to `src-old/`.
   Phase B (demand, #147): B0 read-only flow map (which legacy producers
   still mint game-reaching orders vs V2), then slices from the map.
+  A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
+  modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
+  anchor the catalogue neighbourhood instead of anywhere).
   - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
@@ -538,6 +541,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     the game proves no-regression on the live path, not
     catalogue-answers-base-live; that half rides the synthetic pin +
     a vehicle that actually exercises the fallback.
+    A4b LANDED 2026-11-01 (modifier→neighbourhood translation):
+    `ModifierAnchor.resolve` + `constraintFor` (both overloads) anchor
+    @NATURAL/@MAIN/choke orders instead of anywhere; legacy `toPosition`
+    stays as the fallback. Pins 25/25 (5 new translation pins +
+    adapter suite) + fast gate 1058/1058. GAME 20261101_155312 (TauCross
+    PvZ, loss f16689, supply-50): 0 funnel rows - V2-direct bypasses the
+    funnel and no legacy modifier order flowed, so the answered-live
+    half rides a wall-in vehicle; no-regression holds (0 building
+    cancels ex gas-storm; 5x Nexus "Can't build here" on [94,112] is
+    the known engine-refusal family, 5 rows not 3000). Repaired in
+    passing: A1 had silently degraded legacy @NATURAL wall-ins to
+    anywhere (bypassed spiral); the anchor is restored on catalogue.
     A4a LANDED 2026-11-01 (travelling-builder null-site reroute):
     `ConstructionStatusChanger` uses the construction seam instead of the
     legacy finder directly (same null contract, same testing seam).

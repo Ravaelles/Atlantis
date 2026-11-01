@@ -9,6 +9,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.constructions.position.conditions.can_build_here.IsWorkerCovered;
+import atlantis.production.constructions.position.modifier.ModifierAnchor;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.placement.PlacementPlanner;
@@ -256,6 +257,16 @@ public final class CatalogueSiteAdapter {
 
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
         }
+        // Migration A4b (owner #146): legacy order modifiers (@NATURAL,
+        // @MAIN, choke names...) anchor the neighbourhood instead of
+        // degrading to anywhere. The spiral used to re-derive these per
+        // search; the catalogue ranks around the same anchor.
+        HasPosition anchor = ModifierAnchor.resolve(order.getModifier());
+        if (anchor != null) {
+            APosition centre = APosition.create(anchor);
+
+            return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
+        }
         HasPosition near = construction.nearTo();
         if (near != null) {
             APosition centre = APosition.create(near);
@@ -277,6 +288,13 @@ public final class CatalogueSiteAdapter {
             APosition exact = APosition.create(demand.around());
 
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
+        }
+        // Same modifier anchoring as the order overload (A4b).
+        HasPosition anchor = ModifierAnchor.resolve(demand.modifier());
+        if (anchor != null) {
+            APosition centre = APosition.create(anchor);
+
+            return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
         }
         HasPosition near = construction.nearTo();
         if (near != null) {
