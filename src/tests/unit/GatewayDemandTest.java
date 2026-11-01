@@ -5,6 +5,7 @@ import atlantis.production.policy.ProductionRacePolicy;
 import atlantis.production.producibles.UnitProducible;
 import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("production")
 public class GatewayDemandTest {
+
+    @BeforeEach
+    public void resetBusyLatch() {
+        // The 10 s recently-busy latch is static: without a reset the
+        // all-busy fixture of richAndBusyDemandsThirdGateway leaks into
+        // freeGatewayTrainsFirst (same JVM, method order) and the free
+        // Gateway looks recently busy. Each test starts unlatched.
+        DynamicGoals.clearLatchForTests();
+    }
 
     private static DynamicGoals.GameSnapshot state(
             int workers, int supply, int minerals, int gateways, int freeGateways) {

@@ -84,6 +84,14 @@ public class TooCloseToMineralsOrGeyser {
     public static final double PROSTOSS_MIN_DIST_TO_MINERAL_CANNON = 2.0;
 
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
+        // No game, no crowding: game-less unit tests drive the planner with
+        // stub terrain (PlacementSupportTest, PlacementPlannerTest), and the
+        // mineral/geyser rules below read live supply, bases and unit lists.
+        // Without a world there is nothing to crowd - same contract as the
+        // standing-cover check (null-safe by construction, false with no
+        // game). Live behavior unchanged: a game is always present there.
+        if (atlantis.Atlantis.game() == null) return false;
+
         if (building.isMissileTurret()) return false;
         if (building.isBase()) return false;
 

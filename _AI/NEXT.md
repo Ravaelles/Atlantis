@@ -142,6 +142,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    on the pre-Phase-4 tree (identical stacks): DynamicProductionCommanderTest
    NPE (null raceSpecific factory when not Protoss) and CommanderTest ctor -
    both pin dead legacy commanders, die with Phase 4. Not regressions.
+   DATUM 2026-11-01 (time-budget stage): catalogue-flip fallout, fixed -
+   `PlacementSupportTest` + 4 `PlacementPlannerTest` NPEs
+   (`TooCloseToMineralsOrGeyser` reads live supply with no game running).
+   Same contract as the standing-cover check: no game, no crowding
+   (`Atlantis.game() == null` -> false, live unchanged). 9/9 green.
+   DATUM 2026-11-01 (same run, isolated e2e): CatalogueSiteAdapter (was 5),
+   ProtossDragoonProduction (was 2), PostureTrappedArmy (was 2), Queue3,
+   CountInQueue, Queue2, GasTileIsGeyserTile, CommanderTest green - the
+   remaining acceptance reds are RequestBuildingNear (3), AUnit (2),
+   ProtossDynamicUnitProduction (2), QueueInProgressInvariant,
+   ResourcesReserved, DynamicProductionCommander. Full triage rides the
+   30-issue package.
 
 ## Architecture migration — stages E–J
 
@@ -742,7 +754,31 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   forever), fixed by the raid collapse in `Regroup.march` (dressed in slot
   far beyond sight of a FIGHT anchor marches a walkable staging 5 short of
   it, COLLAPSE tag), now green with the base killed. So the army CAN kill
-  a passive base when sent. ATTACK_DECISION LIVE 2026-10-28 (game 110910):
+  a passive base when sent. COLLAPSE COMMITS 2026-11-01 (owner: why does a
+  near start break the battle?): measured with HOLD twins - at 20-60 tiles
+  the raid never acquires (fog) and the 10-tile collapse gate dithers at
+  the boundary (line shuffles ~10-13 tiles, zero HOLD verdicts in 600
+  ticks - formation is NOT the culprit, the no-target regroup is). The
+  collapse now latches per unit until 6 tiles or contact
+  (`Regroup.shouldCollapseToAnchor` + `BattleCommander.clearForTests`).
+  The raid starts dressed 20 tiles out at full 12v10 scale: the 140-tile
+  march is dead ticks, the committing collapse carries the line into
+  contact, and the owner-reframed pin (attacked, not killed) exits on
+  first damage.
+  BUILDINGS-ONLY FORMATION GUARD 2026-11-01 (owner: no formation when only
+  enemy buildings remain; allowed before ground-attacking defense): 12
+  Dragoons held 600 ticks vs a lone Nexus (HOLD x40, zero damage) -
+  `FormationHold.decide` returns OTHER when no enemy combat unit and no
+  ground-attacking static defense is known (cannons keep formation;
+  hidden defenders re-arm it on approach, per frame). Pinned
+  `NoFormationVsBuildingsOnlyTest` (fast). The zealot-held variant keeps
+  today's logic (visible combat units) - its stalemate is the collapse
+  side above, not the formation side. ATTACK-NOT-KILL 2026-11-01 (owner:
+  time is secondary, attacking is the pin - stop at Nexus below 95% hp):
+  `dragoonMassRaidsMotionlessBaseAndAttacksIt` (renamed from ...AndWins)
+  breaks on first damage with the 12v10 force from 20 tiles; the full
+  grind never runs, the weird non-attacking behavior is what fails.
+  ATTACK_DECISION LIVE 2026-10-28 (game 110910):
   the twin fires - 1 row f4389 ENEMY_MAIN_KNOWN -> [119,10], same frame the
   mission flips Defend->Attack (change-only, no repeats); raid collapse
   fires live too (164 ClusterCollapse tags). The live question who sends
@@ -892,6 +928,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   fixed by the saturation change. Open: the no-enemy half (army
   target met, nothing dies - needs the P3 scripted enemy) and the live
   proof of pre-saturation.
+   DATUM 2026-11-01 (time-budget stage): solo-red again, suite-green -
+   2 Probe warps in 2500 frames after f12000 (mark later than the ~f9393
+   pin), deterministic in a fresh JVM. Suspect stride-60 fallout (the
+   dispatch that fixed it predates the stride cutover); the hunt rides
+   the 30-issue package, the test is time-clean (12 s solo).
 - **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
   20261027_183253, V2 LIVE): f24730-28800, 1568 Pylon goal rows and 120
   `builder committed` dispatches, no Pylon warp after f24617. CANCEL
@@ -1013,6 +1054,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    test file can flip it; the durable fix stays hermetic seams, not id
    resets. Owner 2026-10-31: live with the flake (document recurrences),
    durable fix with K-of-N data or a test-harness rebuild - not now.
+   DATUM 2026-11-01 (time-budget stage): the same one-JVM runs slow sims
+   5-11x vs solo (Bleed 11->63 s, Stalled 13->134 s, LongGame 13->65 s)
+   and flip reds both ways (LongGame @65 red in suite, green solo;
+   PostFiftyProduction red solo, green in suite). Mechanism unidentified;
+   sim-to-sim pairs show no leak, so the poison comes from earlier scopes
+   or GC pressure at suite scale. Landed instead of solved: e2e runs
+   isolated (one JVM per class) in `run-full-tests.sh` and the audit,
+   `-Xmx4g` on every test JVM, stale `.class` purge before every compile
+   (phantom tests from deleted sources - measured), and the JUnit default
+   timeout must stay `same_thread` (Mockito static mocks are thread-local:
+   `separate_thread` NPEs every harness test - proven by probe).
 - **#223** Hidden-unit crisis response (owner ask 2026-10-28: do we answer
   lurkers and Dark Templar, and how does PurpleWave do it). PurpleWave
   pumps Observers 1-vs-3 on lurker-likelihood (seen lurkers/eggs or burrow

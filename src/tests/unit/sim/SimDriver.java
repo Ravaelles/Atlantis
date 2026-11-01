@@ -287,6 +287,14 @@ public final class SimDriver {
         tests.fakes.FakeUnitData.CANCEL.clear();
         atlantis.information.tech.ATech.useEngine();
         SimMap.uninstall();
+
+        // End-of-(sim-)game resets, mirroring OnGameEnd/buildWorld: sims
+        // share one JVM, so per-game accumulators must not leak into the
+        // next test's decisions or timings (suite-order inflation/reds).
+        atlantis.information.enemy.UnitsArchive.reset();
+        atlantis.util.log.EventLog.clearForTests();
+        atlantis.production.requests.produce.ProduceBuilding.clearStartedForTests();
+        atlantis.production.constructions.ConstructionRequests.constructions.clear();
     }
 
     FakeUnit unitById(int id) {

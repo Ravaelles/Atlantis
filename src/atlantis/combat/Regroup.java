@@ -163,14 +163,40 @@ public final class Regroup {
      * to see from it: holding the slot means holding standoff against
      * nothing, forever. FIGHT only - retreats own their movement, and a
      * home anchor is always within sight of a dressed line.
+     *
+     * <p>The collapse commits (owner 2026-11-01): once a dressed line starts
+     * for an attack anchor it keeps marching it until close (6 tiles) or
+     * contact (a target leaves regroup for the fight branch). Re-evaluating
+     * the 10-tile gate per frame dithers at the boundary - measured in the
+     * MotionlessBaseRaid sim: the line shuffles at ~10-13 tiles forever,
+     * never committing in. Latched per unit id, cleared per game/test next
+     * to the other battle resets.</p>
      */
     private static boolean shouldCollapseToAnchor(
         AUnit unit, HasPosition point, HasPosition anchor, FightOrFlight.Tactic tactic
     ) {
-        return tactic == FightOrFlight.Tactic.FIGHT
-            && anchor != null
-            && unit.distTo(point) < 1
-            && unit.distTo(anchor) > COLLAPSE_BEYOND_SIGHT_TILES;
+        if (tactic != FightOrFlight.Tactic.FIGHT || anchor == null || unit == null) {
+            if (unit != null) COLLAPSING.remove(unit.id());
+            return false;
+        }
+        double dAnchor;
+        try {
+            dAnchor = unit.distTo(anchor);
+        } catch (Exception ignored) {
+            return false;
+        }
+        if (dAnchor <= COLLAPSE_COMMIT_TILES) {
+            COLLAPSING.remove(unit.id());
+            return false;
+        }
+        boolean dressed;
+        try {
+            dressed = point != null && unit.distTo(point) < 1;
+        } catch (Exception ignored) {
+            return false;
+        }
+        if (dressed && dAnchor > COLLAPSE_BEYOND_SIGHT_TILES) COLLAPSING.add(unit.id());
+        return COLLAPSING.contains(unit.id());
     }
 
     /**
@@ -242,6 +268,23 @@ public final class Regroup {
      * the unit.
      */
     private static final double COLLAPSE_BEYOND_SIGHT_TILES = 10;
+
+    /**
+     * Inside this the collapse is over: the anchor is in sight, the slot,
+     * ghost and fight branches own the unit from here. Paired with the
+     * latch above - the line commits between the two, never dithers.
+     */
+    private static final double COLLAPSE_COMMIT_TILES = 6;
+
+    /**
+     * Units currently marching a committed collapse (ids). Cleared per
+     * game/test with the other battle resets - see the gate above.
+     */
+    private static final java.util.Set<Integer> COLLAPSING = new java.util.HashSet<>();
+
+    public static void clearForTests() {
+        COLLAPSING.clear();
+    }
 
     /**
      * Where the collapse marches: toward the anchor but stopping short of

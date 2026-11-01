@@ -30,6 +30,10 @@ cd "$(dirname "$0")/.."
 OUT="out/production/Atlantis"
 # Exclude lib-unused: it contains a conflicting older JBWAPI jar.
 CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
+# Test JVM heap (owner order 2026-11-01): the full suite allocates sim
+# worlds by the thousand; the default heap GC-thrashes late in the run
+# (e2e last = slowest). Size once, everywhere.
+MEM="-Xmx6g"
 
 SCOPES=(
   "unit:tests.unit"
@@ -43,6 +47,8 @@ if [ "${1:-}" = "--skip-scenarios" ]; then
 fi
 
 mkdir -p "$OUT"
+# Stale-class purge: see run-tests.sh (phantom tests from deleted sources).
+find "$OUT" -name "*.class" -delete
 echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
 # --release 8: see run-tests.sh. $OUT is shared with the IDE run, so the class
 # files must be Java 8 on every machine regardless of the local default JDK.
@@ -50,6 +56,8 @@ if ! javac --release 8 -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java'); t
   echo "[tests] COMPILE FAILED - no scope was run" >&2
   exit 1
 fi
+# Test-budget enforcement (owner order 2026-10-31): see run-tests.sh.
+cp config/junit-platform.properties "$OUT"/
 
 failed=()
 echo
@@ -61,8 +69,43 @@ for entry in "${SCOPES[@]}"; do
   name="${entry%%:*}"
   package="${entry#*:}"
 
+  # E2E runs isolated, one JVM per class (owner order 2026-11-01): the
+  # sims accumulate harness state in a shared JVM (measured 5-11x
+  # slowdown + order flips in the full run; solo times stay in budget),
+  # so one shared run measures garbage, not the tests. Fresh JVM per
+  # class = true times; the ~2 s fork cost is nothing next to sims.
+  if [ "$name" = "scenarios" ]; then
+    iso_ok=0; iso_fail=0; iso_failed_classes=()
+    for f in $(find "src/${package//.//}" -name "*Test.java" | sort); do
+      cls=$(echo "$f" | sed 's|^src/||; s|\.java$||; s|/|.|g')
+      start=$(date +%s)
+      output=$(java $MEM -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
+        --select-class "$cls" --details=summary --disable-ansi-colors --disable-banner "$@" 2>&1)
+      status=$?
+      seconds=$(( $(date +%s) - start ))
+      passed=$(echo "$output" | grep -oE '^\[ +[0-9]+ tests successful' | grep -oE '[0-9]+')
+      broken=$(echo "$output" | grep -oE '^\[ +[0-9]+ tests failed' | grep -oE '[0-9]+')
+      if [ "$status" -eq 0 ] && [ "${broken:-0}" = "0" ] && [ -n "${passed:-}" ]; then
+        printf '  %-30s %-8s %s\n' "$cls" "${seconds}s" "${passed} passing"
+        iso_ok=$((iso_ok + passed))
+      else
+        printf '  %-30s %-8s %s\n' "$cls" "${seconds}s" "FAILED: ${broken:-?} failing"
+        iso_fail=$((iso_fail + ${broken:-1}))
+        iso_failed_classes+=("$cls")
+        echo "$output" | grep -E "MethodSource|=> " | head -n 8
+      fi
+    done
+    if [ "$iso_fail" = "0" ]; then
+      printf '%-14s %-8s %s\n' "$name" "" "${iso_ok} passing (isolated)"
+    else
+      printf '%-14s %-8s %s\n' "$name" "" "FAILED: ${iso_fail} failing"
+      failed+=("$name")
+    fi
+    continue
+  fi
+
   start=$(date +%s)
-  output=$(java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
+  output=$(java $MEM -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
     --select-package "$package" --details=summary --disable-ansi-colors --disable-banner "$@" 2>&1)
   status=$?
   seconds=$(( $(date +%s) - start ))

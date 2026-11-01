@@ -140,6 +140,22 @@ at the end, never reused.
 - Slow scopes stay out: `tests.e2e`, `tests.acceptance` and the bare
   `tests` root are refused with exit 2 (`--allow-slow` for one-offs).
 - Slow scopes are **owner-only** (`scripts/run-full-tests.sh`).
+- Per-test cap (owner order 2026-10-31, fifth request - systemic fix):
+  no test over 20 s, no exceptions. Mega-tests: at most 40 s, at most
+  3 in the whole tree (ideally 2, a third only vs another race), each
+  tagged `@Tag("mega-test")` + `@Timeout(40)`, each covering only the
+  most necessary things with many assertions in one test. A fourth
+  mega-test is a failure, not a precedent.
+- Enforcement is automatic, not social: `config/junit-platform.properties`
+  sets the JUnit default timeout to 20 s (separate-thread kill), every
+  test script copies it onto the classpath root, and
+  `scripts/audit-test-times.sh` (one compile, `--reports-dir`, sorted
+  per-class table) fails the gate on any over-budget class or a
+  mega-count above 3. A slow test fails loudly the day it slows down.
+- Keep tests fast by construction: test the decision system separately
+  from the implementation (pure decision predicates pin the doctrine in
+  milliseconds; the sim/game proves the wiring, once, in the mega-test).
+  Stride, shrink the world, split the class - never let the suite creep.
 
 ## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
 

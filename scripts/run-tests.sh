@@ -114,6 +114,12 @@ OUT="out/production/Atlantis"
 CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
 
 mkdir -p "$OUT"
+# Stale classes (deleted/renamed sources) linger in $OUT because javac
+# never removes them, and package selectors then run phantom tests
+# (measured: a deleted probe kept failing the unit scope from its stale
+# .class). Delete classes only - never the whole dir: out/ also holds
+# archived game logs (NEXT.md "Test health").
+find "$OUT" -name "*.class" -delete
 echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
 # --release 8, for the same reason build-bot-jar.sh uses it: this tree compiles
 # into $OUT, which is the directory the IDE runs main.Main from. Without the flag
@@ -123,6 +129,11 @@ echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
 # thread reaches a class (measured 2026-10-08: atlantis/keyboard/KeyRelay, class
 # file 61.0 against a runtime that accepts up to 52.0, keyboard dead).
 javac --release 8 -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java')
+# Test-budget enforcement (owner order 2026-10-31): the JUnit default timeout
+# (20 s, kill in a separate thread) lives in config/junit-platform.properties
+# and must be on the classpath root, or the suite runs unbounded. Mega-tests
+# (max 3, @Tag("mega-test")) carry their own @Timeout(40) override.
+cp config/junit-platform.properties "$OUT"/
 
 # The architecture scope is split out so it can be ADVISORY without weakening
 # anything else (owner's ruling, 2026-10-11): "we should be moving towards fixing

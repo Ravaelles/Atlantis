@@ -163,6 +163,7 @@ public class BattleCommander extends Commander {
         StickyTarget.clearForTests();
         atlantis.combat.targeting.ChaseVetoTwin.clearForTests();
         ArmyMission.clearForTests();
+        Regroup.clearForTests();
     }
 
     @Override

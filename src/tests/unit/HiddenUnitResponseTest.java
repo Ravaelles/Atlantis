@@ -82,7 +82,7 @@ public class HiddenUnitResponseTest extends WorldStubForTests {
         ProductionEngine engine = new ProductionEngine(ProductionRacePolicy.forRace("Protoss"));
         int[] firstResponseFrame = {-1};
 
-        world(60, ours, fakeEnemies(lurker), () -> {
+        world(45, ours, fakeEnemies(lurker), () -> {
             if (A.now() == 10) {
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurker);
             }

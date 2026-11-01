@@ -57,15 +57,23 @@ public class MotionlessBaseRaidTest extends AbstractTestWithUnits {
         return z;
     }
 
+    /**
+     * Owner 2026-11-01: the pin is that the raid ATTACKS the base, not that
+     * it kills everything (time is secondary; weird non-attacking behavior
+     * is the defect). The Nexus below 95% hp means attacked; the loop exits
+     * on first damage, so the dead-tick grind never runs. Collapse commits
+     * the march (20 tiles out, per-tick AI to contact); the trade itself is
+     * owned by the small sims.
+     */
     @Test
-    public void dragoonMassRaidsMotionlessBaseAndWins() {
+    public void dragoonMassRaidsMotionlessBaseAndAttacksIt() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit foeNexus = fake(AUnitType.Protoss_Nexus, 110, 110);
         foeNexus.setEnemy();
         foeNexus.hp = 1500;
 
         List<FakeUnit> ours = new ArrayList<>();
-        for (int i = 0; i < 12; i++) ours.add(dragoon(12 + i, 12));
+        for (int i = 0; i < 12; i++) ours.add(dragoon(88 + i, 88));
         ours.add(nexus);
 
         List<FakeUnit> foes = new ArrayList<>(Arrays.asList(
@@ -78,6 +86,7 @@ public class MotionlessBaseRaidTest extends AbstractTestWithUnits {
         SimArena arena = new SimArena(130 * TILE, 130 * TILE);
         SimWorld world = new SimWorld(
             ours.toArray(new FakeUnit[0]), foes.toArray(new FakeUnit[0]), arena);
+        int attackFrame = -1;
         try {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
@@ -91,7 +100,10 @@ public class MotionlessBaseRaidTest extends AbstractTestWithUnits {
                     }
                     ZombiePolicies.holdStill(foes, ours);
                 });
-                if (foeNexus.hp <= 0) break;
+                if (foeNexus.hp < 1500 * 0.95) {
+                    attackFrame = world.frame();
+                    break;
+                }
             }
         }
         finally {
@@ -100,14 +112,8 @@ public class MotionlessBaseRaidTest extends AbstractTestWithUnits {
             atlantis.util.log.EventLog.clearForTests();
         }
 
-        long foesAlive = foes.stream().filter(f -> f.hp > 0).count();
-        long dragoonsAlive = ours.stream()
-            .filter(u -> u.type().equals(AUnitType.Protoss_Dragoon) && u.hp > 0).count();
-        assertTrue(foeNexus.hp <= 0,
-            "the raid reaches the motionless base and kills the Nexus (foes alive: " + foesAlive + ")");
-        assertTrue(foesAlive <= 3,
-            "the defenders die holding still (alive: " + foesAlive + ")");
-        assertTrue(dragoonsAlive >= 6,
-            "the mass survives the trade (dragoons alive: " + dragoonsAlive + "/12)");
+        assertTrue(attackFrame >= 0,
+            "the raid attacks the motionless base instead of holding standoff "
+                + "forever (Nexus hp: " + foeNexus.hp + "/1500)");
     }
 }

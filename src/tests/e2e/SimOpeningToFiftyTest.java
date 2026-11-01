@@ -4,7 +4,9 @@ import atlantis.production.engine.ProductionEngine;
 
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.sim.SimConfig;
 
@@ -27,7 +29,12 @@ import static tests.e2e.OpeningRunner.at;
  * opening plays out. A red test names the frame, the warp log says what
  * the bot did instead. The machinery (driver, matching, formatting) lives
  * in {@link OpeningRunner}.</p>
+ *
+ * <p>Owner time budget: one of at most 3 mega-tests (40 s). The opening
+ * gate plus the faithful-walk pin, in two methods of one run.</p>
  */
+@Tag("mega-test")
+@Timeout(40)
 public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
 
     /**

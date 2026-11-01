@@ -70,6 +70,18 @@ public class ProduceBuilding {
     }
 
     /**
+     * Test/sim-game seam: STARTED-row dedup is per game (live ids never
+     * repeat, so no reset is needed there), but sims share one JVM and
+     * construction ids can repeat across them - without this a later
+     * sim's warps lose their STARTED rows to an earlier sim's cids.
+     * Called from {@code SimDriver.close()}, next to the other
+     * end-of-game resets.
+     */
+    public static void clearStartedForTests() {
+        startedCids.clear();
+    }
+
+    /**
      * Single-door concurrency cap for Pylons (Wine game: three concurrent
      * Pylon warps out of one supply block at 25 - BO#8, its dynamic mirror
      * and BO#11, each firing alone correctly and tripling together). Below

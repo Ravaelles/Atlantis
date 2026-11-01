@@ -93,6 +93,23 @@ public final class FormationHold {
     }
 
     /**
+     * True when there is nothing to form against: no known enemy combat
+     * unit and no known ground-attacking static defense. Slots exist to
+     * approach defended positions; against an undefended building the
+     * line walks in and kills. Cannons (and the like) keep today's
+     * formation approach - this fires only for the undefended shape.
+     */
+    private static boolean noKnownEnemyToFormAgainst() {
+        try {
+            if (atlantis.units.select.Select.enemy().combatUnits().notEmpty()) return false;
+            if (atlantis.units.select.Select.enemy().combatBuildingsAntiLand().notEmpty()) return false;
+        } catch (Exception ignored) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Hold the line instead of engaging this target: true while the
      * enemy is melee-only, the tactic is FIGHT, and none of the contact
      * breaks fired (2.5-tile proximity, damage taken, own ranged able
@@ -122,6 +139,15 @@ public final class FormationHold {
         try {
             if (!unit.isCombatUnit()) return HoldVerdict.OTHER;
             if (atlantis.units.select.Select.enemy().ranged().notEmpty()) return HoldVerdict.OTHER;
+            // Owner 2026-11-01: no formation against buildings-only. Slots
+            // exist to approach defended positions; against an undefended
+            // building the line walks in and kills instead of holding
+            // standoff forever (measured: 12 Dragoons held 600 ticks vs a
+            // lone Nexus, HOLD x40, zero damage dealt). Fires only when no
+            // enemy combat unit is known AND no ground-attacking static
+            // defense is known (cannons keep their formation approach);
+            // hidden defenders re-arm formation on approach, per frame.
+            if (noKnownEnemyToFormAgainst()) return HoldVerdict.OTHER;
             if (calmStandoffAtChoke(unit)) return HoldVerdict.CALM_FAR;
             if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return HoldVerdict.DAMAGE;
             if (unit.hasWeaponRangeToAttack(target, 0)) return HoldVerdict.OTHER;

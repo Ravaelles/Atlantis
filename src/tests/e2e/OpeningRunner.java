@@ -69,12 +69,12 @@ final class OpeningRunner {
         try {
             SimMap map = SimMap.load("src/tests/resources/taucross-snapshot.json");
             map.install();
-            SimDriver driver = newSimDriver(map, SimConfig.faithful(), numbers);
+            SimDriver driver = newSimDriver(map, SimConfig.faithful(), numbers, 150);
             try {
                 driver.spawnResources();
                 driver.spawnBase(0, 4);
 
-                while (driver.frame() < 4000 && !hasWarpOf(driver, "Pylon")) {
+                while (driver.frame() < 2000 && !hasWarpOf(driver, "Pylon")) {
                     driver.step();
                 }
 
@@ -283,6 +283,16 @@ final class OpeningRunner {
     }
 
     private static SimDriver newSimDriver(SimMap map, SimConfig config, BankAndSupply numbers) {
+        return newSimDriver(map, config, numbers, 50);
+    }
+
+    /**
+     * The faithful walk starts funded (150): the pin is the builder's walk
+     * and clean orders, not the mining that precedes it (the fast suite
+     * owns the economy). Mining 100 minerals at stride-1 engine cost would
+     * burn most of the 20 s budget before the builder even moves.
+     */
+    private static SimDriver newSimDriver(SimMap map, SimConfig config, BankAndSupply numbers, int startMinerals) {
         return new SimDriver(map, config, new SimDriver.SimFields() {
             @Override
             public void setMinerals(int minerals) {
@@ -298,7 +308,7 @@ final class OpeningRunner {
             public void setSupply(int used, int total) {
                 numbers.setSupply(used, total);
             }
-        }, 50);
+        }, startMinerals);
     }
 
     /**

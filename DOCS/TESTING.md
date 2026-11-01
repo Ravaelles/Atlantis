@@ -333,8 +333,9 @@ verified instead of guessed. Keep it working.
 The fast loop (`scripts/run-tests.sh`) must stay cheap. Measured
 2026-10-20, wall-clock: compile 4.4 s, `tests.unit` 7.7 s
 (combat 0.7 s, production 2.6 s, placement/map 0.5 s, misc 2.4 s),
-architecture ~1 s, e2e smoke classes 0.5 s after moving the 2.2 s
-`QuickEconomySmokeTest` to the full tier. Total ~12-13 s.
+architecture ~1 s. Total ~12-13 s.
+(`QuickEconomySmokeTest` deleted 2026-10-31: red solo, 269 s in-suite
+via order-dependent state, superseded by `ProductionEngineSmokeTest`.)
 
 Every unit test carries a JUnit `@Tag` area (`production`,
 `combat`, `placement`, `map`, `infra` - by subject, not fixtures)
@@ -346,3 +347,23 @@ excluded tags included. The full tier (`scripts/run-full-tests.sh`)
 runs everything and runs at the end of every finished feature, not
 per edit. On-demand areas: `--domain production,placement` (tag OR;
 `--domain combat` includes the sim package).
+
+## Per-test time budget (owner order 2026-10-31)
+
+No test over 20 s, no exceptions; at most 3 mega-tests at 40 s
+(`@Tag("mega-test")` + `@Timeout(40)` - currently 2:
+`SimOpeningToFiftyTest`, `LongGameToSeventyTest`). Enforcement is
+automatic: `config/junit-platform.properties` (JUnit default timeout
+20 s, separate-thread kill, copied onto the classpath root by every
+test script) fails violators loudly, and `scripts/audit-test-times.sh`
+(one compile, `--reports-dir`, sorted per-class timing table) fails on
+any over-budget class or a mega-count above 3:
+
+```bash
+bash scripts/audit-test-times.sh          # default gate (fast)
+bash scripts/audit-test-times.sh --full   # everything
+```
+
+Keep tests fast by construction: test the decision separately from the
+implementation (pure predicates pin doctrine in milliseconds; the sim
+proves wiring once, in a mega-test). Stride, shrink, split - never creep.

@@ -3,7 +3,9 @@ package tests.e2e;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.sim.SimConfig;
@@ -27,7 +29,12 @@ import static tests.e2e.OpeningRunner.at;
  * each names a different author (Gateway demand, army demand, expansion
  * demand, gas demand) - so the failure tells WHICH demand dies, not just
  * that something does.</p>
+ *
+ * <p>Owner time budget: one of at most 3 mega-tests (40 s). Everything
+ * the suite needs past 50 supply lives here, in one run.</p>
  */
+@Tag("mega-test")
+@Timeout(40)
 public class LongGameToSeventyTest extends AbstractTestWithUnits {
 
     private static final List<Row> BUILD_ORDER = Arrays.asList(
