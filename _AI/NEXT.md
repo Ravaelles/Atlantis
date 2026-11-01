@@ -65,6 +65,19 @@ trade a measurement for an explanation (§3a).
   itself (indecision - no mission sticks for 4000 frames while the line
   mills around unseen). Enforcement order per spec: HOLD_MAIN_CHOKE
   first (forbid the out-march, downgrade blocked attacks).
+  SLICE 3a LANDED 2026-11-01 (code + world pin, suite green; live proof
+  OPEN): `MissionHold` seam + `holdForMission` gate in `act()` (FIGHT,
+  no target, mission forbids leaving) veto the ghost-creep and
+  collapse-march legs and hold the choke standoff instead, twinning
+  change-only `MISSION_ENFORCED` (+300f heartbeat);
+  `HoldMainChokeEnforcementTest` 3/3 (veto holds, control marches,
+  one row per frame). PROOF GAME 20261101_151428 (TauCross PvZ,
+  VICTORY f9090, supply-50 exit, via `atlantis.sh` headless): trigger
+  NEVER fired - min dChoke 12, shadow only HOLD_MAIN/ATTACK_ENEMY_BASE.
+  The line never dresses within AT_STATION of the choke in this
+  vehicle, consistent with the 8/94 choke-focus census. The veto is
+  live-safe (game won, twins flow) but unproven; needs a melee-choke
+  pressure vehicle, not another macro.
 
 - Every item has a **stable number** (`#1`, `#2`, ...). Numbers are never
   reused and never renumbered, so an old commit or chat answer can always be

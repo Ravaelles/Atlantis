@@ -76,13 +76,36 @@ public enum ArmyMission {
             if (in == null) return;
 
             ArmyMission mission = decide(in);
+            current = mission;
             ShadowTwin.row(mission, in);
         } catch (Exception | Error ignored) {
         }
     }
 
     public static void clearForTests() {
+        current = null;
         ShadowTwin.clear();
+    }
+
+    /**
+     * The mission decided this frame (slice 3a): enforcement reads what
+     * the shadow decided, never the other way around. Null before the
+     * first sample of the frame.
+     */
+    public static ArmyMission current() {
+        return current;
+    }
+
+    private static ArmyMission current;
+
+    /**
+     * Slice 3a, first enforced mission: HOLD_MAIN_CHOKE forbids the
+     * out-march (collapse-to-anchor march, ghost creep past the choke -
+     * the mission's own forbidden-branches table). Every other mission
+     * leaves the branches alone.
+     */
+    public static boolean forbidsOutMarch() {
+        return current == HOLD_MAIN_CHOKE;
     }
 
     /**

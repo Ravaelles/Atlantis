@@ -74,9 +74,26 @@ public class BattleCommander extends Commander {
             return;
         }
 
+        if (holdForMission(unit, tactic, anchor)) return;
+
         if (huntLastContact(unit)) return;
 
         regroup(unit, tactic, anchor, leader, strategy);
+    }
+
+    /**
+     * Enforced mission (owner #232, slice 3a): with no target in reach
+     * and FIGHT tactic, a mission that forbids leaving holds its own
+     * ground instead of creeping after ghosts or marching the collapse
+     * out. Fights never reach here (handled above), FLEE rallies keep
+     * their path (retreat owns routing) - this owns only the blind
+     * wait no slot wants.
+     */
+    private static boolean holdForMission(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor) {
+        if (tactic != FightOrFlight.Tactic.FIGHT) return false;
+        if (!ArmyMission.forbidsOutMarch()) return false;
+
+        return MissionHold.hold(unit, anchor);
     }
 
     /**

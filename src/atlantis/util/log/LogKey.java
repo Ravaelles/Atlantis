@@ -159,6 +159,12 @@ public enum LogKey {
      */
     MISSION_SHADOW,
     /**
+     * Enforced mission hold (owner #232, slice 3a): the mission vetoed
+     * an out-march branch and held the line instead. Transitions always
+     * row, steady vetoes heartbeat - the same volume rule as the shadow.
+     */
+    MISSION_ENFORCED,
+    /**
      * A Nexus train/queue attempt (supply, remaining, engine answer).
      */
     TRAIN_ATTEMPT,
