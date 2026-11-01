@@ -13,10 +13,14 @@ import static tests.e2e.OpeningRunner.Row;
 import static tests.e2e.OpeningRunner.at;
 
 /**
- * NEXT #217: the post-expansion economy must keep producing. After the
- * natural Nexus warps (~f9393, supply 49) the sim built one Probe in
- * ~1800 frames while the bank climbed to 849; live 104542 keeps producing
- * through the same window (max bank below 50 is 178).
+ * NEXT #217: the post-expansion economy must keep producing. The doctrine
+ * (decided 2026-11-01, #234b): a saturated single base SAVES for expansion
+ * instead of trickling. Workers cap at saturation (25 on one base), the
+ * bank climbs toward the Nexus price instead of feeding a trickle, the
+ * Nexus warps, and probes resume on the new base. The old shape this
+ * replaces (1 probe per 1800 frames with the bank hoarding at 849 and no
+ * expansion ever warping) fails the assertions below: no Nexus, or probes
+ * that never resume after it.
  *
  * <p>Same Zealot-into-Goon rows as {@link SimOpeningToFiftyTest} (the
  * contract that owns the golden frames - this test owns only what happens
@@ -53,13 +57,17 @@ public class PostFiftyProductionTest extends AbstractTestWithUnits {
         OpeningRunner.PostFiftyResult postFifty = OpeningRunner.playToSupplyThenExtra(
             BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 2500, 30000);
 
-        int probes = postFifty.probeWarpsAfterMark();
-        if (probes < 6) {
+        int nexusFrame = postFifty.firstWarpFrameAfterMark("Nexus");
+        int probesAfterNexus = nexusFrame < 0 ? -1
+            : postFifty.warpsOfTypeAfterFrame("Probe", nexusFrame);
+        if (nexusFrame < 0 || probesAfterNexus < 1) {
             StringBuilder table = new StringBuilder();
             for (String row : postFifty.table) table.append(row).append("\n");
-            org.junit.jupiter.api.Assertions.fail(
-                "post-50 economy stalls: " + probes + " Probe warps in 2500 frames"
-                    + " after f" + postFifty.markFrame + ":\n" + table);
+            org.junit.jupiter.api.Assertions.assertTrue(nexusFrame >= 0,
+                "saturated single base saves for expansion - a Nexus warps "
+                    + "instead of the bank hoarding:\n" + table);
+            org.junit.jupiter.api.Assertions.assertTrue(probesAfterNexus >= 1,
+                "probes resume once the natural warps (Nexus f" + nexusFrame + "):\n" + table);
         }
     }
 

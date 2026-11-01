@@ -336,31 +336,26 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
-    0 cancels; suite 1887/1887. Open remainder: (1) resite-not-cancel on
-    proximity-finish with standing sibling, (2) SimOpeningToFifty re-golden
+    0 cancels; suite 1887/1887. Open remainder: (1) DONE 2026-11-01 -
+    resite-not-cancel on standing-covered sites at issue time
+    (`handleRefreshingPositionIfNeeded` resites via the adopt seam instead
+    of cancelling + same-tile re-request; pinned
+    `IssueRefreshResitesCoveredSiteTest`), (2) SimOpeningToFifty re-golden
     on catalogue, (3) chain deletion is #146.
-  - **#233** Expansion timing follows the bank doctrine in V2 demand (owner
-    2026-11-01: the 1700-frame banked stall is timing, not siting - the base
-    built fine at [94,112]). `ExpansionTiming` (one pure predicate, legacy
-    numbers verbatim) is read by legacy `ProtossShouldExpand`, board
-    `ExpansionGoal` and V2 `addExpansionGoal` (WANT_BANK fires the 777 rule
-    with NATURAL siting for the 2nd base; THICKET keeps old behavior).
-    Pinned: `ExpansionStoryTest` 7/7 + `ExpansionGoalTest` + legacy expansion
-    suites green. Wine proof 20261031_161221: V2 issued the only Nexus
-    (f6547, no doubles, 0 cancels, game to f10200) - legacy
-    `ProtossExpansionCommander` + `ProtossExpandNow` + their 2 tests deleted,
-    V2 anti-double pinned in `GoalSourcesTest`. Board-completion gate done.
   - **#234** V2 mid-game equilibrium stall (mega test `LongGameToSeventyTest`,
     14 s, milestone pipeline): gas branch landed, so Dragoons flow (14) and
     Zealots mix in on lings. The gate3 verdict went green via a 10 s busy
     latch (proven load-bearing by on/off A/B at stride 60: latched green,
     unlatched red on the same tree) because simultaneity (`gatewaysFree == 0`
     + rich bank in one update) almost never holds under coarse dispatch.
-    (b) Single-base equilibrium: capped workers (25) + sub-777 bank +
-    trickle army = no expansion, no probes, flat
-    bank ~200 forever (`PostFiftyProductionTest`: 4 probes in 2500f).
-    Decide: save-for-expansion doctrine vs trickle-army. Evidence: the
-    milestone snapshot (bank/gas/busy counts per 100f).
+    (b) Single-base equilibrium: DECIDED 2026-11-01 save-for-expansion.
+    Evidence (`PostFiftyProductionTest` table, solo): workers cap at 25 on
+    one base, the bank climbs 160->430 instead of feeding a trickle, the
+    Nexus warps (~f13920, bank 430->8), probes resume on the new base
+    (21->23). Old shape (1 probe/1800f, bank hoarding to 849, no expansion)
+    fails the rewritten test: Nexus warps after the mark AND probes resume
+    after it. Bleed covers the pressured half (replacements flow there).
+    Open: live proof of the pre-saturation window.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.

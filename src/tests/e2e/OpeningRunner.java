@@ -245,6 +245,29 @@ final class OpeningRunner {
 
             return count;
         }
+
+        /**
+         * First warp of a type after the mark, or -1. The doctrine pin
+         * reads expansion-then-resume off this, not off a probe count.
+         */
+        int firstWarpFrameAfterMark(String type) {
+            int first = -1;
+            for (SimDriver.WarpRecord record : log) {
+                if (record.frame > markFrame && record.type.equals(type)
+                    && (first < 0 || record.frame < first)) first = record.frame;
+            }
+
+            return first;
+        }
+
+        int warpsOfTypeAfterFrame(String type, int frame) {
+            int count = 0;
+            for (SimDriver.WarpRecord record : log) {
+                if (record.frame > frame && record.type.equals(type)) count++;
+            }
+
+            return count;
+        }
     }
 
     private static OpeningResult play(
