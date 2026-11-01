@@ -554,8 +554,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   Assimilator 30/85 via the legacy door). Exotics (Arbiter/Reaver/
   Shuttle/DT/Archon/Scout/Carrier) have 0 warps AND 0 dispatches but
   stay - ReaverChainTest/TemplarChainTest pin them; deletion needs
-  the V2-goal home first. NEXT: first per-gate producer deletion
-  with game proof.
+  the V2-goal home first. B1-PYLON LANDED 2026-11-01: the legacy
+  per-base Pylon producer (`ProducePylonNearEveryBase`, minted with no
+  supply-need gating) is deleted; openings stay on BO rows, blocks on
+  the V2 supply-pylon goal (pinned `blockedSupplyFeedsTopPylon`), and
+  expansions on catalogue support-Pylon requests (pinned
+  `unpoweredSitingQueuesSupportPylon`: unpowered siting queues a HIGH
+  Pylon instead of serving the tile). Commander call removed + class
+  deleted. Suite: Pylon batch 28/0. Open: per-gate game proof (a macro
+  game where the natural powers via support/V2 with no supply block).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
