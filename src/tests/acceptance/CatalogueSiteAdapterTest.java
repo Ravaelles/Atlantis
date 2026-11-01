@@ -416,9 +416,16 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
      */
     private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {
         private final atlantis.production.placement.PlacementReservation answer;
+        private final java.util.List<atlantis.placement.core.SupportRequest> support;
 
         ScriptedPlanner(atlantis.production.placement.PlacementReservation answer) {
+            this(answer, java.util.Collections.emptyList());
+        }
+
+        ScriptedPlanner(atlantis.production.placement.PlacementReservation answer,
+                        java.util.List<atlantis.placement.core.SupportRequest> support) {
             this.answer = answer;
+            this.support = support;
         }
 
         @Override
@@ -432,5 +439,51 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         ) {
             return answer;
         }
+
+        @Override
+        public java.util.List<atlantis.placement.core.SupportRequest> drainSupportRequests() {
+            return new java.util.ArrayList<>(support);
+        }
+    }
+
+    /**
+     * B1 (owner #147, Pylon family): the expansion-power job of the
+     * deleted per-base Pylon producer lives here - siting a Gateway on
+     * an unpowered tile queues the support Pylon with high priority
+     * instead of serving the tile, so the new base gets power first.
+     */
+    @Test
+    public void unpoweredSitingQueuesSupportPylon() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 8);
+            Construction construction = constructionFor(AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+            ScriptedPlanner planner = new ScriptedPlanner(
+                atlantis.production.placement.PlacementReservation.failure(),
+                java.util.Collections.singletonList(
+                    new atlantis.placement.core.SupportRequest(AUnitType.Protoss_Pylon, 25, 25)));
+
+            APosition site = CatalogueSiteAdapter.siteFor(planner, probe, AUnitType.Protoss_Gateway, construction);
+
+            assertNull(site, "no tile served without power - support instead");
+            boolean queued = false;
+            for (ProductionOrder row : Queue.get().allOrders().list()) {
+                if (row.unitType() != null && row.unitType().isPylon()
+                    && row.aroundPosition() != null
+                    && row.aroundPosition().tx() == 25 && row.aroundPosition().ty() == 25
+                    && row.priority() == atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH) {
+                    queued = true;
+                }
+            }
+            assertTrue(queued, "the support Pylon lands in the queue with high priority: "
+                + Queue.get().allOrders().list());
+        });
     }
 }
