@@ -587,7 +587,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   #174710 no-second-row rewritten onto V2 inFlight (which covers
   PREPARING sites - stronger than the old next-2 cap). Legacy producer
   + class + reason plumbing deleted. 17/0. Open: game proof (gas
-  timing vs legacy: Assimilator should warp as the Core lands).
+  timing vs legacy: Assimilator should warp as the Core lands). PROOF
+  2026-11-01 (vehicle game 20261101_223235 TauCross PvZ, frozen jar
+  WITH the exemption fix, loss f13200): ZERO `REFRESH_CANCEL` rows
+  (was 25-39/game), 1 Assimilator warped, gas 688 at end (was 0.0).
+  #237 (geyser self-block) CLOSED here and its item deleted per rule.
   B1-CORE LANDED 2026-11-01: `CyberneticsCoreGoal` (gateway standing,
   no Core) already had a feeder home (`core` served); pinned
   `gatewayExistsFeedsCoreRow` (goal-to-queue). The #58 requeue and the
@@ -604,42 +608,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   f4296, warping f4355 (Gateway f2445 -> Core ~31 s later - healthy,
   no legacy wait needed); all 3 Pylons V2 on time; natural Nexus
   f6190 (expansion taken); Assimilator 70 requests / 33 starts / 0
-  completions / gas 0.0 = #237 live hole above (NOT a B1 regression -
-  same siting door pre/post). Forge untriggered (no DT evidence) -
+  completions / gas 0.0 = #237 live hole (NOT a B1 regression -
+  same siting door pre/post; since fixed + proven, item closed and
+  deleted per rule). Forge untriggered (no DT evidence) -
   still open. #204: no losing fight, no floor rows - still open.
-- **#237** Assimilator never warps despite 70 requests (vehicle
-  20261101_215027 TauCross, B1-batch game, WIN f8640): 70
-  CONSTRUCTION_REQUESTED + 33 BUILDING_STARTED on the same tile
-  [7,39], 32 CONSTRUCTION_CANCEL ("Assimilator Can't build here"),
-  zero completions, gas 0.0 the whole game (won on Zealots anyway).
-  Discriminated, NOT B1-related: the deleted producers queued through
-  the same siting door (`AddToQueue` without position ->
-  `GasBuildingPositionFinder` geyser tile), and the cancel lives in
-  the shared refresh path (`finalRefreshBeforeIssuingOrderFailed`,
-  every 97th frame). Open mechanism: either the builderless window
-  self-cancels (`builder == null` fails the check before the geyser
-  exemption is even reached), or `standsOnItsGeyser` misses a known
-  geyser - `BUILDER_STATE` twins are absent (BuilderLog twin silent
-  here), so the builder's side is unread. Possible #145 interaction:
-  rotating builders (117->129->151...) may never stand still long
-  enough for the refused-tile memory to engage. Next: instrument the
-  cancel with builder id + stillness + isConstructing, then one
-  vehicle; do NOT touch B1 (V2 authored correctly: 1 Core dispatch ->
-  warp f4296-4355, 3 Pylons on time, all from V2).
-  ROOT CAUSE FOUND 2026-11-01 (vehicles 20261101_220526 + 221437,
-  `REFRESH_CANCEL`/`GHOST_DARK_SKIP`-style twins added for this):
-  `REFRESH_CANCEL` named the blocker as the geyser itself
-  (`VespeneG@7,39#82`) - `OverlapsOurStandingBuilding` runs BEFORE
-  the geyser exemption in `CanPhysicallyBuildHere.check`, so every
-  gas site reads as blocked by its own geyser: 25 cancels in one
-  game with `engine=true`, builder attached but still and never
-  constructing. FIXED 2026-11-01: the geyser exemption moved above
-  the overlap guard (dead code made live), pinned red-first
-  (`geyserDoesNotBlockItsOwnRefinery`: red pre-fix, green post-fix;
-  gas batch 29/0). The builder-stillness half is unproven but moot
-  now - with the site legal the refresh stops cancelling and the
-  normal issue path owns the builder. Open: proof vehicle (gas
-  warps on the frozen jar).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
