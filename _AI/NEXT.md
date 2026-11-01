@@ -479,9 +479,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     is the bar. Note: the #145.1 proximity resite rides the legacy
     `findPositionForNewBuilding` seam (same as adopt) - #146 migrates both
     to the catalogue together. Deletion stays owner-gated (WO order).
+    GUARD 2026-11-01 at HEAD: `createPlacementPlanner()` unconditionally
+    returns `CataloguePlacementPlanner`, legacy planner sits in `src-old/`,
+    and the #145.1 proximity resite rides the same legacy
+    `findPositionForNewBuilding` seam as adopt - #146 migrates both seams
+    to the catalogue together. No code touched.
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
     scheduling. Exit: V2 LIVE by default with parity; legacy queue remains the
     only queue until then.
+    GUARD 2026-11-01 at HEAD: `Queue` is still the singleton queue
+    (`Queue extends AbstractQueue`, static instance) - no parallel demand
+    path was introduced; the deletion wave waits on #144-#147 parity runs
+    (review 2026-11-09). No code touched.
 - **#155** `ProduceBuilding` gates are an ordered registry; the core-single-
   instance deadlock is fixed. Narrow `power-not-funded` and `live-construction`
   gates remain stub-pinned by design. Live resite proof rows are oid-linked;
@@ -504,14 +513,20 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   including objective, hall of fame, promotion, manifests, gradient and sim
   batch. Efficacy remains unproven; duel noise dominates at K=3. Require K-of-N
   replicates before promotion.
+  CHECK 2026-11-01: still parked (review 2026-11-09 is future); no
+  replicates run, nothing promoted.
 - **#164** OpenBW takeover: `/sc-ai/OpenBW/openbw` is canonical; the harness
   copy is a build artifact. Install engine changes only through
   `scripts/build-openbw.sh --install`, then run host smoke and engine tests.
   Wine remains the 1v1 proof vehicle; `M&M_v_ZealDrag` is the OpenBW vehicle.
   Do not touch `src/main/Main.java`.
+  CHECK 2026-11-01: worktree carries only the two pre-existing foreign
+  modifications (archunit store + `run-wine-full.sh`) - `Main.java` and
+  the harness untouched by this session; canonical-engine rule holds.
 - **#166** Independent OpenBW work is scoped in `OPENBW-HANDOFF.md` (T1–T7,
   M1). No done-signal yet; do not take over or verify until handoff, then rerun
   the host smoke and engine tests. Owner decisions are tracked separately.
+  CHECK 2026-11-01: still no done-signal; nothing taken over.
 
 - **#170** Choke doctrine + SquadScout (high priority): do not push a narrow
   choke without superiority; defend from a standoff so the enemy commits into
@@ -526,9 +541,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   gates 8-63, no duplicates, no leak - naturals connected here as predicted
   in #213); the single CONSTRUCTION_CANCEL is the known proximity-finish
   absorption (Pylon [57,117]), zero cover false positives.
+  DATUM 2026-11-01 (94 retained runs, CLUSTER focus census): only 8 games
+  ever focus a choke (focus/anchor choke strings); the rest focus coords
+  ([119,10] x7788, [95,119] x3613) or Nexus anchors. Choke-funnel proof
+  (bait/collapse) has almost no vehicle in this tree; 202204's 4000-frame
+  contactless flap (130/184 foe -1, #232 slice 2) is no-contact bulk but
+  milling, not holding - not the hold shape either.
 - **#171** High-ground choke hold: high side is preferred by the sim-pinned
   `HighGround`/`ChokeStandoff` path; it correctly stays silent vs ranged
   enemies. Live proof still needs a melee-choke game.
+  DATUM 2026-11-01: same 8/94 choke-focus census as #170 - the melee-choke
+  vehicle is scarce in this tree (TauCross naturals stay connected, no
+  island maps); still needs a game, not a rule.
 - **#172** Region-aware escape: sim-pinned walkable candidates and
   corner/obstacle/enemy scoring are implemented. Open: live superiority proof
   and tuner efficacy. No center-pull prior (it would bias against measured edge
@@ -568,6 +592,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
 - **#181** Split-cluster reinforcement is sim-pinned (fresh-contact reinforce,
   ghost-contact rejection, ongoing-fight priority). Timeouts were the Regions
   path. Open: live recurrence of the park-while-fighting shape.
+  DATUM 2026-11-01 (94 retained runs, STALL twin): same census as #182 -
+  stalls are sparse small-count rows, never a parked army beside an
+  ongoing fight; the recurrence vehicle is still missing.
 
 Priority note: #170-#184 slot BELOW the production ratchet (#45, #144-147) -
 small sim-pinned slices, game-verified one at a time. Combat logic stays out of
@@ -577,6 +604,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
 - **#182** FormationHold's contact veto and holder-unstick are sim-pinned; no
  200f stand has recurred. Pocket geometry explains the remaining stand-and-trade
   shape. FrozenWatch's DEPLOYED gate stays (decision recorded).
+  DATUM 2026-11-01 (94 retained runs, STALL twin): 75 games carry STALL
+  rows but sparse (max 41 in 235312) with small stalled counts (max 12 in
+  184042; single-unit stalls reach still=10k) - no army-mass stand signal
+  anywhere; the 200f line-stand recurrence still needs its pinned shape,
+  not this proxy.
 - **#183** Steady holders cannot use manager-history `isUnderAttack()` because
   HP is refreshed every frame. `DuelMemory` now latches battle-frame damage; it
   is a backstop, while VETO/guns-in-range usually decide first. The one active
@@ -584,6 +616,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   VERIFIED 2026-10-28: zero production callers of `isUnderAttack()` outside
   `AUnit` itself - the only `isUnderAttack(n)` reader is `UnitStateManager`
   (the HP trail infrastructure, not a decision) plus Terran-only turret logic.
+  RE-VERIFIED 2026-11-01 at HEAD: only `AUnit` + `UnitStateManager`
+  reference it anywhere in production code - the migration holds, no new
+  callers (not even Terran).
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;
   spec and gates are in `_AI/NN-PLAN.md`. Test scope now has five zombie policies,
@@ -604,6 +639,11 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   named in-code, not designed: ranged pressers that outrange the guns
   (`DragoonsVsZerglingsTest` note). No uncalibrated doctrine pinned -
   the threat pick wants live calibration first (same rule as #92).
+  DATUM 2026-11-01 (audit v4): zero kiting-test failures in the full
+  suite (none of `DragoonPincerKite`, `PocketVsOpenField`,
+  `DragoonsVsZerglings`, `DuelKite` in the 10-class FAIL list) - the
+  Stage B gate holds through the resite tree; harder shape + live
+  calibration still open.
 - **#187** Scout should remain near a discovered enemy main until chased out;
   time cutoff and separation fallback are sim-pinned. `SCOUT_WATCH` now records
   the trail. First live trail never discovered the enemy main, so discovery
@@ -683,7 +723,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   the answer is resolved (`ProtossDefendFocusPoint`); pinned
   `defendedPlaceRowNamesKindAndTileOnce` (world-free, with the null-tile
   dash). Formation adaptation still open (no formation/cluster code reads
-  the kind yet - a doctrine slice: which kinds change slots, sim-pinned). Shared input resolver
+  the kind yet - a doctrine slice: which kinds change slots, sim-pinned).
+  INVENTORY 2026-11-01 at HEAD: exactly 3 files reference `DefendedPlace`
+  (`DefendedPlace`, `ProtossDefendFocusPoint`, `ArmyBoard`) - zero readers
+  in `combat/formation/`, `combat/cluster/`, `FormationHold`. The slice
+  boundary is drawn (producer + board row exist, no consumer); which kinds
+  change slots is still a doctrine decision, not an implementation gap.
+  Shared input resolver
   LANDED 2026-10-26 (commit `ea378db7f`): `HomeGround` in
   `atlantis.combat.cluster` resolves the main base + main choke once per
   resolution - `ClusterRally` (standoff, no-contact hold, guard slot,
@@ -745,7 +791,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   zero Psionic_Storm rows, Corsairs in only 2 runs (222936: 2, 115405: 3
   with Observatory at f21433) - and all vanish from every record (no
   telemetry, no order tags, no deaths). Full expression unproven; needs a
-  game that techs there AND fights with it.
+  game that techs there AND fights with it. TRACE GAP (game 115405): the 3
+  warps (f12652/13694/15839) leave 0 telemetry/death/attack rows - see
+  #201 deep-dive; either air units never enter the twins or the warps die
+  off-record.
 - **#200** Against early Zerg, fewer than five combat units hold at the main
   when the midpoint exceeds six tiles, leaving room for workers to join
   (`NoContactHoldTest`). Extended 2026-10-26 by the first-Dragoon gate
@@ -777,6 +826,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   and all vanish from every record (no telemetry, no order tags, no deaths,
   no attacks). A build alone proves nothing; the hunt still needs a game
   where Corsairs actually engage.
+  DEEP-DIVE 2026-11-01 (game 115405): the 3 Corsairs warp f12652/13694/
+  15839 at [20,41] yet produce 0 UNIT_TELEMETRY + 0 UNIT_DIED + 0 attack
+  rows; the only Corsair records are 59 V2_DISPATCH rows reading
+  "facility unfinished #237" + 1 SCHEDULE_REFUSED. Either air units never
+  enter the twins, or the warps die instantly off-record - the trace gap
+  is now the shape, not just the missing hunt. No fix (owner: no
+  opportunistic macros for rare shapes).
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
@@ -1021,6 +1077,9 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   second half and live proof. Parked 2026-10-27 (owner: no young-base
   stall has ever shown; 222936 ran a healthy bank through the whole
   game - revisit when a game shows the stall, not before).
+  CHECK 2026-11-01: still parked; the 94-run census shows no young-base
+  stall exhibit either (one-base long games bank rich or spend, never
+  stall at 250).
 - **#213** Pylon #3-4 sited at the natural (owner live finding): the
   `exclude(natural).last()` fallthrough in `PylonPosition.nearToForPylon`
   leaks the natural in whenever `Bases.natural()` is null with two bases
