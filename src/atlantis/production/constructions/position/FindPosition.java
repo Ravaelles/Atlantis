@@ -10,7 +10,6 @@ import atlantis.map.region.MainRegion;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.base.FindPositionForBase;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
-import atlantis.production.constructions.position.terran.SupplyDepotPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -64,33 +63,6 @@ public class FindPosition {
         }
 
         // =========================================================
-
-        else if (building.isSupplyDepot()) {
-            APosition position = SupplyDepotPositionFinder.findPosition(builder, construction, nearTo);
-            if (position == null) {
-                ErrorLog.printMaxOncePerMinute(
-                    "SupplyDepotPositionFinder returned null \n    / near:" + nearTo
-                        + "\n    Fallback to default now"
-                );
-
-//                AUnit near = Select.ourBuildings().notInRadius(3, nearTo).random();
-//                if (nearTo != null && nearTo.distTo(near) >= 3) {
-//                    position = findForBuilding(builder, building, construction, near, 35);
-//
-//                    if (position == null) {
-//                        ErrorLog.printMaxOncePerMinute(
-//                            "SupplyDepotPositionFinder CONSEQUENTLY returned null \n    / near:" + nearTo
-//                                + "\n    There's no hope now."
-//                        );
-//                    }
-//                    else {
-//                        ErrorLog.printMaxOncePerMinute("Interestingly, Depot fix helped this time. Near: " + near);
-//                    }
-//                }
-            }
-
-            return position;
-        }
 
         // === Combat building =====================================
 

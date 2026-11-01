@@ -8,12 +8,10 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructions.position.FindPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.workers.FreeWorkers;
 
 public class PylonPosition {
     /**
@@ -35,17 +33,6 @@ public class PylonPosition {
      * per-siting state, reset around each pin.
      */
     public static String lastReason = "-";
-
-    public static HasPosition nextPosition() {
-//        return APositionFinder.findStandardPosition(
-        return FindPosition.findForBuilding(
-            FreeWorkers.get().first(),
-            AUnitType.Protoss_Pylon,
-            null,
-            defineNearTo(),
-            37
-        );
-    }
 
     private static HasPosition defineNearTo() {
         int pylons = Count.pylons();

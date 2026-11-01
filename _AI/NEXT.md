@@ -538,6 +538,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     the game proves no-regression on the live path, not
     catalogue-answers-base-live; that half rides the synthetic pin +
     a vehicle that actually exercises the fallback.
+    A3 LANDED 2026-11-01 (dead-code deletion, Protoss-only D8): removed
+    the Terran depot siting files (`SupplyDepotPositionFinder`,
+    `PositionsAroundMainBase`, `BuildablePositionsAroundMainBase`,
+    `TerranSupplyDepot`, `BarracksPosition`) + the `isSupplyDepot`
+    branch in `FindPosition` + dead `nextPosition()` in `PylonPosition` /
+    `GatewayPosition` (whole file). All callers were commented-out
+    painter lines or the depot branch itself; `CacheKeyTest` mentions
+    them in a comment only. Fast gate 1058/1058 (2 arch advisory
+    pre-existing). No game proof needed: the 3 proof games show zero
+    activity on these paths (0 `WINE_DEBUG` legacy-search mentions),
+    and there is no live demand that could reach them.
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
     scheduling. Exit: V2 LIVE by default with parity; legacy queue remains the
     only queue until then.
