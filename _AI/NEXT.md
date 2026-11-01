@@ -561,8 +561,16 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   expansions on catalogue support-Pylon requests (pinned
   `unpoweredSitingQueuesSupportPylon`: unpowered siting queues a HIGH
   Pylon instead of serving the tile). Commander call removed + class
-  deleted. Suite: Pylon batch 28/0. Open: per-gate game proof (a macro
-  game where the natural powers via support/V2 with no supply block).
+  deleted. Suite: Pylon batch 28/0. PROOF 2026-11-01 (vehicle game
+  20261101_211851 TauCross PvZ, frozen jar WITH deletion, loss f8527):
+  all 3 Pylons V2-dispatched on time (f1131 [99,108] 8/9, f3287
+  [110,124] 15/17, f6565 [81,113] rebuild at 8/8 during collapse) -
+  zero deletion-attributable gaps (the deleted producer fires only
+  after f10080; game ended f8527). The f3300-6500 blocks are a
+  probe-raid collapse (8 Probes die f3963-4338, minerals stranded),
+  not supply-logic failure. OPEN: expansion-power half (no natural
+  taken this game - support-Pylon at a natural still needs a live
+  expansion game).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
