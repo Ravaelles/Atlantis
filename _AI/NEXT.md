@@ -481,6 +481,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   pins; game proof needs a Stargate game). #203 brake twin LANDED.
   #223 V2_DETECTION_GOALS twin LANDED (attribution instrument).
   B0 LANDED 2026-11-01 + B1a/B1b dead-race dispatch deleted.
+  B1c LANDED 2026-11-01 (authorship census by cid/oid join, 98 games):
+  UNITS are V2-only - Zealot 0/1026 + Dragoon 0/884 legacy-door warps,
+  zero exceptions. BUILDINGS are dual-authored live (Pylon 255/661,
+  Gateway 120/274, CyberneticsC 38/97, Nexus 22/50, Forge 18/28,
+  Assimilator 30/85 via the legacy door). Exotics (Arbiter/Reaver/
+  Shuttle/DT/Archon/Scout/Carrier) have 0 warps AND 0 dispatches but
+  stay - ReaverChainTest/TemplarChainTest pin them; deletion needs
+  the V2-goal home first. NEXT: first per-gate producer deletion
+  with game proof.
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
