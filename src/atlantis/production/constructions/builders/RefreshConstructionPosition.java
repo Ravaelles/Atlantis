@@ -11,6 +11,8 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
@@ -63,6 +65,7 @@ public class RefreshConstructionPosition {
                 // lands here failed for other reasons (power, unexplored,
                 // transient traffic) with a stuck builder or none - cancel
                 // and re-request keeps the demand alive.
+                twinRefreshCancel(unit, construction, type, buildPosition, builder);
                 construction.cancel(type + " Can't build here");
 
                 AConsole.errPrintln(LogLevel.HIGH, "Can't build here " + type + ", so cancel + re-request");
@@ -75,6 +78,42 @@ public class RefreshConstructionPosition {
             }
         }
         return false;
+    }
+
+    /**
+     * #237: names who the refresh cancel strands - the builderless
+     * window vs a stuck builder vs a constructing unit read
+     * identically in the ledger today ("Can't build here" + re-request
+     * every ~100 frames, gas 0.0 all game). The twin carries the
+     * discriminator: which builder (or none), whether it had moved
+     * recently, and whether the engine thought it was constructing.
+     */
+    private static void twinRefreshCancel(
+        AUnit unit, Construction construction, AUnitType type, APosition buildPosition, AUnit builder
+    ) {
+        try {
+            boolean still;
+            try {
+                still = builder == null || builder.lastPositionChangedMoreThanAgo(30 * 8);
+            } catch (Exception ignored) {
+                still = true;
+            }
+            boolean constructing;
+            try {
+                constructing = builder != null && builder.isConstructing();
+            } catch (Exception ignored) {
+                constructing = false;
+            }
+            EventLog.key(LogKey.REFRESH_CANCEL)
+                .param("unit", unit == null ? -1 : unit.id())
+                .param("type", type == null ? "-" : type.name())
+                .param("tile", buildPosition == null ? "-" : buildPosition.toString())
+                .param("builder", builder == null ? -1 : builder.id())
+                .param("still", still)
+                .param("constructing", constructing)
+                .log(A.now(), A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 
     protected static APosition refreshPosition(Construction construction) {

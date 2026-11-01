@@ -291,6 +291,13 @@ public enum LogKey {
      */
     SUPPLY_BLOCKED,
     /**
+     * The refresh layer cancelled a build for position (unit, type, tile,
+     * builder or -1, still, constructing): the #237 discriminator between
+     * a builderless-window self-cancel, a stuck builder, and a unit the
+     * engine thought was constructing. Fires with the cancel itself.
+     */
+    REFRESH_CANCEL,
+    /**
      * The no-contact hold owns the unit (unit, tile, why): the blind
      * wait no slot wants. Held (marched to the halfway point) or
      * throttled-stand (latch refused the re-issue). Change-gated per

@@ -64,8 +64,7 @@ public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
     }
 
     @Test
-    public void warpedRefinerySiteIsNeitherCancelledNorReRequested() {
-        FakeUnit probe = fake(AUnitType.Protoss_Probe, 80, 118);
+    public void warpedRefinerySiteIsNeitherCancelledNorReRequested() {        FakeUnit probe = fake(AUnitType.Protoss_Probe, 80, 118);
 
         world(30, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 7, 44),
@@ -103,6 +102,47 @@ public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
         });
 
         assertTrue(fired, "the occupancy-tick frame was reached - else this test proves nothing");
+    }
+
+    @Test
+    public void builderlessCancelNamesItself() {
+        // #237: a builderless gas row cancelled itself every ~100 frames
+        // live ("Can't build here", gas 0.0 all game) with no twin naming
+        // the builderless window vs a stuck builder vs an actually
+        // constructing unit. The REFRESH_CANCEL row carries the
+        // discriminator now.
+        world(100, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 7, 44),
+            fake(AUnitType.Protoss_Probe, 80, 118)
+        ), fakeEnemies(), () -> {
+            // 97 is the refresh-tick frame (everyNthGameFrame(97)).
+            if (atlantis.game.A.now() != 97 || fired) return;
+
+            fired = true;
+            ConstructionRequests.constructions.clear();
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            currentMinerals = 300;
+            currentGas = 200;
+
+            APosition site = APosition.create(86, 118);
+            Construction orphan = new Construction(AUnitType.Protoss_Assimilator);
+            orphan.setPositionToBuild(site);
+            ConstructionRequests.addConstruction(orphan);
+            atlantis.util.log.EventLog.clearForTests();
+
+            boolean cancelled = RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
+                null, orphan, AUnitType.Protoss_Assimilator, site, null);
+
+            assertTrue(cancelled, "builderless + failed check cancels");
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"key\":\"REFRESH_CANCEL\""),
+                "the cancel names itself: " + atlantis.util.log.EventLog.toJsonLines());
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"builder\":-1"),
+                "no builder attached: " + atlantis.util.log.EventLog.toJsonLines());
+        });
+
+        assertTrue(fired, "the refresh-tick frame was reached - else this test proves nothing");
     }
 
     @Override
