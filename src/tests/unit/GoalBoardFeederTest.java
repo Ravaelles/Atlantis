@@ -435,4 +435,41 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             assertTrue(forgeRow, "DT evidence with no Forge feeds one Forge row");
         });
     }
+
+    @Test
+    public void gatewayExistsFeedsCoreRow() {
+        // B1 Core family: the V2 home must serve what the deleted legacy
+        // producer served - a standing Gateway with no Core funds a Core row.
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Pylon, 22, 22),
+            fake(AUnitType.Protoss_Gateway, 24, 24)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            BoardState opening = BoardState.builder()
+                .minerals(400).supply(20, 25)
+                .workers(10).bases(1).gateways(1).army(4)
+                .forge(false)
+                .seconds(300)
+                .build();
+            String fed = GoalBoardFeeder.ensure(opening);
+            assertTrue(GoalBoardFeeder.wantedGoal("core"),
+                "a Gateway with no Core wants the Core goal");
+
+            boolean coreRow = false;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().isCyberneticsCore()) {
+                    coreRow = true;
+                    break;
+                }
+            }
+            assertTrue(coreRow, "a standing Gateway funds one Core row, got: " + fed);
+        });
+    }
 }

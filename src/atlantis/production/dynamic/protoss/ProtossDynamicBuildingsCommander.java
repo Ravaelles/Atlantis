@@ -37,24 +37,10 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     private static boolean topPriority() {
         TrimQueue.trimIfTooBig(CurrentQueue.get());
 
-        if (ProduceCyberneticsCore.produce()) {
-            reportFirstAssimilatorBlockedBy("CyberneticsCore");
-
-            return true;
-        }
         if (ProduceFirstAssimilator.produce()) return true;
         if (ProduceObservatory.produce()) return true;
 
         return ProduceRoboticsFacility.produce();
-    }
-
-    private static void reportFirstAssimilatorBlockedBy(String reason) {
-        if (Have.assimilator() || !Have.cyberneticsCore()) return;
-
-        ProduceFirstAssimilator.reason = "EarlierPriority:" + reason;
-        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-            "First Assimilator diagnostic: producer=" + ProduceFirstAssimilator.reason
-        );
     }
 
     protected static boolean isItSafeToAddTechBuildings() {

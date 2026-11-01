@@ -1,7 +1,10 @@
 package tests.unit;
 
-import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
-import atlantis.production.dynamic.protoss.buildings.ProduceCyberneticsCore;
+import atlantis.decisions.board.BoardState;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.goalboard.GoalBoardFeeder;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;
@@ -15,9 +18,10 @@ import static tests.fakes.FakeUnitHelper.merge;
 /**
  * NEXT #58 follow-up (game 152437): after a cancelled Core, zero Core lines
  * (ADDED/NOT_READY/QUEUE_BASE) appeared for 200+ seconds while the bank
- * swung 100-440 - either the buildings commander never ran or the Core
- * producer never said yes. Replicates that late-game state: 48 supply,
+ * swung 100-440. Replicates that late-game state: 48 supply,
  * 300 bank, 10 Zealots, 2 Gateways, 5 Pylons, no Core, Zerg enemy.
+ * B1: the V2 goal + feeder own the requeue now - a missing Core with
+ * the bank behind it feeds a Core row.
  */
 @Tag("production")
 public class CoreRequeueAfterCancelTest extends AbstractTestWithWorld {
@@ -39,10 +43,6 @@ public class CoreRequeueAfterCancelTest extends AbstractTestWithWorld {
 
     @Test
     public void coreProducerSaysYesWhenCoreMissing() {
-        currentMinerals = 300;
-        currentSupplyUsed = 48;
-        currentSupplyTotal = 60;
-
         FakeUnit[] zealots = new FakeUnit[10];
         for (int i = 0; i < 10; i++) zealots[i] = fake(AUnitType.Protoss_Zealot, 30 + i, 20);
 
@@ -56,15 +56,23 @@ public class CoreRequeueAfterCancelTest extends AbstractTestWithWorld {
             ),
             zealots
         ), fakeEnemies(fake(AUnitType.Zerg_Zergling, 60, 20)), () -> {
-            // The commander is throttled to every 17th frame - assert there.
+            // The frame the legacy commander ran on (every 17th).
             if (atlantis.game.A.now() != 17) return;
 
-            assertTrue(
-                new ProtossDynamicBuildingsCommander().applies(),
-                "commander must run in this state");
-            assertTrue(
-                ProduceCyberneticsCore.produce(),
-                "Core missing, bank 300, 10 Zealots vs Zerg - producer must say yes");
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            BoardState requeue = BoardState.builder()
+                .minerals(300).supply(48, 60)
+                .workers(10).bases(1).gateways(2).army(10)
+                .enemyRace("Zerg")
+                .seconds(600)
+                .build();
+            String fed = GoalBoardFeeder.ensure(requeue);
+
+            assertTrue(fed.contains("core"),
+                "cancelled Core, bank 300 behind it: the V2 goal feeds a Core row, got: " + fed);
         });
     }
 }

@@ -1,24 +1,26 @@
 package tests.acceptance;
 
+import atlantis.decisions.board.BoardState;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.dynamic.protoss.buildings.ProduceCyberneticsCore;
+import atlantis.production.goalboard.GoalBoardFeeder;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Owner 2026-10-18: one Cybernetics Core per game, never two coming.
  * Measured (OpenBW 225045): a dynamic Core row warped 16 s after the BO
- * Core - the in-flight guards (completed / inProduction / queue-top-3)
- * are all blind to a picked-early PREPARING site, so a rich bank
- * re-ordered what was already coming.
+ * Core - the in-flight guards were all blind to a picked-early PREPARING
+ * site, so a rich bank re-ordered what was already coming.
+ * B1: the V2 feeder owns the dedup now - a PREPARING site counts as
+ * in-flight, so a wanted Core goal feeds no second row.
  */
 public class SecondCoreBlockedWhileOneComingTest extends WorldStubForTests {
 
@@ -52,19 +54,24 @@ public class SecondCoreBlockedWhileOneComingTest extends WorldStubForTests {
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
 
-            currentMinerals = 600;
-            currentSupplyUsed = 55;
-            currentSupplyTotal = 60;
-
             // Picked-early site, no builder yet - invisible to every
             // in-flight guard the producer has.
             Construction site = new Construction(AUnitType.Protoss_Cybernetics_Core);
             site.setStatus(atlantis.production.constructions.ConstructionOrderStatus.PREPARING);
             ConstructionRequests.constructions.add(site);
 
-            assertFalse(
-                ProduceCyberneticsCore.produce(),
-                "a Core is coming (PREPARING site) - no dynamic second");
+            BoardState rich = BoardState.builder()                .minerals(600).supply(55, 60)
+                .workers(10).bases(1).gateways(1).army(6)
+                .seconds(500)
+                .build();
+            GoalBoardFeeder.ensure(rich);
+
+            int cores = 0;
+            for (ProductionOrder row : Queue.get().allOrders().list()) {
+                if (row.unitType() != null && row.unitType().isCyberneticsCore()) cores++;
+            }
+            assertTrue(cores == 0,
+                "a Core is coming (PREPARING site) - the feeder queues no dynamic second");
         });
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");
