@@ -123,7 +123,26 @@ public final class ArmyBoard {
         lastAlphaBan = null;
         lastAlphaStrength = Integer.MIN_VALUE;
         lastValuesFrame = Integer.MIN_VALUE;
+        lastDefendedPlace = null;
         ACherryVis_GlobalState.all.clear();
         ACherryVis_GlobalValues.clearForTests();
+    }
+
+    private static String lastDefendedPlace = null;
+
+    /**
+     * Which ground the mission defends (NEXT #194): the DefendedPlace
+     * answer kind and tile, change-only like every other board key. The
+     * focus keys say WHERE the line looks; this one says WHY there (which
+     * ground won: breach, choke, base). Called where the answer is
+     * computed, never on the hot path (TTL-memoized supplier).
+     */
+    public static void noteDefendedPlace(String kind, HasPosition tile) {
+        if (!ACherryVis.isEnabled()) return;
+
+        String value = kind + " " + (tile == null ? "-" : "[" + tile.tx() + "," + tile.ty() + "]");
+        if (value.equals(lastDefendedPlace)) return;
+        lastDefendedPlace = value;
+        ACherryVis_GlobalState.logNewState("DefendedPlace", value);
     }
 }

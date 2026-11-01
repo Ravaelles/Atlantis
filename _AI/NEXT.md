@@ -41,7 +41,7 @@ trade a measurement for an explanation (§3a).
 
 ## Process (normative)
 
-- **#232 — Mission-driven command (priority 0, DESIGN ONLY).** Full spec:
+- **#232 — Mission-driven command (priority 0).** Full spec:
   `_AI/MISSION-DRIVEN-COMMAND.md`. One named Mission owns the cluster
   (HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE / STAGE_MIDDLE /
   HOLD_MIDDLE / ATTACK_ENEMY_BASE); posture, tactic, approach and
@@ -53,6 +53,18 @@ trade a measurement for an explanation (§3a).
   own commit, suite green, game proof where named. Includes the
   post-mortem of how command scattered (7 mechanisms) and proposed
   process rules P1–P7.
+  SLICES 1a/1b LANDED 2026-10-30/31 (`ArmyMission` vocabulary + pure
+  `decide` + `ShadowTwin`, sampled every frame from `BattleCommander`,
+  steering nothing; `ArmyMissionTest` table pins + `ArmyMissionShadowTest`
+  wiring pins). SLICE 2 DATUM 2026-11-01 (game 20261030_202204, retained):
+  posture flaps ATTACK/DEFEND 40+ times f13981-f18085 with the army ~90
+  tiles out and no contact (CLUSTER foe -1 in 130/184), 417
+  FORMATION_ORDER rows in the same window (reform every ~10 frames),
+  shadow mirrors the flap 1:1 (it reads posture - congruence by
+  construction, not an independent signal). Worst offender: the flap
+  itself (indecision - no mission sticks for 4000 frames while the line
+  mills around unseen). Enforcement order per spec: HOLD_MAIN_CHOKE
+  first (forbid the out-march, downgrade blocked attacks).
 
 - Every item has a **stable number** (`#1`, `#2`, ...). Numbers are never
   reused and never renumbered, so an old commit or chat answer can always be
@@ -523,6 +535,12 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   braking, windup, latency and chaser commitment. Live 1Drag retained wins and
   the V2 hit band, but did not isolate a gain. The 0–2-hit target needs harder
   Stage B scenarios; the A/B toggle remains available.
+  DATUM 2026-11-01 (30-issue package): the Stage B gate holds -
+  `DragoonPincerKiteTest` 2/2 + `PocketVsOpenFieldKiteTest` green (wipe
+  pinned, 0-2 hits pinned vs chase-nearest). The missing harder shape is
+  named in-code, not designed: ranged pressers that outrange the guns
+  (`DragoonsVsZerglingsTest` note). No uncalibrated doctrine pinned -
+  the threat pick wants live calibration first (same rule as #92).
 - **#187** Scout should remain near a discovered enemy main until chased out;
   time cutoff and separation fallback are sim-pinned. `SCOUT_WATCH` now records
   the trail. First live trail never discovered the enemy main, so discovery
@@ -589,7 +607,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   ban, both pinned (`DefendedPlaceTest`, `ProtossDefendFocusTest`).
   The army-size veto is proven live (GAME_97948C74: 153/218 CLUSTER rows on
   MiddleFocusChoke, zero MainChoke); the absolute ban needs a longer game.
-  Open: formation adaptation and a CherryVis row. Shared input resolver
+  Open: formation adaptation and a CherryVis row. CHERRYVIS ROW LANDED
+  2026-11-01 (30-issue package): `DefendedPlace` kind+tile on the ArmyBoard
+  (`noteDefendedPlace`, change-only "DefendedPlace" key), computed where
+  the answer is resolved (`ProtossDefendFocusPoint`); pinned
+  `defendedPlaceRowNamesKindAndTileOnce` (world-free, with the null-tile
+  dash). Formation adaptation still open (no formation/cluster code reads
+  the kind yet - a doctrine slice: which kinds change slots, sim-pinned). Shared input resolver
   LANDED 2026-10-26 (commit `ea378db7f`): `HomeGround` in
   `atlantis.combat.cluster` resolves the main base + main choke once per
   resolution - `ClusterRally` (standoff, no-contact hold, guard slot,
@@ -921,6 +945,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   so a far-away warp names its origin without tile forensics. Pinned pure
   (`TargetPlacementNearTest` 4/4) + answered row shape (13/13 in
   `CatalogueSiteAdapterTest`); declined rows unchanged.
+  DECLINED CAUGHT UP 2026-11-01 (30-issue package): declined rows carry
+  the same nearTx/nearTy (scope and no-order fires keep -1: type-level,
+  no site context). Pinned in `sitedFailureDeclinesToLegacy` (row shape
+  with origin).
   FOG-LOOP REPAIR LANDED 2026-10-28: whatever path skips a visible
   enemy (missed discover, listener throw, new id with no create event),
   the per-frame fog loop now wraps it - first wrap rides the discover path
@@ -1064,6 +1092,13 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (unit 3: 27k tooltip + 5.7k command rows); trace 0.5MB -> 4.2MB raw
   (245KB zst). The channel is faithful; the callers flap. Fix direction:
   single tag owner per unit per frame, or accept the volume.
+   DATUM 2026-11-01 (30-issue package): single-owner attempted and
+   WITHDRAWN - first-wins breaks the pinned last-wins contract
+   (`unitBehaviorSticksOnceDriven`: Kite then Reengage must yield
+   Reengage) and cannot fix across-frame alternation anyway (9800 rows /
+   9800 frames = one tag per frame, alternating content - the decision
+   alternates, not the writers). Volume accepted; the alternation itself
+   is formation doctrine (#170-184), not tagging.
 - **#222** Sim order-fragility (pre-existing, untouched): `CutoffSwampedRetreatTest`
   flips under suite order - razor margin (measured 7.01 vs threshold 8) with
   iteration order keyed off the global FakeUnit id hash, so a shifted id

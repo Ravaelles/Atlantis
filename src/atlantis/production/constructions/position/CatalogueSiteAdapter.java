@@ -123,7 +123,8 @@ public final class CatalogueSiteAdapter {
         }
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!withinRange(site, nearTo, maxDistance)) {
-            SiteTwin.declined(building, "too-far", "sited");
+            SiteTwin.declined(building, "too-far", "sited",
+                constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
@@ -182,7 +183,7 @@ public final class CatalogueSiteAdapter {
         // legacy search answer; subsuming these checks is a later slice with
         // its own A/B proof.
         if (builder == null || !builder.isAlive()) {
-            SiteTwin.declined(building, "no-builder", via);
+            SiteTwin.declined(building, "no-builder", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
@@ -196,14 +197,14 @@ public final class CatalogueSiteAdapter {
                 APosition.create(support.tileX(), support.tileY()));
         }
         if (reservation == null || !reservation.isSuccessful()) {
-            SiteTwin.declined(building, "no-tile", via);
+            SiteTwin.declined(building, "no-tile", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
 
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
-            SiteTwin.declined(building, "legacy-refused", via);
+            SiteTwin.declined(building, "legacy-refused", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
@@ -214,7 +215,7 @@ public final class CatalogueSiteAdapter {
         // declined now and re-answered when a pylon lands - just in time,
         // like the legacy chain, which refuses unpowered tiles at search.
         if (building.needsPower() && !IsPoweredByAPylon.check(site, building)) {
-            SiteTwin.declined(building, "unpowered", via);
+            SiteTwin.declined(building, "unpowered", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
@@ -224,7 +225,7 @@ public final class CatalogueSiteAdapter {
         // Decline up front and let the legacy search answer - same numbers
         // as the refusal, never worse than today.
         if (IsWorkerCovered.check(site)) {
-            SiteTwin.declined(building, "worker-covered", via);
+            SiteTwin.declined(building, "worker-covered", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }

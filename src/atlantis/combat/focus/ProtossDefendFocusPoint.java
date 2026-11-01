@@ -149,6 +149,12 @@ public final class ProtossDefendFocusPoint {
                         lastBase);
                     if (answer == null) return null;
 
+                    // NEXT #194: the board names WHY the line is here, not
+                    // just where it looks (AlphaFocus*). Change-only, so a
+                    // standing ground never re-rows.
+                    atlantis.cherryvis.simple.ArmyBoard.noteDefendedPlace(
+                        answer.kind.name(), answer.ground);
+
                     switch (answer.kind) {
                         case BREACH:
                             return new AFocusPoint(

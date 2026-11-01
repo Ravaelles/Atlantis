@@ -270,7 +270,9 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
             assertNull(site, "a refused sited answer declines - the legacy search below answers as before");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"type\":\"PhotonC\",\"result\":\"declined\",\"reason\":\"no-tile\",\"via\":\"sited\""));
+                "\"type\":\"PhotonC\",\"result\":\"declined\",\"reason\":\"no-tile\","
+                    + "\"nearTx\":20,\"nearTy\":20,\"via\":\"sited\""),
+                "the decline names its origin like answers do: " + EventLog.toJsonLines());
         });
     }
 

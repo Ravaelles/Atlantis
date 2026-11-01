@@ -105,6 +105,27 @@ public class ArmyBoardTest extends WorldStubForTests {
     }
 
     @Test
+    public void defendedPlaceRowNamesKindAndTileOnce() {
+        // NEXT #194: the board names WHY the line is here (which ground
+        // won), not just where it looks. World-free: the key is pure
+        // change-detection on (kind, tile).
+        ArmyBoard.noteDefendedPlace("MAIN_CHOKE", APosition.create(87, 111));
+        ArmyBoard.noteDefendedPlace("MAIN_CHOKE", APosition.create(87, 111));
+        String board = ACherryVis_GlobalStates.build();
+        assertEquals(1, countKeys(board, "DefendedPlace"), "same ground writes once: " + board);
+        assertTrue(board.contains("\"DefendedPlace\":\"MAIN_CHOKE [87,111]\""),
+            "kind and tile in one row: " + board);
+
+        ArmyBoard.noteDefendedPlace("BREACH", APosition.create(95, 119));
+        assertEquals(2, countKeys(ACherryVis_GlobalStates.build(), "DefendedPlace"),
+            "a new ground re-rows: " + board);
+
+        ArmyBoard.noteDefendedPlace("BREACH", null);
+        assertTrue(ACherryVis_GlobalStates.build().contains("\"DefendedPlace\":\"BREACH -\""),
+            "null tile degrades to a dash, never a throw: " + board);
+    }
+
+    @Test
     public void banRowNamesDragoonMass() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit[] goons = new FakeUnit[11];

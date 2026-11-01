@@ -81,10 +81,22 @@ final class SiteTwin {
     }
 
     static void declined(AUnitType building, String reason, String via) {
+        declined(building, reason, via, -1, -1);
+    }
+
+    /**
+     * Owner 2026-11-01 (NEXT #214a): declined rows carry the request
+     * origin like answered rows do (nearTx/nearTy, -1 when the decline
+     * has no site context - scope and no-order fires). A far-away warp
+     * names its origin without tile forensics, declined or answered.
+     */
+    static void declined(AUnitType building, String reason, String via, int nearTx, int nearTy) {
         EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", building == null ? "-" : building.name())
             .param("result", "declined")
             .param("reason", reason)
+            .param("nearTx", nearTx)
+            .param("nearTy", nearTy)
             .param("via", via)
             .log(AGame.now(), A.minSec());
     }
