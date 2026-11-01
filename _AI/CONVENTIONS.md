@@ -130,6 +130,17 @@ at the end, never reused.
 - The **mega-test** (one OpenBW game over economy/production/combat/map)
   is the behaviour-coverage goal - worth dozens of unit tests.
 - Budget: `scripts/run-tests.sh` stays well under 40 s (§12).
+- Decisions pin pure, implementations wire once (owner order 2026-11-01):
+  every new behavior pins its DECISION first (snapshot in, verdict out -
+  `DynamicGoals.GameSnapshot`, `ExpansionTiming.Snapshot`,
+  `AttackDecider.decide`, board state), and the sim/game proves the
+  wiring once per capability. An implementation-coupled test (world/sim)
+  is the exception, not the default: its javadoc names the wiring it
+  owns that no decision pin can cover. Rationale: decision tests run in
+  milliseconds and never flake on ids, fog or frames; the suite stays
+  fast because the vast majority never boots a world. Exemplars:
+  `GatewayDemandTest`, `ExpansionStoryTest`, `AttackDeciderTest`,
+  `NoFormationVsBuildingsOnlyTest`.
 
 ## 12. Test runtime budget (owner's ruling, 2026-10-06; re-measured 2026-10-31)
 

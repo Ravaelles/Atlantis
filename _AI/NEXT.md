@@ -296,6 +296,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   no multi-minute delay in any game; GW#3+ lands only in long games and is
   now V2-dynamic (proved 003802, see #192).
   → details: `WINE-MACRO-DATUMS.md` §7
+  DATUM 2026-11-01 (94 retained runs, BUILDING_STARTED twins): 78 runs
+  warp 2+ Gateways; GW#1->GW#2 gap median 1065f, p90 2400f, max 5909f -
+  exactly one multi-minute outlier (20261031_213009: GW#1 s15 f3330 ->
+  GW#2 s55 f9239), the gas-starved game (138 cancelled Assimilators, zero
+  gas) whose stall #234's gas branch + gate3 latch have since closed.
+  Intermittent stands; no blind patch.
 
 - **#94** OpenBW combat remains blocked by engine-side enemy visibility: on
   `1Drag` the enemy deals hits but is invisible to the client. Hosting/handshake
@@ -313,6 +319,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   bank 74, with nothing READY; no author found and no recurrence. Correlate
   `reserved` with `DECISIONS.log` if it returns; `ORDER_NOT_READY` has a price-32
   visibility floor. → details: `WINE-MACRO-DATUMS.md` §8
+  DATUM 2026-11-01 (94 retained runs): no `reserved:250` row anywhere
+  (seen values cluster at 0/100/125/150/175/200/300) - still unobserved,
+  nothing to correlate.
 
 - **#96** Wine verification: owner-side checks remain for painter labels and a
   missions game. Macro artifacts and replay naming are verified; UMS duels
@@ -370,6 +379,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   - **#146** Delete `APositionFinder` after catalogue default and parity (D1).
     Exit: zero `Can't find place` across retained runs; current failure volume
     remains above that bar.
+    DATUM 2026-11-01 (94 retained runs): zero literal `Can't find place`,
+    but 267 SCHEDULE_REFUSED no-placement + proximity finishes (standing
+    Gateway x3k, Pylon x1.6k, "bugged" Pylon/Nexus x3.4k, refresh-still-bad
+    610). The absorptions are by design; the refused/never-sited remainder
+    is the bar. Note: the #145.1 issue-resite rides the legacy
+    `findPositionForNewBuilding` seam (same as adopt) - #146 migrates both
+    to the catalogue together. Deletion stays owner-gated (WO order).
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
     scheduling. Exit: V2 LIVE by default with parity; legacy queue remains the
     only queue until then.
@@ -661,6 +677,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Nexus refresh chase (unfixed, needs #150), and an engine supply-refusal
   the twin mislabels "no free facility". The WAIT+reserve interaction
   itself was never observed to starve anything.
+   DATUM 2026-11-01 (game 131909, loss f28800): single base to f24271,
+   bank to 8625, then Nexus (bank 8625->~0) + Pylon f27680; ends 8084/52 at
+   supply 53/65 with 4 Gateways (GW#3 f8144, GW#4 f14620), 1 Assimilator,
+   21 Zealots, 10 Dragoons. Late twins are combat micro (KITE/SHOT/HIT),
+   production silent (2 BUILD rows after f24000). Minerals at stall: ~8k;
+   dominant rows: combat, not demand; gateways: 4, standing idle with a
+   full bank. A rich single-base pump stall with no WAIT involved - the
+   save-for-expansion doctrine (#234b) fires 16 minutes late here.
 - **#203** Zerg matchup: landed 2026-10-25 (commit ce4de4034) `ProduceZealot`
   brakes excess Zealots at >=200 gas when a Core exists and the minimum Zealot
   floor is met; initial Zealots remain allowed. Pinned by
@@ -730,6 +754,10 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   rule with a pin. Do not add a fourth home-pointer before that reading.
    DATUM 2026-10-29 (games 184529 + 200344): the army never comes home
    in either (fights out, dies out) - the hide shape stays unobserved.
+   DATUM 2026-11-01 (game 131909): Defend on contact f23695, contact lost
+   f23808, re-Attack f23815 (20 s later) - the line re-attacks instead of
+   coming home; still no home-hide shape. Ends f28800 rich-idle (bank
+   8084, gas 52, supply 53/65 - see #202).
   MATCHUP DOCTRINE LANDED 2026-10-28 (owner order: vs Zerg hold, vs Terran
   attack, vs Protoss wait for 3 zealots or a dragoon then attack):
   `PostureReasons` carries `vsProtoss`/`ourZealots`, and a no-contact small

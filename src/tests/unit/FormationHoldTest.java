@@ -126,6 +126,25 @@ public class FormationHoldTest extends WorldStubForTests {
     }
 
     @Test
+    public void buildingsOnlyNeverHold() {
+        // Owner 2026-11-01: no formation against buildings-only (slots
+        // exist to approach defended positions). Decision pin for the
+        // guard - the sim integration lives in
+        // NoFormationVsBuildingsOnlyTest, this is the millisecond version.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 20, 20);
+        FakeUnit foeNexus = fake(AUnitType.Protoss_Nexus, 30, 20);
+        foeNexus.setEnemy();
+        foeNexus.setCompleted(true);
+
+        world(2, fakeOurs(dragoon), fakeEnemies(foeNexus), () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            assertFalse(FormationHold.shouldHold(dragoon, foeNexus, FightOrFlight.Tactic.FIGHT),
+                "an undefended building is walked into and killed, never formed against");
+        });
+    }
+
+    @Test
     public void chewedDragoonBreaksBeforeContact() {
         // Owner 2026-10-26: kiting outranks holding, unconditionally.
         // A chewer closing inside 3 tiles breaks the hold even at full
