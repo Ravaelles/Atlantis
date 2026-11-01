@@ -23,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * ({@link APositionFinder} → {@link CatalogueSiteAdapter}).
  *
  * <p>
- * The adapter declines everything outside its scope (gas, bases, orderless
- * rows) with null so the caller falls back to {@code FindPosition}; an
- * honoured exact tile and an answered neighbourhood prove the translation.
+ * The adapter declines everything outside its scope (gas, orderless
+ * rows) with null so the caller falls back; an honoured exact tile,
+ * an answered neighbourhood and (since migration A2) an answered base
+ * near its natural prove the translation.
  * The injected planner runs over a synthetic flat grid (no game map), the
  * same seam {@code PlacementPlannerTest} uses.
  * </p>
@@ -78,17 +79,30 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     @Test
-    public void basesStayOnTheirDedicatedFinder() {
+    public void basesAreAnsweredNearTheirNatural() {
+        // Migration A2 (owner #146): bases are catalogue ground, the
+        // "dedicated-finder" decline moved to gas-only. A Nexus with a
+        // natural neighbourhood gets an answered tile; the legacy base
+        // search stays as the fallback for a refusing planner.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
-            fake(AUnitType.Protoss_Probe, 21, 21)
+            probe
         ), fakeEnemies(), () -> {
             Construction construction = constructionFor(
                 AUnitType.Protoss_Nexus,
-                new ProductionOrder(AUnitType.Protoss_Nexus, 30), null);
-            assertNull(
-                CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Nexus, construction),
-                "a base builds on a base location - the catalogue must decline");
+                new ProductionOrder(AUnitType.Protoss_Nexus, 30), APosition.create(25, 25));
+            ScriptedPlanner planner = new ScriptedPlanner(
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
+
+            APosition site = CatalogueSiteAdapter.siteFor(
+                planner, probe, AUnitType.Protoss_Nexus, construction);
+
+            assertNotNull(site,
+                "migration A2: the catalogue answers base siting near the natural");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"type\":\"Nexus\",\"result\":\"answered\""),
+                "the answer lands in the twin with its reason: " + EventLog.toJsonLines());
         });
     }
 

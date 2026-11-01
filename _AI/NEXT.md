@@ -522,7 +522,22 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     118x Assimilator "Can't build here" on one tile [86,118] f5723-17072
     (gas-starved bank 6246/0 - same storm as retained 213009's 138x),
     3x transient Nexus cancels on [94,112] f5141-5258 (not the #151
-    thousand-row chase).
+    thousand-row chase). (Update: the 3x Nexus cancels re-read as
+    V2-sited [94,112] engine-refused + A1-null on refresh - honest
+    refusal handling, 3 rows not 3000. The #145.1 resite + adopt seams
+    rode the legacy finder only before A1; both are catalogue-direct
+    now.)
+    A2 LANDED 2026-11-01 (`FindPositionForBase.forNewBase`
+    catalogue-first at the natural neighbourhood, legacy search stays as
+    fallback; base scope lifted, gas stays dedicated): pins 24/24 (incl.
+    rewritten `basesAreAnsweredNearTheirNatural`) + fast gate 1058/1058.
+    GAME 20261101_153615 (TauCross PvZ, VICTORY f12990, supply-80 exit):
+    0 building cancels, 2 natural warps f6254/f10759 - but ZERO
+    CATALOGUE_SITE rows: the V2-director sites expansions straight from
+    scheduler reservations, the legacy base path never fires live. So
+    the game proves no-regression on the live path, not
+    catalogue-answers-base-live; that half rides the synthetic pin +
+    a vehicle that actually exercises the fallback.
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
     scheduling. Exit: V2 LIVE by default with parity; legacy queue remains the
     only queue until then.

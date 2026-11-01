@@ -1,10 +1,12 @@
 package atlantis.production.constructions.position.base;
 
+import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,6 +25,19 @@ public class FindPositionForBase {
                 return APositionFinder.findStandardPosition(builder, building, nearTo, 30);
             }
         }
+
+        // Migration A2 (owner #146): the catalogue answers base siting
+        // first, constrained to the natural neighbourhood (the demand
+        // already names it: V2 expansion goals carry NATURAL). The legacy
+        // search below stays as the fallback until a game proves the
+        // catalogue answers - the twin names which path fired, so the
+        // mix reads off the log, not off a guess. Gas keeps its dedicated
+        // finder (single geyser tile, no search); bases are searchable
+        // ground, which is exactly what the catalogue ranks.
+        APosition natural = BaseLocations.natural();
+        if (natural != null && construction != null) construction.setNearTo(natural);
+        APosition site = CatalogueSiteAdapter.siteFor(builder, building, construction);
+        if (site != null) return site;
 
         return FindPositionForBaseNearestFree.find(building, builder, construction);
     }
