@@ -129,4 +129,28 @@ public class HiddenUnitDetectionGoalsTest {
         assertFalse(hasGoal(goals, AUnitType.Protoss_Observatory),
             "no lurker, no Observatory from detection: " + goals);
     }
+
+    @Test
+    public void detectionTwinNamesEmittedGoals() {
+        // Owner #223: the twin is how the next lurker/DT game attributes
+        // the chain - goal emission (this twin) vs downstream drops
+        // (dispatch twins). Silence without threat, names with it.
+        atlantis.util.log.EventLog.clearForTests();
+        atlantis.production.demand.V2GoalSourceTwin.clearForTests();
+
+        List<ProductionGoal> goals = contribute(state(true, false));
+        atlantis.production.demand.V2GoalSourceTwin.emitDetection(0, goals, true);
+
+        String log = atlantis.util.log.EventLog.toJsonLines();
+        assertTrue(log.contains("\"key\":\"V2_DETECTION_GOALS\""),
+            "the emitted detection goals are twinned: " + log);
+        assertTrue(log.contains("Robotics"),
+            "the Robo answer is named: " + log);
+
+        atlantis.util.log.EventLog.clearForTests();
+        atlantis.production.demand.V2GoalSourceTwin.emitDetection(300, goals, false);
+
+        assertFalse(atlantis.util.log.EventLog.toJsonLines().contains("V2_DETECTION_GOALS"),
+            "no threat, no rows");
+    }
 }

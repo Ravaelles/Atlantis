@@ -1,5 +1,7 @@
 package atlantis.production.demand;
 
+import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.production.demand.ProductionGoal;
 import atlantis.production.policy.ProductionRacePolicy;
 import atlantis.production.placement.TargetPlacement;
@@ -90,6 +92,13 @@ public final class DynamicGoals {
         addFortificationGoals(goals, state);
 
         goals.replaceAll(goal -> goal.withSource("dynamic"));
+
+        // Owner #223: twin which detection goals the layer emits while the
+        // snapshot flag holds (test-side calls stay silent - the twin is
+        // a live-game witness, not a pin).
+        if (!Env.isTesting()) {
+            V2GoalSourceTwin.emitDetection(A.now(), goals, state.enemyHasHiddenUnits);
+        }
 
         return goals;
     }

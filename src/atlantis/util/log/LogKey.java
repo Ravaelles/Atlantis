@@ -122,6 +122,13 @@ public enum LogKey {
      */
     V2_GOAL_SOURCE,
     /**
+     * Detection-goal authorship (owner #223): which hidden-unit goals
+     * (Robo/Observatory/Observer/Forge/cannons) the goal layer emits
+     * while the snapshot flag holds. Transitions always row, steady
+     * threat heartbeats.
+     */
+    V2_DETECTION_GOALS,
+    /**
      * A wall-piece type warped: tile vs the natural anchor row and vs the
      * exact planned tile (#97 M4 geometry gap - did the piece land where
      * the wall planner put it). anchorDist -1 means the map offered no
