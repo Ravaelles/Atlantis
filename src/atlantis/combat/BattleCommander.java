@@ -51,6 +51,12 @@ public class BattleCommander extends Commander {
         // untouched to the shared pipeline below.
         if (atlantis.combat.behaviors.SpecialistBehaviors.act(unit)) return;
 
+        // Owner UMS Lurkers2: the lurker-avoid manager only ever ran for
+        // workers and scouts - the army stood in spines while it applied
+        // nowhere. FLEE owns its own routing and specialists own their
+        // frame; everything else checks the burrow state before engaging.
+        if (tactic != FightOrFlight.Tactic.FLEE && avoidLurkers(unit)) return;
+
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null && atlantis.combat.targeting.ChaseVeto.veto(unit, target)) {
@@ -126,6 +132,26 @@ public class BattleCommander extends Commander {
      */
     private static boolean leaveIfBreached(AUnit unit) {
         return LeaveBreachedBase.leave(unit);
+    }
+
+    /**
+     * Critical-unit avoid for the army (owner UMS Lurkers2): burrowing
+     * Lurkers cannot be hit without a detector over them, so Zealots
+     * standing next to the transition die for nothing. The manager
+     * self-gates per unit (burrowing Zealot rule, burrowed bravery
+     * vetoes); a move issued owns the frame, anything else falls
+     * through to the shared pipeline.
+     */
+    private static boolean avoidLurkers(AUnit unit) {
+        try {
+            atlantis.battle.avoid.special.AvoidLurkers avoid =
+                new atlantis.battle.avoid.special.AvoidLurkers(unit);
+            if (!avoid.applies()) return false;
+
+            return avoid.forceHandle() != null;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**

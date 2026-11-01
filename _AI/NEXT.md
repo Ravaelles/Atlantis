@@ -1603,6 +1603,17 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   gate; combat batch 34/0). Faka `setBurrowing` added alongside
   `setBurrowed`. Open: vehicle proof Zealots break off as burrowing
   starts instead of dying in place.
+  WIRING 2026-11-01 (vehicle `200942` + twin silence): the manager
+  only ever ran for workers and scouts (`ProtossAvoidCriticalUnits`
+  is referenced solely by `WorkerManager`/`ScoutUnitManagers`) - the
+  army pipeline (`BattleCommander.act`) never evaluated it, so zero
+  `AVOID_LURKER` rows across 1289 frames is structural, not a gate
+  miss. FIXED 2026-11-01: `BattleCommander.act` consults
+  `AvoidLurkers` after specialists, before engagement (FLEE keeps its
+  routing); a move issued owns the frame. Pinned end-to-end
+  (`armyZealotBreaksOffThroughBattlePipeline`: `RUN_ENEMY` move, no
+  `ClusterGhost`; `AvoidLurkersTest` 6/6 + combat batch 36/0).
+  Open: vehicle proof on P_v_Lurkers2 with the wiring live.
   DATUM 2026-11-01 (vehicle game 20261101_190800 on P_v_Lurkers2.scx,
   POST-fix-1, 23 s loss, 8 dead to Lurker#103, zero lurker kills):
   the instrument (not a guess) names the march: EVERY CLUSTER row
