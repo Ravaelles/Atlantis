@@ -462,6 +462,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   A4 delete `APositionFinder` to `src-old/`.
   Phase B (demand, #147): B0 read-only flow map (which legacy producers
   still mint game-reaching orders vs V2), then slices from the map.
+  B0 LANDED 2026-11-01 (read-only inventory, no code): 43 files mint
+  legacy orders via AddToQueue (13 dynamic/protoss/buildings, 8
+  requests/*, 6 strategy responses, rest scattered); ~20 files read
+  Queue status (Have, BuildOrderOwnsGame, CancelNotStartedBases,
+  ExpansionCommander, AutoProduceWorkers, Produce* guards,
+  OnOurUnitCreated matching). NOBODY drains the Queue into issues -
+  the legacy drain is gone (`ProductionOrdersCommander` runs only the
+  V2 engine); V2 dispatcher/director is the sole issuer, consulting
+  Queue counts as in-flight (`Count.*InQueue`) + BO rows as goals +
+  DynamicGoals. So #147 = (B1) producers→V2 goals per family, (B2)
+  readers→V2 state, (B3) delete Queue/** + order types. Each slice
+  suite-green + game proof where the twin names the author.
   A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
   modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
   anchor the catalogue neighbourhood instead of anywhere).
