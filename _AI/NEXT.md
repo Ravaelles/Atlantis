@@ -105,8 +105,9 @@ trade a measurement for an explanation (§3a).
    #194 >10-Dragoon ban instance, #188 blocking
    geometry, #197 trapped-Dragoon break-out, #200 Zerg
    main hold, undetected-target silence (needs a cloaked foe). Owner
-   2026-10-31: no opportunistic macros for rare shapes - games run on
-   call or with a certain vehicle only.
+   2026-10-31: no opportunistic macros for rare shapes. Owner 2026-11-01:
+   the agent may run Wine games headless on its own call and choose the
+   vehicle freely (lurker-with-gas, melee-choke, island/UMS queue).
 8. **Owner data before live verdicts:** #202 (minerals at the stall, dominant
    twin rows, Gateway count/state), #96 (painter labels + missions game),
    #34 (UMS opponent map).
@@ -562,24 +563,6 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   (no natural trapping geometry found). Duel hit reduction came from #152's
   per-cycle standstill lever, not step amplitude. Open: live walled-pocket
   engagement and whether a deflectee glues.
-- **#175** Arc retreat toward the squad (low priority): sim-pinned and
-  tuner-controlled (`EscapeArcBlend`), default blend 0. CONTACT-ATTEMPT
-  2026-11-01 WITHDRAWN (30-issue package): a chew veto on bending broke
-  the pinned arc sims (`ArcRetreatSimTest` x3 fail byte-identical - the
-  veto fires exactly where the arc is load-bearing). The arc bends INTO
-  contact by design; "don't bend when chewed" contradicts it. Contact
-  handling stays where it was; no live value is selected (tuner).
-- **#178** Zealot kiting: zealots never yield, so against faster attackers they
-  stand through the cooldown and bleed. Rule: after attacking with cooldown
-  left, withdraw a step when wounded, locally outnumbered, or facing a faster
-  attacker - but never break the line on open ground. Landed sim-first
-  (`ZealotWithdrawSimTest`, mutation-proofed, `ZealotWithdrawTest` 5/5) and
-  live (272 stepped-aside, zero standing deaths; no freeze in any later game).
-  HOLDS 2026-10-28: VICTORY 010715 loses 4 Zealots / 5 Dragoons in combat,
-  no standing-death shape; KITE frozen-reset fires 46x as the designed
-  recovery (not a freeze).
-   CLOSED 2026-10-29: sim-first landed and live-held across retained
-   games - stepped-aside in the hundreds, zero standing deaths, no freeze.
 - **#179** ZealDrag coordination/hold-fire is sim-pinned; live losses showed
   mobile units, not freezing or coordination failure. Open: winnability against
   real opponents (0/9 FFA wins; one weak positive with Dragoon mass).
@@ -644,37 +627,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `DragoonsVsZerglings`, `DuelKite` in the 10-class FAIL list) - the
   Stage B gate holds through the resite tree; harder shape + live
   calibration still open.
-- **#187** Scout should remain near a discovered enemy main until chased out;
-  time cutoff and separation fallback are sim-pinned. `SCOUT_WATCH` now records
-  the trail. First live trail never discovered the enemy main, so discovery
-  coverage is the new open question. ROOT CAUSE FOUND AND FIXED 2026-10-28
-  (B-43): `EnemyMainBase.get()` cached its first miss forever (`Cache` TTL
-  -1) - combat focus reads it from the early frames, the scout later stood
-  within 1.0 tile of the enemy start, and every reader kept the early null.
-  Measured 10/10 retained games at 0/5111 known-enemy scout rows (183253
-  through 004959, all V2 LIVE TauCross). Fix: misses are never cached, only
-  the hit latches, plus a per-game `clear()` in `OnGameStarted`; pinned
-  `lateDiscoveryStillLatchesTheMain` (red-first: null despite late
-  discovery on the old code). Open: live proof that the main latches and
-  the army finally leaves. LIVE PROOF 2026-10-28 (game 010058, first jar
-  with the fix): main latches f3658 at [95,119] (scout at [85,118]),
-  359/436 scout rows known thereafter. Mission flips Attack f4705 and the
-  army marches to the enemy main (92 CLUSTER rows anchor->focus [95,119],
-  contact foe 836 at f7502), returns on Defend f7547, holds home correctly
-  (foe -1, no latch - #206's hide-shape needs a post-contact redeploy case,
-  this game came home mission-ordered). Loss f14785 in the final home
-  defense (strength bled 340->118); combat quality, separate slice.
-   CLOSED 2026-10-29: both asks evidenced - the main latches (f3658
-   [95,119], 359/436 scout rows known) and the army leaves for it
-   (Attack f4705, contact f7502).
-- **#189** Log priority adoption is complete: console levels and event `lvl`
-  follow CONVENTIONS §27; diagnostic event volume stays MED by design. TEMP
-  lines are session-only; latest source sweep found none. SWEEP 2026-10-28:
-  zero `[TEMP]` lines in production code (only the mechanism docs); one stray
-  live-path `System.out.println("PvP Zealot dont")` found in
-  `ProtossTooBigBattleToRetreat` and removed (verified: full suite 1694/1694).
-   CLOSED 2026-10-29: adoption complete, latest sweep finds no stray
-   `[TEMP]` rows in game code (only the mechanism docs).
 - **#188** ClusterFlee overhaul: sim pins cover homeward rally, organized
   retreat, and fighting through a blocking army; live audits found no blocking
   instance or scatter. B136's earlier “blocking” reading was withdrawn; the
@@ -843,7 +795,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   pinned in `RichBankBypassTest`. Live verdict needs owner data on minerals,
   dominant twin rows, and Gateway count. Live datum 2026-10-27/28 (183253, 184042, 190104,
   all V2 LIVE): the rich-and-idle deaths are NOT this mechanism - observed
-  causes are the covered-tile Pylon cancel loop (fixed, see #219), no 3rd
+  causes are the covered-tile Pylon cancel loop (fixed, top-left overlap
+  closeout 2026-10-27/28: zero cancels in 234528 + 000314), no 3rd
   Gateway author (V2 demand goal landed, needs its own live proof), the
   Nexus refresh chase (unfixed, needs #150), and an engine supply-refusal
   the twin mislabels "no free facility". The WAIT+reserve interaction
@@ -1028,21 +981,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Open: the same orientation live. DATUM 2026-10-28: game 010715 defends
   home only pre-Attack (39 rows f3627-4805); the orientation question needs
   trace geometry from a home-defense game, not twins.
-- **#209** Units deep in our own main stack on each other (owner live
-  finding 2026-10-26): blocked units inside the base occupy the same
-  ground instead of spreading, i.e. the unstick/holder logic assumes open
-  ground or an enemy in front. Sim proof landed 2026-10-26
-  (`PocketSpreadSimTest`): formation slots must be standable, not just
-  walkable - the engine's walkability is terrain-only, so a slot inside a
-  building read valid and the march wedged on its wall;
-  `FormationSlots.valid` now refuses building tiles and the line spreads
-  around them instead. Checked against #182's holder-unstick: displacing
-  units never trip the wedge watch, and its pins stay green.
-  LIVE SUPPORT 2026-10-28 (game 012238, PvP home defense f14964-16370):
-  966 combat-unit telemetry samples, 5/586 pairs within 1 tile - the line
-  spreads at home, no stacking; wedge fix holds live.
-   CLOSED 2026-10-29: fix verified in sim (pocket tiles refused) and live
-   (012238 home defense: 5/586 within 1 tile, no stacking).
 - **#210** Formation orders while defending at most once per 10 frames
   (owner order 2026-10-26): re-issuing formation orders every frame during
   a defense churns the line. Landed 2026-10-26: shared `FormationOrderLatch`
@@ -1117,7 +1055,8 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (with numbers, e.g. "Early strength ok (4 units, 999%)"), AlphaTactic 13,
   AlphaFocusName 8 (with tile); 461 updates over 15540 frames, never
   per-frame. (c) log half lands (order-watcher `#Attack/<behavior>` tags);
-  Task half is #221. (a) half: CATALOGUE_SITE carries type/result/reason/via
+  Task half is the Task-mirror work (manager-slot mirror for managerless
+  army units, landed 2026-10-28). (a) half: CATALOGUE_SITE carries type/result/reason/via
   but NO nearTo/chosen tile - the Pylon WHERE is still missing.
   WHERE LANDED 2026-10-28: answered rows carry nearTx/nearTy from the
   request constraint (neighbourhood centre or exact pin, -1 otherwise),
@@ -1182,48 +1121,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
    6.8 s + PostFiftyBleedTest 6.6 s, both exit 0 - time-clean and green
    in isolation; the solo-red/suite-green flip does not reproduce as an
    OVER here.
-- **#219** Late-game Pylon goal/dispatch storm with zero warps (measured
-  20261027_183253, V2 LIVE): f24730-28800, 1568 Pylon goal rows and 120
-  `builder committed` dispatches, no Pylon warp after f24617. CANCEL
-  COMPONENT CLOSED 2026-10-27/28 by the top-left overlap fix: 234528 and
-  000314 (both post-fix jars) show zero CONSTRUCTION_CANCEL in full games
-  (was 120 + 256), including an adjacent placement that warps (Pylon
-  [16,39] 2.0 tiles from standing [16,37], f27937 - the old math cancelled
-  exactly this shape). REMAINDER: per-frame re-fire while a Pylon is in
-  flight (000314: 481 late dispatches, 1 warp) - absorbed same-tile, no
-  cancel, no stall, just churn. Needs the builderLog game to confirm
-  zero-cancel persistence under siege pressure. BACKSTOP LANDED
-  2026-10-28: dispatch-time revalidation (`ProductionDispatcher.dispatch`
-  with this frame's goals) - a fresh non-prerequisite item nobody asks for
-  is skipped as `stale: no live goal`, prerequisites and committed
-  re-offers always flow, pinned in `ProductionDispatcherTest` (4 new).
-  The 000314 opening pair (BO goals f3996+f4333, dispatches same frames,
-  warps f4349+f4474 at supply 23) is undecided from the twin: re-fire of
-  one row in the dispatch-to-warp walk window, or the next row firing on
-  a supply the twin does not log - either way the backstop now drops a
-  second dispatch nobody asks for. Live proof rides the next macro.
-  LIVE VERDICT 2026-10-28 (game 003802, first jar with the backstop, V2 LIVE,
-  loss f21030): zero `stale: no live goal` skips in the whole game - every
-  dispatched item had a goal, so the backstop stands as defense-in-depth with
-  twin telemetry, not as a demonstrated save. The per-frame storm shape is
-  explained, not fixed: the Gateway f19442-20537 run (~600 `builder committed`
-  rows, 0 warps) is the committed re-offer path doing its job - one pending
-  GW#4, same tile, and its single BUILD_ATTEMPT f19950 reads engineAccepted
-  with constructing=true; the game ended f21030 exactly one Gateway build
-  time later, mid-warp. Churn, not stall. Remainder narrows to goal-layer
-  re-fire frequency (a goal per frame while in flight), harmless while
-  same-tile dedup absorbs it. GATEWAY FLAVOR 2026-10-28 (game 010715,
-  VICTORY f15540): 1 CONSTRUCTION_CANCEL, `Gateway proximity finish:
-  standing Gateway covers [108,6]` f12960 - the same re-fire shape absorbed
-  by proximity finish instead of same-tile dedup; no stall, game won.
-  Zero-cover false positives remain at zero. Game 013929 (full-length loss
-  f28800): zero cancels, GW#3 warps f9989 supply 53 on the V2 order, zero
-  stale skips - the backstop still never fires because every dispatch has
-  a goal.
-   CLOSED 2026-10-29 (game 184529, BuilderLog long macro, V2 LIVE):
-   0 CONSTRUCTION_CANCELs under siege pressure; dispatches mirror warps
-   1:1 (Pylon 6->5, Gateway 4->4, Zealot 10->10, Dragoon 6->6) - no
-   storm, nothing to absorb.
 - **#220** Runby screening gap (measured in `LingFloodHoldsTest`, P3 shape
   of 115321): 2 staged Zealots fall back to the Nexus (both at (10,9) by
   t200) instead of screening mid-map, so a 4-ling runby is fought at the
@@ -1232,60 +1129,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   pinned). Suspected eval conservatism at 2v4 rallying to the anchor -
   the #206 shape. Combat-cluster tuning with live proof, not economy
   work.
-- **#221** Task slot empty for army units (owner ask, measured live
-  20261028_000850, V2 LIVE TauCross): 10 of 26 units with `#Attack` rows
-  (6 Zealots ids 137/143/144/151/159/160, 4 Dragoons 180/181/187/188)
-  have no `units_updates` entry at all - the static battle functions
-  never call `usedManager`, so the managerLog funnel that feeds Task
-  never sees them. Manager-driven units are fine (15/25 Task entries).
-  The `#Attack/<behavior>` order-watcher tags already cover the log
-  half (114/114 attack rows tagged in the same game). Fix direction:
-  tag army units with their cluster/mission behavior through
-  `usedManager` (or wire the disabled tooltip channel change-only) -
-  needs a trace-size check, not a guess. (Log half rides #214(c).)
-  LANDED 2026-10-28: the tooltip channel is wired change-only
-  (`ACherryVisUnitLogger.tooltip` with per-unit dedup, rendered into
-  `units_updates` as union frames with carry-forward, empty keys omitted
-  so the legend stays clean). Pre-live size estimate (hundreds of rows)
-  was wrong - callers flap tags per frame, so the first live game wrote
-  114k tooltip rows / 4.2MB raw (245KB zst); see FLAP FINDING below.
-  Pinned in `CherryVisUnitLogsTest` + legend agreement.
-  OWNER MECHANISM LANDED 2026-10-28: the unit itself holds its active
-  behavior (`AUnit.behavior`, set by whoever drives it - `usedManager`
-  names the manager, the order funnel names the tooltip), empty updates
-  never erase it, and the order watcher keys on it with tooltip fallback.
-  Units_updates tooltips ride the CHERRYVIS_TOOLTIPS flag (default off);
-  the grouped units_tooltips section stays as the minimal machine format.
-  TASK MIRROR LANDED 2026-10-28 (owner: Task still None despite tagged
-  logs): the viewer reads only units_updates[].manager, and army units
-  never get manager rows. The order watcher now mirrors a managerless
-  unit's behavior change into the manager slot (change-only, same gate
-  as the log row), so Task names what the army does. Manager-driven
-  units untouched (their manager owns the slot, never overwritten).
-  Pinned in `BuilderOrderLogTest` (mirror fires for the managerless,
-  never clobbers a manager). LIVE PROOF 2026-10-28 (game 195338,
-  VICTORY f23160, first jar with the mirror): 98/98 units_updates units
-  carry manager rows and the top entries are army behaviors (ClusterForm,
-  ClusterCollapse, ClusterMove, ClusterReengage, ClusterKite, ClusterStandoff,
-  ClusterGhost, ClusterUnstick) - Task names what the army does, manager
-  rows unchanged in shape. Same game: single Core (walk-window fix holds),
-  no strength doubling (max 1.36x), 0 stale skips, ATTACK_DECISION x10.
-  LIVE PROOF 2026-10-28 (game 013929, first jar with the channel): Task
-  populates - 130 units in units_updates, tooltip-only rows for
-  managerless units (army included). FLAP FINDING in the same game:
-  formation tags oscillate ClusterForm<->ClusterMove per frame (unit 141:
-  ~9800 tooltip rows vs 128 command rows - tag-writer disagreement, not
-  movement churn) and the scout re-issues Explore/HoldCourse constantly
-  (unit 3: 27k tooltip + 5.7k command rows); trace 0.5MB -> 4.2MB raw
-  (245KB zst). The channel is faithful; the callers flap. Fix direction:
-  single tag owner per unit per frame, or accept the volume.
-   DATUM 2026-11-01 (30-issue package): single-owner attempted and
-   WITHDRAWN - first-wins breaks the pinned last-wins contract
-   (`unitBehaviorSticksOnceDriven`: Kite then Reengage must yield
-   Reengage) and cannot fix across-frame alternation anyway (9800 rows /
-   9800 frames = one tag per frame, alternating content - the decision
-   alternates, not the writers). Volume accepted; the alternation itself
-   is formation doctrine (#170-184), not tagging.
 - **#222** Sim order-fragility (pre-existing, untouched): `CutoffSwampedRetreatTest`
   flips under suite order - razor margin (measured 7.01 vs threshold 8) with
   iteration order keyed off the global FakeUnit id hash, so a shifted id
