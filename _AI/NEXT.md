@@ -451,8 +451,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   per-cycle standstill lever, not step amplitude. Open: live walled-pocket
   engagement and whether a deflectee glues.
 - **#175** Arc retreat toward the squad (low priority): sim-pinned and
-  tuner-controlled (`EscapeArcBlend`), default blend 0. Open: contact-aware
-  bending; no live value is selected.
+  tuner-controlled (`EscapeArcBlend`), default blend 0. CONTACT-AWARE
+  2026-11-01 (30-issue package): a chewed unit never bends
+  (`FightTarget.bendApplies` - same chew veto as the formation hold);
+  the kite owns contact, the arc owns the open field. Pinned
+  `BendAppliesTest` 2/2 (decision, not the 400-tick sims). No live value
+  is selected (tuner).
 - **#178** Zealot kiting: zealots never yield, so against faster attackers they
   stand through the cooldown and bleed. Rule: after attacking with cooldown
   left, withdraw a step when wounded, locally outnumbered, or facing a faster
@@ -469,8 +473,6 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   real opponents (0/9 FFA wins; one weak positive with Dragoon mass).
   DATUM 2026-10-28: game 010715 won vs the native AI with 24 Dragoons / 7
   Zealots - mobile, no freeze; FFA winnability still open.
-- **#180** Per-unit telemetry samples HP, Zealot/Dragoon distances and nearby
-  enemies every 24 frames. Diagnostic-only; thin it after #184's ladder lands.
 - **#181** Split-cluster reinforcement is sim-pinned (fresh-contact reinforce,
   ghost-contact rejection, ongoing-fight priority). Timeouts were the Regions
   path. Open: live recurrence of the park-while-fighting shape.
@@ -490,40 +492,6 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   VERIFIED 2026-10-28: zero production callers of `isUnderAttack()` outside
   `AUnit` itself - the only `isUnderAttack(n)` reader is `UnitStateManager`
   (the HP trail infrastructure, not a decision) plus Terran-only turret logic.
-- **#184** TargetLadder owns the explicit eight-rule order (nine minus
-  the removed squad rule); every rule is a named class, nearest/cover/
-  breach read named seams, never legacy. Sim-pinned slices
-  cover chewer selection, re-arm/step interaction and undetected targets. A
-  forced finish on a 10-HP chewer donates the Dragoon, so a faithful finish rule
-  waits for post-cut ladder work. Shared and cover survived removal
-  attempts as load-bearing (boundary 9.0 and withdrawer protection) -
-  each with its sim pin now.
-   DATUM 2026-10-29: rule 7 (squad target) migrated verbatim into
-   SquadTarget (shared isValidTarget stays); nearest/cover/breach
-   delegate to named seams (nearest-engageable primitive, CoverWithdraw,
-   ClusterBreach), not legacy - no migration. SQUAD REMOVED 2026-10-30:
-   rule 7 was unreachable through the ladder (any squad-remembered target
-   inside 9 is inside enemiesNear 15 with the same validity, so rule 3
-   always owns the pick first - pinned `weakestOwnsPickDespiteSquadTarget`);
-   class + order slot + its two direct tests deleted, suite green. The 6+
-   crowd guard dies with the rule (relocating it would be a behavior change
-   - re-add with a pin if ever wanted). SHARED KEPT 2026-10-31: rule 5's
-   removal was attempted and withdrawn - it is load-bearing at the 9.0
-   boundary (inclusive `<= 9` vs rule 8's strict `< 9` inside
-   `nearestEngageableEnemy`): without it the ladder acquires nothing at
-   exactly 9 tiles and `farOutwardChaseIsVetoedAndForgotten` +
-   `attackMissionChasesFreely` fail. Three sim geometries (static /
-   chasing / chasing + chaff) clear with no losses either way, but the
-   boundary pin decides: rule 5 stays. Covering 9.0 in rule 8 would mean
-   touching the shared primitive (9 callers: kite, cover, ghost,
-   regroup, tactic) - rejected as wider blast for a narrower need.
-   `SharedFocusSimTest` stays as its outcome pin. COVER KEPT 2026-10-31:
-   rule 6's removal was attempted and withdrawn - without it the healthy
-   gun takes its nearest (L2) while L1 chews the withdrawer 5x longer
-   (l1DiedAt 9 vs 46, W leaves with 45 hp instead of 55). Load-bearing
-   for withdrawer protection, pinned `CoveringFireSimTest` (opens on the
-   chewer, W keeps most hp). Remaining: faithful finish rule only.
-
 - **#185** Learn WHEN to use the fixed behavior set from features; synthetic
   scenarios and varied enemy policies only. Sequenced after the production cut;
   spec and gates are in `_AI/NN-PLAN.md`. Test scope now has five zombie policies,
