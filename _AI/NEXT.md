@@ -376,8 +376,8 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     resite-not-cancel on standing-covered sites at issue time
     (`handleRefreshingPositionIfNeeded` resites via the adopt seam instead
     of cancelling + same-tile re-request; pinned
-    `IssueRefreshResitesCoveredSiteTest`), (2) SimOpeningToFifty re-golden
-    on catalogue, (3) chain deletion is #146.
+    `IssueRefreshResitesCoveredSiteTest`), (2) DONE (re-goldened for the
+    stride-60 sim, green in the mega-test), (3) chain deletion is #146.
   - **#234** V2 mid-game equilibrium stall (mega test `LongGameToSeventyTest`,
     14 s, milestone pipeline): gas branch landed, so Dragoons flow (14) and
     Zealots mix in on lings. The gate3 verdict went green via a 10 s busy
