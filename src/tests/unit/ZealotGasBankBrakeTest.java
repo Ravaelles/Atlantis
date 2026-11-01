@@ -128,4 +128,48 @@ public class ZealotGasBankBrakeTest extends WorldStubForTests {
                 "no zealots vs 6 lings: the floor still needs meat even banked - " + ProduceZealot.reason);
         });
     }
+
+    @Test
+    public void brakeTwinsItsHoldWithNumbers() {
+        // Owner #203: brake-vs-warp attribution. The twin names the frames
+        // the brake held and the numbers that held it; releases need no
+        // row (warp rows do that job).
+        enemyRaceInWorld = Race.Zerg;
+
+        currentMinerals = 600;
+        currentGas = 350;
+        currentSupplyUsed = 30;
+        currentSupplyTotal = 40;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit gatewayA = fake(AUnitType.Protoss_Gateway, 24, 24);
+        FakeUnit gatewayB = fake(AUnitType.Protoss_Gateway, 25, 24);
+        FakeUnit core = fake(AUnitType.Protoss_Cybernetics_Core, 26, 26);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+
+        world(5, fakeOurs(
+            nexus, gatewayA, gatewayB, core, probe,
+            fake(AUnitType.Protoss_Zealot, 22, 21),
+            fake(AUnitType.Protoss_Zealot, 22, 22),
+            fake(AUnitType.Protoss_Zealot, 23, 21),
+            fake(AUnitType.Protoss_Zealot, 23, 22),
+            fake(AUnitType.Protoss_Zealot, 24, 21),
+            fake(AUnitType.Protoss_Dragoon, 28, 22),
+            fake(AUnitType.Protoss_Dragoon, 29, 22),
+            fake(AUnitType.Protoss_Dragoon, 30, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            atlantis.util.log.EventLog.clearForTests();
+            ProduceZealot.clearBrakeTwinForTests();
+
+            assertFalse(ProduceZealot.zealot(), "brake holds: " + ProduceZealot.reason);
+
+            String log = atlantis.util.log.EventLog.toJsonLines();
+            assertTrue(log.contains("\"key\":\"ZEALOT_BRAKE\""),
+                "the hold is twinned, not silent: " + log);
+            assertTrue(log.contains("\"gas\":350"),
+                "the twin names the bank that held it: " + log);
+        });
+    }
 }

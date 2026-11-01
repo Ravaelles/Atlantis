@@ -165,6 +165,12 @@ public enum LogKey {
      */
     MISSION_ENFORCED,
     /**
+     * Zealot gas-bank brake (owner #203): the flood pump yields while gas
+     * is banked for Dragoons. Transitions always row, steady holds
+     * heartbeat - the warp rows name the release.
+     */
+    ZEALOT_BRAKE,
+    /**
      * A Nexus train/queue attempt (supply, remaining, engine answer).
      */
     TRAIN_ATTEMPT,

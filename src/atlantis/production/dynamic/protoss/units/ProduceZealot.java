@@ -24,6 +24,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.AMath;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 import static atlantis.units.AUnitType.Protoss_Zealot;
@@ -46,6 +48,8 @@ public class ProduceZealot {
     public static String reason = "-";
     private static int zealots;
     private static int freeGateways;
+    private static boolean brakeTwinnedActive = false;
+    private static int lastBrakeTwinFrame = -1000000;
 
     public static boolean zealot() {
         // D3 priority waiting, first so later plenty-rules cannot bypass it.
@@ -68,7 +72,10 @@ public class ProduceZealot {
         zealots = Count.zealotsWithUnfinished();
 
         if (ZealotInsteadDragoon.needZealot()) return produceZealot("ZealotInsteadOfDragoon");
-        if (bankedGasPrefersDragoons()) return no("GasBankGoDragoons");
+
+        boolean brake = bankedGasPrefersDragoons();
+        twinBrake(brake);
+        if (brake) return no("GasBankGoDragoons");
 
         if (freeGateways >= 2 && A.hasMinerals(600) && A.supplyUsed() <= 180) return produceZealot("LotsOfMinerals");
         if (freeGateways >= 2 && A.hasMinerals(550) && Count.zealots() <= 13) return produceZealot("WealthyGoZealots");
@@ -125,6 +132,39 @@ public class ProduceZealot {
         ProduceZealot.reason = reasonWhyNot;
 
         return false;
+    }
+
+    /**
+     * Brake attribution (owner #203): which frames the gas-bank brake held
+     * the flood pump, with the numbers that held it. Transitions always
+     * row, steady holds heartbeat; releases need no row (the warp rows
+     * name them). Static like the rest here; tests clear it through
+     * {@code clearBrakeTwinForTests}.
+     */
+    private static void twinBrake(boolean active) {
+        try {
+            int now = A.now();
+            boolean transition = active != brakeTwinnedActive;
+            if (!transition && now - lastBrakeTwinFrame < 300) return;
+
+            brakeTwinnedActive = active;
+            lastBrakeTwinFrame = now;
+            if (!active) return;
+
+            EventLog.key(LogKey.ZEALOT_BRAKE)
+                .param("gas", A.gas())
+                .param("zealots", Count.zealots())
+                .param("core", Have.cyberneticsCore())
+                .param("supply", A.supplyUsed())
+                .param("transition", transition)
+                .log(now, A.minSec());
+        } catch (Exception | Error ignored) {
+        }
+    }
+
+    public static void clearBrakeTwinForTests() {
+        brakeTwinnedActive = false;
+        lastBrakeTwinFrame = -1000000;
     }
 
     private static boolean preventDoubleOrdersFromBuildOrderAndDynamic() {

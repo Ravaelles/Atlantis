@@ -1419,6 +1419,23 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   cannons (bank 4577). Needs: verify discovered() contents for contact-
   only units, or add the discovery twin; plus a gas-available lurker
   game for the full chain.
+  DATUM 2026-11-01 (game 20261101_165835, TauCross PvZ, loss f16591,
+  long-horizon): NO lurker anywhere in 17k rows (gas-starved 6740/0 end,
+  Forge f16259) - the hunt continues; lurker rate is ~1 in a few games,
+  not every game.
+  DATUM 2026-11-01 (game 115405 re-audited, POST-fix, gas-rich loss
+  f28800): the TECH-evidence chain WORKS - Citadel/Templar tech evidence
+  opens Robo dispatches f16518 (pre-breach), Forge warps f16921, lurker
+  #248 breaches f16985 in contact, Robo x3 (f19406/21812/23140) +
+  Observatory f21433 warp. But TWO gaps, both certain: (1) ZERO Observer
+  dispatches ever (addDetectionGoals emits Robo/Obs/Forge/cannons but
+  NO Observer unit goal - plain omission in code); (2) ZERO cannon
+  dispatches ever despite Forge standing + 7300 frames of post-Obs
+  threat (goals emitted per code, vanish before dispatch - scheduler
+  or dispatcher drops them, twin-blind: V2_GOAL_SOURCE only logs
+  Pylons). The sighting path (122910: contact-only lurker, partial
+  Forge-only answer) stays the other half. Next: Observer goal +
+  cannon scheduling diagnosis, sim-pinned.
   DATUM 2026-11-01 (94 retained runs): ZERO DISCOVER-mention rows in any
   EVENTS file - no first-sight twin key exists anywhere in the tree, so
   contact-only units (like lurker #234, visible solely in CLUSTER rows)
