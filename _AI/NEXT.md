@@ -579,6 +579,15 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   `ProduceForge.produce()` call + class deleted (sole caller was the
   dynamic commander). 27/0. Open: game proof (a DT-threat or timing
   game where the V2 row warps the Forge - opportunistic).
+  B1-ASSIMILATOR LANDED 2026-11-01: the legacy queued gas once the Core
+  was nearly done (<80 warp seconds left) - the V2 goal needed the same
+  sight, so `BoardState.coreRemainingSeconds` (snapshot min over
+  unfinished Cores, -1 when none) feeds `AssimilatorGoal` (standing OR
+  nearly-done Core). Pinned: snapshot names 40s, feeder funds the row,
+  #174710 no-second-row rewritten onto V2 inFlight (which covers
+  PREPARING sites - stronger than the old next-2 cap). Legacy producer
+  + class + reason plumbing deleted. 17/0. Open: game proof (gas
+  timing vs legacy: Assimilator should warp as the Core lands).
   B1-CORE LANDED 2026-11-01: `CyberneticsCoreGoal` (gateway standing,
   no Core) already had a feeder home (`core` served); pinned
   `gatewayExistsFeedsCoreRow` (goal-to-queue). The #58 requeue and the
