@@ -148,10 +148,9 @@ public class GoalBoardAdvisor extends Commander {
     }
 
     /**
-     * Least remaining warp seconds among unfinished Cores, -1 when none
-     * is warping. Mirrors the legacy first-Assimilator gate (queue when
-     * the Core is near completion): the V2 goal needs the same sight or
-     * the Assimilator slips a full warp behind the legacy timing.
+     * Least warp seconds left on unfinished Cybernetics Cores, -1 when
+     * none is warping. Mirrors the board snapshot helper for the same
+     * decision; the goal layer never counts units itself.
      */
     private static int coreRemainingSeconds() {
         try {

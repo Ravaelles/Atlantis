@@ -102,6 +102,27 @@ public final class GameStateSnapshot {
     }
 
     /**
+     * Least warp seconds left on unfinished Cybernetics Cores, -1 when
+     * none is warping. Mirrors the board snapshot helper for the same
+     * decision (first Assimilator timed to a nearly-done Core).
+     */
+    private static int coreRemainingSeconds() {
+        try {
+            int best = -1;
+            for (atlantis.units.AUnit core : Select
+                .ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core).list()) {
+                if (core == null || core.isCompleted()) continue;
+                int seconds = core.getRemainingBuildTimeInSeconds();
+                if (seconds < 0) continue;
+                if (best < 0 || seconds < best) best = seconds;
+            }
+            return best;
+        } catch (Exception | Error ignored) {
+            return -1;
+        }
+    }
+
+    /**
      * Package-visible as a seam: the whole coming count in one
      * testable place, so no term can silently drop out of the sum.
      */
@@ -266,6 +287,10 @@ public final class GameStateSnapshot {
         // the live counts, so the goal layer never touches Select/Count.
         snapshot.gatewaysExisting = Count.ofTypeWithUnfinished(AUnitType.Protoss_Gateway);
         snapshot.gatewaysFree = Count.freeGateways();
+        // First-Assimilator timing (B1): the least warp seconds left on
+        // unfinished Cybernetics Cores, -1 when none is warping - the
+        // same sight the board snapshot carries for the same decision.
+        snapshot.coreRemainingSeconds = coreRemainingSeconds();
         // Fortification cannons need a standing Forge (legacy gate,
         // ProtossSecureBasesCommander): without it a Cannon goal from frame
         // 0 plans an orphan Forge ahead of the Gateway.

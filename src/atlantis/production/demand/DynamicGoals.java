@@ -71,6 +71,8 @@ public final class DynamicGoals {
         addGatewayGoal(goals, state);
         addTechGoal(goals, state);
         addGasGoal(goals, state, race);
+        addCoreBuildingGoal(goals, state);
+        addFirstAssimilatorGoal(goals, state, race);
         addExpansionGoal(goals, state, race);
         addDetectionGoals(goals, state);
         addStargateGoal(goals, state);
@@ -879,6 +881,52 @@ public final class DynamicGoals {
     }
 
     /**
+     * B1 (owner order): the V2 home for the Cybernetics Core building.
+     * The legacy producer waited for minerals 210 or a supply-25 army
+     * (or a gas building already up); V2 fires on the affordable-now
+     * bank once a Gateway stands, so the tech unlock never waits on a
+     * BO row. In-flight dedup rides the scheduler's committed set, the
+     * same as every other building goal.
+     */
+    private static void addCoreBuildingGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.hasCore) return;
+        if (state.gatewaysExisting < 1) return;
+        if (state.minerals < AUnitType.Protoss_Cybernetics_Core.mineralPrice()) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(AUnitType.Protoss_Cybernetics_Core),
+            ProductionGoal.PRIORITY_NORMAL,
+            1,
+            0,
+            TargetPlacement.anywhere()));
+    }
+
+    /**
+     * B1 (owner order): the V2 home for the first Assimilator. The legacy
+     * producer queued gas once the Core was nearly done (under 80 warp
+     * seconds left) instead of waiting for it to finish; the same sight
+     * lives on the snapshot now. Single-base openings included: unlike
+     * the multi-base gas goal above, this one answers the first refinery.
+     */
+    private static void addFirstAssimilatorGoal(List<ProductionGoal> goals, GameSnapshot state,
+                                               ProductionRacePolicy race) {
+        AUnitType gas = race.gasBuildingType();
+        if (gas == null) return;
+        if (state.gasBuildings > 0) return;
+        if (state.bases < 1) return;
+        boolean coreNearlyDone = state.coreRemainingSeconds >= 0 && state.coreRemainingSeconds < 80;
+        if (!state.hasCore && !coreNearlyDone) return;
+
+        goals.add(new ProductionGoal(
+            UnitProducible.of(gas),
+            ProductionGoal.PRIORITY_GAS,
+            1,
+            0,
+            TargetPlacement.anywhere()));
+    }
+
+    /**
      * Expansion: one more base is wanted as soon as the current one is close to
      * saturated. Expressed as a goal, so the timeline decides whether the 400
      * minerals belong to the expansion or to the defence this frame - the old
@@ -1044,6 +1092,15 @@ public final class DynamicGoals {
          * when every existing one is busy.
          */
         public int gatewaysFree;
+
+        /**
+         * Least warp seconds left on unfinished Cybernetics Cores, -1 when
+         * none is warping (same post-construction pattern). The first
+         * Assimilator times gas to a nearly-done Core the way the legacy
+         * producer did (under 80 warp seconds left), instead of waiting
+         * for it to finish.
+         */
+        public int coreRemainingSeconds = -1;
 
         /**
          * A Forge already standing (Protoss; other races leave it true so the
@@ -1262,6 +1319,7 @@ public final class DynamicGoals {
             // Forge, the in-flight counts and the hidden-unit flag.
             anchored.supplyProvidersComing = supplyProvidersComing;
             anchored.gatewaysExisting = gatewaysExisting;
+            anchored.coreRemainingSeconds = coreRemainingSeconds;
             anchored.basesTotal = basesTotal;
             anchored.basesInProduction = basesInProduction;
             anchored.basesPlanned = basesPlanned;

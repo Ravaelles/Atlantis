@@ -449,14 +449,20 @@ public class GoalSourcesTest {
     }
 
     @Test
-    public void earlySingleBaseOrRichGasWantsNothing() {
-        assertFalse(contains(
+    public void coreWithNoRefineryWantsFirstGas() {
+        // B1: the V2 home for the first Assimilator is Core-timed like
+        // the legacy producer (standing or nearly done), not base-count
+        // timed like the multi-base gas goal above. Single base included -
+        // the healthy minimum refines off one base - and the bank gates
+        // do not apply to the first refinery: without one there is no
+        // gas income to be rich in.
+        assertTrue(contains(
             DynamicGoals.contribute(gasState(30, 2, 50, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
             gasId()));
-        assertFalse(contains(
+        assertTrue(contains(
             DynamicGoals.contribute(gasState(60, 1, 50, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
             gasId()));
-        assertFalse(contains(
+        assertTrue(contains(
             DynamicGoals.contribute(gasState(60, 2, 500, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
             gasId()));
     }
