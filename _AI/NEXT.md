@@ -481,6 +481,10 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   `RaceStrategyResponseFactory`; Protoss-only D8): fast gate 1058/1058
   (2 arch advisory pre-existing). No game proof needed: dispatch
   branches the bot never takes (We.terran() is false in every game).
+  B1b LANDED 2026-11-01 (same for Zerg: `AsZergUnitDiscoveredResponse`
+  + `ZergStrategyResponse` deleted, We.zerg() branches pruned; enemy
+  Zerg is handled by the Protoss response, which stays): fast gate
+  1058/1058. No game proof needed: same untakable-branch argument.
   A4a DONE 2026-11-01 (StatusChanger null-site reroute). A4b IN PROGRESS:
   modifier→constraint translation (legacy @NATURAL/@MAIN wall-in orders
   anchor the catalogue neighbourhood instead of anywhere).
