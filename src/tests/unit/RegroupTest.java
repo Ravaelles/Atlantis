@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RegroupTest extends WorldStubForTests {
 
     @Test
-    public void meleeOnTopSkipsFormationSlots() {
-        // The chewer is invisible: visible enemies get acquired and the
+    public void meleeOnTopSkipsFormationSlots() {        // The chewer is invisible: visible enemies get acquired and the
         // fight owns the unit, so the no-target march only ever meets
         // melee on top through fog - exactly the shape the veto covers.
         // Pivot (the fogged chewer) sits 5.5 tiles from the leader,
@@ -61,5 +60,33 @@ public class RegroupTest extends WorldStubForTests {
                 Alpha.get().removeUnit(c);
             }
         });
+    }
+
+    @Test
+    public void noContactHoldReportsUpward() {
+        // Slice 4: the blind wait no slot wants reports its ownership -
+        // a single Zealot at a home anchor with no enemies anywhere holds
+        // halfway instead of idling silently.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
+        tests.fakes.FakeChoke choke =
+            new tests.fakes.FakeChoke(atlantis.map.position.APosition.create(60, 20), 8);
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
+
+            world(30, fakeOurs(nexus, zealot), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                atlantis.util.log.EventLog.clearForTests();
+                Regroup.march(zealot, FightOrFlight.Tactic.FIGHT,
+                    nexus.position(), zealot, BattleStrategy.OPEN_FIELD);
+
+                assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"why\":\"held\""),
+                    "the blind wait is twinned, not idled: "
+                        + atlantis.util.log.EventLog.toJsonLines());
+            });
+        }
     }
 }

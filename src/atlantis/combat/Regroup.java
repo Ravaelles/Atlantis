@@ -85,10 +85,15 @@ public final class Regroup {
                     // through to the advance below - falling through would
                     // re-issue a different formation order on the same frame
                     // the latch just refused, which is the churn with a new name.
-                    if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, hold)) return;
+                    if (!atlantis.combat.formation.FormationOrderLatch.shouldIssue(unit, hold)) {
+                        twinNoContactHold(unit, hold, "throttled-stand");
+
+                        return;
+                    }
 
                     if (unit.move(hold, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag())) {
                         FightTarget.markRepositioned(unit);
+                        twinNoContactHold(unit, hold, "held");
 
                         return;
                     }
@@ -237,6 +242,38 @@ public final class Regroup {
         }
     }
 
+    private static final java.util.Map<Integer, String> lastHoldTwin = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, Integer> lastHoldTwinFrame = new java.util.HashMap<>();
+
+    /**
+     * Slice 4: the no-contact hold reports its ownership upward - a
+     * blind wait no slot wants is a re-decide (the mission sent nobody
+     * anywhere), not an idle. Change-gated per unit with a 300-frame
+     * heartbeat, same shape as the mission twins.
+     */
+    private static void twinNoContactHold(AUnit unit, APosition hold, String why) {
+        try {
+            if (unit == null || hold == null) return;
+
+            int id = unit.id();
+            String row = why + "@" + hold.tx() + "," + hold.ty();
+            int now = A.now();
+            boolean transition = !row.equals(lastHoldTwin.get(id));
+            if (!transition && now - lastHoldTwinFrame.getOrDefault(id, -1000000) < 300) return;
+
+            lastHoldTwin.put(id, row);
+            lastHoldTwinFrame.put(id, now);
+            EventLog.key(LogKey.NO_CONTACT_HOLD)
+                .param("unit", id)
+                .param("tx", hold.tx())
+                .param("ty", hold.ty())
+                .param("why", why)
+                .param("transition", transition)
+                .log(now, A.minSec());
+        } catch (Exception ignored) {
+        }
+    }
+
     /**
      * True when an undressed line still marches the attack anchor: FIGHT
      * under the open-field approach, the anchor beyond sight, no ongoing
@@ -322,6 +359,8 @@ public final class Regroup {
 
     public static void clearForTests() {
         COLLAPSING.clear();
+        lastHoldTwin.clear();
+        lastHoldTwinFrame.clear();
     }
 
     /**

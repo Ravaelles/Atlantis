@@ -291,6 +291,13 @@ public enum LogKey {
      */
     SUPPLY_BLOCKED,
     /**
+     * The no-contact hold owns the unit (unit, tile, why): the blind
+     * wait no slot wants. Held (marched to the halfway point) or
+     * throttled-stand (latch refused the re-issue). Change-gated per
+     * unit with a heartbeat - presence proves the wait is owned, not idled.
+     */
+    NO_CONTACT_HOLD,
+    /**
      * The retreat floor clamped a rally (rung, tile, why): the losing
      * fight stops on the choke line instead of running home. Change-gated
      * per rung with a heartbeat - presence proves the floor owns a retreat.
