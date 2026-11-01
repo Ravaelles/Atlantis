@@ -59,6 +59,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             String fed = GoalBoardFeeder.ensure(blockedState());
 
@@ -86,6 +87,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             BoardState ample = BoardState.builder()
                 .minerals(500).supply(25, 33)
@@ -117,6 +119,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             GoalBoardFeeder.ensure(blockedState());
 
@@ -149,6 +152,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Pylon, 8));
             Queue.get().clearCache();
@@ -178,6 +182,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             GoalBoardFeeder.ensure(state);
 
@@ -205,12 +210,15 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
     @Test
     public void stalledGatewaysFeedOneZealotRow() {
-        // Bank 300 covers the higher-ranked wants first (workers 50,
-        // gateway 150): the wallet funds top-down, so the posture row
-        // needs the remainder to still cover a Zealot.
+        // Bank 300 covers the higher-ranked wants first (gateway 150):
+        // the wallet funds top-down, so the posture row needs the
+        // remainder to still cover a Zealot. The cannon goal is held off
+        // (one standing) so this pins the posture funding, not the
+        // cannon ladder above it.
         BoardState state = BoardState.builder()
             .minerals(300).gas(0).supply(14, 25)
             .workers(12).bases(1).gateways(1).gatewaysTraining(0).army(8)
+            .cannons(1)
             .seconds(400)
             .build();
 
@@ -223,6 +231,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             String fed = GoalBoardFeeder.ensure(state);
 
@@ -256,6 +265,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
 
             Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Dragoon, 20));
             Queue.get().clearCache();
@@ -292,6 +302,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
             ConstructionRequests.constructions.clear();
 
             currentMinerals = 120;
@@ -377,6 +388,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
             ConstructionRequests.constructions.clear();
 
             assertTrue(
@@ -408,6 +420,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
             ConstructionRequests.constructions.clear();
 
             BoardState dtThreat = BoardState.builder()
@@ -422,7 +435,8 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             assertTrue(GoalBoardFeeder.adoptionAllowed(AUnitType.Protoss_Forge),
                 "the Forge goal must be funded, not just wanted");
 
-            assertTrue(fed.contains("forge"), "fed ids name the goal, got: " + fed
+            assertTrue(fed.contains("forge"), "fed ids name the goal, got: '" + fed
+                + "' queue=" + Queue.get().allOrders().list()
                 + " | lastStatus=" + atlantis.production.orders.production.queue.QueueLastStatus.status());
             boolean forgeRow = false;
             for (ProductionOrder order : Queue.get().allOrders().list()) {
@@ -449,6 +463,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
             ConstructionRequests.constructions.clear();
 
             BoardState opening = BoardState.builder()
@@ -486,6 +501,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             Queue.get().allOrders().list().clear();
             Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
             ConstructionRequests.constructions.clear();
 
             BoardState finishing = BoardState.builder()
@@ -507,6 +523,48 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
                 }
             }
             assertTrue(assimRow, "near-completion Core funds one Assimilator row");
+        });
+    }
+
+    @Test
+    public void mutalisksFundCannonRow() {
+        // B1 Cannon family: the V2 home must fund what the legacy
+        // matrix wanted - scouted mutalisks with no cannons. Competitor
+        // goals are held off by the state (built core/assim, small calm
+        // army, no forge trigger) so the pin names the cannon funding,
+        // not wallet arithmetic.
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 22, 22),
+            fake(AUnitType.Protoss_Forge, 24, 24),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            atlantis.production.orders.production.queue.ReservedResources.reset();
+            ConstructionRequests.constructions.clear();
+
+            BoardState mutas = BoardState.builder()
+                .minerals(600).gas(100).supply(50, 60)
+                .workers(10).bases(1).gateways(2).army(4)
+                .core(true).assimilator(true).cannons(0)
+                .enemyRace("Zerg").enemyUnits(0, 0, 6, false)
+                .seconds(500)
+                .build();
+            String fed = GoalBoardFeeder.ensure(mutas);
+            assertTrue(GoalBoardFeeder.wantedGoal("cannon"),
+                "6 mutas with no cannons wants the Cannon goal");
+            assertTrue(fed.contains("cannon"), "fed names the goal, got: " + fed);
+
+            int cannons = 0;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().isCannon()) {
+                    cannons++;
+                }
+            }
+            assertTrue(cannons >= 1, "mutalisks with no cannons fund a Cannon row, got: " + fed);
         });
     }
 }

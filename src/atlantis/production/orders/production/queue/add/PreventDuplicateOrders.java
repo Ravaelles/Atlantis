@@ -216,7 +216,7 @@ public class PreventDuplicateOrders {
 
         if (We.protoss()) {
             if (tooManyPylons(type, position)) return true;
-            if (type.isCannon()) return existingInQueue <= 3;
+            if (type.isCannon()) return existingInQueue >= 3;
         }
 
         if (We.terran()) {
