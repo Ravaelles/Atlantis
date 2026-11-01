@@ -247,8 +247,8 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   cid/oid twins, resite/adopt guards, builderless cleanup, and a sim-pinned
  2400f age cap are in place. Open: owner visual check of PREPARING, live
   overlap proof, and builder-dead freeze proof (`WO-150b`; HP trail wired).
-  No retained game has shown FROZEN_WARP or recurrence of the old silent-stall
-  class. → details: `WINE-MACRO-DATUMS.md` §3. FROZEN DEMOTE 2026-10-30:
+  No retained game had shown FROZEN_WARP or recurrence of the old
+  silent-stall class - until 20261102_003832 below. → details: `WINE-MACRO-DATUMS.md` §3. FROZEN DEMOTE 2026-10-30:
   the builder-dead freeze proof is the mechanism, not just the twin - a
   static-hp entity past 2400f with nobody working it demotes to
   NOT_STARTED (game 184529 cid 10: 8-minute IN_PROGRESS Pylon froze
@@ -262,6 +262,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   [111,17] builder133, same oid) - the stalled demand re-arms and warps
   instead of dying silent. HP-trail + builder-dead freeze proof (WO-150b)
   still open; the recovery half is now live-proven.
+   DATUM 2026-11-02 (game 20261102_003832, loss f15541): silent-stall
+   RECURRENCE, pre-warp or frozen-warp undetermined from twins.
+   CyberneticsC STARTED f5154 [94,113], then 0 completions / 0 cancels /
+   0 demotes in ~10k frames (17 further dispatches deduped to the same
+   stuck row - 1 start all game). Zero Dragoons all game while gas
+   banked to 1008; zealot-only army overrun f14274+. STALL rows park
+   one builder at [94,117] f6107-6355 (still 253-501f), but no
+   BUILDER_STATE twin (flag off) names the attachment - the demote
+   gate (2400f + static hp + nobody working) never fires, consistent
+   with a builder ATTACHED-but-useless loophole. Needs a BuilderLog
+   game to name the mechanism; HP-trail (WO-150b) would distinguish
+   frozen-warp from never-arrived.
    DATUM 2026-10-29 (game 184529, BuilderLog): 1 Nexus construction from
    3869 attempts / 388 reached, 0 warps, 0 cancels - one builder (#158), one tile
    ([91,115]), canBuild=false in all flag combos while affordable/explored/powered.
