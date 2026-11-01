@@ -260,10 +260,6 @@ public class Count {
         return ofType(AUnitType.Zerg_Zergling);
     }
 
-    public static int zerglingsWithUnfinished() {
-        return ofType(AUnitType.Zerg_Zergling) + countUnitsBeingProduced(AUnitType.Zerg_Zergling);
-    }
-
     public static int hydralisks() {
         return ofType(AUnitType.Zerg_Hydralisk);
     }
@@ -337,10 +333,6 @@ public class Count {
         return ofType(AUnitType.Zerg_Larva);
     }
 
-    public static boolean larvas(int minLarvas) {
-        return larvas() >= minLarvas;
-    }
-
     public static int turrets() {
         return ofType(AUnitType.Terran_Missile_Turret);
     }
@@ -403,10 +395,6 @@ public class Count {
 
     public static int scienceVessels() {
         return Select.countOurOfType(AUnitType.Terran_Science_Vessel);
-    }
-
-    public static int creepColonies() {
-        return Select.countOurOfType(AUnitType.Zerg_Creep_Colony);
     }
 
     public static int barracks() {

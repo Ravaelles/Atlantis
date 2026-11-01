@@ -112,10 +112,6 @@ public class Have {
         return Count.ofType(AUnitType.Zerg_Spawning_Pool) > 0;
     }
 
-    public static boolean spawningPoolWithUnfinished() {
-        return existingUnfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool);
-    }
-
     public static boolean controlTower() {
         return Count.ofType(AUnitType.Terran_Control_Tower) > 0;
     }
@@ -186,10 +182,6 @@ public class Have {
 
     public static boolean forge() {
         return have(AUnitType.Protoss_Forge);
-    }
-
-    public static boolean larvas(int minLarvas) {
-        return Count.larvas() >= minLarvas;
     }
 
     public static boolean scienceVessel() {
