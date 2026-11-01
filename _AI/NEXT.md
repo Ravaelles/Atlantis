@@ -534,7 +534,9 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   deleted. NEXT: B1c first live producer family (needs per-gate game
   proof) or B2 reader migration; owner call on family order.
   #232 slice 3a LANDED (enforcement gate + twin + pins; live proof
-  OPEN - trigger never fired). #232 slice 4 LANDED 2026-11-01
+  OPEN - trigger never fired). #232 slice 3b LANDED 2026-11-01
+  (HOLD_NATURAL_CHOKE forbids the out-march with its own standoff,
+  mirror-pinned; live proof OPEN like 3a). #232 slice 4 LANDED 2026-11-01
   (fallbacks report upward, sim-pinned per fallback, enforcement
   deferred to its mission per spec): ghost give-ups
   (`GHOST_GIVE_UP`: no-ghost/lost-far/wall-grind), collapse latch

@@ -118,6 +118,34 @@ public final class ClusterRally {
     }
 
     /**
+     * Slice 3b (mirror of the main-choke standoff above): RADIUS + 6
+     * tiles from the natural choke center toward the main - the same
+     * depth, so the HOLD_NATURAL_CHOKE enforcement holds ground the
+     * army would hold anyway. Null-safe like its twin.
+     */
+    public static HasPosition naturalStandoffPoint() {
+        HomeGround home = HomeGround.resolve();
+        if (!home.isComplete()) return null;
+
+        AUnit main = home.main();
+
+        try {
+            AChoke choke = atlantis.map.choke.Chokes.natural();
+            if (choke == null || choke.center() == null) return null;
+
+            APosition point = choke.center().translateTilesTowards(
+                atlantis.combat.strategy.ChokeStandoff.standoffTiles(choke), main.position());
+            if (point == null) return null;
+
+            if (!point.isWalkable()) point = point.makeWalkable(6, 3, null);
+
+            return point;
+        } catch (RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    /**
      * Where the line holds with no enemy to engage (owner 2026-10-26,
      * live game vs Protoss: a 2-unit line marched to the far choke
      * standoff with no contact and uncovered the base while Zealots ran

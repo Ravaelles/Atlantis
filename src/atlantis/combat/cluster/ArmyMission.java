@@ -101,11 +101,12 @@ public enum ArmyMission {
     /**
      * Slice 3a, first enforced mission: HOLD_MAIN_CHOKE forbids the
      * out-march (collapse-to-anchor march, ghost creep past the choke -
-     * the mission's own forbidden-branches table). Every other mission
+     * the mission's own forbidden-branches table). Slice 3b adds
+     * HOLD_NATURAL_CHOKE with its own standoff. Every other mission
      * leaves the branches alone.
      */
     public static boolean forbidsOutMarch() {
-        return current == HOLD_MAIN_CHOKE;
+        return current == HOLD_MAIN_CHOKE || current == HOLD_NATURAL_CHOKE;
     }
 
     /**

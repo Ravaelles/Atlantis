@@ -87,9 +87,43 @@ public class HoldMainChokeEnforcementTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * Slice 3b (mirror of 3a): a line dressed at the stub natural choke
+     * holds its own standoff under HOLD_NATURAL_CHOKE instead of marching
+     * to the far anchor, and twins MISSION_ENFORCED with its mission.
+     */
     @Test
-    public void mainLineMarchesWithoutEnforcement() {
+    public void naturalLineHoldsInsteadOfMarchingOut() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 19);
+
+        world(3, fakeOurs(nexus, dragoon), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.gather();
+            ArmyMission.sampleShadow(ClusterMission.Posture.DEFEND);
+            assertTrue(ArmyMission.forbidsOutMarch(),
+                "dressed at the stub natural choke, the mission forbids leaving");
+
+            APosition farAnchor = APosition.create(60, 60);
+            BattleCommander.act(
+                dragoon, FightOrFlight.Tactic.FIGHT, farAnchor, dragoon);
+
+            String log = EventLog.toJsonLines();
+            assertTrue(log.contains("\"key\":\"MISSION_ENFORCED\""),
+                "the veto is twinned, not silent: " + log);
+            assertTrue(log.contains("\"mission\":\"HOLD_NATURAL_CHOKE\""),
+                "the twin names the enforcing mission: " + log);
+            assertFalse(
+                dragoon.lastCommand.equals("Move")
+                    && dragoon.targetPosition() != null
+                    && dragoon.targetPosition().equals(farAnchor.position()),
+                "no march to the far anchor under enforcement, holds the natural standoff");
+        });
+    }
+
+    @Test
+    public void mainLineMarchesWithoutEnforcement() {        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 11);
 
         world(3, fakeOurs(nexus, dragoon), new FakeUnit[0], () -> {

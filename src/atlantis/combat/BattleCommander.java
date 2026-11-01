@@ -88,7 +88,7 @@ public class BattleCommander extends Commander {
     }
 
     /**
-     * Enforced mission (owner #232, slice 3a): with no target in reach
+     * Enforced missions (owner #232, slices 3a/3b): with no target in reach
      * and FIGHT tactic, a mission that forbids leaving holds its own
      * ground instead of creeping after ghosts or marching the collapse
      * out. Fights never reach here (handled above), FLEE rallies keep

@@ -9,8 +9,8 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 /**
- * The enforced half of a mission (owner #232, slice 3a): when the decided
- * mission forbids leaving (currently only HOLD_MAIN_CHOKE), the march-out
+ * The enforced half of a mission (owner #232, slices 3a/3b): when the decided
+ * mission forbids leaving (HOLD_MAIN_CHOKE, HOLD_NATURAL_CHOKE), the march-out
  * branches hold the mission's own ground instead. Contact branches never
  * reach here - the caller veers only the no-target fallthrough (ghost
  * creep, collapse march), never a fight. FLEE rallies keep their own
@@ -34,13 +34,17 @@ public final class MissionHold {
      * Hold the choke standoff the mission owns. A displaced unit walks
      * back to it (marching in, never out); a dressed one holds position.
      * Always handled: falling through would leak into the march-out legs
-     * this veto exists to forbid.
+     * this veto exists to forbid. The standoff follows the mission: the
+     * natural choke for HOLD_NATURAL_CHOKE (slice 3b), the main choke
+     * otherwise.
      */
     public static boolean hold(AUnit unit, HasPosition anchor) {
         if (unit == null || !unit.isAlive()) return true;
 
         try {
-            HasPosition standoff = ClusterRally.chokeStandoffPoint();
+            HasPosition standoff = ArmyMission.current() == ArmyMission.HOLD_NATURAL_CHOKE
+                ? ClusterRally.naturalStandoffPoint()
+                : ClusterRally.chokeStandoffPoint();
             if (standoff != null && standoff.position() != null
                 && unit.distTo(standoff) > 2) {
                 unit.move(standoff, Actions.MOVE_ENGAGE, Behavior.STANDOFF.tag());
