@@ -785,6 +785,19 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   enter the twins, or the warps die instantly off-record - the trace gap
   is now the shape, not just the missing hunt. No fix (owner: no
   opportunistic macros for rare shapes).
+  ROOT CAUSE TRACED 2026-11-01 (read-only, owner order): the hunt is
+  unreachable, not just unproven. `CorsairHunt.act` has exactly one
+  caller (`SpecialistBehaviors.act`), which runs only inside
+  `BattleCommander.act`, which runs only over Alpha's loop - and Alpha
+  explicitly skips solo Corsairs (`!CorsairCluster.mergeWithArmy()`).
+  Nothing else drives them per frame: no orders, no `observe()` (hence
+  no telemetry/FrozenWatch/DuelMemory), and if nothing kills them, no
+  death rows either. Solo Corsairs sit at their warp tile forever.
+  Fix direction (no code yet): a per-frame driver for non-Alpha Corsairs
+  calling `observe()` + `CorsairHunt` (or route them through the shared
+  pipeline without Alpha membership). The 59 "facility unfinished #237"
+  dispatches are scheduler churn on the unfinished Stargate, separate
+  from the driver gap.
 - **#202** Production stall with banked gas: READY construction reservations
   may starve unit production while #192's bounded WAIT holds. Landed
   2026-10-25 (commit ce4de4034): release the earmark during WAIT and
