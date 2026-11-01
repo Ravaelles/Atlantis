@@ -66,8 +66,41 @@ public class AvoidLurkers extends Manager {
         if (burrowing == null) return false;
 
         lurker = burrowing;
+        twinBurrowing(unit, burrowing);
 
         return unit.friendsNear().mobileDetectors().countInRadius(7.5, unit) == 0;
+    }
+
+    private static final java.util.Map<Integer, String> lastBurrowTwin = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, Integer> lastBurrowTwinFrame = new java.util.HashMap<>();
+
+    /**
+     * Names the unconditional flee (owner UMS Lurkers2): without this row
+     * a live game cannot tell "the branch never fired" from "it fired and
+     * the move failed" - exactly the blindness of the 200353 vehicle
+     * (8 dead, zero LURKER orders anywhere). Change-gated per unit.
+     */
+    private static void twinBurrowing(AUnit unit, AUnit burrowing) {
+        try {
+            if (unit == null || burrowing == null) return;
+
+            int id = unit.id();
+            String row = "burrowing#" + burrowing.id();
+            int now = atlantis.game.A.now();
+            boolean transition = !row.equals(lastBurrowTwin.get(id));
+            if (!transition && now - lastBurrowTwinFrame.getOrDefault(id, -1000000) < 300) return;
+
+            lastBurrowTwin.put(id, row);
+            lastBurrowTwinFrame.put(id, now);
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.AVOID_LURKER)
+                .param("unit", id)
+                .param("lurker", burrowing.id())
+                .param("dist", (int) (unit.distTo(burrowing) * 10))
+                .param("burrowed", burrowing.isBurrowed())
+                .param("transition", transition)
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 
     private Selection lurkersToAvoid() {

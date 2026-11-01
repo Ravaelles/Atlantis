@@ -273,6 +273,13 @@ public enum LogKey {
      */
     GHOST_DARK_SKIP,
     /**
+     * The unconditional Zealot flee from a burrowing Lurker fired (unit,
+     * lurker, dist x10, burrowed state): without this row a live game
+     * cannot tell "the branch never fired" from "it fired and the move
+     * failed". Change-gated per unit.
+     */
+    AVOID_LURKER,
+    /**
      * A supply provider wanted but suppressed by coming (unfinished) ones: who blocks.
      */
     SUPPLY_BLOCKED,
