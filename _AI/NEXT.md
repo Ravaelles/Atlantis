@@ -841,6 +841,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   `DragoonsVsZerglings`, `DuelKite` in the 10-class FAIL list) - the
   Stage B gate holds through the resite tree; harder shape + live
   calibration still open.
+  STAGE-B SCENARIO LANDED 2026-11-01 (`dragoonsDoNotStalemateOutrangingPressers`):  the wallFallsToRangedPressers fixture (cannons die, pressers untouched)
+  now runs WITH two Dragoons dressed at the guns. MEASURED FIRST, red:
+  both Dragoons stand through the shelling and die with the wall - the
+  escape doctrine's outranged branch does not fire on unseen shellers.
+  The test pins fixture + resolution (no 2200-tick stalemate) and names
+  the gap; the unseen-shooter step-away is the next B-slice (sim-pinned,
+  then live-calibrated). 25/25 in-class green, fast gate 1060/1060
+  (2 arch advisory pre-existing).
 - **#188** ClusterFlee overhaul: sim pins cover homeward rally, organized
   retreat, and fighting through a blocking army; live audits found no blocking
   instance or scatter. B136's earlier “blocking” reading was withdrawn; the

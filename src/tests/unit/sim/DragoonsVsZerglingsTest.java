@@ -1174,6 +1174,84 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    /**
+     * NEXT #186 Stage B, second discrimination scenario: the same
+     * outranging pressers, now with two Dragoons dressed at the guns.
+     * Today the line stands through the shelling and is donated with
+     * the wall (both Dragoons die in place - the escape doctrine's
+     * outranged branch does not fire on unseen shellers). This pins the
+     * fixture + the resolution (no 2200-tick staring contest), and names
+     * the gap: outranged-withdrawal is the next B-slice (needs the
+     * unseen-shooter step-away, sim-pinned, then live-calibrated like
+     * the rest of #186). Threat pick and stop-point tuning ride the
+     * live calibration (same rule as #92).
+     */
+    @Test
+    public void dragoonsDoNotStalemateOutrangingPressers() {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit dragoonA = fake(AUnitType.Protoss_Dragoon, 33, 14);
+        FakeUnit dragoonB = fake(AUnitType.Protoss_Dragoon, 33, 16);
+        dragoonA.hp = 100; dragoonA.cooldown = 0;
+        dragoonB.hp = 100; dragoonB.cooldown = 0;
+        FakeUnit[] pressers = new FakeUnit[]{
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 13),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 14),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 16),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 17),
+        };
+        FakeUnit[] ours = new FakeUnit[]{cannonA, cannonB, dragoonA, dragoonB};
+        FakeUnit[] dragoons = new FakeUnit[]{dragoonA, dragoonB};
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, pressers, arena);
+        APosition gap = APosition.create(30, 15);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 2200; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, pressers);
+                    scriptCannon(cannonB, pressers);
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    for (FakeUnit presser : pressers) {
+                        scriptRangedPresser(presser, gap, ours);
+                    }
+                });
+                if ((cannonA.hp <= 0 && cannonB.hp <= 0)
+                    || pressersDead(pressers)) break;
+            }
+            long dragoonsAlive = dragoonsAlive(dragoons);
+            System.out.println("SimOpening: presser+dragoons dragoons alive "
+                + dragoonsAlive + "/2 (known gap: donated with the wall, "
+                + "outranged-withdrawal is the next B-slice)");
+            boolean wallFell = cannonA.hp <= 0 && cannonB.hp <= 0;
+            boolean pressersCleared = pressersDead(pressers);
+            assertTrue(wallFell || pressersCleared,
+                "the fight resolves instead of staring for 2200 ticks - "
+                + "either the shelling wins or the line answers it");
+        } finally {
+            world.close();
+        }
+    }
+
+    private static boolean pressersDead(FakeUnit[] pressers) {
+        for (FakeUnit p : pressers) if (p.hp > 0) return false;
+        return true;
+    }
+
+    private static long dragoonsAlive(FakeUnit[] dragoons) {
+        long alive = 0;
+        for (FakeUnit d : dragoons) if (d.hp > 0) alive++;
+        return alive;
+    }
+
     @Test
     public void wallFunnelHoldsRaidWithoutHelp() {
         FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
