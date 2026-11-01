@@ -978,6 +978,21 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   Revert in one commit if the plug's flank argument returns - the
   deletion is flagged here deliberately. Open: game proof (a choke
   station dresses the arc live - the pressure vehicle below).
+  DATUM 2026-11-01 (vehicle game 20261101_204401 on ProtossBaseB_v_Zerg,
+  frozen jar WITH crescents, 3:22 loss, 3 deaths): 2858 rows, 383 SHOT
+  / 84 HIT / 111 KITE - a real fight, but the doctrine's STATIONING
+  half is absent live. Shadow walks STAGE_MIDDLE(f0) -> ATTACK(f1) ->
+  HOLD_MAIN(f96-696) -> ATTACK(f901) -> STAGE_MIDDLE(f995-4595 end);
+  HOLD_MAIN_CHOKE never fires (min dChoke 7 vs AT_STATION 2.0) and the
+  army parks at [7,87] (middle staging) for 3600 frames vetoing chases
+  (HOLD: VETO 30, BREACH 29). The mission vocabulary CLASSIFIES where
+  the army is; nothing MARCHES it station-to-station (Main -> Main
+  Choke -> Natural -> enemy). That conductor is slice-5 territory
+  (mission orders movement), queued after slice 4 and 3b per owner
+  order - NOT built here. What this vehicle proves instead: no
+  regressions from the plug deletion (crescents dress, vetoes hold),
+  and the 3a gate stayed silent correctly (never at station, never
+  vetoed).
   DATUM 2026-10-28: the absolute >10-Dragoon main-choke ban is PvP-only by
   code (`We.protoss() && Count.dragoons() > 10` in
   `ProtossDefendFocusPoint`) - game 010715 fielded 24 Dragoons vs ZERG, so
