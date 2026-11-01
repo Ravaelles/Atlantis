@@ -554,7 +554,7 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   Assimilator 30/85 via the legacy door). Exotics (Arbiter/Reaver/
   Shuttle/DT/Archon/Scout/Carrier) have 0 warps AND 0 dispatches but
   stay - ReaverChainTest/TemplarChainTest pin them; deletion needs
-  the V2-goal home first. B1-PYLON LANDED 2026-11-01: the legacy: the legacy
+  the V2-goal home first. B1-PYLON LANDED 2026-11-01: the legacy
   per-base Pylon producer (`ProducePylonNearEveryBase`, minted with no
   supply-need gating) is deleted; openings stay on BO rows, blocks on
   the V2 supply-pylon goal (pinned `blockedSupplyFeedsTopPylon`), and
@@ -599,6 +599,25 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   supply/mineral gates - earlier Core possible; game proof watches
   the timing. Open: game proof (Core timing + expansion-Pylon +
   live #204 in one macro vehicle).
+- **#237** Assimilator never warps despite 70 requests (vehicle
+  20261101_215027 TauCross, B1-batch game, WIN f8640): 70
+  CONSTRUCTION_REQUESTED + 33 BUILDING_STARTED on the same tile
+  [7,39], 32 CONSTRUCTION_CANCEL ("Assimilator Can't build here"),
+  zero completions, gas 0.0 the whole game (won on Zealots anyway).
+  Discriminated, NOT B1-related: the deleted producers queued through
+  the same siting door (`AddToQueue` without position ->
+  `GasBuildingPositionFinder` geyser tile), and the cancel lives in
+  the shared refresh path (`finalRefreshBeforeIssuingOrderFailed`,
+  every 97th frame). Open mechanism: either the builderless window
+  self-cancels (`builder == null` fails the check before the geyser
+  exemption is even reached), or `standsOnItsGeyser` misses a known
+  geyser - `BUILDER_STATE` twins are absent (BuilderLog twin silent
+  here), so the builder's side is unread. Possible #145 interaction:
+  rotating builders (117->129->151...) may never stand still long
+  enough for the refused-tile memory to engage. Next: instrument the
+  cancel with builder id + stillness + isConstructing, then one
+  vehicle; do NOT touch B1 (V2 authored correctly: 1 Core dispatch ->
+  warp f4296-4355, 3 Pylons on time, all from V2).
   NEXT BATCH (owner 2026-11-01: 30 more NEXT issues, headless games
   allowed): pressure-vehicle game first (one game feeds #232
   enforcement proof, #170/#171 choke proof, #200/#205 hold proof,
