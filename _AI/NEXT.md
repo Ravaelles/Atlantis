@@ -485,6 +485,16 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   + `ZergStrategyResponse` deleted, We.zerg() branches pruned; enemy
   Zerg is handled by the Protoss response, which stays): fast gate
   1058/1058. No game proof needed: same untakable-branch argument.
+  A4h ATTEMPTED + REVERTED 2026-11-01 (sited-request fallback removal):
+  the legacy spiral fallback in `RequestBuildingNear.findExactPosition`
+  is load-bearing, not dead - 3 pinned sited shapes go red without it
+  (cannon/pylon at natural/third). Probe (`SitedDeclineProbeTest`,
+  deleted after the answer): in stub world the catalogue answers the
+  pylon ([2,48]) but correctly declines the unpowered cannon (null),
+  while the legacy spiral answers both - the pylon-first-then-cannon
+  chain depends on the fallback. The fallback stays until the demand
+  side owns the pylon-first chain (B-phase); the twin already names
+  which path answers. No code change kept.
   A4g LANDED 2026-11-01 (legacy precedence restored + dead
   `modifierFor` deleted): constraints read exact > nearTo > modifier >
   anywhere (was modifier-first since A4b - a silent reorder the legacy
