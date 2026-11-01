@@ -111,6 +111,8 @@ public final class GhostAdvance {
     private static final Map<Integer, Integer> firstGhostFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastCreepPos = new HashMap<>();
     private static final Map<Integer, Integer> lastCreepFrame = new HashMap<>();
+    private static final Map<Integer, String> lastGiveUpTwin = new HashMap<>();
+    private static final Map<Integer, Integer> lastGiveUpTwinFrame = new HashMap<>();
     private static final Map<Integer, String> lastDarkTwin = new HashMap<>();
     private static final Map<Integer, Integer> lastDarkTwinFrame = new HashMap<>();
 
@@ -178,6 +180,8 @@ public final class GhostAdvance {
         firstGhostFrame.clear();
         lastCreepPos.clear();
         lastCreepFrame.clear();
+        lastGiveUpTwin.clear();
+        lastGiveUpTwinFrame.clear();
         lastDarkTwin.clear();
         lastDarkTwinFrame.clear();
         departedAtFreshFrame.clear();
@@ -228,6 +232,7 @@ public final class GhostAdvance {
             if (freshContactFor(unit) != null) return true;
 
             forget(unit);
+            twinGiveUp(unit, "no-ghost");
 
             return false;
         }
@@ -247,6 +252,7 @@ public final class GhostAdvance {
         // reinforcement calls, not scouting).
         if (dist > LOST_TILES && !atlantis.game.A.isUms()) {
             forget(unit);
+            twinGiveUp(unit, "lost-far");
 
             return false;
         }
@@ -260,6 +266,7 @@ public final class GhostAdvance {
 
         if (grindingAWall(unit)) {
             forget(unit);
+            twinGiveUp(unit, "wall-grind");
 
             return false;
         }
@@ -484,6 +491,32 @@ public final class GhostAdvance {
                 .param("tx", point.tx())
                 .param("ty", point.ty())
                 .param("why", why)
+                .param("transition", transition)
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * Slice 4 (mission-driven command): the creep's give-ups report
+     * upward instead of silently returning false. Same change-gated
+     * shape as every mission twin: transitions always row, steady
+     * refusals remind every 300 frames.
+     */
+    private static void twinGiveUp(AUnit unit, String reason) {
+        try {
+            if (unit == null) return;
+
+            int id = unit.id();
+            int now = atlantis.game.A.now();
+            boolean transition = !reason.equals(lastGiveUpTwin.get(id));
+            if (!transition && now - lastGiveUpTwinFrame.getOrDefault(id, -1000000) < 300) return;
+
+            lastGiveUpTwin.put(id, reason);
+            lastGiveUpTwinFrame.put(id, now);
+            EventLog.key(LogKey.GHOST_GIVE_UP)
+                .param("unit", id)
+                .param("reason", reason)
                 .param("transition", transition)
                 .log(now, atlantis.game.A.minSec());
         } catch (Exception ignored) {

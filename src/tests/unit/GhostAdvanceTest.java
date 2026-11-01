@@ -7,6 +7,7 @@ import atlantis.combat.strategy.GhostAdvance;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -788,5 +789,46 @@ public class GhostAdvanceTest extends WorldStubForTests {
                     "detector cover revalidates the dark center too");
             });
         }
+    }
+
+    @Test
+    public void lostFarGhostReportsUpward() {
+        // Slice 4: the LOST give-up twins instead of silently
+        // forgetting - a far ghost on melee is a re-decide request.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Zerg_Zergling, 70, 29);
+        zealot.setEnemy();
+        zealot.isVisibleUnitOnMap = false;
+
+        world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            EventLog.clearForTests();
+            assertFalse(GhostAdvance.move(dragoon, FightOrFlight.Tactic.FIGHT),
+                "melee gives up far ghosts as before");
+            assertTrue(EventLog.toJsonLines().contains("\"reason\":\"lost-far\""),
+                "the give-up is twinned with its reason: " + EventLog.toJsonLines());
+        });
+    }
+
+    @Test
+    public void noGhostReportsUpward() {
+        // Slice 4: nothing remembered at all twins too - absence with
+        // no creep proves no memory, change-gated per unit.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+
+        world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            EventLog.clearForTests();
+            assertFalse(GhostAdvance.move(dragoon, FightOrFlight.Tactic.FIGHT),
+                "nothing remembered: the formation owns the unit");
+            assertTrue(EventLog.toJsonLines().contains("\"reason\":\"no-ghost\""),
+                "the empty answer is twinned too: " + EventLog.toJsonLines());
+        });
     }
 }

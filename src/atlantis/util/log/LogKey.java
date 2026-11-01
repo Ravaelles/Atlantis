@@ -273,6 +273,13 @@ public enum LogKey {
      */
     GHOST_DARK_SKIP,
     /**
+     * A ghost the creep cannot execute (unit, reason): the fallback
+     * reports upward instead of silently owning the frame or silently
+     * giving up. Change-gated per unit with a heartbeat - presence
+     * proves the filter fires, absence with no creep proves no memory.
+     */
+    GHOST_GIVE_UP,
+    /**
      * The unconditional Zealot flee from a burrowing Lurker fired (unit,
      * lurker, dist x10, burrowed state): without this row a live game
      * cannot tell "the branch never fired" from "it fired and the move
