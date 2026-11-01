@@ -1,12 +1,9 @@
 package atlantis.production.constructions.position;
 
-import atlantis.battle.zerg.ZergCreepColony;
-import atlantis.combat.siting.NewBunkerPositionFinder;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.map.region.MainRegion;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.base.FindPositionForBase;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
@@ -47,7 +44,6 @@ public class FindPosition {
 
         if (builder == null) builder = defineBuilder();
 
-        if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
         if (maxDistance < 0) maxDistance = MaxBuildingDist.MAX_DIST;
 
         if (construction != null) construction.setMaxDistance(maxDistance);
@@ -149,32 +145,6 @@ public class FindPosition {
     ) {
         if (building.isCannon()) {
             return FindPositionForCannon.find(nearTo, builder, construction);
-        }
-
-        // =========================================================
-
-        else if (building.isBunker()) {
-//            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
-//            return (new NewBunkerPositionFinder(nearTo, builder, construction)).find();
-            APosition thePosition = (new NewBunkerPositionFinder(nearTo, builder)).find();
-
-            if (Count.bunkers() <= 0 && thePosition != null && !thePosition.regionsMatch(MainRegion.mainRegion())) {
-                String modifier = APositionFinder.modifierFor(construction);
-                if ("MAIN_CHOKE".equals(modifier)) {
-                    ErrorLog.printMaxOncePerMinute("Fix for first MAIN_CHOKE bunker, place it in main.");
-
-                    return (new NewBunkerPositionFinder(Select.main(), builder)).find();
-                }
-            }
-
-            return thePosition;
-        }
-
-        // =========================================================
-        // Creep colony
-
-        else if (building.is(AUnitType.Zerg_Creep_Colony)) {
-            return ZergCreepColony.findPosition(building, builder, construction);
         }
 
         return null;

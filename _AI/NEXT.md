@@ -485,6 +485,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   + `ZergStrategyResponse` deleted, We.zerg() branches pruned; enemy
   Zerg is handled by the Protoss response, which stays): fast gate
   1058/1058. No game proof needed: same untakable-branch argument.
+  A4f LANDED 2026-11-01 (dead race-special siting deleted:
+  `FindPosition` bunker + creep branches, `SpecificConstructionRequests`
+  Terran/Zerg methods (now unconditional null),
+  `ZergCreepColony.java`, `TerranAddonBuilder.java`; 0 bunker warps in
+  98 games, We.terran()/We.zerg() false in every game, bunker path had
+  no live or test callers): fast gate 1058/1058. No game proof needed:
+  untakable branches + unreferenced files.
   A4e LANDED 2026-11-01 (dead bunker siting path deleted:
   `DefineExact` bunker block + `definePosition` + whole legacy
   modifier package except `ModifierAnchor` (`PositionModifier`,
