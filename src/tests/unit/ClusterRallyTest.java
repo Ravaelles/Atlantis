@@ -482,4 +482,46 @@ public class ClusterRallyTest extends WorldStubForTests {
             });
         }
     }
+
+    @Test
+    public void collapseLatchReportsItsTransitionUpward() {
+        // Slice 4: the collapse latch IS the collapse decision - when a
+        // dressed line commits to a far attack anchor, the transition
+        // rows instead of marching silently sideways. The line dresses
+        // over frames (an invisible-but-detected pivot gives slots
+        // without acquisition stealing the unit), then latches.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 31, 21);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 31, 19);
+        FakeUnit foe = fake(AUnitType.Zerg_Zergling, 42, 20);
+        foe.setEnemy();
+        foe.isVisibleUnitOnMap = false;
+        APosition anchor = APosition.create(70, 20);
+
+        world(70, fakeOurs(nexus, a, b, c), fakeEnemies(foe), () -> {
+            int now = atlantis.game.A.now();
+            if (now < 2 || now > 60) return;
+
+            Alpha.get().addUnit(a);
+            Alpha.get().addUnit(b);
+            Alpha.get().addUnit(c);
+            try {
+                BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, anchor, a);
+                BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, anchor, b);
+                BattleCommander.act(c, FightOrFlight.Tactic.FIGHT, anchor, c);
+            } finally {
+                Alpha.get().removeUnit(a);
+                Alpha.get().removeUnit(b);
+                Alpha.get().removeUnit(c);
+            }
+
+            if (now != 60) return;
+
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"state\":\"latched\""),
+                "dressed + far anchor latches the collapse with a twin");
+        });
+    }
 }

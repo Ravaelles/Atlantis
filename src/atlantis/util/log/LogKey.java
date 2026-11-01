@@ -291,6 +291,12 @@ public enum LogKey {
      */
     SUPPLY_BLOCKED,
     /**
+     * The collapse-march latch changed (unit, state, anchor): latched when
+     * a dressed line commits to a far attack anchor, released on arrival,
+     * dropped when the tactic/anchor stops qualifying. The latch IS the
+     * collapse decision - twinning its transitions names the march owner.
+     */
+    COLLAPSE_LATCH,    /**
      * A combat unit still with no enemy near and weapon ready (unit, still frames, foe dist): the post-fight freeze signature.
      */
     IDLE,

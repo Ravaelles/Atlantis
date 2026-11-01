@@ -12,6 +12,8 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 /**
  * The march without a target: nothing to fight, so the unit falls back
@@ -176,7 +178,7 @@ public final class Regroup {
         AUnit unit, HasPosition point, HasPosition anchor, FightOrFlight.Tactic tactic
     ) {
         if (tactic != FightOrFlight.Tactic.FIGHT || anchor == null || unit == null) {
-            if (unit != null) COLLAPSING.remove(unit.id());
+            if (unit != null) unlatch(unit, "dropped", anchor);
             return false;
         }
         double dAnchor;
@@ -186,7 +188,7 @@ public final class Regroup {
             return false;
         }
         if (dAnchor <= COLLAPSE_COMMIT_TILES) {
-            COLLAPSING.remove(unit.id());
+            unlatch(unit, "released", anchor);
             return false;
         }
         boolean dressed;
@@ -195,8 +197,44 @@ public final class Regroup {
         } catch (Exception ignored) {
             return false;
         }
-        if (dressed && dAnchor > COLLAPSE_BEYOND_SIGHT_TILES) COLLAPSING.add(unit.id());
+        if (dressed && dAnchor > COLLAPSE_BEYOND_SIGHT_TILES) latch(unit, anchor);
         return COLLAPSING.contains(unit.id());
+    }
+
+    /**
+     * Slice 4: the collapse latch reports its transitions upward - the
+     * latch IS the collapse decision, so a transition row names the
+     * march owner instead of a silent sideways march. Only real
+     * transitions row (set membership is the change gate).
+     */
+    private static void latch(AUnit unit, HasPosition anchor) {
+        if (unit == null || COLLAPSING.contains(unit.id())) return;
+
+        COLLAPSING.add(unit.id());
+        twinCollapseLatch(unit, "latched", anchor);
+    }
+
+    private static void unlatch(AUnit unit, String why, HasPosition anchor) {
+        if (unit == null || !COLLAPSING.contains(unit.id())) return;
+
+        COLLAPSING.remove(unit.id());
+        twinCollapseLatch(unit, why, anchor);
+    }
+
+    private static void twinCollapseLatch(AUnit unit, String state, HasPosition anchor) {
+        try {
+            if (unit == null) return;
+
+            int now = A.now();
+            APosition at = anchor == null ? null : APosition.create(anchor);
+            EventLog.key(LogKey.COLLAPSE_LATCH)
+                .param("unit", unit.id())
+                .param("state", state)
+                .param("ax", at == null ? -1 : at.tx())
+                .param("ay", at == null ? -1 : at.ty())
+                .log(now, A.minSec());
+        } catch (Exception ignored) {
+        }
     }
 
     /**
