@@ -2,11 +2,13 @@ package atlantis.production.constructions;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.ARandom;
+import atlantis.config.env.Env;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.builders.GetOptimalBuilder;
 import atlantis.production.constructions.cancelling.CancelConstruction;
-import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -92,12 +94,28 @@ public class Construction implements Comparable<Construction> {
 
     /**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
+     *
+     * <p>Owner 2026-11-01 (migration A1): catalogue-direct. The legacy
+     * spiral fallback is gone; a catalogue decline answers null and every
+     * caller is null-safe on it (adopt refuses + twins, refresh keeps the
+     * old site, resite falls through to absorb, exact-position falls back
+     * to its own null handling). The testing seam (random tiles) is
+     * preserved verbatim at this seam - resite pins assert shape, not
+     * destinations.
      */
     public APosition findPositionForNewBuilding() {
+        // Orderless constructions answer null before anything else (legacy
+        // guard preserved verbatim): no order, no demand, no site. This
+        // must stay ahead of the testing seam - orderless calls consume
+        // no randomness, and the shared RNG sequence pins suite order.
+        if (productionOrder() == null && demand() == null) return null;
+
+        if (Env.isTesting()) return APosition.create(ARandom.rand(1, 99), ARandom.rand(13, 99));
+
         return (APosition) cache.get(
             "findPositionForNewBuilding:" + genericCacheKey(),
             57,
-            () -> APositionFinder.findPositionForNew(builder, buildingType, this)
+            () -> CatalogueSiteAdapter.siteFor(builder, buildingType, this)
         );
     }
 

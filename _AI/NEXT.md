@@ -448,7 +448,20 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   cap, Pylon@8 at exactly 8 in all three. Authorship races both ways
   (legacy built Gateway#1 in 183253, V2 in 190104/192937) - mixed operation
   in LIVE mode stands, it is WO-147's question. Deletions per the WO order
-  are the owner's call.)
+  are the owner's call. OWNER ORDER 2026-11-01: full migration GO -
+  cut the old production and the old placement, then the full decision
+  system, testable throughout. Slice plan (one commit each, suite green,
+  game proof where named):
+  Phase A (placement, #146): A1 `Construction.findPositionForNewBuilding`
+  delegates catalogue-direct (testing random-tile seam preserved at the
+  seam; all 6 call sites null-safe on decline; `placementCatalogue` flag
+  is constant-true, setter dead) - pins: SiblingCover + adopt/resite
+  tests + suite + siting game. A2 base-siting users (NextBasePosition,
+  FindPositionForBase*, NearestFreeBase). A3 modifiers + FindPosition +
+  ASpecialPositionFinder + Terran depot (Protoss-only: verify dead).
+  A4 delete `APositionFinder` to `src-old/`.
+  Phase B (demand, #147): B0 read-only flow map (which legacy producers
+  still mint game-reaching orders vs V2), then slices from the map.
   - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
@@ -498,6 +511,18 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
     and the #145.1 proximity resite rides the same legacy
     `findPositionForNewBuilding` seam as adopt - #146 migrates both seams
     to the catalogue together. No code touched.
+    A1 LANDED 2026-11-01 (`Construction.findPositionForNewBuilding`
+    delegates catalogue-direct; orderless-guard + testing seam preserved
+    at the seam; all 6 call sites null-safe): pins 13/13 (SiblingCover,
+    RefreshCancel, StaleDuplicate, PreparingSite, WarpedOrder) + fast
+    gate 1058/1058 (2 arch advisory pre-existing). GAME PROOF 20261101_
+    152515 (TauCross PvZ, loss f17123, supply-50 exit via `atlantis.sh`
+    headless): ZERO Pylon/Gateway/Core/Forge/Cannon cancels - the
+    building seam holds. Reproduced pre-existing shapes (not regressions):
+    118x Assimilator "Can't build here" on one tile [86,118] f5723-17072
+    (gas-starved bank 6246/0 - same storm as retained 213009's 138x),
+    3x transient Nexus cancels on [94,112] f5141-5258 (not the #151
+    thousand-row chase).
   - **#147** Replace `Queue/**` and order types LAST with stateless demand and
     scheduling. Exit: V2 LIVE by default with parity; legacy queue remains the
     only queue until then.
