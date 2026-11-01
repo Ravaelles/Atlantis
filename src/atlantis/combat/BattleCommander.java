@@ -98,7 +98,13 @@ public class BattleCommander extends Commander {
 
     /**
      * Twin + frozen-watch + idle-watch sampling, once per unit per frame.
+     * Public for the solo-Corsair driver (owner #201): hunters that never
+     * join Alpha still get observed. Same sampling, no new semantics.
      */
+    public static void observeUnit(AUnit unit) {
+        observe(unit);
+    }
+
     private static void observe(AUnit unit) {
         atlantis.combat.twins.UnitTelemetry.sample(unit);
         FrozenWatch.note(unit);
@@ -215,6 +221,11 @@ public class BattleCommander extends Commander {
         for (AUnit unit : Alpha.get().selection().list()) {
             act(unit, tactic, anchor, Alpha.get().leader());
         }
+
+        // Solo Corsairs never joined Alpha, so act() never ran for them.
+        // Drive the hunt (and only the hunt) here - observe + CorsairHunt,
+        // never the regroup march (owner #201).
+        atlantis.combat.behaviors.CorsairSoloFlight.drive();
 
         return false;
     }
