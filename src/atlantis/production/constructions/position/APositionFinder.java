@@ -1,19 +1,15 @@
 package atlantis.production.constructions.position;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
 import atlantis.production.constructions.position.terran.TerranPositionFinder;
 import atlantis.production.constructions.position.zerg.ZergPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.CacheKey;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -38,66 +34,6 @@ public class APositionFinder {
 
         return construction.productionOrder() == null
             ? null : construction.productionOrder().getModifier();
-    }
-
-    /**
-     * Returns build position for next building of given type.
-     */
-    public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
-        if (construction == null || (construction.productionOrder() == null && construction.demand() == null)) {
-//            ErrorLog.printMaxOncePerMinute(
-//                "construction = " + construction + "\n" +
-//                    "construction.productionOrder() = " + (construction != null ? construction.productionOrder() : "-")
-//            );
-            return null;
-        }
-
-        if (Env.isTesting()) return APosition.create(ARandom.rand(1, 99), ARandom.rand(13, 99));
-
-        // The catalogue answers first when selected (the flag lives inside
-        // the adapter, both entries); a decline (null) falls back to the
-        // legacy search below, so a refused catalogue answer can never do
-        // worse than today. Default off.
-        APosition site = CatalogueSiteAdapter.siteFor(builder, building, construction);
-        if (site != null) return site;
-
-        HasPosition near = construction.nearTo();
-        double maxDistance = construction.maxDistance() >= 0 ? construction.maxDistance() : 35;
-
-//        System.err.println("building = " + building + ", near = " + near);
-
-        String modifier = modifierFor(construction);
-        if (near == null && modifier != null) {
-            near = PositionModifier.toPosition(modifier, building, builder, construction);
-        }
-
-        return findPositionForNew(builder, building, construction, near, maxDistance);
-    }
-
-    /**
-     * Returns build position for next building of given type. If <b>nearTo</b> is not null, it forces to find
-     * position
-     * <b>maxDistance</b> build tiles from given position.
-     */
-    public static APosition findPositionForNew(
-        AUnit builder, AUnitType building,
-        Construction construction,
-        HasPosition nearTo, double maxDistance
-    ) {
-        // The key takes the construction's id, not the object: CacheKey formats
-        // what it knows and "does this cache key builder know what a Construction
-        // is" was one of the two things that stopped it being a kernel helper
-        // (_AI/NEXT.md #13).
-        String cacheKey = CacheKey.create("findPositionForNew", building, nearTo, construction.id(), A.digit(maxDistance));
-//        System.err.println("cacheKey = " + cacheKey);
-
-//        if (true) return FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance);
-
-        return cache.get(
-            cacheKey,
-            37,
-            () -> FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance)
-        );
     }
 
     // =========================================================

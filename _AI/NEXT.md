@@ -481,6 +481,12 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   which is why the fallback could go: a decline retries through the
   demand (no construction minted, no churn), and the twin names every
   decline. 51x Assimilator cancels on one tile = known gas-storm shape.
+  A4d LANDED 2026-11-01 (dead `findPositionForNew` overloads deleted
+  from `APositionFinder` - zero production callers after A1+A4a; only
+  comments + `CacheKeyTest` string mention it, `DemandModifierTest`
+  pins the surviving `modifierFor`): pins 24/24 + fast gate 1058/1058
+  (2 arch advisory pre-existing). No game proof needed: unreferenced
+  code cannot fire (verified by grep, not by belief).
   - **#145** Catalogue-only siting: DONE (flip 2026-11-01, unconditional
     `createPlacementPlanner`, legacy planner in `src-old/`, sim on catalogue).
     Verdicts: A/B III 0 cancels (was 4214), confirming game 20261031_124722
