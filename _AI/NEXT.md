@@ -195,8 +195,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   query caches and unexplained TTLs were removed. Historical inventory:
   `DOCS/SELECT-CACHES.md`.
 - **G · #8 race strategies** `ProductionRacePolicy` + three race policies are
-  landed and live-proven. V2 parity remains open; compare Pylon timing side by
-  side before deciding whether early warp is pull-forward or waste.
+  landed and live-proven. V2 parity CLOSED 2026-11-01 (30-issue package):
+  legacy finder vs catalogue on the same stride-60 opening warp identical
+  rows at identical frames (Pylon f1980, Gateway f3720...) - siting is at
+  parity, early warp is not pull-forward. Pinned by the goldens
+  (`SimOpeningToFiftyTest`); the A/B probe was throwaway, not kept.
 - **H · #9–#11** `A`, `Selection`, and `AUnit` have partial seam extractions.
   Continue only when a clear responsibility seam appears; cross-context readers
   stay until their dependency is fixed.
