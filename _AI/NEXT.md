@@ -534,7 +534,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   deleted. NEXT: B1c first live producer family (needs per-gate game
   proof) or B2 reader migration; owner call on family order.
   #232 slice 3a LANDED (enforcement gate + twin + pins; live proof
-  OPEN - trigger never fired). #201 Corsair driver LANDED (sim/world
+  OPEN - trigger never fired). #232 slice 4 LANDED 2026-11-01
+  (fallbacks report upward, sim-pinned per fallback, enforcement
+  deferred to its mission per spec): ghost give-ups
+  (`GHOST_GIVE_UP`: no-ghost/lost-far/wall-grind), collapse latch
+  transitions (`COLLAPSE_LATCH`: latched/released/dropped), retreat
+  floor overrides (`RETREAT_FLOOR`: clamped/ahead-hold, per rung),
+  no-contact hold ownership (`NO_CONTACT_HOLD`: held/throttled-stand).
+  #201 Corsair driver LANDED (sim/world
   pins; game proof needs a Stargate game). #203 brake twin LANDED.
   #223 V2_DETECTION_GOALS twin LANDED (attribution instrument).
   B0 LANDED 2026-11-01 + B1a/B1b dead-race dispatch deleted.
