@@ -346,6 +346,40 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     /**
      * A planner with a scripted answer: the seam for decline routing without map physics.
      */
+    @Test
+    public void refusedTileIsDeclinedWithItsOwnReason() {
+        // Owner #151: an engine-refused tile must not be re-served. The
+        // twin names the refusal (not a generic no-tile), the caller
+        // re-sites or retries instead of looping on the cursed tile.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            atlantis.production.constructions.position.RefusedTiles.clearForTests();
+            atlantis.production.constructions.position.RefusedTiles.note(
+                APosition.create(25, 25), AUnitType.Protoss_Gateway);
+
+            Construction construction = constructionFor(
+                AUnitType.Protoss_Gateway,
+                new ProductionOrder(AUnitType.Protoss_Gateway, 8), null);
+            ScriptedPlanner planner = new ScriptedPlanner(
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
+
+            APosition site = CatalogueSiteAdapter.siteFor(planner, probe, AUnitType.Protoss_Gateway, construction);
+
+            assertNull(site, "a refused tile is never re-served, even when the planner offers it");
+            assertTrue(EventLog.toJsonLines().contains("\"result\":\"declined\"")
+                && EventLog.toJsonLines().contains("refused-tile"),
+                "the decline is twinned with its reason: " + EventLog.toJsonLines());
+
+            atlantis.production.constructions.position.RefusedTiles.clearForTests();
+        });
+    }
+
+    /**
+     * A planner with a scripted answer: the seam for decline routing without map physics.
+     */
     private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {
         private final atlantis.production.placement.PlacementReservation answer;
 

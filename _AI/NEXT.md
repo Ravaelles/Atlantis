@@ -279,6 +279,13 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   engine-refusal half (tile reads buildable, engine says no) still
   wants refused-tile memory + a live game showing no recurrence.
   detailed ledger adjudication is archived in `WINE-MACRO-DATUMS.md` §3.
+  MECHANISM LANDED 2026-11-01 (`RefusedTiles`, 2400f TTL): IssueBuildOrder
+  notes engine-HARD refusals (builder present and still, engine gate says
+  no - move-timing transients excluded); the catalogue declines refused
+  tiles with its own twin reason instead of re-serving them. Self-
+  correcting (transients age out, hard ones re-add). Pinned
+  `refusedTileIsDeclinedWithItsOwnReason` + fast gate green. Live
+  no-recurrence proof queued (needs an engine-refusal game).
   DATUM 2026-11-01 (94 retained runs): explicit BUILD_REFUSED rows are
   rare and early-era (11 games, max 31 in 151521, all pre-V2 openings) -
   no new repeat-tile chase exhibit; the documented exhibits (184529 Nexus

@@ -204,6 +204,14 @@ public final class CatalogueSiteAdapter {
         }
 
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
+        // Owner #151: an engine-refused tile stays refused until the TTL
+        // expires, so the refresh loop cannot re-serve the cursed tile.
+        // Self-correcting: transient refusals age out, hard ones re-add.
+        if (RefusedTiles.isRefused(site, building)) {
+            SiteTwin.declined(building, "refused-tile", via, constraint.nearTileX(), constraint.nearTileY());
+
+            return null;
+        }
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
             SiteTwin.declined(building, "legacy-refused", via, constraint.nearTileX(), constraint.nearTileY());
 

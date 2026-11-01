@@ -136,6 +136,22 @@ public class IssueBuildOrder extends HasUnit {
                         return true;
                     }
 
+                    // Owner #151: remember engine-HARD refusals so the refresh
+                    // loop stops re-serving the cursed tile (003802: 3000+
+                    // BUILD_REFUSED_WHY on [119,12]). Only when the builder
+                    // is present and still and the engine's own gate says no -
+                    // move-order timing refusals (builder mid-walk, gate open)
+                    // are transient by design and must NOT poison the tile.
+                    try {
+                        if (unit != null && unit.u() != null && !unit.isMoving()
+                            && !unit.u().canBuild(buildingType.ut(), buildTilePosition)) {
+                            atlantis.production.constructions.position.RefusedTiles.note(
+                                APosition.create(buildTilePosition.getX(), buildTilePosition.getY()),
+                                buildingType);
+                        }
+                    } catch (Exception | Error ignored) {
+                    }
+
                     // REFUSED, and the reason is measured: the engine will not accept a Build
                     // while the worker's own order is still `Move`. A refused Gateway attempt
                     // reads `lastCommand=Move getOrder=Move isMoving=true distToBuild=0.6`,
