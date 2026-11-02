@@ -445,6 +445,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 unitType, APosition.create(candidate.tileX(), candidate.tileY())
             )) continue;
 
+            // An engine-refused tile never hosts a warp while the refusal
+            // stands (NEXT #151): the engine said no there, so serving it
+            // again burns a builder walk plus a refresh-cancel every pass
+            // (measured live: Nexus [105,115] refused 1031 times, natural
+            // never online). TTL-forgiven, like the funnel decline.
+            if (atlantis.production.constructions.position.RefusedTiles.isRefused(
+                APosition.create(candidate.tileX(), candidate.tileY()), unitType)) continue;
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to
@@ -562,6 +570,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             int x = construction.buildPosition().tx();
             int y = construction.buildPosition().ty();
+
+            // A refused tile is never carried over (NEXT #151): the
+            // engine said no there, so the plan must name a different
+            // tile - re-serving the cursed one loops the refresh-cancel
+            // every pass until the TTL forgives it.
+            if (atlantis.production.constructions.position.RefusedTiles.isRefused(
+                APosition.create(x, y), unitType)) {
+                return null;
+            }
 
             reservedThisPass.add(x + ":" + y);
             grid.markUsed(x, y, unitType.getTilesWidth(), unitType.getTilesHeights());
