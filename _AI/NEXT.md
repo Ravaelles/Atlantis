@@ -548,7 +548,11 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   #232 slice 3a LANDED (enforcement gate + twin + pins; live proof
   OPEN - trigger never fired). #232 slice 3b LANDED 2026-11-01
   (HOLD_NATURAL_CHOKE forbids the out-march with its own standoff,
-  mirror-pinned; live proof OPEN like 3a). #232 slice 4 LANDED 2026-11-01
+  mirror-pinned; live proof OPEN like 3a). #232 slice 3c LANDED
+  2026-11-02 (HOLD_MAIN forbids the out-march at the same main-choke
+  standoff - the decider owns which mission names the ground;
+  mainLineHoldsInsteadOfMarchingOut red-first, control moved to an
+  attack mission; live proof OPEN like 3b). #232 slice 4 LANDED 2026-11-01
   (fallbacks report upward, sim-pinned per fallback, enforcement
   deferred to its mission per spec): ghost give-ups
   (`GHOST_GIVE_UP`: no-ghost/lost-far/wall-grind), collapse latch
