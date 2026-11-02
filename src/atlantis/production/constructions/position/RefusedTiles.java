@@ -33,6 +33,7 @@ public final class RefusedTiles {
     public static final int REFUSAL_TTL_FRAMES = 2400;
 
     private static final Map<String, Integer> refusedAt = new HashMap<>();
+    private static final Map<String, Integer> lastTwinnedAt = new HashMap<>();
 
     private RefusedTiles() {
     }
@@ -43,6 +44,29 @@ public final class RefusedTiles {
         try {
             APosition p = APosition.create(tile);
             refusedAt.put(key(p.tx(), p.ty(), building), A.now());
+            twinNote(p, building);
+        } catch (Exception | Error ignored) {
+        }
+    }
+
+    /**
+     * Names each refusal once per tile per TTL window (NEXT #151): the
+     * note is silent by design, but whether it fires at all is exactly
+     * what the stuck-tile hunts need to know (measured 20261102_015204:
+     * Nexus [94,112] refused thousands of times with no twin naming a
+     * note). Re-notes inside the window stay silent; expiry re-arms.
+     */
+    private static void twinNote(APosition p, AUnitType building) {
+        try {
+            String k = key(p.tx(), p.ty(), building);
+            Integer last = lastTwinnedAt.get(k);
+            int now = atlantis.game.A.now();
+            if (last != null && now - last < REFUSAL_TTL_FRAMES) return;
+            lastTwinnedAt.put(k, now);
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.TILE_REFUSED)
+                .param("tile", p.tx() + "," + p.ty())
+                .param("building", building.name())
+                .log(now, atlantis.game.A.minSec());
         } catch (Exception | Error ignored) {
         }
     }
@@ -63,6 +87,7 @@ public final class RefusedTiles {
 
     public static void clearForTests() {
         refusedAt.clear();
+        lastTwinnedAt.clear();
     }
 
     private static String key(int tx, int ty, AUnitType building) {

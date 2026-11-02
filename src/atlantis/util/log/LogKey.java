@@ -78,6 +78,11 @@ public enum LogKey {
      */
     BUILD_REFUSED,
     /**
+     * An engine-hard tile refusal noted for the planner (NEXT #151): tile
+     * and building, once per TTL window. Answers whether the note fires.
+     */
+    TILE_REFUSED,
+    /**
      * A picked early site (type, tile, supply row).
      */
     CONSTRUCTION_PREPARING,

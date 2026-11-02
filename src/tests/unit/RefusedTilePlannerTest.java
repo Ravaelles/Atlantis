@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,6 +68,48 @@ public class RefusedTilePlannerTest extends WorldStubForTests {
                 "the refused tile is skipped, not re-served: "
                     + first.tileX() + "," + first.tileY());
         });
+    }
+
+    @Test
+    public void refusalNotesTwinOncePerWindow() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 30);
+        world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            atlantis.util.log.EventLog.clearForTests();
+            RefusedTiles.note(APosition.create(10, 10), AUnitType.Protoss_Pylon);
+            RefusedTiles.note(APosition.create(10, 10), AUnitType.Protoss_Pylon);
+            RefusedTiles.note(APosition.create(11, 10), AUnitType.Protoss_Pylon);
+
+            String rows = atlantis.util.log.EventLog.toJsonLines();
+            assertEquals(2, countKey(rows, "TILE_REFUSED"),
+                "one row per distinct tile: " + rows);
+            assertEquals(1, countTile(rows, "10,10"),
+                "re-notes of the same tile inside the TTL stay silent: " + rows);
+        });
+    }
+
+    private static int countKey(String rows, String key) {
+        int n = 0;
+        int from = 0;
+        while (true) {
+            int at = rows.indexOf("\"key\":\"" + key + "\"", from);
+            if (at < 0) return n;
+            n++;
+            from = at + 1;
+        }
+    }
+
+    private static int countTile(String rows, String tile) {
+        int n = 0;
+        int from = 0;
+        while (true) {
+            int at = rows.indexOf("\"tile\":\"" + tile + "\"", from);
+            if (at < 0) return n;
+            n++;
+            from = at + 1;
+        }
     }
 
     private static final class FlatTerrain implements TileAvailabilityGrid.TerrainSource {
