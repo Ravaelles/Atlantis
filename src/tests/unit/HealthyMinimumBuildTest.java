@@ -84,6 +84,97 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
         return false;
     }
 
+    private static String countsOf(tests.unit.sim.SimDriver driver) {
+        return "Pylon=" + countWarpsOf(driver, "Pylon")
+            + " Gateway=" + countWarpsOf(driver, "Gateway")
+            + " Core=" + countWarpsOf(driver, "CyberneticsC")
+            + " Assimilator=" + countWarpsOf(driver, "Assimilator");
+    }
+
+    private static int countWarpsOf(tests.unit.sim.SimDriver driver, String type) {
+        int count = 0;
+        for (tests.unit.sim.SimDriver.WarpRecord record : driver.warpLog()) {
+            if (record.kind.equals("building") && record.type.equals(type)) count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Owner-ordered staged build order: the first warps must arrive as
+     * exactly 1 Pylon with 0 Gateways, then 1 Pylon + 1 Gateway, then
+     * +1 Cybernetics Core, then +1 Assimilator - no building warps
+     * before its predecessor, and no second copy sneaks in early.
+     * Each stage fires once, on its first warp, and asserts the full
+     * vector so a later stage cannot hide an early duplicate.
+     */
+    private static final class StagedCounts {
+        boolean sawPylon;
+        boolean sawGateway;
+        boolean sawCore;
+        boolean sawAssim;
+    }
+
+    private static void checkStagedCounts(
+        tests.unit.sim.SimDriver driver, Numbers numbers, StagedCounts staged
+    ) {
+        int pylons = countWarpsOf(driver, "Pylon");
+        int gateways = countWarpsOf(driver, "Gateway");
+        int cores = countWarpsOf(driver, "CyberneticsC");
+        int assims = countWarpsOf(driver, "Assimilator");
+
+        if (!staged.sawPylon && pylons >= 1) {
+            staged.sawPylon = true;
+            if (!(pylons == 1 && gateways == 0 && cores == 0 && assims == 0)) {
+                fail("first Pylon warp must precede every Gateway - "
+                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+            }
+        }
+        if (!staged.sawGateway && gateways >= 1) {
+            staged.sawGateway = true;
+            if (!(pylons == 1 && gateways == 1 && cores == 0 && assims == 0)) {
+                fail("first Gateway warp must land on exactly 1 Pylon + 1 Gateway - "
+                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+            }
+        }
+        // No cross-requirement between Core and Assimilator (owner order):
+        // live games warp Assimilator either way, and the engine does not
+        // force an order between them. Each must still warp exactly once.
+        if (!staged.sawCore && cores >= 1) {
+            staged.sawCore = true;
+            if (!(pylons == 1 && gateways == 1 && cores == 1)) {
+                fail("first Core warp must land on exactly 1 Pylon + 1 Gateway + 1 Core - "
+                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+            }
+        }
+        if (!staged.sawAssim && assims >= 1) {
+            staged.sawAssim = true;
+            if (!(pylons == 1 && gateways == 1 && assims == 1)) {
+                fail("first Assimilator warp must land on exactly 1 Pylon + 1 Gateway + 1 Assimilator - "
+                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+            }
+        }
+    }
+
+    /**
+     * The no-duplicates backstop for the single-row opening: once the
+     * healthy minimum is complete, every building type must have warped
+     * exactly once - a second warp anywhere (a re-fired row, a second
+     * supply Pylon, a dual-authored Core) fails here even if it landed
+     * after its stage already passed.
+     */
+    private static void assertExactCounts(tests.unit.sim.SimDriver driver, Numbers numbers) {
+        int pylons = countWarpsOf(driver, "Pylon");
+        int gateways = countWarpsOf(driver, "Gateway");
+        int cores = countWarpsOf(driver, "CyberneticsC");
+        int assims = countWarpsOf(driver, "Assimilator");
+        if (!(pylons == 1 && gateways == 1 && cores == 1 && assims == 1)) {
+            fail("healthy minimum must warp exactly one of each building, got "
+                + pylons + " Pylon(s), " + gateways + " Gateway(s), " + cores + " Core(s), "
+                + assims + " Assimilator(s) - " + statusOf(driver, numbers));
+        }
+    }
+
     /**
      * Work already out: a queue row not finished, or a construction not
      * terminal. The bank gate reads this so a sample taken mid-issue
@@ -195,6 +286,28 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
         runHealthyMinimum(false);
     }
 
+    /**
+     * Test-only seam: point the strategy's build order at the mock rows.
+     * The queue reads the strategy's copy, not CurrentBuildOrder, so
+     * without this the test would drive the on-disk opening instead of
+     * the tight one. Done with reflection (not a production setter) so
+     * the information->production dependency stays out of main code.
+     * Fails loudly if the field is renamed.
+     */
+    private static void setStrategyBuildOrder(
+        atlantis.information.strategy.AStrategy strategy,
+        atlantis.production.orders.build.ABuildOrder order
+    ) {
+        try {
+            java.lang.reflect.Field field =
+                atlantis.information.strategy.AStrategy.class.getDeclaredField("buildOrder");
+            field.setAccessible(true);
+            field.set(strategy, order);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("test seam broke: AStrategy.buildOrder renamed", e);
+        }
+    }
+
     private void runHealthyMinimum(boolean withBuildOrder) throws Exception {
         atlantis.config.env.ProductionV2Mode previous =
             atlantis.config.env.Env.productionV2();
@@ -211,24 +324,45 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
                 driver.spawnResources();
                 driver.spawnBase(1, 4);
                 ABuildOrder previousOrder = CurrentBuildOrder.get();
+                atlantis.information.strategy.AStrategy strategy =
+                    atlantis.information.strategy.Strategy.get();
+                atlantis.production.orders.build.ABuildOrder previousStrategyOrder =
+                    strategy.buildOrder();
                 if (withBuildOrder) {
+                    // Freeze the total footprint before it trips the
+                    // preventive supply Pylon: the V2 supply goal fires
+                    // at free <= 4, so capping used supply at 12 keeps
+                    // free supply at 5 or more all game. Test-harness
+                    // only (SimDriver cap); production code is untouched.
+                    // V2 keeps streaming workers: its proof is authorship,
+                    // not exact counts.
+                    driver.capSupplyUsed(12);
                     // The standard opening, same rows the live
                     // adjudication reads: Pylon 8, Gateway 10+12, Core
                     // 22, Assimilator 23.
+                    // Single-row variant (owner order): one building of
+                    // each kind, so any duplicate warp fails the staged
+                    // pins and the end-state exact count instead of
+                    // hiding in the "at least one" assertion. Thresholds
+                    // stay reachable under one Pylon (9 + 8 = 17 cap):
+                    // live 22/23 rows could never trigger there. The
+                    // order Pylon -> Gateway is enforced by supply and
+                    // power prerequisites; Core vs Assimilator order is
+                    // deliberately unpinned (owner decision).
                     ArrayList<ProductionOrder> orders = new ArrayList<>(Arrays.asList(
                         new ProductionOrder(AUnitType.Protoss_Pylon, 8),
                         new ProductionOrder(AUnitType.Protoss_Gateway, 10),
-                        new ProductionOrder(AUnitType.Protoss_Gateway, 12),
-                        new ProductionOrder(AUnitType.Protoss_Zealot, 13),
-                        new ProductionOrder(AUnitType.Protoss_Pylon, 15),
-                        new ProductionOrder(AUnitType.Protoss_Zealot, 17),
-                        new ProductionOrder(AUnitType.Protoss_Zealot, 18),
-                        new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 22),
-                        new ProductionOrder(AUnitType.Protoss_Assimilator, 23),
-                        new ProductionOrder(AUnitType.Protoss_Pylon, 27)));
+                        new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 12),
+                        new ProductionOrder(AUnitType.Protoss_Assimilator, 12)));
                     ABuildOrder buildOrder = Mockito.mock(ABuildOrder.class);
                     Mockito.when(buildOrder.productionOrders()).thenReturn(orders);
                     CurrentBuildOrder.set(buildOrder);
+                    // The queue reads the strategy's copy, not
+                    // CurrentBuildOrder: point both at the same mock
+                    // rows and rebuild the queue, or the test would
+                    // drive the on-disk opening instead of the tight one.
+                    setStrategyBuildOrder(strategy, buildOrder);
+                    atlantis.production.orders.production.queue.QueueInitializer.initializeProductionQueue();
                 }
                 else {
                     // Pure V2 demand, no build order: the BO path is
@@ -237,14 +371,21 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
                     CurrentBuildOrder.clear();
                 }
                 try {
+                    StagedCounts staged = new StagedCounts();
                     while (driver.frame() < FRAME_CAP) {
                         driver.step();
+                        // Staged pins run on the build-order variant only:
+                        // V2 demand (preventive supply, sustained army) is
+                        // allowed to build past them; its contract is the
+                        // authorship proof in the end-state assertion.
+                        if (withBuildOrder) checkStagedCounts(driver, numbers, staged);
 
                         if (hasWarpOf(driver, "Pylon")
                             && hasWarpOf(driver, "Gateway")
                             && hasWarpOf(driver, "Assimilator")
                             && hasWarpOf(driver, "CyberneticsC")
                             && numbers.gas >= GAS_GOAL) {
+                            if (withBuildOrder) assertExactCounts(driver, numbers);
                             return;
                         }
                         // Hoarded minerals mean stalled production - but
@@ -264,6 +405,10 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
                 } finally {
                     if (previousOrder != null) CurrentBuildOrder.set(previousOrder);
                     else CurrentBuildOrder.clear();
+                    if (previousStrategyOrder != null) {
+                        setStrategyBuildOrder(strategy, previousStrategyOrder);
+                        atlantis.production.orders.production.queue.QueueInitializer.initializeProductionQueue();
+                    }
                 }
             } finally {
                 driver.close();

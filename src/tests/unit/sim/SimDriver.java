@@ -45,6 +45,7 @@ public final class SimDriver {
     private final SimConfig config;
     private final SimFields fields;
     private final SimUnitRegistry units = new SimUnitRegistry();
+    private int supplyCap = Integer.MAX_VALUE;
     private final SimBank bank;
     private final SimMining mining = new SimMining();
     private final SimConstructions constructions = new SimConstructions();
@@ -484,8 +485,27 @@ public final class SimDriver {
         }
     }
 
+    /**
+     * Test scenario control: freeze the total footprint of the sim game.
+     * Once used supply reaches the cap, no more units train. The healthy
+     * pin needs supply frozen while the opening completes - a streaming
+     * workforce plus V2 sustained army would otherwise push supply into
+     * the preventive-Pylon window (free <= 4) and break the exact-count
+     * pins with a duplicate Pylon that is supply math, not a bug.
+     * Test harness only; production code is untouched.
+     */
+    public void capSupplyUsed(int maxSupply) {
+        this.supplyCap = maxSupply;
+    }
+
     private void consumeTrain(AUnitType type) {
         if (type == null) return;
+
+        // Scenario control (test harness only, never production): freeze
+        // the total footprint once used supply reaches the cap. Workers
+        // and V2 sustained army alike would otherwise push supply into
+        // the preventive-Pylon window and duplicate the Pylon by math.
+        if (units.supplyUsed() >= supplyCap) return;
 
         FakeUnit facility = freeFacilityFor(type);
         if (facility == null || constructions.isTraining(facility.id())) return;
