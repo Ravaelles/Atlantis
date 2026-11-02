@@ -106,7 +106,7 @@ public enum ArmyMission {
      * leaves the branches alone.
      */
     public static boolean forbidsOutMarch() {
-        return current == HOLD_MAIN_CHOKE || current == HOLD_NATURAL_CHOKE;
+        return current == HOLD_MAIN_CHOKE || current == HOLD_NATURAL_CHOKE || current == HOLD_MAIN;
     }
 
     /**

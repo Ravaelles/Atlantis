@@ -122,8 +122,16 @@ public class HoldMainChokeEnforcementTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * Slice 3c (mirror of 3a/3b): under HOLD_MAIN the line holds its
+     * ground instead of marching to a far anchor, and twins
+     * MISSION_ENFORCED with its mission. The standoff is the same main
+     * choke the choke missions hold (HOLD_MAIN forbids any march past
+     * it); the decider owns which mission names the ground.
+     */
     @Test
-    public void mainLineMarchesWithoutEnforcement() {        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+    public void mainLineHoldsInsteadOfMarchingOut() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 11);
 
         world(3, fakeOurs(nexus, dragoon), new FakeUnit[0], () -> {
@@ -131,8 +139,38 @@ public class HoldMainChokeEnforcementTest extends WorldStubForTests {
 
             Alpha.gather();
             ArmyMission.sampleShadow(ClusterMission.Posture.DEFEND);
+            assertTrue(ArmyMission.forbidsOutMarch(),
+                "at the main, HOLD_MAIN forbids leaving it");
+
+            APosition farAnchor = APosition.create(28, 28);
+            BattleCommander.act(
+                dragoon, FightOrFlight.Tactic.FIGHT, farAnchor, dragoon);
+
+            String log = EventLog.toJsonLines();
+            assertTrue(log.contains("\"key\":\"MISSION_ENFORCED\""),
+                "the veto is twinned, not silent: " + log);
+            assertTrue(log.contains("\"mission\":\"HOLD_MAIN\""),
+                "the twin names the enforcing mission: " + log);
+            assertFalse(
+                dragoon.lastCommand.equals("Move")
+                    && dragoon.targetPosition() != null
+                    && dragoon.targetPosition().equals(farAnchor.position()),
+                "no march to the far anchor under enforcement, holds the main");
+        });
+    }
+
+    @Test
+    public void attackMissionMarchesWithoutEnforcement() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10, 11);
+
+        world(3, fakeOurs(nexus, dragoon), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            Alpha.gather();
+            ArmyMission.sampleShadow(ClusterMission.Posture.ATTACK);
             assertFalse(ArmyMission.forbidsOutMarch(),
-                "at the main the mission is HOLD_MAIN, nothing is forbidden");
+                "on the attack nothing is forbidden");
 
             APosition farAnchor = APosition.create(28, 28);
             BattleCommander.act(
