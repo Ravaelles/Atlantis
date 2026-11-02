@@ -308,6 +308,17 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
   correcting (transients age out, hard ones re-add). Pinned
   `refusedTileIsDeclinedWithItsOwnReason` + fast gate green. Live
   no-recurrence proof queued (needs an engine-refusal game).
+  MECHANISM CLOSED 2026-11-02 (game 20261102_014019, builder-logged,
+  VICTORY f9240): the loop is the V2-direct path minting from
+  reservations that never consulted RefusedTiles - Nexus [105,115]
+  engine-refused 1031x (bot math buildable, powered, explored,
+  affordable; builder 138 walks, arrives 1.7 out, stops, never
+  issues) while the same tile re-serves every frame. The note already
+  fired on the shared issue path; only the consult was funnel-only.
+  `reservePlacement` now skips refused candidates and `carriedOver`
+  drops refused tiles (fresh search), TTL-forgiven. Pinned
+  `refusedTileIsSkipped` red-first. Live proof: a refused tile
+  re-siting to a working one in a game.
   DATUM 2026-11-01 (94 retained runs): explicit BUILD_REFUSED rows are
   rare and early-era (11 games, max 31 in 151521, all pre-V2 openings) -
   no new repeat-tile chase exhibit; the documented exhibits (184529 Nexus
