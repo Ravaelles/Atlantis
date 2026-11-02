@@ -86,6 +86,13 @@ public final class Kite {
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null) return false;
 
+        // Outranged and under fire (NEXT #186 B-slice): the envelope
+        // below ignores shooters past it, so a Guardian shelling from
+        // 8 tiles reads as no threat and the line donates. Damage we
+        // cannot answer is always a step-away, whatever the cooldown
+        // and health policy above would hold for a reply-able fight.
+        if (atlantis.combat.targeting.Engagement.isOutrangingShooter(unit, threat)) return true;
+
         // Zealots trade contact, except wounded on a spent weapon: with
         // 7+ frames of cooldown left a step back costs no DPS, and a
         // wounded zealot saves HP against faster attackers instead of

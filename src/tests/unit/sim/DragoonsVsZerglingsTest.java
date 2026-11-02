@@ -1241,6 +1241,70 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    /**
+     * NEXT #186 B-slice (unseen-shooter step-away): the same shelling,
+     * but the Dragoons must not donate with the wall. Guardians halt at
+     * their own max range and shell from past Dragoon reply range; the
+     * kite envelope ignores shooters past it, so the line reads no
+     * threat and stands through the shelling. A Dragoon taking damage
+     * it cannot answer steps away from the shooter instead - the wall
+     * still falls (nothing can save the guns), but the mobile guns live.
+     */
+    @Test
+    public void dragoonsWithdrawFromOutrangedShelling() {
+        FakeUnit cannonA = fake(AUnitType.Protoss_Photon_Cannon, 33, 13);
+        FakeUnit cannonB = fake(AUnitType.Protoss_Photon_Cannon, 33, 17);
+        FakeUnit dragoonA = fake(AUnitType.Protoss_Dragoon, 33, 14);
+        FakeUnit dragoonB = fake(AUnitType.Protoss_Dragoon, 33, 16);
+        dragoonA.hp = 100; dragoonA.cooldown = 0;
+        dragoonB.hp = 100; dragoonB.cooldown = 0;
+        // A base behind the wall: the wall defends something, and the
+        // baseless-map last-contact hunt stays closed (it only runs with
+        // no bases at all - without this the sim-only hunt path drags
+        // the guns back west on a stale contact).
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 40, 14);
+        FakeUnit[] pressers = new FakeUnit[]{
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 13),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 14),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 16),
+            fakeEnemy(AUnitType.Zerg_Guardian, 10, 17),
+        };
+        FakeUnit[] ours = new FakeUnit[]{cannonA, cannonB, dragoonA, dragoonB, nexus};
+        FakeUnit[] dragoons = new FakeUnit[]{dragoonA, dragoonB};
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE)
+            .block(30 * TILE, 0, 2 * TILE, 14 * TILE)
+            .block(30 * TILE, 16 * TILE, 2 * TILE, 24 * TILE);
+        SimWorld world = new SimWorld(ours, pressers, arena);
+        APosition gap = APosition.create(30, 15);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 2200; i++) {
+                world.tick(() -> {
+                    scriptCannon(cannonA, pressers);
+                    scriptCannon(cannonB, pressers);
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    for (FakeUnit presser : pressers) {
+                        scriptRangedPresser(presser, gap, ours);
+                    }
+                });
+                if ((cannonA.hp <= 0 && cannonB.hp <= 0)
+                    || pressersDead(pressers)) break;
+            }
+            assertTrue(cannonA.hp <= 0 && cannonB.hp <= 0,
+                "the wall still falls - nothing answers 8-range shelling, withdrawal saves guns, not guns");
+            assertEquals(2, dragoonsAlive(dragoons),
+                "both Dragoons step out of the shell envelope instead of donating with the wall");
+        } finally {
+            world.close();
+        }
+    }
+
     private static boolean pressersDead(FakeUnit[] pressers) {
         for (FakeUnit p : pressers) if (p.hp > 0) return false;
         return true;

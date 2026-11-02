@@ -121,6 +121,11 @@ public final class FightTarget {
         // the focused target: focus fire must not pin a Dragoon that
         // is being shredded).
         AUnit threat = Engagement.nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
+        // Beyond-envelope shelling (NEXT #186 B-slice): the envelope
+        // above ignores shooters past it, so an outranged Guardian reads
+        // as no threat. The outranged branch below names the shooter
+        // instead, and the ladder steps away from it.
+        if (threat == null) threat = Engagement.nearestOutrangingShooter(unit);
         HitTwin.sample(unit, threat != null ? threat : target);
         FightTrace.sample(unit, threat != null ? threat : target);
 
@@ -337,6 +342,29 @@ public final class FightTarget {
         } catch (Exception | Error ignored) {
             return 0;
         }
+        // Outranged and under fire (NEXT #186 B-slice): holding the
+        // Stardust edge (our max range) inside a longer enemy envelope
+        // is standing in the shelling - the 0.3-tile remainder trips
+        // the min-step-gain floor and the gun donates in place
+        // (measured sim: two Dragoons hold 4.0 under Guardian fire and
+        // die with the wall). Leave the envelope instead of holding
+        // its edge: the step below takes the full footwork length
+        // (a remainder-sized step trips the same gain floor), capped
+        // by the normal step rules. Normal fights never read this
+        // (their threat does not outrange them), so the hold-point
+        // doctrine stands.
+        boolean fleeingEnvelope = false;
+        try {
+            if (unit != null && threat != null
+                && unit.hasWeaponToAttackThisUnit(threat)
+                && atlantis.battle.DuelMemory.damagedLessThanAgo(
+                    unit, atlantis.combat.targeting.Engagement.OUTRANGED_DAMAGE_WINDOW_FRAMES)
+                && unit.enemyWeaponRangeAgainstThisUnit(threat) > unit.weaponRangeAgainst(threat)) {
+                fleeingEnvelope = true;
+                gap = Math.max(gap, CombatTuning.current().getKiteStepTiles());
+            }
+        } catch (Exception | Error ignored) {
+        }
         if (atlantis.combat.strategy.DuelKite.isSwamped(unit)) {
             return Math.min(MoveAway.LONG_STEP_TILES, gap);
         }
@@ -518,8 +546,7 @@ public final class FightTarget {
     /**
      * Out of range: glide to the max-range firing position with moves only.
      */
-    private static boolean reengage(AUnit unit, AUnit target, int now, Integer lastStep) {
-        // Shoot instead of gliding (owner 2026-10-29): a ready weapon and
+    private static boolean reengage(AUnit unit, AUnit target, int now, Integer lastStep) {        // Shoot instead of gliding (owner 2026-10-29): a ready weapon and
         // a shootable foe means stop for the shot, not a march - gliding
         // past (or into) an enemy that could be shot this frame is how
         // re-engages walk into the pack and die there. Falls through to
@@ -545,6 +572,23 @@ public final class FightTarget {
         // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
         // 156 attack orders, zero shots landed). The attack issues on
         // arrival, when the target is actually in range.
+        // Outranged envelope (NEXT #186 B-slice): gliding to our
+        // max-range firing position inside a longer enemy envelope
+        // re-enters the shelling the kite just left - the withdraw
+        // oscillates at the edge and dies there (measured sim: two
+        // Dragoons yo-yo at 7-8 under Guardian fire, 0/2 survive).
+        // Do not glide into an envelope we cannot out-trade; the kite
+        // branch owns the step-away. Static relation, not
+        // damage-latched: the latch expires outside the envelope and
+        // the glide would resume. In-range footwork below is untouched.
+        try {
+            if (target != null && unit.hasWeaponToAttackThisUnit(target)
+                && unit.distTo(target) > unit.weaponRangeAgainst(target)
+                && unit.enemyWeaponRangeAgainstThisUnit(target) > unit.weaponRangeAgainst(target)) {
+                return false;
+            }
+        } catch (Exception ignored) {
+        }
         double standOff = unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
         if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
             APosition fireAt = null;
@@ -635,6 +679,25 @@ public final class FightTarget {
         // shared subject (DragoonPincerKiteTest). A far focus still chases
         // with a standing attack order, never a naked glide.
         if (target.equals(unit.target())) return;
+
+        // Never march into an outranging envelope (NEXT #186 B-slice):
+        // issuing attackUnit on a shooter that hits from past our reply
+        // range walks the gun through free hits to a trade it cannot
+        // win - measured sim: two Dragoons march 33->28 into four
+        // Guardians, then donate with the wall. The kite branch owns
+        // the step-away; this gate only refuses the march. Melee is
+        // exempt (closing IS the zealot fight); force-aware dives
+        // (tanks) ride the live calibration, like the rest of #186.
+        try {
+            if (unit != null && target != null
+                && unit.weaponRangeAgainst(target) >= 2
+                && unit.hasWeaponToAttackThisUnit(target)
+                && unit.distTo(target) > unit.weaponRangeAgainst(target)
+                && unit.enemyWeaponRangeAgainstThisUnit(target) > unit.weaponRangeAgainst(target)) {
+                return;
+            }
+        } catch (Exception ignored) {
+        }
 
         ShotTwin.fired(unit, target);
         unit.attackUnit(target);

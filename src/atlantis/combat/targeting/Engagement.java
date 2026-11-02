@@ -12,6 +12,72 @@ import atlantis.util.We;
  */
 public final class Engagement {
 
+    /**
+     * Damage window naming an outranged shooter (NEXT #186 B-slice): hp
+     * that dropped inside this many battle frames still counts as under
+     * fire, so a shelling answered a minute ago does not keep the line
+     * stepping.
+     */
+    public static final int OUTRANGED_DAMAGE_WINDOW_FRAMES = 60;
+    /**
+     * Reach past the shooter's max range that still counts as its
+     * envelope (splash + tile rounding, not a second opinion on range).
+     */
+    public static final double OUTRANGED_REACH_TILES = 1.0;
+
+    /**
+     * The shooter shelling past our reply range (NEXT #186 B-slice):
+     * we are taking damage, this foe can hit us from where it stands,
+     * and we cannot hit back from here. The kite envelope ignores
+     * shooters past it, so without this the line reads no threat and
+     * donates - Guardians halt at their own max range and shell from
+     * past Dragoon reply range (measured sim: both guns stand through
+     * the shelling and die with the wall). Nearest one wins; null when
+     * nothing outranges us or we are not under fire.
+     */
+    public static AUnit nearestOutrangingShooter(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return null;
+        if (!atlantis.battle.DuelMemory.damagedLessThanAgo(unit, OUTRANGED_DAMAGE_WINDOW_FRAMES)) return null;
+
+        atlantis.units.select.Selection enemies = unit.enemiesNear();
+        if (enemies == null) return null;
+
+        AUnit best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (AUnit enemy : enemies.list()) {
+            if (enemy == null || !enemy.isAlive()) continue;
+            if (!enemy.hasPosition()) continue;
+            if (!enemy.isDetected()) continue;
+            if (!isOutrangingShooter(unit, enemy)) continue;
+            double dist = unit.distTo(enemy);
+            if (dist < bestDist) {
+                best = enemy;
+                bestDist = dist;
+            }
+        }
+
+        return best;
+    }
+
+    /**
+     * Whether this foe is an outranged shooter for this unit: damage
+     * inside the window, beyond our reply range, inside its envelope.
+     * Guns that could never reply (no weapon for the foe) are not
+     * outranged - that is a different doctrine, not this branch.
+     */
+    public static boolean isOutrangingShooter(AUnit unit, AUnit threat) {
+        try {
+            if (unit == null || threat == null) return false;
+            if (!unit.hasWeaponToAttackThisUnit(threat)) return false;
+            if (!atlantis.battle.DuelMemory.damagedLessThanAgo(unit, OUTRANGED_DAMAGE_WINDOW_FRAMES)) return false;
+            double dist = unit.distTo(threat);
+            if (dist <= unit.weaponRangeAgainst(threat)) return false;
+            return dist <= unit.enemyWeaponRangeAgainstThisUnit(threat) + OUTRANGED_REACH_TILES;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     private Engagement() {
     }
 
