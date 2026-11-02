@@ -993,6 +993,16 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   the gap; the unseen-shooter step-away is the next B-slice (sim-pinned,
   then live-calibrated). 25/25 in-class green, fast gate 1060/1060
   (2 arch advisory pre-existing).
+  B-SLICE LANDED 2026-11-02 (`dragoonsWithdrawFromOutrangedShelling`,
+  same fixture + a base behind the wall): no attack-march into a
+  superior envelope (rearmAttack gate), the kite bypass names the
+  shooter past the envelope (`Engagement.nearestOutrangingShooter`),
+  the step leaves the envelope instead of holding its edge, and no
+  reengage-glide re-enters it. Measured red-first (0/2 survive), now
+  both Dragoons live while the wall still falls. Melee exempt from
+  the march gate (closing IS the zealot fight); force-aware dives
+  (e.g. tanks) ride the live calibration with the threat pick.
+  26/26 in-class, fast gate 1086/0, combat domain 734/0.
 - **#188** ClusterFlee overhaul: sim pins cover homeward rally, organized
   retreat, and fighting through a blocking army; live audits found no blocking
   instance or scatter. B136's earlier “blocking” reading was withdrawn; the
