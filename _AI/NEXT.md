@@ -1786,3 +1786,18 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   (expect `ghost:` rows avoiding (61,55), stand-off instead of
   stand-in-spines); the PATH through dark ground stays uncovered -
   only destinations are guarded.
+
+- **Active steps (2026-11-02; live-game loop halted on owner order -
+  no new games, no new datum lines without owner order):**
+  - #238 duplicate rows: authorship attribution still open
+    (V2-direct silent mint is the prime suspect, unproven); needs
+    the owner authorship decision before any guard. No code.
+  - #150 stuck-IN_PROGRESS rows: survive all demote branches incl.
+    the 2400f age cap (recurred); discriminating demote-guard twin
+    named, not implemented. No code - paths load-bearing.
+  - Post-warp "builder gone" demotes (systematic): warping
+    self-match suspected to miss on site-vs-warp drift. Needs owner
+    decision. No code.
+  - Strangulation loop (refused re-mint + watchdog, TTL-phased):
+    serve-fresh-tile-after-demote or TTL change - owner decision.
+    No code.
