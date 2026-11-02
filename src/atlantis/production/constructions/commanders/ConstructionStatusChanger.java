@@ -227,16 +227,29 @@ public class ConstructionStatusChanger extends Commander {
         if (builder.isConstructing()) return false;
         if (builder.isMoving()) return false;
         if (!builder.lastPositionChangedMoreThanAgo(FROZEN_WARP_OBSERVED_FRAMES)) return false;
-        if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
+        // Hold fire while the FIRST attempt is still settling: a fresh
+        // issue needs its window, but the window must expire - holding
+        // on the latest attempt lets chronic refusals suppress their own
+        // watchdog forever (measured: 9000f of attempts, every frame
+        // inside the 150f hold-fire, Nexus never online).
+        if (construction.firstBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
 
         String detail = "startingParked=" + builder.lastPositionChangedAgo() + "f";
         logDemote(construction, detail);
         twinDemote(construction, detail);
+        // A row parked 2400f with no issue is refusal evidence as strong
+        // as the single-frame engine gate the legacy path notes: decline
+        // the tile so the planner names a different one (self-forgiving
+        // after the TTL, like the funnel decline).
+        try {
+            atlantis.production.constructions.position.RefusedTiles.note(
+                construction.buildPosition(), construction.buildingType());
+        } catch (Exception | Error ignored) {
+        }
         construction.setBuilder(null);
-        // Hold-fire stamp, not an issue: without it the re-arm refines
-        // straight back to STARTING on the same frozen standstill clock
-        // and demotes again the next frame. 150f of quiet for the fresh
-        // builder to prove movement; a still-parked row re-demotes after.
+        // Re-arm grace: the fresh attempt gets its own settle window
+        // instead of inheriting the chronic row's clock.
+        construction.resetFirstBuildAttempt();
         construction.setLastBuildAttemptNow();
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
 

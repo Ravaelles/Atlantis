@@ -45,6 +45,7 @@ public class Construction implements Comparable<Construction> {
      * accepted attempt).
      */
     private int lastBuildAttemptFrame = -999999;
+    private int firstBuildAttemptFrame = -999999;
     /**
      * Whether the frozen-warp twin already named this construction. A warp
      * that never completes would otherwise re-twin every frame for the
@@ -510,11 +511,28 @@ public class Construction implements Comparable<Construction> {
     }
 
     public void setLastBuildAttemptNow() {
+        if (firstBuildAttemptFrame < 0) firstBuildAttemptFrame = AGame.now();
         lastBuildAttemptFrame = AGame.now();
     }
 
     public int lastBuildAttemptAgo() {
         return A.ago(lastBuildAttemptFrame);
+    }
+
+    /**
+     * Age of the FIRST build attempt on this row (NEXT #150): the
+     * hold-fire after an attempt must expire when attempts keep failing,
+     * or a chronic refuser suppresses its own watchdog forever
+     * (measured live 20261102_015204: Nexus [105,115] attempted for
+     * 9000f, every frame inside the 150f hold-fire, never demoted).
+     * Reset on re-arm so the fresh attempt gets its settle window.
+     */
+    public int firstBuildAttemptAgo() {
+        return A.ago(firstBuildAttemptFrame);
+    }
+
+    public void resetFirstBuildAttempt() {
+        firstBuildAttemptFrame = -999999;
     }
 
     /**

@@ -194,4 +194,39 @@ public class StartingParkedDemoteTest extends AbstractTestWithWorld {
             }
         });
     }
+
+    private Construction chronicStall;
+    private FakeUnit chronicProbe;
+
+    @Test
+    public void chronicAttemptsDoNotHoldFireForever() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        chronicProbe = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        world(2600, units(nexus, chronicProbe), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                chronicProbe.unitState().setLastPositionChanged(A.now());
+                // Old attempts plus a fresh one: the live shape is a
+                // refused build re-issued every few frames for the whole
+                // game (measured: Nexus [105,115] 1031 attempts, every
+                // frame inside the 150f hold-fire, natural never online).
+                chronicStall = startingCoreAt(chronicProbe, 12, 10);
+                chronicStall.setLastBuildAttemptNow();
+            }
+
+            if (A.now() == 2490) {
+                chronicStall.setLastBuildAttemptNow();
+            }
+
+            if (A.now() == 2500) {
+                assertTrue(
+                    ConstructionStatusChanger.demoteParkedStarting(chronicStall, chronicProbe),
+                    "attempts since frame 10 with no issue: the settle window"
+                        + " expired 2340f ago, the parked row must re-arm");
+                assertEquals(
+                    ConstructionOrderStatus.NOT_STARTED, chronicStall.status(),
+                    "the chronic hold-fire expires instead of suppressing the watchdog");
+            }
+        });
+    }
 }
