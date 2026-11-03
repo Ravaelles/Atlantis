@@ -324,6 +324,53 @@ public class WorkerFarFightTest extends WorldStubForTests {
     }
 
     @Test
+    public void attackingWorkerStopsWhenTargetDriftedPast12() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 29, 20);
+        probe.hp = 40;
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 33, 20);
+        ling.setEnemy();
+
+        world(20, fakeOurs(nexus, probe), fakeEnemies(ling), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.attackUnit(ling);
+            assertTrue(new WorkerDefenceStopFighting(worker).applies(),
+                "the attack order pursues without re-asking: a live raider "
+                    + "past 12 ends the trade even when the worker still "
+                    + "stands at 9");
+            assertTrue(new WorkerDefenceStopFighting(worker).forceHandled(),
+                "the recall executes instead of letting the pursuit continue");
+        });
+    }
+
+    @Test
+    public void pursuingWorkerStopsWhenTargetLuredPast12() {
+        enemyRaceInWorld = Race.Zerg;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 29, 20);
+        probe.hp = 40;
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 33, 20);
+        ling.setEnemy();
+
+        world(20, fakeOurs(nexus, probe), fakeEnemies(ling), () -> {
+            if (A.now() != 12) return;
+
+            AUnit worker = Select.ourWorkers().first();
+            worker.move(ling, Actions.MOVE_ATTACK, "SwarmMove");
+
+            assertTrue(new WorkerDefenceStopFighting(worker).applies(),
+                "a healthy worker walking to a raider past 12, with no "
+                    + "building in 5 and no combat support in 3, withdraws "
+                    + "even before its own feet cross 10");
+        });
+    }
+
+    @Test
     public void supportedPursuitNearBuildingsKeepsFighting() {
         enemyRaceInWorld = Race.Protoss;
 

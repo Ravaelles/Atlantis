@@ -48,14 +48,43 @@ public class WorkerDefenceStopFighting extends Manager {
      * within {@link #NO_SUPPORT_WITHIN_TILES}. Each clause owns false:
      * near the base the swarm rules decide, near buildings the cannon
      * paths decide, with support the fight is joined - only all three
-     * together mean the walk is a donation.
+     * together mean the walk is a donation. The fight's address counts
+     * too: a worker still inside 10 walking to a raider past the 12
+     * recall line donates the same way, so a far target trips the
+     * distance clause even when the worker's own feet have not.
      */
     private static boolean unsupportedPursuit(AUnit unit) {
-        if (!WorkerStrayedFromBase.tooFarFromHome(unit)) return false;
+        if (!isFar(unit) && !isTargetBeyondRecall(unit)) return false;
         if (unit.friendsNear().buildings().countInRadius(NO_BUILDING_WITHIN_TILES, unit) > 0) return false;
 
         return unit.friendsNear().combatUnits().groundUnits()
             .countInRadius(NO_SUPPORT_WITHIN_TILES, unit) == 0;
+    }
+
+    private static boolean isFar(AUnit unit) {
+        return WorkerStrayedFromBase.tooFarFromHome(unit);
+    }
+
+    /**
+     * True when the worker's live enemy target sits past the hard recall
+     * line: the pursuit follows the fight's address, not the worker's
+     * feet, so a raider that drifted (or lured) out past 12 trips the
+     * withdraw even while the worker itself still reads inside.
+     */
+    static boolean isTargetBeyondRecall(AUnit unit) {
+        AUnit target;
+        try {
+            target = unit.target();
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+        if (target == null || !target.isEnemy()) return false;
+        try {
+            if (target.hp() <= 0) return false;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+        return WorkerStrayedFromBase.beyondRecall(target);
     }
 
     @Override
@@ -73,8 +102,14 @@ public class WorkerDefenceStopFighting extends Manager {
         // started inside 10 may drift to 12 before the worker turns back -
         // recalling on the 10 line flaps every boundary crossing, and the
         // entry veto below already keeps anything new from starting past 10.
+        // The attack order pursues without re-asking: a worker that started
+        // swinging inside the line keeps its order while the raider walks
+        // out, so the worker's own feet never trip the line above. Read
+        // the target too - a live enemy past 12 ends the trade even when
+        // the worker still stands inside.
         if (unit.isAttacking()) {
             if (WorkerStrayedFromBase.beyondRecall(unit)) return true;
+            if (isTargetBeyondRecall(unit)) return true;
         }
         else if (unsupportedPursuit(unit)) return true;
 
@@ -99,7 +134,7 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     protected Manager handle() {
-        if (WorkerStrayedFromBase.tooFarFromHome(unit)) {
+        if (WorkerStrayedFromBase.tooFarFromHome(unit) || isTargetBeyondRecall(unit)) {
             unit.setTooltipTactical(WorkerDefenceFightCombatUnits.TOO_FAR_FROM_BASE);
         }
 
