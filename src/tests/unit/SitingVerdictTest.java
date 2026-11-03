@@ -164,6 +164,37 @@ public class SitingVerdictTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void supplyBlockedEmergencyMayTakeEdge() {
+        // The legacy rule carried this exemption and the frozen-warp
+        // recovery sim pins a Pylon completing after a supply freeze:
+        // refusing the only free tiles then hoards the bank instead of
+        // recovering. Power still gates Gateways first in check(), so an
+        // unpowered edge Gateway stays unservable regardless.
+        // Supply is stubbed the project's way (static AGame mocks, as in
+        // Queue2Test) - the stub game mock's Player cannot be re-stubbed
+        // per test.
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 60, 60),
+            fake(AUnitType.Protoss_Probe, 61, 61)
+        ), fakeEnemies(), () -> {
+            stubMap128();
+            AbstractTestWithUnits.aGame.when(atlantis.game.AGame::supplyTotal)
+                .thenAnswer(invocation -> 40);
+            AbstractTestWithUnits.aGame.when(atlantis.game.AGame::supplyUsed)
+                .thenAnswer(invocation -> 40);
+            AbstractTestWithUnits.aGame.when(atlantis.game.AGame::supplyFree)
+                .thenAnswer(invocation -> 0);
+
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(1, 60)),
+                "a supply-blocked Pylon may take an edge tile - recovery over aesthetics");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Gateway, APosition.create(1, 60)),
+                "the exemption names Gateway/Pylon like the legacy rule did");
+        });
+    }
+
     private static void stubMap128() {
         bwapi.Game game = atlantis.Atlantis.game();
         org.mockito.Mockito.when(game.mapWidth()).thenReturn(128);

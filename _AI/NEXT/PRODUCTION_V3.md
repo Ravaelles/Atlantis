@@ -192,36 +192,34 @@ pinned; the two paths' twins already name their reasons).
 - MODIFY: `ProtossTooCloseToMapBoundariesTest` retires into
   `SitingVerdictTest` edge pins (boundary 3-refused/4-accepted, right
   edge 122-accepted/126-refused, base/gas/Terran exempt, twin,
-  snapshot planner never within 4 of the edge on TauCross);
+  supply-blocked emergency exempt, TauCross-grounded verdict pin);
   `PylonPosition` (`FIRST_PYLON_TILES_FROM_BASE` stays 7 - that is
   a distance-from-base, not an edge rule; only the edge numbers move
   7->4 / 5->4).
-- Verify: updated pins green (10/10); snapshot pin green; placement
-  90/90.
+- Verify: updated pins green (11/11); placement green.
 - Exit: `grep -rn "marginPx"` finds nothing; `grep -rn "7 * tile"`
   finds only history comments + distance-from-base; the only edge
   numbers left are the two 4s. Evidence: commit f875c0d26.
+- Follow-up (same day): the V2-direct loop consult was reverted -
+  the frozen-warp recovery needs an edge tile in sim while sim
+  supply reads are stubbed (StalledWarpRecoverySimTest bisected it),
+  same sim-gap class as the S1 worker-cover deferral; the loop keeps
+  serving, the verdict still owns the rule. The supply-blocked
+  Gateway/Pylon emergency exemption from the deleted rule is kept
+  (live parity) and pinned. Evidence: commit 5e29d257a.
 - Live proof pending (owner runs games only on call).
 
-### S3. Start-block-first Pylon + slot preservation [Status: DONE (slot) 2026-11-04]
-- MODIFY: plumb the existing `startBlockAnchors` into
-  `reservePlacement`; the first Pylon demand takes the block's
-  power-Pylon slot (all loop gates still apply; falls through when
-  unusable, never fails closed; second Pylon ranks normally).
-  Ranker keeps travel+exit+power. Stardust's producer rule (provides
-  required locations or keeps minimum build locations) as the decider
-  is DEFERRED: needs A/B measurement on the snapshot sim first, and
-  the slot alone already puts Pylon #1 in the layout.
-- ADD: `StartBlockPylonTest` - first Pylon within 10 tiles of the
-  Nexus per base on TauCross (measured 7.81 / 5.39 / 2.83, frozen at
-  10) + slot consumed once.
-- DELETE: nothing (legacy `PylonPosition.firstPylonOriginNear`
-  retires only after S4 proves the replacement).
-- Exit: opening goldens unchanged (SimOpeningToFiftyTest green,
-  long/bleed/post-fifty sims green), first-Pylon-near-base pinned on
-  the snapshot, not on hope. Evidence: commit ffef88162.
-- Game proof pending: one quiet headless game, Pylon #1 in/near the
-  start block (owner runs games only on call).
+### S3. Start-block-first Pylon [Status: REVERTED 2026-11-04]
+The slot served (pin 4/4 green, SimOpeningToFifty green) but shifts
+the whole opening layout, and the shifted trajectory stalls the
+pinned StalledWarpRecoverySimTest at f18600 (931 banked, no warp):
+with the slot active the recovery fails even with both edge
+mechanisms disabled, while without it the suite is green (bisected
+across S1/S2/S3 worktrees). The blocker in the shifted world is a
+non-edge gate - a layout-density vs crowding-rule doctrine
+interaction that needs owner input and live proof, not a silent
+sitter swap. S3 returns after that. Revert removes the helper and
+its pin together; S0-S2 stand.
 
 ### S4. Kill switches, one per commit [Status: BLOCKED on live proof]
 Route each legacy caller through the single door, then delete the
