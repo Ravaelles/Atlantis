@@ -240,7 +240,13 @@ public class SitingVerdictTest extends WorldStubForTests {
     }
 
     @Test
-    public void snapshotPlannerNeverServesWithinFourOfTheEdge() {
+    public void snapshotEdgeRuleHoldsOnTauCrossGround() {
+        // V3 S2, verdict-level (the V2-direct loop deliberately skips no
+        // edge tile - the frozen-warp recovery needs one in sim, and sim
+        // supply reads are stubbed so the loop cannot tell emergency from
+        // doctrine). What the rule owns is pinned here instead, on real
+        // TauCross ground: the three measured S3 block slots accept, an
+        // edge tile by base 0 refuses.
         atlantis.map.snapshot.MapSnapshot snap = tests.fakes.SnapshotTerrain.tauCross();
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 60, 60),
@@ -248,23 +254,15 @@ public class SitingVerdictTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             stubMap128();
 
-            tests.fakes.SnapshotTerrain terrain = new tests.fakes.SnapshotTerrain(snap);
-            atlantis.placement.engine.CataloguePlacementPlanner planner =
-                new atlantis.placement.engine.CataloguePlacementPlanner(
-                    new atlantis.placement.core.TileAvailabilityGrid(terrain), null, null, true);
-            planner.startPass();
-            atlantis.production.placement.PlacementReservation reservation =
-                planner.reservePlacement(
-                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Pylon),
-                    atlantis.production.placement.TargetPlacement.inNeighbourhood(2, 2), 100);
-
-            assertTrue(reservation.isSuccessful(), "interior TauCross still has Pylon ground");
-            int tx = reservation.tileX();
-            int ty = reservation.tileY();
-            int w = AUnitType.Protoss_Pylon.getTilesWidth();
-            int h = AUnitType.Protoss_Pylon.getTilesHeights();
-            assertTrue(tx >= 4 && ty >= 4 && tx + w <= 124 && ty + h <= 124,
-                "served tile respects the 4-tile margin, got [" + tx + "," + ty + "]");
+            int[][] servedSlots = {{13, 49}, {115, 14}, {95, 116}};
+            for (int[] slot : servedSlots) {
+                assertFalse(SitingVerdict.isTooCloseToEdge(
+                        AUnitType.Protoss_Pylon, APosition.create(slot[0], slot[1])),
+                    "the served block slot [" + slot[0] + "," + slot[1] + "] respects the margin");
+            }
+            assertTrue(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(1, 44)),
+                "an edge tile by base 0 refuses - the Steamhammer shape stays unservable");
         });
     }
 

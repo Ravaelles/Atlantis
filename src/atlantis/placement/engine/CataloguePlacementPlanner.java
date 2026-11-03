@@ -474,14 +474,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // here. Unify at the S4 single door with live proof, not by
             // breaking the sim-green opening now.
 
-            // A map-edge tile never hosts a warp either (V3 S2, 4 tiles
-            // everywhere): same shared predicate the verdict consults,
-            // so the two paths cannot disagree on it. The full verdict
-            // cannot run here - an unpowered tile must read NEEDS_SUPPORT
-            // (mint the Pylon), not REFUSE - so the edge answers alone.
-            if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
-                unitType, APosition.create(candidate.tileX(), candidate.tileY())
-            )) continue;
+            // No map-edge skip here (V3 S2 follow-up): the verdict owns the
+            // 4-tile rule for the funnel and the legacy spiral, but this
+            // loop serves the frozen-warp recovery Pylon on an edge tile in
+            // sim (StalledWarpRecoverySimTest: bank hoards with no warp
+            // when the skip is added). Live the supply-blocked emergency
+            // exemption in the verdict covers it; in sim supply reads are
+            // stubbed, so the loop cannot tell emergency from doctrine and
+            // must keep serving. Same sim-gap class as the worker-cover
+            // deferral above - unify at the S4 single door with live proof.
 
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;

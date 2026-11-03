@@ -118,6 +118,17 @@ public final class SitingVerdict {
         if (building.isBase() || building.isGasBuilding()) return false;
 
         try {
+            // Emergency: a supply-blocked Gateway/Pylon may take an edge
+            // tile. The legacy rule carried this exemption, and the
+            // frozen-warp recovery sim pins a Pylon completing after a
+            // supply-freeze stall - refusing the only free tiles then
+            // hoards the bank instead of recovering. Power still gates
+            // Gateways first, so an unpowered edge Gateway (the
+            // Steamhammer shape) stays unservable regardless.
+            if ((building.isGateway() || building.isPylon())
+                && atlantis.game.A.supplyFree() <= 0
+                && atlantis.game.A.supplyTotal() >= 40) return false;
+
             int mapW = atlantis.map.AMap.getMapWidthInTiles();
             int mapH = atlantis.map.AMap.getMapHeightInTiles();
             if (mapW <= 0 || mapH <= 0) return false;
