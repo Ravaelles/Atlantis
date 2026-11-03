@@ -138,64 +138,92 @@ optimizes travel instead of slot preservation.
 
 ## 4. Steps (each: pin red-first, implement, fast gate green, game proof where named)
 
-### S0. Snapshot siting harness [Status: TODO]
+### S0. Snapshot siting harness [Status: DONE 2026-11-04]
 Prove `reservePlacement` runs headless on
 `src/tests/resources/taucross-snapshot.json` (tiles, regions,
 chokes, resources, starts). Vehicle for every pin below; no flat
 stubs for siting ever again.
-- ADD: `src/tests/unit/sim/SnapshotSitingHarnessTest.java`
-  (resolves one known tile through the real stack).
-- Verify: `run-tests.sh --select-class ...` green.
+- ADD: `src/tests/fakes/SnapshotTerrain.java` +
+  `src/tests/unit/SnapshotSitingTest.java` (vehicle + Pylon/Gateway
+  reserve near a real main, deterministically).
+- Verify: placement domain green (vehicle 2/2).
 - Exit: a green test that fails if the planner cannot run without
-  a live game.
+  a live game. Evidence: commit 19124de29; SnapshotSitingTest green.
 
-### S1. Single verdict [Status: TODO]
+### S1. Single verdict [Status: DONE 2026-11-04]
 Merge funnel + V2-direct + legacy per-tile power/geyser/refused/
 standing checks into `SitingVerdict.check` (decision stays pure and
 pinned; the two paths' twins already name their reasons).
-- ADD: `src/atlantis/placement/core/SitingVerdict.java` (+ unit pin
-  per gate x building type, incl. the live [123,26] shape).
-- MODIFY: `CatalogueSiteAdapter` (delegate), `ProtossPlacementStrategy`
-  (delegate availability to the verdict), `EnginePowerSource` stays
+- ADD: `src/atlantis/production/constructions/position/SitingVerdict.java`
+  (lives next to the predicates it consults - the placement engine
+  already imports that package, so no new arch edges - not in
+  `placement/core` as first sketched) + `SitingVerdictTest` decision
+  table per gate x building type, incl. the live [123,26] shape, +
+  funnel geyser twin.
+- MODIFY: `CatalogueSiteAdapter` (delegates; gains the geyser twin it
+  never named), `PositionFulfillsAllConditions` (delegates; gains
+  worker-cover). `ProtossPlacementStrategy` NOT delegated: NEEDS_SUPPORT
+  stays in the V2-direct availability path by decision (support flow
+  vs finished-tile verdict). `EnginePowerSource` stays
   (already footprint-correct).
 - DELETE: nothing yet.
-- Verify: new pin green; `GatewayPsiEdgeTest` + placement domain
-  green; `grep -rn "PsiField.covers" src/atlantis --include=*.java`
-  shows exactly two users (the funnel's `IsPoweredByAPylon` stays
-  as the physical-layer check).
-- Exit: one function owns every power/geyser/refused/standing
-  answer; no path computes its own.
+- Verify: new pin green (red-first: funnel served the crowding tile);
+  `GatewayPsiEdgeTest` + placement domain green; `grep -rn
+  "PsiField.covers" src/atlantis --include=*.java` shows exactly two
+  files (`EnginePowerSource` + the funnel's `IsPoweredByAPylon`).
+- Exit: one function owns every power/geyser/refused/standing/worker
+  answer for funnel + legacy. V2-direct worker-cover DELIBERATELY
+  OUT: the sim assigns builders on covered tiles fine and
+  HealthyMinimumBuildTest stalls with no Gateway when the loop skips
+  them - the live builderless death is not modeled in the sim.
+  Unify at the S4 single door with live proof (comment in
+  `reservePlacement`). Evidence: commit 8dd2c81c7; fast gate 1099/0.
+- Live proof pending (owner runs games only on call).
 
 ### S2. Edge parity: 4 tiles everywhere (owner decision 2026-11-04)
-[Status: TODO]
-- MODIFY: the single verdict enforces the 4-tile map-edge rule;
-  `ProtossTooCloseToMapBoundaries` (legacy 7-tile early-Pylon rule)
-  is deleted and its callers use the verdict.
-- MODIFY: `ProtossTooCloseToMapBoundariesTest`,
+[Status: DONE 2026-11-04]
+- MODIFY: the single verdict enforces the 4-tile map-edge rule
+  (`EDGE_MARGIN_TILES`, footprint-aware, Protoss non-base non-gas,
+  null-safe; shared `isTooCloseToEdge` so the V2-direct loop consults
+  the same numbers without taking the full verdict - unpowered must
+  read NEEDS_SUPPORT, not REFUSE); `ProtossTooCloseToMapBoundaries`
+  (legacy 7-tile early-Pylon rule) is deleted and its callers use the
+  verdict (chain; finder duplicate removed, fallback kept).
+- MODIFY: `ProtossTooCloseToMapBoundariesTest` retires into
+  `SitingVerdictTest` edge pins (boundary 3-refused/4-accepted, right
+  edge 122-accepted/126-refused, base/gas/Terran exempt, twin,
+  snapshot planner never within 4 of the edge on TauCross);
   `PylonPosition` (`FIRST_PYLON_TILES_FROM_BASE` stays 7 - that is
-  a distance-from-base, not an edge rule; only the edge numbers move).
-- Verify: updated pins green; a snapshot pin asserts no served tile
-  within 4 tiles of any map edge.
-- Exit: `grep -rn "7 * tile\|marginPx"` finds no edge rule except
-  the 4-tile one; the Steamhammer edge-Pylon shape is unservable.
+  a distance-from-base, not an edge rule; only the edge numbers move
+  7->4 / 5->4).
+- Verify: updated pins green (10/10); snapshot pin green; placement
+  90/90.
+- Exit: `grep -rn "marginPx"` finds nothing; `grep -rn "7 * tile"`
+  finds only history comments + distance-from-base; the only edge
+  numbers left are the two 4s. Evidence: commit f875c0d26.
+- Live proof pending (owner runs games only on call).
 
-### S3. Start-block-first Pylon + slot preservation [Status: TODO]
+### S3. Start-block-first Pylon + slot preservation [Status: DONE (slot) 2026-11-04]
 - MODIFY: plumb the existing `startBlockAnchors` into
   `reservePlacement`; the first Pylon demand takes the block's
-  power-Pylon slot. Ranker keeps travel+exit+power, adds Stardust's
-  producer rule (provides required locations or keeps minimum build
-  locations) as the decider - A/B measured on the snapshot sim
-  before it sticks.
-- ADD: snapshot sim test - first Pylon within N tiles of the Nexus
-  (N measured from Stardust's fixed offsets, then frozen).
+  power-Pylon slot (all loop gates still apply; falls through when
+  unusable, never fails closed; second Pylon ranks normally).
+  Ranker keeps travel+exit+power. Stardust's producer rule (provides
+  required locations or keeps minimum build locations) as the decider
+  is DEFERRED: needs A/B measurement on the snapshot sim first, and
+  the slot alone already puts Pylon #1 in the layout.
+- ADD: `StartBlockPylonTest` - first Pylon within 10 tiles of the
+  Nexus per base on TauCross (measured 7.81 / 5.39 / 2.83, frozen at
+  10) + slot consumed once.
 - DELETE: nothing (legacy `PylonPosition.firstPylonOriginNear`
   retires only after S4 proves the replacement).
-- Exit: opening goldens unchanged (SimOpeningToFiftyTest green),
-  first-Pylon-near-base pinned on the snapshot, not on hope.
-- Game proof: one quiet headless game, Pylon #1 in/near the start
-  block (owner runs games only on call).
+- Exit: opening goldens unchanged (SimOpeningToFiftyTest green,
+  long/bleed/post-fifty sims green), first-Pylon-near-base pinned on
+  the snapshot, not on hope. Evidence: commit ffef88162.
+- Game proof pending: one quiet headless game, Pylon #1 in/near the
+  start block (owner runs games only on call).
 
-### S4. Kill switches, one per commit [Status: TODO]
+### S4. Kill switches, one per commit [Status: BLOCKED on live proof]
 Route each legacy caller through the single door, then delete the
 orphaned file to `src-old/`. Order: `RequestBuildingNear` sited
 path, `ProduceBuilding.validatePosition`,
@@ -207,8 +235,15 @@ Protoss-only - verify, don't assume).
   they call a static that moves with the cache, not the finder),
   `ProtossPositionFinder.java`, `FindPositionForBase.java`,
   `NextBasePosition.java`, `FindPositionForCannon.java`,
-  `terran/` + `zerg/` position files (audit first: B1a/B1b deleted
-  the dispatchers; delete only what no caller references),
+  `terran/` + `zerg/` position files (audit 2026-11-04: NOT dead -
+  `TerranPositionFinder` has a live combat caller
+  (`NewBunkerPositionFinder`) and chain guards - verify, don't assume).
+  NOTE 2026-11-04: each deletion removes a live fallback path whose
+  behavior the sim cannot model (exact-position sited cannons, base
+  siters, last-resort engine-buildable). Per CONVENTIONS §3 they need
+  one live Wine confirmation each - owner runs games only on call,
+  so this slice waits for the owner. Suite-green alone is not the
+  gate here.
   `PylonPosition.java` (superseded by S3),
   `ProtossDefineNearTo.java` (+ `DefineNearTo.java`,
   `DefineCannonNearTo.java` if orphaned),
