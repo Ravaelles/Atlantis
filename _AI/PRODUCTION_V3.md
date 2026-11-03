@@ -1,11 +1,32 @@
 # Production V3: one door for placing buildings
 
-Owner-ordered migration doc (2026-11-04, supersedes the V2 funnel /
-legacy / V2-direct split). No code here - slices land as separate
-commits, each pinned red-first, suite green, game proof where named.
-Work proceeds piece by piece on owner call; nothing lands without it.
+Owner-ordered migration doc (2026-11-04, written on owner order to
+replace the V2 funnel / legacy / V2-direct split; supersedes the
+2026-11-04 research note it grew from). This file is the single
+source of truth for the migration: NEXT.md carries exactly one
+delegation line to it and nothing else. A slice is done only when
+every checkbox under it has its evidence filled in - the file makes
+it impossible to claim completion while work from the list remains.
 
-## 1. Why V3: the three doors
+Status legend per slice: TODO (not started), DOING (branch work in
+flight), DONE (evidence linked: test run, game id, ArchUnit output).
+No slice closes on "it compiles".
+
+## 0. Session-start protocol (binding on every worker, human or AI)
+
+Before any code in this area:
+
+1. `git log --oneline -5` + `git status --short` (where are we).
+2. Read NEXT.md Active section (the one-line delegation lives there).
+3. Read THIS file in full, including the status boxes.
+4. Mirror back in one paragraph: where we are, what is next, what
+   "done" means for the next slice. Only then touch code.
+
+Skipping step 4 is how the three-door split survived "we cut
+everything": summaries replaced verification. The mirror makes
+misunderstanding visible before it costs a commit.
+
+## 1. Why V3 (measured, not asserted)
 
 Three live issuance paths mint constructions with three different
 gate sets. Every recent production defect is the same shape: a row
@@ -15,29 +36,27 @@ enters through the path whose gate set is missing the relevant check.
   `APositionFinder.findStandardPosition`): power via the footprint
   center (correct), 7-tile early-Pylon map edge
   (`ProtossTooCloseToMapBoundaries`), geyser/minerals, occupancy.
-  Still called directly by `RequestBuildingNear` (sited cannons,
-  pylons, CyberneticsC), `ProduceBuilding.validatePosition`
-  (re-validation), and the three base siters
-  (`NextBasePosition`, `FindPositionForBase` x2). The A4h fallback
-  removal was attempted and REVERTED as load-bearing, so the spiral
-  is a live door, not a dead one.
-- **Catalogue funnel** (`CatalogueSiteAdapter.siteFor`): proposes via
-  the catalogue, validates per tile (the file's own words: "the
-  catalogue proposes, the legacy validator disposes"). Has power
-  (footprint, since the 2026-11-03 fix), geyser, refused-tile and
-  standing-cover gates - but map edge is a 1-tile adjacency margin
-  only (`TileAvailabilityGrid`), not the 7-tile early-Pylon rule.
+  Live callers: `RequestBuildingNear` (sited cannons/pylons/CC),
+  `ProduceBuilding.validatePosition` (re-check), the three base
+  siters (`FindPositionForBase` x3, `NextBasePosition`), plus
+  `FindPositionForCannon` / Terran-Zerg remnants below.
+- **Catalogue funnel** (`CatalogueSiteAdapter.siteFor`): proposes
+  via the catalogue, validates per tile. Has power (footprint,
+  fixed 2026-11-03), geyser, refused-tile and standing-cover gates -
+  but map edge is a 1-tile adjacency margin only, and declined rows
+  fall back to the legacy spiral (callers do).
 - **V2-direct scheduler** (`ProductionScheduler.reservePlacement` +
   `GameOrderDirector.createConstruction`): mints the reservation
   tile verbatim with NO funnel validation. Its power verdict read
   the tile origin instead of the footprint center until the
   2026-11-03 fix; its edge rule is the same 1-tile margin.
-- **Exact-position verbatim** (`DefineExactPositionForNewConstruction`):
-  an `isUsingExactPosition` order hands the tile back without ANY
-  validation (power, geyser, refused, edge) - only an occupancy check
-  can force a fresh search.
+- **Exact-position verbatim**
+  (`DefineExactPositionForNewConstruction`): an
+  `isUsingExactPosition` order hands the tile back without ANY
+  validation (power, geyser, refused, edge) - only an occupancy
+  check can force a fresh search.
 
-Measured consequences on live games (no speculation):
+Measured consequences on live games:
 
 - 2026-11-03 vs Steamhammer, loss: a 4x3 Gateway row sat at
   [123,26] with a warping Pylon at [121,22]. Tile-point power reads
@@ -58,36 +77,38 @@ Why fixes did not stick: each fix closed one door's hole while the
 other two stayed open, and the suite cannot tell the difference -
 the sim has no real siting map behind `findPositionForNewBuilding`
 (AMap statics are null headless) and `FakeOrderSink.build` never
-refuses, so siting defects are green by construction. Games discover,
-tests cannot. The HealthyMinimumBuildTest pins Pylon/Gateway/Core/
-Assimilator warps on a flat stub without geyser, edge, or power
-pressure - the right contract, the wrong map.
+refuses, so siting defects are green by construction. Games
+discover, tests cannot. The HealthyMinimumBuildTest pins
+Pylon/Gateway/Core/Assimilator warps on a flat stub without geyser,
+edge, or power pressure - the right contract, the wrong map.
 
-Communication failure, owned: the last weeks' fixes (including mine)
-patched one path each and thereby cemented the three-door split
-instead of challenging it, and my temp harnesses used flat arenas
-while the TauCross snapshot vehicle already existed
-(`src/atlantis/map/snapshot/`, `src/tests/resources/taucross-snapshot.json`,
+Communication failure, owned (2026-11-04): the last weeks' fixes
+(including the reviewer's own) patched one path each and thereby
+cemented the three-door split instead of challenging it, and temp
+harnesses used flat arenas while the TauCross snapshot vehicle
+already existed (`src/atlantis/map/snapshot/`,
+`src/tests/resources/taucross-snapshot.json`,
 `SimMapSnapshotTest`, NEXT #191). Per CONVENTIONS §3 that challenge
-should have been raised at the first multi-path touch, not now.
+was owed at the first multi-path touch, not now.
 
-## 2. What good looks like (Stardust, read from source)
+## 2. What good looks like (Stardust, read from source, no tuning)
 
-`Stardust/src/Builder/BuildingPlacement.h` + `Blocks/` (no
-interpretation - this is their header, verbatim in structure):
+`Stardust/src/Builder/BuildingPlacement.h` + `Blocks/`:
 
 - Start block anchored RELATIVE TO the Nexus, fixed offsets, typed
   slots (2 Gateways, 2-4 tech, 3-4 cannons), a power Pylon that is
   PART OF the layout, and a reserved border-tile ring (walkable
   corridors, not decoration).
-- Per-block edge rules (`allowTopEdge`/`allowLeftEdge`/
-  `allowRightEdge`/`allowCorner`): every start-block variant returns
-  false for all of them - start blocks never sit on an edge or corner.
+- Per-block edge rules (`allowTopEdge` / `allowLeftEdge` /
+  `allowRightEdge` / `allowCorner`): every start-block variant
+  returns false for all of them - start blocks never sit on an edge
+  or corner.
 - Pylon doctrine: the FIRST pylon is always in the start block; the
-  next powers the choke cannon (PvP); the rest are ordered by distance
-  to the mineral line. The producer takes the first pylon that either
-  provides required build locations or keeps a minimum number of
-  build locations available (slot preservation, not travel time).
+  next powers the choke cannon (PvP); the rest are ordered by
+  distance to the mineral line. The producer takes the first pylon
+  that either provides required build locations or keeps a minimum
+  number of build locations available (slot preservation, not travel
+  time).
 
 What we already have of this: block templates
 (`BlockTemplates.startBlocks()`), the USED+BORDER ring
@@ -107,69 +128,89 @@ optimizes travel instead of slot preservation.
 - ONE verdict: a single gate function every path consults -
   power-at-footprint-center, geyser/minerals, refused tiles,
   map edge, standing cover, builder-walkable/reachable. No two
-  implementations that can disagree.
+  implementations that can disagree. New file, not a patch:
+  `src/atlantis/placement/core/SitingVerdict.java`
+  (ACCEPT / NEEDS_SUPPORT_PYLON / REFUSE + reason).
 - ONE exit: `GameOrderDirector.createConstruction` trusts the
   verdict and only twins. No silent mints (closes NEXT #238's
   authorship question by construction: every row carries the
   verdict's reason).
 
-## 4. Step sequence (each: pin red-first, implement, fast gate green, game proof where named)
+## 4. Steps (each: pin red-first, implement, fast gate green, game proof where named)
 
-- **S0. Snapshot siting harness.** Prove `reservePlacement` runs
-  headless on `taucross-snapshot.json` (tiles, regions, chokes,
-  resources, starts). Vehicle for every pin below; no flat stubs
-  for siting ever again.
-- **S1. Single verdict.** Merge funnel + V2-direct power/geyser/
-  refused/standing checks into one function; both callers delegate.
-  Deletes the disagree class, not one disagreement.
-- **S2. Edge parity: 4 tiles everywhere (owner decision
-  2026-11-04).** Replaces the legacy 7-tile early-Pylon rule and
-  the catalogue 1-tile margin. Updates the pinned tests that name
-  7 (`ProtossTooCloseToMapBoundariesTest`, `PylonPosition`
-  references). Per-block edge flags (Stardust `allow*Edge`) ride
-  here if the shared margin proves too coarse in review.
-- **S3. Start-block-first Pylon (+ slot preservation).** Plumb the
-  existing `startBlockAnchors` into `reservePlacement`; the first
-  Pylon demand takes the block's power-Pylon slot. Ranker keeps
-  travel+exit+power, adds Stardust's producer rule as the
-  tiebreak/decider - A/B measured on the snapshot sim before it
-  sticks. Asserts: first Pylon within N tiles of the Nexus on the
-  snapshot; no Pylon inside 4 tiles of the edge.
-- **S4. Kill switches, one per commit.** Route
-  `RequestBuildingNear` sited calls, `ProduceBuilding.validatePosition`,
-  and the three base siters through the single door; delete the
-  orphaned legacy entry points to `src-old/`. Each deletion lands
-  only with the suite green.
-- **S5. Exact orders through the verdict.** `isUsingExactPosition`
-  keeps its occupied-tile fast path; everything else about the tile
-  (power, geyser, refused, edge) goes through the single verdict
-  instead of verbatim trust.
-- **S6. Corridor proof, not new machinery.** The BORDER ring
-  exists; pin on the snapshot sim that a stamped block never traps
-  the army (pathing assertion). New corridor machinery only if the
-  pin fails.
+### S0. Snapshot siting harness [Status: TODO]
+Prove `reservePlacement` runs headless on
+`src/tests/resources/taucross-snapshot.json` (tiles, regions,
+chokes, resources, starts). Vehicle for every pin below; no flat
+stubs for siting ever again.
+- ADD: `src/tests/unit/sim/SnapshotSitingHarnessTest.java`
+  (resolves one known tile through the real stack).
+- Verify: `run-tests.sh --select-class ...` green.
+- Exit: a green test that fails if the planner cannot run without
+  a live game.
 
-## 5. Test strategy (the "100% build" answer)
+### S1. Single verdict [Status: TODO]
+Merge funnel + V2-direct + legacy per-tile power/geyser/refused/
+standing checks into `SitingVerdict.check` (decision stays pure and
+pinned; the two paths' twins already name their reasons).
+- ADD: `src/atlantis/placement/core/SitingVerdict.java` (+ unit pin
+  per gate x building type, incl. the live [123,26] shape).
+- MODIFY: `CatalogueSiteAdapter` (delegate), `ProtossPlacementStrategy`
+  (delegate availability to the verdict), `EnginePowerSource` stays
+  (already footprint-correct).
+- DELETE: nothing yet.
+- Verify: new pin green; `GatewayPsiEdgeTest` + placement domain
+  green; `grep -rn "PsiField.covers" src/atlantis --include=*.java`
+  shows exactly two users (the funnel's `IsPoweredByAPylon` stays
+  as the physical-layer check).
+- Exit: one function owns every power/geyser/refused/standing
+  answer; no path computes its own.
 
-- Planner pins on the TauCross SNAPSHOT (never flat stubs) for
-  every gate x every building type: power-footprint (done,
-  `GatewayPsiEdgeTest` model), geyser, edge-4, refused, standing.
-- Milestone sim on the snapshot through the REAL siting stack:
-  Pylon -> Gateway -> Core -> Assimilator warp in order, first
-  Pylon near the Nexus, no edge placements. This is the test that
-  would have caught the Steamhammer shape (unpowered row + churn).
-- Honest split, stated up front: the sim still cannot run the
-  ENGINE's refusal, so engine-truth stays a live-game proof (one
-  quiet headless game per slice; games confirm, never discover).
-- Default `FakeOrderSink.build` stays permissive; per-scenario
-  `canBuildHere` stubs keep owning scenario-specific refusals.
+### S2. Edge parity: 4 tiles everywhere (owner decision 2026-11-04)
+[Status: TODO]
+- MODIFY: the single verdict enforces the 4-tile map-edge rule;
+  `ProtossTooCloseToMapBoundaries` (legacy 7-tile early-Pylon rule)
+  is deleted and its callers use the verdict.
+- MODIFY: `ProtossTooCloseToMapBoundariesTest`,
+  `PylonPosition` (`FIRST_PYLON_TILES_FROM_BASE` stays 7 - that is
+  a distance-from-base, not an edge rule; only the edge numbers move).
+- Verify: updated pins green; a snapshot pin asserts no served tile
+  within 4 tiles of any map edge.
+- Exit: `grep -rn "7 * tile\|marginPx"` finds no edge rule except
+  the 4-tile one; the Steamhammer edge-Pylon shape is unservable.
 
-## 6. Open decisions (do not implement past them)
+### S3. Start-block-first Pylon + slot preservation [Status: TODO]
+- MODIFY: plumb the existing `startBlockAnchors` into
+  `reservePlacement`; the first Pylon demand takes the block's
+  power-Pylon slot. Ranker keeps travel+exit+power, adds Stardust's
+  producer rule (provides required locations or keeps minimum build
+  locations) as the decider - A/B measured on the snapshot sim
+  before it sticks.
+- ADD: snapshot sim test - first Pylon within N tiles of the Nexus
+  (N measured from Stardust's fixed offsets, then frozen).
+- DELETE: nothing (legacy `PylonPosition.firstPylonOriginNear`
+  retires only after S4 proves the replacement).
+- Exit: opening goldens unchanged (SimOpeningToFiftyTest green),
+  first-Pylon-near-base pinned on the snapshot, not on hope.
+- Game proof: one quiet headless game, Pylon #1 in/near the start
+  block (owner runs games only on call).
 
-- Edge number: DECIDED 4 tiles (owner 2026-11-04).
-- Ranker objective weights (travel vs slot preservation): measure
-  on the snapshot sim in S3, then decide - no blind tuning.
-- UMS / no-BWEM maps (no regions): the spiral radius cap question
-  (#236 left the reachability check; distance caps are untouched).
-  Decided per slice, not globally.
-- Legacy deletion order past S4: owner call per family, as in #147.
+### S4. Kill switches, one per commit [Status: TODO]
+Route each legacy caller through the single door, then delete the
+orphaned file to `src-old/`. Order: `RequestBuildingNear` sited
+path, `ProduceBuilding.validatePosition`,
+`FindPositionForBase` trio + `NextBasePosition`,
+`FindPositionForCannon` (+ Terran/Zerg callers, dead under
+Protoss-only - verify, don't assume).
+- DELETE (each its own commit, suite green): `FindPosition.java`,
+  `APositionFinder.java` (keep `clearCache` callers working -
+  they call a static that moves with the cache, not the finder),
+  `ProtossPositionFinder.java`, `FindPositionForBase.java`,
+  `NextBasePosition.java`, `FindPositionForCannon.java`,
+  `terran/` + `zerg/` position files (audit first: B1a/B1b deleted
+  the dispatchers; delete only what no caller references),
+  `PylonPosition.java` (superseded by S3),
+  `ProtossDefineNearTo.java` (+ `DefineNearTo.java`,
+  `DefineCannonNearTo.java` if orphaned),
+  `GasBuildingPositionFinder.java` (only after the gas
+...[truncated 2085 chars]

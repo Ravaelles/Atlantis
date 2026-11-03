@@ -1805,3 +1805,7 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   - Strangulation loop (refused re-mint + watchdog, TTL-phased):
     serve-fresh-tile-after-demote or TTL change - owner decision.
     No code.
+  - Production V3 single-door (owner order 2026-11-04): see
+    `_AI/PRODUCTION_V3.md` - the full context, file lists and step
+    sequence live there; this line is the only NEXT entry until the
+    slices land.
