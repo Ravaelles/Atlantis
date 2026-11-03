@@ -59,6 +59,27 @@ public final class PsiGating {
     }
 
     /**
+     * Footprint-aware wait: same contract as {@link #framesUntilPowered(int, int)},
+     * read at the footprint center so the scheduler shifts to the frame the
+     * engine will actually accept, not the frame the origin tile powers.
+     */
+    public int framesUntilPowered(int tx, int ty, int w, int h) {
+        if (power.isPowered(tx, ty, w, h))
+            return 0;
+
+        List<Integer> incoming = power.incomingPowerFrames(tx, ty, w, h);
+        if (incoming == null || incoming.isEmpty())
+            return -1;
+
+        int earliest = Integer.MAX_VALUE;
+        for (Integer frame : incoming) {
+            if (frame != null && frame < earliest)
+                earliest = frame;
+        }
+        return earliest == Integer.MAX_VALUE ? -1 : earliest;
+    }
+
+    /**
      * Should this building wait for power? A building that does not
      * {@code needsPower} never does; one whose tile is powered or has incoming
      * power does not either - the scheduler shifts it to the powered frame. Only a
@@ -84,6 +105,22 @@ public final class PsiGating {
         if (power.isPowered(tx, ty)) return PowerVerdict.ACCEPT;
 
         List<Integer> incoming = power.incomingPowerFrames(tx, ty);
+        if (incoming != null && !incoming.isEmpty()) return PowerVerdict.ACCEPT;
+
+        return powerCouldReach(tx, ty) ? PowerVerdict.NEEDS_NEW_PYLON : PowerVerdict.REFUSE;
+    }
+
+    /**
+     * Footprint-aware verdict: same contract as {@link #verdictFor(int, int)},
+     * but power is read at the building footprint's center - the address the
+     * engine enforces - instead of the origin tile. Tile-point answers agree
+     * with it everywhere except the sub-tile psi rim, where the origin reads
+     * ACCEPT and the engine refuses the warp.
+     */
+    public PowerVerdict verdictFor(int tx, int ty, int w, int h) {
+        if (power.isPowered(tx, ty, w, h)) return PowerVerdict.ACCEPT;
+
+        List<Integer> incoming = power.incomingPowerFrames(tx, ty, w, h);
         if (incoming != null && !incoming.isEmpty()) return PowerVerdict.ACCEPT;
 
         return powerCouldReach(tx, ty) ? PowerVerdict.NEEDS_NEW_PYLON : PowerVerdict.REFUSE;
@@ -141,5 +178,23 @@ public final class PsiGating {
          * refuse rather than "go build a Pylon".
          */
         boolean canBeCoveredByNewPylon(int tx, int ty);
+
+        /**
+         * Footprint-aware variants (NEXT #238 follow-up, live 2026-11-03 vs
+         * Steamhammer): the engine enforces power at the building's footprint
+         * CENTER, while the tile-point answers above read the origin tile. A
+         * 4x3 Gateway on an origin-inside/center-outside edge tile (measured:
+         * [123,26] with Pylon at [121,22] - tile-point dy=144 in, center
+         * dy=176 out) reads ACCEPT here and dies on the engine's refusal.
+         * Default to the tile-point answers so other sources keep working;
+         * the engine source overrides with the footprint center.
+         */
+        default boolean isPowered(int tx, int ty, int w, int h) {
+            return isPowered(tx, ty);
+        }
+
+        default List<Integer> incomingPowerFrames(int tx, int ty, int w, int h) {
+            return incomingPowerFrames(tx, ty);
+        }
     }
 }

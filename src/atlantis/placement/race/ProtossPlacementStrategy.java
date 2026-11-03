@@ -45,6 +45,12 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
         if (psiGating == null)
             return 0;
 
+        AUnitType type = AUnitType.getByName(buildableTypeId);
+        if (type != null && type.needsPower()) {
+            return psiGating.framesUntilPowered(
+                tx, ty, type.getTilesWidth(), type.getTilesHeights());
+        }
+
         return psiGating.framesUntilPowered(tx, ty);
     }
 
@@ -63,7 +69,10 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
     public AvailabilityVerdict availabilityVerdict(int tx, int ty, String buildableTypeId) {
         if (psiGating == null) return AvailabilityVerdict.AVAILABLE;
 
-        PsiGating.PowerVerdict verdict = psiGating.verdictFor(tx, ty);
+        AUnitType type = AUnitType.getByName(buildableTypeId);
+        PsiGating.PowerVerdict verdict = type != null && type.needsPower()
+            ? psiGating.verdictFor(tx, ty, type.getTilesWidth(), type.getTilesHeights())
+            : psiGating.verdictFor(tx, ty);
         switch (verdict) {
             case NEEDS_NEW_PYLON:
                 return AvailabilityVerdict.NEEDS_SUPPORT;

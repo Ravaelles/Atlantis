@@ -151,6 +151,43 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
     }
 
     /**
+     * Footprint-aware answers: the engine enforces power at the footprint
+     * center, so a building whose origin tile reads powered but whose
+     * center does not must not be served (live 2026-11-03 vs Steamhammer:
+     * 4x3 Gateway at [123,26] with warping Pylon at [121,22] - tile-point
+     * dy=144 reads in, center dy=176 reads out, engine refused every
+     * Build and the row strangled on timeouts). Same PsiField rule as the
+     * tile-point answers, evaluated at the center instead of the origin.
+     */
+    @Override
+    public boolean isPowered(int tx, int ty, int w, int h) {
+        if (atlantis.Atlantis.game() == null) return false;
+
+        memo(atlantis.game.A.now());
+        for (AUnit pylon : memoPylons) {
+            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<Integer> incomingPowerFrames(int tx, int ty, int w, int h) {
+        if (atlantis.Atlantis.game() == null) return java.util.Collections.emptyList();
+
+        memo(atlantis.game.A.now());
+        List<Integer> frames = new ArrayList<>();
+        for (AUnit pylon : memoUnfinished) {
+            if (pylon.isCompleted()) continue;
+            if (!PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) continue;
+
+            frames.add(framesUntilComplete(pylon));
+        }
+
+        return frames;
+    }
+
+    /**
      * Could a Pylon we may place cover this tile? True when any free 2x2 spot
      * exists within the Pylon radius - the question the pull-forward verdict turns
      * into "go build a Pylon" instead of "this spot is useless".
