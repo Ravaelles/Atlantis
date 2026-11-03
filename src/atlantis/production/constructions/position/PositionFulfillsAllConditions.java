@@ -63,6 +63,17 @@ public class PositionFulfillsAllConditions {
             return failed();
         }
 
+        // An engine-refused tile stays refused until the TTL expires (NEXT #151):
+        // the legacy spiral re-serves it blindly otherwise, burning a builder
+        // walk per pass (measured live: the [123,26]/[119,26] Gateway churn
+        // behind the Steamhammer defeat - refused, re-served, refused again).
+        // The catalogue already declines these; this aligns the spiral.
+        if (RefusedTiles.isRefused(position, building)) {
+            AbstractPositionFinder._STATUS = "Tile refused by engine";
+
+            return failed();
+        }
+
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
 

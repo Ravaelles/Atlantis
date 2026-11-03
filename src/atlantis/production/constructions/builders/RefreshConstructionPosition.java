@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.AbstractPositionFinder;
+import atlantis.production.constructions.position.RefusedTiles;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -185,6 +186,24 @@ public class RefreshConstructionPosition {
     protected static APosition refreshPosition(Construction construction) {
         if (doNotRefreshPosition(construction)) return construction.buildPosition();
 
+        // A refused tile breaks the commitment below on purpose: a builder
+        // parked on (or walking to) a tile the engine will never accept
+        // holds a worthless commitment, and the travel chain never re-issues
+        // orders on its own (NEXT #53) - without revoking them the builder
+        // keeps walking to the old tile while the row waits at the new one.
+        // Skipped when a warp is already up: a started warp is the engine
+        // saying yes, and nothing here may move it.
+        boolean refusedSite = construction.buildPosition() != null
+            && construction.buildingUnit() == null
+            && RefusedTiles.isRefused(construction.buildPosition(), construction.buildingType());
+        if (refusedSite) {
+            AUnit committed = construction.builder();
+            if (committed != null && (committed.isConstructing() || committed.isMorphing())) {
+                return construction.buildPosition();
+            }
+            if (committed != null) committed.stop("StahpRefused");
+        }
+        //
         // NEVER move the site out from under a builder that is already on its way there.
         //
         // This is the remaining half of NEXT.md #53, and it is the same shape as #52: a
@@ -204,7 +223,9 @@ public class RefreshConstructionPosition {
         //
         // A builder that is assigned but has NOT started moving is still fair game: nothing
         // has been committed yet, and that is the case this refresh exists for.
-        if (builderHasCommittedToTheSite(construction)) {
+        // (A refused tile already revoked the commitment above and stopped the
+        // builder, so this guard only protects healthy sites.)
+        if (!refusedSite && builderHasCommittedToTheSite(construction)) {
             return construction.buildPosition();
         }
 
@@ -399,6 +420,23 @@ public class RefreshConstructionPosition {
         if (buildPosition == null) {
             System.err.println("buildPosition IS NULL - refresh " + buildingType);
 
+            return true;
+        }
+
+        // An engine-refused tile never heals by waiting: the builder walks,
+        // the engine says no, the row demotes or ages out, and the re-arm
+        // walks back to the same cursed tile (measured live 2026-11-03 vs
+        // Steamhammer: Gateway at unpowered [123,26], 82 s of refused Builds,
+        // then the cancel churn with the bank full). Moving now is strictly
+        // better than standing: the catalogue re-gates the fresh tile
+        // (power, geyser, refused, standing cover), and a null answer keeps
+        // the old site. Decided gas sites never refresh (doNotRefreshPosition)
+        // and neither does a row whose warp is already up (buildingUnit set
+        // or builder constructing) - a started warp is the engine saying yes.
+        if (!doNotRefreshPosition(construction)
+            && construction.buildingUnit() == null
+            && (construction.builder() == null || !construction.builder().isConstructing())
+            && RefusedTiles.isRefused(buildPosition, buildingType)) {
             return true;
         }
 
