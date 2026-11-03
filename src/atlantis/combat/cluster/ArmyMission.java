@@ -75,22 +75,26 @@ public enum ArmyMission {
             Snapshot in = readLive(posture);
             if (in == null) return;
 
-            ArmyMission mission = decide(in);
-            current = mission;
-            ShadowTwin.row(mission, in);
+            ArmyMission decided = decide(in);
+            if (MissionTransitionGate.allows(current, decided, A.now())) {
+                current = decided;
+            }
+            ShadowTwin.row(decided, in);
         } catch (Exception | Error ignored) {
         }
     }
 
     public static void clearForTests() {
         current = null;
+        MissionTransitionGate.clearForTests();
         ShadowTwin.clear();
     }
 
     /**
-     * The mission decided this frame (slice 3a): enforcement reads what
-     * the shadow decided, never the other way around. Null before the
-     * first sample of the frame.
+     * The mission in force this frame (slice 3a + transition gate):
+     * enforcement reads what the shadow decided as gated by
+     * {@link MissionTransitionGate}, never the other way around. Null
+     * before the first sample of the frame.
      */
     public static ArmyMission current() {
         return current;
