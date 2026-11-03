@@ -142,9 +142,6 @@ public class NewConstructionRequest {
 
         APositionFinder.clearCache();
 
-        // Assign optimal builder for this building
-        newConstruction.assignOptimalBuilder();
-
         if (ConstructionRequests.alreadyExists(newConstruction, false)) {
             Select.clearCache();
             Construction.clearCache();
@@ -171,6 +168,15 @@ public class NewConstructionRequest {
             return null;
         }
         else {
+            // Assign the optimal builder only for a row that survives: the
+            // assignment can steal a busy builder off a live row (exclusive
+            // ownership unlinks the old row, which re-arms with a second
+            // worker), so a request cancelled as a duplicate must never
+            // reach it - two probes walking to one site, both giving up.
+            // Siting above ran on the random free builder instead, which
+            // draws from the free pool only and steals nothing.
+            newConstruction.assignOptimalBuilder();
+
             // Add to list of pending orders
             ConstructionRequests.addConstruction(newConstruction);
             if (building.isPylon()) {
