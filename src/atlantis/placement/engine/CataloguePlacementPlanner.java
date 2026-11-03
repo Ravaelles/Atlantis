@@ -15,7 +15,6 @@ import atlantis.production.producibles.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.UnitStats;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
@@ -405,16 +404,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return reserveGas(unitType, targetFrame);
         }
 
-        // S3: the first Pylon takes the start block's power slot (Stardust
-        // doctrine - the first pylon is PART of the layout, not the nearest
-        // free tile to the base). Falls through to the generic rank when
-        // the slot is unusable, so a block that fits nowhere never fails
-        // closed here.
-        if (unitType.isPylon()) {
-            PlacementReservation blockSlot = firstPylonFromStartBlock(unitType, targetFrame);
-            if (blockSlot != null) return blockSlot;
-        }
-
         APosition centre = searchCentre(constraint);
         if (centre == null)
             return PlacementReservation.failure();
@@ -662,60 +651,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         reservedThisPass.add(key);
 
         return PlacementReservation.success(tile.tx(), tile.ty(), targetFrame);
-    }
-
-    /**
-     * S3: the first Pylon takes the start block's power slot. The block is
-     * the layout the base is built around (stamped per base at rebuild),
-     * so the Pylon lands in the design instead of on the nearest free
-     * tile to the base. Only when no Pylon exists yet (completed or
-     * warping - a second demand ranks normally); only the slot the block
-     * names; every gate the generic loop enforces still applies (free,
-     * edge, refused, minerals, standing) so the slot can never serve a
-     * tile the rank would decline. Falls through (null) when the slot is
-     * unusable - never fails closed.
-     */
-    private PlacementReservation firstPylonFromStartBlock(AUnitType unitType, int targetFrame) {
-        if (!gameContext.inGame()) return null;
-
-        try {
-            if (Count.pylonsWithUnfinished() != 0) return null;
-        } catch (RuntimeException | Error ignored) {
-            return null;
-        }
-
-        if (catalogue == null || catalogue.startBlockAnchors().isEmpty()) return null;
-
-        int w = unitType.getTilesWidth();
-        int h = unitType.getTilesHeights();
-        for (StartBlockFinder.Anchor anchor : catalogue.startBlockAnchors()) {
-            BuildBlock block = anchor.block();
-            int x = block.powerPylonX();
-            int y = block.powerPylonY();
-            String tile = x + ":" + y;
-            if (reservedThisPass.contains(tile)) continue;
-            if (!grid.isFreeFor(x, y, w, h)) continue;
-
-            APosition slot = APosition.create(x, y);
-            if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
-                unitType, slot)) continue;
-            if (atlantis.production.constructions.position.RefusedTiles.isRefused(
-                slot, unitType)) continue;
-            if (atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser
-                .isTooCloseToMineralsOrGeyser(unitType, slot)) continue;
-            try {
-                if (OverlapsOurStandingBuilding.check(slot, unitType)) continue;
-            } catch (RuntimeException | Error ignored) {
-                return null;
-            }
-
-            reservedThisPass.add(tile);
-            grid.markUsed(x, y, w, h);
-
-            return PlacementReservation.success(x, y, targetFrame);
-        }
-
-        return null;
     }
 
     private PlacementReservation reserveExact(TargetPlacement constraint, AUnitType type, int targetFrame) {
