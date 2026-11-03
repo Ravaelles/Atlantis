@@ -125,6 +125,10 @@ at the end, never reused.
   history stays in the datum log, not duplicated across backlog entries.
   A repeat-verdict game adds its datum row and nothing else - no commit
   until commit-worthy work exists.
+- No artificial game-status entries: a game that teaches nothing new
+  gets no twin, no datum row, no NEXT line. If it teaches something,
+  the lesson (not the log) goes to the task file with the deciding
+  measurement named.
 - Backlog maintenance never justifies a commit alone: it rides inside
   the next work commit, or happens on the owner's explicit order
   (message says so). History is not rewritten: old commits stay.
@@ -330,6 +334,16 @@ decompiled archives:
   engine specifics) or the sim already answered and a game must
   confirm. The reason is recorded in the test or commit. Games
   confirm, never discover.
+- Live confirmation rule (owner order 2026-11-04): StarEngine verifies
+  first, always - a Wine game follows whenever the sim cannot model
+  the shape (engine truth, no real map, fog, UMS specifics) or the
+  issue is live-only. Dev mode means: reproduce in sim, fix with the
+  sim green. Final verification of game-affecting work is always a
+  real game. `[HIGH]` log lines are treated as exceptions: searchable
+  by keyword, attributable with numbers, never silent. An
+  owner-recorded halt in NEXT.md Active steps suspends all live games
+  until explicitly lifted - the halt overrides the standing allowance
+  above: no new games, no new datum lines while it stands.
 - **Wine games are slow. Always try StarEngine first.** A Wine match
   costs minutes, a sim episode ~250 ms - so the DEFAULT above is not
   optional. Do not treat Wine as the first tool just because it is
@@ -340,6 +354,11 @@ decompiled archives:
   (quadrants + chokes + blocked bands) stands in for a real map
   wherever the sim needs ground. Gaps vs live are filed as NEXT
   items with measurement, never silently worked around.
+- Map-geometry-dependent sim tests (siting, pathing, choke, regions)
+  run on the TauCross snapshot harness
+  (`src/tests/resources/taucross-snapshot.json` via the map-snapshot
+  path), never flat stubs; geometry-free rules may use flat arenas
+  only if the test says why the geometry does not matter.
 - Batch tuning rides SimTunerBatch + CSV manifests. Learner sequencing
   (NEXT #185): the TargetLadder is the action space; hand-written gates
   are replaced one rule at a time behind the same seam (hand rule OR net

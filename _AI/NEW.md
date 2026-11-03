@@ -49,9 +49,10 @@ When every box has its evidence, delete the NEXT delegation line
 then it is deleted with the closing commit.
 
 ## Ratchet rule (mandatory for migration slices)
-The pin must fail if the old path is still referenced. When the
-migration closes, delete the ratchet test or move it to
-`src/tests-aux/` - ratchets never become permanent suite weight.
+The pin must fail if the old path is still referenced. One ratchet
+per seam/door, never a battery per case. When the migration closes,
+delete the ratchet test or move it to `src/tests-aux/` - ratchets
+never become permanent suite weight.
 
 ## Siting tests run on the TauCross snapshot (mandatory for placement work)
 `src/tests/resources/taucross-snapshot.json` via the map-snapshot
