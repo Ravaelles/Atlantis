@@ -30,6 +30,17 @@ public class ConstructionStatusChanger extends Commander {
      * the accept; a dead one still demotes after this window.
      */
     private static final int STALLED_IN_PROGRESS_DEMOTE_FRAMES = 90;
+
+    /**
+     * Match radius for the warping self-check (NEXT #150, owner decision).
+     * The engine places the warp off the requested site (measured across
+     * 212 retained games: 3.16-5.0 tiles of drift on Gateway/Citadel/Nexus/
+     * Pylon), so 2.5 missed healthy warps and every one of them ate a false
+     * "builder gone" demote (the Protoss builder is correctly released on
+     * warp). 6 covers the measured max with margin; warps adopted by another
+     * live row never match (ownership guard below).
+     */
+    static final double WARP_MATCH_RADIUS_TILES = 6;
     /**
      * Frames after an engine build attempt during which demote holds fire even
      * for a standstill. Covers accept-to-entity latency with margin; the
@@ -288,7 +299,26 @@ public class ConstructionStatusChanger extends Commander {
 
     private static AUnit warpingNearSite(Construction construction) {
         return Select.ourWithUnfinishedOfType(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition()).first();
+            .inRadius(WARP_MATCH_RADIUS_TILES, construction.buildPosition())
+            .list().stream()
+            .filter(warping -> !isAdoptedByAnotherRow(warping, construction))
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * True when this warping building already belongs to a different live
+     * row: without the ownership check a widened match radius would let a
+     * neighbour's warp shield a dead row from its demote.
+     */
+    private static boolean isAdoptedByAnotherRow(AUnit warping, Construction construction) {
+        for (Construction other : ConstructionRequests.constructions) {
+            if (other == construction) continue;
+
+            if (warping.equals(other.buildingUnit())) return true;
+        }
+
+        return false;
     }
 
     /**
