@@ -3,6 +3,7 @@ package atlantis.units;
 import atlantis.architecture.Manager;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.avoid.margin.UnitRange;
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Squad;
@@ -2359,12 +2360,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     /**
      * Current mission object for this unit's squad.
+     *
+     * <p>Owner: a combat unit is never legitimately squadless - it is a
+     * bug (or a dismissal for a worker, which names no mission either).
+     * Surface it with a trace and follow the army (Alpha) instead of
+     * the hardcoded DEFEND. The trace is throttled: mission() is read
+     * per frame and nothing sets squad fields since the cutover, so an
+     * unthrottled trace would bury the log it is meant to protect.</p>
      */
     public Mission mission() {
-        // BATTLE CUTOVER: squad assignment is deleted - every unit reads
-        // its squad's mission, defaulting to the global DEFEND until
-        // BattleCommander owns missions (step 5).
         if (squad == null) {
+            if (isCombatUnit()) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                    "squadless-combat",
+                    "Squadless combat unit " + nameWithId() + ", following Alpha");
+
+                return Alpha.get().mission();
+            }
+
             return Missions.DEFEND;
         }
         else if (squad.mission() == null) {

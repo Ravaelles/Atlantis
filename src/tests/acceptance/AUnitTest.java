@@ -1,6 +1,8 @@
 package tests.acceptance;
 
 
+import atlantis.battle.cluster.Alpha;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Vectors;
@@ -244,7 +246,15 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(fake(AUnitType.Terran_Marine).isRepairable(), "bio");
         assertFalse(fake(Protoss_Corsair).isRepairable());
 
-        assertFalse(fake(AUnitType.Terran_Marine).isMissionDefendOrSparta());
+        // Squadless combat follows the army: with Alpha attacking, no
+        // defend-or-sparta reads true even though the unit has no squad.
+        Alpha.get().setMission(Missions.ATTACK);
+        try {
+            assertFalse(fake(AUnitType.Terran_Marine).isMissionDefendOrSparta());
+        }
+        finally {
+            Alpha.get().setMission(null);
+        }
     }
 
     // =========================================================
@@ -560,12 +570,20 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(vulture.isQuick(), "Vulture max speed 6.4 >= 5.8");
         assertFalse(scv.isQuick());
 
-        // Missions come from the unit's squad, not from lastCommand.
-        assertTrue(vulture.isMissionAttack());
-        assertTrue(vulture.isMissionAttackOrGlobalAttack());
-        assertFalse(vulture.isMissionDefend());
-        assertFalse(vulture.isMissionSparta());
-        assertFalse(vulture.isSpecialMission());
+        // Missions come from the army for the squadless, not from lastCommand:
+        // a combat unit with no squad follows Alpha (owner rule - squadless
+        // combat is a bug being surfaced, never a silent DEFEND).
+        Alpha.get().setMission(Missions.ATTACK);
+        try {
+            assertTrue(vulture.isMissionAttack());
+            assertTrue(vulture.isMissionAttackOrGlobalAttack());
+            assertFalse(vulture.isMissionDefend());
+            assertFalse(vulture.isMissionSparta());
+            assertFalse(vulture.isSpecialMission());
+        }
+        finally {
+            Alpha.get().setMission(null);
+        }
 
         assertEquals(0.0, vulture.speed(), 0.001, "no velocity without an engine");
         assertTrue(vulture.maxSpeed() > scv.maxSpeed());

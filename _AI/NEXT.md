@@ -183,10 +183,14 @@ as build output. See `_AI/NOTES.md` for runner and ArchUnit hygiene.
    `RequestBuildingNear` x3 fixed solo (catalogue success path now names
    "OK" like the legacy path did - behavior was already right, only the
    twin was stale); placement NPEs fixed (`TooCloseToMineralsOrGeyser`
-   null-game guard, 9/9). Remainder mapped, not touched: AUnit x2
-   (mission-default semantics -> #232 slices), ProtossDynamicUnit x2
+   null-game guard, 9/9). Remainder mapped, not touched: ProtossDynamicUnit x2
    (gateway thicket -> #91 game proof), QueueInProgressInvariant +
    ResourcesReserved (legacy queue semantics -> #147 deletion wave).
+   AUnit x2 CLOSED 2026-11-03 by the mission-default slice (owner rule:
+   squadless combat is a surfaced bug and follows Alpha, workers hold
+   DEFEND): AUnitTest pins Alpha-following with restore, fast pin
+   SquadlessCombatFollowsAlphaTest 2/2, fast gate 1092/0 (2 arch
+   advisory pre-existing). Live proof rides #232 like the other slices.
    RE-TRIAGE 2026-11-01 (post-migration, solo runs): ProtossDynamic*Test
    green solo (3/3 + 1/1) - suite-only reds, i.e. the order-flake
    mechanism, not product. QueueInProgressInvariant + ResourcesReserved
