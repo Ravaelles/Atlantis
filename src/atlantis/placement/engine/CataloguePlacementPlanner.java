@@ -453,6 +453,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (atlantis.production.constructions.position.RefusedTiles.isRefused(
                 APosition.create(candidate.tileX(), candidate.tileY()), unitType)) continue;
 
+            // No worker-cover skip here (V3 S1, deferred): the funnel and
+            // the legacy spiral decline worker-covered tiles through the
+            // shared verdict, but this loop serves the sim opening on tiles
+            // miners cover - HealthyMinimumBuildTest stalls with no Gateway
+            // when the skip is added (bank 310, production stalled). The
+            // sim assigns builders on covered tiles fine; the live
+            // builderless death the funnel guards against is not modeled
+            // here. Unify at the S4 single door with live proof, not by
+            // breaking the sim-green opening now.
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to

@@ -7,8 +7,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
-import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
-import atlantis.production.constructions.position.conditions.can_build_here.IsWorkerCovered;
 import atlantis.production.constructions.position.modifier.ModifierAnchor;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -206,37 +204,19 @@ public final class CatalogueSiteAdapter {
         }
 
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
-        // Owner #151: an engine-refused tile stays refused until the TTL
-        // expires, so the refresh loop cannot re-serve the cursed tile.
-        // Self-correcting: transient refusals age out, hard ones re-add.
-        if (RefusedTiles.isRefused(site, building)) {
-            SiteTwin.declined(building, "refused-tile", via, constraint.nearTileX(), constraint.nearTileY());
+        // V3 S1: one verdict owns refused / power-at-footprint-center /
+        // geyser-minerals / worker-cover, so the funnel can never serve a
+        // tile the legacy spiral would decline. Physics (occupancy, engine
+        // canBuildHere, early allowances) stays with CanPhysicallyBuildHere
+        // below - the verdict answers "should we", physics answers "could we".
+        SitingVerdict verdict = SitingVerdict.check(building, site);
+        if (!verdict.accepted()) {
+            SiteTwin.declined(building, verdict.twin, via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
             SiteTwin.declined(building, "legacy-refused", via, constraint.nearTileX(), constraint.nearTileY());
-
-            return null;
-        }
-        // Power is not part of the physical check above, and the catalogue's
-        // availability answer can go stale (a tile "powered" by a pylon that
-        // never warped): measured 2026-10-18, a covering cannon tile held its
-        // builder 122 s on unpowered ground, then cancelled. A dark tile is
-        // declined now and re-answered when a pylon lands - just in time,
-        // like the legacy chain, which refuses unpowered tiles at search.
-        if (building.needsPower() && !IsPoweredByAPylon.check(site, building)) {
-            SiteTwin.declined(building, "unpowered", via, constraint.nearTileX(), constraint.nearTileY());
-
-            return null;
-        }
-        // Standing workers cover this tile: the builder assignment would
-        // refuse it and the builderless construction would die to the
-        // "looks bugged" cancel, then re-request the same tile (NEXT #145).
-        // Decline up front and let the legacy search answer - same numbers
-        // as the refusal, never worse than today.
-        if (IsWorkerCovered.check(site)) {
-            SiteTwin.declined(building, "worker-covered", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }

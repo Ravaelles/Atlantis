@@ -4,7 +4,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.conditions.*;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
-import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.constructions.position.protoss.*;
 import atlantis.production.constructions.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.constructions.position.terran.TerranPositionFinder;
@@ -49,27 +48,14 @@ public class PositionFulfillsAllConditions {
 //            return false;
 //        }
 
-        // Both planners must agree on power (NEXT #50): the Protoss sweep
-        // has its own gate, but exact-position orders and other paths reach
-        // this shared chain without it - and an unpowered request dies on
-        // the engine 315 times in a row (measured: Gateway [14,51]). The
-        // rule is the engine's own mask (PsiField), not a radius guess.
-        // Power runs before terrain: it is a property of the site (cheap and
-        // global), and the sweep already checks in this order, so both paths
-        // name the same cause.
-        if (We.protoss() && building.needsPower() && !IsPoweredByAPylon.check(position, building)) {
-            AbstractPositionFinder._STATUS = "Not powered by a Pylon";
-
-            return failed();
-        }
-
-        // An engine-refused tile stays refused until the TTL expires (NEXT #151):
-        // the legacy spiral re-serves it blindly otherwise, burning a builder
-        // walk per pass (measured live: the [123,26]/[119,26] Gateway churn
-        // behind the Steamhammer defeat - refused, re-served, refused again).
-        // The catalogue already declines these; this aligns the spiral.
-        if (RefusedTiles.isRefused(position, building)) {
-            AbstractPositionFinder._STATUS = "Tile refused by engine";
+        // V3 S1: one verdict owns refused / power-at-footprint-center /
+        // geyser-minerals / worker-cover, so the spiral can never serve a
+        // tile the funnel would decline. The verdict reasons double as the
+        // legacy _STATUS lines, keeping PowerFailurePullsPylonTest and the
+        // refusal breakdown naming the same causes as before.
+        SitingVerdict verdict = SitingVerdict.check(building, position);
+        if (!verdict.accepted()) {
+            AbstractPositionFinder._STATUS = verdict.reason;
 
             return failed();
         }
@@ -136,8 +122,8 @@ public class PositionFulfillsAllConditions {
             if (TooCloseToChoke.isTooCloseToChoke(building, position)) return failed();
             if (TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(building, position)) return failed();
             if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return failed();
-            if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return failed();
-//            if (!ProtossHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
+            // Geyser/minerals answered by the verdict above - no second idea here.
+            //            if (!ProtossHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
             if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return failed();
             if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return failed();
         }

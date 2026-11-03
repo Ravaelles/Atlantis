@@ -126,9 +126,15 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         // proven by the game run. What this pins is the gate: even a
         // catalogue YES is refused when the builder-time checks say no, so a
         // tile the issuer would reject never leaves the adapter.
+        // V3 S1: the verdict runs before physics, so the tile must be powered
+        // (a Pylon stands by) and free of verdict gates - the refusal below
+        // names the physics itself (a standing building covers the tile),
+        // not power the verdict already owns.
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 21, 24),
+            fake(AUnitType.Protoss_Gateway, 25, 25),
             probe
         ), fakeEnemies(), () -> {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, APosition.create(25, 25), 10);
