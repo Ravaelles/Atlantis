@@ -68,6 +68,14 @@ at the end, never reused.
   `STATUS.md`, `__IN-PROGRESS.md` - deleted). They rot; nobody owns
   cleanup. A commit is timestamped evidence, a NEXT item has a number
   a commit can close. Neither → not started.
+- Carve-out (owner order 2026-11-04): big changes live in ONE task
+  file each under `_AI/NEXT/` (created from the `_AI/NEW.md`
+  template), and NEXT.md carries exactly one delegation line per
+  file. No rot by construction: the file is created on activation,
+  deleted together with its NEXT line when the item closes (§7), and
+  the NEXT line is the only index - no separate indexes, no copies.
+  "One file per topic" (directory README) still governs reference
+  docs; task files are work orders with a lifecycle, not references.
 
 ## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
 

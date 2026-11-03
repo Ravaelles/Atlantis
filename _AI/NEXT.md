@@ -1799,13 +1799,14 @@ the commanders (CONVENTIONS §23): new code lives in `FormationHold` /
   - #150 stuck-IN_PROGRESS rows: survive all demote branches incl.
     the 2400f age cap (recurred); discriminating demote-guard twin
     named, not implemented. No code - paths load-bearing.
-  - Post-warp "builder gone" demotes (systematic): warping
-    self-match suspected to miss on site-vs-warp drift. Needs owner
-    decision. No code.
-  - Strangulation loop (refused re-mint + watchdog, TTL-phased):
-    serve-fresh-tile-after-demote or TTL change - owner decision.
-    No code.
+  - Post-warp "builder gone" demotes: match widened 2.5->6 tiles +
+    ownership guard (committed 12d5e6f89, pinned red-first; 19/25
+    false demotes on healthy warps measured). Live proof pending
+    (halted).
+  - Strangulation loop: refresh-on-refused + legacy spiral consults
+    RefusedTiles (committed 1a3304273, pinned red-first; TTL-exact
+    re-notes measured on 212 games). Live proof pending (halted).
   - Production V3 single-door (owner order 2026-11-04): see
-    `_AI/PRODUCTION_V3.md` - the full context, file lists and step
+    `_AI/NEXT/PRODUCTION_V3.md` - the full context, file lists and step
     sequence live there; this line is the only NEXT entry until the
     slices land.
