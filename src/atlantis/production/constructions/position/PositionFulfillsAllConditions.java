@@ -91,7 +91,8 @@ public class PositionFulfillsAllConditions {
             // still stops true stacking.
             if (PylonNeedsRoomAround.isTooTight(builder, building, position)) return failed();
             if (PylonTooFarFromBaseEarly.isTooFar(builder, building, position)) return failed();
-            if (ProtossTooCloseToMapBoundaries.isTooClose(building, position)) return failed();
+            // Map edge answered by the verdict above (S2: 4 tiles
+            // everywhere) - no second idea here.
             if (ProtossTooCloseToOtherBuildings.isTooClose(builder, building, position)) return failed();
 
             // There is deliberately no "too close to a region boundary" check

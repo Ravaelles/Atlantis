@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * fraction
  * of a tile, and the owner has already been bitten once by a hand-typed tile
  * size
- * in this module ({@code ProtossTooCloseToMapBoundaries}, 30 vs 32).
+ * in this module (the old map-boundary rule, 30 vs 32).
  * </p>
  *
  * <p>

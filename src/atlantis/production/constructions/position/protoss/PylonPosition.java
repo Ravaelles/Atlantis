@@ -15,11 +15,13 @@ import atlantis.units.select.Select;
 
 public class PylonPosition {
     /**
-     * The Pylon's reserved distance from a map edge while supply is low - the same
-     * number {@code ProtossTooCloseToMapBoundaries} enforces (7 tiles), kept here so
-     * the origin and the rule that judges candidates agree.
+     * The Pylon's reserved distance from a map edge (V3 S2: 4 tiles
+     * everywhere, owner 2026-11-04) - the same number the verdict
+     * enforces, kept here so the origin and the rule that judges
+     * candidates agree. FIRST_PYLON_TILES_FROM_BASE below stays 7:
+     * that is a distance-from-base, not an edge rule.
      */
-    public static final int PYLON_EDGE_MARGIN_TILES = 7;
+    public static final int PYLON_EDGE_MARGIN_TILES = 4;
     /**
      * How far the first Pylon's search origin sits from the Nexus. The old code was
      * reaching for 7 tiles (`translateTilesTowards(-7, ...)`) before that step was
@@ -76,10 +78,9 @@ public class PylonPosition {
         }
 
         // The direction towards the resource line is the natural first choice, but it
-        // is only a candidate: on a corner base (measured on TauCross: Nexus at
-        // (117,7)-(120,9), i.e. 7 tiles from the top edge) the minerals sit *towards*
-        // that edge, and 7 tiles that way lands straight inside the 7-tile margin
-        // `ProtossTooCloseToMapBoundaries` reserves for a Pylon. A blind direction is
+        // is only a candidate: on a corner base the minerals can sit *towards*
+        // the edge, and stepping that way lands straight inside the margin
+        // the verdict reserves for a Pylon (S2: 4 tiles). A blind direction is
         // what kept the search in a corner; the direction must be one that has room.
         HasPosition towards = ABaseLocation.mineralsCenter(base);
         if (towards == null) {
@@ -113,7 +114,7 @@ public class PylonPosition {
         if (towards != null && base.distTo(towards) > 1) {
             APosition towardsResources = base.translateTilesTowards(firstPylonReach(), towards);
             if (isWellInsideMap(towardsResources)) {
-                return towardsResources.makeBuildableFarFromBounds(5);
+                return towardsResources.makeBuildableFarFromBounds(4);
             }
         }
 
@@ -126,7 +127,7 @@ public class PylonPosition {
             return fallback();
         }
 
-        return awayFromEdge.makeBuildableFarFromBounds(5);
+        return awayFromEdge.makeBuildableFarFromBounds(4);
     }
 
     /**

@@ -463,6 +463,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // here. Unify at the S4 single door with live proof, not by
             // breaking the sim-green opening now.
 
+            // A map-edge tile never hosts a warp either (V3 S2, 4 tiles
+            // everywhere): same shared predicate the verdict consults,
+            // so the two paths cannot disagree on it. The full verdict
+            // cannot run here - an unpowered tile must read NEEDS_SUPPORT
+            // (mint the Pylon), not REFUSE - so the edge answers alone.
+            if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
+                unitType, APosition.create(candidate.tileX(), candidate.tileY())
+            )) continue;
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to

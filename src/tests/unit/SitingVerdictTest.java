@@ -20,11 +20,12 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * V3 S1: the single siting verdict, pinned per gate x building type.
- * One function owns refused / power / geyser-minerals / worker-cover,
- * so no path can serve a tile another would decline. Includes the live
- * Steamhammer shape (Gateway [123,26] vs warping Pylon [121,22]) and
- * the funnel geyser twin (a new decline the funnel never named before).
+ * V3 S1-S2: the single siting verdict, pinned per gate x building type.
+ * One function owns refused / power / geyser-minerals / worker-cover
+ * (S1) and the map edge (S2: 4 tiles everywhere), so no path can serve
+ * a tile another would decline. Includes the live Steamhammer shape
+ * (Gateway [123,26] vs warping Pylon [121,22]) and the funnel geyser
+ * twin (a new decline the funnel never named before).
  */
 @Tag("placement")
 public class SitingVerdictTest extends WorldStubForTests {
@@ -160,6 +161,110 @@ public class SitingVerdictTest extends WorldStubForTests {
             assertTrue(EventLog.toJsonLines().contains(
                     "\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"mineral-gas-too-close\""),
                 "the refusal names itself in the twin: " + EventLog.toJsonLines());
+        });
+    }
+
+    private static void stubMap128() {
+        bwapi.Game game = atlantis.Atlantis.game();
+        org.mockito.Mockito.when(game.mapWidth()).thenReturn(128);
+        org.mockito.Mockito.when(game.mapHeight()).thenReturn(128);
+    }
+
+    @Test
+    public void edgeMarginIsFourTilesEverywhere() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 60, 60),
+            fake(AUnitType.Protoss_Probe, 61, 61)
+        ), fakeEnemies(), () -> {
+            stubMap128();
+
+            assertTrue(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(1, 60)),
+                "x=1 is inside the 4-tile margin");
+            assertTrue(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(3, 60)),
+                "x=3 is still inside the 4-tile margin");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(4, 60)),
+                "x=4 is the first legal column");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(122, 60)),
+                "a 2x2 Pylon at x=122 ends at 124, the last legal edge");
+            assertTrue(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Pylon, APosition.create(126, 60)),
+                "a 2x2 Pylon at x=126 ends past the margin");
+            assertTrue(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Gateway, APosition.create(60, 0)),
+                "y=0 is inside the top margin, whatever the building");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Gateway, APosition.create(60, 60)),
+                "the middle of the map is never near an edge");
+        });
+    }
+
+    @Test
+    public void edgeExemptsBasesGasAndOtherRaces() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 60, 60),
+            fake(AUnitType.Protoss_Probe, 61, 61)
+        ), fakeEnemies(), () -> {
+            stubMap128();
+
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Nexus, APosition.create(0, 0)),
+                "bases stand where they stand - fixed positions, never judged");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Protoss_Assimilator, APosition.create(0, 0)),
+                "gas stands on its geyser by design - exempt like minerals");
+            assertFalse(SitingVerdict.isTooCloseToEdge(
+                    AUnitType.Terran_Barracks, APosition.create(0, 0)),
+                "a Protoss edge rule never judges a Terran building");
+        });
+    }
+
+    @Test
+    public void verdictNamesTheEdgeWithItsOwnTwin() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 60, 60),
+            fake(AUnitType.Protoss_Probe, 61, 61)
+        ), fakeEnemies(), () -> {
+            stubMap128();
+
+            SitingVerdict verdict = SitingVerdict.check(
+                AUnitType.Protoss_Pylon, APosition.create(1, 60));
+
+            assertFalse(verdict.accepted(), "an edge Pylon is unservable (S2)");
+            assertEquals("too-close-to-edge", verdict.twin);
+            assertEquals("Too close to map edge", verdict.reason);
+        });
+    }
+
+    @Test
+    public void snapshotPlannerNeverServesWithinFourOfTheEdge() {
+        atlantis.map.snapshot.MapSnapshot snap = tests.fakes.SnapshotTerrain.tauCross();
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 60, 60),
+            fake(AUnitType.Protoss_Probe, 61, 61)
+        ), fakeEnemies(), () -> {
+            stubMap128();
+
+            tests.fakes.SnapshotTerrain terrain = new tests.fakes.SnapshotTerrain(snap);
+            atlantis.placement.engine.CataloguePlacementPlanner planner =
+                new atlantis.placement.engine.CataloguePlacementPlanner(
+                    new atlantis.placement.core.TileAvailabilityGrid(terrain), null, null, true);
+            planner.startPass();
+            atlantis.production.placement.PlacementReservation reservation =
+                planner.reservePlacement(
+                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Pylon),
+                    atlantis.production.placement.TargetPlacement.inNeighbourhood(2, 2), 100);
+
+            assertTrue(reservation.isSuccessful(), "interior TauCross still has Pylon ground");
+            int tx = reservation.tileX();
+            int ty = reservation.tileY();
+            int w = AUnitType.Protoss_Pylon.getTilesWidth();
+            int h = AUnitType.Protoss_Pylon.getTilesHeights();
+            assertTrue(tx >= 4 && ty >= 4 && tx + w <= 124 && ty + h <= 124,
+                "served tile respects the 4-tile margin, got [" + tx + "," + ty + "]");
         });
     }
 
