@@ -1,0 +1,1 @@
+Each harness is a plain `main()` (no JUnit, so no suite ever selects it) driving the headless StarEngine sim (`SimWorld`/`SimArena`/`TileMapSource` plus minimal static mocks) with exit codes 0 = rule holds, 1 = bug reproduced, 2 = inconclusive shape; run via `java -cp out/production/Atlantis:<lib-jars> <class>`.
