@@ -43,19 +43,7 @@ public final class PsiGating {
      * </p>
      */
     public int framesUntilPowered(int tx, int ty) {
-        if (power.isPowered(tx, ty))
-            return 0;
-
-        List<Integer> incoming = power.incomingPowerFrames(tx, ty);
-        if (incoming == null || incoming.isEmpty())
-            return -1;
-
-        int earliest = Integer.MAX_VALUE;
-        for (Integer frame : incoming) {
-            if (frame != null && frame < earliest)
-                earliest = frame;
-        }
-        return earliest == Integer.MAX_VALUE ? -1 : earliest;
+        return framesUntilPowered(power.isPowered(tx, ty), power.incomingPowerFrames(tx, ty));
     }
 
     /**
@@ -64,10 +52,13 @@ public final class PsiGating {
      * engine will actually accept, not the frame the origin tile powers.
      */
     public int framesUntilPowered(int tx, int ty, int w, int h) {
-        if (power.isPowered(tx, ty, w, h))
+        return framesUntilPowered(power.isPowered(tx, ty, w, h), power.incomingPowerFrames(tx, ty, w, h));
+    }
+
+    private int framesUntilPowered(boolean powered, List<Integer> incoming) {
+        if (powered)
             return 0;
 
-        List<Integer> incoming = power.incomingPowerFrames(tx, ty, w, h);
         if (incoming == null || incoming.isEmpty())
             return -1;
 
@@ -76,6 +67,7 @@ public final class PsiGating {
             if (frame != null && frame < earliest)
                 earliest = frame;
         }
+
         return earliest == Integer.MAX_VALUE ? -1 : earliest;
     }
 
@@ -102,12 +94,8 @@ public final class PsiGating {
      * </p>
      */
     public PowerVerdict verdictFor(int tx, int ty) {
-        if (power.isPowered(tx, ty)) return PowerVerdict.ACCEPT;
-
-        List<Integer> incoming = power.incomingPowerFrames(tx, ty);
-        if (incoming != null && !incoming.isEmpty()) return PowerVerdict.ACCEPT;
-
-        return powerCouldReach(tx, ty) ? PowerVerdict.NEEDS_NEW_PYLON : PowerVerdict.REFUSE;
+        return verdictFor(
+            power.isPowered(tx, ty), power.incomingPowerFrames(tx, ty), tx, ty);
     }
 
     /**
@@ -118,9 +106,13 @@ public final class PsiGating {
      * ACCEPT and the engine refuses the warp.
      */
     public PowerVerdict verdictFor(int tx, int ty, int w, int h) {
-        if (power.isPowered(tx, ty, w, h)) return PowerVerdict.ACCEPT;
+        return verdictFor(
+            power.isPowered(tx, ty, w, h), power.incomingPowerFrames(tx, ty, w, h), tx, ty);
+    }
 
-        List<Integer> incoming = power.incomingPowerFrames(tx, ty, w, h);
+    private PowerVerdict verdictFor(boolean powered, List<Integer> incoming, int tx, int ty) {
+        if (powered) return PowerVerdict.ACCEPT;
+
         if (incoming != null && !incoming.isEmpty()) return PowerVerdict.ACCEPT;
 
         return powerCouldReach(tx, ty) ? PowerVerdict.NEEDS_NEW_PYLON : PowerVerdict.REFUSE;
@@ -180,10 +172,10 @@ public final class PsiGating {
         boolean canBeCoveredByNewPylon(int tx, int ty);
 
         /**
-         * Footprint-aware variants (NEXT #238 follow-up, live 2026-11-03 vs
-         * Steamhammer): the engine enforces power at the building's footprint
-         * CENTER, while the tile-point answers above read the origin tile. A
-         * 4x3 Gateway on an origin-inside/center-outside edge tile (measured:
+         * Footprint-aware variants: the engine enforces power at the
+         * building's footprint CENTER, while the tile-point answers above
+         * read the origin tile. A 4x3 Gateway on an origin-inside/center-
+         * outside edge tile (measured live 2026-11-03 vs Steamhammer:
          * [123,26] with Pylon at [121,22] - tile-point dy=144 in, center
          * dy=176 out) reads ACCEPT here and dies on the engine's refusal.
          * Default to the tile-point answers so other sources keep working;

@@ -194,16 +194,12 @@ public class RefreshConstructionPosition {
         // Skipped when a warp is already up: a started warp is the engine
         // saying yes, and nothing here may move it.
         boolean refusedSite = construction.buildPosition() != null
-            && construction.buildingUnit() == null
+            && !warpUp(construction)
             && RefusedTiles.isRefused(construction.buildPosition(), construction.buildingType());
         if (refusedSite) {
             AUnit committed = construction.builder();
-            if (committed != null && (committed.isConstructing() || committed.isMorphing())) {
-                return construction.buildPosition();
-            }
             if (committed != null) committed.stop("StahpRefused");
         }
-        //
         // NEVER move the site out from under a builder that is already on its way there.
         //
         // This is the remaining half of NEXT.md #53, and it is the same shape as #52: a
@@ -283,6 +279,20 @@ public class RefreshConstructionPosition {
         if (builder.isMoving()) return true;
 
         return builder.distTo(construction.buildPosition()) <= 3.5;
+    }
+
+    /**
+     * A started warp is the engine saying yes: neither refresh, resite
+     * nor stop may touch the row. Covers the adopted building (the
+     * demote path names it) and a builder mid-construction/morph,
+     * whichever the path observed first.
+     */
+    private static boolean warpUp(Construction construction) {
+        if (construction.buildingUnit() != null) return true;
+
+        AUnit builder = construction.builder();
+
+        return builder != null && (builder.isConstructing() || builder.isMorphing());
     }
 
     protected static boolean doNotRefreshPosition(Construction construction) {
@@ -434,8 +444,7 @@ public class RefreshConstructionPosition {
         // and neither does a row whose warp is already up (buildingUnit set
         // or builder constructing) - a started warp is the engine saying yes.
         if (!doNotRefreshPosition(construction)
-            && construction.buildingUnit() == null
-            && (construction.builder() == null || !construction.builder().isConstructing())
+            && !warpUp(construction)
             && RefusedTiles.isRefused(buildPosition, buildingType)) {
             return true;
         }

@@ -45,13 +45,23 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
         if (psiGating == null)
             return 0;
 
-        AUnitType type = AUnitType.getByName(buildableTypeId);
-        if (type != null && type.needsPower()) {
-            return psiGating.framesUntilPowered(
-                tx, ty, type.getTilesWidth(), type.getTilesHeights());
-        }
+        AUnitType type = powerNeedingType(buildableTypeId);
 
-        return psiGating.framesUntilPowered(tx, ty);
+        return type == null
+            ? psiGating.framesUntilPowered(tx, ty)
+            : psiGating.framesUntilPowered(tx, ty, type.getTilesWidth(), type.getTilesHeights());
+    }
+
+    /**
+     * The footprint source of truth, in one place: only power-needing
+     * buildings read the footprint center, everything else answers per
+     * tile. Verdict and wait shift through it, so the two can never
+     * disagree on which buildings the rule owns.
+     */
+    private static AUnitType powerNeedingType(String buildableTypeId) {
+        AUnitType type = AUnitType.getByName(buildableTypeId);
+
+        return type != null && type.needsPower() ? type : null;
     }
 
     /**
@@ -60,19 +70,17 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
      */
     @Override
     public boolean requiresAvailability(String buildableTypeId) {
-        AUnitType type = AUnitType.getByName(buildableTypeId);
-
-        return type != null && type.needsPower();
+        return powerNeedingType(buildableTypeId) != null;
     }
 
     @Override
     public AvailabilityVerdict availabilityVerdict(int tx, int ty, String buildableTypeId) {
         if (psiGating == null) return AvailabilityVerdict.AVAILABLE;
 
-        AUnitType type = AUnitType.getByName(buildableTypeId);
-        PsiGating.PowerVerdict verdict = type != null && type.needsPower()
-            ? psiGating.verdictFor(tx, ty, type.getTilesWidth(), type.getTilesHeights())
-            : psiGating.verdictFor(tx, ty);
+        AUnitType type = powerNeedingType(buildableTypeId);
+        PsiGating.PowerVerdict verdict = type == null
+            ? psiGating.verdictFor(tx, ty)
+            : psiGating.verdictFor(tx, ty, type.getTilesWidth(), type.getTilesHeights());
         switch (verdict) {
             case NEEDS_NEW_PYLON:
                 return AvailabilityVerdict.NEEDS_SUPPORT;

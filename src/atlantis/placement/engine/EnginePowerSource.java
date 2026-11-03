@@ -54,13 +54,6 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
     }
 
     /**
-     * Would a Pylon at this unit's position power the tile once finished?
-     */
-    private static boolean withinPowerRadius(AUnit pylon, int tx, int ty) {
-        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1);
-    }
-
-    /**
      * Frames until this building finishes, estimated from its health fraction -
      * the engine does not expose remaining build time through this binding. The
      * estimate is an upper bound (a fresh Pylon reports its full duration), which
@@ -116,17 +109,38 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         Boolean hit = memoPowered.get(key(tx, ty));
         if (hit != null) return hit;
 
-        boolean powered = false;
-        for (AUnit pylon : memoPylons) {
-            // Tile-point approximation (no footprint at this call site): the
-            // legacy path tests the exact footprint center, so the two agree
-            // everywhere except sub-tile razor boundaries. The verdict layer
-            // degrades a miss to NEEDS_NEW_PYLON, not to a deadlock.
-            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1)) { powered = true; break; }
-        }
+        boolean powered = anyCovers(memoPylons, tx, ty, 1, 1);
 
         memoPowered.put(key(tx, ty), powered);
         return powered;
+    }
+
+    /**
+     * One PsiField sweep over a pylon list, at the given footprint, so the
+     * engine rule lives once. Result memos stay tile-keyed (the footprint
+     * answers deliberately skip them - one key cannot name all footprints).
+     * Tile-point callers pass 1x1: an approximation the legacy path (exact
+     * center) agrees with everywhere except sub-tile razor boundaries, and
+     * the verdict layer degrades a miss to NEEDS_NEW_PYLON, not to a deadlock.
+     */
+    private boolean anyCovers(java.util.List<AUnit> pylons, int tx, int ty, int w, int h) {
+        for (AUnit pylon : pylons) {
+            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) return true;
+        }
+
+        return false;
+    }
+
+    private List<Integer> incomingFrames(java.util.List<AUnit> unfinished, int tx, int ty, int w, int h) {
+        List<Integer> frames = new ArrayList<>();
+        for (AUnit pylon : unfinished) {
+            if (pylon.isCompleted()) continue;
+            if (!PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) continue;
+
+            frames.add(framesUntilComplete(pylon));
+        }
+
+        return frames;
     }
 
     @Override
@@ -138,13 +152,7 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         List<Integer> hit = memoIncoming.get(k);
         if (hit != null) return hit;
 
-        List<Integer> frames = new ArrayList<>();
-        for (AUnit pylon : memoUnfinished) {
-            if (pylon.isCompleted()) continue;
-            if (!withinPowerRadius(pylon, tx, ty)) continue;
-
-            frames.add(framesUntilComplete(pylon));
-        }
+        List<Integer> frames = incomingFrames(memoUnfinished, tx, ty, 1, 1);
 
         memoIncoming.put(k, frames);
         return frames;
@@ -164,11 +172,8 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         if (atlantis.Atlantis.game() == null) return false;
 
         memo(atlantis.game.A.now());
-        for (AUnit pylon : memoPylons) {
-            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) return true;
-        }
 
-        return false;
+        return anyCovers(memoPylons, tx, ty, w, h);
     }
 
     @Override
@@ -176,15 +181,8 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         if (atlantis.Atlantis.game() == null) return java.util.Collections.emptyList();
 
         memo(atlantis.game.A.now());
-        List<Integer> frames = new ArrayList<>();
-        for (AUnit pylon : memoUnfinished) {
-            if (pylon.isCompleted()) continue;
-            if (!PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) continue;
 
-            frames.add(framesUntilComplete(pylon));
-        }
-
-        return frames;
+        return incomingFrames(memoUnfinished, tx, ty, w, h);
     }
 
     /**
