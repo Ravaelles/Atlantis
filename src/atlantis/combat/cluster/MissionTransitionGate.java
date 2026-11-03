@@ -1,7 +1,5 @@
 package atlantis.combat.cluster;
 
-import atlantis.combat.cluster.ArmyMission;
-
 /**
  * The mediator for mission changes (owner order: a superior concept
  * deciding whether defend&lt;-&gt;attack transitions may happen, not
