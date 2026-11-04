@@ -74,11 +74,11 @@ public class BuildOrderAuditTest extends AbstractTestWithWorld {
         warpPylonAt(26, 16, true);
 
         assertEquals(1, BuildOrderAudit.mismatchLines().size(),
-            "one off-plan BO warp, one HIGH line, got: " + BuildOrderAudit.mismatchLines());
-        assertTrue(BuildOrderAudit.mismatchLines().get(0).contains("At 16"),
+            "one off-plan BO warp, one MEDIUM issue line, got: " + BuildOrderAudit.mismatchLines());
+        assertTrue(BuildOrderAudit.mismatchLines().get(0).contains("instead 16"),
             "the line names the planned supply: " + BuildOrderAudit.mismatchLines());
-        assertTrue(BuildOrderAudit.mismatchLines().get(0).contains("26"),
-            "the line names the actual supply: " + BuildOrderAudit.mismatchLines());
+        assertTrue(BuildOrderAudit.mismatchLines().get(0).contains("built at 26 supply"),
+            "the line names the actual supply first: " + BuildOrderAudit.mismatchLines());
     }
 
     @Test

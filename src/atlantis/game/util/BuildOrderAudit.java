@@ -48,6 +48,9 @@ public final class BuildOrderAudit {
 
     /**
      * Mismatched rows, oldest first. Pure over the recorded rows.
+     * Grep shape (owner ask): one "[MED] Construction issue detected"
+     * line per break - type, order, actual then planned supply - so the
+     * units log answers "which demand slipped" without the twin hunt.
      */
     public static List<String> mismatchLines() {
         List<String> lines = new ArrayList<String>();
@@ -56,9 +59,9 @@ public final class BuildOrderAudit {
                 row.actualSupply != row.expectedSupply
                     && (row.actualSupply <= 20 || Math.abs(row.actualSupply - row.expectedSupply) >= 2)
             ) {
-                lines.add("BO ORDER MISMATCH (HIGH): " + row.type
-                    + " (BO #" + row.orderId + ") planned At " + row.expectedSupply
-                    + " but warped at supply " + row.actualSupply);
+                lines.add("Construction issue detected: " + row.type
+                    + "#" + row.orderId + " built at " + row.actualSupply
+                    + " supply instead " + row.expectedSupply);
             }
         }
         return lines;
@@ -66,8 +69,9 @@ public final class BuildOrderAudit {
 
     /**
      * End-of-log analysis: every BO building whose warp supply differs
-     * from the plan, plus a one-line tally. Silent when everything
-     * matched. Never throws: exit paths call this.
+     * from the plan, plus a one-line tally - and an explicit clean bill
+     * when everything matched (a silent log cannot tell "clean" from
+     * "the audit never ran"). Never throws: exit paths call this.
      */
     public static void printAudit() {
         try {
@@ -78,7 +82,11 @@ public final class BuildOrderAudit {
             AConsole.println("===== BUILD_ORDER audit: " + total + " BO buildings warped, "
                 + mismatches.size() + " off-plan =====");
             for (String line : mismatches) {
-                AConsole.println(line);
+                AConsole.println(atlantis.util.log.LogLevel.MEDIUM, line);
+            }
+            if (mismatches.isEmpty()) {
+                AConsole.println(atlantis.util.log.LogLevel.LOW,
+                    "No issues in Build Order execution detected.");
             }
         } catch (Exception ignored) {
         }
