@@ -45,6 +45,15 @@ public class OnOurNewUnitCompleted {
             if (construction != null) construction.setStatus(ConstructionOrderStatus.FINISHED);
 
             unit.setConstruction(null);
+
+            // Warp survival for the ledger: a warp recorded at appearance
+            // only counts as a duplicate source once it finished. Without
+            // this a cancelled warp re-served reads as a double-mint.
+            try {
+                atlantis.game.util.BuildingLedger.markCompleted(
+                    unit.type().name(), unit.tx(), unit.ty());
+            } catch (Exception | Error ignored) {
+            }
         }
     }
 }

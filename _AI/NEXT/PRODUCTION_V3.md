@@ -350,3 +350,16 @@ tile through dead builders, no per-building unit-log key.
   warps while the BO is open in 68F87352 - bank at goal time not
   decidable from twins, the new block twin adjudicates next game);
   Nexus anchor twin deployed, awaiting an expansion game.
+- Mint-door builder check (owner order 2026-11-04): overrun with no
+  free builders minted-and-cancelled the same Pylon tile 170 times in
+  7 s live (GAME_D1AA02FE, fresh cid+oid every frame, "looks bugged"
+  cancelling the order while de-dup guards saw nothing). The V2 door
+  now refuses the mint when no builder was assigned (mirrors the
+  legacy mint door + adopt path's no-free-builder guard) and twins
+  BUILD_REFUSED/no-builder change-gated; the demand survives and
+  re-dispatches. Pinned red-first both directions.
+- Ledger tracks warp completion (owner order 2026-11-04): the
+  same-tile-dup verdict counted a cancelled warp re-served as a
+  double-mint (GAME_BAF8D14E: Pylon [121,22] warped 2:20 and 4:15, no
+  death or cancel twin anywhere). Rows now carry completed, set on
+  unit completion; the dup counts only repeats after a completion.

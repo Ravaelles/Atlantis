@@ -115,17 +115,12 @@ public class GameSummary {
 
     /**
      * Same-tile warp repeats: the double-mint twin (NEXT #238), counted
-     * over the ledger's in-memory rows so no file is re-read.
+     * over the ledger's in-memory rows so no file is re-read. Delegates
+     * to the ledger so cancelled-then-rebuilt rows never read as dups.
      */
     private static int sameTileDuplicates() {
         try {
-            Set<String> seen = new HashSet<>();
-            int dups = 0;
-            for (String tile : BuildingLedger.buildingTypeTiles()) {
-                if (!seen.add(tile)) dups++;
-            }
-
-            return dups;
+            return BuildingLedger.sameTileDuplicates();
         } catch (Exception ignored) {
             return 0;
         }

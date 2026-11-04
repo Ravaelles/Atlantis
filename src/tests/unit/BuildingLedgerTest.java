@@ -32,12 +32,12 @@ public class BuildingLedgerTest {
                 + "\"supplyUsed\":8,\"supplyTotal\":9,\"minerals\":100,\"gas\":0,"
                 + "\"reservedMinerals\":0,\"reservedGas\":0,"
                 + "\"expectedSupply\":8,\"order\":\"At 8 Pylon READY_TO_PRODUCE(#1)\","
-                + "\"construction\":7,\"orderId\":1},\n"
+                + "\"construction\":7,\"orderId\":1,\"completed\":false},\n"
                 + "  {\"kind\":\"unit\",\"type\":\"Zealot\",\"tile\":[20,20],\"frame\":6750,\"time\":\"4:40\","
                 + "\"supplyUsed\":35,\"supplyTotal\":41,\"minerals\":155,\"gas\":80,"
                 + "\"reservedMinerals\":300,\"reservedGas\":0,"
                 + "\"expectedSupply\":12,\"order\":\"At 12 Zealot (#4)\","
-                + "\"construction\":null,\"orderId\":4}\n"
+                + "\"construction\":null,\"orderId\":4,\"completed\":false}\n"
                 + "]\n",
             BuildingLedger.toJson()
         );
@@ -67,7 +67,7 @@ public class BuildingLedgerTest {
                 + "\"supplyUsed\":5,\"supplyTotal\":9,\"minerals\":50,\"gas\":0,"
                 + "\"reservedMinerals\":0,\"reservedGas\":0,"
                 + "\"expectedSupply\":9,\"order\":\"At 9 Gateway (#2)\","
-                + "\"construction\":8,\"orderId\":2}\n"
+                + "\"construction\":8,\"orderId\":2,\"completed\":false}\n"
                 + "]\n",
             BuildingLedger.toJson()
         );
@@ -92,6 +92,39 @@ public class BuildingLedgerTest {
             java.util.Arrays.asList("Pylon@[16,46]", "Pylon@[16,46]"),
             BuildingLedger.buildingTypeTiles()
         );
+    }
+
+    @Test
+    public void cancelledWarpRebuiltIsNoDuplicate() {
+        BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
+            8, "At 8 Pylon (#1)", 7, 1);
+        BuildingLedger.recordBuilding(12, "Pylon", 16, 46, 900, "0:37", 14, 17, 90, 0, 0, 0,
+            14, "At 14 Pylon (#9)", 9, 9);
+
+        assertEquals(0, BuildingLedger.sameTileDuplicates(),
+            "the first warp never completed - a rebuild, not a double-mint");
+    }
+
+    @Test
+    public void completedWarpRepeatedIsDuplicate() {
+        BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
+            8, "At 8 Pylon (#1)", 7, 1);
+        BuildingLedger.markCompleted("Pylon", 16, 46);
+        BuildingLedger.recordBuilding(12, "Pylon", 16, 46, 900, "0:37", 14, 17, 90, 0, 0, 0,
+            14, "At 14 Pylon (#9)", 9, 9);
+
+        assertEquals(1, BuildingLedger.sameTileDuplicates(),
+            "two finished warps on one tile is the double-mint");
+    }
+
+    @Test
+    public void markCompletedIgnoresUnknownTiles() {
+        BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
+            8, "At 8 Pylon (#1)", 7, 1);
+        BuildingLedger.markCompleted("Pylon", 99, 99);
+        BuildingLedger.markCompleted(null, 16, 46);
+
+        assertEquals(0, BuildingLedger.sameTileDuplicates());
     }
 
     private int countRows() {

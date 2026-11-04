@@ -97,8 +97,10 @@ public class BuildingLedger {
 
     /**
      * Postgame digest seam: "Type@[x,y]" per warped building, in warp
-     * order. The digest counts repeats as same-tile duplicates (the twin
-     * that proved a double-mint, NEXT #238).
+     * order. Kept for the per-row listing; the duplicate verdict lives
+     * in {@link #sameTileDuplicates()}, which only counts a repeat when
+     * the earlier warp completed (a cancelled warp re-served is a heal,
+     * not a double-mint).
      */
     public static java.util.List<String> buildingTypeTiles() {
         java.util.List<String> tiles = new java.util.ArrayList<>();
@@ -109,6 +111,45 @@ public class BuildingLedger {
         }
 
         return tiles;
+    }
+
+    /**
+     * Same-tile warp repeats, completion-gated: a repeat counts only
+     * when an earlier warp of the same type on the same tile completed.
+     * Cancelled-then-rebuilt rows (the common live shape) do not read
+     * as double mints. Pure over the in-memory rows.
+     */
+    public static int sameTileDuplicates() {
+        java.util.Set<String> completedTiles = new java.util.HashSet<>();
+        int dups = 0;
+        for (Row row : rows.values()) {
+            if (!"building".equals(row.kind)) continue;
+
+            String key = row.type + "@[" + row.tx + "," + row.ty + "]";
+            if (completedTiles.contains(key)) dups++;
+            if (row.completed) completedTiles.add(key);
+        }
+
+        return dups;
+    }
+
+    /**
+     * Marks the warp finished (called on unit completion, never on warp
+     * start - the ledger records appearance, this records survival).
+     * Matches by type+tile, oldest uncompleted first: ids are engine
+     * details the verdict must not depend on. Unknown tile: no-op.
+     */
+    public static void markCompleted(String type, int tx, int ty) {
+        if (type == null) return;
+
+        for (Row row : rows.values()) {
+            if (!"building".equals(row.kind) || row.completed) continue;
+            if (type.equals(row.type) && tx == row.tx && ty == row.ty) {
+                row.completed = true;
+
+                return;
+            }
+        }
     }
 
     /**
@@ -145,6 +186,7 @@ public class BuildingLedger {
                 .append(",\"order\":").append(row.order == null ? "null" : "\"" + quote(row.order) + "\"")
                 .append(",\"construction\":").append(row.constructionId == null ? "null" : row.constructionId)
                 .append(",\"orderId\":").append(row.orderId == null ? "null" : row.orderId)
+                .append(",\"completed\":").append(row.completed)
                 .append("}");
         }
         return out.append(first ? "]" : "\n]").append("\n").toString();
@@ -164,6 +206,7 @@ public class BuildingLedger {
         private final String type;
         private final int tx;
         private final int ty;
+        private boolean completed;
         private final int frame;
         private final String time;
         private final int supplyUsed;
