@@ -160,6 +160,34 @@ public class ProductionHealthWatcherTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void hoardShoutsOncePerGame() {
+        currentMinerals = 100;
+
+        world(20, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 10) return;
+
+            currentMinerals = 100;
+            assertFalse(ProductionHealthWatcher.checkHoard(),
+                "healthy bank: silent");
+
+            currentMinerals = 900;
+            assertTrue(ProductionHealthWatcher.checkHoard(),
+                "first crossing shouts the HIGH line");
+            assertFalse(ProductionHealthWatcher.checkHoard(),
+                "same episode: twin-only, never twice");
+
+            currentMinerals = 100;
+            ProductionHealthWatcher.checkHoard();
+            currentMinerals = 900;
+            assertFalse(ProductionHealthWatcher.checkHoard(),
+                "re-crossing re-twins (edge-triggered) but never re-shouts");
+        });
+    }
+
     private int countRows(String key) {
         String rows = EventLog.toJsonLines();
         int count = 0;

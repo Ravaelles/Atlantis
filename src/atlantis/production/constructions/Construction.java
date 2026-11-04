@@ -105,6 +105,17 @@ public class Construction implements Comparable<Construction> {
      * destinations.
      */
     public APosition findPositionForNewBuilding() {
+        return findPositionForNewBuilding(builder);
+    }
+
+    /**
+     * The same search validated by another worker: a refresh that lost
+     * its builder re-sites through a free proxy instead of declining
+     * "no-builder" forever. The proxy is validation-only (never
+     * assigned); orderless and testing guards live here once, so every
+     * entry answers them the same way.
+     */
+    public APosition findPositionForNewBuilding(AUnit searcher) {
         // Orderless constructions answer null before anything else (legacy
         // guard preserved verbatim): no order, no demand, no site. This
         // must stay ahead of the testing seam - orderless calls consume
@@ -116,7 +127,7 @@ public class Construction implements Comparable<Construction> {
         return (APosition) cache.get(
             "findPositionForNewBuilding:" + genericCacheKey(),
             57,
-            () -> CatalogueSiteAdapter.siteFor(builder, buildingType, this)
+            () -> CatalogueSiteAdapter.siteFor(searcher, buildingType, this)
         );
     }
 

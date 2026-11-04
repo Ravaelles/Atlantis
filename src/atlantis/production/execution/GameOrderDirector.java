@@ -146,6 +146,18 @@ public class GameOrderDirector implements OrderDirector {
             return true;
         }
 
+        // One Pylon in flight below 40 supply (two above): the legacy
+        // concurrency cap, consulted through the single implementation
+        // instead of a second idea of "too many". Without it the same
+        // supply block mints overlapping Pylons every pass (measured:
+        // three concurrent warps out of one block at 25 supply), since
+        // carriedOver only re-offers not-started tiles and a walking
+        // builder's tile looks free again.
+        if (buildingType.isPylon()
+            && atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight()) {
+            return true;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 

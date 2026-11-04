@@ -148,11 +148,6 @@ public final class ProductionEngine {
 
         logFrame(state.frame(), plan, issued);
 
-        // Bank-hoard tripwire (owner ask): one HIGH line when the bank
-        // first crosses 800, with the demand side next to it - saving for
-        // a Nexus reads differently from a stalled pump.
-        atlantis.production.dynamic.MineralHoardWatch.check();
-
         return plan;
     }
 

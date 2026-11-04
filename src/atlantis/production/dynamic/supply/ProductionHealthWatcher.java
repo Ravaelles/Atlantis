@@ -55,12 +55,21 @@ public class ProductionHealthWatcher extends Commander {
     private static boolean hoardActive = false;
 
     /**
+     * The loud line fires once per game (owner ask: a stuck bank with
+     * no production is the defeat shape, and it must read in the
+     * console log, not just the twins). The twin below stays
+     * edge-triggered (re-crossings re-twin), the shout does not re-arm.
+     */
+    private static boolean hoardShouted = false;
+
+    /**
      * Test seam: edge memory is per-JVM, tests reset it.
      */
     public static void clearForTests() {
         overstockActive = false;
         floodActive = false;
         hoardActive = false;
+        hoardShouted = false;
     }
 
     /**
@@ -99,8 +108,11 @@ public class ProductionHealthWatcher extends Commander {
 
     /**
      * Public seam: the edge logic pins in stub states without running the frame.
+     *
+     * @return true when the loud line fired (the first bank-over-800 of
+     * the game) - the twin above still re-arms per episode, this does not.
      */
-    public static void checkHoard() {
+    public static boolean checkHoard() {
         boolean hoard = A.minerals() > HOARD_BANK_MINERALS;
         if (hoard && !hoardActive) {
             int notReady = Queue.get() == null ? -1 : Queue.get().statusNotReady().size();
@@ -112,8 +124,24 @@ public class ProductionHealthWatcher extends Commander {
                 .param("notReady", notReady)
                 .param("workerGate", AutoProduceWorkersCommander.REASON)
                 .log(A.now(), A.minSec());
+
+            boolean shouted = false;
+            if (!hoardShouted) {
+                hoardShouted = true;
+                shouted = true;
+                atlantis.util.AConsole.errPrintln(atlantis.util.log.LogLevel.HIGH,
+                    "BANK_HOARD first bank over " + HOARD_BANK_MINERALS + ": " + A.minerals()
+                        + " minerals, free supply " + (A.supplyTotal() - A.supplyUsed())
+                        + ", not-ready rows " + notReady);
+            }
+
+            hoardActive = hoard;
+
+            return shouted;
         }
         hoardActive = hoard;
+
+        return false;
     }
 
     @Override

@@ -189,7 +189,6 @@ public class RefreshConstructionPosition {
         if (doNotRefreshPosition(construction)) return construction.buildPosition();
 
         // A refused tile breaks the commitment below on purpose: a builder
-        // parked on (or walking to) a tile the engine will never accept
         // holds a worthless commitment, and the travel chain never re-issues
         // orders on its own (NEXT #53) - without revoking them the builder
         // keeps walking to the old tile while the row waits at the new one.
@@ -230,7 +229,7 @@ public class RefreshConstructionPosition {
         Construction.clearCache();
         AbstractPositionFinder.clearCache();
 
-        APosition positionForNewBuilding = construction.findPositionForNewBuilding();
+        APosition positionForNewBuilding = findFreshSite(construction);
         if (positionForNewBuilding != null
             && !sameTile(positionForNewBuilding, construction.buildPosition())) {
             construction.setPositionToBuild(positionForNewBuilding);
@@ -265,6 +264,41 @@ public class RefreshConstructionPosition {
         if (a == null || b == null) return a == null && b == null;
 
         return a.tx() == b.tx() && a.ty() == b.ty();
+    }
+
+    /**
+     * The resite search, answering even when the assigned builder is gone:
+     * the funnel needs a living builder for validation, and "no-builder"
+     * declines forever on a row whose builder just died (measured live:
+     * a refused Gateway kept its cursed tile through two re-arms because
+     * every dead-builder window answered null). A free worker validates
+     * as a proxy - it is never assigned here, the row stays builderless
+     * until the re-arm paths run, and a live assigned builder is always
+     * preferred (same answers as before for healthy rows). Orderless
+     * rows and the testing seam stay in the shared overload, not
+     * duplicated here.
+     */
+    private static APosition findFreshSite(Construction construction) {
+        AUnit builder = construction.builder();
+        if (builder != null && builder.isAlive()) {
+            return construction.findPositionForNewBuilding();
+        }
+
+        AUnit proxy = null;
+        try {
+            APosition anchor = construction.buildPosition() != null
+                ? construction.buildPosition()
+                : (construction.nearTo() != null
+                    ? APosition.create(construction.nearTo())
+                    : null);
+            if (anchor != null) {
+                proxy = atlantis.units.workers.FreeWorkers.get().nearestTo(anchor);
+            }
+        } catch (Exception | Error ignored) {
+        }
+        if (proxy == null || !proxy.isAlive()) return construction.findPositionForNewBuilding();
+
+        return construction.findPositionForNewBuilding(proxy);
     }
 
     /**

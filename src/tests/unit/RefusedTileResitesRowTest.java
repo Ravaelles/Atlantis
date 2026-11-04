@@ -249,6 +249,20 @@ public class RefusedTileResitesRowTest extends WorldStubForTests {
     }
 
     @Test
+    public void proxySearchKeepsOrderlessGuard() {
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20)
+        ), fakeEnemies(), () -> {
+            Construction orderless = new Construction(AUnitType.Protoss_Pylon);
+            FakeUnit proxy = fake(AUnitType.Protoss_Probe, 21, 21);
+
+            assertNull(orderless.findPositionForNewBuilding(proxy),
+                "no order, no demand, no site - the overload answers the "
+                + "same guards instead of searching behind the caller's back");
+        });
+    }
+
+    @Test
     public void sharedChainNeverNamesRefusedWithoutANote() {
         FakeUnit builder = fake(AUnitType.Protoss_Probe, 60, 60);
 

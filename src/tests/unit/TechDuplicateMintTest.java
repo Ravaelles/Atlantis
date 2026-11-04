@@ -70,7 +70,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
     }
 
     @Test
-    public void pylonPairStillMintsTwice() {
+    public void secondPylonWaitsForFirstToFinish() {
         world(3, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21),
@@ -85,9 +85,40 @@ public class TechDuplicateMintTest extends WorldStubForTests {
                 PlacementReservation.success(30, 30, 100), 8));
             assertTrue(director.buildAt(
                 UnitProducible.of(AUnitType.Protoss_Pylon),
+                PlacementReservation.success(40, 40, 100), 8),
+                "dedup reports handled, but must not mint while the first Pylon is unfinished");
+            assertEquals(1, liveOf(AUnitType.Protoss_Pylon),
+                "one Pylon in flight below 40 supply (legacy cap, ported to the mint door)");
+
+            ConstructionRequests.removeOrder(
+                ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Pylon).get(0));
+            assertTrue(director.buildAt(
+                UnitProducible.of(AUnitType.Protoss_Pylon),
                 PlacementReservation.success(40, 40, 100), 8));
-            assertEquals(2, liveOf(AUnitType.Protoss_Pylon),
-                "legit concurrency (Pylon pair) must keep minting");
+            assertEquals(1, liveOf(AUnitType.Protoss_Pylon),
+                "no deadlock: once the first is gone the second mints");
+        });
+    }
+
+    @Test
+    public void gatewayPairStillMintsTwice() {
+        world(3, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            ConstructionRequests.constructions.clear();
+
+            GameOrderDirector director = new GameOrderDirector();
+            assertTrue(director.buildAt(
+                UnitProducible.of(AUnitType.Protoss_Gateway),
+                PlacementReservation.success(30, 30, 100), 10));
+            assertTrue(director.buildAt(
+                UnitProducible.of(AUnitType.Protoss_Gateway),
+                PlacementReservation.success(46, 46, 100), 12));
+            assertEquals(2, liveOf(AUnitType.Protoss_Gateway),
+                "legit concurrency (double Gateway) keeps minting on distinct tiles");
         });
     }
 }
