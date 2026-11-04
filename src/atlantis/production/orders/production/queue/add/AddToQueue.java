@@ -16,6 +16,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -165,7 +167,18 @@ public class AddToQueue {
         if (type.is(AUnitType.Protoss_Nexus)) {
 //            AConsole.errPrintln(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
             if ("_NO_EXPAND_REASON_".equals(ShouldExpand.reason)) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
+                // Routine guard, not an exception: no expansion wanted, no
+                // order minted. Twin only, no stack - the call path is
+                // always the refresh-fail re-request above, so a trace
+                // adds nothing (measured: 162 stack lines in one
+                // owner-watched game from this line alone).
+                EventLog.key(LogKey.BUILD_REFUSED)
+                    .param("type", type.name())
+                    .param("guard", "nexus-no-expand-reason")
+                    .param("reason", String.valueOf(ShouldExpand.reason))
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("minerals", A.minerals())
+                    .log(A.now(), A.minSec());
 
                 return null;
             }

@@ -22,6 +22,7 @@ import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 import atlantis.util.log.LogLevel;
+import atlantis.util.log.PostGameDigest;
 
 public class RefreshConstructionPosition {
 
@@ -371,7 +372,9 @@ public class RefreshConstructionPosition {
             // its builder walked to an engine-refused tile), and each one
             // read as a move in the log.
             if (!sameTile(before, construction.buildPosition())) {
-                System.err.println(A.minSec() + " Refresh " + buildingType + " position");
+                AConsole.printlnCapped(LogLevel.LOW, "refresh-move-" + buildingType,
+                    PostGameDigest.MAX_SAMPLES_PER_KEY,
+                    A.minSec() + " Refresh " + buildingType + " position");
 
                 EventLog.key(LogKey.POSITION_REFRESH)
                     .param("type", buildingType.name())
@@ -397,11 +400,11 @@ public class RefreshConstructionPosition {
                 return buildPosition;
             }
 
-            System.err.println(A.minSec() + " [LVL=HIGH] WTF?!? Cancel and request again.");
+            AConsole.errPrintln(LogLevel.HIGH, A.minSec() + " Cancel and request again: " + buildingType);
             APosition prevPosition = construction.buildPosition();
             AUnit blocker = blockingCompletedBuilding(prevPosition, buildingType);
             if (blocker != null) {
-                System.err.println(A.minSec() + " [LVL=HIGH] site blocked by "
+                AConsole.errPrintln(LogLevel.HIGH, A.minSec() + " site blocked by "
                     + blocker.type().name() + " at [" + blocker.tx() + "," + blocker.ty() + "]");
             }
 
@@ -432,11 +435,11 @@ public class RefreshConstructionPosition {
             else {
                 newOrder = AddToQueue.withHighPriority(buildingType, nextPosition);
             }
-            System.err.println("[LVL=HIGH] This got re-requested: " + newOrder);
+            AConsole.errPrintln(LogLevel.HIGH, "This got re-requested: " + newOrder);
 
             if (newOrder == null) {
                 newOrder = AddToQueue.withTopPriority(buildingType, nextPosition);
-                System.err.println("[LVL=HIGH] Re-re-requesting: " + newOrder);
+                AConsole.errPrintln(LogLevel.HIGH, "Re-re-requesting: " + newOrder);
             }
 
             // Same demand, same timing: a tail-derived minSupply parks the

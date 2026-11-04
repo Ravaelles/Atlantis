@@ -3,6 +3,8 @@ package atlantis.production.constructions.builders;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 public class AbandonAsBuilderIfAttacked extends Manager {
     public AbandonAsBuilderIfAttacked(AUnit unit) {
@@ -18,14 +20,14 @@ public class AbandonAsBuilderIfAttacked extends Manager {
     public Manager handle() {
         if (unit.isConstructing()) {
             unit.orderSink().stop(unit);
-            System.err.println("STOP CONSTRUCTING");
+            AConsole.println(LogLevel.LOW, "STOP CONSTRUCTING");
             return usedManager(this, "StopConstructing");
         }
 
         AUnit enemy = unit.enemiesNear().nearestTo(unit);
         if (enemy != null) {
             unit.runningManager().runFrom(enemy, 5, Actions.RUN_ENEMY, false);
-            System.err.println("AbandonAsBuilderIfAttacked");
+            AConsole.println(LogLevel.LOW, "AbandonAsBuilderIfAttacked");
             return usedManager(this, "AbandonAsBuilderIfAttacked");
         }
 

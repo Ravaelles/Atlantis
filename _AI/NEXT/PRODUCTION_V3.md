@@ -313,3 +313,17 @@ tile through dead builders, no per-building unit-log key.
   (benign: pairs allowed), 1x late SUPPLY_OVERSTOCK. No audit lines
   (LOW=0): the timeout never reached OnGameEnd, same shape as the
   BuildingLedger javadoc notes.
+- Java postgame digest (owner order 2026-11-04, overruling the
+  script-side aggregation: analysis is project code, not a sidecar):
+  `atlantis.util.log.PostGameDigest` aggregates in memory (twin feed
+  from `EventLog.append`, console feed from `AConsole`), counts per
+  [LEVEL] KEY with at most 10 samples per key, writes
+  `bwapi-data/write/POSTGAME_SUMMARY.json` and prints one bounded
+  console section from `GameSummary` on both exit paths (OnGameEnd +
+  shutdown hook). Routine-guard stack trace (`AddToQueue` Nexus
+  no-expand) replaced by a BUILD_REFUSED twin; untagged construction
+  `System.err` lines routed through tagged `AConsole` (Refresh moves
+  LOW + capped at 10/type, cancels/errors HIGH/CRIT). A crashed JVM
+  still yields no digest - the periodic twins/ledger stay the record
+  for those games. No live game (halt stands): verification rides the
+  next owner-ordered game, which the digest section will answer.

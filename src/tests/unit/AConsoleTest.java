@@ -32,11 +32,13 @@ public class AConsoleTest {
     public void setUp() {
         recording = new RecordingLogPort();
         AConsole.usePort(recording);
+        AConsole.clearCappedForTests();
     }
 
     @AfterEach
     public void tearDown() {
         AConsole.usePort(originalPort);
+        AConsole.clearCappedForTests();
     }
 
     @Test
@@ -116,6 +118,27 @@ public class AConsoleTest {
         AConsole.usePort(null);
 
         assertInstanceOf(SystemLogPort.class, AConsole.port(), "null restores the console");
+    }
+
+    @Test
+    public void cappedLinesStopAfterCapPerKey() {
+        for (int i = 0; i < 5; i++) {
+            AConsole.printlnCapped(LogLevel.HIGH, "spam-key", 3, "churn " + i);
+        }
+        AConsole.printlnCapped(LogLevel.HIGH, "other-key", 3, "kept");
+
+        assertEquals(
+            Arrays.asList("[HIGH] churn 0", "[HIGH] churn 1", "[HIGH] churn 2", "[HIGH] kept"),
+            recording.out
+        );
+    }
+
+    @Test
+    public void cappedBudgetResetsPerKey() {
+        AConsole.printlnCapped(LogLevel.LOW, "a", 10, "one");
+        AConsole.printlnCapped(LogLevel.LOW, "b", 10, "two");
+
+        assertEquals(Arrays.asList("[LOW] one", "[LOW] two"), recording.out);
     }
 
     /**

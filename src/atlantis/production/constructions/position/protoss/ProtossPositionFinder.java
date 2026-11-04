@@ -10,6 +10,8 @@ import atlantis.production.constructions.position.conditions.can_build_here.CanP
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
 
@@ -239,7 +241,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         // Pylons only: other buildings twin their breakdown through the V2
         // planner instead; sharing this line would mislabel them.
         if (building.isPylon() && reasons != null && !reasons.isEmpty() && !relaxedBoundaryMargin) {
-            System.err.println("[LVL=CRITICAL] PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
+            AConsole.errPrintln(LogLevel.CRITICAL, "PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
                 + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
                 + " reasons=" + reasons);
         }

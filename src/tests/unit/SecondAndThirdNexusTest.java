@@ -105,6 +105,38 @@ public class SecondAndThirdNexusTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void nexusNoExpandReasonRefusesWithTwinNotStack() throws Exception {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            String previous = ShouldExpand.reason;
+            ShouldExpand.reason = "_NO_EXPAND_REASON_";
+            try {
+                atlantis.util.log.EventLog.clearForTests();
+
+                assertNull(
+                    AddToQueue.withTopPriority(AUnitType.Protoss_Nexus),
+                    "no expansion wanted means no order minted");
+
+                java.io.File tmp = java.nio.file.Files.createTempFile("events", ".jsonl").toFile();
+                atlantis.util.log.EventLog.flushTo(tmp.getAbsolutePath());
+                String rows = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+                assertTrue(
+                    rows.contains("nexus-no-expand-reason"),
+                    "the refusal names itself in the twins - the stack trace added nothing");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                ShouldExpand.reason = previous;
+                atlantis.util.log.EventLog.clearForTests();
+            }
+        });
+    }
+
+    @Test
     public void thirdNexusDecidedWhenRichAndBig() {
         // genericThird path (supply + strength, no mineral/division traps):
         // LimitedBases would preempt at 777+, HasInProgress needs its own

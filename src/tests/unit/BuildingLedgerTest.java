@@ -78,6 +78,22 @@ public class BuildingLedgerTest {
         assertEquals("[\n]\n", BuildingLedger.toJson());
     }
 
+    @Test
+    public void digestSeamsCountOnlyBuildingsAndNameTiles() {
+        BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
+            8, "At 8 Pylon (#1)", 7, 1);
+        BuildingLedger.recordBuilding(12, "Pylon", 16, 46, 900, "0:37", 14, 17, 90, 0, 0, 0,
+            14, "At 14 Pylon (#9)", 9, 9);
+        BuildingLedger.recordUnit(23, "Zealot", 20, 20, 6750, "4:40", 35, 41, 155, 80, 300, 0,
+            12, "At 12 Zealot (#4)", null, 4);
+
+        assertEquals(2, BuildingLedger.buildingWarps());
+        assertEquals(
+            java.util.Arrays.asList("Pylon@[16,46]", "Pylon@[16,46]"),
+            BuildingLedger.buildingTypeTiles()
+        );
+    }
+
     private int countRows() {
         String json = BuildingLedger.toJson();
         int count = 0;

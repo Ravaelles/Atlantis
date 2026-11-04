@@ -11,7 +11,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
+import atlantis.util.log.LogLevel;
 
 public class FindPositionForBase {
 
@@ -51,7 +53,7 @@ public class FindPositionForBase {
         APosition near = DefineNaturalBase.natural();
 
         if (near == null) {
-            System.err.println("Unknown natural position - it will break base position");
+            AConsole.errPrintln(LogLevel.HIGH, "Unknown natural position - it will break base position");
 
             return null;
         }

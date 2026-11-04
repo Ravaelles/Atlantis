@@ -71,7 +71,9 @@ public final class BuildOrderAudit {
      * End-of-log analysis: every BO building whose warp supply differs
      * from the plan, plus a one-line tally - and an explicit clean bill
      * when everything matched (a silent log cannot tell "clean" from
-     * "the audit never ran"). Never throws: exit paths call this.
+     * "the audit never ran"). Capped at ten issue lines (owner order:
+     * no more than ~10 errors of the same type - the full per-row
+     * evidence stays in the twins). Never throws: exit paths call this.
      */
     public static void printAudit() {
         try {
@@ -81,8 +83,15 @@ public final class BuildOrderAudit {
 
             AConsole.println("===== BUILD_ORDER audit: " + total + " BO buildings warped, "
                 + mismatches.size() + " off-plan =====");
+            int shown = 0;
             for (String line : mismatches) {
+                if (shown >= atlantis.util.log.PostGameDigest.MAX_SAMPLES_PER_KEY) {
+                    AConsole.println(atlantis.util.log.LogLevel.MEDIUM,
+                        "... and " + (mismatches.size() - shown) + " more off-plan warps (see twins).");
+                    break;
+                }
                 AConsole.println(atlantis.util.log.LogLevel.MEDIUM, line);
+                shown++;
             }
             if (mismatches.isEmpty()) {
                 AConsole.println(atlantis.util.log.LogLevel.LOW,

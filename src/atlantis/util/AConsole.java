@@ -2,9 +2,12 @@ package atlantis.util;
 
 import atlantis.util.log.LogLevel;
 import atlantis.util.log.LogPort;
+import atlantis.util.log.PostGameDigest;
 import atlantis.util.log.SystemLogPort;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Console writers used across the bot, extracted from the {@code A} god utility
@@ -29,6 +32,28 @@ import java.util.Collection;
 public class AConsole {
 
     private static LogPort port = new SystemLogPort();
+
+    /**
+     * Per-message console budget (owner 2026-11-04): a routine line that
+     * fires every frame or every resite may print at most {@code cap}
+     * times per {@code capKey} per game (the twin still records every
+     * occurrence - the cap touches witnesses only, never data). Measured:
+     * 309 untagged "Refresh X position" lines in one owner-watched game,
+     * all invisible to the severity tooling.
+     */
+    private static final Map<String, Integer> cappedCounts = new TreeMap<>();
+
+    public static void printlnCapped(LogLevel level, String capKey, int cap, Object message) {
+        int shown = cappedCounts.getOrDefault(capKey, 0);
+        if (shown >= cap) return;
+
+        cappedCounts.put(capKey, shown + 1);
+        println(level, message);
+    }
+
+    public static void clearCappedForTests() {
+        cappedCounts.clear();
+    }
 
     /**
      * Replaces the destination of all console output. Intended for tests and
@@ -128,6 +153,7 @@ public class AConsole {
      * as untagged output.
      */
     public static void println(LogLevel level, Object string) {
+        PostGameDigest.noteConsole(level, String.valueOf(string));
         port.println(level.tag() + " " + string);
     }
 
@@ -145,6 +171,7 @@ public class AConsole {
     }
 
     public static void errPrintln(LogLevel level, Object string) {
+        PostGameDigest.noteConsole(level, String.valueOf(string));
         port.printError(level.tag() + " " + string);
     }
 

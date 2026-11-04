@@ -55,6 +55,7 @@ public class EventLog {
         }
         lastFrame = frame;
         buffer.add(new Row(key, frame, time, key.level(), new LinkedHashMap<>(params)));
+        PostGameDigest.note(key, key.level(), PostGameDigest.sampleOf(key.name(), params));
         if (flushDue(frame, lastFlushFrame)) flush();
     }
 

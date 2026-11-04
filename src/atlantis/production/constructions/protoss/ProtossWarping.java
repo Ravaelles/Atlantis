@@ -12,6 +12,8 @@ import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 
 public class ProtossWarping {
 
@@ -66,7 +68,7 @@ public class ProtossWarping {
         }
 
         if (construction == null) {
-            System.err.println("CANNOT define construction for " + newBuilding);
+            AConsole.errPrintln(LogLevel.HIGH, "CANNOT define construction for " + newBuilding);
 
             return;
         }

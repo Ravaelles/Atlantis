@@ -12,7 +12,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.LogLevel;
 
 public class TravelToConstruct extends HasUnit {
     public TravelToConstruct(AUnit unit) {
@@ -98,7 +100,7 @@ public class TravelToConstruct extends HasUnit {
             throw new RuntimeException("unit empty");
         }
         if (buildPosition == null) {
-            System.err.println("buildPosition is null (travelToConstruct " + type + ")");
+            AConsole.errPrintln(LogLevel.HIGH, "buildPosition is null (travelToConstruct " + type + ")");
             construction.cancel(type + " buildPosition is null");
 
             return false;

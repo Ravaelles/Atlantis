@@ -82,6 +82,36 @@ public class BuildingLedger {
     }
 
     /**
+     * Postgame digest seam: how many own buildings warped (any kind row
+     * with kind "building"). Pure over the in-memory rows, so the digest
+     * never re-reads the file it just wrote.
+     */
+    public static int buildingWarps() {
+        int total = 0;
+        for (Row row : rows.values()) {
+            if ("building".equals(row.kind)) total++;
+        }
+
+        return total;
+    }
+
+    /**
+     * Postgame digest seam: "Type@[x,y]" per warped building, in warp
+     * order. The digest counts repeats as same-tile duplicates (the twin
+     * that proved a double-mint, NEXT #238).
+     */
+    public static java.util.List<String> buildingTypeTiles() {
+        java.util.List<String> tiles = new java.util.ArrayList<>();
+        for (Row row : rows.values()) {
+            if ("building".equals(row.kind)) {
+                tiles.add(row.type + "@[" + row.tx + "," + row.ty + "]");
+            }
+        }
+
+        return tiles;
+    }
+
+    /**
      * The warp ledger belongs at the tail of the debug stream too, so one
      * file carries diagnostics plus what warped, when and where. Java-side
      * (not the runner script) so IDE runs land it as well - stderr is the

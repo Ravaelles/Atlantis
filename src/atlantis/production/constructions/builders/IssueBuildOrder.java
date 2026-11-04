@@ -11,9 +11,11 @@ import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.special.SleepUntilFrameGate;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
+import atlantis.util.log.LogLevel;
 import bwapi.TilePosition;
 
 public class IssueBuildOrder extends HasUnit {
@@ -42,11 +44,12 @@ public class IssueBuildOrder extends HasUnit {
 
         AUnit builder = construction.builder();
         if (builder != null && builder.buildUnit() != null) {
-            System.err.println("builder = " + builder);
-            System.err.println("builder.buildUnit() = " + builder.buildUnit());
-            System.err.println("builder.construction() = " + builder.construction());
+            AConsole.printlnCapped(LogLevel.LOW, "builder-state-dump", 10,
+                "builder = " + builder + " / buildUnit = " + builder.buildUnit()
+                    + " / construction = " + builder.construction());
             if (builder.construction() != null) {
-                System.err.println("builder.productionOrder() = " + builder.construction().productionOrder());
+                AConsole.printlnCapped(LogLevel.LOW, "builder-state-dump", 10,
+                    "builder.productionOrder() = " + builder.construction().productionOrder());
             }
         }
 

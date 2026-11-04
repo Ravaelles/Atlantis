@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.PostGameDigest;
 
 import java.util.*;
 
@@ -45,6 +46,7 @@ public class GameSummary {
                     " ###\n" +
                     buildingsLine());
             BuildOrderAudit.printAudit();
+            printPostGameDigest();
         } catch (Throwable ignored) {
         }
     }
@@ -84,6 +86,49 @@ public class GameSummary {
         }
         UnitsArchive.paintKillLossResources();
         BuildOrderAudit.printAudit();
+        printPostGameDigest();
+    }
+
+    /**
+     * The concise end-of-game artifact the agent reads after every game
+     * (owner order 2026-11-04): grouped twin/console counts with capped
+     * samples plus the construction verdict (warps/off-plan/same-tile
+     * dups), as one small JSON file and one bounded console section.
+     * Runs on both exit paths ({@code OnGameEnd} with the whole exit
+     * window, and the SIGTERM hook as backup) - a file written only by
+     * the loser of a crash never exists, the periodic twin/ledger files
+     * stay the forensic record for those games. Never throws.
+     */
+    private static void printPostGameDigest() {
+        try {
+            int warps = BuildingLedger.buildingWarps();
+            int offPlan = BuildOrderAudit.mismatchLines().size();
+            int sameTileDups = sameTileDuplicates();
+            String construction = "{\"warps\":" + warps
+                + ",\"offPlan\":" + offPlan
+                + ",\"sameTileDups\":" + sameTileDups + "}";
+            PostGameDigest.writeTo(PostGameDigest.OUTPUT_PATH, construction);
+            PostGameDigest.printSummary(warps, offPlan, sameTileDups);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
+     * Same-tile warp repeats: the double-mint twin (NEXT #238), counted
+     * over the ledger's in-memory rows so no file is re-read.
+     */
+    private static int sameTileDuplicates() {
+        try {
+            Set<String> seen = new HashSet<>();
+            int dups = 0;
+            for (String tile : BuildingLedger.buildingTypeTiles()) {
+                if (!seen.add(tile)) dups++;
+            }
+
+            return dups;
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     /**
