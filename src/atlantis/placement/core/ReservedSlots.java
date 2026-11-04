@@ -71,6 +71,14 @@ public final class ReservedSlots {
                 catalogue, main.position(),
                 AUnitType.Protoss_Pylon, PYLON_SLOTS,
                 AUnitType.Protoss_Gateway, GATEWAY_SLOTS);
+
+            if (!slots.isEmpty()) {
+                atlantis.util.AConsole.println(atlantis.util.log.LogLevel.MEDIUM,
+                    "Reserved slots: " + slots.size() + " (" + slots.get(0).label
+                        + " at " + slots.get(0).tile + " .. "
+                        + slots.get(slots.size() - 1).label
+                        + " at " + slots.get(slots.size() - 1).tile + ")");
+            }
         } catch (Exception | Error ignored) {
         }
     }
