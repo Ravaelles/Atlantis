@@ -354,6 +354,9 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
                         new ProductionOrder(AUnitType.Protoss_Gateway, 10),
                         new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 12),
                         new ProductionOrder(AUnitType.Protoss_Assimilator, 12)));
+                    // Mock rows stand in for parsed build-order rows, which
+                    // the parser marks non-dynamic (see SecondGateway sim).
+                    for (ProductionOrder row : orders) row.markAsNotDynamic();
                     ABuildOrder buildOrder = Mockito.mock(ABuildOrder.class);
                     Mockito.when(buildOrder.productionOrders()).thenReturn(orders);
                     CurrentBuildOrder.set(buildOrder);

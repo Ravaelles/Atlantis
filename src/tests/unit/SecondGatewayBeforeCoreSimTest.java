@@ -135,6 +135,11 @@ public class SecondGatewayBeforeCoreSimTest extends WorldStubForTests {
                     orders.add(new ProductionOrder(AUnitType.Protoss_Zealot, 16));
                     orders.add(new ProductionOrder(AUnitType.Protoss_Pylon, 15));
                 }
+                // Mock rows stand in for parsed build-order rows, which the
+                // parser marks non-dynamic: without this the sim never sees
+                // a live-like unfinished BO and gates keyed on it (B1) stay
+                // open by construction, so the sim cannot pin them.
+                for (ProductionOrder row : orders) row.markAsNotDynamic();
                 ABuildOrder buildOrder = org.mockito.Mockito.mock(ABuildOrder.class);
                 org.mockito.Mockito.when(buildOrder.productionOrders()).thenReturn(orders);
                 CurrentBuildOrder.set(buildOrder);

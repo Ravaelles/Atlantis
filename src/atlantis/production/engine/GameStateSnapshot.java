@@ -412,15 +412,27 @@ public final class GameStateSnapshot {
                 atlantis.production.orders.production.queue.Queue.get();
             if (queue == null) return true;
 
-            for (atlantis.production.orders.production.queue.order.ProductionOrder row :
-                queue.notFinished().list()) {
-                if (row != null && !row.isDynamic()) return false;
-            }
-
-            return true;
+            return buildOrderDone(queue.notFinished().list());
         } catch (Exception | Error ignored) {
             return true;
         }
+    }
+
+    /**
+     * Test seam: the unfinished-BO-row check over an explicit list, so the
+     * rule pins without a queue (mirrors the parser: file rows are
+     * non-dynamic, dynamic rows never own the opening).
+     */
+    public static boolean buildOrderDone(
+        java.util.List<atlantis.production.orders.production.queue.order.ProductionOrder> rows
+    ) {
+        if (rows == null) return true;
+
+        for (atlantis.production.orders.production.queue.order.ProductionOrder row : rows) {
+            if (row != null && !row.isDynamic()) return false;
+        }
+
+        return true;
     }
 
     private AUnitType supplyProviderType() {
