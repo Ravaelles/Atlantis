@@ -32,8 +32,25 @@ public final class RefusedTiles {
     /** Long enough to outlive any chase, short enough to forgive a freed tile. */
     public static final int REFUSAL_TTL_FRAMES = 2400;
 
+    /**
+     * Map-edge margin for structural refusals (same 4 tiles as the S2
+     * siting rule): the border never becomes buildable, so an
+     * engine-refused edge tile is not a transient - re-serving it only
+     * re-parks a builder there (measured live: Nexus [120,0] refused
+     * 5:57, re-served, parked 105 s).
+     */
+    public static final int EDGE_TILES = 4;
+
     private static final Map<String, Integer> refusedAt = new HashMap<>();
     private static final Map<String, Integer> lastTwinnedAt = new HashMap<>();
+    /**
+     * Engine-refused map-edge tiles: no TTL, the border does not heal.
+     * Unlike the S2 verdict predicate this has no base/gas exemption -
+     * an engine refusal is ground truth even for a base (a refused tile
+     * never warps), while the verdict must keep servable near-edge
+     * base spots open.
+     */
+    private static final java.util.Set<String> structuralRefusals = new java.util.HashSet<>();
 
     private RefusedTiles() {
     }
@@ -44,6 +61,9 @@ public final class RefusedTiles {
         try {
             APosition p = APosition.create(tile);
             refusedAt.put(key(p.tx(), p.ty(), building), A.now());
+            if (isMapEdgeTile(p.tx(), p.ty(), building)) {
+                structuralRefusals.add(key(p.tx(), p.ty(), building));
+            }
             twinNote(p, building);
         } catch (Exception | Error ignored) {
         }
@@ -76,7 +96,10 @@ public final class RefusedTiles {
 
         try {
             APosition p = APosition.create(tile);
-            Integer at = refusedAt.get(key(p.tx(), p.ty(), building));
+            String k = key(p.tx(), p.ty(), building);
+            if (structuralRefusals.contains(k)) return true;
+
+            Integer at = refusedAt.get(k);
             if (at == null) return false;
 
             return A.now() - at < REFUSAL_TTL_FRAMES;
@@ -85,9 +108,39 @@ public final class RefusedTiles {
         }
     }
 
+    /**
+     * Map-edge tile for the building's footprint (pure over numbers, so
+     * the boundary pins without a game): tx/ty below the margin or the
+     * footprint crossing the far margin. Unknown map size fails open
+     * (no game attached) - the TTL path still applies. Public as a seam:
+     * the V2 loop consults the numbers without taking any verdict.
+     */
+    public static boolean isMapEdgeTile(int tx, int ty, AUnitType building) {
+        try {
+            int mapW = atlantis.map.AMap.getMapWidthInTiles();
+            int mapH = atlantis.map.AMap.getMapHeightInTiles();
+            if (mapW <= 0 || mapH <= 0) return false;
+
+            return isMapEdgeTile(tx, ty,
+                building == null ? 1 : Math.max(1, building.getTilesWidth()),
+                building == null ? 1 : Math.max(1, building.getTilesHeights()),
+                mapW, mapH);
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    public static boolean isMapEdgeTile(int tx, int ty, int w, int h, int mapW, int mapH) {
+        if (tx < EDGE_TILES || ty < EDGE_TILES) return true;
+        if (tx + w > mapW - EDGE_TILES) return true;
+
+        return ty + h > mapH - EDGE_TILES;
+    }
+
     public static void clearForTests() {
         refusedAt.clear();
         lastTwinnedAt.clear();
+        structuralRefusals.clear();
     }
 
     private static String key(int tx, int ty, AUnitType building) {
