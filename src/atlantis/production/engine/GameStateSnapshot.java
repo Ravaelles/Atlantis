@@ -287,6 +287,8 @@ public final class GameStateSnapshot {
         // the live counts, so the goal layer never touches Select/Count.
         snapshot.gatewaysExisting = Count.ofTypeWithUnfinished(AUnitType.Protoss_Gateway);
         snapshot.gatewaysFree = Count.freeGateways();
+        snapshot.gatewayConstructions =
+            ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).size();
         // First-Assimilator timing (B1): the least warp seconds left on
         // unfinished Cybernetics Cores, -1 when none is warping - the
         // same sight the board snapshot carries for the same decision.

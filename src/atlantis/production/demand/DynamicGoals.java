@@ -656,12 +656,23 @@ public final class DynamicGoals {
         int cap = state.enemyIsProtoss && state.enemyCombatBuildings == 0 ? 6 : 4;
         if (state.gatewaysExisting < 2 || state.gatewaysExisting >= cap) return;
 
-        boolean allBusy = state.gatewaysFree == 0;
-        if (allBusy) lastAllBusySecond = state.seconds;
-        if (!allBusy
-            && (lastAllBusySecond < 0 || state.seconds - lastAllBusySecond > 10)) return;
+        // Third Gateway (owner order 2026-11-04): no early third - only on
+        // a saturated completed pair (both standing, none walking/warping),
+        // with 225+ minerals in the bank. Later Gateways keep the old
+        // rich-plus-busy rule below.
+        if (state.gatewaysExisting == 2) {
+            if (state.minerals < GATEWAY_THIRD_BANK_MINERALS) return;
+            if (state.gatewaysFree != 0) return;
+            if (state.gatewayConstructions > 0) return;
+        }
+        else {
+            boolean allBusy = state.gatewaysFree == 0;
+            if (allBusy) lastAllBusySecond = state.seconds;
+            if (!allBusy
+                && (lastAllBusySecond < 0 || state.seconds - lastAllBusySecond > 10)) return;
 
-        if (state.minerals < GATEWAY_BANK_MINERALS) return;
+            if (state.minerals < GATEWAY_BANK_MINERALS) return;
+        }
 
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Gateway),
@@ -688,6 +699,9 @@ public final class DynamicGoals {
 
     /** Rich-only rule: a new Gateway never starves tech or units. */
     private static final int GATEWAY_BANK_MINERALS = 400;
+
+    /** Third Gateway bank floor (owner 2026-11-04): saturated pair, 225+. */
+    private static final int GATEWAY_THIRD_BANK_MINERALS = 225;
 
     /**
      * Baseline army: always some combat units once we have a base and a
@@ -1108,6 +1122,15 @@ public final class DynamicGoals {
          * when every existing one is busy.
          */
         public int gatewaysFree;
+
+        /**
+         * Gateway constructions still underway (walking builder or warping,
+         * not yet producing). The third Gateway waits for a saturated
+         * completed pair - minting it behind a walking builder is how
+         * 30/48 slides toward 38/65. Set post-construction like
+         * {@link #gatewaysFree}.
+         */
+        public int gatewayConstructions;
 
         /**
          * Least warp seconds left on unfinished Cybernetics Cores, -1 when

@@ -91,4 +91,24 @@ public class GatewayDemandTest {
             hasGatewayGoal(contribute(state(30, 60, 1200, 4, 0))),
             "four Gateways is enough for now - further expansion is a new decision");
     }
+
+    @Test
+    public void thirdGatewayNeedsOnly225OnSaturatedPair() {
+        DynamicGoals.GameSnapshot snapshot = state(25, 45, 250, 2, 0);
+        snapshot.gatewayConstructions = 0;
+
+        assertTrue(
+            hasGatewayGoal(contribute(snapshot)),
+            "owner 2026-11-04: 225+ bank on a saturated completed pair wants the 3rd - no 400 toll");
+    }
+
+    @Test
+    public void walkingBuilderBlocksThirdGateway() {
+        DynamicGoals.GameSnapshot snapshot = state(25, 45, 800, 2, 0);
+        snapshot.gatewayConstructions = 1;
+
+        assertFalse(
+            hasGatewayGoal(contribute(snapshot)),
+            "owner 2026-11-04: a Gateway still walking/warping blocks the next one - no overlap churn");
+    }
 }
