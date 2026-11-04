@@ -348,10 +348,10 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     }
 
     /**
-     * The worker the gas branch measures from: the nearest free worker to
-     * our base, one per pass. Travel ranking no longer uses it (it reads
-     * the base anchor instead, which never churns) - this stays for the
-     * exact-geyser rule, which needs a worker to hand to the finder.
+     * The worker every candidate in this pass is measured from: the nearest free
+     * worker to our base. One per pass (not per building) so two candidates in one
+     * frame cannot disagree about travel time. The gas branch reuses the same
+     * worker to hand to the exact-geyser rule.
      */
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
