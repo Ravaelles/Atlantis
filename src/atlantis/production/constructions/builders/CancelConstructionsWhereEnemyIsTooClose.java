@@ -24,6 +24,14 @@ public class CancelConstructionsWhereEnemyIsTooClose {
 
         AUnit enemy = enemies.nearestTo(builder);
 
+        // No enemy, no cancel: nearestTo answers null on an empty
+        // selection, and dereferencing it below NPE'd every frame
+        // (measured: hundreds of "distanceTo got null" + traces in one
+        // owner-watched game). The exception path cancelled nothing,
+        // so an explicit false changes no behavior - it only silences
+        // the storm. Same for a null site in the position check.
+        if (enemy == null) return false;
+
         if (builderTooCloseToEnemy(builder, enemy)) {
             return cancel(
                 construction,
@@ -51,7 +59,7 @@ public class CancelConstructionsWhereEnemyIsTooClose {
     }
 
     private static boolean positionTooCloseToEnemy(APosition position, AUnit enemy) {
-        if (position == null) return false;
+        if (position == null || enemy == null) return false;
 
         double positionToEnemyDist = position.distTo(enemy) - enemy.groundWeaponRange();
 
