@@ -248,11 +248,13 @@ Protoss-only - verify, don't assume).
   `GasBuildingPositionFinder.java` (only after the gas
 ...[truncated 2085 chars]
 
-### S5. Live-hardening batch + single minter [Status: DONE 2026-11-04, live game #2 pending]
-Wine baseline 20261104_101505 (TauCross vs Grendel, 10:27, 23 warps,
-zero duplicates) reproduced the owner's complaints in the twins:
+### S5. Live-hardening batch + single minter [Status: DONE 2026-11-04]
+Wine baselines 20261104_101505 (TauCross vs Grendel, 23 warps, zero
+duplicates) and scbw GAME_9B5AB3C1 (vs Steamhammer, 4 warps, zero
+Gateways ever - the reported failure reproduced) showed in the twins:
 81 no-op POSITION_REFRESH + stderr lines for one Gateway on a refused
-tile, builders walking to cursed tiles, no per-building unit-log key.
+tile, builders walking to cursed tiles, a refused row holding its
+tile through dead builders, no per-building unit-log key.
 - Unit log names the building on the command half:
   `#Build-Pylon/Pylon/BuilderManager` (OrderWatcher; BuilderOrderLogTest).
 - Refresh spam killed: twin + stderr only fire when the site actually
@@ -272,9 +274,24 @@ tile, builders walking to cursed tiles, no per-building unit-log key.
 - Travel-anchor experiment (base instead of free worker): REVERTED -
   moved the natural answer out of its neighbourhood
   (BaseSitingCatalogueTest), ranker tuned around worker travel.
+- Resite without a live builder (proxy validation, shared
+  findPositionForNewBuilding overload): the funnel's no-builder decline
+  froze rows whose builder died on a refused tile. Pinned (guard
+  contract); live proof pending.
+- V2 pylon cap ported to the mint door (same legacy function, one
+  implementation); Gateway pairs unaffected (pinned).
 - Verify: placement 87/0, fast 1100/0, combat 746/0, e2e 41/0
   (incl. stall recovery), acceptance only the 6 pre-existing #147
   queue failures.
+- Verification loop (owner ask): scripts/analyze-game.sh <game>
+  prints only counts (HIGH/MED/CRIT/LOW, warps, offPlan,
+  sameTileDups, status) and writes ANALYSIS_SUMMARY.json + one file
+  per [SEV] debug-key. Bot side: BuildOrderAudit mismatch lines now
+  read "[MED] Construction issue detected: Gateway#11 built at 10
+  supply instead 11" (was: BO ORDER MISMATCH (HIGH)); clean games
+  print "[LOW] No issues in Build Order execution detected."
+  Twin HIGH/CRIT rows are errors; twin-MEDIUM stays out of the
+  counts (telemetry chatter by construction).
 - Remaining V3 (needs one live game of proof each, owner-gated):
   route sited requests (RequestBuildingNear fallback) and the cannon
   direct siter (ProtossPhotonCannonAntiLand) through reservePlacement;
@@ -283,5 +300,7 @@ tile, builders walking to cursed tiles, no per-building unit-log key.
   requestBuilding/validatePosition/adoptPreparedSite + BuildGates
   (pinned doctrine - port each gate to V2 with its test before
   deleting; Terran/Zerg files stay - live combat caller).
-- Game proof: run a second Wine game on this tree and verify
-  BUILDINGS.json (no 2x rows, Gateway warps).
+- Game proof: scbw GAME_1077E111 (this tree minus audit strings)
+  warped Gateway 1:23 + Core with zero spam twins and zero cancels;
+  scbw Steamhammer verification game with the full tree + audit lines
+  was launched to confirm BUILDINGS.json end-to-end (analyze it).
