@@ -36,7 +36,7 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
         cannonNeeded = cannonNeeded();
         cancelConstructionsIfNeededToGetMinerals();
 
-        AConsole.errPrintln("cannonsNeeded = " + cannonNeeded);
+        AConsole.println(atlantis.util.log.LogLevel.LOW, "cannonsNeeded = " + cannonNeeded);
 
         for (int i = 0; i < cannonNeeded; i++) {
             ProduceCannonAtNaturalOrMain.produce();

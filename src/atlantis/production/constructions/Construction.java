@@ -15,7 +15,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -200,7 +200,8 @@ public class Construction implements Comparable<Construction> {
                 (new GatherResources(oldBuilder)).forceHandle();
             }
         }
-        else ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
+        else atlantis.util.AConsole.printlnCapped(atlantis.util.log.LogLevel.LOW, "no-optimal-builder", 10,
+            "No optimal builder for " + buildingType);
 
         return builder;
     }

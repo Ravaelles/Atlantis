@@ -46,7 +46,7 @@ public class ACherryVis {
         if (!isEnabled()) return;
         if (A.s <= 2) return;
 
-        AConsole.println("CherryVis finishing...");
+        AConsole.println(atlantis.util.log.LogLevel.LOW, "CherryVis finishing...");
         try {
             logger().onGameEnd();
         } catch (Throwable t) {
