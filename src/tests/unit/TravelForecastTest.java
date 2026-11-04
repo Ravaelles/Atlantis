@@ -156,6 +156,34 @@ public class TravelForecastTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void refusedSiteHoldsBuilder() {
+        world(3, fixture(false), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() == 1) seedConstructions(false);
+            if (atlantis.game.A.now() != 2) return;
+
+            currentSupplyUsed = 20;
+            currentMinerals = 200;
+
+            Construction pylon = linkedPylon();
+            assertFalse(
+                ShouldNotTravelToConstructYet.check(pylon, builder, 5.0),
+                "bank covers the price and the tile is clean: walk now");
+            atlantis.production.constructions.position.RefusedTiles.note(
+                atlantis.map.position.APosition.create(26, 24), AUnitType.Protoss_Pylon);
+
+            try {
+                assertTrue(
+                    ShouldNotTravelToConstructYet.check(pylon, builder, 5.0),
+                    "the engine refused this tile: walking there earns nothing, "
+                        + "the builder stays claimed and mines instead while the refresh moves the site");
+            }
+            finally {
+                atlantis.production.constructions.position.RefusedTiles.clearForTests();
+            }
+        });
+    }
+
     private FakeUnit[] fixture(boolean mining) {
         FakeUnit[] miners = new FakeUnit[10];
         for (int i = 0; i < miners.length; i++) {

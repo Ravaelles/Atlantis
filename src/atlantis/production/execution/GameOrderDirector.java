@@ -136,6 +136,16 @@ public class GameOrderDirector implements OrderDirector {
             }
         }
 
+        // Single-demand tech mints once: a second concurrent construction
+        // of a tech building is always a duplicate (one Core per tech
+        // path), never legit concurrency like Pylons or Gateways. The
+        // queue-side wall (OnlyOneAllowedOfType) cannot see V2 mints, so
+        // the mint door owns it. A stuck row still heals: overdue cancels
+        // remove it and the next frame mints again.
+        if (isSingleDemandTech(buildingType) && hasLiveTechDemandCovered(buildingType)) {
+            return true;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
@@ -212,6 +222,39 @@ public class GameOrderDirector implements OrderDirector {
      * The engine throws (rather than returning false) when a building is asked
      * for work it cannot take, so every path checks the facility first.
      */
+
+    /**
+     * Tech buildings wanted at most once at a time (mirrors the queue-side
+     * {@code OnlyOneAllowedOfType} list, minus Robotics: a second Robo while
+     * the first warps is rare enough that waiting for the warp beats
+     * risking a duplicate pair, and the wait is bounded by completion).
+     * Pylons, Gateways, Cannons, bases and gas never take this exit -
+     * legit concurrency (two Gateways, Pylon pairs) must keep minting.
+     */
+    private static boolean isSingleDemandTech(AUnitType type) {
+        if (type.isPylon() || type.isGateway() || type.isCannon()
+            || type.isBase() || type.isGasBuilding()) return false;
+
+        return type.equals(AUnitType.Protoss_Forge)
+            || type.equals(AUnitType.Protoss_Cybernetics_Core)
+            || type.equals(AUnitType.Protoss_Citadel_of_Adun)
+            || type.equals(AUnitType.Protoss_Observatory)
+            || type.equals(AUnitType.Protoss_Robotics_Support_Bay)
+            || type.equals(AUnitType.Protoss_Fleet_Beacon)
+            || type.equals(AUnitType.Protoss_Templar_Archives)
+            || type.equals(AUnitType.Terran_Engineering_Bay)
+            || type.equals(AUnitType.Terran_Armory);
+    }
+
+    /**
+     * True when this tech already has a live row or a standing/warping
+     * building: a second mint now would be the duplicate, not the demand.
+     */
+    private static boolean hasLiveTechDemandCovered(AUnitType type) {
+        if (Select.countOurOfTypeWithUnfinished(type) > 0) return true;
+
+        return !ConstructionRequests.notFinishedOfType(type).isEmpty();
+    }
 
     /**
      * Creates the legacy construction request and attaches an order to it: the

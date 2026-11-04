@@ -87,6 +87,21 @@ public class ShouldNotTravelToConstructYet {
         if (We.zerg()) return false;
         if (building == null) return false;
 
+        // An engine-refused site is not walked to (measured live: a Gateway
+        // re-served its refused tile every 2 frames while the builder kept
+        // walking to it - the walk earns nothing since the engine refuses
+        // the Build at arrival, and the resite, which needs an uncommitted
+        // builder, never fires while it walks). The builder stays claimed
+        // and mines instead; the refresh moves the site, not the worker.
+        if (construction.buildPosition() != null
+            && atlantis.production.constructions.position.RefusedTiles.isRefused(
+            construction.buildPosition(), building)) {
+            if (builder != null) {
+                builder.setTooltipTactical("Cursed site " + building.name());
+            }
+            return true;
+        }
+
         if (A.supplyUsed() > FORECAST_MAX_SUPPLY) {
             return check(building, distance);
         }

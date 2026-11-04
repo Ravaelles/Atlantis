@@ -298,7 +298,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         reservedThisPass.clear();
         supportThisPass.clear();
         passBuilder = null;
-        passBuilderPosition = null;
 
         // A caller-supplied grid is reused as-is across passes (terrain is
         // null, so there is nothing to rebuild from): drop the reservation
@@ -339,19 +338,11 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     }
 
     /**
-     * The worker every candidate in this pass is measured from: the nearest free
-     * worker to our base. One per pass (not per building) so two candidates in one
-     * frame cannot disagree about travel time.
+     * The worker the gas branch measures from: the nearest free worker to
+     * our base, one per pass. Travel ranking no longer uses it (it reads
+     * the base anchor instead, which never churns) - this stays for the
+     * exact-geyser rule, which needs a worker to hand to the finder.
      */
-    /**
-     * The pass builder's position, fetched once per pass. The ranker asks
-     * travel for every candidate (~10k per building goal) - re-reading the
-     * live unit object there costs a full stub round-trip each time in the
-     * sim, for an answer that cannot change mid-pass (the game is frozen
-     * while the plan computes).
-     */
-    private APosition passBuilderPosition;
-
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
             if (!gameContext.inGame()) return null;
@@ -503,22 +494,51 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     /**
      * Fills in the two facts the catalogue cannot know: the builder travel estimate
-     * and the distance to the neighbourhood's exit. One nearest worker per pass (the
-     * same choice the legacy planner made), so every candidate is measured from the
-     * same place and the ordering is stable frame to frame.
+     * and the distance to the neighbourhood's exit. Travel is measured from the
+     * base, not from the free worker of the moment: the pass builder used to be
+     * the nearest free worker, so every dispatch (which removes a worker from
+     * the free pool) moved the anchor and re-ranked every candidate - the
+     * fresh tile that won was then minted next to the walking builder's own
+     * row (measured live: systematic same-type doubles). The builder comes
+     * from the base anyway, and the base does not move, so the order is
+     * stable frame to frame and idempotent with carriedOver.
      */
     private List<BuildLocation> refine(AUnitType unitType, List<BuildLocation> candidates) {
-        AUnit builder = builderForThisPass();
+        APosition travelFrom = travelAnchor();
 
         List<BuildLocation> refined = new java.util.ArrayList<>(candidates.size());
         for (BuildLocation candidate : candidates) {
             BuildLocation withTravel = candidate.refined(
-                builderTravelEstimate(builder, candidate),
+                builderTravelEstimate(travelFrom, candidate),
                 exitDistanceFor(candidate)
             );
             refined.add(withTravel.withFramesUntilAvailable(availabilityFrames(unitType, candidate)));
         }
         return refined;
+    }
+
+    /**
+     * The travel anchor: our base (main first), falling back to the pass
+     * builder only when no base stands yet (first frame). Null with no
+     * game attached (a pure planner test) - travel then reads 0 for every
+     * candidate, as before.
+     */
+    private APosition travelAnchor() {
+        if (!gameContext.inGame()) return null;
+
+        try {
+            AUnit base = nearestBaseUnit();
+            if (base != null && base.position() != null) return base.position();
+        } catch (RuntimeException | Error ignored) {
+        }
+
+        try {
+            AUnit builder = builderForThisPass();
+            if (builder != null && builder.position() != null) return builder.position();
+        } catch (RuntimeException | Error ignored) {
+        }
+
+        return null;
     }
 
     /**
@@ -536,22 +556,23 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * How long the builder needs to get there, in frames. Ground distance in tiles
      * at the slowest worker speed, plus a small floor - an estimate, deliberately
      * cheap: the ranker only needs the candidates ORDERED, and a path query per
-     * candidate is the cost the catalogue exists to avoid (§4.6).
+     * candidate is the cost the catalogue exists to avoid (§4.6). Measured from
+     * the base anchor ({@link #travelAnchor}), never from a live worker: the
+     * free pool churns every dispatch, and a moving anchor re-ranks the whole
+     * map each frame.
      */
-    private int builderTravelEstimate(AUnit builder, BuildLocation candidate) {
-        if (builder == null) return 0;
+    private int builderTravelEstimate(APosition from, BuildLocation candidate) {
+        if (from == null) return 0;
 
         APosition dest = APosition.create(candidate.tileX(), candidate.tileY());
         double tiles;
         if (atlantis.map.AMap.bwem() == null) {
-            if (passBuilderPosition == null) passBuilderPosition = builder.position();
-            APosition from = passBuilderPosition;
-            tiles = (from == null || from.position() == null || dest == null)
+            tiles = (from.position() == null || dest == null)
                 ? 999
                 : atlantis.map.position.PositionUtil.distanceTo(from.position().p(), dest.position().p());
         }
         else {
-            tiles = builder.groundDist(dest);
+            tiles = from.groundDist(dest);
         }
 
         // A Probe moves ~0.7 tiles/s at the default speed; 30 frames/s, so about

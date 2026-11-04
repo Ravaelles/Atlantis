@@ -144,6 +144,49 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
     }
 
     @Test
+    public void liveOrderIsReusedInsteadOfDuplicated() {
+        FakeUnit mason = fake(AUnitType.Protoss_Probe, SX, SY);
+        world(30, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 7, 44),
+            fake(AUnitType.Protoss_Pylon, SX, SY),
+            mason
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 23 || fired) return;
+
+            fired = true;
+            vetoPosture();
+
+            APosition site = APosition.create(SX, SY);
+            Construction doomed = new Construction(AUnitType.Protoss_Pylon);
+            doomed.setPositionToBuild(site);
+            ProductionOrder replaced = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            doomed.setProductionOrder(replaced);
+            doomed.setBuilder(mason);
+            ConstructionRequests.addConstruction(doomed);
+            Queue.get().addNew(0, replaced);
+
+            RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
+                mason, doomed, AUnitType.Protoss_Pylon, site, mason);
+
+            assertFalse(
+                ConstructionRequests.constructions.contains(doomed),
+                "a standing building on the site is hopeless - the old path stands");
+            int pylonRows = 0;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Pylon)) {
+                    pylonRows++;
+                    assertTrue(order == replaced,
+                        "one demand, one row: the live row is reused, never doubled");
+                }
+            }
+            assertEquals(1, pylonRows, "no rescue row next to the surviving one");
+            assertEquals(8, replaced.minSupply(), "same demand, same timing");
+        });
+
+        assertTrue(fired, "the frame was reached - else this test proves nothing");
+    }
+
+    @Test
     public void warpingBuildingDoesNotCancel() {
         FakeUnit mason = fake(AUnitType.Protoss_Probe, SX, SY);
         FakeUnit warping = fake(AUnitType.Protoss_Gateway, SX, SY);

@@ -69,6 +69,86 @@ public class RefusedTileResitesRowTest extends WorldStubForTests {
         RefusedTiles.clearForTests();
     }
 
+    @Test
+    public void sameTileRefreshStaysSilent() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 60, 60);
+        world(3, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            builder
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            TileMapSource.everythingFine().install();
+            try {
+                currentMinerals = 300;
+                RefusedTiles.note(CURSED, AUnitType.Protoss_Pylon);
+                Construction row = new Construction(AUnitType.Protoss_Pylon) {
+                    @Override
+                    public APosition findPositionForNewBuilding() {
+                        return CURSED;
+                    }
+                };
+                row.setPositionToBuild(CURSED);
+                row.setBuilder(builder);
+                ConstructionRequests.addConstruction(row);
+
+                int before = countRefreshedTwins();
+                RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
+                    builder, row, AUnitType.Protoss_Pylon, CURSED, builder);
+
+                assertEquals(CURSED, row.buildPosition(),
+                    "same tile back is not a move");
+                assertEquals(before, countRefreshedTwins(),
+                    "no move, no twin, no log line - the 81-twins-per-Gateway spam ends here");
+            }
+            finally {
+                TileMapSource.uninstall();
+            }
+        });
+    }
+
+    @Test
+    public void movedTileTwinsOnce() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 60, 60);
+        world(3, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            builder
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            TileMapSource.everythingFine().install();
+            try {
+                currentMinerals = 300;
+                RefusedTiles.note(CURSED, AUnitType.Protoss_Pylon);
+                Construction row = rowAt(CURSED, builder);
+
+                int before = countRefreshedTwins();
+                RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
+                    builder, row, AUnitType.Protoss_Pylon, CURSED, builder);
+
+                assertEquals(FRESH, row.buildPosition(), "a better tile still moves");
+                assertEquals(before + 1, countRefreshedTwins(),
+                    "a real move twins exactly once, with both tiles named");
+                assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"prevTile\""),
+                    "the twin names where the row came from: "
+                        + atlantis.util.log.EventLog.toJsonLines());
+            }
+            finally {
+                TileMapSource.uninstall();
+            }
+        });
+    }
+
+    private static int countRefreshedTwins() {
+        String log = atlantis.util.log.EventLog.toJsonLines();
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = log.indexOf("\"result\":\"refreshed\"", from);
+            if (at < 0) return count;
+            count++;
+            from = at + 1;
+        }
+    }
+
     private static Construction rowAt(APosition site, FakeUnit builder) {
         Construction row = new Construction(AUnitType.Protoss_Pylon) {
             @Override

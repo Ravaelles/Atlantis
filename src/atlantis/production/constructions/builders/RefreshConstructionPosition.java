@@ -8,7 +8,9 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.RefusedTiles;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -229,7 +231,8 @@ public class RefreshConstructionPosition {
         AbstractPositionFinder.clearCache();
 
         APosition positionForNewBuilding = construction.findPositionForNewBuilding();
-        if (positionForNewBuilding != null) {
+        if (positionForNewBuilding != null
+            && !sameTile(positionForNewBuilding, construction.buildPosition())) {
             construction.setPositionToBuild(positionForNewBuilding);
             Construction.clearCache();
 
@@ -252,6 +255,16 @@ public class RefreshConstructionPosition {
         }
 
         return construction.buildPosition();
+    }
+
+    /**
+     * Null-safe tile equality for the no-op guard above: a failed search
+     * re-serves the identical tile (or null), and neither is a move.
+     */
+    private static boolean sameTile(APosition a, APosition b) {
+        if (a == null || b == null) return a == null && b == null;
+
+        return a.tx() == b.tx() && a.ty() == b.ty();
     }
 
     /**
@@ -315,15 +328,25 @@ public class RefreshConstructionPosition {
         if (shouldRefreshConstructionPosition(construction)) {
             AbstractPositionFinder.clearCache();
 
-            System.err.println(A.minSec() + " Refresh " + buildingType + " position");
-            AbstractPositionFinder.clearCache();
-
+            APosition before = construction.buildPosition();
             buildPosition = refreshIfNeeded(construction);
 
-            EventLog.key(LogKey.POSITION_REFRESH)
-                .param("type", buildingType.name())
-                .param("result", "refreshed")
-                .log(A.now(), A.minSec());
+            // Twin + stderr only when the site actually moved. A failed
+            // search re-serves the same tile every frame (measured live:
+            // 81 no-op "refreshed" twins + log lines for one Gateway while
+            // its builder walked to an engine-refused tile), and each one
+            // read as a move in the log.
+            if (!sameTile(before, construction.buildPosition())) {
+                System.err.println(A.minSec() + " Refresh " + buildingType + " position");
+
+                EventLog.key(LogKey.POSITION_REFRESH)
+                    .param("type", buildingType.name())
+                    .param("result", "refreshed")
+                    .param("prevTile", before == null ? "-" : before.toString())
+                    .param("tile", construction.buildPosition() == null ? "-"
+                        : construction.buildPosition().toString())
+                    .log(A.now(), A.minSec());
+            }
         }
 
         if (shouldRefreshConstructionPosition(construction)) {
@@ -357,7 +380,24 @@ public class RefreshConstructionPosition {
             // B-41 adopts on position).
             HasPosition nextPosition = completedBuildingOverlaps(prevPosition, buildingType)
                 ? null : prevPosition;
-            ProductionOrder newOrder = AddToQueue.withHighPriority(buildingType, nextPosition);
+            ProductionOrder replaced = construction.productionOrder();
+            ProductionOrder newOrder;
+            if (replaced != null && Queue.get() != null
+                && Queue.get().allOrders().list().contains(replaced)
+                && !replaced.isStatus(OrderStatus.FINISHED)) {
+                // One demand, one row: the replaced row survives the cancel
+                // above, and a fresh row next to it would mint a twin the
+                // next time either path fires (measured live: duplicate
+                // tech buildings). Reuse the live row instead - same supply
+                // gate, fresh site, reset patience - and mint nothing.
+                replaced.setAroundPosition(nextPosition);
+                replaced.clearFailedSearchStreak();
+                replaced.resetRuntimeState();
+                newOrder = replaced;
+            }
+            else {
+                newOrder = AddToQueue.withHighPriority(buildingType, nextPosition);
+            }
             System.err.println("[LVL=HIGH] This got re-requested: " + newOrder);
 
             if (newOrder == null) {
@@ -368,9 +408,9 @@ public class RefreshConstructionPosition {
             // Same demand, same timing: a tail-derived minSupply parks the
             // replacement rows above the current supply (measured: "At 28"
             // re-requests maturing into duplicate Cores), while the pump
-            // resets its own rows on the next pass anyway.
-            ProductionOrder replaced = construction.productionOrder();
-            if (newOrder != null && replaced != null) {
+            // resets its own rows on the next pass anyway. Copied only onto
+            // a genuinely new row - a reused row already carries it.
+            if (newOrder != null && newOrder != replaced && replaced != null) {
                 newOrder.setMinSupply(replaced.minSupply());
             }
 
@@ -428,8 +468,6 @@ public class RefreshConstructionPosition {
         APosition buildPosition = construction.buildPosition();
 
         if (buildPosition == null) {
-            System.err.println("buildPosition IS NULL - refresh " + buildingType);
-
             return true;
         }
 
