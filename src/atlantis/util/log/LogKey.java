@@ -357,6 +357,12 @@ public enum LogKey {
      */
     CLOSE_WARPS,
     /**
+     * March-cohesion gate transitions (owner 2026-11-04): the vanguard
+     * holds at the choke fallback while the rear dresses, so the march
+     * travels abreast instead of a snake. Change-gated: engage, release.
+     */
+    MARCH_COHESION,
+    /**
      * Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why.
      */
     BANK_HOARD;

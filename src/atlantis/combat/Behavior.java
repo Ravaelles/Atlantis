@@ -65,6 +65,11 @@ public enum Behavior {
      */
     GATHER("ClusterMove"),
     /**
+     * Hold the choke fallback while the rear dresses: the march travels
+     * abreast instead of a snake (owner 2026-11-04).
+     */
+    DRESS("ClusterDress"),
+    /**
      * Run from a lost fight toward the retreat anchor.
      */
     FLEE("ClusterFlee"),

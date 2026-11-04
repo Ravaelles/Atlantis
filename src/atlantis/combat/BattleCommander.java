@@ -214,6 +214,7 @@ public class BattleCommander extends Commander {
         atlantis.combat.targeting.ChaseVetoTwin.clearForTests();
         ArmyMission.clearForTests();
         Regroup.clearForTests();
+        atlantis.combat.formation.MarchCohesion.clearForTests();
     }
 
     @Override

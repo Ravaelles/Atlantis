@@ -4,6 +4,7 @@ import atlantis.battle.cluster.Missions;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.cluster.HomeGround;
+import atlantis.combat.formation.MarchCohesion;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.GhostAdvance;
 import atlantis.combat.targeting.Engagement;
@@ -98,6 +99,23 @@ public final class Regroup {
                         return;
                     }
                 }
+            }
+        }
+        // March cohesion (owner 2026-11-04): a scattered line dresses
+        // before it advances - the front holds at the choke fallback
+        // while the rear walks its slots, so the march travels abreast
+        // instead of a snake. FIGHT attack marches only (the scout runs
+        // ahead by design); FLEE owns its rally, defense owns its holds.
+        if (tactic == FightOrFlight.Tactic.FIGHT
+            && Missions.isGlobalMissionAttack()
+            && !GhostAdvance.isVanguard(unit)
+            && anchor != null) {
+            APosition dressBack = MarchCohesion.holdPointFor(unit, anchor);
+            if (dressBack != null
+                && unit.move(dressBack, Actions.MOVE_ENGAGE, Behavior.DRESS.tag())) {
+                FightTarget.markRepositioned(unit);
+
+                return;
             }
         }
         // Undressed far-leg of the attack march (one site with the dressed
