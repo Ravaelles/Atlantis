@@ -137,6 +137,18 @@ public class OnGameStarted {
 
         InitialMainPosition.remember();
 
+        // Pre-planned building slots, once per game (owner order
+        // 2026-11-04, Stardust doctrine): pylons + 10 gateways picked
+        // near the main up front and painted in full mode, instead of
+        // hunting a site every frame. Display-only: nothing mints from
+        // them yet, so a weird layout cannot break a game. Never throws
+        // into the startup path.
+        try {
+            atlantis.placement.core.ReservedSlots.clearForTests();
+            atlantis.placement.core.ReservedSlots.planAtGameStart();
+        } catch (Throwable ignored) {
+        }
+
         // One-shot map snapshot for the StarEngine map library
         // (CONVENTIONS section 30, NEXT #191): MAP_SNAPSHOT=1 in ENV
         // writes out/map-snapshots/<Map>.json once, then the game

@@ -367,3 +367,27 @@ tile through dead builders, no per-building unit-log key.
   source the recorder uses) - the first version read center-derived
   tx()/ty(), which differ for every footprint, so zero warps ever
   matched live; pinned end-to-end through the completion hook.
+
+### S6. Pre-planned slots, display first (owner order 2026-11-04)
+Per-frame siting hunts make every game pay the search at its most
+contended moment (measured live: first Gateway unplaceable until
+the second Pylon; Nexus parked at y=0). Stardust answers this with
+blocks: the layout is picked once, slots are typed and numbered,
+issuance takes a slot instead of searching. Slice 1 (this commit)
+is display-only and behavior-free by construction: at game start
+`ReservedSlots` picks pylons + 10 gateways (G1..G10) near the main
+from the same catalogue the planner ranks, and full-mode painting
+draws the labels - a weird layout cannot break a game, only draw.
+- ADD: `placement/core/ReservedSlots.java` (plan once at game start
+  via OnGameStarted, paint in full mode) + `ReservedSlotsTest`
+  decision table (10 G + P slots, distinct buildable tiles, G1
+  nearest, deterministic across runs) on the TauCross snapshot.
+- MODIFY: `OnGameStarted` (plan once, guarded), `AAdvancedPainter`
+  (draw labels in full mode only).
+- Verify: placement domain green; a live full-mode game shows
+  G1..G10/P1.. on the ground (owner visual check).
+- Next slice (needs its own pin + live proof): wire issuance to
+  take reserved slots (funnel first), then delete the per-frame
+  fallback search for covered types. S3 (start-block-first Pylon,
+  reverted for shifting the whole opening) returns in this form:
+  slots, not sitters.
