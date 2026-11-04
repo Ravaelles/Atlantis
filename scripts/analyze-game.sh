@@ -29,7 +29,13 @@ if [ "$GAME" = "--json" ]; then GAME=""; fi
 EVENTS=""
 BUILDINGS=""
 BOTLOG=""
-if [ -n "$GAME" ] && [ -f "$GAME" ]; then
+# Set only when the caller names a game explicitly (path or dir): the
+# auto-detected newest game and the live tree keep the global fallbacks.
+EXPLICIT_GAME=""
+if [ -n "$GAME" ]; then
+  EXPLICIT_GAME=1
+fi
+if [ -f "$GAME" ]; then
   EVENTS="$GAME"
   GAME="$(dirname "$GAME")"
 fi
@@ -56,14 +62,20 @@ if [ -f "$GAME/write_0/BUILDINGS.json" ]; then BUILDINGS="$GAME/write_0/BUILDING
 elif [ -f "$GAME/BUILDINGS.json" ]; then BUILDINGS="$GAME/BUILDINGS.json";
 elif [ -f /sc-ai/Atlantis/bwapi-data/write/BUILDINGS.json ]; then BUILDINGS=/sc-ai/Atlantis/bwapi-data/write/BUILDINGS.json; fi
 
+# Console logs are game-local only: the shared out/wine/* copies belong
+# to whatever Wine game ran last and must never leak into another game's
+# verdict (measured: stale WINE_DEBUG rows attributed to a finished OpenBW
+# game). They are used only when analyzing the live tree with no game dir.
 BOTLOG=""
-for cand in "$GAME/logs_0/bot.log" "$GAME/WINE_LOG" /sc-ai/Atlantis/out/wine/WINE_LOG; do
+for cand in "$GAME/logs_0/bot.log" "$GAME/WINE_LOG"; do
   if [ -f "$cand" ]; then BOTLOG="$cand"; break; fi
 done
 BOTLOG2=""
-for cand in "$GAME/WINE_DEBUG" /sc-ai/Atlantis/out/wine/WINE_DEBUG; do
-  if [ -f "$cand" ]; then BOTLOG2="$cand"; break; fi
-done
+if [ -f "$GAME/WINE_DEBUG" ]; then BOTLOG2="$GAME/WINE_DEBUG"; fi
+if [ -z "$BOTLOG" ] && [ -z "$EXPLICIT_GAME" ]; then
+  [ -f /sc-ai/Atlantis/out/wine/WINE_LOG ] && BOTLOG=/sc-ai/Atlantis/out/wine/WINE_LOG
+  [ -f /sc-ai/Atlantis/out/wine/WINE_DEBUG ] && BOTLOG2=/sc-ai/Atlantis/out/wine/WINE_DEBUG
+fi
 
 export ANALYZE_EVENTS="$EVENTS" ANALYZE_BUILDINGS="$BUILDINGS"
 export ANALYZE_BOTLOG="$BOTLOG" ANALYZE_BOTLOG2="$BOTLOG2" ANALYZE_GAME="$GAME"
