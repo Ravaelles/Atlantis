@@ -8,6 +8,7 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -197,6 +198,68 @@ public class StartingParkedDemoteTest extends AbstractTestWithWorld {
 
     private Construction chronicStall;
     private FakeUnit chronicProbe;
+
+    @Test
+    public void gatheringAncientBuilderRearmsDespiteMotion() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit thief = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        final Construction[] held = new Construction[1];
+        world(3000, units(nexus, thief), new FakeUnit[0], () -> {
+            if (A.now() == 10) {
+                held[0] = startingCoreAt(thief, 12, 10);
+            }
+            if (A.now() == 2500) {
+                // Stolen back to mining: trips between patch and base
+                // (moving, position fresh) while gathering - the exact
+                // shape that shielded the 9-minute Nexus park forever.
+                thief.setAction(Actions.GATHER_MINERALS);
+                thief.lastCommand = "Move";
+                thief.unitState().setLastPositionChanged(A.now());
+
+                EventLog.clearForTests();
+
+                assertTrue(
+                    ConstructionStatusChanger.demoteParkedStarting(held[0], thief),
+                    "a gathering ancient builder is stolen, not travelling"
+                        + " - motion must not shield the theft");
+                assertEquals(
+                    ConstructionOrderStatus.NOT_STARTED, held[0].status(),
+                    "theft re-arms through the normal machinery");
+                assertNull(
+                    held[0].builder(),
+                    "the thief is released so the re-arm picks a fresh worker");
+                assertTrue(
+                    EventLog.countByKey(atlantis.util.log.LogKey.DEMOTE_STALLED) >= 1
+                        || atlantis.util.log.PostGameDigest.countFor("[MED] DEMOTE_STALLED") >= 1,
+                    "the theft twins, never silent");
+            }
+        });
+    }
+
+    @Test
+    public void gatheringYoungBuilderKeepsTravelling() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit young = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        final Construction[] held = new Construction[1];
+        world(300, units(nexus, young), new FakeUnit[0], () -> {
+            if (A.now() == 100) {
+                held[0] = startingCoreAt(young, 12, 10);
+            }
+            if (A.now() == 200) {
+                young.setAction(Actions.GATHER_MINERALS);
+                young.lastCommand = "Move";
+
+                assertFalse(
+                    ConstructionStatusChanger.demoteParkedStarting(held[0], young),
+                    "a young gathering row is still in its walk window - theft needs age");
+                assertEquals(
+                    ConstructionOrderStatus.STARTING, held[0].status(),
+                    "no demote means no status change");
+            }
+        });
+    }
 
     @Test
     public void chronicAttemptsDoNotHoldFireForever() {

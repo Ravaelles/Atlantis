@@ -372,6 +372,32 @@ tile through dead builders, no per-building unit-log key.
   the gate used to consult the parallel legacy queue, which can
   disagree with the door it gates - silent live passes with an
   unfinished BO and a poor bank while two games showed early Cores.
+- Parked STARTING rows name themselves + stolen builders re-arm
+  (owner order 2026-11-04, NEXT #150): a Nexus sat 9 minutes with
+  its builder assigned and no twin anywhere - demoteParkedStarting
+  shields on motion, and miners trip every few seconds so the 2400f
+  clock never fills. twinParkedStarting fires once per ancient
+  (2400f+) STARTING row regardless of motion, naming builder state;
+  the demote gains the stolen-builder doctrine (gathering + ancient
+  re-arms even while moving, young rows keep their walk window).
+  Pinned red-first (ParkedStartingTwinTest 3/3 green, new demote
+  pins 9/9 green, verified red on stashed old code) + main() repro
+  under src/tests-aux.
+- Console hygiene (owner order: no MED/HIGH in output): end-of-game
+  and startup rollups read LOW, never MED - POSTGAME DIGEST +
+  BUILD_ORDER audit header + Reserved slots announce + GameSummary
+  blocks + LongFrames + Game-ended + config valid. Real anomaly
+  lines (off-plan warps, refresh moves, cancels, stalls) keep
+  their MEDIUM/HIGH and must be fixed to zero, not demoted.
+- S4 cuts 2-3 (dead code, zero live callers, suite green 1127/0):
+  cut 2 removes the anti-land/air commander subtree
+  (DynamicBuildingCommander + AntiLand/AntiAir + both Protoss
+  photon-cannon siters + TerranBunker); cut 3 removes the
+  bunker-siting family (NewBunker + PositionFinder +
+  ApproximatePosition + ShouldPlaceBunker + both Estimates).
+  Remaining S4 items (sited fallback, base siters, BuildGates,
+  ProduceBuilding helpers) have live callers and wait for one
+  Wine game of proof each.
 
 ### S6. Pre-planned slots, display first (owner order 2026-11-04)
 Per-frame siting hunts make every game pay the search at its most

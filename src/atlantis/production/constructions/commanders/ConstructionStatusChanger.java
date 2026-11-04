@@ -236,6 +236,33 @@ public class ConstructionStatusChanger extends Commander {
         if (construction.buildPosition() == null) return false;
         if (builder == null || builder.isDead() || !builder.isWorker()) return false;
         if (builder.isConstructing()) return false;
+        // A builder back on minerals/gas is not travelling to this site
+        // (stolen-builder doctrine, same as the IN_PROGRESS path above):
+        // miners trip between patch and base every few seconds, so the
+        // 2400f standstill clock below never fills and the isMoving shield
+        // holds forever - the 9-minute silent Nexus park. Ancient rows
+        // (ordered 2400f+ ago, past any settle window) re-arm even while
+        // the thief keeps moving. Young rows keep travelling: assignment
+        // needs its walk window before the theft verdict lands.
+        if ((builder.isGatheringMinerals() || builder.isGatheringGas())
+            && A.now() - construction.timeOrdered() >= FROZEN_WARP_OBSERVED_FRAMES
+            && (construction.buildWasNeverAttempted()
+            || construction.firstBuildAttemptAgo() >= DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES)) {
+            String stolen = "startingStolenBuilder";
+            logDemote(construction, stolen);
+            twinDemote(construction, stolen);
+            try {
+                atlantis.production.constructions.position.RefusedTiles.note(
+                    construction.buildPosition(), construction.buildingType());
+            } catch (Exception | Error ignored) {
+            }
+            construction.setBuilder(null);
+            construction.resetFirstBuildAttempt();
+            construction.setLastBuildAttemptNow();
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+
+            return true;
+        }
         if (builder.isMoving()) return false;
         if (!builder.lastPositionChangedMoreThanAgo(FROZEN_WARP_OBSERVED_FRAMES)) return false;
         // Hold fire while the FIRST attempt is still settling: a fresh
