@@ -91,4 +91,43 @@ public class CoreAssimilatorGoalsTest {
         assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Assimilator),
             "one gas building is enough for the first-gas goal");
     }
+
+    @Test
+    public void poorBankWithOpenBuildOrderWantsNoCore() {
+        DynamicGoals.GameSnapshot snapshot = state(150, false, 2, 0);
+        snapshot.buildOrderDone = false;
+
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Cybernetics_Core),
+            "owner 2026-11-04: dynamic Core waits for the BO or a 300+ bank, "
+                + "it jumped the second Gateway three games running");
+    }
+
+    @Test
+    public void poorBankWithFinishedBuildOrderWantsCore() {
+        DynamicGoals.GameSnapshot snapshot = state(250, false, 2, 0);
+        snapshot.buildOrderDone = true;
+
+        assertTrue(hasGoal(contribute(snapshot), AUnitType.Protoss_Cybernetics_Core),
+            "a finished BO unlocks dynamic tech on any affordable bank");
+    }
+
+    @Test
+    public void poorBankWithOpenBuildOrderWantsNoAssimilator() {
+        DynamicGoals.GameSnapshot snapshot = state(150, false, 2, 0);
+        snapshot.coreRemainingSeconds = 40;
+        snapshot.buildOrderDone = false;
+
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Assimilator),
+            "owner 2026-11-04: dynamic gas waits with the Core, same rule");
+    }
+
+    @Test
+    public void poorBankWithFinishedBuildOrderWantsAssimilator() {
+        DynamicGoals.GameSnapshot snapshot = state(150, false, 2, 0);
+        snapshot.coreRemainingSeconds = 40;
+        snapshot.buildOrderDone = true;
+
+        assertTrue(hasGoal(contribute(snapshot), AUnitType.Protoss_Assimilator),
+            "a finished BO unlocks dynamic gas on any affordable bank");
+    }
 }

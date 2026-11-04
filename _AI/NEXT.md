@@ -86,8 +86,9 @@ Work rules: never batch rewrites; never gate commits on full games; never trade 
 - #214 decision reasons (owner: VERY HIGH priority): all three
   halves landed; needs a fresh live game proving an unattributed
   death is now attributed (owner-gated vehicle).
-- Live games halted on owner order - no new games, no new datum
-  lines without owner order.
+- Live games OPEN on owner order 2026-11-04 (halt lifted): one quiet
+  game at a time, ideally one game per several issues - verification
+  rides batched games, never alongside the suite.
 
 ## Next steps (pointer queue, not a backlog)
 

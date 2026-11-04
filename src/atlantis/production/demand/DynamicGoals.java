@@ -881,6 +881,20 @@ public final class DynamicGoals {
     }
 
     /**
+     * Owner order 2026-11-04 (Zealot-into-Goon build order): follow the
+     * build order - a dynamic tech building (Core, first Assimilator)
+     * mints only once the BO has no unfinished rows left, or the bank
+     * covers it three times over (300+). Measured live: a dynamic Core
+     * at ~supply 14 jumped the BO second Gateway (At 12, warped at 25)
+     * in three consecutive losses, and the Assimilator followed it -
+     * both rows the BO lists at 22/23. Pure over the snapshot, so the
+     * rule pins without a game.
+     */
+    static boolean dynamicTechBuildingsAllowed(GameSnapshot state) {
+        return state.minerals >= 300 || state.buildOrderDone;
+    }
+
+    /**
      * B1 (owner order): the V2 home for the Cybernetics Core building.
      * The legacy producer waited for minerals 210 or a supply-25 army
      * (or a gas building already up); V2 fires on the affordable-now
@@ -893,6 +907,7 @@ public final class DynamicGoals {
         if (state.hasCore) return;
         if (state.gatewaysExisting < 1) return;
         if (state.minerals < AUnitType.Protoss_Cybernetics_Core.mineralPrice()) return;
+        if (!dynamicTechBuildingsAllowed(state)) return;
 
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Cybernetics_Core),
@@ -917,6 +932,7 @@ public final class DynamicGoals {
         if (state.bases < 1) return;
         boolean coreNearlyDone = state.coreRemainingSeconds >= 0 && state.coreRemainingSeconds < 80;
         if (!state.hasCore && !coreNearlyDone) return;
+        if (!dynamicTechBuildingsAllowed(state)) return;
 
         goals.add(new ProductionGoal(
             UnitProducible.of(gas),
@@ -1101,6 +1117,15 @@ public final class DynamicGoals {
          * for it to finish.
          */
         public int coreRemainingSeconds = -1;
+
+        /**
+         * No unfinished build-order rows left (owner order 2026-11-04,
+         * Zealot-into-Goon: follow the build order - dynamic tech
+         * buildings wait for this or a 300+ bank). Set post-construction
+         * from the live queue; unit tests pin the gate through this flag
+         * instead of a queue.
+         */
+        public boolean buildOrderDone = false;
 
         /**
          * A Forge already standing (Protoss; other races leave it true so the

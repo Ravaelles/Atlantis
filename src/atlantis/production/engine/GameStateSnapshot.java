@@ -295,6 +295,10 @@ public final class GameStateSnapshot {
         // ProtossSecureBasesCommander): without it a Cannon goal from frame
         // 0 plans an orphan Forge ahead of the Gateway.
         snapshot.hasForge = We.protoss() && Have.forge();
+        // Dynamic tech follows the build order (owner 2026-11-04): no
+        // unfinished BO row left means the opening is done and dynamic
+        // Core/Assimilator goals may fire on any bank.
+        snapshot.buildOrderDone = buildOrderDone();
         // Stargate chain inputs (the matchup want reads discovered air
         // pressure, own line strength and standing eyes - zeros until seen).
         snapshot.enemyHydras = atlantis.information.enemy.EnemyUnits.hydras();
@@ -391,6 +395,29 @@ public final class GameStateSnapshot {
         AUnitType provider = supplyProviderType();
 
         return supplyProvidersComing(provider);
+    }
+
+    /**
+     * No unfinished build-order row left: every BO row either warped or
+     * left the queue. Dynamic rows never count (they are the demand this
+     * gates, not the order). Never throws: the queue may be absent in
+     * tests, which then read as order-done so sims keep today's behavior.
+     */
+    private static boolean buildOrderDone() {
+        try {
+            atlantis.production.orders.production.queue.Queue queue =
+                atlantis.production.orders.production.queue.Queue.get();
+            if (queue == null) return true;
+
+            for (atlantis.production.orders.production.queue.order.ProductionOrder row :
+                queue.notFinished().list()) {
+                if (row != null && !row.isDynamic()) return false;
+            }
+
+            return true;
+        } catch (Exception | Error ignored) {
+            return true;
+        }
     }
 
     private AUnitType supplyProviderType() {
