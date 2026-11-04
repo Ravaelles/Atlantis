@@ -299,8 +299,11 @@ public final class GameStateSnapshot {
         snapshot.hasForge = We.protoss() && Have.forge();
         // Dynamic tech follows the build order (owner 2026-11-04): no
         // unfinished BO row left means the opening is done and dynamic
-        // Core/Assimilator goals may fire on any bank.
-        snapshot.buildOrderDone = buildOrderDone();
+        // Core/Assimilator goals may fire on any bank. Same rows and same
+        // progress the scheduler's own BO goals read - one source of
+        // truth, never the parallel legacy queue.
+        snapshot.buildOrderDone = BuildOrderGoals.isFinished(
+            ProductionEngine.buildOrderRows(), new LiveBuildOrderProgress());
         snapshot.frame = frame();
         // Stargate chain inputs (the matchup want reads discovered air
         // pressure, own line strength and standing eyes - zeros until seen).
@@ -398,41 +401,6 @@ public final class GameStateSnapshot {
         AUnitType provider = supplyProviderType();
 
         return supplyProvidersComing(provider);
-    }
-
-    /**
-     * No unfinished build-order row left: every BO row either warped or
-     * left the queue. Dynamic rows never count (they are the demand this
-     * gates, not the order). Never throws: the queue may be absent in
-     * tests, which then read as order-done so sims keep today's behavior.
-     */
-    private static boolean buildOrderDone() {
-        try {
-            atlantis.production.orders.production.queue.Queue queue =
-                atlantis.production.orders.production.queue.Queue.get();
-            if (queue == null) return true;
-
-            return buildOrderDone(queue.notFinished().list());
-        } catch (Exception | Error ignored) {
-            return true;
-        }
-    }
-
-    /**
-     * Test seam: the unfinished-BO-row check over an explicit list, so the
-     * rule pins without a queue (mirrors the parser: file rows are
-     * non-dynamic, dynamic rows never own the opening).
-     */
-    public static boolean buildOrderDone(
-        java.util.List<atlantis.production.orders.production.queue.order.ProductionOrder> rows
-    ) {
-        if (rows == null) return true;
-
-        for (atlantis.production.orders.production.queue.order.ProductionOrder row : rows) {
-            if (row != null && !row.isDynamic()) return false;
-        }
-
-        return true;
     }
 
     private AUnitType supplyProviderType() {

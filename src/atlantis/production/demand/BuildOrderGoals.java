@@ -49,6 +49,31 @@ public final class BuildOrderGoals {
     private BuildOrderGoals() {
     }
 
+    /**
+     * Whether every build-order row is produced (BO finished). Same
+     * demanded-vs-produced bookkeeping as {@link #from}, without the
+     * supply gates (an unbuilt future row still means the BO is open)
+     * and without the one-goal-per-item carve-out. Null-safe: no rows
+     * or no progress reads as finished, never as blocked.
+     */
+    public static boolean isFinished(List<BuildOrderRow> rows, BuildOrderProgress progress) {
+        if (rows == null || progress == null) return true;
+
+        Map<String, Integer> demanded = new HashMap<>();
+        Map<String, Producible> byId = new HashMap<>();
+        for (BuildOrderRow row : rows) {
+            if (row == null || row.item() == null) continue;
+            demanded.merge(row.item().id(), row.multiplicity(), Integer::sum);
+            byId.putIfAbsent(row.item().id(), row.item());
+        }
+
+        for (Map.Entry<String, Integer> entry : demanded.entrySet()) {
+            if (Math.max(0, progress.produced(byId.get(entry.getKey()))) < entry.getValue()) return false;
+        }
+
+        return true;
+    }
+
     public static List<ProductionGoal> from(List<BuildOrderRow> rows, BuildOrderProgress progress) {
         List<ProductionGoal> goals = new ArrayList<>();
         if (rows == null || progress == null) return goals;

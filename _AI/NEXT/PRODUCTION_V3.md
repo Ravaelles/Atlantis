@@ -367,6 +367,11 @@ tile through dead builders, no per-building unit-log key.
   source the recorder uses) - the first version read center-derived
   tx()/ty(), which differ for every footprint, so zero warps ever
   matched live; pinned end-to-end through the completion hook.
+- B1 reads the BO from the same rows the scheduler does
+  (BuildOrderGoals.isFinished over buildOrderRows + live progress):
+  the gate used to consult the parallel legacy queue, which can
+  disagree with the door it gates - silent live passes with an
+  unfinished BO and a poor bank while two games showed early Cores.
 
 ### S6. Pre-planned slots, display first (owner order 2026-11-04)
 Per-frame siting hunts make every game pay the search at its most

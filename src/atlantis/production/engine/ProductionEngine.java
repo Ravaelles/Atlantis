@@ -202,7 +202,7 @@ public final class ProductionEngine {
         return goals;
     }
 
-    private List<BuildOrderRow> buildOrderRows() {
+    static List<BuildOrderRow> buildOrderRows() {
         if (CurrentBuildOrder.get() == null)
             return Collections.emptyList();
 
