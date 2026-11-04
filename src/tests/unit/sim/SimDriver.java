@@ -295,6 +295,7 @@ public final class SimDriver {
         atlantis.information.enemy.UnitsArchive.reset();
         atlantis.util.log.EventLog.clearForTests();
         atlantis.production.requests.produce.ProduceBuilding.clearStartedForTests();
+        atlantis.production.dynamic.MineralHoardWatch.reset();
         atlantis.production.constructions.ConstructionRequests.constructions.clear();
     }
 

@@ -21,6 +21,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AlphaRosterHygieneTest extends WorldStubForTests {
 
     @Test
+    public void joiningSetsBothSides() {
+        FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 30);
+
+        world(3, fakeOurs(a), new FakeUnit[]{}, () -> {
+            if (atlantis.game.A.now() != 1) return;
+
+            Alpha.gather();
+
+            assertTrue(a.squad() == Alpha.get(),
+                "the back-pointer is part of joining: a bare roster entry "
+                    + "keeps unit.squad() null, which reads as a bug in every "
+                    + "squad reader while the unit already follows Alpha");
+        });
+    }
+
+    @Test
     public void rosterDoesNotSurviveClearAll() {
         FakeUnit a = fake(AUnitType.Protoss_Zealot, 30, 30);
         FakeUnit b = fake(AUnitType.Protoss_Zealot, 32, 30);

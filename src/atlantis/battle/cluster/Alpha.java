@@ -25,6 +25,13 @@ public class Alpha {
      * once per frame from the fight composition before anything reads
      * the roster.
      *
+     * <p>The back-pointer is part of joining: the roster alone leaves
+     * {@code unit.squad()} null, which reads as "never legitimately
+     * squadless" in every squad reader (a per-minute trace per unit)
+     * while the unit already follows Alpha's mission. Joining sets
+     * both sides, so the trace only fires for units the gather
+     * genuinely skipped.</p>
+     *
      * <p>One exception (NEXT #201): a solo Corsair does not join - it
      * hunts on its own (CorsairHunt) instead of trailing the army, and
      * merges only when the CorsairCluster rule says threatening air
@@ -40,6 +47,7 @@ public class Alpha {
                     && !atlantis.combat.cluster.CorsairCluster.mergeWithArmy()) continue;
 
                 ALPHA.addUnit(unit);
+                unit.forceSetSquad(ALPHA);
             }
         }
     }

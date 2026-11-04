@@ -64,6 +64,7 @@ public class OnGameStarted {
         // twin tests read them). Each seam is behavior-neutral on a fresh
         // game - it only drops stale entries.
         atlantis.production.orders.production.queue.add.AddToQueue.clearForTests();
+        atlantis.production.dynamic.MineralHoardWatch.reset();
         atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
         atlantis.combat.twins.HitTwin.clearForTests();
         atlantis.combat.twins.ShotTwin.clearForTests();
