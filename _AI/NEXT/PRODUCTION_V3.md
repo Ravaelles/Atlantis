@@ -283,12 +283,13 @@ tile through dead builders, no per-building unit-log key.
 - Verify: placement 87/0, fast 1100/0, combat 746/0, e2e 41/0
   (incl. stall recovery), acceptance only the 6 pre-existing #147
   queue failures.
-- Verification loop (owner ask): scripts/analyze-game.sh <game>
-  prints only counts (HIGH/MED/CRIT/LOW, warps, offPlan,
-  sameTileDups, status) and writes ANALYSIS_SUMMARY.json + one file
-  per [SEV] debug-key. Bot side: BuildOrderAudit mismatch lines now
-  read "[MED] Construction issue detected: Gateway#11 built at 10
-  supply instead 11" (was: BO ORDER MISMATCH (HIGH)); clean games
+- Verification loop (owner ask, Java-only 2026-11-04 -
+  scripts/analyze-game.sh deleted, digest takes the verdict):
+  `PostGameDigest` writes `bwapi-data/write/POSTGAME_SUMMARY.json`
+  {errors, byKey, samples (max 10/key), construction} and prints one
+  bounded console section on both exit paths. Bot side:
+  BuildOrderAudit mismatch lines read "[MED] Construction issue
+  detected: Gateway#11 built at 10 supply instead 11"; clean games
   print "[LOW] No issues in Build Order execution detected."
   Twin HIGH/CRIT rows are errors; twin-MEDIUM stays out of the
   counts (telemetry chatter by construction).
