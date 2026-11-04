@@ -247,3 +247,41 @@ Protoss-only - verify, don't assume).
   `DefineCannonNearTo.java` if orphaned),
   `GasBuildingPositionFinder.java` (only after the gas
 ...[truncated 2085 chars]
+
+### S5. Live-hardening batch + single minter [Status: DONE 2026-11-04, live game #2 pending]
+Wine baseline 20261104_101505 (TauCross vs Grendel, 10:27, 23 warps,
+zero duplicates) reproduced the owner's complaints in the twins:
+81 no-op POSITION_REFRESH + stderr lines for one Gateway on a refused
+tile, builders walking to cursed tiles, no per-building unit-log key.
+- Unit log names the building on the command half:
+  `#Build-Pylon/Pylon/BuilderManager` (OrderWatcher; BuilderOrderLogTest).
+- Refresh spam killed: twin + stderr only fire when the site actually
+  moves; same-tile set skipped; null-position println removed
+  (RefusedTileResitesRowTest pins silence + one twin per real move).
+- Refused travel gate in ShouldNotTravelToConstructYet (pinned in
+  TravelForecastTest): no walks to engine-refused tiles; builder stays
+  claimed and mines while the refresh moves the site.
+- Cancel+re-request reuses the live queue row instead of minting a
+  twin next to it (pinned: still exactly one row, same minSupply).
+- V2 mint door refuses a second concurrent single-demand tech
+  building (Core/Citadel/Forge/...; pinned red-first in
+  TechDuplicateMintTest; Pylon pairs still mint twice).
+- Single minting door enforced: ConstructionRequests.addConstruction
+  refuses same-type+same-tile doubles (pinned red-first in
+  SingleDoorMintTest; neighbour tiles still mint, null sites bypass).
+- Travel-anchor experiment (base instead of free worker): REVERTED -
+  moved the natural answer out of its neighbourhood
+  (BaseSitingCatalogueTest), ranker tuned around worker travel.
+- Verify: placement 87/0, fast 1100/0, combat 746/0, e2e 41/0
+  (incl. stall recovery), acceptance only the 6 pre-existing #147
+  queue failures.
+- Remaining V3 (needs one live game of proof each, owner-gated):
+  route sited requests (RequestBuildingNear fallback) and the cannon
+  direct siter (ProtossPhotonCannonAntiLand) through reservePlacement;
+  base siters (FindPositionForBase/NextBasePosition) after V2 proves
+  natural/expansion siting alone; dead dispatcher BUILD branch +
+  requestBuilding/validatePosition/adoptPreparedSite + BuildGates
+  (pinned doctrine - port each gate to V2 with its test before
+  deleting; Terran/Zerg files stay - live combat caller).
+- Game proof: run a second Wine game on this tree and verify
+  BUILDINGS.json (no 2x rows, Gateway warps).
