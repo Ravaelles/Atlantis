@@ -398,6 +398,24 @@ tile through dead builders, no per-building unit-log key.
   Remaining S4 items (sited fallback, base siters, BuildGates,
   ProduceBuilding helpers) have live callers and wait for one
   Wine game of proof each.
+- Live verification GAME_4382BF70 (this tree, vs Steamhammer Zerg,
+  11:14 loss, no crash): console hygiene holds - digest/audit/slots/
+  summaries all [LOW], no spam twins; new PARKED twin silent (0 rows,
+  no ancient parks), stolen-builder demote unfired (no theft shape
+  this game). Real anomalies named, not hidden: 5 off-plan BO warps
+  (placement/timing drift), 1 same-tile Core dup (Critical emergency
+  re-fire), 6 Critical cancels + 5:40/6:17 phantom cannons from a
+  2:37 hidden-units call vs Zerg (Lurkers impossible before 5:00) -
+  the response now gates on earliest timing (see below), 1 PhotonC
+  refresh move (sited cannon routing, S4 remainder), 12 STALL rows
+  (army hold, combat workstream), 3 marginal SUPPLY_OVERSTOCK
+  (free=15). Console [MED]/[HIGH] left: HELLO marker (protocol),
+  5 off-plan lines, 1 refresh move, 2 transient builder lines
+  (now LOW next game), CherryVis/cannonsNeeded (now LOW next game).
+- Hidden-units earliest-timing gate (owner order 2026-11-04): the
+  emergency (cannons + Critical cancels gutting live Core/Gateways)
+  cannot fire before 4:00 (DTs 4:30+, Lurkers 5:00+). Pinned
+  red-first (HiddenUnitsTimingGateTest 2/2); live proof next game.
 
 ### S6. Pre-planned slots, display first (owner order 2026-11-04)
 Per-frame siting hunts make every game pay the search at its most

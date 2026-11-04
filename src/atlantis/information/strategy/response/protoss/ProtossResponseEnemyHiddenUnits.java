@@ -12,6 +12,24 @@ import atlantis.util.AConsole;
 public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     private int cannonNeeded;
 
+    /**
+     * Earliest any hidden unit can exist (seconds): DTs need Templar
+     * Archives (4:30+), Lurkers need Lair + Den + research (5:00+).
+     * Any hidden-units call before this is spurious recognition, not
+     * defense - measured live GAME_4382BF70, the response gutted our
+     * Core + 2 Gateways at 2:37 vs Zerg for phantom cannons.
+     */
+    static final int HIDDEN_EARLIEST_S = 240;
+
+    /**
+     * Pure time predicate (test seam): hidden units are impossible
+     * before {@link #HIDDEN_EARLIEST_S}, so the emergency must not
+     * fire. No game state - timing alone decides.
+     */
+    public static boolean isTooEarlyForHiddenUnits(int seconds) {
+        return seconds < HIDDEN_EARLIEST_S;
+    }
+
     private static int cannonNeeded() {
         return Enemy.zerg()
             ? 2
@@ -19,6 +37,8 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     }
 
     public boolean handle() {
+        if (isTooEarlyForHiddenUnits(A.s)) return false;
+
         buildCannons();
         cancelBasesBeingConstructed();
 
