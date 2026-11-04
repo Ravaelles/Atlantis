@@ -372,7 +372,11 @@ public class RefreshConstructionPosition {
             // its builder walked to an engine-refused tile), and each one
             // read as a move in the log.
             if (!sameTile(before, construction.buildPosition())) {
-                AConsole.printlnCapped(LogLevel.LOW, "refresh-move-" + buildingType,
+                // Owner 2026-11-04: a moved site reads MEDIUM, not LOW -
+                // a building that cannot sit disrupts the whole pipeline
+                // (measured live: first Gateway unplaceable to 2:47 while
+                // the log whispered LOW). Still capped at ten per type.
+                AConsole.printlnCapped(LogLevel.MEDIUM, "refresh-move-" + buildingType,
                     PostGameDigest.MAX_SAMPLES_PER_KEY,
                     A.minSec() + " Refresh " + buildingType + " position");
 

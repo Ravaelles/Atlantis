@@ -324,7 +324,22 @@ tile through dead builders, no per-building unit-log key.
   shutdown hook). Routine-guard stack trace (`AddToQueue` Nexus
   no-expand) replaced by a BUILD_REFUSED twin; untagged construction
   `System.err` lines routed through tagged `AConsole` (Refresh moves
-  LOW + capped at 10/type, cancels/errors HIGH/CRIT). A crashed JVM
-  still yields no digest - the periodic twins/ledger stay the record
-  for those games. No live game (halt stands): verification rides the
-  next owner-ordered game, which the digest section will answer.
+  MEDIUM + capped at 10/type per owner 2026-11-04 - an unplaceable
+  building disrupts everything downstream; cancels/errors HIGH/CRIT).
+  A crashed JVM still yields no digest - the periodic twins/ledger
+  stay the record for those games. Halt lifted 2026-11-04 (owner):
+  one quiet game at a time, batched verification.
+- Live verification batch (owner order): GAME_DE15E51B (timeout,
+  23 warps, digest works end-to-end, NPE storm gone), GAME_D935C37C
+  (2:26 loss), GAME_1923B7E0 (3:48 loss, Gateway#1+#2 both off-plan
+  at 16 - placement drought, B1 gate correctly silent: bank never
+  hit 300 with the BO open... UNPROVEN, twin pending),
+  GAME_68F87352 (realtime-out 16:43, 19 warps). Recurring shape all
+  four games: first Gateway unplaceable until the second Pylon opens
+  a powered pocket (SCHEDULE_REFUSED no-placement with 600f
+  heartbeat now names the drought length). Open: support-Pylon flow
+  never fires despite NEEDS_SUPPORT verdict existing (no V2 support
+  request twinned in any game); B1 live trigger unobserved (Core
+  warps while the BO is open in 68F87352 - bank at goal time not
+  decidable from twins, the new block twin adjudicates next game);
+  Nexus anchor twin deployed, awaiting an expansion game.
