@@ -271,6 +271,13 @@ tile through dead builders, no per-building unit-log key.
 - Single minting door enforced: ConstructionRequests.addConstruction
   refuses same-type+same-tile doubles (pinned red-first in
   SingleDoorMintTest; neighbour tiles still mint, null sites bypass).
+- V2 mint door refuses what no builder can start (owner order
+  2026-11-04): overrun with no free builders minted-and-cancelled
+  the same Pylon tile 170 times in 7 s live (GAME_D1AA02FE, fresh
+  cid+oid every frame, "looks bugged" cancelling the order while
+  de-dup guards saw nothing live). The demand survives the BUILD_REFUSED
+  twin and re-dispatches when builders exist (pinned red-first in
+  MintWithoutBuilderIsRefusedTest, both directions).
 - Travel-anchor experiment (base instead of free worker): REVERTED -
   moved the natural answer out of its neighbourhood
   (BaseSitingCatalogueTest), ranker tuned around worker travel.

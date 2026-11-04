@@ -284,6 +284,19 @@ public class GameOrderDirector implements OrderDirector {
         construction.setDemand(atlantis.production.demand.Demand.of(buildingType));
         construction.assignOptimalBuilder();
 
+        // No builder, no mint (owner order 2026-11-04): dispatching into
+        // an overrun with no free builders minted-and-cancelled the same
+        // Pylon tile 170 times in 7 seconds live (no builder ever
+        // assigned, "looks bugged" cancelling the order, de-dup guards
+        // blind because each twin died instantly). The demand survives
+        // the refusal and re-dispatches when builders exist. Mirrors the
+        // legacy mint door, which refuses on a null random builder.
+        if (construction.builder() == null) {
+            twinNoBuilder(buildingType);
+
+            return null;
+        }
+
         // The legacy issue path twins every construction it mints; V2-direct
         // orders bypassed it, so a warp-less construction was invisible -
         // 44 issued Nexus dispatches with zero twin rows anywhere (live).
@@ -293,6 +306,33 @@ public class GameOrderDirector implements OrderDirector {
             construction.productionOrder());
 
         return construction;
+    }
+
+    /**
+     * Test seam: the refusal throttle is per-JVM state, like every twin
+     * gate with a heartbeat.
+     */
+    public static void clearForTests() {
+        lastNoBuilderTwin.clear();
+    }
+
+    private static final java.util.Map<String, Integer> lastNoBuilderTwin = new java.util.HashMap<>();
+
+    private static void twinNoBuilder(AUnitType buildingType) {
+        try {
+            String id = buildingType == null ? "-" : buildingType.name();
+            Integer last = lastNoBuilderTwin.get(id);
+            int now = atlantis.game.A.now();
+            if (last != null && now - last < 600) return;
+            lastNoBuilderTwin.put(id, now);
+
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.BUILD_REFUSED)
+                .param("type", id)
+                .param("guard", "no-builder")
+                .param("bank", atlantis.game.A.minerals())
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception | Error ignored) {
+        }
     }
 
     /**
