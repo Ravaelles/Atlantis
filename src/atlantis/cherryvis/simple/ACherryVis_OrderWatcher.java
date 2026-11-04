@@ -35,8 +35,17 @@ public class ACherryVis_OrderWatcher {
             // NEXT #214: name WHAT the builder is building and WHY next to
             // the command, so a stuck builder (site-refresh chase, covered
             // tile) reads off one row instead of needing a WINE_DEBUG hunt.
-            // Change-only on all three parts: a steady builder stays silent.
-            String command = "#" + unit.lastCommandName() + buildingTag(unit) + behaviorTag(unit);
+            // Owner 2026-11-04: the building rides the COMMAND half with a
+            // dash ("#Build-Pylon"), keeping the slash-separated shape of
+            // the row ("/Pylon/BuilderManager") parseable - the unit log
+            // is grepped per building, and "#Build/Pylon/..." does not say
+            // which half names the building.
+            // Change-only on all parts: a steady builder stays silent.
+            String building = buildingName(unit);
+            String command = "#" + unit.lastCommandName()
+                + (building.isEmpty() ? "" : "-" + building)
+                + (building.isEmpty() ? "" : "/" + building)
+                + behaviorTag(unit);
             if (!command.equals(lastOrders.get(unit.id()))) {
                 lastOrders.put(unit.id(), command);
                 CV.unitLog(command + "@" + A.minSec(), unit);
@@ -45,8 +54,8 @@ public class ACherryVis_OrderWatcher {
         }
     }
 
-    /** "/Pylon" while this builder holds a live construction of that type. */
-    private static String buildingTag(AUnit unit) {
+    /** "Pylon" while this builder holds a live construction of that type. */
+    private static String buildingName(AUnit unit) {
         Construction construction = unit.construction();
         if (construction == null || !construction.notFinished()) return "";
 
@@ -58,7 +67,7 @@ public class ACherryVis_OrderWatcher {
             return "";
         }
 
-        return "/" + construction.buildingType().name();
+        return construction.buildingType().name();
     }
 
     /** "/<behavior>" - the active behavior tag the bot last gave this unit.

@@ -24,9 +24,11 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * NEXT #214 (owner ask): the units log names WHAT the builder is building
  * and WHY, so a stuck builder (site-refresh chase, covered tile) reads off
  * one row instead of needing a WINE_DEBUG hunt.
- * {@code #Build@2:15} becomes {@code #Build/Protoss_Pylon/TravelToSite@2:15}.
+ * {@code #Build@2:15} becomes {@code #Build-Pylon/Pylon/TravelToSite@2:15}
+ * (owner 2026-11-04: the building rides the command half with a dash, so
+ * the row greps per building without splitting the slash structure).
  *
- * <p>Change-only on all three parts (command, building, tooltip): a steady
+ * <p>Change-only on all parts (command, building, tooltip): a steady
  * builder stays silent. No world harness: the watcher reads one mocked
  * selection, nothing else, so this pins the watcher and nothing around it.</p>
  */
@@ -91,6 +93,8 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         String rows = rows();
         assertTrue(rows.contains("/Pylon/TravelToSite@"),
             "the row names the building and the behavior: " + rows);
+        assertTrue(rows.contains("-Pylon/Pylon/"),
+            "the building rides the command half with a dash: " + rows);
     }
 
     @Test
