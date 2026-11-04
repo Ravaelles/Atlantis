@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.LogLevel;
 import atlantis.util.log.PostGameDigest;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class GameSummary {
 
             int totalS = AGame.timeSeconds();
             int resourceBalance = AGame.killsLossesResourceBalance();
-            AConsole.println(
+            AConsole.println(LogLevel.LOW,
                 "\n### Stopped (no game end reached) after " + totalS + " seconds. ###"
                     + "\n### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +
                     "### Resource killed/lost: " + (resourceBalance > 0 ? "+" + resourceBalance : resourceBalance) +
@@ -61,7 +62,7 @@ public class GameSummary {
 
         LongFrames.printSummary();
 
-        AConsole.println(result);
+        AConsole.println(LogLevel.LOW, result);
 
         if (Atlantis.game() == null) {
             return;
@@ -69,7 +70,7 @@ public class GameSummary {
 
         int resourceBalance = AGame.killsLossesResourceBalance();
         int totalS = AGame.timeSeconds();
-        AConsole.println(
+        AConsole.println(LogLevel.LOW,
             "\n### Total time: " + totalS + " seconds. ###" +
                 (totalS >= 90 ? "\n\n" : "\n### Total frames: " + A.now() + " frames. ###\n\n") +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +

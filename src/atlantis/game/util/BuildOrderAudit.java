@@ -81,7 +81,8 @@ public final class BuildOrderAudit {
             List<String> mismatches = mismatchLines();
             if (total == 0) return;
 
-            AConsole.println("===== BUILD_ORDER audit: " + total + " BO buildings warped, "
+            AConsole.println(atlantis.util.log.LogLevel.LOW,
+                "===== BUILD_ORDER audit: " + total + " BO buildings warped, "
                 + mismatches.size() + " off-plan =====");
             int shown = 0;
             for (String line : mismatches) {

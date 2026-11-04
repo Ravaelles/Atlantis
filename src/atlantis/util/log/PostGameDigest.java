@@ -189,19 +189,19 @@ public final class PostGameDigest {
             int crit = levelTotals.getOrDefault("CRIT", 0);
             int low = levelTotals.getOrDefault("LOW", 0);
             String status = (high > 0 || crit > 0 || offPlan > 0 || sameTileDups > 0) ? "issues" : "ok";
-            AConsole.println(LogLevel.MEDIUM,
+            AConsole.println(LogLevel.LOW,
                 "===== POSTGAME DIGEST: HIGH=" + high + " MED=" + med
                     + " CRIT=" + crit + " LOW=" + low
                     + " warps=" + warps + " offPlan=" + offPlan
                     + " sameTileDups=" + sameTileDups + " status=" + status + " =====");
             for (Map.Entry<String, Integer> entry : counts.entrySet()) {
-                AConsole.println(LogLevel.MEDIUM,
+                AConsole.println(LogLevel.LOW,
                     "DIGEST " + entry.getKey() + " count=" + entry.getValue());
                 if (entry.getKey().startsWith("[HIGH]") || entry.getKey().startsWith("[CRIT]")) {
                     List<String> kept = samples.get(entry.getKey());
                     if (kept != null) {
                         for (String sample : kept) {
-                            AConsole.println(LogLevel.MEDIUM, "DIGEST SAMPLE " + entry.getKey() + " " + sample);
+                            AConsole.println(LogLevel.LOW, "DIGEST SAMPLE " + entry.getKey() + " " + sample);
                         }
                     }
                 }

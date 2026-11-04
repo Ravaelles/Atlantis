@@ -73,7 +73,7 @@ public final class ReservedSlots {
                 AUnitType.Protoss_Gateway, GATEWAY_SLOTS);
 
             if (!slots.isEmpty()) {
-                atlantis.util.AConsole.println(atlantis.util.log.LogLevel.MEDIUM,
+                atlantis.util.AConsole.println(atlantis.util.log.LogLevel.LOW,
                     "Reserved slots: " + slots.size() + " (" + slots.get(0).label
                         + " at " + slots.get(0).tile + " .. "
                         + slots.get(slots.size() - 1).label
