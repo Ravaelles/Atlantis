@@ -8,6 +8,8 @@ import atlantis.production.placement.TargetPlacement;
 import atlantis.production.producibles.UnitProducible;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -695,6 +697,38 @@ public final class DynamicGoals {
 
     public static void clearLatchForTests() {
         lastAllBusySecond = Integer.MIN_VALUE;
+        lastBlockTwinSecond.clear();
+    }
+
+    /**
+     * Names a dynamic tech building the BO rule held back (owner
+     * 2026-11-04): without this twin a gated-out Core reads exactly
+     * like an unwanted one - no goal, no row, no reason. Transition-
+     * gated per item (a held-back goal twins once, not every frame),
+     * so the next live game shows whether the gate fires at all.
+     */
+    private static final java.util.Map<String, Integer> lastBlockTwinSecond = new java.util.HashMap<>();
+
+    private static void twinBlocked(String itemId, GameSnapshot state) {
+        try {
+            Integer last = lastBlockTwinSecond.get(itemId);
+            if (last != null && state.seconds - last < 25) return;
+            lastBlockTwinSecond.put(itemId, state.seconds);
+
+            EventLog.key(LogKey.BUILD_REFUSED)
+                .param("type", itemId)
+                .param("guard", "dynamic-tech-waits-for-bo")
+                .param("bank", state.minerals)
+                .param("buildOrderDone", state.buildOrderDone)
+                .log(Math.max(0, state.frame), clockOf(state.seconds));
+        } catch (Exception | Error ignored) {
+        }
+    }
+
+    private static String clockOf(int seconds) {
+        if (seconds < 0) seconds = 0;
+
+        return (seconds / 60) + ":" + String.format("%02d", seconds % 60);
     }
 
     /** Rich-only rule: a new Gateway never starves tech or units. */
@@ -921,7 +955,11 @@ public final class DynamicGoals {
         if (state.hasCore) return;
         if (state.gatewaysExisting < 1) return;
         if (state.minerals < AUnitType.Protoss_Cybernetics_Core.mineralPrice()) return;
-        if (!dynamicTechBuildingsAllowed(state)) return;
+        if (!dynamicTechBuildingsAllowed(state)) {
+            twinBlocked(AUnitType.Protoss_Cybernetics_Core.name(), state);
+
+            return;
+        }
 
         goals.add(new ProductionGoal(
             UnitProducible.of(AUnitType.Protoss_Cybernetics_Core),
@@ -946,7 +984,11 @@ public final class DynamicGoals {
         if (state.bases < 1) return;
         boolean coreNearlyDone = state.coreRemainingSeconds >= 0 && state.coreRemainingSeconds < 80;
         if (!state.hasCore && !coreNearlyDone) return;
-        if (!dynamicTechBuildingsAllowed(state)) return;
+        if (!dynamicTechBuildingsAllowed(state)) {
+            twinBlocked(gas.name(), state);
+
+            return;
+        }
 
         goals.add(new ProductionGoal(
             UnitProducible.of(gas),
@@ -1140,6 +1182,14 @@ public final class DynamicGoals {
          * for it to finish.
          */
         public int coreRemainingSeconds = -1;
+
+        /**
+         * Game frame this snapshot was taken at (post-construction like
+         * the rest): twins stamp it instead of reading the live clock, so
+         * the goal layer stays pure and pinnable without a game. -1 when
+         * unset (unit tests); logged as frame 0 then.
+         */
+        public int frame = -1;
 
         /**
          * No unfinished build-order rows left (owner order 2026-11-04,

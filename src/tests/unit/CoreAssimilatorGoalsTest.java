@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -94,7 +95,7 @@ public class CoreAssimilatorGoalsTest {
 
     @Test
     public void poorBankWithOpenBuildOrderWantsNoCore() {
-        DynamicGoals.GameSnapshot snapshot = state(150, false, 2, 0);
+        DynamicGoals.GameSnapshot snapshot = state(250, false, 2, 0);
         snapshot.buildOrderDone = false;
 
         assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Cybernetics_Core),
@@ -129,5 +130,24 @@ public class CoreAssimilatorGoalsTest {
 
         assertTrue(hasGoal(contribute(snapshot), AUnitType.Protoss_Assimilator),
             "a finished BO unlocks dynamic gas on any affordable bank");
+    }
+
+    @Test
+    public void blockedCoreTwinsOnceWithBankAndFlag() {
+        DynamicGoals.GameSnapshot snapshot = state(250, false, 2, 0);
+        snapshot.buildOrderDone = false;
+        atlantis.util.log.EventLog.clearForTests();
+        DynamicGoals.clearLatchForTests();
+
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Cybernetics_Core));
+        String rows = atlantis.util.log.EventLog.toJsonLines();
+        assertTrue(rows.contains("\"key\":\"BUILD_REFUSED\"")
+            && rows.contains("dynamic-tech-waits-for-bo"),
+            "a gated-out Core names the gate instead of vanishing: " + rows);
+
+        atlantis.util.log.EventLog.clearForTests();
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_Cybernetics_Core));
+        assertEquals("", atlantis.util.log.EventLog.toJsonLines().trim(),
+            "the same storm does not re-twin every frame");
     }
 }

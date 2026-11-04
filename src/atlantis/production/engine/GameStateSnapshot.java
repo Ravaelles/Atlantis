@@ -301,6 +301,7 @@ public final class GameStateSnapshot {
         // unfinished BO row left means the opening is done and dynamic
         // Core/Assimilator goals may fire on any bank.
         snapshot.buildOrderDone = buildOrderDone();
+        snapshot.frame = frame();
         // Stargate chain inputs (the matchup want reads discovered air
         // pressure, own line strength and standing eyes - zeros until seen).
         snapshot.enemyHydras = atlantis.information.enemy.EnemyUnits.hydras();
