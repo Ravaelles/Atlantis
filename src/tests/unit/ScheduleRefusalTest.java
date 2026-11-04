@@ -76,6 +76,30 @@ public class ScheduleRefusalTest {
     }
 
     @Test
+    public void persistingStormReTwinsOnHeartbeatWithElapsed() {
+        FakeProducible pylon = new FakeProducible("Pylon", true);
+        FakePlanner failing = new FakePlanner(false);
+
+        ProductionPlan first = scheduler(failing).schedule(
+            goals(pylon), new ResourceTimeline(0, 2000, 500, 0, 8, 16));
+        assertTrue(first.isEmpty(), "refused plans nothing");
+
+        ProductionPlan sameStorm = scheduler(failing).schedule(
+            goals(pylon), new ResourceTimeline(300, 2000, 500, 0, 8, 16));
+        assertTrue(sameStorm.isEmpty(), "same storm inside the heartbeat stays silent");
+
+        ProductionPlan heartbeat = scheduler(failing).schedule(
+            goals(pylon), new ResourceTimeline(600, 2000, 500, 0, 8, 16));
+        assertTrue(heartbeat.isEmpty(), "still refused, only louder");
+
+        String rows = EventLog.toJsonLines();
+        assertEquals(2, count(rows, "\"key\":\"SCHEDULE_REFUSED\""),
+            "first refusal plus one heartbeat witness: " + rows);
+        assertTrue(rows.contains("\"elapsed\":600"),
+            "the witness names how long the door has been closed: " + rows);
+    }
+
+    @Test
     public void missingProducerIsNamed() {
         FakeProducible dragoon = new FakeProducible("Dragoon", false);
         FakePlanner planner = new FakePlanner(true);

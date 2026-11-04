@@ -17,27 +17,44 @@ import java.util.Map;
  * production stall instead of a siting or bank problem.
  *
  * <p>Transition-gated like the attack decision: the same item failing for
- * the same reason rows once, not every frame. The twin answers "which
- * door is closed" for the next live game; it never changes what gets
- * planned.</p>
+ * the same reason rows once, not every frame - plus a heartbeat for
+ * persisting storms, so a minute-long drought reads with a duration
+ * (measured live: BO Gateway refused "no-placement" from 2:04, one row,
+ * then silence until the 3:19 mint). The twin answers "which door is
+ * closed" for the next live game; it never changes what gets planned.</p>
  */
 public final class ScheduleRefusal {
 
+    /**
+     * Same-reason storms re-twin on this cadence (25 game-seconds).
+     */
+    public static final int HEARTBEAT_FRAMES = 600;
+
     private static final Map<String, String> lastRefusalByItem = new HashMap<>();
+    private static final Map<String, Integer> lastFrameByItem = new HashMap<>();
+    private static final Map<String, Integer> firstFrameByItem = new HashMap<>();
 
     private ScheduleRefusal() {
     }
 
-    public static void note(Producible item, String reason) {
+    public static void note(Producible item, String reason, int frame) {
         if (item == null || reason == null) return;
 
         String id = item.id();
-        if (reason.equals(lastRefusalByItem.get(id))) return;
+        boolean sameStorm = reason.equals(lastRefusalByItem.get(id));
+        Integer lastFrame = lastFrameByItem.get(id);
+        if (sameStorm && lastFrame != null && frame - lastFrame < HEARTBEAT_FRAMES) return;
+
+        Integer firstFrame = firstFrameByItem.get(id);
+        if (!sameStorm || firstFrame == null) firstFrame = frame;
         lastRefusalByItem.put(id, reason);
+        lastFrameByItem.put(id, frame);
+        firstFrameByItem.put(id, firstFrame);
 
         EventLog.key(LogKey.SCHEDULE_REFUSED)
             .param("item", id)
             .param("reason", reason)
+            .param("elapsed", frame - firstFrame)
             .log(A.now(), A.minSec());
     }
 
@@ -47,5 +64,7 @@ public final class ScheduleRefusal {
      */
     public static void clearForTests() {
         lastRefusalByItem.clear();
+        lastFrameByItem.clear();
+        firstFrameByItem.clear();
     }
 }

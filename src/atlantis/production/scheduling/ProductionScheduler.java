@@ -241,27 +241,27 @@ public final class ProductionScheduler {
         if (item.requiresPlacement()) {
             start = timeline.findEarliestAffordableFrame(cost, notBefore);
             if (start < 0) {
-                ScheduleRefusal.note(item, "unaffordable");
+                ScheduleRefusal.note(item, "unaffordable", timeline.originFrame());
                 return null;
             }
         }
         else {
             producer = chooseProducer(item, notBefore, producerLimit, usedProducers);
             if (producer == null) {
-                ScheduleRefusal.note(item, "no-free-producer");
+                ScheduleRefusal.note(item, "no-free-producer", timeline.originFrame());
                 return null;
             }
 
             start = timeline.findEarliestAffordableFrame(cost, Math.max(notBefore, freeFrom(producer)));
             if (start < 0) {
-                ScheduleRefusal.note(item, "unaffordable");
+                ScheduleRefusal.note(item, "unaffordable", timeline.originFrame());
                 return null;
             }
 
             // Continuous goals only fill producers that are free inside the
             // horizon; they never queue a second item behind the first.
             if (onlyFreeProducers && usedProducers.contains(producer.id())) {
-                ScheduleRefusal.note(item, "producer-busy-in-horizon");
+                ScheduleRefusal.note(item, "producer-busy-in-horizon", timeline.originFrame());
                 return null;
             }
         }
@@ -271,14 +271,14 @@ public final class ProductionScheduler {
         if (item.requiresPlacement()) {
                 reservation = placementPlanner.reservePlacement(item, placement, start);
                 if (reservation == null || !reservation.isSuccessful()) {
-                ScheduleRefusal.note(item, "no-placement");
+                ScheduleRefusal.note(item, "no-placement", timeline.originFrame());
                 return null;
             }
 
             if (reservation.readyFrame() > start) {
                 start = timeline.findEarliestAffordableFrame(cost, reservation.readyFrame());
                 if (start < 0) {
-                    ScheduleRefusal.note(item, "unaffordable-after-placement");
+                    ScheduleRefusal.note(item, "unaffordable-after-placement", timeline.originFrame());
                     return null;
                 }
             }
