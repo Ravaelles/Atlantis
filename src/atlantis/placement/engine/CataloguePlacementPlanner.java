@@ -454,6 +454,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (atlantis.production.constructions.position.RefusedTiles.isRefused(
                 APosition.create(candidate.tileX(), candidate.tileY()), unitType)) continue;
 
+            // Expansion discipline (owner order 2026-11-04): a base warps
+            // only next to a real base location (within 2 tiles) and away
+            // from our standing or planned bases (15+ tiles). Measured
+            // live Tomas Cere: a [120,0] edge tile with no base on it
+            // parked a Nexus 105 s ("looks bugged" cancels, re-mint on
+            // another edge tile). No map data (tests, sims without BWTA)
+            // fails open to the old behavior.
+            if (unitType.isBase() && !isLegalBaseSite(candidate.tileX(), candidate.tileY())) continue;
+
             // No worker-cover skip here (V3 S1, deferred): the funnel and
             // the legacy spiral decline worker-covered tiles through the
             // shared verdict, but this loop serves the sim opening on tiles
@@ -745,6 +754,58 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * convention the legacy pipeline uses; a named area resolves to its own
      * centre.
      */
+    /**
+     * Expansion anchor discipline (owner order 2026-11-04): a base tile
+     * is legal only next to a real base location (within 2 tiles) and
+     * away from our standing or planned bases (15+ tiles). Pure over
+     * positions, so the boundary pins without a game; unknown map data
+     * fails open to serving (tests and sims without BWTA keep the old
+     * behavior). Public as a seam: the legacy siter takes the same
+     * numbers when S4 routes it through the single door.
+     */
+    public static boolean isLegalBaseSite(int tx, int ty) {
+        try {
+            java.util.List<atlantis.map.position.HasPosition> bases =
+                new java.util.ArrayList<atlantis.map.position.HasPosition>();
+            for (atlantis.units.AUnit base : Select.ourBasesWithUnfinished().list()) {
+                if (base != null && base.position() != null) bases.add(base.position());
+            }
+
+            return isLegalBaseSite(tx, ty,
+                atlantis.map.base.BaseLocations.baseLocations(), bases);
+        } catch (Exception | Error ignored) {
+            return true;
+        }
+    }
+
+    public static boolean isLegalBaseSite(int tx, int ty, java.util.List<? extends atlantis.map.position.HasPosition> baseLocations,
+                                   java.util.List<? extends atlantis.map.position.HasPosition> ownBases) {
+        // No map truth (tests, sims without BWEM): fail open to serving,
+        // the old behavior. A real map always lists its bases.
+        if (baseLocations == null || baseLocations.isEmpty()) return true;
+
+        APosition tile = APosition.create(tx, ty);
+
+        boolean nearBase = false;
+        for (atlantis.map.position.HasPosition base : baseLocations) {
+            if (base == null || base.position() == null) continue;
+            if (tile.distTo(base.position()) <= 2.0) {
+                nearBase = true;
+                break;
+            }
+        }
+        if (!nearBase) return false;
+
+        if (ownBases != null) {
+            for (atlantis.map.position.HasPosition own : ownBases) {
+                if (own == null || own.position() == null) continue;
+                if (tile.distTo(own.position()) < 15.0) return false;
+            }
+        }
+
+        return true;
+    }
+
     private APosition searchCentre(TargetPlacement constraint) {
         switch (constraint.mode()) {
             case NEIGHBOURHOOD:
