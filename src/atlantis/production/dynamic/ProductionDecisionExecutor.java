@@ -4,7 +4,6 @@ import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.DecisionExecutor;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnit;
 
@@ -16,6 +15,10 @@ import atlantis.units.AUnit;
  * <p>Strangler, Phase A: legacy gates still live inside the executors;
  * questions only add the audit trail (what/why) and the single door.
  * Pure gate migration is follow-up work, not this class.</p>
+ *
+ * <p>V3 S4: the BUILD branch is gone - no production caller issues
+ * BUILD decisions anymore (the V2 engine mints directly), so the
+ * branch was dead. Buildings mint through the single V2 door only.</p>
  */
 public class ProductionDecisionExecutor implements DecisionExecutor {
 
@@ -41,15 +44,6 @@ public class ProductionDecisionExecutor implements DecisionExecutor {
                     ProductionOrder order = (ProductionOrder) decision.payload();
                     if (order.unitType() != null) {
                         return ProduceUnit.orderUnit(order.unitType(), order);
-                    }
-                }
-                return false;
-
-            case BUILD:
-                if (decision.payload() instanceof ProductionOrder) {
-                    ProductionOrder order = (ProductionOrder) decision.payload();
-                    if (order.unitType() != null) {
-                        return ProduceBuilding.requestBuilding(order.unitType(), order);
                     }
                 }
                 return false;
