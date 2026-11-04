@@ -41,6 +41,45 @@ public class WarpingVisibleWhileWarpingTest extends AbstractTestWithWorld {
     @AfterEach
     public void cleanConstructions() {
         ConstructionRequests.constructions.clear();
+        atlantis.game.util.BuildingLedger.clearForTests();
+    }
+
+    @Test
+    public void completedWarpMarksLedgerRowSoResitesDoNotReadAsDuplicates() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+
+        world(30, units(nexus, probe), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 10) return;
+
+            atlantis.game.util.BuildingLedger.clearForTests();
+            try {
+                // First warp at the tile, then it completes: the ledger
+                // row must flip to completed via the same origin tile
+                // the recorder used (not the center-derived tx/ty,
+                // which differs for every footprint).
+                FakeUnit first = fake(AUnitType.Protoss_Pylon, 40, 33);
+                atlantis.game.util.BuildingLedger.recordBuilding(
+                    first.id(), "Pylon", 40, 33, 100, "0:41", 10, 17, 100, 0, 0, 0,
+                    8, "At 8 Pylon (#1)", 7, 1);
+                first.setCompleted(true);
+                atlantis.game.listeners.OnOurNewUnitCompleted.ourNewUnitCompleted(first);
+
+                FakeUnit second = fake(AUnitType.Protoss_Pylon, 40, 33);
+                atlantis.game.util.BuildingLedger.recordBuilding(
+                    second.id(), "Pylon", 40, 33, 200, "1:23", 14, 17, 90, 0, 0, 0,
+                    14, "At 14 Pylon (#9)", 9, 9);
+                second.setCompleted(true);
+                atlantis.game.listeners.OnOurNewUnitCompleted.ourNewUnitCompleted(second);
+
+                assertEquals(1, atlantis.game.util.BuildingLedger.sameTileDuplicates(),
+                    "two finished warps on one tile is the double-mint");
+                assertTrue(atlantis.game.util.BuildingLedger.toJson().contains("\"completed\":true"),
+                    "the completion flag lands in the file the digest reads");
+            } finally {
+                atlantis.game.util.BuildingLedger.clearForTests();
+            }
+        });
     }
 
     @Test

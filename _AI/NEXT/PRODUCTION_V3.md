@@ -363,3 +363,7 @@ tile through dead builders, no per-building unit-log key.
   double-mint (GAME_BAF8D14E: Pylon [121,22] warped 2:20 and 4:15, no
   death or cancel twin anywhere). Rows now carry completed, set on
   unit completion; the dup counts only repeats after a completion.
+  Completion matches by origin tile (unit.tilePosition(), the same
+  source the recorder uses) - the first version read center-derived
+  tx()/ty(), which differ for every footprint, so zero warps ever
+  matched live; pinned end-to-end through the completion hook.

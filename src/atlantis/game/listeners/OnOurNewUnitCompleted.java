@@ -49,9 +49,14 @@ public class OnOurNewUnitCompleted {
             // Warp survival for the ledger: a warp recorded at appearance
             // only counts as a duplicate source once it finished. Without
             // this a cancelled warp re-served reads as a double-mint.
+            // Tile source must match the recorder (origin tile, not the
+            // center-derived tx/ty which differ for every footprint).
             try {
-                atlantis.game.util.BuildingLedger.markCompleted(
-                    unit.type().name(), unit.tx(), unit.ty());
+                bwapi.TilePosition tile = unit.tilePosition();
+                if (tile != null) {
+                    atlantis.game.util.BuildingLedger.markCompleted(
+                        unit.type().name(), tile.getX(), tile.getY());
+                }
             } catch (Exception | Error ignored) {
             }
         }
