@@ -101,6 +101,74 @@ public class ProtossDefendFocusTest extends WorldStubForTests {
     }
 
     @Test
+    public void edgeSkirmishHoldsChokeInsteadOfBunchingHome() {
+        enemyRaceInWorld = Race.Protoss;
+
+        atlantis.map.choke.AChoke mainChoke = org.mockito.Mockito.mock(atlantis.map.choke.AChoke.class);
+        org.mockito.Mockito.when(mainChoke.center()).thenReturn(APosition.create(60, 20));
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
+        // 7 tiles from the main: a runby at the base edge, not an occupation.
+        FakeUnit raider = fake(AUnitType.Protoss_Dragoon, 27, 20);
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class);
+             org.mockito.MockedStatic<MiddleFocusChoke> middle =
+                 org.mockito.Mockito.mockStatic(MiddleFocusChoke.class);
+             org.mockito.MockedStatic<atlantis.combat.cluster.ClusterRally> rally =
+                 org.mockito.Mockito.mockStatic(atlantis.combat.cluster.ClusterRally.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(mainChoke);
+            middle.when(MiddleFocusChoke::get).thenReturn(null);
+            rally.when(atlantis.combat.cluster.ClusterRally::chokeStandoffPoint)
+                .thenReturn(APosition.create(55, 20));
+
+            world(1, fakeOurs(nexus, zealot), fakeEnemies(raider), () -> {
+                AFocusPoint focus = ProtossDefendFocusPoint.focusPoint();
+                assertNotNull(focus, "a leashed breach still has an answer - the choke");
+
+                assertTrue(
+                    focus.name().contains("MainChoke"),
+                    "edge raid holds the choke standoff, never the base: " + focus.name());
+            });
+        }
+    }
+
+    @Test
+    public void intruderInsideBasePullsLineHome() {
+        enemyRaceInWorld = Race.Protoss;
+
+        atlantis.map.choke.AChoke mainChoke = org.mockito.Mockito.mock(atlantis.map.choke.AChoke.class);
+        org.mockito.Mockito.when(mainChoke.center()).thenReturn(APosition.create(60, 20));
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
+        // 3 tiles from the main: really inside, the leash holds.
+        FakeUnit intruder = fake(AUnitType.Protoss_Dragoon, 23, 20);
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class);
+             org.mockito.MockedStatic<MiddleFocusChoke> middle =
+                 org.mockito.Mockito.mockStatic(MiddleFocusChoke.class);
+             org.mockito.MockedStatic<atlantis.combat.cluster.ClusterRally> rally =
+                 org.mockito.Mockito.mockStatic(atlantis.combat.cluster.ClusterRally.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(mainChoke);
+            middle.when(MiddleFocusChoke::get).thenReturn(null);
+            rally.when(atlantis.combat.cluster.ClusterRally::chokeStandoffPoint)
+                .thenReturn(APosition.create(55, 20));
+
+            world(1, fakeOurs(nexus, zealot), fakeEnemies(intruder), () -> {
+                AFocusPoint focus = ProtossDefendFocusPoint.focusPoint();
+                assertNotNull(focus, "an intruder still has an answer - the base");
+
+                assertTrue(
+                    focus.name().contains("EnemyBreachedBase"),
+                    "inside the leash the line comes home: " + focus.name());
+            });
+        }
+    }
+
+    @Test
     public void bigArmyStagesAtMiddleNotMain() {
         enemyRaceInWorld = Race.Protoss;
 

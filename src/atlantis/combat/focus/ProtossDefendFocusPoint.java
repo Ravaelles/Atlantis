@@ -64,6 +64,16 @@ public final class ProtossDefendFocusPoint {
     }
 
     /**
+     * Breach leash (owner order 2026-11-04, Tomas Cere game): an enemy at
+     * the edge of the base is a runby, not an occupation - the line holds
+     * the main-choke standoff and meets it there, instead of sitting on
+     * the mineral line while the choke stands empty (measured live 5:21:
+     * BREACH "hold home" with the enemy at the edge, army parked top).
+     * Only an enemy really inside the base pulls the line home.
+     */
+    private static final int BREACH_LEASH_TILES = 5;
+
+    /**
      * The absolute ban read for other seams: a Protoss dragoon mass this
      * big never stages home (NEXT #194). Pure read, no orders.
      */
@@ -106,6 +116,13 @@ public final class ProtossDefendFocusPoint {
 
                     AUnit enemyInBase = EnemyUnitBreachedBase.get();
                     if (enemyInBase != null && !enemyInBase.isAlive()) enemyInBase = null;
+
+                    // A runby at the base edge is not an occupation: leash
+                    // the breach to the base interior, so the line holds
+                    // the choke standoff and meets the raid there.
+                    if (enemyInBase != null && !breachInsideBase(enemyInBase, mainBase)) {
+                        enemyInBase = null;
+                    }
 
                     AChoke mainChoke = home.mainChoke();
                     Selection unfinishedBases = Select.ourWithUnfinished().bases();
@@ -198,6 +215,23 @@ public final class ProtossDefendFocusPoint {
     }
 
     // =========================================================
+
+    /**
+     * True when the breaching enemy is really inside the base (within
+     * leash of the main), not just near it: the 8-tile detection ring
+     * also fires on runbys at the edge, and those hold the choke.
+     * Null-safe: no positions means no occupation.
+     */
+    private static boolean breachInsideBase(AUnit enemy, AUnit mainBase) {
+        try {
+            if (enemy == null || mainBase == null) return false;
+            if (enemy.position() == null || mainBase.position() == null) return false;
+
+            return enemy.distTo(mainBase) <= BREACH_LEASH_TILES;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
 
     /**
      * True when the known enemy cannot shoot over a mouth plug: combat
