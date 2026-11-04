@@ -21,9 +21,53 @@ public class ConstructionRequests {
     /**
      * The single door for new constructions (NEXT #57): every creation path
      * goes through here, so the duplicate question has one place to ask.
+     * An identical live row (same type, same tile) refuses the add: one
+     * tile holds one building, so a second mint there is always a
+     * duplicate, never legit concurrency (which the paths mint on their
+     * own tiles - Pylon pairs, double Gateways). The refusal twins
+     * builderLog-gated, like the legacy request path's own duplicate
+     * twin, so a suppressed double-mint reads as a decision, not
+     * silence. Returns false when refused.
      */
-    public static void addConstruction(Construction construction) {
+    public static boolean addConstruction(Construction construction) {
+        if (construction != null && construction.buildPosition() != null
+            && construction.buildingType() != null
+            && hasLiveRowOnTile(construction.buildingType(), construction.buildPosition(), construction)) {
+            if (atlantis.config.env.Env.builderLog()) {
+                atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.REQUEST_REFUSED_DUPLICATE)
+                    .param("type", construction.buildingType().name())
+                    .param("tile", "[" + construction.buildPosition().tx()
+                        + "," + construction.buildPosition().ty() + "]")
+                    .param("existing", countAllOfType(construction.buildingType()))
+                    .log(atlantis.game.A.now(), atlantis.game.A.minSec());
+            }
+
+            return false;
+        }
+
         constructions.add(construction);
+
+        return true;
+    }
+
+    /**
+     * True when another unfinished row already owns this exact tile: same
+     * demand re-minted, not a second demand (those carry their own tiles).
+     */
+    private static boolean hasLiveRowOnTile(
+        atlantis.units.AUnitType type, atlantis.map.position.APosition tile, Construction self
+    ) {
+        for (Construction other : constructions) {
+            if (other == null || other == self) continue;
+            if (other.buildingType() != type) continue;
+            if (other.buildPosition() == null) continue;
+            if (other.buildPosition().tx() == tile.tx()
+                && other.buildPosition().ty() == tile.ty()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
