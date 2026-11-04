@@ -11,6 +11,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -84,15 +86,31 @@ public class MarchCohesionTest {
     }
 
     @Test
-    public void fallbackStepsTwoBackFromTheChoke() {
-        APosition choke = APosition.create(100, 100);
-        APosition enemy = APosition.create(100, 120);
+    public void spiralFindsWalkableNearUnwalkable() {
+        APosition center = APosition.create(100, 100);
+        APosition same = MarchCohesion.firstWalkableNear(center, p -> true);
 
-        APosition back = MarchCohesion.fallbackPoint(choke, enemy);
+        assertNotNull(same, "a walkable center is served as is");
+        assertEquals(100, same.tx());
+        assertEquals(100, same.ty());
 
-        assertTrue(Math.abs(back.distTo(choke) - 2.0) < 0.6,
-            "owner: nextChoke.moveAway(2), not a march home: " + back.distTo(choke));
-        assertTrue(back.distTo(enemy) > choke.distTo(enemy),
-            "back means away from the enemy");
+        // Everything blocked except one ring-2 tile: the search walks
+        // past the wall instead of handing back a cursed order.
+        APosition found = MarchCohesion.firstWalkableNear(
+            center, p -> p.tx() == 102 && p.ty() == 100);
+
+        assertNotNull(found, "a walkable tile in range is served");
+        assertEquals(102, found.tx());
+        assertEquals(100, found.ty());
+    }
+
+    @Test
+    public void walledPocketAnswersNullInsteadOfCursedTile() {
+        APosition center = APosition.create(100, 100);
+
+        assertNull(MarchCohesion.firstWalkableNear(center, p -> false),
+            "no walkable tile nearby means no hold - the caller falls through");
+        assertNull(MarchCohesion.firstWalkableNear(null, p -> true),
+            "null center never holds");
     }
 }

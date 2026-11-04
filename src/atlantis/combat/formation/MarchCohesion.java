@@ -106,28 +106,63 @@ public final class MarchCohesion {
 
     /**
      * A step back from the choke, away from the enemy: two tiles (owner:
-     * nextChoke.moveAway(2)), never a march home. Degenerate direction
-     * (enemy on the choke) falls back to the choke itself.
+     * nextChoke.moveAway(2)), never a march home. The tile must be
+     * walkable - an unwalkable hold is a refused order plus a stack
+     * trace every time (measured live: Dragoon ordered into a wall off
+     * a choke fallback). Spirals like the collapse staging point; null
+     * when the whole pocket is unwalkable, and the caller falls through
+     * to the normal legs instead of issuing a cursed order.
      */
     public static APosition fallbackPoint(HasPosition choke, HasPosition awayFrom) {
         if (choke == null) return null;
 
         try {
             APosition center = APosition.create(choke);
-            if (awayFrom == null) return center;
+            if (awayFrom != null) {
+                APosition foe = APosition.create(awayFrom);
+                double dx = center.tx() - foe.tx();
+                double dy = center.ty() - foe.ty();
+                double dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist >= 0.01) {
+                    center = APosition.create(
+                        (int) Math.round(center.tx() + dx / dist * FALLBACK_TILES),
+                        (int) Math.round(center.ty() + dy / dist * FALLBACK_TILES));
+                }
+            }
 
-            APosition foe = APosition.create(awayFrom);
-            double dx = center.tx() - foe.tx();
-            double dy = center.ty() - foe.ty();
-            double dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 0.01) return center;
+            return firstWalkableNear(center, APosition::isWalkable);
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
 
-            int tx = (int) Math.round(center.tx() + dx / dist * FALLBACK_TILES);
-            int ty = (int) Math.round(center.ty() + dy / dist * FALLBACK_TILES);
+    /**
+     * Nearest walkable tile to the center, the center first, then rings
+     * 1-3 out (same search as the collapse staging). The walkability
+     * check rides a predicate so the spiral pins without a game.
+     * Public as a seam: any ordered move can validate its destination
+     * through the same search instead of growing its own.
+     */
+    public static APosition firstWalkableNear(
+        APosition center, java.util.function.Predicate<APosition> walkable
+    ) {
+        if (center == null || walkable == null) return null;
 
-            // Pure geometry, no bounds clamp: walkability is checked at
-            // issue time by the move itself, and clamping needs a game.
-            return APosition.create(tx, ty);
+        try {
+            if (walkable.test(center)) return center;
+
+            for (int r = 1; r <= 3; r++) {
+                for (int dx = -r; dx <= r; dx++) {
+                    for (int dy = -r; dy <= r; dy++) {
+                        if (Math.max(Math.abs(dx), Math.abs(dy)) != r) continue;
+
+                        APosition candidate = APosition.create(center.tx() + dx, center.ty() + dy);
+                        if (walkable.test(candidate)) return candidate;
+                    }
+                }
+            }
+
+            return null;
         } catch (Exception | Error ignored) {
             return null;
         }
