@@ -302,5 +302,14 @@ tile through dead builders, no per-building unit-log key.
   deleting; Terran/Zerg files stay - live combat caller).
 - Game proof: scbw GAME_1077E111 (this tree minus audit strings)
   warped Gateway 1:23 + Core with zero spam twins and zero cancels;
-  scbw Steamhammer verification game with the full tree + audit lines
-  was launched to confirm BUILDINGS.json end-to-end (analyze it).
+  final-tree scbw GAME_921C9B8D (jar fingerprint matches 8ea97aaac,
+  vs Steamhammer, 12:15 harness timeout, no winner): 23 warps
+  (Pylon 12, Gateway 3, Core, Assimilator, Forge, Citadel, TemplarA,
+  Stargate 2, Nexus attempt), `HIGH=12 MED=1 CRIT=1 LOW=0 warps=23
+  offPlan=0 sameTileDups=0 status=issues` - zero same-tile dups,
+  zero off-plan; remaining HIGHs are the S4 base-siter remainder
+  (3x Nexus expansion cancel at [94,112] "Can't build here"),
+  2x early STALL, 1x CLOSE_WARPS Pylon-pair overlap signal
+  (benign: pairs allowed), 1x late SUPPLY_OVERSTOCK. No audit lines
+  (LOW=0): the timeout never reached OnGameEnd, same shape as the
+  BuildingLedger javadoc notes.
