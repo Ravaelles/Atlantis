@@ -10,6 +10,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.*;
 import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
+import atlantis.production.constructions.position.SiteTwin;
 import atlantis.production.placement.*;
 import atlantis.production.producibles.*;
 import atlantis.units.AUnit;
@@ -57,8 +58,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return atlantis.Atlantis.game() != null;
         }
     };
-    private static final GameContext NO_GAME = new GameContext() {
-        @Override
+    private static final GameContext NO_GAME = new GameContext() {        @Override
         public boolean inGame() {
             return false;
         }
@@ -85,6 +85,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private final Set<String> reservedThisPass = new HashSet<>();
     private final List<SupportRequest> supportThisPass = new ArrayList<>();
+
+    /**
+     * Last natural-anchor centre twinned by this instance: the centre
+     * barely moves within a game, so one row per anchor answers the
+     * "which ground did V2 aim at" question without a per-frame twin.
+     * Instance state (fresh planner per test, one planner per game).
+     */
+    private String lastCentredBase;
     private TileAvailabilityGrid grid;
     /**
      * Rebuilt per pass, so reservations do not survive a frame.
@@ -408,6 +416,19 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         APosition centre = searchCentre(constraint);
         if (centre == null)
             return PlacementReservation.failure();
+
+        // Named-area base anchors are adjudication-critical and otherwise
+        // invisible on the V2 path (no funnel twin): a far-away warp
+        // names whether the anchor or the serving was wrong. Change-gated
+        // per planner instance, so one row per anchor, never per frame.
+        if (unitType.isBase() && constraint != null
+            && constraint.mode() == atlantis.production.placement.TargetPlacement.Mode.NAMED_AREA) {
+            String centreKey = centre.tx() + "," + centre.ty();
+            if (!centreKey.equals(lastCentredBase)) {
+                lastCentredBase = centreKey;
+                SiteTwin.centre(unitType, centre, "v2-direct");
+            }
+        }
 
         // Refine before ranking: the catalogue emits geometry it can know without
         // workers, and the ranker needs builder travel, the exit distance and when

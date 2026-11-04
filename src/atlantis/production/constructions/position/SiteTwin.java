@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * grepping thousands of near-identical lines stays filtering one key
  * (the {@code LogKey} rule).
  */
-final class SiteTwin {
+public final class SiteTwin {
 
     private static long reserveNanosTotal = 0;
     private static int reserveCalls = 0;
@@ -82,6 +82,24 @@ final class SiteTwin {
 
     static void declined(AUnitType building, String reason, String via) {
         declined(building, reason, via, -1, -1);
+    }
+
+    /**
+     * The resolved search centre for a named-area base request (V2
+     * direct, which never funnels): a far-away warp names whether the
+     * anchor or the serving was wrong. Change-gated by the caller - one
+     * row per anchor, not per frame.
+     */
+    public static void centre(AUnitType building, APosition centre, String via) {
+        if (building == null || centre == null) return;
+
+        EventLog.key(LogKey.CATALOGUE_SITE)
+            .param("type", building.name())
+            .param("result", "centre")
+            .param("tx", centre.tx())
+            .param("ty", centre.ty())
+            .param("via", via)
+            .log(atlantis.game.A.now(), atlantis.game.A.minSec());
     }
 
     /**
