@@ -18,9 +18,9 @@ public class LongFrames {
     }
 
     public static void printSummary() {
-        if (framesOver10000 > 0) AConsole.println("Frames over 10s  : " + framesOver10000);
-        else if (framesOver1000 > 0) AConsole.println("Frames over 1s   : " + framesOver1000);
-        else if (framesOver85 > 0) AConsole.println("Frames over 85ms : " + framesOver85);
+        if (framesOver10000 > 0) AConsole.println(atlantis.util.log.LogLevel.LOW, "Frames over 10s  : " + framesOver10000);
+        else if (framesOver1000 > 0) AConsole.println(atlantis.util.log.LogLevel.LOW, "Frames over 1s   : " + framesOver1000);
+        else if (framesOver85 > 0) AConsole.println(atlantis.util.log.LogLevel.LOW, "Frames over 85ms : " + framesOver85);
 //        else AConsole.println("No long frames above 85ms");
         AConsole.println();
     }

@@ -60,7 +60,7 @@ public class AtlantisRaceConfig {
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
 
-        AConsole.println("Atlantis config is valid.");
+        AConsole.println(atlantis.util.log.LogLevel.LOW, "Atlantis config is valid.");
     }
 
     // =========================================================
