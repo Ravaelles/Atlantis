@@ -378,6 +378,48 @@ public class ConstructionStatusChanger extends Commander {
     }
 
     /**
+     * Names a STARTING row the demote shields miss (NEXT #150
+     * parked-Nexus shape): ancient (ordered 2400f+ ago), builder
+     * alive but never issuing - gathering, stale-constructing
+     * elsewhere, or jittering so the standstill clock never fills.
+     * Names only, once per construction, never demotes by itself.
+     * Public as a seam so the witness pins without running a game.
+     */
+    public static boolean twinParkedStarting(Construction construction, AUnit builder) {
+        if (construction == null) return false;
+        if (construction.status() != ConstructionOrderStatus.STARTING) return false;
+        if (construction.buildPosition() == null) return false;
+        if (construction.isParkedStartTwinned()) return false;
+        if (builder == null || builder.isDead() || !builder.isWorker()) return false;
+        if (A.now() - construction.timeOrdered() < FROZEN_WARP_OBSERVED_FRAMES) return false;
+
+        String builderState;
+        try {
+            double dist = builder.distTo(construction.buildPosition());
+            builderState = (builder.isConstructing() ? "constructing" : "not-constructing")
+                + "/" + (builder.isMoving() ? "moving" : "still")
+                + "/" + (builder.isGatheringResources() ? "gathering" : "not-gathering")
+                + " dist=" + String.format("%.1f", dist)
+                + " stillFor=" + builder.lastPositionChangedAgo() + "f";
+        } catch (Exception | Error ignored) {
+            builderState = "unknown";
+        }
+
+        construction.markParkedStartTwinned();
+        EventLog.key(LogKey.PARKED_STARTING)
+            .param("cid", construction.id())
+            .param("oid", construction.productionOrder() == null
+                ? null : construction.productionOrder().id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition().toString())
+            .param("builder", builderState)
+            .param("orderedAgo", A.now() - construction.timeOrdered())
+            .log(A.now(), A.minSec());
+
+        return true;
+    }
+
+    /**
      * Public as a seam: tests pin the finish-vs-churn contract here (a
      * waiting PREPARING site next to a sibling building is owed demand,
      * not a duplicate) rather than through a game. Since #145.1 the
@@ -810,6 +852,7 @@ public class ConstructionStatusChanger extends Commander {
         // then the row re-arms instead of holding the site forever.
         if (construction.status() == ConstructionOrderStatus.STARTING) {
             demoteParkedStarting(construction, builder);
+            twinParkedStarting(construction, builder);
         }
 
         if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)

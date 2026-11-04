@@ -363,6 +363,16 @@ public enum LogKey {
      */
     MARCH_COHESION,
     /**
+     * A STARTING row old enough to be overdue whose builder is alive
+     * but the row never demotes (NEXT #150 parked-Nexus shape): names
+     * the stall the demote shields miss - a miner tripping between
+     * patch and base resets the standstill clock forever, a stale
+     * constructing flag shields without progress. Fires once per
+     * construction; the fix is the re-arm, this row is the witness
+     * that the re-arm was owed.
+     */
+    PARKED_STARTING,
+    /**
      * Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why.
      */
     BANK_HOARD;

@@ -52,6 +52,7 @@ public class Construction implements Comparable<Construction> {
      * rest of the game; the row is a witness, not a heartbeat.
      */
     private boolean frozenWarpTwinned;
+    private boolean parkedStartTwinned;
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
@@ -479,6 +480,14 @@ public class Construction implements Comparable<Construction> {
 
     public void markFrozenWarpTwinned() {
         frozenWarpTwinned = true;
+    }
+
+    public boolean isParkedStartTwinned() {
+        return parkedStartTwinned;
+    }
+
+    public void markParkedStartTwinned() {
+        parkedStartTwinned = true;
     }
 
     /**
