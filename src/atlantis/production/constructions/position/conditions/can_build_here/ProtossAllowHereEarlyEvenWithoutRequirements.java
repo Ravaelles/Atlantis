@@ -33,8 +33,9 @@ public class ProtossAllowHereEarlyEvenWithoutRequirements {
             return false;
         }
         // The debug print used to be the value of this expression; its `true`
-        // return stood in for the predicate result.
-        AConsole.println("Allow early Gateway - " + position.distToDigit(
+        // return stood in for the predicate result. LOW: routine siting
+        // trace, not an error - MED/HIGH in output must mean action is owed.
+        AConsole.println(atlantis.util.log.LogLevel.LOW, "Allow early Gateway - " + position.distToDigit(
             Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()
         ));
 

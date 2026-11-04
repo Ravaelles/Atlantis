@@ -93,9 +93,9 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
     }
 
     public Orders print(String message) {
-        AConsole.println("@" + A.now() + " " + message + " (" + orders.size() + "):");
+        AConsole.println(atlantis.util.log.LogLevel.LOW, "@" + A.now() + " " + message + " (" + orders.size() + "):");
         for (ProductionOrder order : orders) {
-            AConsole.println("    " + order);
+            AConsole.println(atlantis.util.log.LogLevel.LOW, "    " + order);
         }
         AConsole.println("");
 
