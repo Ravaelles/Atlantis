@@ -59,6 +59,7 @@ public class MintWithoutBuilderIsRefusedTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
             initSupply(49, 51);
+            currentMinerals = 150;
             ConstructionRequests.constructions.clear();
             EventLog.clearForTests();
 
@@ -85,6 +86,7 @@ public class MintWithoutBuilderIsRefusedTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
             initSupply(49, 51);
+            currentMinerals = 150;
             ConstructionRequests.constructions.clear();
             EventLog.clearForTests();
 

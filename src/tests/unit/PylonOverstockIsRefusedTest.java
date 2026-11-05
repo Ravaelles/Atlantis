@@ -81,6 +81,7 @@ public class PylonOverstockIsRefusedTest extends WorldStubForTests {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
             initSupply(25, 33 - 5);
+            currentMinerals = 150;
             ConstructionRequests.constructions.clear();
             EventLog.clearForTests();
 

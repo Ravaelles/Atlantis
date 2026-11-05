@@ -202,6 +202,15 @@ public class GameOrderDirector implements OrderDirector {
             return false;
         }
 
+        // Never mint what the bank does not cover (ex legacy wallet
+        // funding): the scheduler plans affordable frames, but the bank
+        // moves under it. Dispatch checks reality; the demand retries.
+        if (!atlantis.game.A.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {
+            twinRefused(buildingType, "unaffordable");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
