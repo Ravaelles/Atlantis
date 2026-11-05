@@ -495,3 +495,15 @@ draws the labels - a weird layout cannot break a game, only draw.
   S0 vehicle (suite green); placement domain carries 1 pre-existing
   failure (AdoptCoveredSiteTest, stash-proven independent of this
   change - fails identically without it).
+- Slice 4b DONE 2026-11-05: power is part of the layout. Pair
+  planning replaces apart planning: every Gateway slot is born with
+  a covering Pylon slot in reach (Chebyshev <= 6, one tile under
+  the engine 7 for the footprints), because apart-planned Pylons
+  covered 2 of 10 Gateways and the support hint had nowhere to land
+  (GAME_D80BAED: support ordered, Pylon warped 16 tiles off, Gateway
+  never). The support hint is now the covering free Pylon slot,
+  twinned as supportTx/supportTy. The live main base is pruned from
+  the layout at game start (G1 used to sit under the Nexus), with
+  renumbering after the prune. PYLON_SLOTS dies with the apart era:
+  Pylons are sized by Gateway coverage, not by a count. Pinned
+  (coverage of all 10 G, prune exactness, support-slot choice).

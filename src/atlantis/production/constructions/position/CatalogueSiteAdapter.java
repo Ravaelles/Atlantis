@@ -233,13 +233,24 @@ public final class CatalogueSiteAdapter {
      * waiting for the supply pump to notice. Same high-priority queue
      * the planner drain uses (no new ordering rules); the queue dedup
      * still owns flood control, so a refused repeat twins nothing.
-     * Only power-needing buildings (Protoss by construction).
+     * The hint is the free Pylon slot covering the Gateway slot - a
+     * tile a siting Pylon can actually land on (a bare Gateway tile
+     * 16 tiles from any power is not). Only power-needing buildings.
      */
     private static void queueSlotSupportPylon(AUnitType building, APosition slot) {
         if (building == null || slot == null || !building.needsPower()) return;
         try {
+            APosition pylonSlot = atlantis.placement.core.ReservedSlots.supportPylonSlotFor(
+                slot, AUnitType.Protoss_Pylon,
+                (tile, type) ->
+                    atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(tile, type)
+                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                        .check(tile, type));
+            if (pylonSlot == null) return;
+
             ProductionOrder support = AddToQueue.withHighPriority(
-                AUnitType.Protoss_Pylon, slot);
+                AUnitType.Protoss_Pylon, pylonSlot);
             if (support == null) return;
 
             atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CATALOGUE_SITE)
@@ -249,6 +260,8 @@ public final class CatalogueSiteAdapter {
                 .param("ty", slot.ty())
                 .param("via", "slot")
                 .param("support", AUnitType.Protoss_Pylon.name())
+                .param("supportTx", pylonSlot.tx())
+                .param("supportTy", pylonSlot.ty())
                 .log(AGame.now(), atlantis.game.A.minSec());
         } catch (Exception | Error ignored) {
         }

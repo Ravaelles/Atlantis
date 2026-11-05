@@ -145,7 +145,12 @@ public class OnGameStarted {
         // into the startup path.
         try {
             atlantis.placement.core.ReservedSlots.clearForTests();
-            atlantis.placement.core.ReservedSlots.planAtGameStart();
+            atlantis.placement.core.ReservedSlots.planAtGameStart(
+                (tile, type) ->
+                    atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(tile, type)
+                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                        .check(tile, type));
         } catch (Throwable ignored) {
         }
 

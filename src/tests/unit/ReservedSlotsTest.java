@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -32,7 +33,6 @@ public class ReservedSlotsTest {
 
         return ReservedSlots.planOn(
             new atlantis.placement.core.BuildLocationCatalogue(grid), main,
-            AUnitType.Protoss_Pylon, 8,
             AUnitType.Protoss_Gateway, 10);
     }
 
@@ -77,6 +77,59 @@ public class ReservedSlotsTest {
             assertTrue(main.distTo(g1.tile) <= main.distTo(slot.tile) + 0.001,
                 "G1 is the nearest gateway slot: " + g1.tile);
         }
+    }
+
+    @Test
+    public void everyGatewaySlotSitsWithinPowerReachOfAPylonSlot() {
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
+        APosition main = terrain.baseTile(0);
+
+        java.util.List<ReservedSlots.Slot> layout = ReservedSlots.planOn(
+            new atlantis.placement.core.BuildLocationCatalogue(grid), main,
+            AUnitType.Protoss_Gateway, 10);
+
+        java.util.List<APosition> pylons = new java.util.ArrayList<APosition>();
+        java.util.List<ReservedSlots.Slot> gateways = new java.util.ArrayList<ReservedSlots.Slot>();
+        for (ReservedSlots.Slot slot : layout) {
+            if (slot.type.isPylon()) pylons.add(slot.tile);
+            else gateways.add(slot);
+        }
+        assertEquals(10, gateways.size(), "owner ordered ten gateways, all powered");
+
+        for (ReservedSlots.Slot gateway : gateways) {
+            assertTrue(ReservedSlots.coveredByPylonSlots(
+                gateway.tile.tx(), gateway.tile.ty(), pylons),
+                gateway.label + " at " + gateway.tile + " must sit within power reach of a Pylon slot");
+        }
+    }
+
+    @Test
+    public void coveredSlotsArePrunedBeforeNumbering() {
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
+        APosition main = terrain.baseTile(0);
+
+        java.util.List<ReservedSlots.Slot> layout = ReservedSlots.planOn(
+            new atlantis.placement.core.BuildLocationCatalogue(grid), main,
+            AUnitType.Protoss_Gateway, 10);
+        assertTrue(layout.size() > 0, "a layout exists to prune");
+
+        ReservedSlots.Slot g1 = null;
+        for (ReservedSlots.Slot slot : layout) {
+            if (slot.label.equals("G1")) g1 = slot;
+        }
+        assertNotNull(g1, "G1 exists before pruning");
+        final APosition coveredTile = g1.tile;
+
+        java.util.List<ReservedSlots.Slot> pruned = ReservedSlots.pruneCoveredSlots(
+            layout, (t, b) -> t.tx() == coveredTile.tx() && t.ty() == coveredTile.ty());
+
+        for (ReservedSlots.Slot slot : pruned) {
+            assertTrue(slot.tile.tx() != coveredTile.tx() || slot.tile.ty() != coveredTile.ty(),
+                "the covered slot is gone: " + slot.label);
+        }
+        assertEquals(layout.size() - 1, pruned.size(), "exactly the covered slot drops");
     }
 
     @Test

@@ -431,23 +431,40 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             atlantis.placement.core.ReservedSlots.planOn(
                 new atlantis.placement.core.BuildLocationCatalogue(grid),
                 APosition.create(20, 20),
-                AUnitType.Protoss_Pylon, 6,
                 AUnitType.Protoss_Gateway, 10);
-        atlantis.placement.core.ReservedSlots.Slot g1 = null;
-        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
-            if (slot.label.equals("G1")) g1 = slot;
-        }
-        assertNotNull(g1, "the layout owes a first gateway slot");
-        final atlantis.placement.core.ReservedSlots.Slot first = g1;
+
+        // Expected slot computed purely: the live main base stands on
+        // its tile, so slots under the 4x3 Nexus are born covered.
+        atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+        final APosition expected =
+            atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
+                AUnitType.Protoss_Gateway,
+                (tile, type) -> coversNexusBase(tile, type));
+        assertNotNull(expected, "the layout owes a free gateway slot");
 
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
-            fake(AUnitType.Protoss_Pylon, first.tile.tx() + 5, first.tile.ty()),
+            fake(AUnitType.Protoss_Pylon, expected.tx() + 5, expected.ty()),
             probe
         ), fakeEnemies(), () -> {
             atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
             try {
+                // The production occupancy (live Select) must agree with
+                // the scripted one above - otherwise the test proves
+                // nothing about the live path.
+                APosition liveExpected =
+                    atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
+                        AUnitType.Protoss_Gateway,
+                        (tile, type) ->
+                            atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                                .check(tile, type)
+                                || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                                .check(tile, type));
+                assertNotNull(liveExpected, "a free slot exists live too");
+                assertEquals(expected.tx(), liveExpected.tx(), "scripted and live occupancy agree");
+                assertEquals(expected.ty(), liveExpected.ty(), "scripted and live occupancy agree");
+
                 ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
                 Construction construction = constructionFor(
                     AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
@@ -457,9 +474,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 APosition site = CatalogueSiteAdapter.siteFor(
                     failing, probe, AUnitType.Protoss_Gateway, construction);
 
-                assertNotNull(site, "a free G1 serves even when the planner declines");
-                assertEquals(first.tile.tx(), site.tx(), "the slot tile, not a hunted one");
-                assertEquals(first.tile.ty(), site.ty(), "the slot tile, not a hunted one");
+                assertNotNull(site, "a free slot serves even when the planner declines: "
+                    + EventLog.toJsonLines());
+                assertEquals(expected.tx(), site.tx(), "the slot tile, not a hunted one");
+                assertEquals(expected.ty(), site.ty(), "the slot tile, not a hunted one");
                 assertTrue(EventLog.toJsonLines().contains("\"via\":\"slot\""),
                     "the answer names the slot path: " + EventLog.toJsonLines());
             }
@@ -467,6 +485,19 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 atlantis.placement.core.ReservedSlots.clearForTests();
             }
         });
+    }
+
+    /**
+     * Scripted twin of the production occupancy for the slot tests:
+     * the 4x3 Nexus standing on the main base tile covers whatever
+     * footprint it touches. Pure, so the expected slot is known
+     * before the world (and its power Pylon) is built.
+     */
+    private static boolean coversNexusBase(APosition tile, AUnitType type) {
+        int w = type.getTilesWidth();
+        int h = type.getTilesHeights();
+        return tile.tx() < 20 + 4 && 20 < tile.tx() + w
+            && tile.ty() < 20 + 3 && 20 < tile.ty() + h;
     }
 
     @Test
@@ -477,7 +508,6 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             atlantis.placement.core.ReservedSlots.planOn(
                 new atlantis.placement.core.BuildLocationCatalogue(grid),
                 APosition.create(20, 20),
-                AUnitType.Protoss_Pylon, 6,
                 AUnitType.Protoss_Gateway, 10);
         atlantis.placement.core.ReservedSlots.Slot g1 = null;
         atlantis.placement.core.ReservedSlots.Slot g2 = null;
@@ -533,7 +563,6 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             atlantis.placement.core.ReservedSlots.planOn(
                 new atlantis.placement.core.BuildLocationCatalogue(grid),
                 APosition.create(20, 20),
-                AUnitType.Protoss_Pylon, 6,
                 AUnitType.Protoss_Gateway, 10);
         atlantis.placement.core.ReservedSlots.Slot g1 = null;
         for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
@@ -566,16 +595,19 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 for (ProductionOrder row : Queue.get().allOrders().list()) {
                     if (row.unitType() != null && row.unitType().isPylon()
                         && row.aroundPosition() != null
-                        && row.aroundPosition().tx() == first.tile.tx()
-                        && row.aroundPosition().ty() == first.tile.ty()
-                        && row.priority() == atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH) {
+                        && row.priority() == atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH
+                        && Math.max(Math.abs(row.aroundPosition().tx() - first.tile.tx()),
+                            Math.abs(row.aroundPosition().ty() - first.tile.ty())) <= 6) {
                         queued = true;
                     }
                 }
-                assertTrue(queued, "the unpowered slot orders its support Pylon high-priority: "
+                assertTrue(queued, "the unpowered slot orders its support Pylon high-priority"
+                    + " on a covering Pylon slot, not the bare Gateway tile: "
                     + Queue.get().allOrders().list());
                 assertTrue(EventLog.toJsonLines().contains("\"result\":\"supported\""),
                     "the support order is twinned: " + EventLog.toJsonLines());
+                assertTrue(EventLog.toJsonLines().contains("\"supportTx\""),
+                    "the twin names where the Pylon should land: " + EventLog.toJsonLines());
             }
             finally {
                 atlantis.placement.core.ReservedSlots.clearForTests();
@@ -591,19 +623,18 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             atlantis.placement.core.ReservedSlots.planOn(
                 new atlantis.placement.core.BuildLocationCatalogue(grid),
                 APosition.create(20, 20),
-                AUnitType.Protoss_Pylon, 6,
                 AUnitType.Protoss_Gateway, 10);
-        atlantis.placement.core.ReservedSlots.Slot g1 = null;
-        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
-            if (slot.label.equals("G1")) g1 = slot;
-        }
-        assertNotNull(g1, "the layout owes G1");
-        final atlantis.placement.core.ReservedSlots.Slot first = g1;
+        atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+        final APosition expected =
+            atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
+                AUnitType.Protoss_Gateway,
+                (tile, type) -> coversNexusBase(tile, type));
+        assertNotNull(expected, "the layout owes a free gateway slot");
 
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
-            fake(AUnitType.Protoss_Pylon, first.tile.tx() + 5, first.tile.ty()),
+            fake(AUnitType.Protoss_Pylon, expected.tx() + 5, expected.ty()),
             probe
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
@@ -620,7 +651,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 APosition site = CatalogueSiteAdapter.siteFor(
                     failing, probe, AUnitType.Protoss_Gateway, construction);
 
-                assertNotNull(site, "a powered slot serves (slice 2)");
+                assertNotNull(site, "a powered slot serves: " + EventLog.toJsonLines());
                 boolean queued = false;
                 for (ProductionOrder row : Queue.get().allOrders().list()) {
                     if (row.unitType() != null && row.unitType().isPylon()) queued = true;
@@ -642,7 +673,6 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             atlantis.placement.core.ReservedSlots.planOn(
                 new atlantis.placement.core.BuildLocationCatalogue(grid),
                 APosition.create(20, 20),
-                AUnitType.Protoss_Pylon, 6,
                 AUnitType.Protoss_Gateway, 10);
 
         java.util.List<FakeUnit> ours = new java.util.ArrayList<FakeUnit>();

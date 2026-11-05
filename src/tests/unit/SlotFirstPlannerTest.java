@@ -38,7 +38,6 @@ public class SlotFirstPlannerTest {
         return ReservedSlots.planOn(
             new BuildLocationCatalogue(grid),
             terrain.baseTile(0),
-            AUnitType.Protoss_Pylon, 6,
             AUnitType.Protoss_Gateway, 10);
     }
 
