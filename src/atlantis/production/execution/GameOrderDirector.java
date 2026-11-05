@@ -191,6 +191,17 @@ public class GameOrderDirector implements OrderDirector {
             return false;
         }
 
+        // A waiting Core outranks Pylon spending while contended (owner
+        // rule, ex legacy CorePriorityGate): the 100 minerals stay saved
+        // for the Core instead of going into a forward Pylon. Started
+        // (warping) Cores and rich banks never block. Same guard name.
+        if (buildingType.isPylon()
+            && atlantis.production.orders.production.queue.PriorityWaiters.pylonYieldsToCore()) {
+            twinRefused(buildingType, "core-priority");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
