@@ -62,6 +62,13 @@ owner-called.
 - **#179 ZealDrag coordination/hold-fire.** Sim-pinned; live
   losses showed mobile units, not freezing. Open: winnability vs
   real bots (0/9 FFA wins).
+- **Early harass override (owner 2026-11-07).** A healthy first
+  Dragoon meets 1-2 lone Zerglings instead of holding formation or
+  standing off (`EarlyHarass.shouldHarass` vetoes FormHold calm slots
+  with a HARASS verdict and MissionHold standoffs; kite still
+  outranks, packs/zealots/breach keep their pins). Pinned red-first
+  (`EarlyHarassTest` 3/3); combat 759/759, fast 1137/0. Open: live
+  early-Zerg pressure game.
 - **#181 split-cluster reinforce.** Sim-pinned (fresh-contact
   reinforce, ghost-contact rejection, ongoing-fight priority).
   Open: live recurrence of the park-while-fighting shape.

@@ -148,6 +148,12 @@ public final class FormationHold {
             // defense is known (cannons keep their formation approach);
             // hidden defenders re-arm formation on approach, per frame.
             if (noKnownEnemyToFormAgainst()) return HoldVerdict.OTHER;
+            // Early harass override (owner 2026-11-07): a healthy first
+            // Dragoon meets lone Zerglings/Zealots instead of forming up
+            // against them. Below the kite gates (kiting still outranks),
+            // above the calm: the safe move and the lethal move coincide.
+            if (atlantis.combat.cluster.EarlyHarass.shouldHarass(unit, target))
+                return HoldVerdict.HARASS;
             if (calmStandoffAtChoke(unit)) return HoldVerdict.CALM_FAR;
             if (DuelMemory.tookDamageSinceLastBattleFrame(unit)) return HoldVerdict.DAMAGE;
             if (unit.hasWeaponRangeToAttack(target, 0)) return HoldVerdict.OTHER;
@@ -398,6 +404,11 @@ public final class FormationHold {
          * Anything else that declines the hold (tactic, ranged enemy, ...).
          */
         OTHER,
+        /**
+         * Early harass override (owner 2026-11-07): a healthy first
+         * Dragoon meets lone Zerglings/Zealots instead of holding.
+         */
+        HARASS,
         /**
          * Raiders in our base: no forming up, everybody attacks (owner doctrine).
          */

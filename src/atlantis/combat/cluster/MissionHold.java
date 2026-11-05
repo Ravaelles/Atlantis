@@ -41,6 +41,11 @@ public final class MissionHold {
     public static boolean hold(AUnit unit, HasPosition anchor) {
         if (unit == null || !unit.isAlive()) return true;
 
+        // Early harass override (owner 2026-11-07): the standoff is the
+        // other half of the pinned dragoon - a healthy first Dragoon
+        // with melee in front marches out instead of standing off.
+        if (atlantis.combat.cluster.EarlyHarass.shouldHarass(unit, null)) return false;
+
         try {
             HasPosition standoff = ArmyMission.current() == ArmyMission.HOLD_NATURAL_CHOKE
                 ? ClusterRally.naturalStandoffPoint()
