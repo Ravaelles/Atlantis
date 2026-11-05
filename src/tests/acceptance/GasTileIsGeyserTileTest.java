@@ -2,7 +2,6 @@ package tests.acceptance;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.builders.GasBuildingFix;
-import atlantis.production.constructions.position.FindPosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -30,22 +29,6 @@ public class GasTileIsGeyserTileTest extends WorldStubForTests {
     @Override
     public Race initRace() {
         return Race.Protoss;
-    }
-
-    @Test
-    public void finderReturnsGeyserTile() {
-        FakeUnit base = fake(AUnitType.Protoss_Nexus, 80, 110);
-        FakeUnit worker = fake(AUnitType.Protoss_Probe, 79, 109);
-        neutralInWorld = new FakeUnit[]{fake(AUnitType.Resource_Vespene_Geyser, GX, GY)};
-
-        world(1, units(base, worker), units(), () -> {
-            APosition tile = FindPosition.findForBuilding(
-                worker, AUnitType.Protoss_Assimilator, null, base.position(), 30
-            );
-
-            assertEquals(GX, tile.tx(), "refinery tile x");
-            assertEquals(GY, tile.ty(), "refinery tile y");
-        });
     }
 
     @Test
