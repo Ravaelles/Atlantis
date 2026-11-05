@@ -70,9 +70,17 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
      * the same order, every frame on the 60-frame grid (all slightly
      * earlier - less re-plan dither per decision). Same contract as ever:
      * order, gates and no-churn pin the opening, not the clock.
+     *
+     * Re-goldened 2026-11-06 for the V2 earlier-reserve guard (mint only
+     * what covers price plus unpaid earlier rows): refusing marginal
+     * mints moves bank across rows, so Gateway@12 warps 900f earlier
+     * (bank no longer sunk into a contested mint) and the tail re-times
+     * around it. Same rows, same order, supply 50 reached, bank capped,
+     * no intruder, no invalid orders - the full test proves health, not
+     * just the clock.
      */
     private static final int[] GOLDEN_WARP_FRAMES = {
-        1980, 3720, 6360, 5280, 4200, 6000, 6780, 5400, 8760, 7680, 7140,
+        1980, 3720, 5460, 5280, 4200, 6360, 6960, 5880, 7800, 8040, 7080,
     };
 
     /**
