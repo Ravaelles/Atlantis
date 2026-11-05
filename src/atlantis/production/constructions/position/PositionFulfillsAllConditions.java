@@ -5,9 +5,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.conditions.*;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructions.position.protoss.*;
-import atlantis.production.constructions.position.terran.TerranForbiddenByStreetGrid;
-import atlantis.production.constructions.position.terran.TerranPositionFinder;
-import atlantis.production.constructions.position.terran.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -105,18 +102,6 @@ public class PositionFulfillsAllConditions {
             // be pinned by a test, and Protoss buildings are therefore not
             // checked against region edges at all.
             if (ProtossCannonTooCloseToPylonFix.isTooClose(building, position)) return failed();
-        }
-
-        if (We.terran()) {
-            if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
-//            if (!TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
-            if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return failed();
-
-            if (building.isMissileTurret()) {
-                if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return failed();
-            }
-            if (TooCloseToBunker.isTooCloseToBunker(building, position)) return failed();
-            if (TooCloseToTerranBase.isTooCloseToBase(building, position)) return failed();
         }
 
         if (!building.isBase()) {
