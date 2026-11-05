@@ -194,9 +194,17 @@ public class GameOrderDirector implements OrderDirector {
         // A waiting Core outranks Pylon spending while contended (owner
         // rule, ex legacy CorePriorityGate): the 100 minerals stay saved
         // for the Core instead of going into a forward Pylon. Started
-        // (warping) Cores and rich banks never block. Same guard name.
+        // (warping) Cores and rich banks never block. Only when the Core
+        // is actually affordable: yielding while the bank cannot cover
+        // the Core parks the Pylon behind a demand that cannot move
+        // either (measured sim: 40 refusals into a supply stall - the
+        // legacy door never saw this because its queue rows converted;
+        // V2 mints the Core itself, so an unaffordable Core must not
+        // veto the unblocker). Same guard name.
         if (buildingType.isPylon()
-            && atlantis.production.orders.production.queue.PriorityWaiters.pylonYieldsToCore()) {
+            && atlantis.production.orders.production.queue.PriorityWaiters.pylonYieldsToCore()
+            && atlantis.game.A.canAfford(AUnitType.Protoss_Cybernetics_Core.mineralPrice(),
+            AUnitType.Protoss_Cybernetics_Core.gasPrice())) {
             twinRefused(buildingType, "core-priority");
 
             return false;
