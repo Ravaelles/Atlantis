@@ -328,7 +328,14 @@ public class ConstructionStatusChanger extends Commander {
         return Select.ourWithUnfinishedOfType(construction.buildingType())
             .inRadius(WARP_MATCH_RADIUS_TILES, construction.buildPosition())
             .list().stream()
-            .filter(warping -> !isAdoptedByAnotherRow(warping, construction))
+            // Only genuinely warping entities count: the selector answers
+            // by aliveness, so a standing neighbour (e.g. a completed
+            // Pylon two tiles from a frozen site) would otherwise shield
+            // the row from its demote forever - measured in StarEngine:
+            // the frozen [15,34] Pylon never demoted because completed
+            // [13,34] matched. A completed building on the site is the
+            // proximity-finish's case, not the demote's.
+            .filter(warping -> !warping.isCompleted() && !isAdoptedByAnotherRow(warping, construction))
             .findFirst()
             .orElse(null);
     }
