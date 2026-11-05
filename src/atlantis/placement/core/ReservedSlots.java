@@ -104,6 +104,37 @@ public final class ReservedSlots {
     }
 
     /**
+     * The first slot of this type no live building covers, oldest
+     * planned first. Occupancy answers the caller (footprint overlap,
+     * standing and unfinished alike), so this stays free of engine
+     * imports and the single door can share it with the funnel.
+     * Never throws: a failed occupancy read skips the slot, a failed
+     * pass reads as no slot - the hunt below owns the frame either way.
+     */
+    public static APosition firstFreeSlotOfType(
+        AUnitType type, java.util.function.BiPredicate<APosition, AUnitType> occupied
+    ) {
+        if (type == null || occupied == null) return null;
+        try {
+            for (Slot slot : slots) {
+                if (slot == null || slot.tile == null || slot.type == null) continue;
+                if (!slot.type.equals(type)) continue;
+
+                boolean busy;
+                try {
+                    busy = occupied.test(slot.tile, type);
+                } catch (Exception | Error ignored) {
+                    continue;
+                }
+                if (!busy) return slot.tile;
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return null;
+    }
+
+    /**
      * Ranked, non-overlapping slots of two footprint families around a
      * point, nearest first (stable order: distance, then tile). Pure
      * over the catalogue. Public so the layout stays pinnable from

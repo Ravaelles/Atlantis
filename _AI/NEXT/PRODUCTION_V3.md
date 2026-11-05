@@ -476,3 +476,22 @@ draws the labels - a weird layout cannot break a game, only draw.
   severity). Only power-needing buildings. Pinned red-first (2 new
   pins: unpowered G1 queues Pylon HIGH at the slot tile + twin;
   powered slot orders nothing; red was an empty queue pre-wiring).
+- Live shape GAME_D80BA0ED (slot-wiring jar): ZERO via-slot twins -
+  the V2-direct path mints reservation tiles verbatim and never
+  funnels, so slots wired only into the adapter never see the main
+  demand (Gateway still 25v12 off-plan). Slice 4 moves the slots
+  into the planner: the single door.
+- Slice 4a DONE 2026-11-05: reservePlacement serves the first free
+  planned slot before the ranked hunt, through the same extracted
+  legality ladder (serveIfLegal: availability/refused/standing/
+  minerals/base/NEEDS_SUPPORT+support/success). Occupancy is
+  footprint overlap standing+unfinished via caller predicate (no new
+  ArchUnit edge: engine already imports those conditions).
+  Decision pinned pure (SlotFirstPlannerTest 4/4: G1 first, covered
+  skip to G2, full->null, unknown/null->null); the slot-vs-hunt
+  outcome is sim-indistinguishable (ranker converges on G1) and is
+  proved live (V2_DISPATCH tile == slot tile). Hunt behavior
+  unchanged: the extraction is covered by existing planner pins +
+  S0 vehicle (suite green); placement domain carries 1 pre-existing
+  failure (AdoptCoveredSiteTest, stash-proven independent of this
+  change - fails identically without it).

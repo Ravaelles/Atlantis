@@ -413,6 +413,17 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return reserveGas(unitType, targetFrame);
         }
 
+        // V3 S6: the once-planned layout owns issuance on the single
+        // door too - the first free slot serves before the ranked hunt,
+        // through the same legality ladder a hunted tile faces, so the
+        // V2-direct path (which never funnels) issues from the layout.
+        // A refused slot falls through to the hunt below, never declines.
+        BuildLocation planned = firstFreePlannedSlot(unitType);
+        if (planned != null) {
+            PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
+            if (slotAnswer != null) return slotAnswer;
+        }
+
         APosition centre = searchCentre(constraint);
         if (centre == null)
             return PlacementReservation.failure();
@@ -447,8 +458,53 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (reservedThisPass.contains(tile))
                 continue;
 
-            RacePlacementStrategy.AvailabilityVerdict availability = availabilityVerdict(unitType, candidate);
-            if (availability == RacePlacementStrategy.AvailabilityVerdict.REFUSE) continue;
+            PlacementReservation answer = serveIfLegal(candidate, unitType, targetFrame, ranker);
+            if (answer != null) return answer;
+        }
+
+        return PlacementReservation.failure();
+    }
+
+    /**
+     * The first free planned slot of this type as a catalogue-shaped
+     * candidate, or null. Occupancy is footprint overlap, standing and
+     * unfinished alike: a warping Pylon and a parked row both hold
+     * their slot, and a cancelled row frees it by ceasing to cover it
+     * (no bookkeeping that could desync). Pure order, no mutation.
+     */
+    private BuildLocation firstFreePlannedSlot(AUnitType unitType) {
+        if (unitType == null) return null;
+
+        try {
+            APosition tile = atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
+                unitType,
+                (slotTile, building) ->
+                    atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(slotTile, building)
+                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                        .check(slotTile, building));
+            if (tile == null) return null;
+
+            return new atlantis.placement.core.BuildLocation(
+                tile.tx(), tile.ty(),
+                unitType.getTilesWidth(), unitType.getTilesHeights(),
+                0, 0, 0, false);
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * One candidate through the whole legality ladder, hunt and slot
+     * alike: refused tiles never serve, unpowered ones declare support
+     * (and end the pass with failure, like the hunt), standing-covered
+     * tiles never host a warp. Returns the reservation, or null when
+     * this candidate is skipped and the hunt moves on.
+     */
+    private PlacementReservation serveIfLegal(BuildLocation candidate, AUnitType unitType, int targetFrame,
+            BuildLocationCatalogue.LocationScorer ranker) {
+        RacePlacementStrategy.AvailabilityVerdict availability = availabilityVerdict(unitType, candidate);
+        if (availability == RacePlacementStrategy.AvailabilityVerdict.REFUSE) return null;
 
             // A tile a standing building already covers never hosts a warp:
             // serving it burns a builder walk plus a proximity-finish cancel
@@ -457,7 +513,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // Completed buildings only - warping ones still finish and free
             // the tile (same rule as the sim's coveredByStanding and the
             // refresh path's blockingCompletedBuilding).
-            if (standsOnCompletedBuilding(candidate, unitType)) continue;
+            if (standsOnCompletedBuilding(candidate, unitType)) return null;
 
             // A mineral-crowding tile never hosts a warp either: same shape as
             // the standing-cover check above, evaluated through the shared
@@ -465,7 +521,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // (Owner 2026-11-01: no Pylon within 5 tiles of minerals.)
             if (atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(
                 unitType, APosition.create(candidate.tileX(), candidate.tileY())
-            )) continue;
+            )) return null;
 
             // An engine-refused tile never hosts a warp while the refusal
             // stands (NEXT #151): the engine said no there, so serving it
@@ -473,7 +529,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // (measured live: Nexus [105,115] refused 1031 times, natural
             // never online). TTL-forgiven, like the funnel decline.
             if (atlantis.production.constructions.position.RefusedTiles.isRefused(
-                APosition.create(candidate.tileX(), candidate.tileY()), unitType)) continue;
+                APosition.create(candidate.tileX(), candidate.tileY()), unitType)) return null;
 
             // Expansion discipline (owner order 2026-11-04): a base warps
             // only next to a real base location (within 2 tiles) and away
@@ -482,7 +538,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // parked a Nexus 105 s ("looks bugged" cancels, re-mint on
             // another edge tile). No map data (tests, sims without BWTA)
             // fails open to the old behavior.
-            if (unitType.isBase() && !isLegalBaseSite(candidate.tileX(), candidate.tileY())) continue;
+            if (unitType.isBase() && !isLegalBaseSite(candidate.tileX(), candidate.tileY())) return null;
 
             // No worker-cover skip here (V3 S1, deferred): the funnel and
             // the legacy spiral decline worker-covered tiles through the
@@ -516,20 +572,17 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 return PlacementReservation.failure();
             }
 
-            reservedThisPass.add(tile);
+            reservedThisPass.add(candidate.tileX() + ":" + candidate.tileY());
             grid.markUsed(candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight());
 
             PlacementReservation reservation =
                 PlacementReservation.success(candidate.tileX(), candidate.tileY(), targetFrame);
-            CoverageVerdict coverage = ranker.coverageOf(candidate);
+            CoverageVerdict coverage = ranker == null ? null : ranker.coverageOf(candidate);
             if (coverage != null) {
                 reservation = reservation.withCoverage(coverage.choke(), coverage.anchor());
             }
             return reservation;
-        }
-
-        return PlacementReservation.failure();
     }
 
     /**
