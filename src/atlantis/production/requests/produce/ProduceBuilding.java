@@ -317,7 +317,7 @@ public class ProduceBuilding {
      * never need power (their needsPower is false, so no first-Pylon
      * deadlock); warping counts as not built, per the owner's rule.
      */
-    static boolean powerProviderNotFunded(AUnitType type) {
+    public static boolean powerProviderNotFunded(AUnitType type) {
         if (!We.protoss() || !type.needsPower()) return false;
         if (Count.ofType(AUnitType.Protoss_Pylon) > 0) return false;
 

@@ -181,6 +181,16 @@ public class GameOrderDirector implements OrderDirector {
             return false;
         }
 
+        // Power before workers (owner rule, ex legacy PowerNotFundedGate):
+        // sending a builder for a power-needing building while no Pylon
+        // stands spends its price and then holds the worker on unpowered
+        // ground while the bank refills. Wait until the bank covers both.
+        if (atlantis.production.requests.produce.ProduceBuilding.powerProviderNotFunded(buildingType)) {
+            twinRefused(buildingType, "power-not-funded");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
