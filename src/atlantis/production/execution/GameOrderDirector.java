@@ -211,6 +211,19 @@ public class GameOrderDirector implements OrderDirector {
             return false;
         }
 
+        // Earlier rows reserve first (ex legacy EarlierReserveGate): an
+        // earlier unfinished building still needs its price, so a later
+        // mint must cover both (warping rows paid at warp start and never
+        // count). V2 has no queue sequence - every other unpaid row
+        // counts. Same guard name in the twin.
+        if (!atlantis.game.A.canAfford(
+            buildingType.mineralPrice() + unpaidUnfinishedMinerals(),
+            buildingType.gasPrice() + unpaidUnfinishedGas())) {
+            twinRefused(buildingType, "earlier-reserve");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
@@ -370,8 +383,6 @@ public class GameOrderDirector implements OrderDirector {
         lastRefusedTwin.clear();
     }
 
-    private static final java.util.Map<String, Integer> lastRefusedTwin = new java.util.HashMap<>();
-
     /**
      * A refused mint names its guard (same names as the legacy door, one
      * doctrine across the migration), throttled like the no-builder twin
@@ -395,7 +406,41 @@ public class GameOrderDirector implements OrderDirector {
         }
     }
 
+    private static final java.util.Map<String, Integer> lastRefusedTwin = new java.util.HashMap<>();
+
     private static final java.util.Map<String, Integer> lastNoBuilderTwin = new java.util.HashMap<>();
+
+    /**
+     * Unpaid price of every other unfinished row (minerals): a warping
+     * row paid at warp start (its building unit lives), so only rows
+     * with no live building unit still need money. The mint door's
+     * earlier-reserve math - no queue sequence, every row counts.
+     */
+    private static int unpaidUnfinishedMinerals() {
+        int sum = 0;
+        for (atlantis.production.constructions.Construction other :
+            atlantis.production.constructions.ConstructionRequests.notFinished()) {
+            if (other == null || other.buildingType() == null) continue;
+            atlantis.units.AUnit building = other.buildingUnit();
+            if (building != null && building.isAlive()) continue;
+            sum += other.buildingType().mineralPrice();
+        }
+
+        return sum;
+    }
+
+    private static int unpaidUnfinishedGas() {
+        int sum = 0;
+        for (atlantis.production.constructions.Construction other :
+            atlantis.production.constructions.ConstructionRequests.notFinished()) {
+            if (other == null || other.buildingType() == null) continue;
+            atlantis.units.AUnit building = other.buildingUnit();
+            if (building != null && building.isAlive()) continue;
+            sum += other.buildingType().gasPrice();
+        }
+
+        return sum;
+    }
 
     private static void twinNoBuilder(AUnitType buildingType) {
         try {
