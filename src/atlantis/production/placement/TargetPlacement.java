@@ -11,13 +11,19 @@ package atlantis.production.placement;
  */
 public final class TargetPlacement {
 
-    private static final TargetPlacement ANYWHERE = new TargetPlacement(Mode.ANYWHERE, 0, 0, 0, 0, null);
+    private static final TargetPlacement ANYWHERE = new TargetPlacement(Mode.ANYWHERE, 0, 0, 0, 0, null, -1);
     private final Mode mode;
     /**
      * Neighbourhood centre in build tiles; meaningful for NEIGHBOURHOOD.
      */
     private final int tileX;
     private final int tileY;
+    /**
+     * Search radius in tiles around the neighbourhood centre; meaningful
+     * for NEIGHBOURHOOD. Negative means unbounded (the queue funnel has
+     * no maxDistance - it ranks around the anchor but serves anywhere).
+     */
+    private final double radius;
     /**
      * Exact tile; meaningful for EXACT_TILE (ramp pylons, cannon creeps, geysers).
      */
@@ -28,10 +34,12 @@ public final class TargetPlacement {
      */
     private final String areaName;
 
-    private TargetPlacement(Mode mode, int tileX, int tileY, int exactTileX, int exactTileY, String areaName) {
+    private TargetPlacement(Mode mode, int tileX, int tileY, int exactTileX, int exactTileY, String areaName,
+                            double radius) {
         this.mode = mode;
         this.tileX = tileX;
         this.tileY = tileY;
+        this.radius = radius;
         this.exactTileX = exactTileX;
         this.exactTileY = exactTileY;
         this.areaName = areaName;
@@ -42,11 +50,21 @@ public final class TargetPlacement {
     }
 
     public static TargetPlacement inNeighbourhood(int tileX, int tileY) {
-        return new TargetPlacement(Mode.NEIGHBOURHOOD, tileX, tileY, 0, 0, null);
+        return new TargetPlacement(Mode.NEIGHBOURHOOD, tileX, tileY, 0, 0, null, -1);
+    }
+
+    /**
+     * Neighbourhood with a search radius in tiles (the sited door passes
+     * its maxDistance): the hunt skips candidates beyond the radius, so
+     * the answer lands where the caller asked. Negative means unbounded,
+     * as in legacy.
+     */
+    public static TargetPlacement inNeighbourhood(int tileX, int tileY, double radius) {
+        return new TargetPlacement(Mode.NEIGHBOURHOOD, tileX, tileY, 0, 0, null, radius);
     }
 
     public static TargetPlacement exactTile(int tileX, int tileY) {
-        return new TargetPlacement(Mode.EXACT_TILE, 0, 0, tileX, tileY, null);
+        return new TargetPlacement(Mode.EXACT_TILE, 0, 0, tileX, tileY, null, -1);
     }
 
     /**
@@ -55,7 +73,15 @@ public final class TargetPlacement {
     public static TargetPlacement namedArea(String name) {
         if (name == null || name.trim().isEmpty()) return ANYWHERE;
 
-        return new TargetPlacement(Mode.NAMED_AREA, 0, 0, 0, 0, name.trim().toUpperCase());
+        return new TargetPlacement(Mode.NAMED_AREA, 0, 0, 0, 0, name.trim().toUpperCase(), -1);
+    }
+
+    /**
+     * Search radius in tiles, or negative when unbounded. Only
+     * NEIGHBOURHOOD carries one.
+     */
+    public double radius() {
+        return mode == Mode.NEIGHBOURHOOD ? radius : -1;
     }
 
     public String areaName() {
@@ -112,7 +138,8 @@ public final class TargetPlacement {
                 return "anywhere";
 
             case NEIGHBOURHOOD:
-                return "near(" + tileX + "," + tileY + ")";
+                return radius < 0 ? "near(" + tileX + "," + tileY + ")"
+                    : "near(" + tileX + "," + tileY + ",r=" + radius + ")";
 
             case EXACT_TILE:
                 return "exact(" + exactTileX + "," + exactTileY + ")";

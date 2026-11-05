@@ -120,19 +120,13 @@ public final class CatalogueSiteAdapter {
         if (building == null) return null;
 
         planner.startPass();
-        TargetPlacement constraint = constraintForSited(nearTo);
+        TargetPlacement constraint = constraintForSited(nearTo, maxDistance);
         PlacementReservation reservation = propose(planner, builder, building, constraint, "sited",
-            new HashSet<String>());
+            new HashSet<String>(), site -> withinRange(site, nearTo, maxDistance));
         if (reservation == null) {
             return null;
         }
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
-        if (!withinRange(site, nearTo, maxDistance)) {
-            SiteTwin.declined(building, "too-far", "sited",
-                constraint.nearTileX(), constraint.nearTileY());
-
-            return null;
-        }
         return answerWithTwin(site, building, "sited", reservation, constraint);
     }
 
@@ -304,12 +298,25 @@ public final class CatalogueSiteAdapter {
      */
     private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
                                                 TargetPlacement constraint, String via) {
-        return propose(planner, builder, building, constraint, via, new HashSet<String>());
+        return propose(planner, builder, building, constraint, via, new HashSet<String>(), null);
     }
 
     private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
                                                 TargetPlacement constraint, String via,
                                                 Set<String> excluded) {
+        return propose(planner, builder, building, constraint, via, excluded, null);
+    }
+
+    /**
+     * @param inRange null means no range gate (the queue funnel has no
+     * maxDistance); the sited door passes its withinRange check so an
+     * out-of-neighbourhood tile excludes-and-retries like any other
+     * refusal instead of failing the whole demand after a success.
+     */
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
+                                                TargetPlacement constraint, String via,
+                                                Set<String> excluded,
+                                                java.util.function.Predicate<APosition> inRange) {
         // The catalogue proposes, the legacy validator disposes: a tile the
         // builder-time checks refuse would start a builder, fail refresh and
         // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
@@ -340,6 +347,19 @@ public final class CatalogueSiteAdapter {
             }
 
             APosition site = APosition.create(reservation.tileX(), reservation.tileY());
+            // Cheapest gate first: the legacy ring search stayed within
+            // maxDistance of near, so an out-of-neighbourhood tile
+            // excludes-and-retries here instead of failing a served
+            // demand downstream (measured stub: ranker's favourite
+            // declined on edge, second tile declined too-far, demand
+            // died while the legacy tile passed the verdict).
+            if (inRange != null && !inRange.test(site)) {
+                SiteTwin.declined(building, "too-far", via, constraint.nearTileX(), constraint.nearTileY());
+                if (attempt + 1 >= FUNNEL_MAX_TRIES) return null;
+                excluded.add(tileKey(site.tx(), site.ty()));
+
+                continue;
+            }
             // V3 S1: one verdict owns refused / power-at-footprint-center /
             // geyser-minerals / worker-cover, so the funnel can never serve a
             // tile the legacy spiral would decline. Physics (occupancy, engine
@@ -445,11 +465,11 @@ public final class CatalogueSiteAdapter {
         return TargetPlacement.anywhere();
     }
 
-    private static TargetPlacement constraintForSited(HasPosition nearTo) {
+    private static TargetPlacement constraintForSited(HasPosition nearTo, double maxDistance) {
         if (nearTo == null) return TargetPlacement.anywhere();
 
         APosition centre = APosition.create(nearTo);
 
-        return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
+        return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty(), maxDistance);
     }
 }

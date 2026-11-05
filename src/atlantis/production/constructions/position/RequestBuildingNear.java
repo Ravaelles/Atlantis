@@ -12,7 +12,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
 public class RequestBuildingNear {
@@ -147,32 +146,18 @@ public class RequestBuildingNear {
     private APosition findExactPosition() {
         AUnit builder = FreeWorkers.get().nearestTo(near);
 
-        // Sited demand reaches the catalogue first (same flag, same
-        // null-means-legacy contract as the queue funnel): coverage-ranked
-        // tiles for cannons, block layouts for the rest. The validations,
-        // queueing and construction below stay exactly as they were.
-        APosition site = CatalogueSiteAdapter.siteForSited(builder, type, near, maxDistance);
-        if (site != null) return site;
-
-        APosition position = FindPosition.findForBuilding(
-            builder,
-            type,
-            null,
-            near,
-            maxDistance
-        );
-
-        if (preventTooManyOfTheSameTypeInOnePlace(position)) return null;
-
-        return position;
-    }
-
-    private boolean preventTooManyOfTheSameTypeInOnePlace(APosition position) {
-        if (position == null) return false;
-
-        //            ErrorLog.printMaxOncePerMinute(A.minSec() + " - Prevent excessive cannons at " + position);
-        return type.isCannon()
-            && Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).countInRadius(8, position) >= 6;
+        // Sited demand is catalogue-only (owner order 2026-11-06,
+        // single door): coverage-ranked tiles for cannons, block
+        // layouts for the rest, with bounded retry over declined
+        // tiles (the legacy spiral fallback died here - the retry
+        // serves the second tile where the fallback served the
+        // legacy tile). Null still means "declined, fail closed".
+        // The 6-unfinished-cannons cap died with the fallback: it
+        // guarded legacy-served tiles only (catalogue sites always
+        // bypassed it) and tooManyNear above still caps unfinished
+        // neighbours. The validations, queueing and construction
+        // below stay exactly as they were.
+        return CatalogueSiteAdapter.siteForSited(builder, type, near, maxDistance);
     }
 
     private boolean tooManyNear(AUnitType type, HasPosition near) {

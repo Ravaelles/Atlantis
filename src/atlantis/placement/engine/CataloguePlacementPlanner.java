@@ -430,8 +430,19 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // through the same legality ladder a hunted tile faces, so the
         // V2-direct path (which never funnels) issues from the layout.
         // A refused slot falls through to the hunt below, never declines.
+        // A slot outside a bounded neighbourhood falls through too: the
+        // sited door asked near its anchor, the layout lives at the main.
+        APosition centre = searchCentre(constraint);
+        if (centre == null)
+            return PlacementReservation.failure();
+
+        double slotRadius = constraint.radius();
+        boolean slotBounded = constraint.mode() == TargetPlacement.Mode.NEIGHBOURHOOD && slotRadius >= 0;
+
         BuildLocation planned = firstFreePlannedSlot(unitType, excluded);
-        if (planned != null) {
+        if (planned != null
+            && (!slotBounded
+            || APosition.create(planned.tileX(), planned.tileY()).distTo(centre) <= slotRadius)) {
             PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
             if (slotAnswer != null) {
                 // The single door proves it issues from the layout: hunted
@@ -446,10 +457,6 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                 return slotAnswer;
             }
         }
-
-        APosition centre = searchCentre(constraint);
-        if (centre == null)
-            return PlacementReservation.failure();
 
         // Named-area base anchors are adjudication-critical and otherwise
         // invisible on the V2 path (no funnel twin): a far-away warp
@@ -476,9 +483,19 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         BuildLocationCatalogue.LocationScorer ranker = rankerFor(unitType, centre);
         java.util.Collections.sort(candidates, ranker);
 
+        // A bounded neighbourhood (the sited door passes its maxDistance)
+        // serves only inside the radius: the legacy ring search never
+        // left it either. Unbounded (funnel, V2-direct) serves anywhere
+        // as before - the ranker alone decides order there.
+        double radius = constraint.radius();
+        boolean bounded = constraint.mode() == atlantis.production.placement.TargetPlacement.Mode.NEIGHBOURHOOD
+            && radius >= 0;
+
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
             if (reservedThisPass.contains(tile) || excluded.contains(tile))
+                continue;
+            if (bounded && APosition.create(candidate.tileX(), candidate.tileY()).distTo(centre) > radius)
                 continue;
 
             PlacementReservation answer = serveIfLegal(candidate, unitType, targetFrame, ranker);
