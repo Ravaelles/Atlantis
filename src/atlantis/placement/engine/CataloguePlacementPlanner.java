@@ -421,7 +421,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         BuildLocation planned = firstFreePlannedSlot(unitType);
         if (planned != null) {
             PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
-            if (slotAnswer != null) return slotAnswer;
+            if (slotAnswer != null) {
+                // The single door proves it issues from the layout: hunted
+                // tiles stay untwinned (as before), a served slot names
+                // itself, so a game log tells slot issues apart from hunts.
+                if (slotAnswer.isSuccessful()) {
+                    SiteTwin.answered(unitType,
+                        APosition.create(planned.tileX(), planned.tileY()),
+                        "slot-planner", slotAnswer, null);
+                }
+
+                return slotAnswer;
+            }
         }
 
         APosition centre = searchCentre(constraint);

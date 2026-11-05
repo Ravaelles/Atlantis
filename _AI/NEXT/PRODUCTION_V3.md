@@ -490,11 +490,23 @@ draws the labels - a weird layout cannot break a game, only draw.
   Decision pinned pure (SlotFirstPlannerTest 4/4: G1 first, covered
   skip to G2, full->null, unknown/null->null); the slot-vs-hunt
   outcome is sim-indistinguishable (ranker converges on G1) and is
-  proved live (V2_DISPATCH tile == slot tile). Hunt behavior
-  unchanged: the extraction is covered by existing planner pins +
-  S0 vehicle (suite green); placement domain carries 1 pre-existing
-  failure (AdoptCoveredSiteTest, stash-proven independent of this
-  change - fails identically without it).
+  proved live (V2_DISPATCH tile == slot tile; the planner twins
+  served slots as via slot-planner on the same CATALOGUE_SITE key,
+  hunts stay untwinned as before). Hunt behavior unchanged: the
+  extraction is covered by existing planner pins + S0 vehicle
+  (suite green); placement domain carries 1 pre-existing failure
+  (AdoptCoveredSiteTest, stash-proven independent of this change -
+  fails identically without it).
+- Live shape GAME_D5AABE08 (slot-planner jar): 1489 via-slot twins
+  (2x supported) - the funnel path still declines unpowered
+  Gateway slots while the V2 path mints; Gateway never warped
+  (support Pylon warped 16 tiles off the slot it was hinted at).
+  Lesson: the hint is not coverage. Slice 5 (below) answers it.
+- Digest tooling fix 2026-11-05: GAME_45B3F90E POSTGAME_SUMMARY.json
+  was unparseable (a multiline ### FAILED ### sample broke the hand
+  JSON - escape() knew only \\ and "). escape() now covers
+  control chars, and the rescue shouts are single-line; pinned
+  red-first (multiline sample stays valid JSON).
 - Slice 4b DONE 2026-11-05: power is part of the layout. Pair
   planning replaces apart planning: every Gateway slot is born with
   a covering Pylon slot in reach (Chebyshev <= 6, one tile under

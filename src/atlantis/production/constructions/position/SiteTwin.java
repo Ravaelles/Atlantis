@@ -60,7 +60,12 @@ public final class SiteTwin {
             .log(frame, A.minSec());
     }
 
-    static void answered(AUnitType building, APosition site, String via,
+    /**
+     * Public like {@link #centre}: the single door (which lives outside
+     * this package) twins the slots it serves, so a game log tells
+     * slot issues apart from hunts.
+     */
+    public static void answered(AUnitType building, APosition site, String via,
                          PlacementReservation reservation,
                          atlantis.production.placement.TargetPlacement constraint) {
         if (site == null) return;

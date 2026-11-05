@@ -238,15 +238,15 @@ public class CancelTooLongConstructions {
             }
 
             ErrorLog.printMaxOncePerMinute(
-                "### FAILED ### Requesting " + type + " as it got cancelled\n" +
-                    "New requested order: " + newOrder
+                "### FAILED ### Requesting " + type + " as it got cancelled"
+                    + " / New requested order: " + newOrder
             );
 
             if (newOrder == null && type.isProtossImportantTechBuilding()) {
                 newOrder = AddToQueue.withTopPriority(type);
 
                 ErrorLog.printMaxOncePerMinute(
-                    "### IMPORTANT ### Re-request failed again " + type + "\n" +
+                    "### IMPORTANT ### Re-request failed again " + type + " / " +
                         "Re-requested: " + newOrder
                 );
             }

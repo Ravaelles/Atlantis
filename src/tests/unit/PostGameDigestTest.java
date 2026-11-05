@@ -92,6 +92,22 @@ public class PostGameDigestTest {
     }
 
     @Test
+    public void multilineSamplesStayValidJson() throws Exception {
+        PostGameDigest.note(LogKey.STALL, LogLevel.HIGH,
+            "### FAILED ### Requesting Pylon as it got cancelled\nNew requested order: At 13 Pylon* (#117)");
+        PostGameDigest.noteConsole(LogLevel.HIGH, "tab\there\"quoted\"");
+
+        java.io.File tmp = Files.createTempFile("digest-multiline", ".json").toFile();
+        PostGameDigest.writeTo(tmp.getAbsolutePath(), "{}");
+
+        String json = new String(Files.readAllBytes(tmp.toPath()), "UTF-8");
+        assertTrue(json.contains("\\n"), "newlines escape, the file stays one JSON object per write: " + json);
+        assertTrue(json.contains("\\\"quoted\\\""), "quotes escape: " + json);
+        assertTrue(!json.contains("\nNew requested"),
+            "no raw newline inside a sample: " + json);
+    }
+
+    @Test
     public void jsonCarriesErrorsByKeySamplesAndConstruction() throws Exception {
         PostGameDigest.note(LogKey.STALL, LogLevel.HIGH, "STALL f=1");
         PostGameDigest.note(LogKey.SUPPLY_OVERSTOCK, LogLevel.CRITICAL, "overstock");
