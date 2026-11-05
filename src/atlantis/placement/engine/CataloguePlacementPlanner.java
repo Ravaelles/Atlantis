@@ -612,15 +612,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             // here. Unify at the S4 single door with live proof, not by
             // breaking the sim-green opening now.
 
-            // No map-edge skip here (V3 S2 follow-up): the verdict owns the
-            // 4-tile rule for the funnel and the legacy spiral, but this
-            // loop serves the frozen-warp recovery Pylon on an edge tile in
-            // sim (StalledWarpRecoverySimTest: bank hoards with no warp
-            // when the skip is added). Live the supply-blocked emergency
-            // exemption in the verdict covers it; in sim supply reads are
-            // stubbed, so the loop cannot tell emergency from doctrine and
-            // must keep serving. Same sim-gap class as the worker-cover
-            // deferral above - unify at the S4 single door with live proof.
+            // Map edge (owner order, S2 numbers, live-proven 2026-11-06:
+            // the planner served x=0 Pylon tiles on TauCross while the
+            // funnel declined them - the SUPPORT flow mints exact tiles
+            // with no downstream verdict, so the loop owns the same rule.
+            // Single source: the shared verdict predicate, emergency
+            // exemption included (a supply-blocked Pylon/Gateway may still
+            // take an edge tile, so frozen-warp recovery is not parked
+            // behind the doctrine).
+            if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
+                unitType, APosition.create(candidate.tileX(), candidate.tileY()))) return null;
 
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
@@ -811,6 +812,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         int y = constraint.exactTileY();
 
         if (!grid.isFreeFor(x, y, type.getTilesWidth(), type.getTilesHeights())) {
+            return PlacementReservation.failure();
+        }
+
+        // Exact tiles answer the same single verdict: an edge exact tile
+        // (the SUPPORT flow's hint) fails here instead of minting an
+        // illegal warp with no downstream check. Emergency exemption
+        // included via the shared predicate.
+        if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
+            type, APosition.create(x, y))) {
             return PlacementReservation.failure();
         }
 

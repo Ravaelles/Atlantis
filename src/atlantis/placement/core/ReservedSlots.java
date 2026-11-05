@@ -179,6 +179,14 @@ public final class ReservedSlots {
         for (BuildLocation candidate : candidates) {
             if (gateways >= gatewayCount) break;
 
+            // No edge slots, ever (owner order: Pylon warped ON the map
+            // edge on TauCross while the funnel declines edge tiles -
+            // the layout is the first issuer, so it owns the same rule.
+            // Same 4-tile footprint-aware numbers as the verdict; layout
+            // is planned once at game start, no emergency exemption).
+            if (isEdgeTile(candidate.tileX(), candidate.tileY(),
+                candidate.tileWidth(), candidate.tileHeight())) continue;
+
             Rect rect = new Rect(
                 candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight());
@@ -210,6 +218,9 @@ public final class ReservedSlots {
         for (BuildLocation candidate : pylonCandidates) {
             if (Math.max(Math.abs(candidate.tileX() - gx), Math.abs(candidate.tileY() - gy))
                 > POWER_COVER_TILES) continue;
+
+            if (isEdgeTile(candidate.tileX(), candidate.tileY(),
+                candidate.tileWidth(), candidate.tileHeight())) continue;
 
             Rect rect = new Rect(
                 candidate.tileX(), candidate.tileY(),
@@ -379,6 +390,31 @@ public final class ReservedSlots {
         }
 
         return false;
+    }
+
+    /**
+     * The layout's copy of the map-edge rule (same 4-tile
+     * footprint-aware numbers as the single verdict): blocks never
+     * sit on an edge or corner, so no slot is born illegal. Local
+     * on purpose - placement core must not reach into the production
+     * verdict package (frozen architecture boundary). No emergency
+     * exemption here: the layout is planned once at game start, the
+     * exemption is a per-pass runtime call.
+     */
+    private static final int EDGE_MARGIN_TILES = 4;
+
+    private static boolean isEdgeTile(int tx, int ty, int w, int h) {
+        try {
+            int mapW = atlantis.map.AMap.getMapWidthInTiles();
+            int mapH = atlantis.map.AMap.getMapHeightInTiles();
+            if (mapW <= 0 || mapH <= 0) return false;
+
+            if (tx < EDGE_MARGIN_TILES || ty < EDGE_MARGIN_TILES) return true;
+
+            return tx + w > mapW - EDGE_MARGIN_TILES || ty + h > mapH - EDGE_MARGIN_TILES;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     private static final class Rect {
