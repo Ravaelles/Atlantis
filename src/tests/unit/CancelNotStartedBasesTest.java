@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -9,6 +10,7 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * one is a <i>rebuild</i>, not an expansion, and nothing was gained - see
  * {@link atlantis.information.enemy.UnitsArchive#lastTimeOurBaseDiedLessThanAgo(int)}.</p>
  */
+@Tag("placement")
 public class CancelNotStartedBasesTest extends WorldStubForTests {
 
     @Override

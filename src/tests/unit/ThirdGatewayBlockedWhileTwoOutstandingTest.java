@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.buildings.ProduceGateway;
@@ -7,6 +8,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * cap, so the pump adds a third. Outstanding means queue + constructions
  * + warping buildings.
  */
+@Tag("placement")
 public class ThirdGatewayBlockedWhileTwoOutstandingTest extends WorldStubForTests {
 
     private boolean fired = false;

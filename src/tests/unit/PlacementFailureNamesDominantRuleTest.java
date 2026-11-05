@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
@@ -7,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * twin carries the dominant one. The request-level twin itself only fires
  * live (the stub harness answers every placement "this one will do").
  */
+@Tag("placement")
 public class PlacementFailureNamesDominantRuleTest extends WorldStubForTests {
 
     @Override

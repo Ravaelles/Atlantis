@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -7,6 +8,7 @@ import atlantis.production.constructions.position.conditions.can_build_here.CanP
 import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -42,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * half of that contract.
  * </p>
  */
+@Tag("placement")
 public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;

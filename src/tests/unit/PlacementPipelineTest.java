@@ -1,9 +1,10 @@
-package tests.acceptance;
+package tests.unit;
 
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.placement.race.ProtossPlacementStrategy;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * deterministic, which is what makes it a guard for the whole subsystem.
  * </p>
  */
+@Tag("placement")
 public class PlacementPipelineTest {
 
     private static boolean sameOrigin(BuildLocation a, BuildLocation b) {

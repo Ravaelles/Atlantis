@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
@@ -9,6 +10,7 @@ import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * gone from the list while its building warps. A second Core order while
  * any Core comes (other order's site or warping building) is refused.
  */
+@Tag("placement")
 public class SecondCoreRequestRefusedTest extends WorldStubForTests {
 
     private boolean fired = false;

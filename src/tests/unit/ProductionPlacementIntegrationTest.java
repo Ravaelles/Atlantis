@@ -1,4 +1,4 @@
-package tests.acceptance;
+package tests.unit;
 import atlantis.production.engine.GameStateSnapshot;
 
 import atlantis.production.demand.ProductionGoal;
@@ -6,6 +6,7 @@ import atlantis.production.policy.ProductionRacePolicy;
 import atlantis.production.placement.TargetPlacement;
 import atlantis.production.demand.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * ({@code GameStateSnapshot}) is exercised by the e2e smoke tests.
  * </p>
  */
+@Tag("placement")
 public class ProductionPlacementIntegrationTest {
 
     /**

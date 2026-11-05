@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
@@ -8,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Position;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -29,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
  * tiles away, everything beyond reads its Euclidean fallback - the
  * production fallback when no BWEM path exists.</p>
  */
+@Tag("placement")
 public class GatewaySpiralSkipsAcrossWallTileTest extends WorldStubForTests {
 
     @Override

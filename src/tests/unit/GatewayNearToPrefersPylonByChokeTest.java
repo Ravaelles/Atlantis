@@ -1,11 +1,13 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossDefineNearTo;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * then order-cancelled in a loop). The anchor is the Pylon nearest the
  * main choke; with no Pylon at all the legacy choke center stands in.
  */
+@Tag("placement")
 public class GatewayNearToPrefersPylonByChokeTest extends WorldStubForTests {
 
     @Override

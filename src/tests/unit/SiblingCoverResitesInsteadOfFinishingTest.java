@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -10,6 +11,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * ({@code StaleDuplicateFinishesOnItsTilesTest}); a travelling builder
  * keeps its walk (#53).
  */
+@Tag("placement")
 public class SiblingCoverResitesInsteadOfFinishingTest extends WorldStubForTests {
 
     private boolean fired = false;

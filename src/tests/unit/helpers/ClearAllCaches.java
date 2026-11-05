@@ -78,5 +78,6 @@ public class ClearAllCaches {
         atlantis.combat.BattleCommander.clearForTests();
         atlantis.combat.formation.FormationOrderLatch.clearForTests();
         atlantis.combat.twins.StrengthWatch.clearForTests();
+        atlantis.placement.engine.EnginePowerSource.clearForTests();
     }
 }

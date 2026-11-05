@@ -1,9 +1,11 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.PylonPosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -37,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * build beside</b>. That is the invariant; the exact distance is tuning.
  * </p>
  */
+@Tag("placement")
 public class FirstPylonOriginTest extends WorldStubForTests {
 
     @Override

@@ -1,11 +1,13 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * mask itself without a world.
  * </p>
  */
+@Tag("placement")
 public class PylonPowerRadiusTest extends WorldStubForTests {
 
     @Override

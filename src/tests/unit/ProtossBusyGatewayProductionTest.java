@@ -1,10 +1,12 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.game.A;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import atlantis.util.Counter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitData;
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * is what the harness calls "not free". The production used to return before it ever
  * asked the engine, and it did so silently, which is why the report was a week old.</p>
  */
+@Tag("placement")
 public class ProtossBusyGatewayProductionTest extends WorldStubForTests {
 
     private final ArrayList<FakeUnit> spawned = new ArrayList<>();

@@ -1,9 +1,11 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.production.constructions.builders.ShouldNotTravelToConstructYet;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * travel used to unlock at ~74 banked, now at ~50. Only while no Pylon
  * stands: later Pylons keep the old threshold.</p>
  */
+@Tag("placement")
 public class FirstPylonTravelsEarlyTest extends WorldStubForTests {
 
     private boolean fired = false;

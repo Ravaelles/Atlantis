@@ -1,11 +1,13 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * the rescued tile below is refused by the grid on purpose, on a
  * comfortable bank so no escape hatch is open.</p>
  */
+@Tag("placement")
 public class PylonLastResortTest extends WorldStubForTests {
 
     private boolean fired = false;

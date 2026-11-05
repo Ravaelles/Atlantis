@@ -466,6 +466,15 @@ draws the labels - a weird layout cannot break a game, only draw.
   only). Remaining: 3 off-plan (Gateway 25v12 drought shape -
   slot issuance is the answer), 1 healthy Pylon demote+warp,
   4x SUPPLY_OVERSTOCK, 4x STALL. Slot-wiring proof next game.
+- V3 S6 slice 5 DOING 2026-11-06 (owner order: no live games until
+  StarEngine proves the base): the V2 composition root forwards
+  drained planner support to a covering Pylon slot (exact
+  reservation, affordable only, pylon-cap respected, twin
+  result=supported via=slot-planner). StarEngine vehicle: the whole
+  placement suite runs by tag (26 acceptance siting tests moved to
+  tests.unit with @Tag placement; --domain placement is the
+  runner), plus a live-shape repro (TauCross spawn of GAME_120B0292)
+  and power/support planner pins with the real strategy.
 - Slice 2 live shape GAME_60A9B0ED (slot-wiring jar, short loss):
   228 `declined unpowered via slot` twins, zero served - the
   verdict gates power binarily and the V2 scheduler never drains

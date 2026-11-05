@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -9,6 +10,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>Null sites keep the old path: fresh placement there can genuinely help,
  * so only decided (non-null) gas sites skip the refresh-cancel pair.</p>
  */
+@Tag("placement")
 public class GasRefreshKeepsDecidedSiteTest extends WorldStubForTests {
 
     private static final int GX = 86;

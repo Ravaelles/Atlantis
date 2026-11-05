@@ -13,6 +13,11 @@ import atlantis.production.execution.V2DispatchTwin;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.placement.core.ReservedSlots;
+import atlantis.placement.core.SupportRequest;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
+import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.demand.*;
 import atlantis.production.execution.*;
@@ -24,6 +29,8 @@ import atlantis.production.demand.BuildOrderGoals;
 import atlantis.production.demand.BuildOrderRow;
 import atlantis.units.AUnitType;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,12 +150,114 @@ public final class ProductionEngine {
         plan = CommittedConstructions.mergeInto(plan, state.frame());
         lastPlan = plan;
 
+        forwardPlannedSupport();
+
         gameDirector.startFrame();
         List<DispatchResult> issued = new ProductionDispatcher(gameDirector).dispatch(plan, goals, state.frame(), LATENCY_FRAMES);
 
         logFrame(state.frame(), plan, issued);
 
         return plan;
+    }
+
+    /**
+     * V3 single door, support half (owner order 2026-11-06): the planner
+     * declares power support as data during reservePlacement, and this
+     * composition root forwards each declaration to production - the V2
+     * heartbeat (no-placement every 600f, zero Gateways live
+     * GAME_120B0292) proved declarations without forwarding are a
+     * silent stall. Each support Pylon goes to the covering free
+     * Pylon slot (ReservedSlots), validated by exact reservation,
+     * affordable only, pylon-cap respected; a refused repeat twins
+     * nothing.
+     */
+    private void forwardPlannedSupport() {
+        forwardDrainedSupport(placementPlanner, gameDirector, A.now());
+    }
+
+    /**
+     * Testable seam: forwarding is a pure function of the buffered
+     * support, the planned layout, the bank and the pylon cap - no
+     * economy sim needed to pin it (CONVENTIONS §10: decisions pin
+     * pure, the sim proves the wiring once per capability).
+     */
+    public static void forwardDrainedSupport(PlacementPlanner planner, GameOrderDirector director, int now) {
+        java.util.List<SupportRequest> drained;
+        try {
+            drained = planner.drainSupportRequests();
+        } catch (Exception | Error ignored) {
+            return;
+        }
+        if (drained == null || drained.isEmpty()) return;
+
+        for (SupportRequest support : drained) {
+            try {
+                forwardOneSupport(planner, director, support, now);
+            } catch (Exception | Error ignored) {
+            }
+        }
+    }
+
+    private static void forwardOneSupport(PlacementPlanner planner, GameOrderDirector director, SupportRequest support, int now) {
+        if (support == null || support.unitType() == null) return;
+        if (!support.unitType().isPylon()) return;
+
+        APosition gatewayTile = APosition.create(support.tileX(), support.tileY());
+        APosition pylonTile = ReservedSlots.supportPylonSlotFor(
+            gatewayTile, support.unitType(),
+            (tile, type) ->
+                OverlapsOurStandingBuilding.check(tile, type)
+                    || OverlapsOurUnfinishedBuilding.check(tile, type));
+        if (pylonTile == null) return;
+
+        // Same doors as a normal mint: no overdraft, no flood past the cap,
+        // no twin for a re-offer the live row already absorbs.
+        if (!A.canAfford(support.unitType())) return;
+        if (atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight()) return;
+        if (hasLiveConstruction(support.unitType(), pylonTile)) return;
+
+        PlacementReservation reservation = planner.reservePlacement(
+            UnitProducible.of(support.unitType()),
+            TargetPlacement.exactTile(pylonTile.tx(), pylonTile.ty()),
+            now);
+        if (reservation == null || !reservation.isSuccessful()) return;
+
+        boolean ok = director.buildAt(
+            UnitProducible.of(support.unitType()), reservation, A.supplyUsed());
+        if (!ok) return;
+
+        EventLog.key(LogKey.CATALOGUE_SITE)
+            .param("type", "Gateway")
+            .param("result", "supported")
+            .param("tx", gatewayTile.tx())
+            .param("ty", gatewayTile.ty())
+            .param("via", "slot-planner")
+            .param("support", support.unitType().name())
+            .param("supportTx", pylonTile.tx())
+            .param("supportTy", pylonTile.ty())
+            .log(now, A.minSec());
+    }
+
+    /**
+     * A live row on the same tile already owns this demand: the re-offer
+     * is absorbed, never re-minted, never re-twinned (mirrors the
+     * same-tile dedupe inside buildAt).
+     */
+    private static boolean hasLiveConstruction(AUnitType type, APosition tile) {
+        try {
+            for (atlantis.production.constructions.Construction construction :
+                atlantis.production.constructions.ConstructionRequests.constructions) {
+                if (construction == null || construction.buildingType() != type
+                    || construction.buildPosition() == null) continue;
+                if (construction.buildPosition().tx() == tile.tx()
+                    && construction.buildPosition().ty() == tile.ty()) {
+                    return true;
+                }
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return false;
     }
 
     /**

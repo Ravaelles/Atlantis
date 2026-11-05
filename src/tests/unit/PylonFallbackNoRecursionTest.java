@@ -1,11 +1,13 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * "no tile". A zero search radius fails on both passes by construction, which
  * is what pins the guard without needing a map.</p>
  */
+@Tag("placement")
 public class PylonFallbackNoRecursionTest extends WorldStubForTests {
 
     @Override

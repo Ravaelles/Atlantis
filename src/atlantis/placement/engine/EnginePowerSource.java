@@ -86,6 +86,23 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         return (((long) tx) << 32) | (ty & 0xffffffffL);
     }
 
+    /**
+     * Test seam: the memo is keyed by (frame, game), but every stub
+     * world plays frames 0-5 on a re-mocked game the key cannot tell
+     * apart - a powered tile from one test reads unpowered (or the
+     * reverse) in the next. The harness clears this per test, next to
+     * the other static resets.
+     */
+    public static void clearForTests() {
+        memoFrame = Integer.MIN_VALUE;
+        memoGame = null;
+        memoPylons = java.util.Collections.emptyList();
+        memoUnfinished = java.util.Collections.emptyList();
+        memoPowered.clear();
+        memoIncoming.clear();
+        memoCoverable.clear();
+    }
+
     private static void memo(int frame) {
         Object game = atlantis.Atlantis.game();
         if (frame == memoFrame && game == memoGame) return;

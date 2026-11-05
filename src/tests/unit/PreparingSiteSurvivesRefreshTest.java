@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -9,6 +10,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * yet there is nothing to save, only churn to make. Adoption
  * re-validates at issue time anyway.
  */
+@Tag("placement")
 public class PreparingSiteSurvivesRefreshTest extends WorldStubForTests {
 
     private boolean fired = false;

@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -7,6 +8,7 @@ import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * still warping. The link is the order instance: a sibling row links a
  * different order and still proceeds.
  */
+@Tag("placement")
 public class WarpedOrderIsNotResitedTest extends WorldStubForTests {
 
     private boolean fired = false;

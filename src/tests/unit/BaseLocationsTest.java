@@ -1,9 +1,11 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.util.Options;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeUnit;
@@ -13,6 +15,7 @@ import static atlantis.units.AUnitType.Protoss_Pylon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Tag("placement")
 public class BaseLocationsTest extends WorldStubForTests {
     @Test
     public void testNearestTo() {

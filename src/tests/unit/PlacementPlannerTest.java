@@ -1,4 +1,4 @@
-package tests.acceptance;
+package tests.unit;
 import atlantis.production.placement.PlacementPlanner;
 
 import atlantis.placement.core.TileAvailabilityGrid;
@@ -7,6 +7,7 @@ import atlantis.production.placement.PlacementReservation;
 import atlantis.production.placement.TargetPlacement;
 import atlantis.production.producibles.UnitProducible;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * placement acceptance tests.
  * </p>
  */
+@Tag("placement")
 public class PlacementPlannerTest {
 
     private static CataloguePlacementPlanner planner(int w, int h) {

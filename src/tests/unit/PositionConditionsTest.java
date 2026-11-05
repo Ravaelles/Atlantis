@@ -1,5 +1,6 @@
-package tests.acceptance;
+package tests.unit;
 
+import tests.acceptance.WorldStubForTests;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.conditions.TooCloseToMainBase;
@@ -9,6 +10,7 @@ import atlantis.production.constructions.position.conditions.can_build_here.CanP
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * placement is being worked on.
  * </p>
  */
+@Tag("placement")
 public class PositionConditionsTest extends WorldStubForTests {
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;
