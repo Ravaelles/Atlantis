@@ -439,6 +439,7 @@ public class ConstructionStatusChanger extends Commander {
 
         if (fresh != null && fresh.isAlive()) {
             if (loud) {
+                if (lastStuckTwin.size() > 64) lastStuckTwin.clear();
                 lastStuckTwin.put(construction.id(), A.now());
                 twinStuck(construction, "re-armed builder #" + fresh.id());
             }
@@ -447,6 +448,7 @@ public class ConstructionStatusChanger extends Commander {
         }
 
         if (loud) {
+            if (lastStuckTwin.size() > 64) lastStuckTwin.clear();
             lastStuckTwin.put(construction.id(), A.now());
             twinStuck(construction, "no-free-builder");
         }

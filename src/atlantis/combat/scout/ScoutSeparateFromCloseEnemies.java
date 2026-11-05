@@ -48,6 +48,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         center = enemies.limit(2).center();
 
         if (enemies.notEmpty()) {
+            if (engagedUntil.size() > 16) engagedUntil.clear();
             engagedUntil.put(unit.id(), A.now() + HOLD_FRAMES);
 
             return true;
@@ -62,15 +63,20 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         // releases early when nothing hostile remains in the wider exit
         // band, and re-checks from scratch afterwards.
         Integer until = engagedUntil.get(unit.id());
-        if (until != null && A.now() < until) {
-            enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin() + EXIT_EXTRA_TILES);
-            if (enemies.notEmpty()) {
-                center = enemies.limit(2).center();
-                engagedUntil.put(unit.id(), A.now() + HOLD_FRAMES);
-
-                return true;
+        if (until != null) {
+            if (A.now() >= until) {
+                engagedUntil.remove(unit.id());
             }
-            engagedUntil.remove(unit.id());
+            else {
+                enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin() + EXIT_EXTRA_TILES);
+                if (enemies.notEmpty()) {
+                    center = enemies.limit(2).center();
+                    engagedUntil.put(unit.id(), A.now() + HOLD_FRAMES);
+
+                    return true;
+                }
+                engagedUntil.remove(unit.id());
+            }
         }
 
         return false;
