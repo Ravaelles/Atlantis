@@ -146,7 +146,7 @@ public class BaseLocations {
      * a base. Starting locations are also included here.
      */
     public static List<ABaseLocation> baseLocations() {
-        return (List<ABaseLocation>) cache.get(
+        List<ABaseLocation> out = (List<ABaseLocation>) cache.get(
             "baseLocations",
             -1,
             () -> AllBaseLocations.get()
@@ -159,6 +159,21 @@ public class BaseLocations {
 //                        .filter(base -> Select.minerals().inRadius(8, base).atLeast(6))
 //                        .collect(Collectors.toList())
         );
+
+        // Same no-poison rule as the natural: BWEM lists no bases during
+        // map analysis, and caching that empty answer poisons every
+        // base-anchored decision for the whole game.
+        if (out == null || out.isEmpty()) cache.forget("baseLocations");
+
+        return out;
+    }
+
+    /**
+     * Per-game reset: base lists belong to the map, and a new game is a
+     * new map. Called from OnGameStarted alongside the natural reset.
+     */
+    public static void resetForNewGame() {
+        cache.forget("baseLocations");
     }
 
     public static List<ABaseLocation> nonStartingLocations() {
