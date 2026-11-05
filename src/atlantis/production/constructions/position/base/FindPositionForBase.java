@@ -4,23 +4,18 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.util.We;
 
 public class FindPositionForBase {
 
     // =========================================================
 
     public static APosition forNewBase(AUnit builder, AUnitType building, Construction construction, HasPosition nearTo) {
-        if (We.zerg()) {
-            if (Count.larvas() == 0 || Count.bases() >= 3) {
-                return APositionFinder.findStandardPosition(builder, building, nearTo, 30);
-            }
-        }
+        // Protoss-only bot: no Zerg branch (the legacy Zerg fallback died
+        // with the spiral - a Zerg game breaks hundreds of Protoss
+        // assumptions long before base siting matters).
 
         // Migration A4c (owner #146): pure catalogue. The legacy spiral
         // fallback is gone - a declined base retries through the demand
