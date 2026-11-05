@@ -927,8 +927,9 @@ public class AAdvancedPainter extends APainter {
     /**
      * Pre-planned building slots (owner order 2026-11-04): G1..G10 and
      * P1.. drawn in full mode only, so the opening layout is visible
-     * without spamming the partial view. Display-only - nothing mints
-     * from these yet.
+     * without spamming the partial view. The funnel and the planner
+     * both issue from these slots now (V3 S6) - grey means free,
+     * a standing or warping building on the tile means taken.
      */
     private static void paintReservedSlots() {
         try {
@@ -936,11 +937,23 @@ public class AAdvancedPainter extends APainter {
                 atlantis.placement.core.ReservedSlots.slots()) {
                 if (slot == null || slot.tile == null || slot.type == null) continue;
 
+                // Same occupancy the issuance reads: a covered slot is
+                // taken (green), a free one is still to build (grey).
+                boolean taken;
+                try {
+                    taken = atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(slot.tile, slot.type)
+                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                        .check(slot.tile, slot.type);
+                } catch (Exception | Error ignored) {
+                    taken = false;
+                }
+
                 paintRectangle(
                     slot.tile,
                     slot.type.getTilesWidth() * 32,
                     slot.type.getTilesHeights() * 32,
-                    Color.Grey);
+                    taken ? Color.Green : Color.Grey);
                 paintTextCentered(slot.tile, slot.label, Color.White);
             }
         } catch (Exception | Error ignored) {

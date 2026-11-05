@@ -438,6 +438,10 @@ draws the labels - a weird layout cannot break a game, only draw.
   (draw labels in full mode only).
 - Verify: placement domain green; a live full-mode game shows
   G1..G10/P1.. on the ground (owner visual check).
+- Visibility DONE 2026-11-06: TauCross forces full painting +
+  main-base camera on watched runs (headless batch games
+  untouched - the commander returns early there); taken slots
+  draw green, free grey, same occupancy issuance reads.
 - Next slice (needs its own pin + live proof): wire issuance to
   take reserved slots (funnel first), then delete the per-frame
   fallback search for covered types. S3 (start-block-first Pylon,

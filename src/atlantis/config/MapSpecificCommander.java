@@ -314,6 +314,19 @@ public class MapSpecificCommander extends Commander {
         }
 
         // =========================================================
+        // Ladder TauCross: the pre-planned layout (ReservedSlots G1..G10 /
+        // P1.., owner order 2026-11-04) is only visible in full painting.
+        // Watched runs only - MapSpecificCommander already returns early
+        // for headless batch games, so this never costs them a frame.
+        else if (ActiveMap.isMap("TauCross", "Tau Cross")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.centerCameraOn(Select.ourBases().first());
+            }
+        }
+
+        // =========================================================
 
         else if (ActiveMap.isMap("M&M_v_Zealots")) {
             if (A.now() <= 1) {
