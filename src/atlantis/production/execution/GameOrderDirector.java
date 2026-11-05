@@ -158,6 +158,18 @@ public class GameOrderDirector implements OrderDirector {
             return true;
         }
 
+        // Below 40 supply never more than 8 free (owner rule, ex legacy
+        // PylonOverstockGate): a Pylon mint that would push free past
+        // that waits - the demand retries next frame. Same guard name
+        // in the twin, so the logs read one doctrine across the door
+        // migration.
+        if (buildingType.isPylon()
+            && atlantis.game.A.supplyUsed() < 40 && atlantis.game.A.supplyFree() > 8) {
+            twinRefused(buildingType, "pylon-overstock");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
@@ -314,6 +326,32 @@ public class GameOrderDirector implements OrderDirector {
      */
     public static void clearForTests() {
         lastNoBuilderTwin.clear();
+        lastRefusedTwin.clear();
+    }
+
+    private static final java.util.Map<String, Integer> lastRefusedTwin = new java.util.HashMap<>();
+
+    /**
+     * A refused mint names its guard (same names as the legacy door, one
+     * doctrine across the migration), throttled like the no-builder twin
+     * so a waiting demand does not shout every frame.
+     */
+    private static void twinRefused(AUnitType buildingType, String guard) {
+        try {
+            String id = (buildingType == null ? "-" : buildingType.name()) + ":" + guard;
+            Integer last = lastRefusedTwin.get(id);
+            int now = atlantis.game.A.now();
+            if (last != null && now - last < 600) return;
+            lastRefusedTwin.put(id, now);
+
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.BUILD_REFUSED)
+                .param("type", buildingType == null ? "-" : buildingType.name())
+                .param("guard", guard)
+                .param("supplyUsed", atlantis.game.A.supplyUsed())
+                .param("minerals", atlantis.game.A.minerals())
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception | Error ignored) {
+        }
     }
 
     private static final java.util.Map<String, Integer> lastNoBuilderTwin = new java.util.HashMap<>();
