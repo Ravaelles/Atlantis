@@ -96,6 +96,14 @@ public final class ReservedSlots {
     }
 
     /**
+     * Test seam: inject a layout computed by {@link #planOn} (pure) so
+     * issuance tests pin slot order without a live game start.
+     */
+    public static void setSlotsForTests(List<Slot> layout) {
+        slots = layout == null ? new ArrayList<Slot>() : new ArrayList<Slot>(layout);
+    }
+
+    /**
      * Ranked, non-overlapping slots of two footprint families around a
      * point, nearest first (stable order: distance, then tile). Pure
      * over the catalogue. Public so the layout stays pinnable from

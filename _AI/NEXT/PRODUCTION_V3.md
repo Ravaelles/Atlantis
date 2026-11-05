@@ -443,3 +443,22 @@ draws the labels - a weird layout cannot break a game, only draw.
   fallback search for covered types. S3 (start-block-first Pylon,
   reverted for shifting the whole opening) returns in this form:
   slots, not sitters.
+- Slice 2 DONE 2026-11-05: funnel serves a free reserved slot
+  before the planner hunts. `siteForInner` consults the layout
+  after the scope/order gates: first slot of the type no standing
+  or unfinished footprint covers, under the same verdict +
+  physics + reachability a hunted tile faces (shared
+  `unreachableFromMain`, so the paths cannot disagree); a refused
+  slot twins `declined ... via slot` and falls through to the hunt,
+  full slots fall through silently. Twin `answered ... via slot`
+  vs `via funnel` tells the paths apart in EVENTS. Pinned red-first
+  (3 new pins in CatalogueSiteAdapterTest: free G1 serves despite a
+  failing planner, occupied G1 skips to G2, full slots fall back to
+  the planner; red was 3/3 nulls pre-wiring).
+- Live verification GAME_F881CFF3 (tree with LVL cleanup + 4:00
+  gate, pre-slot-wiring jar): zero [HIGH] console lines, zero
+  Critical cancels, zero phantom cannons, Core warped 2:44 and
+  survived, sameTileDups=0, B1 blocks fire correctly (7x, JSON
+  only). Remaining: 3 off-plan (Gateway 25v12 drought shape -
+  slot issuance is the answer), 1 healthy Pylon demote+warp,
+  4x SUPPLY_OVERSTOCK, 4x STALL. Slot-wiring proof next game.

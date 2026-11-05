@@ -418,6 +418,156 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     /**
+     * V3 S6 slice 2 (owner order 2026-11-04, Stardust doctrine): a free
+     * reserved slot serves BEFORE the planner hunts - the layout picked
+     * once at game start owns issuance, per-frame search is the
+     * fallback. A failing planner must not matter when G1 is free.
+     */
+    @Test
+    public void aFreeReservedSlotServesBeforeThePlanner() {
+        atlantis.placement.core.TileAvailabilityGrid grid =
+            new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
+            atlantis.placement.core.ReservedSlots.planOn(
+                new atlantis.placement.core.BuildLocationCatalogue(grid),
+                APosition.create(20, 20),
+                AUnitType.Protoss_Pylon, 6,
+                AUnitType.Protoss_Gateway, 10);
+        atlantis.placement.core.ReservedSlots.Slot g1 = null;
+        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+            if (slot.label.equals("G1")) g1 = slot;
+        }
+        assertNotNull(g1, "the layout owes a first gateway slot");
+        final atlantis.placement.core.ReservedSlots.Slot first = g1;
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, first.tile.tx() + 5, first.tile.ty()),
+            probe
+        ), fakeEnemies(), () -> {
+            atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+                Construction construction = constructionFor(
+                    AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+                ScriptedPlanner failing = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.failure());
+
+                APosition site = CatalogueSiteAdapter.siteFor(
+                    failing, probe, AUnitType.Protoss_Gateway, construction);
+
+                assertNotNull(site, "a free G1 serves even when the planner declines");
+                assertEquals(first.tile.tx(), site.tx(), "the slot tile, not a hunted one");
+                assertEquals(first.tile.ty(), site.ty(), "the slot tile, not a hunted one");
+                assertTrue(EventLog.toJsonLines().contains("\"via\":\"slot\""),
+                    "the answer names the slot path: " + EventLog.toJsonLines());
+            }
+            finally {
+                atlantis.placement.core.ReservedSlots.clearForTests();
+            }
+        });
+    }
+
+    @Test
+    public void anOccupiedSlotIsSkippedForTheNextFreeOne() {
+        atlantis.placement.core.TileAvailabilityGrid grid =
+            new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
+            atlantis.placement.core.ReservedSlots.planOn(
+                new atlantis.placement.core.BuildLocationCatalogue(grid),
+                APosition.create(20, 20),
+                AUnitType.Protoss_Pylon, 6,
+                AUnitType.Protoss_Gateway, 10);
+        atlantis.placement.core.ReservedSlots.Slot g1 = null;
+        atlantis.placement.core.ReservedSlots.Slot g2 = null;
+        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+            if (slot.label.equals("G1")) g1 = slot;
+            if (slot.label.equals("G2")) g2 = slot;
+        }
+        assertNotNull(g1, "the layout owes G1");
+        assertNotNull(g2, "the layout owes G2");
+        final atlantis.placement.core.ReservedSlots.Slot taken = g1;
+        final atlantis.placement.core.ReservedSlots.Slot next = g2;
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, next.tile.tx() + 5, next.tile.ty()),
+            fake(AUnitType.Protoss_Gateway, taken.tile.tx(), taken.tile.ty()),
+            probe
+        ), fakeEnemies(), () -> {
+            atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+                Construction construction = constructionFor(
+                    AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+                ScriptedPlanner failing = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.failure());
+
+                APosition site = CatalogueSiteAdapter.siteFor(
+                    failing, probe, AUnitType.Protoss_Gateway, construction);
+
+                assertNotNull(site, "an occupied G1 skips to G2, never declines while slots stay free");
+                assertEquals(next.tile.tx(), site.tx(), "the next free slot");
+                assertEquals(next.tile.ty(), site.ty(), "the next free slot");
+            }
+            finally {
+                atlantis.placement.core.ReservedSlots.clearForTests();
+            }
+        });
+    }
+
+    @Test
+    public void fullSlotsFallThroughToThePlanner() {
+        atlantis.placement.core.TileAvailabilityGrid grid =
+            new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
+            atlantis.placement.core.ReservedSlots.planOn(
+                new atlantis.placement.core.BuildLocationCatalogue(grid),
+                APosition.create(20, 20),
+                AUnitType.Protoss_Pylon, 6,
+                AUnitType.Protoss_Gateway, 10);
+
+        java.util.List<FakeUnit> ours = new java.util.ArrayList<FakeUnit>();
+        ours.add(fake(AUnitType.Protoss_Nexus, 20, 20));
+        ours.add(fake(AUnitType.Protoss_Pylon, 30, 25));
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        ours.add(probe);
+        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+            if (slot.type.equals(AUnitType.Protoss_Gateway)) {
+                ours.add(fake(AUnitType.Protoss_Gateway, slot.tile.tx(), slot.tile.ty()));
+            }
+            if (slot.type.equals(AUnitType.Protoss_Pylon)) {
+                ours.add(fake(AUnitType.Protoss_Pylon, slot.tile.tx(), slot.tile.ty()));
+            }
+        }
+        world(5, fakeOurs(ours.toArray(new FakeUnit[0])), fakeEnemies(), () -> {
+            atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+                Construction construction = constructionFor(
+                    AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
+                ScriptedPlanner yes = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.success(33, 20, 0));
+
+                APosition site = CatalogueSiteAdapter.siteFor(
+                    yes, probe, AUnitType.Protoss_Pylon, construction);
+
+                assertNotNull(site, "a covered type with no free slot falls back to the hunt, never declines: "
+                    + EventLog.toJsonLines());
+                assertEquals(33, site.tx(), "the planner tile, not a slot");
+                assertEquals(20, site.ty(), "the planner tile, not a slot");
+                assertTrue(EventLog.toJsonLines().contains("\"via\":\"funnel\""),
+                    "the fallback names the funnel path: " + EventLog.toJsonLines());
+            }
+            finally {
+                atlantis.placement.core.ReservedSlots.clearForTests();
+            }
+        });
+    }
+
+    /**
      * A planner with a scripted answer: the seam for decline routing without map physics.
      */
     private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {

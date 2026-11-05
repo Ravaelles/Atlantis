@@ -153,6 +153,31 @@ public final class CatalogueSiteAdapter {
         TargetPlacement constraint = demand != null
             ? constraintFor(demand, construction)
             : constraintFor(order, construction);
+
+        // V3 S6 slice 2: the once-planned layout owns issuance - a free
+        // reserved slot serves before the per-frame hunt, under the same
+        // verdict, physics and reachability the hunted tile would face.
+        // A refused slot falls through to the hunt below, never declines.
+        APosition slot = firstFreeSlot(building);
+        if (slot != null) {
+            SitingVerdict slotVerdict = SitingVerdict.check(building, slot);
+            if (!slotVerdict.accepted()) {
+                SiteTwin.declined(building, slotVerdict.twin, "slot",
+                    constraint.nearTileX(), constraint.nearTileY());
+            }
+            else if (!CanPhysicallyBuildHere.check(builder, building, slot)) {
+                SiteTwin.declined(building, "legacy-refused", "slot",
+                    constraint.nearTileX(), constraint.nearTileY());
+            }
+            else if (unreachableFromMain(slot)) {
+                SiteTwin.declined(building, "unreachable", "slot",
+                    constraint.nearTileX(), constraint.nearTileY());
+            }
+            else {
+                return answerWithTwin(slot, building, "slot", null, constraint);
+            }
+        }
+
         PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel");
         if (reservation == null) return null;
 
@@ -170,6 +195,45 @@ public final class CatalogueSiteAdapter {
         SiteTwin.answered(building, site, via, reservation, constraint);
 
         return site;
+    }
+
+    /**
+     * The first reserved slot of this type no live building covers
+     * (V3 S6): standing and unfinished footprints both occupy, so a
+     * warping Pylon and a parked row equally hold their slot. Pure
+     * order, no mutation - a cancelled row frees its slot by ceasing
+     * to cover it, never by bookkeeping that could desync.
+     */
+    private static APosition firstFreeSlot(AUnitType building) {
+        if (building == null) return null;
+        try {
+            for (atlantis.placement.core.ReservedSlots.Slot slot :
+                atlantis.placement.core.ReservedSlots.slots()) {
+                if (slot == null || slot.tile == null || slot.type == null) continue;
+                if (!slot.type.equals(building)) continue;
+                if (atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                    .check(slot.tile, building)) continue;
+                if (atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                    .check(slot.tile, building)) continue;
+
+                return slot.tile;
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return null;
+    }
+
+    /**
+     * The main base must reach the proposal by ground (owner
+     * 2026-11-01). Shared by the hunted tile and the reserved slot -
+     * the two paths cannot disagree on reachability.
+     */
+    private static boolean unreachableFromMain(APosition site) {
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null || main.position() == null) return false;
+
+        return !ReachableTiles.between(main.position(), site);
     }
 
     /**
@@ -225,13 +289,10 @@ public final class CatalogueSiteAdapter {
         // a disconnected region (UMS/island pocket) declines to the legacy
         // spiral instead of stranding the builder. Skipped when no base
         // stands yet (first frame) - there is nothing to measure from.
-        AUnit main = Select.mainOrAnyBuilding();
-        if (main != null && main.position() != null) {
-            if (!ReachableTiles.between(main.position(), site)) {
-                SiteTwin.declined(building, "unreachable", via, constraint.nearTileX(), constraint.nearTileY());
+        if (unreachableFromMain(site)) {
+            SiteTwin.declined(building, "unreachable", via, constraint.nearTileX(), constraint.nearTileY());
 
-                return null;
-            }
+            return null;
         }
         return reservation;
     }
