@@ -287,6 +287,21 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
     }
 
     /**
+     * Owner order 2026-11-06 (three days without a first Gateway live -
+     * GAME_120B0292 drought, GAME_D5AABE08 unpowered slot): the staged
+     * proof replays on TauCross, the map that starved us. Same tight
+     * rows (Pylon 8, Gateway 10, Core 12, Assimilator 12), same staged
+     * pins (Pylon alone, then exactly 1P+1G, then Core, then Assim -
+     * no duplicates), plus the drought pin: the first Gateway warps on
+     * powered ground (the verdict accepts its tile at warp frame).
+     * A live game runs only after this is green.
+     */
+    @Test
+    public void buildsFirstGatewayPoweredOnTauCross() throws Exception {
+        runTauCrossMinimum();
+    }
+
+    /**
      * Test-only seam: point the strategy's build order at the mock rows.
      * The queue reads the strategy's copy, not CurrentBuildOrder, so
      * without this the test would drive the on-disk opening instead of
@@ -308,8 +323,7 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
         }
     }
 
-    private void runHealthyMinimum(boolean withBuildOrder) throws Exception {
-        atlantis.config.env.ProductionV2Mode previous =
+    private void runHealthyMinimum(boolean withBuildOrder) throws Exception {        atlantis.config.env.ProductionV2Mode previous =
             atlantis.config.env.Env.productionV2();
         atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
         atlantis.config.env.Env.setPlacementCatalogueForTest(true);
@@ -420,5 +434,158 @@ public class HealthyMinimumBuildTest extends WorldStubForTests {
             atlantis.config.env.Env.setProductionV2ForTest(previous);
             atlantis.config.env.Env.setPlacementCatalogueForTest(true);
         }
+    }
+
+    /**
+     * TauCross replay of the drought (see test above): realistic rows
+     * (Pylon 8, Gateway 10, Core 22, Assimilator 23 - the tight 12/12
+     * rows fake a bank race the live BO never has), staged first-warps,
+     * no drought (Gateway lands soon after the Pylon), plus a
+     * powered-ground pin on the first Gateway warp. The sim sink never
+     * refuses, so the pin re-checks the verdict on the warp tile - the
+     * exact gate the live engine enforces and the drought starved on.
+     * Extra supply Pylons are fine (V2 supply grows uncapped); exact
+     * counts stay on the UMS tight variant.
+     */
+    private void runTauCrossMinimum() throws Exception {
+        atlantis.config.env.ProductionV2Mode previous =
+            atlantis.config.env.Env.productionV2();
+        atlantis.config.env.Env.setProductionV2ForTest(atlantis.config.env.ProductionV2Mode.LIVE);
+        atlantis.config.env.Env.setPlacementCatalogueForTest(true);
+        try {
+            tests.unit.sim.SimMap map = tests.unit.sim.SimMap.load(
+                "out/map-snapshots/sscai_(3)TauCross.scx.json");
+            map.install();
+            Numbers numbers = new Numbers();
+            tests.unit.sim.SimDriver driver = new tests.unit.sim.SimDriver(
+                map, tests.unit.sim.SimConfig.fast().withStride(60), numbers, 50);
+            try {
+                driver.spawnResources();
+                driver.spawnBase(1, 4);
+                ABuildOrder previousOrder = CurrentBuildOrder.get();
+                atlantis.information.strategy.AStrategy strategy =
+                    atlantis.information.strategy.Strategy.get();
+                atlantis.production.orders.build.ABuildOrder previousStrategyOrder =
+                    strategy.buildOrder();
+                ArrayList<ProductionOrder> orders = new ArrayList<>(Arrays.asList(
+                    new ProductionOrder(AUnitType.Protoss_Pylon, 8),
+                    new ProductionOrder(AUnitType.Protoss_Gateway, 10),
+                    new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 22),
+                    new ProductionOrder(AUnitType.Protoss_Assimilator, 23)));
+                for (ProductionOrder row : orders) row.markAsNotDynamic();
+                ABuildOrder buildOrder = Mockito.mock(ABuildOrder.class);
+                Mockito.when(buildOrder.productionOrders()).thenReturn(orders);
+                CurrentBuildOrder.set(buildOrder);
+                setStrategyBuildOrder(strategy, buildOrder);
+                atlantis.production.orders.production.queue.QueueInitializer.initializeProductionQueue();
+                try {
+                    // No supply cap here (the UMS tight variant freezes
+                    // supply to dodge the preventive Pylon): Core 22 and
+                    // Assimilator 23 need a grown supply, and extra supply
+                    // Pylons are fine - the pins below name firsts, not
+                    // exact counts.
+                    int pylonFrame = -1;
+                    int gatewayFrame = -1;
+                    boolean gatewayPowerPinned = false;
+                    while (driver.frame() < 16000) {
+                        driver.step();
+
+                        if (pylonFrame < 0 && countWarpsOf(driver, "Pylon") >= 1) {
+                            pylonFrame = driver.frame();
+                            if (!(countWarpsOf(driver, "Gateway") == 0
+                                && countWarpsOf(driver, "CyberneticsC") == 0
+                                && countWarpsOf(driver, "Assimilator") == 0)) {
+                                fail("first Pylon warp must precede every Gateway - "
+                                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+                            }
+                        }
+
+                        if (gatewayFrame < 0 && countWarpsOf(driver, "Gateway") >= 1) {
+                            gatewayFrame = driver.frame();
+                            if (!(countWarpsOf(driver, "CyberneticsC") == 0
+                                && countWarpsOf(driver, "Assimilator") == 0)) {
+                                fail("first Gateway warp must precede Core and Assimilator - "
+                                    + countsOf(driver) + " - " + statusOf(driver, numbers));
+                            }
+                            if (pylonFrame >= 0 && gatewayFrame - pylonFrame > 3600) {
+                                fail("Gateway drought on TauCross: first Gateway "
+                                    + (gatewayFrame - pylonFrame)
+                                    + " frames after the first Pylon - "
+                                    + statusOf(driver, numbers));
+                            }
+                            atlantis.map.position.APosition tile = firstWarpTile(driver, "Gateway");
+                            assertTrue(tile != null, "first Gateway warp carries a tile");
+                            // Powered ground, engine truth: a finished Pylon
+                            // must cover the footprint center right now
+                            // (PsiField, the same mask the engine
+                            // enforces). Worker cover is deliberately NOT
+                            // pinned here - miners walk through the site
+                            // and the warp pushes on; power is the
+                            // drought's gate.
+                            assertTrue(isPoweredNow(driver, tile),
+                                "first Gateway warps on powered ground at " + tile);
+                            gatewayPowerPinned = true;
+                        }
+
+                        if (hasWarpOf(driver, "Pylon")
+                            && hasWarpOf(driver, "Gateway")
+                            && hasWarpOf(driver, "Assimilator")
+                            && hasWarpOf(driver, "CyberneticsC")
+                            && numbers.gas >= GAS_GOAL) {
+                            assertTrue(gatewayPowerPinned, "the powered-Gateway pin fired");
+                            return;
+                        }
+                        if (numbers.minerals >= BANK_CAP && !hasInFlight()) {
+                            fail("banked " + numbers.minerals + " minerals on TauCross: production stalled - "
+                                + statusOf(driver, numbers));
+                        }
+                    }
+
+                    fail("no healthy minimum on TauCross within ~11 game minutes - "
+                        + statusOf(driver, numbers));
+                } finally {
+                    if (previousOrder != null) CurrentBuildOrder.set(previousOrder);
+                    else CurrentBuildOrder.clear();
+                    if (previousStrategyOrder != null) {
+                        setStrategyBuildOrder(strategy, previousStrategyOrder);
+                        atlantis.production.orders.production.queue.QueueInitializer.initializeProductionQueue();
+                    }
+                }
+            } finally {
+                driver.close();
+            }
+        } finally {
+            atlantis.config.env.Env.setProductionV2ForTest(previous);
+            atlantis.config.env.Env.setPlacementCatalogueForTest(true);
+        }
+    }
+
+    private static atlantis.map.position.APosition firstWarpTile(
+        tests.unit.sim.SimDriver driver, String type
+    ) {
+        for (tests.unit.sim.SimDriver.WarpRecord record : driver.warpLog()) {
+            if (type.equals(record.type)) return atlantis.map.position.APosition.create(record.tx, record.ty);
+        }
+
+        return null;
+    }
+
+    /**
+     * Engine-truth power at this instant: a finished, living Pylon whose
+     * PsiField mask covers the 4x3 Gateway footprint center. Reads the
+     * sim's own units, not the planner memo - the pin audits the warp,
+     * not the search.
+     */
+    private static boolean isPoweredNow(
+        tests.unit.sim.SimDriver driver, atlantis.map.position.APosition tile
+    ) {
+        for (tests.fakes.FakeUnit u : driver.units().ours()) {
+            if (u == null || !u.isAlive() || !u.isCompleted()) continue;
+            if (u.type() != AUnitType.Protoss_Pylon) continue;
+            if (atlantis.map.position.PsiField.covers(
+                u.tx(), u.ty(), tile.tx(), tile.ty(), 4, 3)) return true;
+        }
+
+        return false;
     }
 }

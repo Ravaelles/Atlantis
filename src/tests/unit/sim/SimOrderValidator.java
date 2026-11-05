@@ -29,9 +29,9 @@ import java.util.List;
 public final class SimOrderValidator {
 
     /**
-     * Pylon psi reach in tiles (engine mask is 256x160px around the
-     * pylon; 8 tiles covers it symmetrically and never over-claims
-     * a powered site as unpowered).
+     * Pylon psi reach: engine truth is the 256x160px footprint-center
+     * mask ({@link atlantis.map.position.PsiField}), not a tile circle -
+     * kept here only for the javadoc contract below.
      */
     static final double PSI_TILES = 8;
 
@@ -74,7 +74,7 @@ public final class SimOrderValidator {
             return SimOrder.rejected(SimOrder.Verb.BUILD, builder, type, tile,
                 "builder cannot reach the site");
         }
-        if (type.isProtoss() && type.ut().requiresPsi() && !coveredByPsi(ourBuildings, tile)) {
+        if (type.isProtoss() && type.ut().requiresPsi() && !coveredByPsi(ourBuildings, type, tx, ty)) {
             return SimOrder.rejected(SimOrder.Verb.BUILD, builder, type, tile,
                 "no psi coverage (no finished Pylon in range)");
         }
@@ -142,14 +142,18 @@ public final class SimOrderValidator {
         return SimOrder.accepted(verb, facility, null, null);
     }
 
-    private static boolean coveredByPsi(List<FakeUnit> ourBuildings, APosition tile) {
+    private static boolean coveredByPsi(List<FakeUnit> ourBuildings, AUnitType type, int tx, int ty) {
         for (FakeUnit other : ourBuildings) {
             if (other == null || !other.isAlive() || !other.isCompleted()) continue;
             if (!AUnitType.Protoss_Pylon.equals(other.type())) continue;
-            try {
-                if (other.position().distTo(tile) <= PSI_TILES) return true;
-            } catch (RuntimeException ignored) {
-            }
+            // Engine truth, not a circle guess: the client powers the
+            // footprint CENTER through the 256x160px mask (PsiField,
+            // measured on live refusals). The old euclidean reach called
+            // rim tiles powered that the engine refuses - the exact
+            // GAME_120B0292 shape (tile-point in, center out).
+            if (atlantis.map.position.PsiField.covers(
+                other.tx(), other.ty(), tx, ty,
+                type.getTilesWidth(), type.getTilesHeights())) return true;
         }
 
         return false;

@@ -148,8 +148,12 @@ public class SimOrderValidatorTest extends AbstractTestWithUnits {
         FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 0, 0);
         List<FakeUnit> buildings = new ArrayList<>(Collections.singletonList(pylon));
 
+        // Adjacent rows: the engine powers the footprint CENTER through
+        // the PsiField mask, and a 4-wide Gateway one tile down already
+        // falls off the mask's narrow bottom rows (measured live). A
+        // one-tile gap is unpowered - the sim matches the engine now.
         SimOrder order = SimOrderValidator.validateBuild(
-            ground(), probe, AUnitType.Protoss_Gateway, 0, 2, rich(), buildings, true);
+            ground(), probe, AUnitType.Protoss_Gateway, 0, 1, rich(), buildings, true);
 
         assertTrue(order.accepted(), "psi covered, footprint open: " + order);
     }

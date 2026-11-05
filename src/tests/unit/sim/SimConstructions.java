@@ -154,6 +154,16 @@ public final class SimConstructions {
         if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) {
             AUnitType type = construction.buildingType();
             if (!frame.bank().canAfford(type.mineralPrice(), type.gasPrice())) return;
+            // The engine enforces power at warp start, not at request
+            // time: a Pylon that covered the site at validation may be
+            // gone (or still warping) when the builder arrives, and the
+            // Build is refused. The sim waits like the engine instead of
+            // warping unpowered (measured TauCross: Gateway warped at
+            // [116,13] 240f before its support Pylon finished). Progress
+            // stays with the demand/refresh loop - a power that never
+            // comes stalls into the frame cap, which is the correct
+            // signal, not a silent unpowered warp.
+            if (type.needsPower() && !poweredNow(frame, type, construction)) return;
             // Proximity finish, like the live game: a site covered by a
             // standing building cancels instead of warping - the request
             // was legal when placed, the engine kills it at warp start.
@@ -232,6 +242,27 @@ public final class SimConstructions {
     }
 
     // =========================================================
+
+    /**
+     * Engine truth at warp start: a finished Pylon must cover the
+     * footprint center right now (incoming warps do not count - the
+     * engine refuses until the power is real). Sim-local PsiField read
+     * over completed sim buildings, same mask production trusts.
+     */
+    private boolean poweredNow(SimFrame frame, AUnitType type, Construction construction) {
+        APosition tile = construction.buildPosition();
+        if (tile == null) return false;
+
+        for (FakeUnit other : frame.driver().completedBuildings()) {
+            if (other == null || !other.isAlive()) continue;
+            if (!AUnitType.Protoss_Pylon.equals(other.type())) continue;
+            if (atlantis.map.position.PsiField.covers(
+                other.tx(), other.ty(), tile.tx(), tile.ty(),
+                type.getTilesWidth(), type.getTilesHeights())) return true;
+        }
+
+        return false;
+    }
 
     private boolean coveredByStanding(SimFrame frame, AUnitType type, Construction construction) {
         APosition tile = construction.buildPosition();
