@@ -464,6 +464,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (planned != null
             && (!slotBounded
             || APosition.create(planned.tileX(), planned.tileY()).distTo(centre) <= slotRadius)) {
+            int supportMark = supportThisPass.size();
             PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
             if (slotAnswer != null) {
                 // The single door proves it issues from the layout: hunted
@@ -473,12 +474,40 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                     SiteTwin.answered(unitType,
                         APosition.create(planned.tileX(), planned.tileY()),
                         "slot-planner", slotAnswer, null);
+
+                    return slotAnswer;
                 }
 
-                return slotAnswer;
+                // An unpowered slot declares its support (inside
+                // serveIfLegal) but no longer ends the pass: the hunt below
+                // may know a powered tile near standing power, and serving
+                // it now beats waiting 600f for the support chain (measured
+                // live: Gateway slot dark 3500f while Pylon power stood a
+                // few tiles away). The speculative support is retracted when
+                // the hunt serves - power extends only while nothing
+                // powered exists. Refused slots still fall through as before
+                // (serveIfLegal null), and an empty hunt keeps the support.
+                PlacementReservation hunted = hunt(unitType, constraint, centre,
+                    targetFrame, excluded);
+                if (hunted != null && hunted.isSuccessful())
+                    supportThisPass.subList(supportMark, supportThisPass.size()).clear();
+
+                return hunted;
             }
         }
 
+        return hunt(unitType, constraint, centre, targetFrame, excluded);
+    }
+
+    /**
+     * The ranked hunt over catalogue candidates, shared by the plain pass
+     * and the unpowered-slot fall-through (a dark slot declares support
+     * but no longer parks the pass behind it). Serves the first legal
+     * tile - powered ones only, an unpowered candidate declares support
+     * and ends the hunt - or fails with the support kept for forwarding.
+     */
+    private PlacementReservation hunt(AUnitType unitType, TargetPlacement constraint, APosition centre,
+                                      int targetFrame, java.util.Set<String> excluded) {
         // Named-area base anchors are adjudication-critical and otherwise
         // invisible on the V2 path (no funnel twin): a far-away warp
         // names whether the anchor or the serving was wrong. Change-gated
