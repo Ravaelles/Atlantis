@@ -31,7 +31,27 @@ public class DefineExactPositionForNewConstruction {
                 positionToBuild = newConstructionOrder.findPositionForNewBuilding();
             }
             else {
-                positionToBuild = exact;
+                // V3 single verdict (owner order 2026-11-06): an exact tile
+                // is a request, not a promise - and not only against
+                // occupancy. Power died with a Pylon, the edge moved with
+                // a re-pick, a sibling warped onto it: the same verdict
+                // the hunt answers owns the exact tile too, with the same
+                // fresh-search fallback the occupied path already takes.
+                // The decline is twinned (same CATALOGUE_SITE key, via
+                // exact), so a game log tells a refused exact tile from a
+                // refused hunt.
+                atlantis.production.constructions.position.SitingVerdict verdict =
+                    atlantis.production.constructions.position.SitingVerdict.check(building, exact);
+                if (!verdict.accepted()) {
+                    atlantis.production.constructions.position.SiteTwin.declined(
+                        building, verdict.twin, "exact",
+                        exact.tx(), exact.ty());
+                    order.markAsNotUsingExactPosition();
+                    positionToBuild = newConstructionOrder.findPositionForNewBuilding();
+                }
+                else {
+                    positionToBuild = exact;
+                }
             }
             //            CameraCommander.centerCameraOn(positionToBuild);
         }
