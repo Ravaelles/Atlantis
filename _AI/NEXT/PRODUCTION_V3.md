@@ -532,3 +532,15 @@ draws the labels - a weird layout cannot break a game, only draw.
   renumbering after the prune. PYLON_SLOTS dies with the apart era:
   Pylons are sized by Gateway coverage, not by a count. Pinned
   (coverage of all 10 G, prune exactness, support-slot choice).
+- StarEngine visualization DONE 2026-11-06 (owner order: see the
+  layout while a test runs): tests.unit.sim.SimVisualizer draws the
+  snapshot map (walkable ground, minerals, geysers), our buildings
+  as labeled boxes (cyan done, orange warping, yellow-ringed base),
+  workers as teal dots, other units with their current action, and
+  reserved slots as labeled grey/green boxes (taken = green, same
+  overlap rule as issuance). Opt-in per test
+  (SimConfig.withVisualization() or -Datlantis.visualize=true);
+  headless CI skips silently; the frame holds 5 s after the test
+  and closes itself. Verified by screenshot on Xvfb (HealthyMinimum
+  sim shows Gateway/Pylon/Forge/Citadel/Assimilator labels on the
+  snapshot with minerals). No live game needed to watch a build.

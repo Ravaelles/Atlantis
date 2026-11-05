@@ -12,14 +12,20 @@ public final class SimConfig {
 
     private final Mode mode;
     private final int stride;
+    private final boolean visualize;
 
     private SimConfig(Mode mode) {
-        this(mode, 1);
+        this(mode, 1, false);
     }
 
     private SimConfig(Mode mode, int stride) {
+        this(mode, Math.max(1, stride), false);
+    }
+
+    private SimConfig(Mode mode, int stride, boolean visualize) {
         this.mode = mode;
         this.stride = Math.max(1, stride);
+        this.visualize = visualize;
     }
 
     /**
@@ -29,7 +35,24 @@ public final class SimConfig {
      * scenarios keep 1 - striding skips the per-frame decisions they pin.
      */
     public SimConfig withStride(int stride) {
-        return new SimConfig(mode, stride);
+        return new SimConfig(mode, stride, visualize);
+    }
+
+    /**
+     * Opt-in live view for exactly one test run: a Swing window shows the
+     * snapshot map (bases, minerals, planned slots are drawn by the
+     * painter, not here) plus every sim unit, refreshed per step and
+     * closed automatically a few seconds after the test ends. Headless
+     * environments (CI, no X display) silently skip it, so the flag is
+     * safe to leave in a test - but leave it OFF unless you are
+     * watching this run, as an open window holds the JVM open.
+     */
+    public SimConfig withVisualization() {
+        return new SimConfig(mode, stride, true);
+    }
+
+    public boolean visualize() {
+        return visualize || Boolean.getBoolean("atlantis.visualize");
     }
 
     public int stride() {

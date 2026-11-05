@@ -201,6 +201,7 @@ public final class SimDriver {
         }
         syncFields();
         stallWatchdog();
+        if (config.visualize()) SimVisualizer.frame(this);
     }
 
     /**
@@ -287,6 +288,7 @@ public final class SimDriver {
         tests.fakes.FakeUnitData.TRAIN.clear();
         tests.fakes.FakeUnitData.CANCEL.clear();
         atlantis.information.tech.ATech.useEngine();
+        SimVisualizer.finish();
         SimMap.uninstall();
 
         // End-of-(sim-)game resets, mirroring OnGameEnd/buildWorld: sims

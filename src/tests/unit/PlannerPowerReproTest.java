@@ -112,13 +112,12 @@ public class PlannerPowerReproTest extends WorldStubForTests {
         ReservedSlots.setSlotsForTests(layout);
 
         FakeUnit probe = fake(AUnitType.Protoss_Probe, main.tx() + 2, main.ty());
-        world(5, fakeOurs(
-            fake(AUnitType.Protoss_Nexus, main.tx(), main.ty()),
-            fake(AUnitType.Protoss_Pylon, 114, 11),
-            fake(AUnitType.Protoss_Pylon, 121, 22),
-            fake(AUnitType.Protoss_Pylon, 126, 21),
-            probe
-        ), fakeEnemies(), () -> {
+        final FakeUnit nexus = fake(AUnitType.Protoss_Nexus, main.tx(), main.ty());
+        final FakeUnit pyl1 = fake(AUnitType.Protoss_Pylon, 114, 11);
+        final FakeUnit pyl2 = fake(AUnitType.Protoss_Pylon, 121, 22);
+        final FakeUnit pyl3 = fake(AUnitType.Protoss_Pylon, 126, 21);
+        final java.util.List<FakeUnit> cast = java.util.Arrays.asList(nexus, pyl1, pyl2, pyl3, probe);
+        world(5, fakeOurs(nexus, pyl1, pyl2, pyl3, probe), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
 
             TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
@@ -138,8 +137,15 @@ public class PlannerPowerReproTest extends WorldStubForTests {
 
                 assertTrue(result.isSuccessful(),
                     "live Pylons stand, a Gateway slot must reserve (GAME_120B0292 never did)");
+
+                // Visual proof hook (owner order 2026-11-06): with
+                // -Datlantis.visualize=true the TauCross layout, units and
+                // reserved slots stay on screen 5 s after the test.
+                tests.unit.sim.SimVisualizer.show(SnapshotTerrain.tauCross(),
+                    "live-drought shape, base 1", cast);
             }
             finally {
+                tests.unit.sim.SimVisualizer.finish();
                 ReservedSlots.clearForTests();
             }
         });
