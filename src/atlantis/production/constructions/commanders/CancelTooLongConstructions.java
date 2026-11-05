@@ -92,14 +92,22 @@ public class CancelTooLongConstructions {
 
         // A freestanding probe order: the search refuses to run without one
         // (no order -> no position, by construction), and it never enters the
-        // queue - it only carries the request. If the replace succeeds, the
-        // old construction's real queue order is transferred to the fresh one.
+        // queue - it only carries the request. The anchor is deliberately
+        // dropped (around null): the old tile just proved unworkable
+        // (measured live: re-place around a geyser-crowded tile failed
+        // with the same verdict, the row died and the requeue screamed
+        // PLACEMENT_FAILED). An anywhere search that can do no better
+        // returns the same tile or nothing and the old construction
+        // survives untouched - "placement blocks us" keeps the status
+        // quo, exactly as specified. A different site means the new
+        // construction owns a builder already, so releasing the old
+        // worker is safe.
         atlantis.production.orders.production.queue.order.ProductionOrder probeOrder =
             new atlantis.production.orders.production.queue.order.ProductionOrder(
-                type, oldPosition, 0);
+                type, (atlantis.map.position.HasPosition) null, 0);
 
         atlantis.production.constructions.NewConstructionRequest.requestConstructionOf(
-            type, oldPosition, probeOrder);
+            type, null, probeOrder);
 
         // Only what the request above ADDED counts: a pre-existing sibling at
         // a different site must never be mistaken for the replacement (it has
