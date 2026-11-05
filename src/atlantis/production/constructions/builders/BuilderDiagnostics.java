@@ -105,7 +105,7 @@ public class BuilderDiagnostics {
             at.ty() * 32 + construction.buildingType().getTilesHeights() * 16
         );
 
-        System.err.println("[LVL=CRITICAL] BUILD_BREAKDOWN @" + A.now()
+        atlantis.util.AConsole.errPrintln(atlantis.util.log.LogLevel.CRITICAL, "BUILD_BREAKDOWN @" + A.now()
             + " unit=#" + unit.id()
             + " building=" + construction.buildingType().name()
             + " tile=[" + tile.getX() + "," + tile.getY() + "]"

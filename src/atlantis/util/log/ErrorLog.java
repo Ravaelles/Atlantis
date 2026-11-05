@@ -54,6 +54,27 @@ public class ErrorLog {
         printMaxOncePerMinute(message, message);
     }
 
+    /**
+     * Throttled critical reporting: same minute-keyed throttle as the
+     * HIGH path above, but rendered [CRIT] instead of [HIGH]. Sites
+     * that declared "[LVL=CRITICAL]" in the message text used the
+     * HIGH channel and lost their level; this keeps the throttle
+     * and the level.
+     */
+    public static void printCriticalMaxOncePerMinute(String key, String message) {
+        if (!theSameErrorWasLoggedLessThanMinuteAgo(key)) {
+            AConsole.errPrintln(LogLevel.CRITICAL, message);
+
+            errorTimestamps.put(key, GameClock.seconds());
+        }
+
+        increaseErrorCount(key);
+    }
+
+    public static void printCriticalMaxOncePerMinute(String message) {
+        printCriticalMaxOncePerMinute(message, message);
+    }
+
     public static void printMaxOncePerMinutePlusPrintStackTrace(String key, String message) {
         if (!theSameErrorWasLoggedLessThanMinuteAgo(key)) {
             print(message, key);

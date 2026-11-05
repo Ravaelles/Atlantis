@@ -333,6 +333,9 @@ tile through dead builders, no per-building unit-log key.
   `System.err` lines routed through tagged `AConsole` (Refresh moves
   MEDIUM + capped at 10/type per owner 2026-11-04 - an unplaceable
   building disrupts everything downstream; cancels/errors HIGH/CRIT).
+   2026-11-05: the last `[LVL=HIGH/CRITICAL]` prefixes are gone - levels
+   come only from the channel (ErrorLog=HIGH, new
+   `printCriticalMaxOncePerMinute`=CRIT, AConsole explicit).
   A crashed JVM still yields no digest - the periodic twins/ledger
   stay the record for those games. Halt lifted 2026-11-04 (owner):
   one quiet game at a time, batched verification.

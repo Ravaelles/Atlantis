@@ -318,7 +318,7 @@ public class NewConstructionRequest {
     }
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
-        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
+        ErrorLog.printCriticalMaxOncePerMinute("cant-find-place-" + building, A.minSec() + ": Can't find place for `" + building + "`, " + order);
         // Dominant refusal, not the last one: the sweep ends wherever the
         // rings end, so the final _STATUS names an edge tile, not the rule
         // that killed the search (measured: 8x Gateway "Not powered" while

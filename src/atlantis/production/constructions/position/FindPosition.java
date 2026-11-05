@@ -101,7 +101,7 @@ public class FindPosition {
             double cap = BuildSiteDistance.capFor(maxDistance);
             if (BuildSiteDistance.isTooFar(standardPosition, nearTo, cap)) {
                 atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-                    "[LVL=HIGH] SITE_TOO_FAR " + building + " at " + standardPosition
+                    "SITE_TOO_FAR " + building + " at " + standardPosition
                         + " is " + ((int) standardPosition.groundDist(nearTo))
                         + " ground tiles from " + nearTo + " (cap " + ((int) cap) + ") - not built"
                 );
@@ -119,7 +119,7 @@ public class FindPosition {
             if (main != null && main.position() != null
                 && !ReachableTiles.between(main.position(), standardPosition)) {
                 atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-                    "[LVL=HIGH] SITE_UNREACHABLE " + building + " at " + standardPosition
+                    "SITE_UNREACHABLE " + building + " at " + standardPosition
                         + " has no ground path from the main - not built"
                 );
 
