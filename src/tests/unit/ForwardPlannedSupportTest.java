@@ -51,6 +51,61 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
         return n;
     }
 
+    private static int droppedTwins(String reason) {
+        int n = 0;
+        for (String line : EventLog.toJsonLines().split("\n")) {
+            if (line.contains("\"result\":\"support-dropped\"")
+                && line.contains("\"reason\":\"" + reason + "\"")) n++;
+        }
+
+        return n;
+    }
+
+    @Test
+    public void brokeSupportTwinsItsGateOnce() {
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        APosition main = terrain.baseTile(1);
+        currentMinerals = 0;
+
+        TileAvailabilityGrid planGrid = new TileAvailabilityGrid(terrain);
+        java.util.List<ReservedSlots.Slot> layout = ReservedSlots.planOn(
+            new BuildLocationCatalogue(planGrid),
+            main,
+            AUnitType.Protoss_Gateway, 10);
+        ReservedSlots.setSlotsForTests(layout);
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, main.tx() + 2, main.ty());
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, main.tx(), main.ty()),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
+            CataloguePlacementPlanner planner = new CataloguePlacementPlanner(
+                grid,
+                new atlantis.placement.race.ProtossPlacementStrategy(
+                    new atlantis.placement.core.PsiGating(
+                        new atlantis.placement.engine.EnginePowerSource())),
+                null, true);
+            planner.startPass();
+
+            PlacementReservation failed = planner.reservePlacement(
+                UnitProducible.of(AUnitType.Protoss_Gateway),
+                TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
+            assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+
+            ProductionEngine.forwardDrainedSupport(
+                planner, new atlantis.production.execution.GameOrderDirector(), 100);
+            ProductionEngine.forwardDrainedSupport(
+                planner, new atlantis.production.execution.GameOrderDirector(), 100);
+
+            assertEquals(1, droppedTwins("unaffordable"),
+                "a broke support names its gate once, throttled on the repeat: "
+                    + EventLog.toJsonLines());
+        });
+    }
+
     @Test
     public void unpoweredGatewayDemandMintsCoveringPylonOnce() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());

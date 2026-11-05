@@ -192,6 +192,37 @@ public final class ProductionEngine {
         }
     }
 
+    /**
+     * Throttled witness for silent support drops (one row per reason per
+     * 600f, same heartbeat as the scheduler refusals): the support Pylon
+     * unblocks the Gateway slot, and every drop path used to twin nothing -
+     * the next drought would have needed a diagnostic build to name its
+     * gate. Routine absorbs (cap, live row, short bank) show as rare
+     * chatter; layout gaps (no-slot, exact-fail) shout by repetition.
+     */
+    private static final java.util.Map<String, Integer> supportDropLastTwin = new java.util.HashMap<>();
+
+    private static void twinSupportDrop(String reason, SupportRequest support, APosition pylonTile,
+                                        int now) {
+        try {
+            Integer last = supportDropLastTwin.get(reason);
+            if (last != null && now - last < 600) return;
+            supportDropLastTwin.put(reason, now);
+
+            EventLog.key(LogKey.CATALOGUE_SITE)
+                .param("type", "Gateway")
+                .param("result", "support-dropped")
+                .param("reason", reason)
+                .param("tx", support == null ? -1 : support.tileX())
+                .param("ty", support == null ? -1 : support.tileY())
+                .param("via", "slot-planner")
+                .param("supportTx", pylonTile == null ? -1 : pylonTile.tx())
+                .param("supportTy", pylonTile == null ? -1 : pylonTile.ty())
+                .log(now, A.minSec());
+        } catch (Exception | Error ignored) {
+        }
+    }
+
     private static void forwardOneSupport(PlacementPlanner planner, GameOrderDirector director, SupportRequest support, int now) {
         if (support == null || support.unitType() == null) return;
         if (!support.unitType().isPylon()) return;
@@ -202,23 +233,41 @@ public final class ProductionEngine {
             (tile, type) ->
                 OverlapsOurStandingBuilding.check(tile, type)
                     || OverlapsOurUnfinishedBuilding.check(tile, type));
-        if (pylonTile == null) return;
+        if (pylonTile == null) {
+            twinSupportDrop("no-slot", support, null, now);
+            return;
+        }
 
         // Same doors as a normal mint: no overdraft, no flood past the cap,
         // no twin for a re-offer the live row already absorbs.
-        if (!A.canAfford(support.unitType())) return;
-        if (atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight()) return;
-        if (hasLiveConstruction(support.unitType(), pylonTile)) return;
+        if (!A.canAfford(support.unitType())) {
+            twinSupportDrop("unaffordable", support, pylonTile, now);
+            return;
+        }
+        if (atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight()) {
+            twinSupportDrop("pylon-cap", support, pylonTile, now);
+            return;
+        }
+        if (hasLiveConstruction(support.unitType(), pylonTile)) {
+            twinSupportDrop("live-row", support, pylonTile, now);
+            return;
+        }
 
         PlacementReservation reservation = planner.reservePlacement(
             UnitProducible.of(support.unitType()),
             TargetPlacement.exactTile(pylonTile.tx(), pylonTile.ty()),
             now);
-        if (reservation == null || !reservation.isSuccessful()) return;
+        if (reservation == null || !reservation.isSuccessful()) {
+            twinSupportDrop("exact-fail", support, pylonTile, now);
+            return;
+        }
 
         boolean ok = director.buildAt(
             UnitProducible.of(support.unitType()), reservation, A.supplyUsed());
-        if (!ok) return;
+        if (!ok) {
+            twinSupportDrop("buildat-false", support, pylonTile, now);
+            return;
+        }
 
         EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", "Gateway")
