@@ -74,6 +74,7 @@ public class BattleCommander extends Commander {
         if (target != null) {
             ArmyContact.noteFight(unit, target, tactic);
             if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;
+            if (atlantis.combat.cluster.ClusterCohesion.recallStraggler(unit, target)) return;
 
             fight(unit, target, strategy, anchor, leader);
 
@@ -203,6 +204,7 @@ public class BattleCommander extends Commander {
         FrozenWatch.clearForTests();
         IdleWatch.clearForTests();
         atlantis.combat.twins.ClusterTwin.clearForTests();
+        atlantis.combat.twins.CohesionTwin.clearForTests();
         atlantis.combat.twins.FormationOrderTwin.clearForTests();
         ArmyContact.clearForTests();
         atlantis.combat.retreating.RetreatLadder.reset();

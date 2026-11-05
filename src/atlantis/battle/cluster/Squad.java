@@ -82,7 +82,30 @@ public class Squad {
     }
 
     public APosition median() {
-        return (APosition) center();
+        java.util.List<Integer> xs = new java.util.ArrayList<>();
+        java.util.List<Integer> ys = new java.util.ArrayList<>();
+        for (AUnit unit : units) {
+            if (unit == null || !unit.hasPosition()) continue;
+            xs.add(unit.position().getX());
+            ys.add(unit.position().getY());
+        }
+        if (xs.isEmpty()) return null;
+
+        java.util.Collections.sort(xs);
+        java.util.Collections.sort(ys);
+
+        // Component-wise median, not the mean: one scout far out must
+        // not drag the ball's anchor toward itself (that is exactly the
+        // shape the leash exists to prevent).
+        return atlantis.map.position.APosition.createFromPixels(
+            middle(xs), middle(ys));
+    }
+
+    private static int middle(java.util.List<Integer> sorted) {
+        int n = sorted.size();
+        if (n % 2 == 1) return sorted.get(n / 2);
+
+        return (sorted.get(n / 2 - 1) + sorted.get(n / 2)) / 2;
     }
 
     public AUnit alphaLeader() {

@@ -216,6 +216,13 @@ public enum LogKey {
      */
     CHASE_VETO,
     /**
+     * A recalled straggler (owner 2026-11-07): the cohesion gate denied a
+     * lone engagement and ordered the unit back to the ball - unit and
+     * target ids, dist to the median x10. Per-unit throttled like the
+     * chase veto; a calm army rows nothing.
+     */
+    COHESION_RECALL,
+    /**
      * A wanted item the scheduler could not place: no placement tile, no
      * affordable frame, no free producer. Transition-gated (one row per
      * item per reason), so an 18k-frame stall names its door once.

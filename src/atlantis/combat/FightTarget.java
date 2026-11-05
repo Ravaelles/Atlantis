@@ -413,10 +413,10 @@ public final class FightTarget {
             // so unit.squad() reads null in games and in the sim).
             APosition center = null;
             atlantis.battle.cluster.Squad squad = unit.squad();
-            if (squad != null && squad.isNotEmpty()) center = squad.median();
+            if (squad != null && squad.isNotEmpty()) center = (APosition) squad.center();
             if (center == null) {
                 atlantis.battle.cluster.Squad alpha = atlantis.battle.cluster.Alpha.get();
-                if (alpha != null && alpha.isNotEmpty()) center = alpha.median();
+                if (alpha != null && alpha.isNotEmpty()) center = (APosition) alpha.center();
             }
             if (center == null) return dest;
             if (unit.distTo(center) > atlantis.combat.escape.EscapeArc.SQUAD_RADIUS_TILES) return dest;

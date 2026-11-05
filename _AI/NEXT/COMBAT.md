@@ -65,6 +65,15 @@ owner-called.
 - **#181 split-cluster reinforce.** Sim-pinned (fresh-contact
   reinforce, ghost-contact rejection, ongoing-fight priority).
   Open: live recurrence of the park-while-fighting shape.
+- **Cohesion leash (owner 2026-11-07).** A melee unit that acquires a
+  target while detached from the ball (>6 tiles from the median)
+  rejoins instead of engaging (`ClusterCohesion.recallStraggler` in
+  the commander's fight branch + `COHESION_RECALL` twin; median is
+  component-wise, scouts march out untouched, chewing/kiting exempt).
+  Ranged units keep their kite/escape doctrine (pocket-escape and
+  base-raid pins forbid a leash over them - separate slice with its
+  own vehicle). Pinned red-first (`StragglerRecallTest` 3/3);
+  combat 756/756, fast 1134/0. Open: live lone-zealot game.
 - **#182 FormationHold veto + unstick.** Sim-pinned; no 200f stand
   recurs. Open: a stand-and-trade that is NOT the pocket geometry
   (unobserved so far).
