@@ -9,8 +9,6 @@ import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
-import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
-import atlantis.production.constructions.position.protoss.PylonPosition;
 import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -182,8 +180,7 @@ public class NewConstructionRequest {
             if (building.isPylon()) {
                 atlantis.cherryvis.CV.globalState("PylonSite",
                     "[" + newConstruction.buildPosition().tx() + ","
-                        + newConstruction.buildPosition().ty() + "] via "
-                        + PylonPosition.lastReason);
+                        + newConstruction.buildPosition().ty() + "]");
             }
             EventLog.key(LogKey.CONSTRUCTION_REQUESTED)
                 .param("type", building.name())
@@ -271,12 +268,13 @@ public class NewConstructionRequest {
     /**
      * The dominant refusal of the last placement search for this building.
      * Public as a seam: the wait/cancel decision pins on the production
-     * verdict itself, not a hand-made string.
+     * verdict itself, not a hand-made string. One breakdown (the legacy
+     * Pylon spiral's died with it) - pylons read the same verdict
+     * breakdown as everything else.
      */
     public static String dominantRefusal(AUnitType building) {
-        java.util.Map<String, Integer> breakdown = building.isPylon()
-            ? ProtossPositionFinder.lastRefusalBreakdown()
-            : PositionFulfillsAllConditions.lastRefusalBreakdown();
+        java.util.Map<String, Integer> breakdown =
+            PositionFulfillsAllConditions.lastRefusalBreakdown();
         return dominantRefusal(breakdown,
             AbstractPositionFinder._STATUS == null ? "-" : AbstractPositionFinder._STATUS);
     }
