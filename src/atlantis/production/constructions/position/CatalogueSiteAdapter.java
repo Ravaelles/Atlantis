@@ -152,6 +152,20 @@ public final class CatalogueSiteAdapter {
             ? constraintFor(demand, construction)
             : constraintFor(order, construction);
 
+        // A construction that names a maxDistance hunts inside it: the
+        // legacy ring search never left it, and an unbounded rank around
+        // the anchor serves global optima the caller never asked for
+        // (measured stub: base demand anchored at the natural served a
+        // start location 110 tiles away). Non-positive means unbounded,
+        // as in legacy - the V2 door and sited callers opt in by setting
+        // it (V2 home radius, sited maxDistance, base neighbourhood).
+        double maxDistance = construction.maxDistance();
+        if (maxDistance > 0
+            && constraint.mode() == TargetPlacement.Mode.NEIGHBOURHOOD) {
+            constraint = TargetPlacement.inNeighbourhood(
+                constraint.tileX(), constraint.tileY(), maxDistance);
+        }
+
         // V3 S6 slice 2: the once-planned layout owns issuance - a free
         // reserved slot serves before the per-frame hunt, under the same
         // verdict, physics and reachability the hunted tile would face.

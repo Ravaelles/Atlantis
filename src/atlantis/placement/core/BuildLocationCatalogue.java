@@ -65,6 +65,13 @@ public final class BuildLocationCatalogue {
      */
     private final List<int[]> basePositions;
 
+    /**
+     * Base tiles (own and future expansions alike) no normal block may
+     * cover, in tile coordinates. The scan emits them as candidates, so
+     * an expansion's Nexus spot survives block stamping.
+     */
+    private final List<int[]> basesToProtect;
+
     private final List<StartBlockFinder.Anchor> startBlockAnchors = new ArrayList<>();
 
     public BuildLocationCatalogue(TileAvailabilityGrid grid) {
@@ -86,10 +93,32 @@ public final class BuildLocationCatalogue {
         StartBlockFinder startBlockFinder,
         List<int[]> basePositions
     ) {
+        this(grid, blockFactories, startBlockFinder, basePositions,
+            java.util.Collections.<int[]>emptyList());
+    }
+
+    /**
+     * Same, plus base tiles no normal block may cover: an expansion's Nexus
+     * goes ON its base location, so a production block stamped over it eats
+     * the only tile the expansion discipline accepts (measured stub:
+     * natural [14,13] block-covered, bounded base hunt answered no-tile
+     * while a start location 110 tiles away served). The per-tile scan
+     * still emits the freed tiles, so the Nexus spot survives as a 4x3
+     * candidate and the gates dispose it like any other.
+     */
+    public BuildLocationCatalogue(
+        TileAvailabilityGrid grid,
+        List<BlockFactory> blockFactories,
+        StartBlockFinder startBlockFinder,
+        List<int[]> basePositions,
+        List<int[]> basesToProtect
+    ) {
         this.grid = grid;
         this.blockFactories = blockFactories;
         this.startBlockFinder = startBlockFinder;
         this.basePositions = basePositions;
+        this.basesToProtect = basesToProtect == null
+            ? java.util.Collections.<int[]>emptyList() : basesToProtect;
         rebuild();
     }
 
@@ -207,12 +236,32 @@ public final class BuildLocationCatalogue {
                         continue;
                     if (!block.fits(grid))
                         continue;
+                    if (coversProtectedBase(x, y, block.width(), block.height()))
+                        continue;
 
                     all.addAll(block.locations());
                     block.stamp(grid);
                 }
             }
         }
+    }
+
+    /**
+     * A normal block over (or flush against) a base location eats the
+     * expansion's Nexus spot: the discipline only accepts tiles within
+     * 2 of a base, and the scan never re-emits a stamped tile. The 4x3
+     * at the base tile stays block-free with a one-tile margin, so the
+     * neighbours' BORDER ring (markUsed paints one) cannot spill onto
+     * it either; the scan offers it and the gates dispose it.
+     */
+    private boolean coversProtectedBase(int x, int y, int w, int h) {
+        for (int[] base : basesToProtect) {
+            if (base == null) continue;
+            if (x < base[0] + 4 + 1 && base[0] - 1 < x + w
+                && y < base[1] + 3 + 1 && base[1] - 1 < y + h) return true;
+        }
+
+        return false;
     }
 
     /**

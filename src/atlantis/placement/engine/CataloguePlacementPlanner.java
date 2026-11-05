@@ -284,7 +284,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private BuildLocationCatalogue buildCatalogue() {
         return withBlocks
             ? new BuildLocationCatalogue(grid, factoriesFor(strategy),
-            startBlockFinderFor(grid, strategy), ourBasePositions())
+            startBlockFinderFor(grid, strategy), ourBasePositions(), allBasePositions())
             : new BuildLocationCatalogue(grid, java.util.Collections
             .emptyList());
     }
@@ -306,6 +306,27 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
             if (base.position() != null) bases.add(new int[]{base.tx(), base.ty()});
+        }
+        return bases;
+    }
+
+    /**
+     * Every known base location (own and future expansions), so normal
+     * blocks never cover an expansion's Nexus spot. Empty without a
+     * game (pure planner tests keep the old behavior); failures fail
+     * open to no protection, never to no candidates.
+     */
+    private List<int[]> allBasePositions() {
+        List<int[]> bases = new ArrayList<>();
+        if (!gameContext.inGame()) return bases;
+
+        try {
+            for (atlantis.map.base.ABaseLocation base :
+                atlantis.map.base.BaseLocations.baseLocations()) {
+                if (base == null || base.position() == null) continue;
+                bases.add(new int[]{base.position().tx(), base.position().ty()});
+            }
+        } catch (Exception | Error ignored) {
         }
         return bases;
     }
