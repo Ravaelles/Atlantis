@@ -6,7 +6,7 @@ import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Phase 4 slice 1: the legacy search delegates "which tile" to the catalogue
- * ({@link APositionFinder} → {@link CatalogueSiteAdapter}).
+ * ({@link AbstractPositionFinder} → {@link CatalogueSiteAdapter}).
  *
  * <p>
  * The adapter declines everything outside its scope (gas, orderless

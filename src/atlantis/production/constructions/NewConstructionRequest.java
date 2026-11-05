@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
@@ -140,12 +140,12 @@ public class NewConstructionRequest {
         if (order != null) order.clearFailedSearchStreak();
         if (order != null) order.makeSureResourcesAreReserved();
 
-        APositionFinder.clearCache();
+        AbstractPositionFinder.clearCache();
 
         if (ConstructionRequests.alreadyExists(newConstruction, false)) {
             Select.clearCache();
             Construction.clearCache();
-            APositionFinder.clearCache();
+            AbstractPositionFinder.clearCache();
 //            AConsole.errPrintln("Construction had the same position, find new: " + newConstruction);
             newConstruction.findPositionForNewBuilding();
         }

@@ -2,7 +2,7 @@ package atlantis.production.constructions.cancelling;
 
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
@@ -22,7 +22,7 @@ public class CancelNotStarted {
 
             Select.clearCache();
             Construction.clearCache();
-            APositionFinder.clearCache();
+            AbstractPositionFinder.clearCache();
 
             return true;
         }
