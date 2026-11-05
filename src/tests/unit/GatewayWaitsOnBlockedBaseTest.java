@@ -39,10 +39,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * choice between "transient clutter" and "wrong search center" is
  * unreadable without them.
  *
- * <p>Shape note: the test drives {@code FindPosition.findForBuilding}
+ * <p>Shape note: the test used to drive {@code FindPosition.findForBuilding}
  * directly, like the other search tests - the upper entry
- * ({@code APositionFinder.findPositionForNew}) answers a random tile
- * in tests, so the full request path cannot fail there by construction.
+ * ({@code APositionFinder.findPositionForNew}) answered a random tile
+ * in tests, so the full request path could not fail there by construction.
+ * The search now answers through the funnel; handleFailedSearch below is
+ * untouched.
  */
 @Tag("production")
 public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {

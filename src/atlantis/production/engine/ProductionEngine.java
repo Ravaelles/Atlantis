@@ -80,15 +80,9 @@ public final class ProductionEngine {
     private static final int LATENCY_FRAMES = 3;
 
     /**
-     * Which placement implementation answers the seam.
-     *
-     * <p>
-     * The default is the legacy {@code APositionFinder} adapter, unchanged, until
-     * the catalogue-backed planner (S1 of {@code _AI/redesign/03_PLACEMENT.md})
-     * has been seen to place a Pylon in a real game. {@code PLACEMENT=catalogue}
-     * in ENV switches it, so the two can be compared in one build - the same
-     * shape as {@code PRODUCTION_V2}'s OFF/DRY_RUN/LIVE cutover.
-     * </p>
+     * Which placement implementation answers the seam: the catalogue
+     * planner, full stop (V3 single door - the legacy spiral was cut
+     * slice by slice, last caller gone 2026-11-06).
      */
     private final PlacementPlanner placementPlanner = createPlacementPlanner();
     private final GameOrderDirector gameDirector = new GameOrderDirector();

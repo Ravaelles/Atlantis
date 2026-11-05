@@ -165,7 +165,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
             assertNull(
                 CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Pylon, construction),
-                "validation needs a builder to check against - decline and let FindPosition define one");
+                "validation needs a builder to check against - decline, no legacy fallback");
             assertTrue(EventLog.toJsonLines().contains(
                 "\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-builder\""));
         });
@@ -262,7 +262,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
         assertNull(CatalogueSiteAdapter.siteForSited(
                 null, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12),
-            "flag off means the sited path never touches the catalogue - FindPosition answers as before");
+            "flag off means the sited path fails closed without the catalogue");
     }
 
     @Test

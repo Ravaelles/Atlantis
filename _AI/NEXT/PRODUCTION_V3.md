@@ -221,7 +221,7 @@ interaction that needs owner input and live proof, not a silent
 sitter swap. S3 returns after that. Revert removes the helper and
 its pin together; S0-S2 stand.
 
-### S4. Kill switches, one per commit [Status: BLOCKED on live proof]
+### S4. Kill switches, one per commit [Status: DONE 2026-11-06 StarEngine-verified (owner order: no live games until StarEngine proves the base); live proof pending owner call]
 Route each legacy caller through the single door, then delete the
 orphaned file to `src-old/`. Order: `RequestBuildingNear` sited
 path, `ProduceBuilding.validatePosition`,
@@ -247,6 +247,7 @@ Protoss-only - verify, don't assume).
   `DefineCannonNearTo.java` if orphaned),
   `GasBuildingPositionFinder.java` (only after the gas
 ...[truncated 2085 chars]
+- S4 DONE 2026-11-06 (owner order: continue without per-cut live games, verify in StarEngine). Cuts landed one per commit, placement + fast gate green each: RequestBuildingNear legacy fallback cut (funnel retry max 3 via reservePlacementExcluding covers it); ProduceBuilding.validatePosition routed through the funnel (the ^^^ shout died); NextBasePosition, OurNextFreeExpansionMostDistantToEnemy (+ test), dead base helpers, dead Zerg branch to src-old; keystone FindPosition + APositionFinder (+ clearCache repointed to AbstractPositionFinder); Protoss spiral family (ProtossPositionFinder, FindPositionForCannon, DefineNearTo, ProtossDefineNearTo, DefineCannonNearTo, PylonPosition) + 10 pinning tests (doctrines live at the funnel/mint door); terran/ + zerg/ siters + We.terran block (the alleged live combat caller NewBunkerPositionFinder is in src-old already); legacy issuance door requestBuilding/produceBuilding/adoptPreparedSite/refuse + BuildGate registry + BuildGates with 17 dead-door test pins deleted or ported (overlap-oid to its live home, throttle/precedence/funding-skips to buildAt); TooCloseToTerranBase + BaseLocations.expansionBaseLocationMostDistantToEnemy (zero callers). Evidence: placement 245/245, fast 1128/1128 (arch 9/11, 2 pre-existing Manager/ExpansionGoal, untouched), acceptance 151/157 (6 pre-existing queue-doctrine, stash-proven; BaseSiting fixed by this slice). NOTE: this section once lost its tail to a pasted truncation marker (pre-existing, all commits carry it) - the list above is the landed truth from git, not a reconstruction. Stays: GasBuildingPositionFinder (live via reserveGas), BuildingQuestion (dead question, decision layer - not the door).
 
 ### S5. Live-hardening batch + single minter [Status: DONE 2026-11-04]
 Wine baselines 20261104_101505 (TauCross vs Grendel, 23 warps, zero
@@ -300,14 +301,7 @@ tile through dead builders, no per-building unit-log key.
   print "[LOW] No issues in Build Order execution detected."
   Twin HIGH/CRIT rows are errors; twin-MEDIUM stays out of the
   counts (telemetry chatter by construction).
-- Remaining V3 (needs one live game of proof each, owner-gated):
-  route sited requests (RequestBuildingNear fallback) and the cannon
-  direct siter (ProtossPhotonCannonAntiLand) through reservePlacement;
-  base siters (FindPositionForBase/NextBasePosition) after V2 proves
-  natural/expansion siting alone; dead dispatcher BUILD branch +
-  requestBuilding/validatePosition/adoptPreparedSite + BuildGates
-  (pinned doctrine - port each gate to V2 with its test before
-  deleting; Terran/Zerg files stay - live combat caller).
+- S4/S5 remainder LANDED 2026-11-06 (StarEngine-verified, no live games): sited fallback cut (retry covers); no ProtossPhotonCannonAntiLand caller exists in-tree; forNewBase pure funnel + bounded natural hunt (BaseSiting 2/2); BUILD never issues (executor default-false); requestBuilding/produceBuilding/validatePosition/adoptPreparedSite + BuildGates deleted; gates ported to the V2 mint door with red-first buildAt pins - overstock, below-min-supply, power-not-funded, core-priority, unaffordable, earlier-reserve (+ pre-existing no-builder, single-tech, pylon-cap); covered by design: live-construction (same-tile dedup), warping-link (inFlight), unstarted-pylon (cap), funding (unaffordable + timeline; adoptionAllowed has no live carrier). Terran/Zerg deleted after re-audit (no live callers). Left, owner decision needed: 6 queue-doctrine acceptance failures (tests assert pre-single-owner behavior; stash-proven pre-existing), STALL/SUPPLY tuning, S1/S2 planner-loop unifications (worker-cover + edge - the sims pin the gap live-side, unifying breaks HealthyMinimum/StalledWarpRecovery without live proof).
 - Game proof: scbw GAME_1077E111 (this tree minus audit strings)
   warped Gateway 1:23 + Core with zero spam twins and zero cancels;
   final-tree scbw GAME_921C9B8D (jar fingerprint matches 8ea97aaac,
@@ -544,3 +538,4 @@ draws the labels - a weird layout cannot break a game, only draw.
   and closes itself. Verified by screenshot on Xvfb (HealthyMinimum
   sim shows Gateway/Pylon/Forge/Citadel/Assimilator labels on the
   snapshot with minerals). No live game needed to watch a build.
+- Slice 6 DONE 2026-11-06 (single door, no new issuance paths): funnel retry (max 3, exclusion set, range inside the loop); bounded neighbourhood hunt (TargetPlacement radius; sited maxDistance, funnel construction.maxDistance, base 20); planner honors the radius in slot-first + hunt; normal blocks skip base tiles + 1-tile margin (BORDER spill ate the natural Nexus spot); exact orders answer SitingVerdict with fresh-search fallback (twinned via exact); V2 mint door owns 6 ported guards + twinRefused (600f heartbeat, same names). Full gate evidence per commit.

@@ -31,9 +31,10 @@ import java.util.Set;
  * owning builders, statuses and retries; only the "which tile" question is
  * delegated, through the same {@code PlacementPlanner} seam the v2
  * scheduler consumes. Anything out of scope - or any catalogue failure -
- * declines with null and the caller falls back to {@code FindPosition}, so
- * a refused catalogue answer can never do worse than today. Selected by
- * {@code PLACEMENT=catalogue}, default off.
+ * declines with null and the demand fails closed (no legacy fallback;
+ * the spiral was cut 2026-11-06), so a refused catalogue answer retries
+ * through the demand instead of hunting elsewhere. Selected by
+ * {@code PLACEMENT=catalogue}, default on.
  * </p>
  *
  * <p>
@@ -51,8 +52,8 @@ public final class CatalogueSiteAdapter {
      * runs unfinishable, 35 s wall for 208 game-s vs 6 s legacy). The
      * frame's first search pays one rebuild; later searches reuse the pass -
      * which additionally keeps two constructions off one tile, the same pass
-     * semantics the v2 scheduler relies on. Same static-state shape as the
-     * {@code APositionFinder} cache next door; single-threaded game loop.
+     * semantics the v2 scheduler relies on. Static frame-keyed cache,
+     * single-threaded game loop.
      */
     private static CataloguePlacementPlanner sharedPlanner;
     private static int sharedPlannerFrame = -1;
@@ -97,8 +98,8 @@ public final class CatalogueSiteAdapter {
     /**
      * Sited requests ({@code RequestBuildingNear}: cannons, forward pylons)
      * search with no order and no construction yet. Same propose + validate
-     * + range discipline, same null-means-legacy contract, selected by the
-     * same flag. The caller keeps its validations, queueing and
+     * + range discipline, same null-means-declined contract, selected by
+     * the same flag. The caller keeps its validations, queueing and
      * construction afterwards, unchanged.
      */
     public static APosition siteForSited(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
