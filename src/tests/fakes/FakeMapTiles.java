@@ -77,7 +77,14 @@ public class FakeMapTiles implements MapTiles.Source {
     @Override
     public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
         if (We.protoss() && building.needsPower()) {
-            if (Select.ourOfType(AUnitType.Protoss_Pylon).countInRadius(5.98, at) == 0) {
+            // Engine truth, not a circle guess: the client powers the
+            // footprint CENTER through a 256x160px mask (PsiField,
+            // measured on live refusals) - a 5.98 euclidean circle
+            // around the pylon refused tiles the engine powers
+            // ([47,11] off Pylon [53,12]: center dx=160px in-mask,
+            // 6.08 euclidean off-circle). The stub must not be
+            // stricter than the engine it stands in for.
+            if (!coveredByOurPylon(building, at)) {
                 AbstractPositionFinder._STATUS = "[Testing] No power";
 
                 return false;
@@ -96,6 +103,24 @@ public class FakeMapTiles implements MapTiles.Source {
         }
 
         AbstractPositionFinder._STATUS = "[Testing] Can't physically build here";
+
+        return false;
+    }
+
+    /**
+     * Engine-truth power for the stub world: a finished Pylon powers a
+     * site exactly when {@link atlantis.map.position.PsiField} says so
+     * (footprint center through the client mask). Only finished Pylons
+     * count - a warping Pylon gives no power live either.
+     */
+    private static boolean coveredByOurPylon(AUnitType building, APosition at) {
+        for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
+            if (pylon == null || pylon.tilePosition() == null) continue;
+            if (atlantis.map.position.PsiField.covers(
+                pylon.tilePosition().getX(), pylon.tilePosition().getY(),
+                at.tx(), at.ty(), building.getTilesWidth(), building.getTilesHeights()
+            )) return true;
+        }
 
         return false;
     }
