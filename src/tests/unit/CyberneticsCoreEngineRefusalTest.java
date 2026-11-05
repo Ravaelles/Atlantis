@@ -1,4 +1,4 @@
-package tests.acceptance;
+package tests.unit;
 
 import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
 
@@ -46,7 +47,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * two behaviours.
  * </p>
  */
-public class CyberneticsCoreEngineRefusalTest extends WorldStubForTests {
+@Tag("placement")
+public class CyberneticsCoreEngineRefusalTest extends tests.acceptance.WorldStubForTests {
 
     @Override
     public Race initRace() {

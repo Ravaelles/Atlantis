@@ -1,4 +1,4 @@
-package tests.acceptance;
+package tests.unit;
 
 import atlantis.game.A;
 import atlantis.map.choke.Chokes;
@@ -12,12 +12,14 @@ import atlantis.production.dynamic.protoss.reinforce.ProtossSecureBaseWithCannon
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RequestBuildingNearTest extends WorldStubForTests {
+@Tag("placement")
+public class RequestBuildingNearTest extends tests.acceptance.WorldStubForTests {
 
     private static FakeUnit main = null;
     private static FakeUnit natural = null;
