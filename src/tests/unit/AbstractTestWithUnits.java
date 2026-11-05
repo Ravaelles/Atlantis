@@ -391,7 +391,6 @@ public class AbstractTestWithUnits extends UnitTest {
         // test to refuse a guard silences the same refusal in every later
         // test (measured: a suite-only funding refusal with no twin row).
         // Clearing changes no boolean, only the logging.
-        atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
 
         // Board funding statics (active/funded/fresh) are refreshed by any
         // world loop that runs the feeder; a fresh active-but-unfunded goal

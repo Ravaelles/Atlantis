@@ -177,6 +177,8 @@ public class Main {
     public static String mapAsProtoss() {
         if (!"Protoss".equals(ourRace())) return null;
 
+        if (true) return "sscai/(3)TauCross.scx";
+
         // -------------------- vs Terran ------------------------
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";

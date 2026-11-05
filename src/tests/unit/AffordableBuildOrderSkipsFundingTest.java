@@ -8,7 +8,6 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -51,7 +50,6 @@ public class AffordableBuildOrderSkipsFundingTest extends AbstractTestWithWorld 
     public void clean() {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
-        ProduceBuilding.clearRefusedThrottleForTests();
     }
 
     @Test
@@ -95,9 +93,18 @@ public class AffordableBuildOrderSkipsFundingTest extends AbstractTestWithWorld 
             ConstructionRequests.constructions.add(preparing);
 
             EventLog.clearForTests();
+            // V2 door: no wallet check exists at the mint - an affordable
+            // BO demand mints on bank alone (the unfunded wallet above is
+            // real state, the mint ignores it by design, not by accident).
+            // The PREPARING row above engages earlier-reserve (150 unpaid);
+            // 400 covers Gateway (150) plus the reserve.
+            atlantis.production.execution.GameOrderDirector director =
+                new atlantis.production.execution.GameOrderDirector();
             assertTrue(
-                ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, order),
-                "affordable queue order skips an unfunded wallet: " + EventLog.toJsonLines());
+                director.buildAt(
+                    atlantis.production.producibles.UnitProducible.of(AUnitType.Protoss_Gateway),
+                    atlantis.production.placement.PlacementReservation.success(30, 30, 100), 10),
+                "affordable BO demand mints despite the unfunded wallet: " + EventLog.toJsonLines());
             assertFalse(
                 EventLog.toJsonLines().contains("\"guard\":\"funding\""),
                 "no funding veto on an affordable BO row: " + EventLog.toJsonLines());

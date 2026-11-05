@@ -63,7 +63,6 @@ public class EarlierReserveAgreementTest extends AbstractTestWithWorld {
     public void clean() {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
-        ProduceBuilding.clearRefusedThrottleForTests();
     }
 
     @Test
