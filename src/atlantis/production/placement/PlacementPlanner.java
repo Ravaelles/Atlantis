@@ -29,6 +29,22 @@ public interface PlacementPlanner {
     PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame);
 
     /**
+     * Tries to reserve a legal, buildable spot for the building under the
+     * given constraint, skipping the given already-refused tiles.
+     *
+     * <p>The default answers like {@link #reservePlacement} (no exclusions);
+     * the catalogue planner honors the set. Tiles are named
+     * {@code "tx:ty"}, like the per-pass reservation memory - a tile the
+     * funnel's verdict just refused must not be re-served to the same
+     * demand in the same call (measured live: the same cursed tile
+     * re-served every frame until something else moved).
+     */
+    default PlacementReservation reservePlacementExcluding(Producible building, TargetPlacement constraint,
+                                                           int targetFrame, java.util.Set<String> excludedTiles) {
+        return reservePlacement(building, constraint, targetFrame);
+    }
+
+    /**
      * Called once before a schedule pass: spatial reservations from a previous
      * pass are discarded (the plan is stateless and recomputed every frame).
      */

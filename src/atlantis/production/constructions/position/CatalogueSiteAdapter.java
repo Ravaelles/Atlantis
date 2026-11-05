@@ -19,6 +19,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Legacy site search answered from the catalogue planner: two entries
  * (queue rows with orders, sited requests without), one shared core.
@@ -118,7 +121,8 @@ public final class CatalogueSiteAdapter {
 
         planner.startPass();
         TargetPlacement constraint = constraintForSited(nearTo);
-        PlacementReservation reservation = propose(planner, builder, building, constraint, "sited");
+        PlacementReservation reservation = propose(planner, builder, building, constraint, "sited",
+            new HashSet<String>());
         if (reservation == null) {
             return null;
         }
@@ -157,7 +161,10 @@ public final class CatalogueSiteAdapter {
         // V3 S6 slice 2: the once-planned layout owns issuance - a free
         // reserved slot serves before the per-frame hunt, under the same
         // verdict, physics and reachability the hunted tile would face.
-        // A refused slot falls through to the hunt below, never declines.
+        // A refused slot falls through to the hunt below, never declines -
+        // and joins that hunt's exclusion list, so the hunt cannot
+        // re-serve on verdict grounds what the slot path just refused.
+        Set<String> excluded = new HashSet<String>();
         APosition slot = firstFreeSlot(building);
         if (slot != null) {
             SitingVerdict slotVerdict = SitingVerdict.check(building, slot);
@@ -167,21 +174,24 @@ public final class CatalogueSiteAdapter {
                 if ("unpowered".equals(slotVerdict.twin)) {
                     queueSlotSupportPylon(building, slot);
                 }
+                excluded.add(tileKey(slot.tx(), slot.ty()));
             }
             else if (!CanPhysicallyBuildHere.check(builder, building, slot)) {
                 SiteTwin.declined(building, "legacy-refused", "slot",
                     constraint.nearTileX(), constraint.nearTileY());
+                excluded.add(tileKey(slot.tx(), slot.ty()));
             }
             else if (unreachableFromMain(slot)) {
                 SiteTwin.declined(building, "unreachable", "slot",
                     constraint.nearTileX(), constraint.nearTileY());
+                excluded.add(tileKey(slot.tx(), slot.ty()));
             }
             else {
                 return answerWithTwin(slot, building, "slot", null, constraint);
             }
         }
 
-        PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel");
+        PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel", excluded);
         if (reservation == null) return null;
 
         return answerWithTwin(
@@ -203,28 +213,19 @@ public final class CatalogueSiteAdapter {
     /**
      * The first reserved slot of this type no live building covers
      * (V3 S6): standing and unfinished footprints both occupy, so a
-     * warping Pylon and a parked row equally hold their slot. Pure
-     * order, no mutation - a cancelled row frees its slot by ceasing
-     * to cover it, never by bookkeeping that could desync.
+     * warping Pylon and a parked row equally hold their slot. Single
+     * implementation in {@link atlantis.placement.core.ReservedSlots};
+     * this is just the call-site predicate (same overlap rule the
+     * planner uses, so the two paths cannot disagree on occupancy).
      */
     private static APosition firstFreeSlot(AUnitType building) {
-        if (building == null) return null;
-        try {
-            for (atlantis.placement.core.ReservedSlots.Slot slot :
-                atlantis.placement.core.ReservedSlots.slots()) {
-                if (slot == null || slot.tile == null || slot.type == null) continue;
-                if (!slot.type.equals(building)) continue;
-                if (atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
-                    .check(slot.tile, building)) continue;
-                if (atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
-                    .check(slot.tile, building)) continue;
-
-                return slot.tile;
-            }
-        } catch (Exception | Error ignored) {
-        }
-
-        return null;
+        return atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
+            building,
+            (tile, type) ->
+                atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                    .check(tile, type)
+                || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                    .check(tile, type));
     }
 
     /**
@@ -280,64 +281,100 @@ public final class CatalogueSiteAdapter {
     }
 
     /**
+     * How many tiles one funnel call may try at most: the first pick plus
+     * two alternatives. Each extra attempt is a full catalogue hunt, so the
+     * bound keeps a declined demand from re-scanning the map every frame
+     * (sited demand re-fires until it is answered or cancelled) while still
+     * giving the neighbourhood a second and third look when the ranker's
+     * favourite fails the verdict. A demand with no servable tile answers
+     * once and waits for the next frame like before.
+     */
+    private static final int FUNNEL_MAX_TRIES = 3;
+
+    private static String tileKey(int tx, int ty) {
+        return tx + ":" + ty;
+    }
+
+    /**
      * The shared core: builder check, catalogue proposal, legacy validation.
      * Returns the validated reservation or null (decline already twinned).
+     * A tile the verdict, physics or reachability refuses is excluded and
+     * the hunt is asked again (bounded above): the ranker's favourite is
+     * not always servable, but a refused tile never is.
      */
-    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building, TargetPlacement constraint, String via) {
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
+                                                TargetPlacement constraint, String via) {
+        return propose(planner, builder, building, constraint, via, new HashSet<String>());
+    }
+
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
+                                                TargetPlacement constraint, String via,
+                                                Set<String> excluded) {
         // The catalogue proposes, the legacy validator disposes: a tile the
         // builder-time checks refuse would start a builder, fail refresh and
         // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
-        // the control for the same opening). Decline instead and let the
-        // legacy search answer; subsuming these checks is a later slice with
-        // its own A/B proof.
+        // the control for the same opening). Decline instead of serving it.
         if (builder == null || !builder.isAlive()) {
             SiteTwin.declined(building, "no-builder", via, constraint.nearTileX(), constraint.nearTileY());
 
             return null;
         }
 
-        PlacementReservation reservation = SiteTwin.timed(() -> planner.reservePlacement(
-            UnitProducible.of(building), constraint, AGame.now()
-        ));
-        for (atlantis.placement.core.SupportRequest support : planner.drainSupportRequests()) {
-            AddToQueue.withHighPriority(
-                support.unitType(),
-                APosition.create(support.tileX(), support.tileY()));
-        }
-        if (reservation == null || !reservation.isSuccessful()) {
-            SiteTwin.declined(building, "no-tile", via, constraint.nearTileX(), constraint.nearTileY());
+        for (int attempt = 0; ; attempt++) {
+            PlacementReservation reservation = SiteTwin.timed(() -> planner.reservePlacementExcluding(
+                UnitProducible.of(building), constraint, AGame.now(), excluded
+            ));
+            for (atlantis.placement.core.SupportRequest support : planner.drainSupportRequests()) {
+                AddToQueue.withHighPriority(
+                    support.unitType(),
+                    APosition.create(support.tileX(), support.tileY()));
+            }
+            if (reservation == null || !reservation.isSuccessful()) {
+                // Only the first failure names no-tile: on later attempts the
+                // declines above already told which tiles blocked the hunt.
+                if (excluded.isEmpty()) {
+                    SiteTwin.declined(building, "no-tile", via, constraint.nearTileX(), constraint.nearTileY());
+                }
 
-            return null;
-        }
+                return null;
+            }
 
-        APosition site = APosition.create(reservation.tileX(), reservation.tileY());
-        // V3 S1: one verdict owns refused / power-at-footprint-center /
-        // geyser-minerals / worker-cover, so the funnel can never serve a
-        // tile the legacy spiral would decline. Physics (occupancy, engine
-        // canBuildHere, early allowances) stays with CanPhysicallyBuildHere
-        // below - the verdict answers "should we", physics answers "could we".
-        SitingVerdict verdict = SitingVerdict.check(building, site);
-        if (!verdict.accepted()) {
-            SiteTwin.declined(building, verdict.twin, via, constraint.nearTileX(), constraint.nearTileY());
+            APosition site = APosition.create(reservation.tileX(), reservation.tileY());
+            // V3 S1: one verdict owns refused / power-at-footprint-center /
+            // geyser-minerals / worker-cover, so the funnel can never serve a
+            // tile the legacy spiral would decline. Physics (occupancy, engine
+            // canBuildHere, early allowances) stays with CanPhysicallyBuildHere
+            // below - the verdict answers "should we", physics answers "could we".
+            SitingVerdict verdict = SitingVerdict.check(building, site);
+            if (!verdict.accepted()) {
+                SiteTwin.declined(building, verdict.twin, via, constraint.nearTileX(), constraint.nearTileY());
+                if (attempt + 1 >= FUNNEL_MAX_TRIES) return null;
+                excluded.add(tileKey(site.tx(), site.ty()));
 
-            return null;
-        }
-        if (!CanPhysicallyBuildHere.check(builder, building, site)) {
-            SiteTwin.declined(building, "legacy-refused", via, constraint.nearTileX(), constraint.nearTileY());
+                continue;
+            }
+            if (!CanPhysicallyBuildHere.check(builder, building, site)) {
+                SiteTwin.declined(building, "legacy-refused", via, constraint.nearTileX(), constraint.nearTileY());
+                if (attempt + 1 >= FUNNEL_MAX_TRIES) return null;
+                excluded.add(tileKey(site.tx(), site.ty()));
 
-            return null;
-        }
-        // Owner 2026-11-01: the main base must reach the site by ground.
-        // Last and once per proposal (reachability is the costly query):
-        // a disconnected region (UMS/island pocket) declines to the legacy
-        // spiral instead of stranding the builder. Skipped when no base
-        // stands yet (first frame) - there is nothing to measure from.
-        if (unreachableFromMain(site)) {
-            SiteTwin.declined(building, "unreachable", via, constraint.nearTileX(), constraint.nearTileY());
+                continue;
+            }
+            // Owner 2026-11-01: the main base must reach the site by ground.
+            // Last and once per passing tile (reachability is the costly
+            // query): a disconnected region (UMS/island pocket) declines
+            // instead of stranding the builder. Skipped when no base
+            // stands yet (first frame) - there is nothing to measure from.
+            if (unreachableFromMain(site)) {
+                SiteTwin.declined(building, "unreachable", via, constraint.nearTileX(), constraint.nearTileY());
+                if (attempt + 1 >= FUNNEL_MAX_TRIES) return null;
+                excluded.add(tileKey(site.tx(), site.ty()));
 
-            return null;
+                continue;
+            }
+
+            return reservation;
         }
-        return reservation;
     }
 
     /**

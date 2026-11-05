@@ -378,6 +378,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     @Override
     public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame) {
+        return reservePlacement(building, constraint, targetFrame, java.util.Collections.<String>emptySet());
+    }
+
+    @Override
+    public PlacementReservation reservePlacementExcluding(Producible building, TargetPlacement constraint,
+                                                          int targetFrame, java.util.Set<String> excludedTiles) {
+        return reservePlacement(building, constraint, targetFrame,
+            excludedTiles == null ? java.util.Collections.<String>emptySet() : excludedTiles);
+    }
+
+    private PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame,
+                                                  java.util.Set<String> excluded) {
         AUnitType unitType = resolveUnitType(building);
         if (unitType == null)
             return PlacementReservation.failure();
@@ -418,7 +430,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // through the same legality ladder a hunted tile faces, so the
         // V2-direct path (which never funnels) issues from the layout.
         // A refused slot falls through to the hunt below, never declines.
-        BuildLocation planned = firstFreePlannedSlot(unitType);
+        BuildLocation planned = firstFreePlannedSlot(unitType, excluded);
         if (planned != null) {
             PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
             if (slotAnswer != null) {
@@ -466,7 +478,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
-            if (reservedThisPass.contains(tile))
+            if (reservedThisPass.contains(tile) || excluded.contains(tile))
                 continue;
 
             PlacementReservation answer = serveIfLegal(candidate, unitType, targetFrame, ranker);
@@ -483,14 +495,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * their slot, and a cancelled row frees it by ceasing to cover it
      * (no bookkeeping that could desync). Pure order, no mutation.
      */
-    private BuildLocation firstFreePlannedSlot(AUnitType unitType) {
+    private BuildLocation firstFreePlannedSlot(AUnitType unitType, final java.util.Set<String> excluded) {
         if (unitType == null) return null;
 
         try {
             APosition tile = atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
                 unitType,
                 (slotTile, building) ->
-                    atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                    (excluded != null && excluded.contains(slotTile.tx() + ":" + slotTile.ty()))
+                        || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
                         .check(slotTile, building)
                         || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
                         .check(slotTile, building));
