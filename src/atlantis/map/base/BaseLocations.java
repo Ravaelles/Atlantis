@@ -142,33 +142,6 @@ public class BaseLocations {
 //    }
 
     /**
-     * Returns free base location which is as far from enemy starting location as possible.
-     */
-    public static ABaseLocation expansionBaseLocationMostDistantToEnemy() {
-        AUnit farthestTo = EnemyUnits.nearestEnemyBuilding();
-        if (farthestTo == null) {
-            return expansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
-        }
-
-        // =========================================================
-
-        // Get list of all base locations
-        Positions<ABaseLocation> baseLocations = new Positions<>();
-        baseLocations.addPositions(baseLocations());
-
-        // Sort them all by closest to given nearestTo position
-        baseLocations.sortByGroundDistanceTo(farthestTo, false);
-
-        // For every location...
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocationLooksFree(baseLocation)) {
-                return baseLocation;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns list of places that have geyser and mineral fields so they are the places where you could build
      * a base. Starting locations are also included here.
      */

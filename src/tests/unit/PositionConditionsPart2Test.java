@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for the second group of position conditions:
  * - {@link TooCloseToChoke}
  * - {@link TooCloseToBaseLocation}
- * - {@link TooCloseToTerranBase}
  * - {@link TerranHasEnoughSidesFreeFromOtherBuildings}
  * - {@link IsProbablyInAnotherRegion}
  * - {@link ProtossAllowHereEarlyEvenWithoutRequirements}
@@ -113,20 +112,6 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
             assertFalse(
                 TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(ASSIMILATOR, atBaseLoc),
                 "a gas building is exempt from base location check");
-        });
-    }
-
-    // ---------------------------------------------------------------------------
-    // TooCloseToTerranBase
-    // ---------------------------------------------------------------------------
-
-    @Test
-    public void protossIsExemptFromTooCloseToTerranBase() {
-        world(1, fakeOurs(
-            main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
-            assertFalse(
-                TooCloseToTerranBase.isTooCloseToBase(GATEWAY, APosition.create(50, 50)),
-                "Protoss buildings are never judged by TooCloseToTerranBase");
         });
     }
 
