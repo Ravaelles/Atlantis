@@ -5,7 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.NewConstructionRequest;
-import atlantis.production.constructions.position.FindPosition;
+import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -223,9 +223,11 @@ public class GatewayWaitsOnBlockedBaseTest extends WorldStubForTests {
         construction.setNearTo(order.aroundPosition());
         construction.setMaxDistance(order.maximumDistance());
 
-        return FindPosition.findForBuilding(
-            probe, AUnitType.Protoss_Gateway, construction,
-            order.aroundPosition(), order.maximumDistance());
+        // V3 single door: the funnel answers bounded by the order's own
+        // radius (null on a blocked base, a tile when freed) - the legacy
+        // spiral died with FindPosition. handleFailedSearch below is
+        // untouched: the WAIT-vs-cancel doctrine lives there.
+        return CatalogueSiteAdapter.siteFor(probe, AUnitType.Protoss_Gateway, construction);
     }
 
     private String dominant() {
