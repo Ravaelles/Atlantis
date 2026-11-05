@@ -11,7 +11,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.NewConstructionRequest;
-import atlantis.production.constructions.position.FindPosition;
+import atlantis.production.constructions.position.CatalogueSiteAdapter;
 import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -19,7 +19,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
@@ -441,21 +440,26 @@ public class ProduceBuilding {
         return true;
     }
 
+    /**
+     * An exact order's tile is re-validated through the single door, not
+     * the legacy spiral: the sited funnel re-serves within the order's
+     * own maximum distance (bounded hunt + retry), or the order keeps
+     * its tile and the mint door disposes. The ^^^ shout died here -
+     * a null answer is a normal decline the caller names, not console
+     * output (console hygiene: no MED/HIGH in game output).
+     */
     private static void validatePosition(ProductionOrder order, AUnitType type) {
         HasPosition atPosition = order.aroundPosition();
         if (atPosition == null) return;
 
         if (type.isBase() || type.isGasBuilding()) return;
 
-        APosition newPosition = FindPosition.findForBuilding(
-            FreeWorkers.get().nearestTo(atPosition), type, null, atPosition, order.maximumDistance()
+        APosition site = CatalogueSiteAdapter.siteForSited(
+            FreeWorkers.get().nearestTo(atPosition), type, atPosition, order.maximumDistance()
         );
 
-        if (newPosition != null) {
-            order.setAroundPosition(newPosition);
-        }
-        else {
-            AConsole.errPrintln("^^^^^^^^^^^^^^^^^^^ CAN'T FIND POSITION FOR " + type + " at " + atPosition);
+        if (site != null) {
+            order.setAroundPosition(site);
         }
     }
 }
