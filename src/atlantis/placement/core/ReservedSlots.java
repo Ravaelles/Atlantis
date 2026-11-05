@@ -29,6 +29,17 @@ public final class ReservedSlots {
      */
     public static final int GATEWAY_SLOTS = 10;
 
+    /**
+     * Dedicated supply Pylons planned with the pairs (owner order:
+     * condense near the main, Stardust doctrine). The 10 pair-Pylons
+     * are Gateway cover; supply demand ate them first-come, so late
+     * supply Pylons fell to the anywhere-hunt and landed in foreign
+     * regions with home ground free (measured live: bank 1500+,
+     * supply-capped, Pylon in another region). 10 + 14 = 24 Pylons
+     * cover max supply on home power; the hunt stays the fallback.
+     */
+    public static final int SUPPLY_PYLON_SLOTS = 14;
+
 
     /**
      * Power cover in build tiles (Chebyshev on origins): a Gateway
@@ -161,8 +172,39 @@ public final class ReservedSlots {
         List<Rect> taken = new ArrayList<Rect>();
 
         takeGatewaySlotsWithPower(catalogue, main, gatewayType, gatewayCount, out, taken);
+        takeSupplyPylonSlots(catalogue, main, out, taken);
         nameSlotsInDistanceOrder(out, main);
         return out;
+    }
+
+    /**
+     * Dedicated supply Pylons, nearest the main first: the pool supply
+     * demand eats before it touches pair-cover Pylons. Same edge rule
+     * as the pairs (no exemption: planned once, never an emergency).
+     */
+    private static void takeSupplyPylonSlots(BuildLocationCatalogue catalogue, APosition main,
+                                             List<Slot> out, List<Rect> taken) {
+        List<BuildLocation> candidates = catalogue.candidates(
+            AUnitType.Protoss_Pylon.getTilesWidth(), AUnitType.Protoss_Pylon.getTilesHeights(), null);
+        sortByDistanceToMain(candidates, main);
+
+        int pylons = 0;
+        for (BuildLocation candidate : candidates) {
+            if (pylons >= SUPPLY_PYLON_SLOTS) break;
+
+            if (isEdgeTile(candidate.tileX(), candidate.tileY(),
+                candidate.tileWidth(), candidate.tileHeight())) continue;
+
+            Rect rect = new Rect(
+                candidate.tileX(), candidate.tileY(),
+                candidate.tileWidth(), candidate.tileHeight());
+            if (overlapsTaken(rect, taken)) continue;
+
+            taken.add(rect);
+            out.add(new Slot("S", AUnitType.Protoss_Pylon,
+                APosition.create(candidate.tileX(), candidate.tileY())));
+            pylons++;
+        }
     }
 
     private static void takeGatewaySlotsWithPower(BuildLocationCatalogue catalogue,
@@ -242,22 +284,29 @@ public final class ReservedSlots {
     }
 
     /**
-     * Labels in distance order: Pylons then Gateways, nearest the main
-     * first (P1..Pn, G1..Gn). The plan order above interleaves pairs;
-     * the painter contract (G1 nearest) is restored here.
+     * Labels in distance order: supply Pylons first (S1.. nearest the
+     * main - supply demand eats the pool head-first and never touches
+     * pair cover while S slots stand free), then pair Pylons, then
+     * Gateways. The plan order interleaves pairs; the painter contract
+     * (G1 nearest, S1 nearest) is restored here.
      */
     private static void nameSlotsInDistanceOrder(List<Slot> out, final APosition main) {
+        List<Slot> supply = new ArrayList<Slot>();
         List<Slot> pylons = new ArrayList<Slot>();
         List<Slot> gateways = new ArrayList<Slot>();
         for (Slot slot : out) {
-            if (slot.type.isPylon()) pylons.add(slot);
+            if (slot.label.startsWith("S")) supply.add(slot);
+            else if (slot.type.isPylon()) pylons.add(slot);
             else gateways.add(slot);
         }
+        sortSlotsByDistanceToMain(supply, main);
         sortSlotsByDistanceToMain(pylons, main);
         sortSlotsByDistanceToMain(gateways, main);
 
         out.clear();
         int n = 1;
+        for (Slot slot : supply) out.add(new Slot("S" + n++, slot.type, slot.tile));
+        n = 1;
         for (Slot slot : pylons) out.add(new Slot("P" + n++, slot.type, slot.tile));
         n = 1;
         for (Slot slot : gateways) out.add(new Slot("G" + n++, slot.type, slot.tile));

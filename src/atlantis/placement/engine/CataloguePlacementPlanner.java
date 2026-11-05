@@ -527,7 +527,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // decide ORDER, never correctness.
         List<BuildLocation> candidates = refine(
             unitType,
-            catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null)
+            catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null),
+            centre
         );
 
         BuildLocationCatalogue.LocationScorer ranker = rankerFor(unitType, centre);
@@ -690,18 +691,67 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * Cross-frame flips are absorbed downstream instead (carriedOver
      * re-offers the owned tile, buildAt dedups it).</p>
      */
-    private List<BuildLocation> refine(AUnitType unitType, List<BuildLocation> candidates) {
+    private List<BuildLocation> refine(AUnitType unitType, List<BuildLocation> candidates,
+                                       APosition centre) {
         AUnit builder = builderForThisPass();
+
+        // The search centre's base area, once per pass: every candidate is
+        // answered against it, so the ranker can keep buildings in the
+        // area they were asked for (Stardust: blocks per area, never a
+        // cross-map grab while home ground stands free).
+        AUnit centreBase = nearestBaseFor(centre);
 
         List<BuildLocation> refined = new java.util.ArrayList<>(candidates.size());
         for (BuildLocation candidate : candidates) {
             BuildLocation withTravel = candidate.refined(
                 builderTravelEstimate(builder, candidate),
-                exitDistanceFor(candidate)
+                exitDistanceFor(candidate),
+                sameBaseAs(candidate, centreBase)
             );
             refined.add(withTravel.withFramesUntilAvailable(availabilityFrames(unitType, candidate)));
         }
         return refined;
+    }
+
+    /**
+     * Nearest owned base to a tile (Chebyshev, same rule as the
+     * neighbourhood source), main as the pre-base fallback. Null when
+     * nothing is known - the area answer fails open above it.
+     */
+    private static AUnit nearestBaseFor(APosition at) {
+        if (at == null) return null;
+
+        try {
+            AUnit nearest = null;
+            int best = Integer.MAX_VALUE;
+            for (AUnit base : Select.ourBasesWithUnfinished().list()) {
+                if (base == null) continue;
+                int d = Math.max(Math.abs(base.tx() - at.tx()), Math.abs(base.ty() - at.ty()));
+                if (d < best) {
+                    best = d;
+                    nearest = base;
+                }
+            }
+            if (nearest == null) nearest = Select.main();
+
+            return nearest;
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Same base area as the search centre: both tiles answer to the same
+     * owned base. Unknown on either side reads same (fail-open: with no
+     * bases listed there is no area to disagree about).
+     */
+    private static boolean sameBaseAs(BuildLocation candidate, AUnit centreBase) {
+        if (centreBase == null) return true;
+
+        AUnit candidateBase = nearestBaseFor(APosition.create(candidate.tileX(), candidate.tileY()));
+        if (candidateBase == null) return true;
+
+        return candidateBase.id() == centreBase.id();
     }
 
     /**

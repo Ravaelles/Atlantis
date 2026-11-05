@@ -51,6 +51,17 @@ public final class BuildLocation {
      */
     private final boolean hasExit;
 
+    /**
+     * True when the candidate sits in the same base area as the search
+     * centre (nearest owned base on both sides). A far-but-powered tile
+     * in another region used to beat a dark home tile on availability
+     * alone (measured live: supply Pylons in foreign regions while the
+     * main stood half empty) - the ranker hears area before distance.
+     * Fail-open true: with no bases listed yet there is no area to
+     * disagree about.
+     */
+    private final boolean sameArea;
+
     public BuildLocation(
         int tileX, int tileY, int tileWidth, int tileHeight,
         int builderFrames, int framesUntilAvailable, int distanceToExit, boolean techLocation) {
@@ -62,6 +73,14 @@ public final class BuildLocation {
         int tileX, int tileY, int tileWidth, int tileHeight,
         int builderFrames, int framesUntilAvailable, int distanceToExit,
         boolean techLocation, boolean hasExit) {
+        this(tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
+            distanceToExit, techLocation, hasExit, true);
+    }
+
+    public BuildLocation(
+        int tileX, int tileY, int tileWidth, int tileHeight,
+        int builderFrames, int framesUntilAvailable, int distanceToExit,
+        boolean techLocation, boolean hasExit, boolean sameArea) {
         this.tileX = tileX;
         this.tileY = tileY;
         this.tileWidth = tileWidth;
@@ -71,6 +90,7 @@ public final class BuildLocation {
         this.distanceToExit = distanceToExit;
         this.techLocation = techLocation;
         this.hasExit = hasExit;
+        this.sameArea = sameArea;
     }
 
     /**
@@ -79,9 +99,17 @@ public final class BuildLocation {
      * with a real travel estimate and the neighbourhood's exit distance.
      */
     public BuildLocation refined(int builderFrames, int distanceToExit) {
+        return refined(builderFrames, distanceToExit, true);
+    }
+
+    /**
+     * The same tile refined plus its area answer: same base area as the
+     * search centre or not (fail-open true from the two-arg shape).
+     */
+    public BuildLocation refined(int builderFrames, int distanceToExit, boolean sameArea) {
         return new BuildLocation(
             tileX, tileY, tileWidth, tileHeight,
-            builderFrames, framesUntilAvailable, distanceToExit, techLocation, hasExit
+            builderFrames, framesUntilAvailable, distanceToExit, techLocation, hasExit, sameArea
         );
     }
 
@@ -91,12 +119,16 @@ public final class BuildLocation {
     public BuildLocation withFramesUntilAvailable(int framesUntilAvailable) {
         return new BuildLocation(
             tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
-            distanceToExit, techLocation, hasExit
+            distanceToExit, techLocation, hasExit, sameArea
         );
     }
 
     public boolean hasExit() {
         return hasExit;
+    }
+
+    public boolean sameArea() {
+        return sameArea;
     }
 
     public int tileX() {
@@ -148,6 +180,7 @@ public final class BuildLocation {
             + " builder=" + builderFrames
             + " avail=" + framesUntilAvailable
             + " exit=" + distanceToExit
-            + (techLocation ? " tech" : "") + ")";
+            + (techLocation ? " tech" : "")
+            + (sameArea ? "" : " far") + ")";
     }
 }

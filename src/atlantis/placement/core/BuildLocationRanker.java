@@ -13,6 +13,10 @@ package atlantis.placement.core;
  * <ol>
  * <li><b>available before unavailable</b>: a powered/ready tile beats one that
  * must wait for a Pylon;</li>
+ * <li><b>home area before foreign</b>: a tile in the search centre's base
+ * area beats one across the map (Stardust keeps blocks per area; a far
+ * powered tile no longer outranks home ground on availability ties -
+ * power still rules, area only breaks ties);</li>
  * <li><b>distance, weighted by kind</b>: a normal building wants to be near the
  * exit (toward the map, so its units leave quickly), a tech building wants
  * to be <i>away</i> from it (Stardust's {@code buildAwayFromExit}), and
@@ -55,7 +59,14 @@ public final class BuildLocationRanker implements BuildLocationCatalogue.Locatio
         if (availability != 0)
             return availability;
 
-        // 2. Distance score, lower is better.
+        // 2. Same base area as asked first. Power still rules above this:
+        // a powered foreign tile beats a dark home one (speed over
+        // tidiness); on ties the buildings condense instead of
+        // scattering (owner order: home ground first).
+        if (a.sameArea() != b.sameArea())
+            return a.sameArea() ? -1 : 1;
+
+        // 3. Distance score, lower is better.
 
         return Integer.compare(score(a), score(b));
     }

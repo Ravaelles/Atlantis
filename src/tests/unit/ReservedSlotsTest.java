@@ -42,8 +42,38 @@ public class ReservedSlotsTest {
 
         long gateways = slots.stream().filter(s -> s.label.startsWith("G")).count();
         long pylons = slots.stream().filter(s -> s.label.startsWith("P")).count();
+        long supply = slots.stream().filter(s -> s.label.startsWith("S")).count();
         assertEquals(10, gateways, "owner ordered ten gateways");
         assertTrue(pylons >= 1, "at least one pylon slot to power them");
+        assertEquals(ReservedSlots.SUPPLY_PYLON_SLOTS, supply,
+            "dedicated supply pool, so supply demand never eats pair cover");
+    }
+
+    @Test
+    public void supplySlotsComeFirstAndNearestFirst() {
+        List<ReservedSlots.Slot> slots = plan();
+
+        int firstP = -1;
+        int lastS = -1;
+        ReservedSlots.Slot s1 = null;
+        for (int i = 0; i < slots.size(); i++) {
+            ReservedSlots.Slot slot = slots.get(i);
+            if (slot.label.startsWith("S")) {
+                lastS = i;
+                if (slot.label.equals("S1")) s1 = slot;
+            }
+            if (slot.label.startsWith("P") && firstP < 0) firstP = i;
+        }
+        assertTrue(s1 != null, "S1 exists");
+        assertTrue(lastS < firstP, "supply pool is eaten before pair cover");
+
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        APosition main = terrain.baseTile(0);
+        for (ReservedSlots.Slot slot : slots) {
+            if (!slot.label.startsWith("S")) continue;
+            assertTrue(main.distTo(s1.tile) <= main.distTo(slot.tile) + 0.001,
+                "S1 is the nearest supply slot: " + s1.tile);
+        }
     }
 
     @Test
