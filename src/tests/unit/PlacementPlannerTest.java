@@ -101,7 +101,7 @@ public class PlacementPlannerTest {
         planner.startPass();
 
         PlacementReservation reservation = planner.reservePlacement(
-            UnitProducible.of(AUnitType.Protoss_Gateway),
+            UnitProducible.of(AUnitType.Protoss_Pylon),
             TargetPlacement.exactTile(25, 25), 0);
 
         assertTrue(reservation.isSuccessful());
@@ -116,11 +116,11 @@ public class PlacementPlannerTest {
 
         // First building claims the area, second asks for the same exact tile.
         planner.reservePlacement(
-            UnitProducible.of(AUnitType.Protoss_Gateway),
+            UnitProducible.of(AUnitType.Protoss_Pylon),
             TargetPlacement.exactTile(25, 25), 0);
 
         PlacementReservation second = planner.reservePlacement(
-            UnitProducible.of(AUnitType.Protoss_Gateway),
+            UnitProducible.of(AUnitType.Protoss_Pylon),
             TargetPlacement.exactTile(25, 25), 0);
 
         assertFalse(second.isSuccessful(),

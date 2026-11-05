@@ -653,6 +653,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
                 unitType, APosition.create(candidate.tileX(), candidate.tileY()))) return null;
 
+            // Reachability (owner 2026-11-01): the main base must walk
+            // there by ground. Same rule as the funnel's sited path, so
+            // the loop never serves a tile the funnel would decline.
+            // Fail-open with no main yet (first frames, game-less tests).
+            if (unreachableFromMain(APosition.create(candidate.tileX(), candidate.tileY()))) return null;
+
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to
@@ -894,12 +900,26 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return PlacementReservation.failure();
         }
 
-        // Exact tiles answer the same single verdict: an edge exact tile
-        // (the SUPPORT flow's hint) fails here instead of minting an
-        // illegal warp with no downstream check. Emergency exemption
-        // included via the shared predicate.
-        if (atlantis.production.constructions.position.SitingVerdict.isTooCloseToEdge(
-            type, APosition.create(x, y))) {
+        APosition tile = APosition.create(x, y);
+
+        // Exact tiles answer the same single verdict as every other tile:
+        // an exact hint is a wish, not a proof (the SUPPORT flow mints
+        // exact Pylon tiles with no downstream check, and sited orders
+        // carry stale tiles). Refused, unpowered, mineral-crowded,
+        // standing-covered, worker-covered or edge-exact all fail here
+        // instead of minting an illegal warp. Power stays a verdict
+        // answer (ACCEPT/REFUSE, never NEEDS_SUPPORT): an unpowered
+        // exact tile is refused outright - the caller re-hints or waits.
+        atlantis.production.constructions.position.SitingVerdict verdict =
+            atlantis.production.constructions.position.SitingVerdict.check(type, tile);
+        if (!verdict.accepted()) {
+            return PlacementReservation.failure();
+        }
+
+        // Reachability stays with the caller (the verdict never reads
+        // live state): the main base must walk there, same rule as the
+        // funnel's sited path, so the two cannot disagree.
+        if (unreachableFromMain(tile)) {
             return PlacementReservation.failure();
         }
 
@@ -907,6 +927,22 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         grid.markUsed(x, y, type.getTilesWidth(), type.getTilesHeights());
 
         return PlacementReservation.success(x, y, targetFrame);
+    }
+
+    /**
+     * The main base must reach the tile by ground (owner 2026-11-01).
+     * Same rule as the funnel's sited path - the two paths cannot
+     * disagree on reachability. Fail-open with no main yet.
+     */
+    private static boolean unreachableFromMain(APosition site) {
+        try {
+            AUnit main = Select.mainOrAnyBuilding();
+            if (main == null || main.position() == null) return false;
+
+            return !atlantis.map.ReachableTiles.between(main.position(), site);
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**
