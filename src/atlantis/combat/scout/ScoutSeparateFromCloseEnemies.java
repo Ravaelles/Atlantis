@@ -2,6 +2,7 @@ package atlantis.combat.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.avoid.DoAvoidEnemies;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.map.scout.ScoutCommander;
@@ -46,7 +47,41 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin());
         center = enemies.limit(2).center();
 
-        return enemies.notEmpty();
+        if (enemies.notEmpty()) {
+            engagedUntil.put(unit.id(), A.now() + HOLD_FRAMES);
+
+            return true;
+        }
+
+        // Hysteresis (measured live: a healthy scout spun in its own base
+        // vs one enemy harvester, alternating HoldCourse and Separate
+        // every 1-7 frames - the harvester paced the margin and each
+        // crossing flipped the whole manager chain, so the scout vibrated
+        // in place on a potential building site instead of holding course
+        // or leaving). Once engaged, the evade holds briefly: it only
+        // releases early when nothing hostile remains in the wider exit
+        // band, and re-checks from scratch afterwards.
+        Integer until = engagedUntil.get(unit.id());
+        if (until != null && A.now() < until) {
+            enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin() + EXIT_EXTRA_TILES);
+            if (enemies.notEmpty()) {
+                center = enemies.limit(2).center();
+                engagedUntil.put(unit.id(), A.now() + HOLD_FRAMES);
+
+                return true;
+            }
+            engagedUntil.remove(unit.id());
+        }
+
+        return false;
+    }
+
+    /**
+     * Test seam: per-scout evade latch, cleared per test like every
+     * static manager latch.
+     */
+    public static void clearEvadeLatchForTests() {
+        engagedUntil.clear();
     }
 
     /**
@@ -54,6 +89,11 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
      * can hit us from (its range + 3 tiles). Beyond that the scout holds
      * its circle around the enemy main instead of donating the intel.
      */
+    private static final int HOLD_FRAMES = 48;
+    private static final double EXIT_EXTRA_TILES = 2.0;
+
+    private static final java.util.Map<Integer, Integer> engagedUntil = new java.util.HashMap<>();
+
     private double safetyMargin() {
         return 3
             + (Enemy.zerg() ? 2 : 0)
