@@ -22,6 +22,14 @@ import atlantis.units.actions.Actions;
  * alone (Stardust formArc waits for the ball the same way). Scouts
  * reveal through contact and fall back - the march out (no target
  * yet) is untouched, only the lone engagement dies.</p>
+ *
+ * <p>Stability (Stardust consecutive-frames doctrine): the first recall
+ * latches the unit onto rejoining until it reaches the ball, takes a
+ * hit, meets contact, or the latch times out. Without the latch the
+ * frame after a recall re-acquires and the line flaps hold/recall
+ * forever (measured live: one Zealot, 5000+ frames, never rejoined
+ * and never committed). Pain and contact break the march, like damage
+ * breaks the hold.</p>
  */
 public final class ClusterCohesion {
 
@@ -31,7 +39,20 @@ public final class ClusterCohesion {
      */
     public static final double STRAY_TILES = 6;
 
+    /**
+     * A latched rejoin that never completes is abandoned, not marched
+     * forever: the ball moved on, the tile never got walkable, the war
+     * moved elsewhere. The next contact re-latches from scratch.
+     */
+    private static final int LATCH_TIMEOUT_FRAMES = 900;
+
+    private static final java.util.Map<Integer, Integer> latchedSince = new java.util.HashMap<>();
+
     private ClusterCohesion() {
+    }
+
+    public static void clearForTests() {
+        latchedSince.clear();
     }
 
     /**
@@ -39,7 +60,7 @@ public final class ClusterCohesion {
      * fighting: a detached melee unit, not chewing its target.
      */
     public static boolean recallStraggler(AUnit unit, AUnit target) {
-        if (unit == null || target == null) return false;
+        if (unit == null) return false;
         if (!unit.isZealot()) return false;
 
         try {
@@ -51,18 +72,54 @@ public final class ClusterCohesion {
 
     private static boolean recallStragglerInner(AUnit unit, AUnit target) {
         APosition median = Alpha.get().median();
-        if (median == null) return false;
+        if (median == null) {
+            latchedSince.remove(unit.id());
+            return false;
+        }
 
+        Integer latchedAt = latchedSince.get(unit.id());
+        if (latchedAt != null) {
+            if (unit.distTo(median) <= STRAY_TILES) {
+                latchedSince.remove(unit.id());
+                return false;
+            }
+            if (atlantis.game.A.now() - latchedAt > LATCH_TIMEOUT_FRAMES) {
+                latchedSince.remove(unit.id());
+                return false;
+            }
+            if (threatAdjacent(unit) || atlantis.battle.DuelMemory.tookDamageSinceLastBattleFrame(unit)) {
+                latchedSince.remove(unit.id());
+                return false;
+            }
+
+            return moveBack(unit, median, target);
+        }
+
+        if (target == null) return false;
         if (unit.distTo(median) <= STRAY_TILES) return false;
         if (unit.distTo(target) <= 1) return false;
 
-        boolean moved = unit.move(median, Actions.MOVE_FORMATION, Behavior.DRESS.tag());
-        if (System.getenv("ATLANTIS_TMPDIAG") != null)
-            System.err.println("TMPDIRAG-TRY unit=" + unit.id() + " moved=" + moved);
-        if (moved) {
+        if (latchedSince.size() > 64) latchedSince.clear();
+        latchedSince.put(unit.id(), atlantis.game.A.now());
+
+        return moveBack(unit, median, target);
+    }
+
+    private static boolean moveBack(AUnit unit, APosition median, AUnit target) {
+        if (unit.move(median, Actions.MOVE_FORMATION, Behavior.DRESS.tag())) {
             atlantis.combat.twins.CohesionTwin.recalled(unit, target, median);
 
             return true;
+        }
+
+        return false;
+    }
+
+    private static boolean threatAdjacent(AUnit unit) {
+        for (AUnit enemy : atlantis.units.select.Select.enemy().list()) {
+            if (enemy == null || !enemy.isAlive() || !enemy.hasPosition()) continue;
+            if (!enemy.isVisibleUnitOnMap()) continue;
+            if (unit.distTo(enemy) <= 1.5) return true;
         }
 
         return false;

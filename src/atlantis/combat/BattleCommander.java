@@ -73,13 +73,20 @@ public class BattleCommander extends Commander {
         }
         if (target != null) {
             ArmyContact.noteFight(unit, target, tactic);
-            if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;
+            // Cohesion before calm: a latched rejoin must not be
+            // preempted by a hold, or the line flaps hold/recall
+            // forever (Stardust stability: switch once, stick).
             if (atlantis.combat.cluster.ClusterCohesion.recallStraggler(unit, target)) return;
+            if (FormationHold.holdIfCalm(unit, target, tactic, leader, anchor)) return;
 
             fight(unit, target, strategy, anchor, leader);
 
             return;
         }
+
+        // A latched rejoin marches on without contact: the ball is home,
+        // the stray is not, and no other leg owns the frame.
+        if (atlantis.combat.cluster.ClusterCohesion.recallStraggler(unit, null)) return;
 
         if (holdForMission(unit, tactic, anchor)) return;
 
@@ -205,6 +212,7 @@ public class BattleCommander extends Commander {
         IdleWatch.clearForTests();
         atlantis.combat.twins.ClusterTwin.clearForTests();
         atlantis.combat.twins.CohesionTwin.clearForTests();
+        atlantis.combat.cluster.ClusterCohesion.clearForTests();
         atlantis.combat.twins.FormationOrderTwin.clearForTests();
         ArmyContact.clearForTests();
         atlantis.combat.retreating.RetreatLadder.reset();

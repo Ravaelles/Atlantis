@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.battle.cluster.Alpha;
 import atlantis.combat.BattleCommander;
 import atlantis.combat.cluster.FightOrFlight;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -101,6 +102,73 @@ public class StragglerRecallTest extends WorldStubForTests {
             }
             finally {
                 Alpha.get().clear();
+            }
+        });
+    }
+
+    @Test
+    public void latchMarchesOnWithoutContact() {
+        FakeUnit d1 = ours(AUnitType.Protoss_Zealot, 28, 20);
+        FakeUnit d2 = ours(AUnitType.Protoss_Zealot, 29, 20);
+        FakeUnit d3 = ours(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit stray = ours(AUnitType.Protoss_Zealot, 50, 20);
+        FakeUnit ling = foe(AUnitType.Zerg_Zergling, 52, 20);
+
+        world(5, fakeOurs(d1, d2, d3, stray), fakeEnemies(ling), () -> {
+            int now = atlantis.game.A.now();
+            if (now != 2 && now != 3) return;
+
+            try {
+                Alpha.gather();
+                if (now == 2) {
+                    BattleCommander.act(stray, FightOrFlight.Tactic.FIGHT, null, Alpha.get().leader());
+                    assertTrue(attacked(stray) == false, "frame 2 recalls, never engages");
+                    return;
+                }
+
+                ling.position = APosition.create(100, 20);
+                BattleCommander.act(stray, FightOrFlight.Tactic.FIGHT, null, Alpha.get().leader());
+
+                assertFalse(attacked(stray), "nothing in reach: no phantom fight");
+                assertTrue(stray.lastCommand.equals("Move"),
+                    "latched rejoin marches on without contact instead of idling: " + stray.lastCommand);
+            }
+            finally {
+                Alpha.get().clear();
+                atlantis.combat.cluster.ClusterCohesion.clearForTests();
+            }
+        });
+    }
+
+    @Test
+    public void contactBreaksTheLatch() {
+        FakeUnit d1 = ours(AUnitType.Protoss_Zealot, 28, 20);
+        FakeUnit d2 = ours(AUnitType.Protoss_Zealot, 29, 20);
+        FakeUnit d3 = ours(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit stray = ours(AUnitType.Protoss_Zealot, 50, 20);
+        FakeUnit ling = foe(AUnitType.Zerg_Zergling, 52, 20);
+
+        world(5, fakeOurs(d1, d2, d3, stray), fakeEnemies(ling), () -> {
+            int now = atlantis.game.A.now();
+            if (now != 2 && now != 3) return;
+
+            try {
+                Alpha.gather();
+                if (now == 2) {
+                    BattleCommander.act(stray, FightOrFlight.Tactic.FIGHT, null, Alpha.get().leader());
+                    return;
+                }
+
+                ling.position = APosition.create(51, 20);
+                BattleCommander.act(stray, FightOrFlight.Tactic.FIGHT, null, Alpha.get().leader());
+
+                assertTrue(attacked(stray),
+                    "chewed mid-march: the latch breaks and the zealot defends itself: "
+                        + ((FakeOrderSink) stray.orderSink()).orders());
+            }
+            finally {
+                Alpha.get().clear();
+                atlantis.combat.cluster.ClusterCohesion.clearForTests();
             }
         });
     }
