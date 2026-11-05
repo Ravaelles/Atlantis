@@ -52,6 +52,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 22, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+            initSupply(25, 33);
             ConstructionRequests.constructions.clear();
 
             GameOrderDirector director = new GameOrderDirector();
@@ -77,6 +78,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 22, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+            initSupply(25, 33);
             ConstructionRequests.constructions.clear();
 
             GameOrderDirector director = new GameOrderDirector();
@@ -108,6 +110,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 22, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
+            initSupply(25, 33);
             ConstructionRequests.constructions.clear();
 
             GameOrderDirector director = new GameOrderDirector();

@@ -170,6 +170,17 @@ public class GameOrderDirector implements OrderDirector {
             return false;
         }
 
+        // Below minSupply only price+50 builds (owner rule, ex legacy
+        // BelowMinSupplyGate): a poor early mint waits for the bank,
+        // a funded one still aims. Same guard name in the twin.
+        if (atlantis.game.A.supplyUsed() < minSupply
+            && !atlantis.game.A.canAfford(
+            buildingType.mineralPrice() + 50, buildingType.gasPrice())) {
+            twinRefused(buildingType, "below-min-supply-and-poor");
+
+            return false;
+        }
+
         Construction construction = createConstruction(buildingType, placement, building, minSupply);
         if (construction == null) return false;
 
