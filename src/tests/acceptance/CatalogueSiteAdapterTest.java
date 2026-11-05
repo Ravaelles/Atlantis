@@ -518,6 +518,122 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * V3 S6 slice 3: an unpowered reserved slot orders its support -
+     * the drought shape (228 unpowered declines, zero Pylons) dies
+     * here. The support Pylon rides the same high-priority queue the
+     * planner drain uses, so no new ordering rules; dedup still owns
+     * flood control.
+     */
+    @Test
+    public void anUnpoweredSlotQueuesItsSupportPylon() {
+        atlantis.placement.core.TileAvailabilityGrid grid =
+            new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
+            atlantis.placement.core.ReservedSlots.planOn(
+                new atlantis.placement.core.BuildLocationCatalogue(grid),
+                APosition.create(20, 20),
+                AUnitType.Protoss_Pylon, 6,
+                AUnitType.Protoss_Gateway, 10);
+        atlantis.placement.core.ReservedSlots.Slot g1 = null;
+        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+            if (slot.label.equals("G1")) g1 = slot;
+        }
+        assertNotNull(g1, "the layout owes G1");
+        final atlantis.placement.core.ReservedSlots.Slot first = g1;
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+                Construction construction = constructionFor(
+                    AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+                ScriptedPlanner failing = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.failure());
+
+                APosition site = CatalogueSiteAdapter.siteFor(
+                    failing, probe, AUnitType.Protoss_Gateway, construction);
+
+                assertNull(site, "no power, no tile - the slot declines like the hunt would");
+                boolean queued = false;
+                for (ProductionOrder row : Queue.get().allOrders().list()) {
+                    if (row.unitType() != null && row.unitType().isPylon()
+                        && row.aroundPosition() != null
+                        && row.aroundPosition().tx() == first.tile.tx()
+                        && row.aroundPosition().ty() == first.tile.ty()
+                        && row.priority() == atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH) {
+                        queued = true;
+                    }
+                }
+                assertTrue(queued, "the unpowered slot orders its support Pylon high-priority: "
+                    + Queue.get().allOrders().list());
+                assertTrue(EventLog.toJsonLines().contains("\"result\":\"supported\""),
+                    "the support order is twinned: " + EventLog.toJsonLines());
+            }
+            finally {
+                atlantis.placement.core.ReservedSlots.clearForTests();
+            }
+        });
+    }
+
+    @Test
+    public void aPoweredSlotOrdersNoSupport() {
+        atlantis.placement.core.TileAvailabilityGrid grid =
+            new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
+            atlantis.placement.core.ReservedSlots.planOn(
+                new atlantis.placement.core.BuildLocationCatalogue(grid),
+                APosition.create(20, 20),
+                AUnitType.Protoss_Pylon, 6,
+                AUnitType.Protoss_Gateway, 10);
+        atlantis.placement.core.ReservedSlots.Slot g1 = null;
+        for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+            if (slot.label.equals("G1")) g1 = slot;
+        }
+        assertNotNull(g1, "the layout owes G1");
+        final atlantis.placement.core.ReservedSlots.Slot first = g1;
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, first.tile.tx() + 5, first.tile.ty()),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
+            try {
+                ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+                Construction construction = constructionFor(
+                    AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+                ScriptedPlanner failing = new ScriptedPlanner(
+                    atlantis.production.placement.PlacementReservation.failure());
+
+                APosition site = CatalogueSiteAdapter.siteFor(
+                    failing, probe, AUnitType.Protoss_Gateway, construction);
+
+                assertNotNull(site, "a powered slot serves (slice 2)");
+                boolean queued = false;
+                for (ProductionOrder row : Queue.get().allOrders().list()) {
+                    if (row.unitType() != null && row.unitType().isPylon()) queued = true;
+                }
+                assertFalse(queued, "power present means no support order: "
+                    + Queue.get().allOrders().list());
+            }
+            finally {
+                atlantis.placement.core.ReservedSlots.clearForTests();
+            }
+        });
+    }
+
     @Test
     public void fullSlotsFallThroughToThePlanner() {
         atlantis.placement.core.TileAvailabilityGrid grid =

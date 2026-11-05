@@ -462,3 +462,17 @@ draws the labels - a weird layout cannot break a game, only draw.
   only). Remaining: 3 off-plan (Gateway 25v12 drought shape -
   slot issuance is the answer), 1 healthy Pylon demote+warp,
   4x SUPPLY_OVERSTOCK, 4x STALL. Slot-wiring proof next game.
+- Slice 2 live shape GAME_60A9B0ED (slot-wiring jar, short loss):
+  228 `declined unpowered via slot` twins, zero served - the
+  verdict gates power binarily and the V2 scheduler never drains
+  planner support (structural disjoint named in S5). Funnel still
+  served the drought Gateway 2:43/2:46 (17v10). Slice 3 answers it.
+- Slice 3 DONE 2026-11-05: an unpowered slot queues its support
+  Pylon (Stardust: power is part of the layout). Same
+  high-priority queue the planner drain uses, hinted at the slot
+  tile exactly like `requestAvailabilitySupport`; queue dedup
+  owns flood control, a refused repeat twins nothing. New twin
+  `result supported via slot` (same CATALOGUE_SITE key, no new
+  severity). Only power-needing buildings. Pinned red-first (2 new
+  pins: unpowered G1 queues Pylon HIGH at the slot tile + twin;
+  powered slot orders nothing; red was an empty queue pre-wiring).

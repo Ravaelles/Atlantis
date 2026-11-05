@@ -164,6 +164,9 @@ public final class CatalogueSiteAdapter {
             if (!slotVerdict.accepted()) {
                 SiteTwin.declined(building, slotVerdict.twin, "slot",
                     constraint.nearTileX(), constraint.nearTileY());
+                if ("unpowered".equals(slotVerdict.twin)) {
+                    queueSlotSupportPylon(building, slot);
+                }
             }
             else if (!CanPhysicallyBuildHere.check(builder, building, slot)) {
                 SiteTwin.declined(building, "legacy-refused", "slot",
@@ -222,6 +225,33 @@ public final class CatalogueSiteAdapter {
         }
 
         return null;
+    }
+
+    /**
+     * An unpowered slot orders its support the Stardust way: the power
+     * Pylon is part of the layout, so the slot names it instead of
+     * waiting for the supply pump to notice. Same high-priority queue
+     * the planner drain uses (no new ordering rules); the queue dedup
+     * still owns flood control, so a refused repeat twins nothing.
+     * Only power-needing buildings (Protoss by construction).
+     */
+    private static void queueSlotSupportPylon(AUnitType building, APosition slot) {
+        if (building == null || slot == null || !building.needsPower()) return;
+        try {
+            ProductionOrder support = AddToQueue.withHighPriority(
+                AUnitType.Protoss_Pylon, slot);
+            if (support == null) return;
+
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CATALOGUE_SITE)
+                .param("type", building.name())
+                .param("result", "supported")
+                .param("tx", slot.tx())
+                .param("ty", slot.ty())
+                .param("via", "slot")
+                .param("support", AUnitType.Protoss_Pylon.name())
+                .log(AGame.now(), atlantis.game.A.minSec());
+        } catch (Exception | Error ignored) {
+        }
     }
 
     /**
