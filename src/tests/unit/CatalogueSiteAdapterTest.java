@@ -172,6 +172,66 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     @Test
+    public void v2RowsHuntUnboundedWhileSitedStaysBounded() {
+        // The V2 mint door leaves maxDistance unset (unbounded): a V2
+        // row's funnel re-site hunts ranked-anywhere instead of dying at
+        // a home r=12 fence with home ground full (measured live: 100+
+        // candidates skipped out-of-radius every pass). An explicit bound
+        // (sited callers) still binds - the opt-in, not the default.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, 8);
+            Construction free = constructionFor(
+                AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+            CapturingPlanner unbounded = new CapturingPlanner();
+            CatalogueSiteAdapter.siteFor(unbounded, probe, AUnitType.Protoss_Gateway, free);
+
+            assertNotNull(unbounded.captured, "the funnel asks the planner");
+            assertEquals(atlantis.production.placement.TargetPlacement.Mode.NEIGHBOURHOOD,
+                unbounded.captured.mode());
+            assertTrue(unbounded.captured.radius() < 0,
+                "no maxDistance stamp: rank, don't bind");
+
+            Construction bound = constructionFor(
+                AUnitType.Protoss_Gateway, order, APosition.create(20, 20));
+            bound.setMaxDistance(12);
+            CapturingPlanner bounded = new CapturingPlanner();
+            CatalogueSiteAdapter.siteFor(bounded, probe, AUnitType.Protoss_Gateway, bound);
+
+            assertNotNull(bounded.captured, "the funnel asks the planner");
+            assertEquals(12, bounded.captured.radius(), 0.001,
+                "an explicit bound still binds: sited opt-in unchanged");
+        });
+    }
+
+    private static final class CapturingPlanner implements atlantis.production.placement.PlacementPlanner {
+        atlantis.production.placement.TargetPlacement captured;
+
+        @Override
+        public void startPass() {
+        }
+
+        @Override
+        public atlantis.production.placement.PlacementReservation reservePlacement(
+            atlantis.production.producibles.Producible building,
+            atlantis.production.placement.TargetPlacement constraint, int targetFrame
+        ) {
+            captured = constraint;
+            return atlantis.production.placement.PlacementReservation.failure();
+        }
+
+        @Override
+        public java.util.List<atlantis.placement.core.SupportRequest> drainSupportRequests() {
+            return new java.util.ArrayList<>();
+        }
+    }
+
+    @Test
     public void aNeighbourhoodIsTranslated() {
         // Pure translation, no physics: the order's neighbourhood hint must
         // reach the catalogue as a neighbourhood constraint. The answered

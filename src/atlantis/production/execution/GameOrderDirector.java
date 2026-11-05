@@ -353,7 +353,15 @@ public class GameOrderDirector implements OrderDirector {
         Construction construction = new Construction(buildingType);
         construction.setPositionToBuild(APosition.create(placement.tileX(), placement.tileY()));
         construction.setNearTo(homePosition());
-        construction.setMaxDistance(12);
+        // No maxDistance stamp (owner order 2026-11-07): bounding every
+        // V2 row's funnel re-site to home r=12 trapped mid-game demand
+        // in a full home area (measured live: 100+ candidates skipped
+        // out-of-radius every pass, Gateway/Nexus no-placement loops)
+        // and could never reach a third base. The ranker already
+        // condenses (same-area first, availability first) - the bound
+        // only made sense for the legacy ring search. Sited callers
+        // keep their explicit bounds (siteForSited); this door stays
+        // unbounded and ranked.
         construction.setProductionOrder(orderFor(buildingType, minSupply));
         construction.setDemand(atlantis.production.demand.Demand.of(buildingType));
         construction.assignOptimalBuilder();
