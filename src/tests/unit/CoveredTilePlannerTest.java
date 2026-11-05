@@ -51,6 +51,33 @@ public class CoveredTilePlannerTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * The AdoptCoveredSite shape through the live door (NEXT #150): a
+     * standing Pylon covers the y+1 row, so a Pylon demanded next to it
+     * must serve elsewhere - never the covered tile, never null when a
+     * free tile exists. The dead produceBuilding door pinned this
+     * through a removed entry; the planner verdict owns it now.
+     */
+    @Test
+    public void pylonCoveredRowIsSkipped() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit standing = fake(AUnitType.Protoss_Pylon, 26, 24);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 30, 30);
+        world(5, fakeOurs(nexus, standing, probe), fakeEnemies(), () -> {
+            CataloguePlacementPlanner planner = planner(40, 40);
+            planner.startPass();
+            Producible pylon = UnitProducible.of(AUnitType.Protoss_Pylon);
+            PlacementReservation reservation = planner.reservePlacement(
+                pylon, TargetPlacement.inNeighbourhood(26, 26), 100);
+
+            assertTrue(reservation.isSuccessful(), "a free tile exists nearby");
+            APosition answered = APosition.create(reservation.tileX(), reservation.tileY());
+            assertFalse(
+                OverlapsOurStandingBuilding.check(answered, AUnitType.Protoss_Pylon),
+                "the served tile never overlaps the standing Pylon footprint, got: " + answered);
+        });
+    }
+
     private static final class FlatTerrain implements TileAvailabilityGrid.TerrainSource {
         private final int w;
         private final int h;
