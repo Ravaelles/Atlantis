@@ -405,6 +405,82 @@ public class ConstructionStatusChanger extends Commander {
     }
 
     /**
+     * A builderless row with a covering bank past the 10 s mark is stuck,
+     * not waiting: fresh mints assign a builder (or refuse), adopts
+     * assign, demotes release into a re-arm - nothing in the pipeline
+     * will ever pick this row up again (measured live: a natural Nexus
+     * stood builderless 4000f+ on a hoarding bank while the zombie row
+     * suppressed its own demand, second base never came). Re-arms on the
+     * spot via the optimal search and names it; a row with no free
+     * builder at all names that instead and retries next window.
+     *
+     * <p>PREPARING rows are excluded on purpose (aimed future, waits on
+     * supply/timing by design); IN_PROGRESS rows belong to the demote
+     * paths. Young rows skip (mint-frame transients). Throttled per
+     * row (600f) so a persistent stall keeps shouting; console CRIT is
+     * globally capped like every other critical.
+     *
+     * @return true when a builder was assigned by this call.
+     */
+    public static boolean rearmBuilderlessRow(Construction construction) {
+        if (construction == null || construction.buildingType() == null) return false;
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED
+            && construction.status() != ConstructionOrderStatus.STARTING) return false;
+        AUnit builder = construction.builder();
+        if (builder != null && builder.isAlive()) return false;
+        if (!A.canAfford(construction.buildingType().mineralPrice(),
+            construction.buildingType().gasPrice())) return false;
+        if (A.now() - construction.timeOrdered() < 240) return false;
+
+        Integer last = lastStuckTwin.get(construction.id());
+        boolean loud = last == null || A.now() - last >= 600;
+        construction.assignOptimalBuilder();
+        AUnit fresh = construction.builder();
+
+        if (fresh != null && fresh.isAlive()) {
+            if (loud) {
+                lastStuckTwin.put(construction.id(), A.now());
+                twinStuck(construction, "re-armed builder #" + fresh.id());
+            }
+
+            return true;
+        }
+
+        if (loud) {
+            lastStuckTwin.put(construction.id(), A.now());
+            twinStuck(construction, "no-free-builder");
+        }
+
+        return false;
+    }
+
+    private static final java.util.Map<Integer, Integer> lastStuckTwin = new java.util.HashMap<>();
+
+    /**
+     * Test seam: per-row twin throttle is per-JVM state like every twin
+     * gate with a heartbeat.
+     */
+    public static void clearStuckForTests() {
+        lastStuckTwin.clear();
+    }
+
+    private static void twinStuck(Construction construction, String reason) {
+        EventLog.key(LogKey.BUILDER_STUCK)
+            .param("cid", construction.id())
+            .param("oid", construction.productionOrder() == null
+                ? null : construction.productionOrder().id())
+            .param("type", construction.buildingType() == null ? "-" : construction.buildingType().name())
+            .param("tile", construction.buildPosition() == null ? "-" : construction.buildPosition().toString())
+            .param("bank", A.minerals())
+            .param("reason", reason)
+            .log(A.now(), A.minSec());
+        ErrorLog.printCriticalMaxOncePerMinute("BUILDER_STUCK",
+            "BUILDER_STUCK " + construction.buildingType().name()
+                + " #" + construction.id() + " " + reason
+                + " (bank " + A.minerals() + ", " + A.minSec() + ")");
+    }
+
+    /**
      * Names a STARTING row the demote shields miss (NEXT #150
      * parked-Nexus shape): ancient (ordered 2400f+ ago), builder
      * alive but never issuing - gathering, stale-constructing
@@ -710,6 +786,7 @@ public class ConstructionStatusChanger extends Commander {
 
             checkForConstructionStatusChange(construction);
             OverdueConstructions.handleIfOverdue(construction);
+            rearmBuilderlessRow(construction);
         }
         return false;
     }

@@ -152,6 +152,15 @@ public enum LogKey {
      */
     STUCK_WORKER,
     /**
+     * A builderless row with a covering bank stood past the 10 s mark:
+     * nothing will ever pick it up (fresh mints assign, adopts assign,
+     * demotes release into a re-arm), so it names itself and re-arms on
+     * the spot - or names the missing free builder. Live proof: a
+     * natural Nexus stood builderless 4000f+ on a hoarding bank while
+     * the zombie row suppressed its own demand.
+     */
+    BUILDER_STUCK,
+    /**
      * The worker pump refused, with the refusing gate.
      */
     WORKER_GATE,
