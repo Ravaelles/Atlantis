@@ -316,6 +316,32 @@ public final class ReservedSlots {
         sortSlotsByDistanceToMain(pylons, main);
         sortSlotsByDistanceToMain(gateways, main);
 
+        // The first supply Pylon must power the first Gateway (owner
+        // order: the BO opens Pylon into Gateway, no support detour):
+        // S1 is the supply slot covering G1, the rest stay nearest-
+        // first. When no supply slot covers G1 the order is unchanged
+        // and the support flow covers it as before.
+        if (!supply.isEmpty() && !gateways.isEmpty()) {
+            APosition g1 = gateways.get(0).tile;
+            int cover = -1;
+            int coverDist = Integer.MAX_VALUE;
+            for (int i = 0; i < supply.size(); i++) {
+                APosition tile = supply.get(i).tile;
+                if (Math.max(Math.abs(tile.tx() - g1.tx()), Math.abs(tile.ty() - g1.ty()))
+                    <= POWER_COVER_TILES) {
+                    int d = Math.abs(tile.tx() - main.tx()) + Math.abs(tile.ty() - main.ty());
+                    if (d < coverDist) {
+                        coverDist = d;
+                        cover = i;
+                    }
+                }
+            }
+            if (cover > 0) {
+                Slot first = supply.remove(cover);
+                supply.add(0, first);
+            }
+        }
+
         out.clear();
         int n = 1;
         for (Slot slot : supply) out.add(new Slot("S" + n++, slot.type, slot.tile));

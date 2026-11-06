@@ -77,6 +77,23 @@ public class ReservedSlotsTest {
     }
 
     @Test
+    public void firstSupplyPylonCoversFirstGateway() {
+        List<ReservedSlots.Slot> slots = plan();
+        ReservedSlots.Slot s1 = null;
+        ReservedSlots.Slot g1 = null;
+        for (ReservedSlots.Slot slot : slots) {
+            if (slot.label.equals("S1")) s1 = slot;
+            if (slot.label.equals("G1")) g1 = slot;
+        }
+        assertNotNull(s1, "S1 exists");
+        assertNotNull(g1, "G1 exists");
+        assertTrue(Math.max(Math.abs(s1.tile.tx() - g1.tile.tx()),
+            Math.abs(s1.tile.ty() - g1.tile.ty())) <= 6,
+            "the BO opens Pylon into Gateway: S1 powers G1 with no support detour, S1="
+                + s1.tile + " G1=" + g1.tile);
+    }
+
+    @Test
     public void slotsAreDistinctBuildableTiles() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
         Set<String> seen = new HashSet<>();
