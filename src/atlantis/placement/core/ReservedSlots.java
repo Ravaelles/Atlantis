@@ -195,6 +195,14 @@ public final class ReservedSlots {
             if (isEdgeTile(candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight())) continue;
 
+            // No mineral-crowding supply slots (owner 2026-11-01: Pylons
+            // never sit within 5 tiles of minerals): the hunt declines
+            // these through the shared predicate, so a planned one would
+            // only ever fail at mint time (measured live: support
+            // exact-fail on a 4.1-tile slot while the Gateway waited).
+            if (atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(
+                AUnitType.Protoss_Pylon, APosition.create(candidate.tileX(), candidate.tileY()))) continue;
+
             Rect rect = new Rect(
                 candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight());
@@ -217,6 +225,8 @@ public final class ReservedSlots {
         List<BuildLocation> pylonCandidates =
             catalogue.candidates(
                 AUnitType.Protoss_Pylon.getTilesWidth(), AUnitType.Protoss_Pylon.getTilesHeights(), null);
+        pylonCandidates.removeIf(c -> atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(
+            AUnitType.Protoss_Pylon, APosition.create(c.tileX(), c.tileY())));
         int gateways = 0;
         for (BuildLocation candidate : candidates) {
             if (gateways >= gatewayCount) break;
@@ -233,6 +243,9 @@ public final class ReservedSlots {
                 candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight());
             if (overlapsTaken(rect, taken)) continue;
+
+            if (atlantis.production.constructions.position.conditions.TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(
+                gatewayType, APosition.create(candidate.tileX(), candidate.tileY()))) continue;
 
             APosition cover = coveringPylonSlot(
                 candidate.tileX(), candidate.tileY(), pylonCandidates, taken, rect);

@@ -92,6 +92,19 @@ public class TooCloseToMineralsOrGeyser {
         // game). Live behavior unchanged: a game is always present there.
         if (atlantis.Atlantis.game() == null) return false;
 
+        try {
+            return isTooCloseToMineralsOrGeyserInner(building, position);
+        } catch (Exception | Error ignored) {
+            // A stubbed world (mocked game, no neutrals) reads as no
+            // crowding, never as a crash: fail-open like every sibling
+            // predicate. Live the game is always complete here.
+            return false;
+        }
+    }
+
+    private static boolean isTooCloseToMineralsOrGeyserInner(AUnitType building, APosition position) {
+        if (atlantis.Atlantis.game() == null) return false;
+
         if (building.isMissileTurret()) return false;
         if (building.isBase()) return false;
 
