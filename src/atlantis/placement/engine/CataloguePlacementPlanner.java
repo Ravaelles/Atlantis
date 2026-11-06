@@ -986,7 +986,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // behind its Gateway's reservation). USED, terrain BLOCKED and
         // the terrain ADJACENT margin still refuse.
         if (!grid.isFreeForIgnoringBorder(x, y, type.getTilesWidth(), type.getTilesHeights())) {
-            lastRefusal = "grid-blocked";
+            lastRefusal = "grid-blocked:" + grid.flagsAt(x, y);
             return PlacementReservation.failure();
         }
 
