@@ -44,13 +44,27 @@ public class PsiFieldTest {
         // with hasPower=false while a finished Pylon stood at [16,46].
         assertFalse(
             covers(16, 46, 14, 51),
-            "center dy is 208px, outside the engine's 160px vertical bound"
+            "center dy is 176px, outside the engine's 160px vertical bound"
         );
 
-        assertFalse(
+        assertTrue(
             covers(16, 46, 14, 50),
-            "origin dy is 128px (inside) but center dy is 176px (outside) - "
-                + "this is why the origin tile is the wrong input"
+            "center dy is 144px, mask[4][0] reads in (the old origin-based "
+                + "read said out at dy=176px - superseded by the live warp below)"
+        );
+    }
+
+    @Test
+    public void boundaryColumnReadsThePylonCenter() {
+        // Measured live 2026-11-07 (TauCross): Gateway [113,10] warped
+        // and completed on Pylon [107,11]. The origin-based read said
+        // dx=256px, exactly out - but the engine measures from the
+        // Pylon's sprite (its center, +32px), where dx=224px reads
+        // mask[0][7] = in. A model stricter than the engine parks the
+        // Gateway behind a support chain the engine never asked for.
+        assertTrue(
+            covers(107, 11, 113, 10),
+            "live warp proves it: centered dx=224px is inside the 256px bound"
         );
     }
 

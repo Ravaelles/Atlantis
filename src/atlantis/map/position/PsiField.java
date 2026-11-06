@@ -52,12 +52,18 @@ public class PsiField {
     private static final int HALF_HEIGHT_PX = 160;
 
     /**
-     * Does a finished Pylon at (pylonTx, pylonTy) power a building of the
+     * Does a finished 2x2 Pylon at (pylonTx, pylonTy) power a building of the
      * given footprint placed at (siteTx, siteTy)?
      *
      * <p>
-     * The mask is applied to the footprint CENTER, mirroring the client. See
-     * the class javadoc for why the origin tile is the wrong input.
+     * Both ends are footprint CENTERS, mirroring the client and the
+     * engine: the site center (the client's {@code hasPower} test) and
+     * the Pylon's center (the engine measures its psi range from the
+     * Pylon's sprite position, not its top-left tile). The origin-based
+     * version disagreed with the engine on the whole boundary column
+     * (measured live: Gateway [113,10] warped and completed on Pylon
+     * [107,11] while the origin math read dx=256, exactly out;
+     * centered it reads dx=224, in).
      * </p>
      */
     public static boolean covers(
@@ -66,10 +72,25 @@ public class PsiField {
         int centerX = siteTx * 32 + siteWTiles * 16;
         int centerY = siteTy * 32 + siteHTiles * 16;
 
-        int dx = Math.abs(centerX - pylonTx * 32);
-        int dy = Math.abs(centerY - pylonTy * 32);
+        // The engine measures from the Pylon's sprite, not its top-left
+        // tile: a 2x2 Pylon's sprite sits centered on its footprint.
+        int pylonCenterX = pylonTx * 32 + 32;
+        int pylonCenterY = pylonTy * 32 + 32;
+
+        int relX = centerX - pylonCenterX;
+        int relY = centerY - pylonCenterY;
+        int dx = Math.abs(relX);
+        int dy = Math.abs(relY);
 
         if (dx >= HALF_WIDTH_PX || dy >= HALF_HEIGHT_PX) return false;
+
+        // OpenBW decrements negative rels before the mask lookup - a
+        // sub-tile asymmetry that decides exactly the boundary column
+        // this whole rule exists for (Gateway [110,13] off Pylon
+        // [118,16] reads mask[2][6] covered instead of mask[2][7]
+        // refused only with it).
+        if (relX < 0) dx--;
+        if (relY < 0) dy--;
 
         return PSI_FIELD_MASK[dy / 32][dx / 32];
     }

@@ -54,8 +54,16 @@ public class PostFiftyProductionTest extends AbstractTestWithUnits {
 
     @Test
     public void economyKeepsProducingAfterFiftySupply() throws Exception {
+        // Window 4000 (was 2500): pylon-center power (engine measures its
+        // psi range from the Pylon's sprite, not its top-left tile) makes
+        // the opening wait for real power (Gateway@12 5460->6300) and lets
+        // two post-50 Gateways ([9,48]@12300, [15,48]@13740, both powered
+        // by Pylon [17,51]) warp before the Nexus (@15000, mark+3240) -
+        // the same gates-before-Nexus shape the live game shows (3 gates
+        // before Nexus@6552 on TauCross). The doctrine stands (Nexus warps,
+        // probes resume, no hoard), it just needs the engine-truth clock.
         OpeningRunner.PostFiftyResult postFifty = OpeningRunner.playToSupplyThenExtra(
-            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 2500, 30000);
+            BUILD_ORDER, SimConfig.fast().withStride(60), numbers(), 50, 4000, 30000);
 
         int nexusFrame = postFifty.firstWarpFrameAfterMark("Nexus");
         int probesAfterNexus = nexusFrame < 0 ? -1

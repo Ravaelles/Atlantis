@@ -78,9 +78,16 @@ public class SimOpeningToFiftyTest extends AbstractTestWithUnits {
      * around it. Same rows, same order, supply 50 reached, bank capped,
      * no intruder, no invalid orders - the full test proves health, not
      * just the clock.
+     *
+     * Re-goldened 2026-11-07 for pylon-center power (the engine measures
+     * its psi range from the Pylon's sprite, not its top-left tile):
+     * Gateway@12 waits for real power instead of warping on an
+     * origin-math pocket the engine would refuse (live proof: Gateway
+     * [113,10] warped and completed on Pylon [107,11], impossible
+     * under origin math). Same rows, same order, same gates.
      */
     private static final int[] GOLDEN_WARP_FRAMES = {
-        1980, 3720, 5460, 5280, 4200, 6360, 6960, 5880, 7800, 8040, 7080,
+        1980, 3720, 6300, 4920, 4200, 6120, 6840, 5400, 7680, 7980, 7080,
     };
 
     /**
