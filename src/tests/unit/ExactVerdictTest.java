@@ -70,12 +70,15 @@ public class ExactVerdictTest extends WorldStubForTests {
             APosition tile = APosition.create(main.tx() + 6, main.ty() + 1);
             RefusedTiles.note(tile, AUnitType.Protoss_Gateway);
 
-            PlacementReservation result = planner(terrain).reservePlacement(
+            CataloguePlacementPlanner p = planner(terrain);
+            PlacementReservation result = p.reservePlacement(
                 UnitProducible.of(AUnitType.Protoss_Gateway),
                 TargetPlacement.exactTile(tile.tx(), tile.ty()), 100);
 
             assertFalse(result.isSuccessful(),
                 "an engine-refused exact tile must fail, never mint");
+            assertTrue(p.lastRefusal().contains("refused"),
+                "the refusal names its gate for the twins: " + p.lastRefusal());
         });
     }
 
@@ -91,12 +94,15 @@ public class ExactVerdictTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 2) return;
 
             APosition tile = APosition.create(main.tx() + 8, main.ty() + 2);
-            PlacementReservation result = planner(terrain).reservePlacement(
+            CataloguePlacementPlanner p = planner(terrain);
+            PlacementReservation result = p.reservePlacement(
                 UnitProducible.of(AUnitType.Protoss_Gateway),
                 TargetPlacement.exactTile(tile.tx(), tile.ty()), 100);
 
             assertFalse(result.isSuccessful(),
                 "no Pylon anywhere: an unpowered exact Gateway is refused, not served");
+            assertTrue(p.lastRefusal().contains("unpowered"),
+                "the refusal names its gate for the twins: " + p.lastRefusal());
         });
     }
 

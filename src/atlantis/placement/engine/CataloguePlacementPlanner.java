@@ -85,6 +85,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private final Set<String> reservedThisPass = new HashSet<>();
     private final List<SupportRequest> supportThisPass = new ArrayList<>();
+    private String lastRefusal = "-";
+
+    @Override
+    public String lastRefusal() {
+        return lastRefusal == null ? "-" : lastRefusal;
+    }
 
     /**
      * Last natural-anchor centre twinned by this instance: the centre
@@ -412,18 +418,23 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame,
                                                   java.util.Set<String> excluded) {
         AUnitType unitType = resolveUnitType(building);
-        if (unitType == null)
+        if (unitType == null) {
+            lastRefusal = "bad-type";
             return PlacementReservation.failure();
+        }
 
         if (unitType.getTilesWidth() <= 0 || unitType.getTilesHeights() <= 0) {
+            lastRefusal = "bad-type";
             return PlacementReservation.failure();
         }
 
         // No map, no siting: the planner was constructed without a game
         // (unit tests own the commander tree game-less) and no pass has
         // built the grid yet. Fail closed instead of dereferencing nulls.
-        if (grid == null || catalogue == null)
+        if (grid == null || catalogue == null) {
+            lastRefusal = "no-grid";
             return PlacementReservation.failure();
+        }
 
         if (constraint.mode() == TargetPlacement.Mode.EXACT_TILE) {
             return reserveExact(constraint, unitType, targetFrame);
@@ -454,8 +465,10 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // A slot outside a bounded neighbourhood falls through too: the
         // sited door asked near its anchor, the layout lives at the main.
         APosition centre = searchCentre(constraint);
-        if (centre == null)
+        if (centre == null) {
+            lastRefusal = "no-centre";
             return PlacementReservation.failure();
+        }
 
         double slotRadius = constraint.radius();
         boolean slotBounded = constraint.mode() == TargetPlacement.Mode.NEIGHBOURHOOD && slotRadius >= 0;
@@ -553,6 +566,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (answer != null) return answer;
         }
 
+        lastRefusal = "hunt-exhausted";
         return PlacementReservation.failure();
     }
 
@@ -668,6 +682,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                     strategy.requestAvailabilitySupport(candidate.tileX(), candidate.tileY(), unitType.name());
                 if (support != null) supportThisPass.add(support);
 
+                lastRefusal = "unpowered";
                 return PlacementReservation.failure();
             }
 
@@ -897,6 +912,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         int y = constraint.exactTileY();
 
         if (!grid.isFreeFor(x, y, type.getTilesWidth(), type.getTilesHeights())) {
+            lastRefusal = "grid-blocked";
             return PlacementReservation.failure();
         }
 
@@ -921,6 +937,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         atlantis.production.constructions.position.SitingVerdict verdict =
             atlantis.production.constructions.position.SitingVerdict.check(type, tile);
         if (!verdict.accepted() && !"worker-covered".equals(verdict.twin)) {
+            lastRefusal = verdict.twin;
             return PlacementReservation.failure();
         }
 
@@ -928,6 +945,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // live state): the main base must walk there, same rule as the
         // funnel's sited path, so the two cannot disagree.
         if (unreachableFromMain(tile)) {
+            lastRefusal = "unreachable";
             return PlacementReservation.failure();
         }
 

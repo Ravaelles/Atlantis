@@ -69,4 +69,14 @@ public interface PlacementPlanner {
     default List<SupportRequest> drainSupportRequests() {
         return Collections.emptyList();
     }
+
+    /**
+     * The gate that refused the last reservation, for twins (same
+     * vocabulary as the verdict/site twins): grid-blocked, a verdict
+     * twin, unreachable, hunt-exhausted. Read right after a failed
+     * reservePlacement; "-" when unknown. Never null.
+     */
+    default String lastRefusal() {
+        return "-";
+    }
 }

@@ -258,7 +258,7 @@ public final class ProductionEngine {
             TargetPlacement.exactTile(pylonTile.tx(), pylonTile.ty()),
             now);
         if (reservation == null || !reservation.isSuccessful()) {
-            twinSupportDrop("exact-fail", support, pylonTile, now);
+            twinSupportDrop("exact-fail:" + planner.lastRefusal(), support, pylonTile, now);
             return;
         }
 
