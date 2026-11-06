@@ -90,6 +90,44 @@ public class WorkerCoveredSiteTest extends WorldStubForTests {
         });
     }
 
+    @Test
+    public void committedBuilderIsServedOnCoveredTile() {
+        // Live defect (Wine 20261106_175548): the slot path declined a
+        // powered Gateway slot 1511x on worker-cover while the demand
+        // held an assigned builder, then an 80 s cancel, re-request,
+        // repeat - buildings.json shows one Gateway all game. Cover
+        // predicts "no builder could be assigned here", but the builder
+        // is already committed, so the prediction is wrong and the wait
+        // is permanent. Serve it; the uncommitted (proxy) path below
+        // keeps declining.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 21, 24),
+            probe,
+            fake(AUnitType.Protoss_Probe, 28, 25),
+            fake(AUnitType.Protoss_Probe, 25, 28),
+            fake(AUnitType.Protoss_Probe, 31, 26),
+            fake(AUnitType.Protoss_Probe, 26, 31)
+        ), fakeEnemies(), () -> {
+            APosition tile = APosition.create(25, 25);
+            ScriptedPlanner yes = new ScriptedPlanner(
+                atlantis.production.placement.PlacementReservation.success(25, 25, 0));
+            Construction construction = gatewayOrderAt(tile);
+            construction.setBuilder(probe);
+
+            APosition site = CatalogueSiteAdapter.siteFor(
+                yes, probe, AUnitType.Protoss_Gateway, construction);
+
+            assertNotNull(site,
+                "a committed builder's demand must be served even on a covered"
+                    + " tile - declining parks it behind a builder that already"
+                    + " walked there. Twins: " + EventLog.toJsonLines());
+            assertEquals(tile.tx(), site.tx());
+            assertEquals(tile.ty(), site.ty());
+        });
+    }
+
     private static final class ScriptedPlanner implements atlantis.production.placement.PlacementPlanner {
         private final atlantis.production.placement.PlacementReservation answer;
 

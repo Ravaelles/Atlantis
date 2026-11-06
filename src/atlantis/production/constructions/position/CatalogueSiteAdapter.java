@@ -198,7 +198,21 @@ public final class CatalogueSiteAdapter {
         APosition slot = firstFreeSlot(building);
         if (slot != null) {
             SitingVerdict slotVerdict = SitingVerdict.check(building, slot);
-            if (!slotVerdict.accepted()) {
+            // Worker-cover is an assignment prediction ("no builder could
+            // be assigned here"), not a tile fact: with the demand's own
+            // builder committed and alive the assignment already happened
+            // (V2-direct assigns from the free pool even on covered
+            // tiles), so declining parks a waiting builder behind a
+            // prediction about itself. Measured live (TauCross 20261106):
+            // a powered Gateway slot declined 1511x on cover while its
+            // builder spun mine/manager, 80 s cancel, re-request, repeat -
+            // one Gateway in buildings.json all game. Uncommitted
+            // (proxy) searches keep declining: serving them would re-make
+            // the NEXT #145 builderless storm. Refused, unpowered and
+            // mineral tiles still decline, waiver or not.
+            boolean coverWaived = isCommittedBuilder(construction, builder)
+                && "worker-covered".equals(slotVerdict.twin);
+            if (!slotVerdict.accepted() && !coverWaived) {
                 SiteTwin.declined(building, slotVerdict.twin, "slot",
                     constraint.nearTileX(), constraint.nearTileY());
                 if ("unpowered".equals(slotVerdict.twin)) {
@@ -221,7 +235,8 @@ public final class CatalogueSiteAdapter {
             }
         }
 
-        PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel", excluded);
+        PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel", excluded,
+            isCommittedBuilder(construction, builder));
         if (reservation == null) return null;
 
         return answerWithTwin(
@@ -331,16 +346,43 @@ public final class CatalogueSiteAdapter {
      * A tile the verdict, physics or reachability refuses is excluded and
      * the hunt is asked again (bounded above): the ranker's favourite is
      * not always servable, but a refused tile never is.
+     *
+     * <p>Cover needs the commitment answer, so it travels as an explicit
+     * flag: waived only for the demand's own committed builder (the slot
+     * path computes the same rule inline). A free proxy validating for a
+     * builderless row is not committed - waiving for it would serve tiles
+     * nobody can build.</p>
      */
+    private static boolean isCommittedBuilder(Construction construction, AUnit builder) {
+        if (construction == null || builder == null || !builder.isAlive()) return false;
+
+        AUnit assigned = construction.builder();
+
+        return assigned != null && (assigned == builder || assigned.equals(builder));
+    }
+
     private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
                                                 TargetPlacement constraint, String via) {
-        return propose(planner, builder, building, constraint, via, new HashSet<String>(), null);
+        return propose(planner, builder, building, constraint, via, new HashSet<String>(), null, false);
     }
 
     private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
                                                 TargetPlacement constraint, String via,
                                                 Set<String> excluded) {
-        return propose(planner, builder, building, constraint, via, excluded, null);
+        return propose(planner, builder, building, constraint, via, excluded, null, false);
+    }
+
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
+                                                TargetPlacement constraint, String via,
+                                                Set<String> excluded, boolean coverWaived) {
+        return propose(planner, builder, building, constraint, via, excluded, null, coverWaived);
+    }
+
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
+                                                TargetPlacement constraint, String via,
+                                                Set<String> excluded,
+                                                java.util.function.Predicate<APosition> inRange) {
+        return propose(planner, builder, building, constraint, via, excluded, inRange, false);
     }
 
     /**
@@ -352,7 +394,8 @@ public final class CatalogueSiteAdapter {
     private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building,
                                                 TargetPlacement constraint, String via,
                                                 Set<String> excluded,
-                                                java.util.function.Predicate<APosition> inRange) {
+                                                java.util.function.Predicate<APosition> inRange,
+                                                boolean coverWaived) {
         // The catalogue proposes, the legacy validator disposes: a tile the
         // builder-time checks refuse would start a builder, fail refresh and
         // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
@@ -401,8 +444,13 @@ public final class CatalogueSiteAdapter {
             // tile the legacy spiral would decline. Physics (occupancy, engine
             // canBuildHere, early allowances) stays with CanPhysicallyBuildHere
             // below - the verdict answers "should we", physics answers "could we".
+            // Cover waived for the demand's own committed builder (same rule
+            // as the slot path above): the assignment already happened, so
+            // declining re-makes the live starvation (1511 slot declines,
+            // one Gateway all game). Proxy validations keep declining.
             SitingVerdict verdict = SitingVerdict.check(building, site);
-            if (!verdict.accepted()) {
+            if (!verdict.accepted()
+                && !(coverWaived && "worker-covered".equals(verdict.twin))) {
                 SiteTwin.declined(building, verdict.twin, via, constraint.nearTileX(), constraint.nearTileY());
                 if (attempt + 1 >= FUNNEL_MAX_TRIES) return null;
                 excluded.add(tileKey(site.tx(), site.ty()));

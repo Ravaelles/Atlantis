@@ -57,7 +57,9 @@ public final class ReservedSlots {
         public final AUnitType type;
         public final APosition tile;
 
-        Slot(String label, AUnitType type, APosition tile) {
+        // Test seam companion to {@link #setSlotsForTests}: issuance tests
+        // pin a layout tile without a live game start.
+        public Slot(String label, AUnitType type, APosition tile) {
             this.label = label;
             this.type = type;
             this.tile = tile;
