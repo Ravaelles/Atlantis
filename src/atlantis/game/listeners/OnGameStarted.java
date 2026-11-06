@@ -56,6 +56,7 @@ public class OnGameStarted {
         atlantis.map.base.define.EnemyMainBase.clear();
         atlantis.map.base.define.DefineNaturalBase.resetForNewGame();
         atlantis.map.base.BaseLocations.resetForNewGame();
+        atlantis.production.constructions.position.CatalogueSiteAdapter.resetForNewGame();
         atlantis.combat.focus.AttackFocusPoint.clear();
         BattleCommander.reset();
         atlantis.battle.cluster.Missions.reset();

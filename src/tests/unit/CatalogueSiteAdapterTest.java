@@ -664,9 +664,31 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                         queued = true;
                     }
                 }
-                assertTrue(queued, "the unpowered slot orders its support Pylon high-priority"
-                    + " on a covering Pylon slot, not the bare Gateway tile: "
-                    + Queue.get().allOrders().list());
+                boolean covering = false;
+                boolean plannedPylon = false;
+                for (ProductionOrder row : Queue.get().allOrders().list()) {
+                    if (row.unitType() == null || !row.unitType().isPylon()) continue;
+                    if (row.aroundPosition() == null) continue;
+                    for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+                        if (!slot.type.isPylon()) continue;
+                        if (slot.tile.tx() != row.aroundPosition().tx()
+                            || slot.tile.ty() != row.aroundPosition().ty()) continue;
+                        plannedPylon = true;
+                        for (atlantis.placement.core.ReservedSlots.Slot gateway : layout) {
+                            if (gateway.type.isPylon()) continue;
+                            if (Math.max(Math.abs(gateway.tile.tx() - slot.tile.tx()),
+                                Math.abs(gateway.tile.ty() - slot.tile.ty())) <= 6) {
+                                covering = true;
+                            }
+                        }
+                    }
+                }
+                assertTrue(plannedPylon,
+                    "the support Pylon lands on a planned Pylon slot, not a bare tile: "
+                        + Queue.get().allOrders().list());
+                assertTrue(covering,
+                    "that slot covers a Gateway slot (power is part of the layout): "
+                        + Queue.get().allOrders().list());
                 assertTrue(EventLog.toJsonLines().contains("\"result\":\"supported\""),
                     "the support order is twinned: " + EventLog.toJsonLines());
                 assertTrue(EventLog.toJsonLines().contains("\"supportTx\""),
@@ -676,6 +698,41 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 atlantis.placement.core.ReservedSlots.clearForTests();
             }
         });
+    }
+
+    /**
+     * A 2x2 tile no planned slot and no unit covers: the fallback needs
+     * a tile the verdict and physics both accept, whatever the layout
+     * looks like after a doctrine move (streets re-homed every slot).
+     */
+    private static APosition firstTileFreeOfSlotsAndUnits(
+        java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout,
+        java.util.List<FakeUnit> ours, int w, int h) {
+        for (int tx = 5; tx <= 33; tx++) {
+            for (int ty = 5; ty <= 33; ty++) {
+                boolean busy = false;
+                for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
+                    if (slot == null || slot.tile == null) continue;
+                    if (Math.abs(slot.tile.tx() - tx) < Math.max(w, slot.type.getTilesWidth())
+                        && Math.abs(slot.tile.ty() - ty) < Math.max(h, slot.type.getTilesHeights())) {
+                        busy = true;
+                        break;
+                    }
+                }
+                if (!busy) {
+                    for (FakeUnit u : ours) {
+                        if (u != null && u.position() != null
+                            && Math.abs(u.tx() - tx) < w + 1 && Math.abs(u.ty() - ty) < h + 1) {
+                            busy = true;
+                            break;
+                        }
+                    }
+                }
+                if (!busy) return APosition.create(tx, ty);
+            }
+        }
+
+        return null;
     }
 
     @Test
@@ -751,6 +808,8 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 ours.add(fake(AUnitType.Protoss_Pylon, slot.tile.tx(), slot.tile.ty()));
             }
         }
+        final APosition free = firstTileFreeOfSlotsAndUnits(layout, ours, 2, 2);
+        assertNotNull(free, "the test owes one unplanned tile to fall back to");
         world(5, fakeOurs(ours.toArray(new FakeUnit[0])), fakeEnemies(), () -> {
             atlantis.placement.core.ReservedSlots.setSlotsForTests(layout);
             try {
@@ -758,15 +817,15 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                 Construction construction = constructionFor(
                     AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
                 ScriptedPlanner yes = new ScriptedPlanner(
-                    atlantis.production.placement.PlacementReservation.success(33, 20, 0));
+                    atlantis.production.placement.PlacementReservation.success(free.tx(), free.ty(), 0));
 
                 APosition site = CatalogueSiteAdapter.siteFor(
                     yes, probe, AUnitType.Protoss_Pylon, construction);
 
                 assertNotNull(site, "a covered type with no free slot falls back to the hunt, never declines: "
                     + EventLog.toJsonLines());
-                assertEquals(33, site.tx(), "the planner tile, not a slot");
-                assertEquals(20, site.ty(), "the planner tile, not a slot");
+                assertEquals(free.tx(), site.tx(), "the planner tile, not a slot");
+                assertEquals(free.ty(), site.ty(), "the planner tile, not a slot");
                 assertTrue(EventLog.toJsonLines().contains("\"via\":\"funnel\""),
                     "the fallback names the funnel path: " + EventLog.toJsonLines());
             }

@@ -61,7 +61,15 @@ public final class CatalogueSiteAdapter {
     }
 
     private static synchronized PlacementPlanner plannerForFrame(int frame) {
-        if (sharedPlanner == null || sharedPlannerFrame != frame) {
+        // One planner for the game, not one per frame (owner order
+        // 2026-11-06: rebuilding grid + catalogue every frame re-paid
+        // the whole scan for identical terrain). Tests always rebuild:
+        // worlds swap maps between tests, and a cached planner would
+        // answer on the wrong one (same results either way - it is a
+        // cache, not a decision). Reservations are per-pass state and
+        // die in startPass, which every entry calls; the terrain scan
+        // itself rebuilds on the planner's own cadence.
+        if (sharedPlanner == null || atlantis.config.env.Env.isTesting()) {
             // The constructor already builds the grid + catalogue, so no
             // startPass here (it would build everything twice per frame).
             sharedPlanner = new CataloguePlacementPlanner();
@@ -69,6 +77,16 @@ public final class CatalogueSiteAdapter {
             SiteTwin.addRebuild();
         }
         return sharedPlanner;
+    }
+
+    /**
+     * Per-game reset: the shared planner answers from the map it was
+     * built on, and a new game is a new map. Called from OnGameStarted
+     * alongside the other per-game state.
+     */
+    public static synchronized void resetForNewGame() {
+        sharedPlanner = null;
+        sharedPlannerFrame = -1;
     }
 
     /**
@@ -81,7 +99,10 @@ public final class CatalogueSiteAdapter {
     public static APosition siteFor(AUnit builder, AUnitType building, Construction construction) {
         if (!Env.placementCatalogue()) return null;
 
-        return answerWithTwin(siteForInner(plannerForFrame(AGame.now()), builder, building, construction),
+        PlacementPlanner planner = plannerForFrame(AGame.now());
+        planner.startPass();
+
+        return answerWithTwin(siteForInner(planner, builder, building, construction),
             building, "funnel");
     }
 

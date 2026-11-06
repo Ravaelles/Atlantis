@@ -85,6 +85,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private final Set<String> reservedThisPass = new HashSet<>();
     private final List<SupportRequest> supportThisPass = new ArrayList<>();
+    private final java.util.Map<String, int[]> refineCache = new java.util.HashMap<>();
+    private final java.util.Map<String, Integer> exitCache = new java.util.HashMap<>();
     private String lastRefusal = "-";
 
     @Override
@@ -341,6 +343,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     public void startPass() {
         reservedThisPass.clear();
         supportThisPass.clear();
+        refineCache.clear();
+        exitCache.clear();
         passBuilder = null;
         passBuilderPosition = null;
 
@@ -537,12 +541,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // Refine before ranking: the catalogue emits geometry it can know without
         // workers, and the ranker needs builder travel, the exit distance and when
         // the tile becomes usable at all. All three are estimates (§4.6) - they
-        // decide ORDER, never correctness.
-        List<BuildLocation> candidates = refine(
-            unitType,
-            catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null),
-            centre
-        );
+        // decide ORDER, never correctness. Production hunts refine the
+        // street-legal set only (precomputed spacing, Stardust doctrine):
+        // hundreds of tiles instead of ten thousand, every pass. Sited
+        // hunts keep the full set - a cannon creeping a choke sits where
+        // the fight needs it.
+        double radius = constraint.radius();
+        boolean bounded = constraint.mode() == atlantis.production.placement.TargetPlacement.Mode.NEIGHBOURHOOD
+            && radius >= 0;
+
+        List<BuildLocation> raw =
+            catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null);
+        List<BuildLocation> candidates = refine(unitType, raw, centre);
 
         BuildLocationCatalogue.LocationScorer ranker = rankerFor(unitType, centre);
         java.util.Collections.sort(candidates, ranker);
@@ -551,10 +561,24 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // serves only inside the radius: the legacy ring search never
         // left it either. Unbounded (funnel, V2-direct) serves anywhere
         // as before - the ranker alone decides order there.
-        double radius = constraint.radius();
-        boolean bounded = constraint.mode() == atlantis.production.placement.TargetPlacement.Mode.NEIGHBOURHOOD
-            && radius >= 0;
+        PlacementReservation answer = huntList(
+            candidates, unitType, targetFrame, centre, bounded, radius, excluded, ranker);
+        if (answer != null) return answer;
 
+        lastRefusal = "hunt-exhausted";
+        return PlacementReservation.failure();
+    }
+
+    /**
+     * One ranked pass over the given candidate list: skip reserved,
+     * excluded and out-of-radius tiles, serve the first legal one.
+     * Shared by the street hunt and its fallbacks so the legality
+     * ladder runs exactly once per tile.
+     */
+    private PlacementReservation huntList(List<BuildLocation> candidates, AUnitType unitType, int targetFrame,
+                                          APosition centre, boolean bounded, double radius,
+                                          java.util.Set<String> excluded,
+                                          BuildLocationCatalogue.LocationScorer ranker) {
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
             if (reservedThisPass.contains(tile) || excluded.contains(tile))
@@ -566,8 +590,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (answer != null) return answer;
         }
 
-        lastRefusal = "hunt-exhausted";
-        return PlacementReservation.failure();
+        return null;
     }
 
     /**
@@ -716,36 +739,68 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
                                        APosition centre) {
         AUnit builder = builderForThisPass();
 
-        // The search centre's base area, once per pass: every candidate is
+        // The search centre's base area, once per call: every candidate is
         // answered against it, so the ranker can keep buildings in the
         // area they were asked for (Stardust: blocks per area, never a
-        // cross-map grab while home ground stands free).
-        AUnit centreBase = nearestBaseFor(centre);
+        // cross-map grab while home ground stands free). One Select read
+        // per call, never per tile - the per-tile Select scan measured
+        // as the pass bottleneck (NEXT #228).
+        java.util.List<AUnit> bases;
+        try {
+            bases = Select.ourBasesWithUnfinished().list();
+        } catch (Exception | Error ignored) {
+            bases = java.util.Collections.emptyList();
+        }
+        AUnit centreBase = nearestBase(centre, bases);
 
         List<BuildLocation> refined = new java.util.ArrayList<>(candidates.size());
         for (BuildLocation candidate : candidates) {
+            int[] cached = refineCache.get(cacheKey(unitType, candidate));
+            int travel;
+            int exit;
+            int avail;
+            if (cached != null) {
+                travel = cached[0];
+                exit = cached[1];
+                avail = cached[2];
+            }
+            else {
+                travel = builderTravelEstimate(builder, candidate);
+                exit = exitDistanceFor(candidate);
+                avail = availabilityFrames(unitType, candidate);
+                refineCache.put(cacheKey(unitType, candidate),
+                    new int[]{travel, exit, avail});
+            }
             BuildLocation withTravel = candidate.refined(
-                builderTravelEstimate(builder, candidate),
-                exitDistanceFor(candidate),
-                sameBaseAs(candidate, centreBase)
+                travel,
+                exit,
+                sameBaseAs(candidate, centreBase, bases)
             );
-            refined.add(withTravel.withFramesUntilAvailable(availabilityFrames(unitType, candidate)));
+            refined.add(withTravel.withFramesUntilAvailable(avail));
         }
         return refined;
+    }
+
+    private static String cacheKey(AUnitType unitType, BuildLocation candidate) {
+        return candidate.tileX() + "," + candidate.tileY() + ","
+            + (unitType == null ? "-" : unitType.id());
     }
 
     /**
      * Nearest owned base to a tile (Chebyshev, same rule as the
      * neighbourhood source), main as the pre-base fallback. Null when
-     * nothing is known - the area answer fails open above it.
+     * nothing is known - the area answer fails open above it. Pure over
+     * the given base list: callers fetch Select once per pass, never
+     * per tile (the per-tile Select scan measured as the pass
+     * bottleneck).
      */
-    private static AUnit nearestBaseFor(APosition at) {
+    private static AUnit nearestBase(APosition at, java.util.List<AUnit> bases) {
         if (at == null) return null;
 
         try {
             AUnit nearest = null;
             int best = Integer.MAX_VALUE;
-            for (AUnit base : Select.ourBasesWithUnfinished().list()) {
+            for (AUnit base : bases) {
                 if (base == null) continue;
                 int d = Math.max(Math.abs(base.tx() - at.tx()), Math.abs(base.ty() - at.ty()));
                 if (d < best) {
@@ -766,10 +821,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * owned base. Unknown on either side reads same (fail-open: with no
      * bases listed there is no area to disagree about).
      */
-    private static boolean sameBaseAs(BuildLocation candidate, AUnit centreBase) {
+    private static boolean sameBaseAs(BuildLocation candidate, AUnit centreBase,
+                                      java.util.List<AUnit> bases) {
         if (centreBase == null) return true;
 
-        AUnit candidateBase = nearestBaseFor(APosition.create(candidate.tileX(), candidate.tileY()));
+        AUnit candidateBase = nearestBase(
+            APosition.create(candidate.tileX(), candidate.tileY()), bases);
         if (candidateBase == null) return true;
 
         return candidateBase.id() == centreBase.id();
@@ -818,10 +875,21 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private int exitDistanceFor(BuildLocation candidate) {
         if (neighbourhoods == null) return 0;
 
+        // Per-pass memo: the neighbourhood read walks selections per
+        // tile, and the same tiles are re-refined for every demand of
+        // the pass (NEXT #228: the pass bottleneck is per-tile Select
+        // scans, not the scan itself).
+        String key = candidate.tileX() + "," + candidate.tileY();
+        Integer known = exitCache.get(key);
+        if (known != null) return known;
+
         NeighbourhoodRegistry.Neighbourhood area =
             neighbourhoods.forTile(candidate.tileX(), candidate.tileY());
 
-        return NeighbourhoodRegistry.distanceToExit(area, candidate.tileX(), candidate.tileY());
+        int dist = NeighbourhoodRegistry.distanceToExit(area, candidate.tileX(), candidate.tileY());
+        exitCache.put(key, dist);
+
+        return dist;
     }
 
     /**
