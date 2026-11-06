@@ -156,12 +156,31 @@ public final class TileAvailabilityGrid {
      * Stardust's {@code checkTile}.
      */
     public boolean isFreeFor(int left, int top, int w, int h) {
+        return isFreeFor(left, top, w, h, false);
+    }
+
+    /**
+     * Same, but the one-tile BORDER ring does not refuse: layout pairs are
+     * designed adjacent (a covering Pylon intentionally sits in its
+     * Gateway's ring), and the same pass reserves the Gateway first, so a
+     * strict read makes the Gateway block its own support (measured live:
+     * support exact-fail:grid-blocked on a clean tile). USED (a live
+     * reservation), terrain BLOCKED and the terrain ADJACENT margin still
+     * refuse - only the reservation ring is forgiven.
+     */
+    public boolean isFreeForIgnoringBorder(int left, int top, int w, int h) {
+        return isFreeFor(left, top, w, h, true);
+    }
+
+    private boolean isFreeFor(int left, int top, int w, int h, boolean ignoreBorder) {
         for (int x = left; x < left + w; x++) {
             for (int y = top; y < top + h; y++) {
                 if (!inBounds(x, y))
                     return false;
 
-                if (flags[index(x, y)] != 0)
+                int tileFlags = flags[index(x, y)];
+                if (ignoreBorder) tileFlags &= ~BORDER;
+                if (tileFlags != 0)
 
                     return false;
             }

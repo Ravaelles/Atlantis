@@ -979,7 +979,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         int x = constraint.exactTileX();
         int y = constraint.exactTileY();
 
-        if (!grid.isFreeFor(x, y, type.getTilesWidth(), type.getTilesHeights())) {
+        // Border-blind freeness (layout pairs sit adjacent by design):
+        // the same pass reserves the demanding tile first, and its
+        // one-tile BORDER ring would otherwise fail its own support
+        // (measured live: a clean support tile refused as grid-blocked
+        // behind its Gateway's reservation). USED, terrain BLOCKED and
+        // the terrain ADJACENT margin still refuse.
+        if (!grid.isFreeForIgnoringBorder(x, y, type.getTilesWidth(), type.getTilesHeights())) {
             lastRefusal = "grid-blocked";
             return PlacementReservation.failure();
         }

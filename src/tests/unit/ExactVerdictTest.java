@@ -106,6 +106,75 @@ public class ExactVerdictTest extends WorldStubForTests {
         });
     }
 
+    private static final class Flat implements TileAvailabilityGrid.TerrainSource {
+        private final int w;
+        private final int h;
+
+        Flat(int w, int h) {
+            this.w = w;
+            this.h = h;
+        }
+
+        @Override
+        public int mapWidth() {
+            return w;
+        }
+
+        @Override
+        public int mapHeight() {
+            return h;
+        }
+
+        @Override
+        public boolean isBuildable(int tx, int ty) {
+            return true;
+        }
+
+        @Override
+        public boolean isWalkable(int tx, int ty) {
+            return true;
+        }
+
+        @Override
+        public boolean isResource(int tx, int ty) {
+            return false;
+        }
+
+        @Override
+        public boolean isDepotOrigin(int tx, int ty) {
+            return false;
+        }
+    }
+
+    @Test
+    public void exactTileInOwnReservationBorderStillServes() {
+        TileAvailabilityGrid grid = new TileAvailabilityGrid(new Flat(40, 40));
+        grid.markUsed(24, 24, 2, 2);
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+
+        world(5, fakeOurs(nexus), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            CataloguePlacementPlanner planner = new CataloguePlacementPlanner(
+                grid,
+                new atlantis.placement.race.ProtossPlacementStrategy(
+                    new atlantis.placement.core.PsiGating(
+                        new atlantis.placement.engine.EnginePowerSource())),
+                null, false);
+            planner.startPass();
+
+            assertFalse(grid.isFreeFor(22, 23, 2, 2),
+                "setup: the neighbour reservation borders the tile");
+            PlacementReservation result = planner.reservePlacement(
+                UnitProducible.of(AUnitType.Protoss_Pylon),
+                TargetPlacement.exactTile(22, 23), 100);
+
+            assertTrue(result.isSuccessful(),
+                "layout pairs sit adjacent by design: " + result);
+        });
+    }
+
     @Test
     public void poweredExactGatewayServes() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
