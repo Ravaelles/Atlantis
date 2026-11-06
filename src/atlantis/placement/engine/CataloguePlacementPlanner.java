@@ -906,13 +906,21 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // an exact hint is a wish, not a proof (the SUPPORT flow mints
         // exact Pylon tiles with no downstream check, and sited orders
         // carry stale tiles). Refused, unpowered, mineral-crowded,
-        // standing-covered, worker-covered or edge-exact all fail here
-        // instead of minting an illegal warp. Power stays a verdict
+        // standing-covered or edge-exact all fail here instead of
+        // minting an illegal warp. Power stays a verdict
         // answer (ACCEPT/REFUSE, never NEEDS_SUPPORT): an unpowered
         // exact tile is refused outright - the caller re-hints or waits.
+        //
+        // Worker-cover does NOT fail here (measured live: the support
+        // Pylon for a Gateway slot sits inside the miners' cover and
+        // still warps - builders do walk there). Cover is a builder
+        // question, and the mint door already answers it honestly
+        // (no-builder refusal with a twin when nobody can go). Failing
+        // the site on cover parks the support behind a demand that
+        // would have walked.
         atlantis.production.constructions.position.SitingVerdict verdict =
             atlantis.production.constructions.position.SitingVerdict.check(type, tile);
-        if (!verdict.accepted()) {
+        if (!verdict.accepted() && !"worker-covered".equals(verdict.twin)) {
             return PlacementReservation.failure();
         }
 
