@@ -27,17 +27,22 @@ public final class CohesionTwin {
         try {
             int now = A.now();
             Integer last = lastRowed.get(unit.id());
+            // March recalls (no target) row under their own sentinel: a
+            // targetless rejoin is its own state, not a repeat of the last
+            // denied target - without this every march recall reads as a
+            // transition and the heartbeat never throttles it.
+            int foe = target == null ? -1 : target.id();
             Integer lastFoe = lastTarget.get(unit.id());
-            boolean transition = lastFoe == null || target.id() != lastFoe;
+            boolean transition = lastFoe == null || foe != lastFoe;
 
             if (!transition && last != null && now - last < HEARTBEAT_FRAMES) return;
 
             lastRowed.put(unit.id(), now);
-            lastTarget.put(unit.id(), target.id());
+            lastTarget.put(unit.id(), foe);
 
             EventLog.key(LogKey.COHESION_RECALL)
                 .param("unit", unit.id())
-                .param("target", target.id())
+                .param("target", foe)
                 .param("dist", (int) (unit.distTo(median) * 10))
                 .param("transition", transition)
                 .log(now, A.minSec());

@@ -40,6 +40,14 @@ public final class ClusterCohesion {
     public static final double STRAY_TILES = 6;
 
     /**
+     * The latch releases here, inside the engage radius: engaging at 6
+     * and releasing at 6 parks the unit on the boundary, marching out
+     * and getting recalled every few seconds. The 2-tile deadband keeps
+     * the ball a ball instead of a breathing rim.
+     */
+    static final double REJOIN_TILES = 4;
+
+    /**
      * A latched rejoin that never completes is abandoned, not marched
      * forever: the ball moved on, the tile never got walkable, the war
      * moved elsewhere. The next contact re-latches from scratch.
@@ -70,39 +78,90 @@ public final class ClusterCohesion {
         }
     }
 
-    private static boolean recallStragglerInner(AUnit unit, AUnit target) {
-        APosition median = Alpha.get().median();
-        if (median == null) {
-            latchedSince.remove(unit.id());
+    /**
+     * The march half of the leash: a detached melee unit WITHOUT a
+     * target rejoins the ball instead of marching alone to the anchor,
+     * slot or ghost the march chain would otherwise hand it (measured
+     * live: one Zealot flapping GATHER/COLLAPSE/DRESS/STANDOFF for 760
+     * frames, never in the ball). Same latch, same radii as the contact
+     * half above, so a rejoining unit cannot flap between the two.
+     *
+     * <p>Exempt by design, not by distance: the vanguard scout runs ahead
+     * (it owns first contact), and a unit creeping a remembered contact
+     * is on a mission, not lost. Ranged units keep their kite doctrine
+     * (separate slice) - this stays melee-only like the contact half.</p>
+     */
+    public static boolean recallMarchStraggler(AUnit unit) {
+        if (unit == null) return false;
+        if (!unit.isZealot() || !unit.isAlive()) return false;
+
+        try {
+            if (atlantis.combat.strategy.GhostAdvance.isVanguard(unit)) return false;
+            if (atlantis.combat.strategy.GhostAdvance.effectiveGhostPointFor(unit) != null) return false;
+
+            return recallLatched(unit);
+        } catch (Exception | Error ignored) {
             return false;
         }
+    }
+
+    private static boolean recallStragglerInner(AUnit unit, AUnit target) {
+        APosition median = medianOrUnlatch(unit);
+        if (median == null) return false;
 
         Integer latchedAt = latchedSince.get(unit.id());
-        if (latchedAt != null) {
-            if (unit.distTo(median) <= STRAY_TILES) {
-                latchedSince.remove(unit.id());
-                return false;
-            }
-            if (atlantis.game.A.now() - latchedAt > LATCH_TIMEOUT_FRAMES) {
-                latchedSince.remove(unit.id());
-                return false;
-            }
-            if (threatAdjacent(unit) || atlantis.battle.DuelMemory.tookDamageSinceLastBattleFrame(unit)) {
-                latchedSince.remove(unit.id());
-                return false;
-            }
-
-            return moveBack(unit, median, target);
-        }
-
+        if (latchedAt != null) return holdLatch(unit, median, latchedAt, target);
         if (target == null) return false;
         if (unit.distTo(median) <= STRAY_TILES) return false;
         if (unit.distTo(target) <= 1) return false;
 
-        if (latchedSince.size() > 64) latchedSince.clear();
-        latchedSince.put(unit.id(), atlantis.game.A.now());
+        latch(unit);
 
         return moveBack(unit, median, target);
+    }
+
+    private static boolean recallLatched(AUnit unit) {
+        APosition median = medianOrUnlatch(unit);
+        if (median == null) return false;
+
+        Integer latchedAt = latchedSince.get(unit.id());
+        if (latchedAt != null) return holdLatch(unit, median, latchedAt, null);
+        if (unit.distTo(median) <= STRAY_TILES) return false;
+
+        latch(unit);
+
+        return moveBack(unit, median, null);
+    }
+
+    private static APosition medianOrUnlatch(AUnit unit) {
+        APosition median = Alpha.get().median();
+        if (median == null) {
+            latchedSince.remove(unit.id());
+        }
+
+        return median;
+    }
+
+    private static boolean holdLatch(AUnit unit, APosition median, int latchedAt, AUnit target) {
+        if (unit.distTo(median) <= REJOIN_TILES) {
+            latchedSince.remove(unit.id());
+            return false;
+        }
+        if (atlantis.game.A.now() - latchedAt > LATCH_TIMEOUT_FRAMES) {
+            latchedSince.remove(unit.id());
+            return false;
+        }
+        if (threatAdjacent(unit) || atlantis.battle.DuelMemory.tookDamageSinceLastBattleFrame(unit)) {
+            latchedSince.remove(unit.id());
+            return false;
+        }
+
+        return moveBack(unit, median, target);
+    }
+
+    private static void latch(AUnit unit) {
+        if (latchedSince.size() > 64) latchedSince.clear();
+        latchedSince.put(unit.id(), atlantis.game.A.now());
     }
 
     private static boolean moveBack(AUnit unit, APosition median, AUnit target) {

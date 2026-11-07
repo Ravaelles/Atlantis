@@ -1,6 +1,7 @@
 package atlantis.combat;
 
 import atlantis.battle.cluster.Missions;
+import atlantis.combat.cluster.ClusterCohesion;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.cluster.HomeGround;
@@ -46,6 +47,24 @@ public final class Regroup {
     public static void march(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
     ) {
+        // Median leash (owner 2026-11-07): a detached melee unit rejoins
+        // the ball instead of marching alone to whichever point the chain
+        // below would hand it this frame - strategy/dress/collapse/hold/
+        // gather re-decide every frame while the ball sits still, so one
+        // lone Zealot flaps between all of them for minutes and the ball
+        // never forms. The latch holds the rejoin; collective moves go
+        // through untouched (a unit with the ball never trips the leash).
+        // FLEE owns retreats, the UMS reinforce owns join-the-fight, the
+        // bait owns the funnel mouth - the leash yields to all three.
+        if (tactic != FightOrFlight.Tactic.FLEE
+            && !(tactic == FightOrFlight.Tactic.FIGHT
+                && A.isUms() && ArmyContact.isOngoingFight())
+            && strategy != BattleStrategy.SCOUT_BAIT
+            && ClusterCohesion.recallMarchStraggler(unit)) {
+            FightTarget.markRepositioned(unit);
+
+            return;
+        }
         APosition regroup = strategy.regroupPointFor(unit);
         if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag().tag())) {
             FightTarget.markRepositioned(unit);
