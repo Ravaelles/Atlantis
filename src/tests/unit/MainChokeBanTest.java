@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -339,5 +340,35 @@ public class MainChokeBanTest extends WorldStubForTests {
                     "unbanned: the dress still holds the front while the rear catches up");
             });
         }
+    }
+
+    @Test
+    public void missionOverrideHoldsBaseInsteadOfBannedChoke() {
+        FakeUnit n1 = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit n2 = fake(AUnitType.Protoss_Nexus, 40, 20);
+        FakeUnit n3 = fake(AUnitType.Protoss_Nexus, 60, 40);
+
+        world(3, fakeOurs(n1, n2, n3), fakeEnemies(), () -> {
+            assertEquals(atlantis.combat.cluster.ArmyMission.HOLD_MAIN,
+                atlantis.combat.cluster.ArmyMission.enforceBan(
+                    atlantis.combat.cluster.ArmyMission.HOLD_MAIN_CHOKE),
+                "banned: the mission override holds the base, never the banned choke");
+            assertEquals(atlantis.combat.cluster.ArmyMission.ATTACK_ENEMY_BASE,
+                atlantis.combat.cluster.ArmyMission.enforceBan(
+                    atlantis.combat.cluster.ArmyMission.ATTACK_ENEMY_BASE),
+                "the override touches only the banned hold, nothing else");
+        });
+    }
+
+    @Test
+    public void missionOverrideLetsUnbannedHoldThrough() {
+        FakeUnit n1 = fake(AUnitType.Protoss_Nexus, 20, 20);
+
+        world(3, fakeOurs(n1), fakeEnemies(), () -> {
+            assertEquals(atlantis.combat.cluster.ArmyMission.HOLD_MAIN_CHOKE,
+                atlantis.combat.cluster.ArmyMission.enforceBan(
+                    atlantis.combat.cluster.ArmyMission.HOLD_MAIN_CHOKE),
+                "unbanned: the decider's answer stands");
+        });
     }
 }

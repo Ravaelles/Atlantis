@@ -75,13 +75,31 @@ public enum ArmyMission {
             Snapshot in = readLive(posture);
             if (in == null) return;
 
-            ArmyMission decided = decide(in);
+            ArmyMission decided = enforceBan(decide(in));
             if (MissionTransitionGate.allows(current, decided, A.now())) {
                 current = decided;
             }
             ShadowTwin.row(decided, in);
         } catch (Exception | Error ignored) {
         }
+    }
+
+    /**
+     * Absolute main-choke ban at the mission wiring (owner order
+     * 2026-11-07): the pure decider may still answer HOLD_MAIN_CHOKE
+     * (it only reads the snapshot), so a banned game overrides it to
+     * HOLD_MAIN here - hold the base, never the banned choke. Kept out
+     * of {@code decide} on purpose: the snapshot contract stays pure
+     * and pinnable without live state, the ban reads live counts.
+     * Public as a seam: the override pins without a full game.
+     */
+    public static ArmyMission enforceBan(ArmyMission decided) {
+        if (decided == ArmyMission.HOLD_MAIN_CHOKE
+            && atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBanned()) {
+            return ArmyMission.HOLD_MAIN;
+        }
+
+        return decided;
     }
 
     public static void clearForTests() {
