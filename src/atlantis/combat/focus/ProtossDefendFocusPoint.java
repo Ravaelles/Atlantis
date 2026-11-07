@@ -60,6 +60,48 @@ public final class ProtossDefendFocusPoint {
      */
     private static final int DRAGOON_BAN_MAIN_CHOKE = 10;
 
+    /**
+     * Absolute main-choke ban by base count (owner order 2026-11-07): past
+     * two bases the line never stages home, so the main choke is not a
+     * stand, a sparta carve-out, or a fallback - the army lives forward.
+     * Same shape as the dragoon ban below, so the two read as one rule.
+     */
+    private static final int MAIN_CHOKE_MAX_BASES = 2;
+
+    public static boolean mainChokeBannedByBases() {
+        try {
+            return We.protoss()
+                && Select.ourWithUnfinished().bases().count() > MAIN_CHOKE_MAX_BASES;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Absolute middle enforcement (owner order 2026-11-07): past this many
+     * combat units the line stages at the middle choke, full stop - not
+     * at a sparta choke, not at the natural, not at a base. Breach still
+     * wins (an enemy inside the base pulls the line home), but every
+     * staging answer below it is the middle.
+     */
+    private static final int MIDDLE_FORCE_ARMY = 15;
+
+    private static boolean middleForcedByArmy(AChoke middleChoke) {
+        try {
+            return middleChoke != null && Count.ourCombatUnits() > MIDDLE_FORCE_ARMY;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * The combined ban read for staging gates outside this file: a
+     * dragoon mass or a 3+ base game never holds the main choke.
+     */
+    public static boolean mainChokeBanned() {
+        return mainChokeBannedByDragoons() || mainChokeBannedByBases();
+    }
+
     private ProtossDefendFocusPoint() {
     }
 
@@ -151,15 +193,22 @@ public final class ProtossDefendFocusPoint {
                     // NATURAL/BASE. The SPARTA branch above is a
                     // deliberate carve-out: a wall-in plan holds its
                     // choke on purpose, whatever the army size - except
-                    // under the absolute dragoon ban below, which a
-                    // finished wall has no claim against.
+                    // under the absolute bans below, which a finished wall
+                    // has no claim against.
+                    boolean mainBanned =
+                        mainChokeBannedByDragoons() || mainChokeBannedByBases();
                     boolean holdsMainChoke = mainStand != null
                         && !(We.protoss() && Count.ourCombatUnits() >= MIDDLE_CHOKE_MIN_ARMY)
-                        && !mainChokeBannedByDragoons();
+                        && !mainBanned;
+
+                    // Absolute middle (owner order 2026-11-07): past 15
+                    // combat units the sparta input is withdrawn too, so
+                    // MIDDLE wins over every other staging answer.
+                    boolean middleForced = middleForcedByArmy(middleChoke);
 
                     DefendedPlace.Answer answer = DefendedPlace.defendGround(
                         enemyInBase,
-                        sparta && !mainChokeBannedByDragoons() ? mainChoke : null,
+                        sparta && !mainBanned && !middleForced ? mainChoke : null,
                         middleChoke,
                         holdsMainChoke ? mainChoke : null,
                         naturalChoke != null && natural != null ? naturalChoke : null,

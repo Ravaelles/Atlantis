@@ -103,11 +103,16 @@ public final class ChokeStandoff {
 
     /**
      * Guarded detection: this unit's hold point, or null when no choke is held.
+     * A banned main choke holds nothing (owner order 2026-11-07): the line
+     * forms up elsewhere instead of standing where the focus refuses to
+     * stage. Other chokes hold as before.
      */
     public static APosition holdPointFor(AUnit unit) {
         try {
             AChoke choke = BattleSetup.chokeNear(unit);
             if (choke == null || choke.center() == null) return null;
+            if (choke.isMainChoke()
+                && atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBanned()) return null;
 
             APosition ours = holdPoint(choke, unit);
             // High side first (NEXT #171): both lips are candidates and

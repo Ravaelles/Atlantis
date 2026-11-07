@@ -38,6 +38,13 @@ public final class SquadScout {
         if (choke == null || choke.center() == null) return false;
         if (BattleSetup.enemiesNear(choke.center(), ChokeStandoff.CONTEST_TILES) == 0) return false;
 
+        // Absolute main-choke ban (owner order 2026-11-07): no bait games
+        // at a choke the focus refuses to stage - the bait would detach
+        // a unit to the banned ground while the line holds elsewhere.
+        // Other chokes bait as before.
+        if (choke.isMainChoke()
+            && atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBanned()) return false;
+
         Selection ours = Select.ourCombatUnits();
         if (ours == null || ours.count() < 6) return false;
         if (ours.dragoons().isEmpty()) return false;

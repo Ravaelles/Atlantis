@@ -228,6 +228,14 @@ public final class MarchCohesion {
             HasPosition choke = resolveChoke(anchor);
             if (choke == null) return null;
 
+            // Absolute main-choke ban (owner order 2026-11-07): the dress
+            // holds the line at the choke fallback, which must not be
+            // the banned main choke - the front marches on instead of
+            // dressing where the focus refuses to stage.
+            if (choke instanceof atlantis.map.choke.AChoke
+                && ((atlantis.map.choke.AChoke) choke).isMainChoke()
+                && atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBanned()) return null;
+
             List<AUnit> mates = Select.ourCombatUnits().list();
             List<Double> dists = new ArrayList<>();
             double myDist = Double.MAX_VALUE;

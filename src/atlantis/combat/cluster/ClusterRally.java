@@ -164,6 +164,13 @@ public final class ClusterRally {
         AUnit main = home.main();
         if (!isHomeAnchor(anchor, main)) return null;
 
+        // Absolute main-choke ban (owner order 2026-11-07): the halfway
+        // hold IS a main-choke stand, so a banned game skips it instead
+        // of parking the line where the focus refuses to stage. The
+        // formation slots and the gather own the wait instead - the line
+        // forms up, it just does not form up at the banned choke.
+        if (atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBanned()) return null;
+
         try {
             AChoke choke = home.mainChoke();
 

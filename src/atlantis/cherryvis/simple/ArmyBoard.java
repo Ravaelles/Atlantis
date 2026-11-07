@@ -97,13 +97,18 @@ public final class ArmyBoard {
 
     /**
      * The main-choke ban, named with its headcount (NEXT #194): a Protoss
-     * dragoon mass over the ban never stages home. "none" when no ban
-     * stands, so the row also witnesses the ban lifting.
+     * dragoon mass over the ban never stages home, and neither does a
+     * 3+ base game. "none" when no ban stands, so the row also witnesses
+     * the ban lifting.
      */
     private static String banState() {
         try {
             if (atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBannedByDragoons()) {
                 return "main-choke:" + atlantis.units.select.Count.dragoons() + "-dragoons";
+            }
+            if (atlantis.combat.focus.ProtossDefendFocusPoint.mainChokeBannedByBases()) {
+                return "main-choke:"
+                    + atlantis.units.select.Select.ourWithUnfinished().bases().count() + "-bases";
             }
         } catch (RuntimeException ignored) {
         }
