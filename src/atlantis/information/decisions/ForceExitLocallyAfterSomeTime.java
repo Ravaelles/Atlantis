@@ -23,7 +23,10 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
 
     @Override
     public boolean applies() {
-        if (!Env.isLocal()) return false;
+        // The scbw slot opts in explicitly (ENV key present): a bounded run
+        // there must end through the engine so the replay is flushed, same as
+        // LOCAL. OpenBW tiers never set the key - their gates own the end.
+        if (!Env.isLocal() && !Env.realSecondsLimitExplicit()) return false;
         if (A.now() % 300 != 0) return false;
 
         if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) {

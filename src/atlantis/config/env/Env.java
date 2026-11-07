@@ -112,6 +112,13 @@ public class Env {
      */
     private static boolean endGameViaEngine = false;
     private static int forceEndAtSupply = 0;
+    /**
+     * True once FORCE_END_GAME_AFTER_REAL_SECONDS was explicitly set from
+     * an ENV file. The scbw slot sets it (bounded run must end through the
+     * engine so the replay is flushed); OpenBW tiers never do - their gates
+     * own the end. Presence is the scope: no inferred backend detection.
+     */
+    private static boolean realSecondsLimitExplicit = false;
 
     // =========================================================
 
@@ -193,6 +200,7 @@ public class Env {
                 // Cap enforced again here, so a hand-edited ENV cannot widen the
                 // wall-clock limit past the OpenBW simulation cap (CONVENTIONS §17).
                 ForceExitLocallyAfterSomeTime.realSecondsLimit = Math.max(toInt(value), -1);
+                realSecondsLimitExplicit = true;
                 return true;
 
             case "FORCE_END_GAME_AFTER_INGAME_SECONDS":
@@ -521,6 +529,17 @@ public class Env {
      */
     public static boolean endGameViaEngine() {
         return endGameViaEngine;
+    }
+
+    public static boolean realSecondsLimitExplicit() {
+        return realSecondsLimitExplicit;
+    }
+
+    /**
+     * Test seam (the flag is ENV-driven and has no other writer).
+     */
+    public static void setRealSecondsLimitExplicitForTest(boolean explicit) {
+        realSecondsLimitExplicit = explicit;
     }
 
     public static boolean isBenchmark() {
