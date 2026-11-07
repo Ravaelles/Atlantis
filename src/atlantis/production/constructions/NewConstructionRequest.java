@@ -14,6 +14,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.requirements.Requirements;
+import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -78,6 +79,18 @@ public class NewConstructionRequest {
 //            System.err.println("------- NO REQUIREMENTS");
             handleRequirementMissingFor(building);
 
+            return null;
+        }
+
+        // Single-door Pylon cap (owner order 2026-11-07): the V2 mint
+        // door refuses a second unfinished Pylon below 40 supply - this
+        // door must refuse the same way instead of minting behind its
+        // back (measured live: two Pylons out of one 25/25 supply block,
+        // a V2 supply Pylon plus a legacy-door one, each firing alone
+        // correctly and doubling together). The demand retries - the
+        // cap counts warping + not-started rows, so a stuck site still
+        // heals through the normal cancel + re-request path.
+        if (building.isPylon() && ProduceBuilding.tooManyPylonsInFlight()) {
             return null;
         }
 
