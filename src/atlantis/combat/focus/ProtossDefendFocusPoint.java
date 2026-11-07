@@ -195,8 +195,7 @@ public final class ProtossDefendFocusPoint {
                     // choke on purpose, whatever the army size - except
                     // under the absolute bans below, which a finished wall
                     // has no claim against.
-                    boolean mainBanned =
-                        mainChokeBannedByDragoons() || mainChokeBannedByBases();
+                    boolean mainBanned = mainChokeBanned();
                     boolean holdsMainChoke = mainStand != null
                         && !(We.protoss() && Count.ourCombatUnits() >= MIDDLE_CHOKE_MIN_ARMY)
                         && !mainBanned;

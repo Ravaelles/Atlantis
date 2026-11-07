@@ -371,4 +371,88 @@ public class MainChokeBanTest extends WorldStubForTests {
                 "unbanned: the decider's answer stands");
         });
     }
+
+    /**
+     * Middle-force boundary is count-based (15 holds the wall, 16 stages
+     * middle), so the chokes stay mocked like the companions above: the
+     * geometry plays no part in the tripwire.
+     */
+    @Test
+    public void sixteenCombatUnitsForceMiddleOverSparta() {
+        AChoke mainChoke = Mockito.mock(AChoke.class);
+        Mockito.when(mainChoke.center()).thenReturn(APosition.create(60, 20));
+        AChoke middleChoke = Mockito.mock(AChoke.class);
+        Mockito.when(middleChoke.center()).thenReturn(APosition.create(100, 100));
+
+        FakeUnit n1 = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] ours = new FakeUnit[17];
+        ours[0] = n1;
+        for (int i = 0; i < 16; i++) {
+            ours[i + 1] = fake(AUnitType.Protoss_Zealot, 22 + (i % 4), 21 + (i / 4));
+        }
+
+        try (MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 Mockito.mockStatic(atlantis.map.choke.Chokes.class);
+             MockedStatic<MiddleFocusChoke> middle =
+                 Mockito.mockStatic(MiddleFocusChoke.class);
+             MockedStatic<atlantis.combat.cluster.ClusterRally> rally =
+                 Mockito.mockStatic(atlantis.combat.cluster.ClusterRally.class);
+             MockedStatic<atlantis.battle.cluster.Missions> missions =
+                 Mockito.mockStatic(atlantis.battle.cluster.Missions.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(mainChoke);
+            middle.when(MiddleFocusChoke::get).thenReturn(middleChoke);
+            rally.when(atlantis.combat.cluster.ClusterRally::chokeStandoffPoint)
+                .thenReturn(APosition.create(55, 20));
+            missions.when(atlantis.battle.cluster.Missions::isGlobalMissionSparta).thenReturn(true);
+
+            world(3, fakeOurs(ours), fakeEnemies(), () -> {
+                atlantis.battle.advance.focus.AFocusPoint focus =
+                    ProtossDefendFocusPoint.focusPoint();
+
+                assertNotNull(focus, "forced: the focus still answers with 16 units");
+                assertTrue(focus.name().contains("MiddleFocusChoke"),
+                    "16 combat units stage at the middle even with a wall-in plan: "
+                        + focus.name());
+            });
+        }
+    }
+
+    @Test
+    public void fifteenCombatUnitsKeepSpartaWall() {
+        AChoke mainChoke = Mockito.mock(AChoke.class);
+        Mockito.when(mainChoke.center()).thenReturn(APosition.create(60, 20));
+        AChoke middleChoke = Mockito.mock(AChoke.class);
+        Mockito.when(middleChoke.center()).thenReturn(APosition.create(100, 100));
+
+        FakeUnit n1 = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] ours = new FakeUnit[16];
+        ours[0] = n1;
+        for (int i = 0; i < 15; i++) {
+            ours[i + 1] = fake(AUnitType.Protoss_Zealot, 22 + (i % 4), 21 + (i / 4));
+        }
+
+        try (MockedStatic<atlantis.map.choke.Chokes> chokes =
+                 Mockito.mockStatic(atlantis.map.choke.Chokes.class);
+             MockedStatic<MiddleFocusChoke> middle =
+                 Mockito.mockStatic(MiddleFocusChoke.class);
+             MockedStatic<atlantis.combat.cluster.ClusterRally> rally =
+                 Mockito.mockStatic(atlantis.combat.cluster.ClusterRally.class);
+             MockedStatic<atlantis.battle.cluster.Missions> missions =
+                 Mockito.mockStatic(atlantis.battle.cluster.Missions.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(mainChoke);
+            middle.when(MiddleFocusChoke::get).thenReturn(middleChoke);
+            rally.when(atlantis.combat.cluster.ClusterRally::chokeStandoffPoint)
+                .thenReturn(APosition.create(55, 20));
+            missions.when(atlantis.battle.cluster.Missions::isGlobalMissionSparta).thenReturn(true);
+
+            world(3, fakeOurs(ours), fakeEnemies(), () -> {
+                atlantis.battle.advance.focus.AFocusPoint focus =
+                    ProtossDefendFocusPoint.focusPoint();
+
+                assertNotNull(focus, "unforced: the focus still answers with 15 units");
+                assertTrue(focus.name().contains("Choke300"),
+                    "at exactly 15 the wall-in plan keeps its choke: " + focus.name());
+            });
+        }
+    }
 }
