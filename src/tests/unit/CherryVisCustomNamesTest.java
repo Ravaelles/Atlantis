@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.cherryvis.simple.ACherryVisLogger_TraceJson;
-import atlantis.cherryvis.simple.ACherryVis_Strings;
+import cherryvis.GameTrace;
+import cherryvis.StringTable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class CherryVisCustomNamesTest {
 
     @Test
     public void legendFollowsRuntimeAssignmentOrder() {
-        ACherryVis_Strings strings = new ACherryVis_Strings();
+        StringTable strings = new StringTable();
         strings.get("IdleWorker");
         strings.get("GatherResources");
 
@@ -31,7 +31,7 @@ public class CherryVisCustomNamesTest {
         // trace.json concatenates sections around it.
         assertEquals(
             " \"manager\": {\"10000\":\"IdleWorker\",\"10001\":\"GatherResources\"}",
-            ACherryVisLogger_TraceJson.customNames(strings)
+            GameTrace.customNames(strings)
         );
     }
 }

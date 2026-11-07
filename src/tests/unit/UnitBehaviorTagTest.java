@@ -64,7 +64,7 @@ public class UnitBehaviorTagTest extends WorldStubForTests {
 
             probe.setManagerUsed(new GatherResources(probe), "ClusterFlee");
 
-            String rows = atlantis.cherryvis.simple.ACherryVis_UnitLogs.buildUnitLogs(unitLogger());
+            String rows = ACherryVis.trace().buildUnitLogs();
             assertTrue(rows.contains("-ClusterFlee/GatherResources@"),
                 "the behavior tag rides next to the manager class: " + rows);
         });
@@ -80,7 +80,7 @@ public class UnitBehaviorTagTest extends WorldStubForTests {
 
             probe.setManagerUsed(new GatherResources(probe), null);
 
-            String rows = atlantis.cherryvis.simple.ACherryVis_UnitLogs.buildUnitLogs(unitLogger());
+            String rows = ACherryVis.trace().buildUnitLogs();
             assertTrue(rows.contains("-GatherResources@"),
                 "no behavior tag, no prefix - the old shape stands: " + rows);
         });

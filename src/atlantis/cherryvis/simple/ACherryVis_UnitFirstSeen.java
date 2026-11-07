@@ -5,89 +5,17 @@ import atlantis.game.A;
 import atlantis.game.event.AutomaticListener;
 import atlantis.game.event.Event;
 import atlantis.units.AUnit;
+import cherryvis.FirstSeen;
 
-import java.util.*;
-
+/**
+ * Bot-side first-seen hook: translates game events into primitive records on
+ * the game trace. The record format and the deferral policy live in the
+ * library ({@link FirstSeen}); the unit lookup stays here, where the game
+ * objects are.
+ */
 public class ACherryVis_UnitFirstSeen extends AutomaticListener {
-    private static final Set<Integer> seenUnitIds = new HashSet<>();
-    private static final Map<Integer, List<int[]>> unitsByFrame = new TreeMap<>();
-
-    /**
-     * Direct our-id to engine-id pairs (NEXT #76): the viewer fuzzy-matches
-     * first-seen units against the replay by (frame, type, x, y) with no
-     * retry, so a missed seed frame strands dozens of units forever. When
-     * {@code unit_ids} is present the viewer skips fuzzy matching entirely
-     * ({@code cvis_dbg_matching.js}: pairs are trusted directly). Filled next
-     * to every first-seen record from the unit's own engine handle.
-     */
-    private static final Map<Integer, Integer> engineIds = new TreeMap<>();
-    /**
-     * Units whose own position is not known yet (NEXT #68 follow-up): a mobile
-     * unit at completion still reports its PRODUCER's position - every late
-     * Probe recorded at the Nexus, and the viewer (nearest same-type within
-     * 25px, no retry) matches nothing in the crowd. The id is parked here with
-     * its completion frame; {@link #processPending} records it a few frames
-     * later, when the unit has walked out with a position of its own. Same
-     * frame in the trace and in the replay means distance zero, so the delay
-     * cannot hurt matching - only a wrong position can.
-     */
-    private static final Map<Integer, Integer> pendingFirstSeen = new TreeMap<>();
-    /**
-     * Frames between completion and the deferred first-seen record.
-     */
-    private static final int DEFER_FRAMES = 7;
-
-    /**
-     * "10203": [
-     * {
-     * "id": 246,
-     * "type": 37,
-     * "x": 3744,
-     * "y": 3795
-     * }
-     * ],
-     * "10278": [
-     * {
-     * "id": 249,
-     * "type": 35,
-     * "x": 3525,
-     * "y": 2864
-     * }
-     * ],
-     *
-     * <p>One array per frame (several units can be discovered on the same
-     * frame), each unit exactly once. This is the shape the CherryVis viewer
-     * parses - a single object instead of an array, or a lookup by counter
-     * instead of by frame, silently drops units or crashes the trace write.</p>
-     */
-    public static String get() {
-        StringBuilder result = new StringBuilder();
-
-        boolean firstFrame = true;
-        for (Integer frame : unitsByFrame.keySet()) {
-            if (!firstFrame) {
-                result.append(",");
-            }
-            firstFrame = false;
-
-            result.append("\"").append(frame).append("\":[");
-
-            List<int[]> records = unitsByFrame.get(frame);
-            for (int i = 0; i < records.size(); i++) {
-                int[] record = records.get(i);
-                result.append("{\"id\":").append(record[0])
-                    .append(",\"type\":").append(record[1])
-                    .append(",\"x\":").append(record[2])
-                    .append(",\"y\":").append(record[3])
-                    .append("}");
-                if (i < records.size() - 1) {
-                    result.append(",");
-                }
-            }
-            result.append("]");
-        }
-
-        return result.toString();
+    private static FirstSeen registry() {
+        return ACherryVis.trace().firstSeen();
     }
 
     /**
@@ -99,24 +27,18 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * forever - every starting unit then reads "i???". NEXT #68.</p>
      */
     public static void record(int frame, int id, int type, int x, int y) {
-        if (frame <= 0) frame = 1;
-        if (!seenUnitIds.contains(id)) {
-            seenUnitIds.add(id);
-            if (!unitsByFrame.containsKey(frame)) {
-                unitsByFrame.put(frame, new ArrayList<>());
-            }
-            unitsByFrame.get(frame).add(new int[]{id, type, x, y});
-        }
+        registry().record(frame, id, type, x, y);
+    }
+
+    public static String get() {
+        return registry().toJson();
     }
 
     /**
      * Test seam: static maps leak between tests in one JVM, so clear it.
      */
     public static void clear() {
-        seenUnitIds.clear();
-        unitsByFrame.clear();
-        pendingFirstSeen.clear();
-        engineIds.clear();
+        registry().clear();
     }
 
     /**
@@ -127,14 +49,14 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     public static void noteEngineIdOf(AUnit unit) {
         if (unit == null || unit.u() == null) return;
 
-        noteEngineId(unit.id(), unit.u().getID());
+        registry().noteEngineId(unit.id(), unit.u().getID());
     }
 
     /**
      * Explicit ids for tests (production reads them off the unit).
      */
     public static void noteEngineId(int ourId, int engineId) {
-        engineIds.put(ourId, engineId);
+        registry().noteEngineId(ourId, engineId);
     }
 
     /**
@@ -142,14 +64,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * these pairs directly and skips its fuzzy match.
      */
     public static String engineIdsJson() {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<Integer, Integer> entry : engineIds.entrySet()) {
-            if (!first) result.append(",");
-            first = false;
-            result.append("[").append(entry.getKey()).append(",").append(entry.getValue()).append("]");
-        }
-        return result.toString();
+        return registry().engineIdsJson();
     }
 
     public static void defer(int id) {
@@ -160,7 +75,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * Explicit frame for tests (production stamps the current frame).
      */
     public static void defer(int id, int frame) {
-        pendingFirstSeen.put(id, frame);
+        registry().defer(id, frame);
     }
 
     /**
@@ -169,23 +84,16 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * the live registry. Dead or unknown units are dropped silently.
      */
     public static void processPending(java.util.function.Function<Integer, AUnit> lookup, int now) {
-        if (pendingFirstSeen.isEmpty()) return;
-
-        java.util.Iterator<Map.Entry<Integer, Integer>> it = pendingFirstSeen.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Integer, Integer> entry = it.next();
-            if (now - entry.getValue() < DEFER_FRAMES) continue;
-
-            it.remove();
+        for (int id : registry().pollDue(now)) {
             AUnit unit;
             try {
-                unit = lookup.apply(entry.getKey());
+                unit = lookup.apply(id);
             } catch (Exception e) {
                 continue;
             }
             if (unit == null || unit.isDead() || !unit.isCompleted()) continue;
 
-            record(now, unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            registry().record(now, unit.id(), unit.type().ut().id, unit.x(), unit.y());
             noteEngineIdOf(unit);
         }
     }
@@ -201,11 +109,11 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     public static void seedCurrentUnits() {
         for (AUnit unit : atlantis.units.select.Select.ourUnitsWithUnfinishedList()) {
             // Engine type id - see onEvent (NEXT #68).
-            record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            registry().record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
             noteEngineIdOf(unit);
         }
         for (AUnit mineral : atlantis.units.select.Select.mineralsAndGeysers().list()) {
-            record(A.now(), mineral.id(), mineral.type().ut().id, mineral.x(), mineral.y());
+            registry().record(A.now(), mineral.id(), mineral.type().ut().id, mineral.x(), mineral.y());
             noteEngineIdOf(mineral);
         }
     }
@@ -227,7 +135,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
             // Engine type id (bwapi), NOT AUnitType.id() (ours, 1000+): the viewer
             // matches units against the replay by BWAPI type, and anything else
             // matches nothing - every clicked unit then reads "i???" (NEXT #68).
-            record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            registry().record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
             noteEngineIdOf(unit);
         }
     }

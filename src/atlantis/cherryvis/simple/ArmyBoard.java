@@ -4,8 +4,10 @@ import atlantis.cherryvis.ACherryVis;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.twins.ClusterTwin;
+import atlantis.game.A;
 import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
+import cherryvis.GameTrace;
 
 /**
  * Army decisions for the CherryVis board + game-values graph (NEXT #214):
@@ -38,6 +40,8 @@ public final class ArmyBoard {
     ) {
         if (!ACherryVis.isEnabled()) return;
 
+        GameTrace trace = ACherryVis.trace();
+
         // Mission and tactic ride separate keys: posture is where the
         // army belongs (ATTACK = enemy base, DEFEND = home), tactic is
         // what it does (FIGHT/FLEE) - one combined "ATTACK/FLEE" string
@@ -45,36 +49,36 @@ public final class ArmyBoard {
         String mission = posture.name();
         if (!mission.equals(lastAlphaMission)) {
             lastAlphaMission = mission;
-            ACherryVis_GlobalState.logNewState("AlphaMission", mission);
+            trace.logState(frame, "AlphaMission", mission);
         }
 
         String tacticName = tactic.name();
         if (!tacticName.equals(lastAlphaTactic)) {
             lastAlphaTactic = tacticName;
-            ACherryVis_GlobalState.logNewState("AlphaTactic", tacticName);
+            trace.logState(frame, "AlphaTactic", tacticName);
         }
 
         if (!reason.equals(lastAlphaReason)) {
             lastAlphaReason = reason;
-            ACherryVis_GlobalState.logNewState("AlphaReason", reason);
+            trace.logState(frame, "AlphaReason", reason);
         }
 
         String focus = ClusterTwin.focusName(anchor);
         if (!focus.equals(lastAlphaFocus)) {
             lastAlphaFocus = focus;
-            ACherryVis_GlobalState.logNewState("AlphaFocus", focus);
+            trace.logState(frame, "AlphaFocus", focus);
         }
 
         String focusName = ClusterTwin.focusShortName(anchor);
         if (!focusName.equals(lastAlphaFocusName)) {
             lastAlphaFocusName = focusName;
-            ACherryVis_GlobalState.logNewState("AlphaFocusName", focusName);
+            trace.logState(frame, "AlphaFocusName", focusName);
         }
 
         String ban = banState();
         if (!ban.equals(lastAlphaBan)) {
             lastAlphaBan = ban;
-            ACherryVis_GlobalState.logNewState("AlphaBan", ban);
+            trace.logState(frame, "AlphaBan", ban);
         }
 
         int strength;
@@ -85,13 +89,13 @@ public final class ArmyBoard {
         }
         if (strength != lastAlphaStrength) {
             lastAlphaStrength = strength;
-            ACherryVis_GlobalState.logNewState("AlphaStrength", String.valueOf(strength));
+            trace.logState(frame, "AlphaStrength", String.valueOf(strength));
         }
 
         if (lastValuesFrame == Integer.MIN_VALUE
             || frame - lastValuesFrame >= VALUES_EVERY_FRAMES) {
             lastValuesFrame = frame;
-            ACherryVis_GlobalValues.sample(frame, "Strength", strength);
+            trace.sampleValue(frame, "Strength", strength);
         }
     }
 
@@ -129,8 +133,7 @@ public final class ArmyBoard {
         lastAlphaStrength = Integer.MIN_VALUE;
         lastValuesFrame = Integer.MIN_VALUE;
         lastDefendedPlace = null;
-        ACherryVis_GlobalState.all.clear();
-        ACherryVis_GlobalValues.clearForTests();
+        ACherryVis.trace().clear();
     }
 
     private static String lastDefendedPlace = null;
@@ -148,6 +151,6 @@ public final class ArmyBoard {
         String value = kind + " " + (tile == null ? "-" : "[" + tile.tx() + "," + tile.ty() + "]");
         if (value.equals(lastDefendedPlace)) return;
         lastDefendedPlace = value;
-        ACherryVis_GlobalState.logNewState("DefendedPlace", value);
+        ACherryVis.trace().logState(A.now(), "DefendedPlace", value);
     }
 }

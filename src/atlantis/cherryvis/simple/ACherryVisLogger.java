@@ -3,25 +3,26 @@ package atlantis.cherryvis.simple;
 import atlantis.cherryvis.ACherryVis;
 import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.cherryvis.AbstractCherryVisLogger;
-import atlantis.cherryvis.generic.ACherryVis_GameSummary;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.AConsole;
-import atlantis.util.AFile;
+import cherryvis.GameTrace;
 
+/**
+ * Bot-side implementation of the trace logger: stamps the current frame and
+ * the unit id, then forwards primitives to the game trace. No format or file
+ * knowledge lives here.
+ */
 public class ACherryVisLogger implements AbstractCherryVisLogger {
-    private final ACherryVisConfig config;
-    private final ACherryVisUnitLogger unitLogger;
+    private final ACherryVisUnitLogger unitLogger = new ACherryVisUnitLogger();
 
-    public ACherryVisLogger(ACherryVisConfig config) {
-        this.config = config;
-        this.unitLogger = new ACherryVisUnitLogger();
-        ACherryVis_GlobalLog.all.clear();
+    private GameTrace trace() {
+        return ACherryVis.trace();
     }
 
     @Override
     public ACherryVisConfig config() {
-        return config;
+        return ACherryVisConfig.createDefault();
     }
 
     @Override
@@ -30,37 +31,17 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
 
     @Override
     public void onGameEnd() {
-        if (!ACherryVis.isEnabled()) return;
-
-        String directoryPath = config.cherryVisDirReplayPath();
-//        System.err.println((new File(directoryPath)).getAbsolutePath());
-
-        if (!AFile.directoryExists(directoryPath)) {
-            AFile.createDirectory(directoryPath);
-        }
-
-        if (!AFile.directoryExists(directoryPath)) {
-            AConsole.errPrintln("##################################################");
-            AConsole.errPrintln("### Could not create CherryVis dir:");
-            AConsole.errPrintln("### " + directoryPath);
-            AConsole.errPrintln("### As a result, CherryVis logs will not be saved.");
-            AConsole.errPrintln("##################################################");
-        }
-
-        (new ACherryVis_GameSummary(config)).saveToFile();
-        (new ACherryVisLogger_TraceJson(config, unitLogger)).saveToFile();
+        ACherryVis.finish();
     }
 
     @Override
     public void log(String message) {
-        String prefix = A.minSec() + ": ";
-
-        ACherryVis_GlobalLog.create(prefix + message, "Unknown");
+        trace().logGlobal(A.now(), message, "Unknown");
     }
 
     @Override
     public void state(String stateName, String stateValue) {
-        ACherryVis_GlobalState.logNewState(stateName, stateValue);
+        trace().logState(A.now(), stateName, stateValue);
     }
 
     @Override
@@ -75,7 +56,7 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
 
     @Override
     public void unitTooltip(String tooltip, AUnit unit) {
-        if (atlantis.config.env.Env.cherryVisTooltips()) {
+        if (Env.cherryVisTooltips()) {
             unitLogger.tooltip(A.now(), tooltip, unit);
         }
     }

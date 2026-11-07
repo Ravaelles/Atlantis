@@ -76,7 +76,7 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
     }
 
     private static String rows() {
-        return atlantis.cherryvis.simple.ACherryVis_UnitLogs.buildUnitLogs(unitLogger());
+        return ACherryVis.trace().buildUnitLogs();
     }
 
     @Test
@@ -169,7 +169,7 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
 
         java.util.Map<Integer, String> managerRows =
-            unitLogger().unitsManagerLogs.get(zealot.id());
+            unitLogger().managerRows(zealot.id());
         assertTrue(managerRows != null && managerRows.containsValue("ClusterKite"),
             "a managerless behavior rides the manager slot (Task): " + managerRows);
     }
@@ -191,7 +191,7 @@ public class BuilderOrderLogTest extends AbstractTestWithUnits {
         atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
 
         java.util.Map<Integer, String> managerRows =
-            unitLogger().unitsManagerLogs.get(probe.id());
+            unitLogger().managerRows(probe.id());
         assertTrue(managerRows != null && !managerRows.isEmpty(),
             "a driven unit keeps a manager row: " + managerRows);
         assertTrue(managerRows.values().stream().noneMatch("Gatherer!"::equals),

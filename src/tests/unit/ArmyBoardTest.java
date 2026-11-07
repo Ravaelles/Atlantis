@@ -1,7 +1,6 @@
 package tests.unit;
 
-import atlantis.cherryvis.simple.ACherryVis_GlobalStates;
-import atlantis.cherryvis.simple.ACherryVis_GlobalValues;
+import atlantis.cherryvis.ACherryVis;
 import atlantis.cherryvis.simple.ArmyBoard;
 import atlantis.combat.cluster.ClusterMission;
 import atlantis.combat.cluster.FightOrFlight;
@@ -67,7 +66,7 @@ public class ArmyBoardTest extends WorldStubForTests {
             ArmyBoard.publish(1, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
                 "Not enough Goons (0/2) vZ", anchor);
 
-            String board = ACherryVis_GlobalStates.build();
+            String board = ACherryVis.trace().buildBoardUpdates();
             assertEquals(1, countKeys(board, "AlphaMission"), "same mission writes once: " + board);
             assertEquals(1, countKeys(board, "AlphaTactic"), "same tactic writes once: " + board);
             assertEquals(1, countKeys(board, "AlphaFocus"), "same focus writes once: " + board);
@@ -77,7 +76,7 @@ public class ArmyBoardTest extends WorldStubForTests {
 
             ArmyBoard.publish(31, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
-            board = ACherryVis_GlobalStates.build();
+            board = ACherryVis.trace().buildBoardUpdates();
             assertEquals(2, countKeys(board, "AlphaMission"), "changed mission writes again: " + board);
             assertTrue(board.contains("\"AlphaMission\":\"ATTACK\""), "mission names where the army belongs: " + board);
             assertEquals(2, countKeys(board, "AlphaTactic"), "changed tactic writes again: " + board);
@@ -88,9 +87,9 @@ public class ArmyBoardTest extends WorldStubForTests {
 
             ArmyBoard.publish(32, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", anchor);
-            assertEquals(2, countKeys(ACherryVis_GlobalStates.build(), "AlphaMission"), "unchanged mission stays silent: " + board);
+            assertEquals(2, countKeys(ACherryVis.trace().buildBoardUpdates(), "AlphaMission"), "unchanged mission stays silent: " + board);
 
-            String values = ACherryVis_GlobalValues.build(null);
+            String values = ACherryVis.trace().buildGameValues();
             assertTrue(values.contains("\"31\":{\"Strength\":"), "strength graphs on cadence: " + values);
             assertFalse(values.contains("\"32\""), "off-cadence frames stay out: " + values);
 
@@ -98,7 +97,7 @@ public class ArmyBoardTest extends WorldStubForTests {
                 new atlantis.battle.advance.focus.AFocusPoint(nexus, "MiddleFocusChoke");
             ArmyBoard.publish(33, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FLEE,
                 "Outgunned (1 goon, 100%), coming home", named);
-            String namedBoard = ACherryVis_GlobalStates.build();
+            String namedBoard = ACherryVis.trace().buildBoardUpdates();
             assertTrue(namedBoard.contains("MiddleFocusChoke ["),
                 "the focus name carries its tile: " + namedBoard);
         });
@@ -111,17 +110,17 @@ public class ArmyBoardTest extends WorldStubForTests {
         // change-detection on (kind, tile).
         ArmyBoard.noteDefendedPlace("MAIN_CHOKE", APosition.create(87, 111));
         ArmyBoard.noteDefendedPlace("MAIN_CHOKE", APosition.create(87, 111));
-        String board = ACherryVis_GlobalStates.build();
+        String board = ACherryVis.trace().buildBoardUpdates();
         assertEquals(1, countKeys(board, "DefendedPlace"), "same ground writes once: " + board);
         assertTrue(board.contains("\"DefendedPlace\":\"MAIN_CHOKE [87,111]\""),
             "kind and tile in one row: " + board);
 
         ArmyBoard.noteDefendedPlace("BREACH", APosition.create(95, 119));
-        assertEquals(2, countKeys(ACherryVis_GlobalStates.build(), "DefendedPlace"),
+        assertEquals(2, countKeys(ACherryVis.trace().buildBoardUpdates(), "DefendedPlace"),
             "a new ground re-rows: " + board);
 
         ArmyBoard.noteDefendedPlace("BREACH", null);
-        assertTrue(ACherryVis_GlobalStates.build().contains("\"DefendedPlace\":\"BREACH -\""),
+        assertTrue(ACherryVis.trace().buildBoardUpdates().contains("\"DefendedPlace\":\"BREACH -\""),
             "null tile degrades to a dash, never a throw: " + board);
     }
 
@@ -142,14 +141,14 @@ public class ArmyBoardTest extends WorldStubForTests {
 
             ArmyBoard.publish(5, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FIGHT,
                 "Early strength ok (11 goons, 243%)", anchor);
-            String board = ACherryVis_GlobalStates.build();
+            String board = ACherryVis.trace().buildBoardUpdates();
             assertTrue(board.contains("\"AlphaBan\":\"main-choke:11-dragoons\""),
                 "an 11-dragoon mass trips the absolute ban, named with its headcount: " + board);
             assertEquals(1, countKeys(board, "AlphaBan"), "one ban row: " + board);
 
             ArmyBoard.publish(6, ClusterMission.Posture.ATTACK, FightOrFlight.Tactic.FIGHT,
                 "Early strength ok (11 goons, 243%)", anchor);
-            assertEquals(1, countKeys(ACherryVis_GlobalStates.build(), "AlphaBan"),
+            assertEquals(1, countKeys(ACherryVis.trace().buildBoardUpdates(), "AlphaBan"),
                 "an unchanged ban stays silent: " + board);
         });
     }
@@ -165,7 +164,7 @@ public class ArmyBoardTest extends WorldStubForTests {
 
             ArmyBoard.publish(5, ClusterMission.Posture.DEFEND, FightOrFlight.Tactic.FIGHT,
                 "Not enough Goons (1/2) vZ", anchor);
-            assertTrue(ACherryVis_GlobalStates.build().contains("\"AlphaBan\":\"none\""),
+            assertTrue(ACherryVis.trace().buildBoardUpdates().contains("\"AlphaBan\":\"none\""),
                 "no ban in force still rows once, so lifting it later is visible");
         });
     }

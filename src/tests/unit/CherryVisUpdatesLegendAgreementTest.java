@@ -1,13 +1,9 @@
 package tests.unit;
 
-import atlantis.cherryvis.simple.ACherryVisLogger_TraceJson;
-import atlantis.cherryvis.simple.ACherryVisUnitLogger;
-import atlantis.cherryvis.simple.ACherryVis_Strings;
-import atlantis.cherryvis.simple.ACherryVis_UnitLogs;
+import cherryvis.GameTrace;
+import cherryvis.StringTable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,14 +23,14 @@ public class CherryVisUpdatesLegendAgreementTest {
 
     @Test
     public void everyManagerIdInUpdatesResolvesInTheLegend() {
-        ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
-        logger.unitsManagerLogs.computeIfAbsent(7, k -> new TreeMap<>()).put(100, "ScoutTryFindingEnemy");
-        logger.unitsManagerLogs.computeIfAbsent(7, k -> new TreeMap<>()).put(200, "GatherResources");
-        logger.unitsManagerLogs.computeIfAbsent(9, k -> new TreeMap<>()).put(150, "GatherResources");
+        GameTrace trace = new GameTrace();
+        trace.logManager(100, 7, "ScoutTryFindingEnemy");
+        trace.logManager(200, 7, "GatherResources");
+        trace.logManager(150, 9, "GatherResources");
 
-        ACherryVis_Strings strings = new ACherryVis_Strings();
-        String updates = ACherryVis_UnitLogs.build(logger, strings);
-        String legend = ACherryVisLogger_TraceJson.customNames(strings);
+        StringTable strings = new StringTable();
+        String updates = trace.buildUnitsUpdates(strings, true);
+        String legend = GameTrace.customNames(strings);
 
         // Runtime order: Scout logged first, so it owns 10000.
         assertTrue(
@@ -50,14 +46,12 @@ public class CherryVisUpdatesLegendAgreementTest {
     public void everyTooltipIdInUpdatesResolvesInTheLegend() {
         // NEXT #221: tooltip rows share the manager legend table - a viewer
         // resolving one resolves the other, same runtime order.
-        ACherryVisUnitLogger logger = new ACherryVisUnitLogger();
-        tests.fakes.FakeUnit zealot = tests.unit.AbstractTestWithUnits.fake(
-            atlantis.units.AUnitType.Protoss_Zealot, 10);
-        logger.tooltip(100, "ClusterKite", zealot);
+        GameTrace trace = new GameTrace();
+        trace.logTooltip(100, 9, "ClusterKite");
 
-        ACherryVis_Strings strings = new ACherryVis_Strings();
-        String tooltips = ACherryVis_UnitLogs.buildTooltips(logger, strings);
-        String legend = ACherryVisLogger_TraceJson.customNames(strings);
+        StringTable strings = new StringTable();
+        String tooltips = trace.buildTooltips(strings);
+        String legend = GameTrace.customNames(strings);
 
         assertTrue(
             legend.contains("\"10000\":\"ClusterKite\""),
