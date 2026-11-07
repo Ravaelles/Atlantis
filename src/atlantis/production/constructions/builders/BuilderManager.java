@@ -183,6 +183,22 @@ public class BuilderManager extends Manager {
                 // FIRST, before travel: the CantAfford tail of
                 // IssueBuildOrder returns true (handled), so a branch after
                 // travelWhenReady never fires while poor.
+                //
+                // Power-dead sites never heal by waiting (live TauCross:
+                // Gateway on an unpowered tile, builder mining at 200
+                // minerals, nothing ever warps): the forecast only counts
+                // money, not power, and no other refresh path runs while
+                // the builder mine-waits (travel is skipped, overdue is
+                // supply-gated, finalRefresh needs standstill). Re-site
+                // promptly instead - the funnel serves standing power,
+                // a null answer keeps the old site, and incoming cover
+                // (a warping Pylon reaching the tile) still waits.
+                // Throttled: the funnel search is the expensive half.
+                if (atlantis.game.A.everyNthGameFrame(97)
+                    && RefreshConstructionPosition.siteHopelesslyUnpowered(
+                        construction.buildPosition(), construction.buildingType())) {
+                    RefreshConstructionPosition.refreshIfNeeded(construction);
+                }
                 if (shouldMineWhileWaiting(construction, unit)
                     && atlantis.units.workers.gather.AMineralGathering.gatherResources(unit)) {
                     return usedManager(this, "BuilderMiningWhileWaiting");
