@@ -46,12 +46,31 @@ public class IsPoweredByAPylon {
         if (position == null) return false;
 
         for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
+            int[] origin = pylonOrigin(pylon);
             if (PsiField.covers(
-                pylon.tx(), pylon.ty(), position.tx(), position.ty(),
+                origin[0], origin[1], position.tx(), position.ty(),
                 building.getTilesWidth(), building.getTilesHeights()
             )) return true;
         }
 
         return false;
+    }
+
+    /**
+     * Same origin-tile contract as the planner's power source: {@code
+     * tx()/ty()} are center tiles on a live engine, so feeding them in
+     * double-centers the field and phantom-powers the rim (2026-11-07
+     * vs Steamhammer). Kept local on purpose: sharing the planner's
+     * helper would add a production-to-placement edge the architecture
+     * gate owns.
+     */
+    private static int[] pylonOrigin(AUnit pylon) {
+        try {
+            bwapi.TilePosition tile = pylon.tilePosition();
+            if (tile != null) return new int[]{tile.getX(), tile.getY()};
+        } catch (RuntimeException ignored) {
+        }
+
+        return new int[]{pylon.tx(), pylon.ty()};
     }
 }

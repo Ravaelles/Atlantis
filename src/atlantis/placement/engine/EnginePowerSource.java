@@ -142,17 +142,39 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
      */
     private boolean anyCovers(java.util.List<AUnit> pylons, int tx, int ty, int w, int h) {
         for (AUnit pylon : pylons) {
-            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) return true;
+            int[] origin = pylonOrigin(pylon);
+            if (PsiField.covers(origin[0], origin[1], tx, ty, w, h)) return true;
         }
 
         return false;
+    }
+
+    /**
+     * The Pylon's origin tile - the address {@link PsiField} reads power
+     * from. {@code tx()/ty()} are center tiles on a live engine (a 2x2
+     * Pylon at origin [15,49] centers on (16,50)) but origin tiles in
+     * stubs, so feeding them in double-centers the field live and
+     * phantom-powers the rim (measured 2026-11-07 vs Steamhammer:
+     * Gateway [12,54] served all game on a field dy=176px out). The
+     * engine's own top-left tile is right in both worlds; fail-open to
+     * the old read when it is missing.
+     */
+    private static int[] pylonOrigin(AUnit pylon) {
+        try {
+            bwapi.TilePosition tile = pylon.tilePosition();
+            if (tile != null) return new int[]{tile.getX(), tile.getY()};
+        } catch (RuntimeException ignored) {
+        }
+
+        return new int[]{pylon.tx(), pylon.ty()};
     }
 
     private List<Integer> incomingFrames(java.util.List<AUnit> unfinished, int tx, int ty, int w, int h) {
         List<Integer> frames = new ArrayList<>();
         for (AUnit pylon : unfinished) {
             if (pylon.isCompleted()) continue;
-            if (!PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, w, h)) continue;
+            int[] origin = pylonOrigin(pylon);
+            if (!PsiField.covers(origin[0], origin[1], tx, ty, w, h)) continue;
 
             frames.add(framesUntilComplete(pylon));
         }

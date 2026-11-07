@@ -4,8 +4,10 @@ import atlantis.placement.core.PsiGating;
 import atlantis.placement.engine.EnginePowerSource;
 import atlantis.placement.race.ProtossPlacementStrategy;
 import atlantis.placement.core.RacePlacementStrategy;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import bwapi.TilePosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
@@ -106,9 +108,48 @@ public class GatewayPsiEdgeTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * Live shape 2026-11-07 vs Steamhammer (TauCross, zero Gateways all
+     * game): a finished Pylon at origin [15,49] centers on (16,50), and
+     * the engine reads power from the origin - a 4x3 Gateway at [12,54]
+     * sits dy=176px out. The power read fed tx()/ty() (center tiles on
+     * a live engine, origin tiles in stubs) into {@code PsiField}, which
+     * centers the Pylon itself - so live double-centered the field and
+     * phantom-powered the rim the stubs never saw. The stub Pylon below
+     * is engine-posed (center pixels, origin tilePosition) so the pin
+     * reads what the game read, not what the stubs assume.
+     */
     @Test
-    public void pylonNeedsNoPower() {
+    public void liveCenteredPylonDoesNotPhantomPower() {
+        FakeUnit livePylon = new FakeUnit(AUnitType.Protoss_Pylon, 15, 49) {
+            @Override
+            public TilePosition tilePosition() {
+                return new TilePosition(15, 49);
+            }
+        };
+        livePylon.position = APosition.createFromPixels(15 * 32 + 32, 49 * 32 + 32);
+
         world(3, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 10, 10),
+            livePylon
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            TileMapSource.everythingFine().install();
+            try {
+                assertFalse(new EnginePowerSource().isPowered(12, 54, 4, 3),
+                    "origin [15,49] leaves the Gateway center dy=176 out: no phantom rim power");
+                assertEquals(RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT,
+                    strategy().availabilityVerdict(12, 54, AUnitType.Protoss_Gateway.name()),
+                    "an unpowered slot asks for its Pylon instead of serving the Gateway");
+            }
+            finally {
+                TileMapSource.uninstall();
+            }
+        });
+    }
+
+    @Test
+    public void pylonNeedsNoPower() {        world(3, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 114, 11),
             fake(AUnitType.Protoss_Probe, 115, 12)
         ), fakeEnemies(), () -> {
