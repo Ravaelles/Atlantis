@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.combat.ArmyContact;
 import atlantis.combat.BattleCommander;
+import atlantis.battle.cluster.Missions;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Tag;
@@ -46,6 +47,44 @@ public class ArmyContactReinforceTest extends WorldStubForTests {
             assertTrue(b.targetPosition.distTo(enemy.position()) < 1.0,
                 "at the fresh fight, not at a slot or the leader: " + b.targetPosition);
         });
+    }
+
+    @Test
+    public void attackMissionMarchesToOngoingFightOffUms() {
+        // Live 2026-11-07 vs Steamhammer (F591FAC2, 8:02-8:40): mission
+        // ATTACK, ongoing fight at the enemy, six Dragoons with no target
+        // dressed at the main choke instead of joining - half the army
+        // fought while the other half waited. No UMS stub here: off-map
+        // the reinforce used to be UMS-only, so the march never came.
+        Missions.forceGlobalMissionAttack("reinforce-repro");
+        try {
+            FakeUnit a = fake(AUnitType.Protoss_Dragoon, 20, 20);
+            FakeUnit b = fake(AUnitType.Protoss_Dragoon, 60, 20);
+            FakeUnit enemy = fake(AUnitType.Protoss_Zealot, 22, 20);
+            enemy.setEnemy();
+
+            world(10, fakeOurs(a, b), fakeEnemies(enemy), () -> {
+                int now = atlantis.game.A.now();
+                if (now == 1) {
+                    BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
+
+                    return;
+                }
+                if (now != 2) return;
+
+                // Formation needs 3+ units: with two ours no slot owns B,
+                // so the only march at the fight point is the reinforce.
+                BattleCommander.act(b, FightOrFlight.Tactic.FIGHT, null, b);
+                assertNotNull(b.targetPosition, "B marches instead of holding");
+                assertTrue(b.targetPosition.distTo(enemy.position()) < 5.0,
+                    "at the fresh fight, not at a slot or dressed home: " + b.targetPosition);
+                assertTrue(b.commandHistory().toString().contains("ClusterReinforce"),
+                    "the march is tagged reinforce: " + b.commandHistory());
+            });
+        }
+        finally {
+            Missions.forceGlobalMissionDefend("test-cleanup");
+        }
     }
 
     @Test

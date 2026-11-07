@@ -75,10 +75,13 @@ public final class Regroup {
         // in formation while the cluster fights - melee joins, ranged
         // advances to range). Only while contact is fresh (ongoing, not
         // old news - old fights must not drag the line out of formation),
-        // only on FIGHT, only on UMS (melee keeps its anchor/formation
-        // discipline: a scouting skirmish must not drag the army across
-        // the map). Ghosts and static slots wait below.
-        if (tactic == FightOrFlight.Tactic.FIGHT && A.isUms() && ArmyContact.isOngoingFight()) {
+        // only on FIGHT, only on UMS or on an attack march (a scouting
+        // skirmish must not drag a defending army across the map, but an
+        // army committed forward rejoins its own ongoing fight instead
+        // of dressing home while half of it fights - measured live
+        // F591FAC2 8:02-8:40). Ghosts and static slots wait below.
+        if (tactic == FightOrFlight.Tactic.FIGHT && ArmyContact.isOngoingFight()
+            && (A.isUms() || Missions.isGlobalMissionAttack())) {
             APosition reinforce = ArmyContact.reinforcePointFor(unit);
             if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
                 FightTarget.markRepositioned(unit);

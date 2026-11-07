@@ -70,8 +70,10 @@ owner-called.
   (`EarlyHarassTest` 3/3); combat 759/759, fast 1137/0. Open: live
   early-Zerg pressure game.
 - **#181 split-cluster reinforce.** Sim-pinned (fresh-contact
-  reinforce, ghost-contact rejection, ongoing-fight priority).
-  Open: live recurrence of the park-while-fighting shape.
+  reinforce, ghost-contact rejection, ongoing-fight priority;
+  2026-11-07 extension: ATTACK-march reinforce off-map, UMS gate
+  stays for defending armies). Open: live recurrence of the
+  park-while-fighting shape.
 - **Cohesion leash (owner 2026-11-07).** A melee unit that acquires a
   target while detached from the ball (>6 tiles from the median)
   rejoins instead of engaging (`ClusterCohesion.recallStraggler` in
