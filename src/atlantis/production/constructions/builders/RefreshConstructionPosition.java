@@ -528,6 +528,25 @@ public class RefreshConstructionPosition {
             return true;
         }
 
+        // A held site without power never heals by waiting either: the
+        // engine refuses every build attempt, the tile curses, the curse
+        // expires, and the same unpowered tile re-serves (live TauCross:
+        // Gateway [12,54] with no covering Pylon, 80 s "took too long",
+        // cancel, re-request the same tile). Re-site promptly when no
+        // cover is materializing - the hunt serves standing power instead,
+        // and a null answer keeps the old site. An incoming Pylon (warping
+        // and covering the tile) still waits: moving off real support
+        // would churn the support chain the slot just declared.
+        if (buildingType != null && buildingType.needsPower()
+            && !doNotRefreshPosition(construction)
+            && !warpUp(construction)
+            && buildPosition != null
+            && !atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon
+                .check(buildPosition, buildingType)
+            && !hasIncomingPowerCover(buildPosition, buildingType)) {
+            return true;
+        }
+
         // The engine's raw tile query is the fast answer, but it is not the truth on
         // OpenBW: it reports "not buildable" both when something really stands on the
         // tile and when it merely refuses a valid one (see MapTiles.canBuildHere).
@@ -570,8 +589,57 @@ public class RefreshConstructionPosition {
      * map or a finder: true only when a completed building stands on the
      * footprint. Units (crossing workers, the arriving builder) and
      * warping buildings (the construction itself) never move a site.
+     * The power half of the same contract lives in
+     * {@link #siteHopelesslyUnpowered}.
      */
     public static boolean siteHopelesslyBlocked(APosition site, AUnitType type) {
         return BuildingTilesAreOccupied.checkBuildingsOnly(site, type);
+    }
+
+    /**
+     * The refresh discriminator for power, next to the occupancy one
+     * above: true when a power-needing building sits on a tile no
+     * finished Pylon covers and no warping Pylon will cover - the
+     * engine will refuse every attempt there, so holding the site only
+     * burns the builder until CancelTooLong. An incoming (warping,
+     * covering) Pylon is not hopeless: power is on its way and the row
+     * correctly waits for it. Pure over live Select state, pinnable
+     * without a map or a finder.
+     */
+    public static boolean siteHopelesslyUnpowered(APosition site, AUnitType type) {
+        if (site == null || type == null || !type.needsPower()) return false;
+
+        if (atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon
+            .check(site, type)) {
+            return false;
+        }
+
+        return !hasIncomingPowerCover(site, type);
+    }
+
+    /**
+     * A warping Pylon that already covers the site: power is on its way.
+     * Completed Pylons are power, not cover (IsPoweredByAPylon owns them);
+     * a Pylon that cannot reach the site is not cover either, even while
+     * warping. Fail-closed on a broken read (cover claimed): a lost
+     * update must not move a live site, it only delays this refresh pass.
+     */
+    private static boolean hasIncomingPowerCover(APosition site, AUnitType building) {
+        if (site == null || building == null) return false;
+
+        try {
+            for (AUnit pylon : Select.ourWithUnfinished(AUnitType.Protoss_Pylon).list()) {
+                if (pylon == null || !pylon.isAlive() || pylon.isCompleted()) continue;
+                if (atlantis.map.position.PsiField.covers(
+                    pylon.tx(), pylon.ty(), site.tx(), site.ty(),
+                    building.getTilesWidth(), building.getTilesHeights())) {
+                    return true;
+                }
+            }
+        } catch (Exception | Error ignored) {
+            return true;
+        }
+
+        return false;
     }
 }
