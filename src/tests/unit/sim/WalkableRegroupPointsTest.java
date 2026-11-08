@@ -14,6 +14,8 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -98,6 +100,29 @@ public class WalkableRegroupPointsTest extends WorldStubForTests {
             public boolean canBuildHere(atlantis.units.AUnit builder, atlantis.units.AUnitType building, APosition at) {
                 return arena.isWalkablePx(at.position().x(), at.position().y());
             }
+        });
+    }
+
+    @Test
+    public void marchNeverIssuesUnwalkablePoint() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 20, 30);
+
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        arena.block(19 * TILE, 17 * TILE, 7 * TILE, 3 * TILE);
+        useArenaWalkability(arena);
+
+        world(2, fakeOurs(dragoon), fakeEnemies(), () -> {
+            APosition open = APosition.create(10, 10);
+            assertEquals(open, atlantis.combat.Regroup.walkableOrNull(open),
+                "a walkable point marches as is");
+
+            APosition snapped = atlantis.combat.Regroup.walkableOrNull(APosition.create(20, 18));
+            assertTrue(snapped == null || snapped.isWalkable(),
+                "a walled point snaps to walkable ground or drops, never marches into the wall: "
+                    + snapped);
+
+            assertNull(atlantis.combat.Regroup.walkableOrNull(null),
+                "no point, no march");
         });
     }
 }

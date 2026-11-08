@@ -89,4 +89,25 @@ public class DragoonPumpTest {
             hasDragoonPump(contribute(state(30, false, 7, 0, 800, 1))),
             "Dragoons cost gas: without it the pump stays silent");
     }
+@Test
+    public void richGaslessBankPumpsZealots() {
+        List<ProductionGoal> goals = contribute(state(30, false, 7, 0, 800, 1));
+        String id = UnitProducible.of(AUnitType.Protoss_Zealot).id();
+
+        assertTrue(goals.stream().anyMatch(goal ->
+                goal.item().id().equals(id)
+                    && goal.priority() == atlantis.production.demand.ProductionGoal.PRIORITY_MAINARMY),
+            "rich bank, no gas, free Gateway: Zealots, not idling: " + goals);
+    }
+
+    @Test
+    public void busyGatewaysPumpNothing() {
+        List<ProductionGoal> goals = contribute(state(30, false, 7, 0, 800, 0));
+        String id = UnitProducible.of(AUnitType.Protoss_Zealot).id();
+
+        assertFalse(goals.stream().anyMatch(goal ->
+                goal.item().id().equals(id)
+                    && goal.priority() == atlantis.production.demand.ProductionGoal.PRIORITY_MAINARMY),
+            "no free Gateway: the pump waits for capacity, like its Dragoon twin");
+    }
 }

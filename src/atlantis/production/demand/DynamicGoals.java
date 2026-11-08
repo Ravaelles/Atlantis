@@ -666,9 +666,25 @@ public final class DynamicGoals {
     private static void addGatewayGoal(List<ProductionGoal> goals, GameSnapshot state) {
         if (!We.protoss()) return;
         if (state.supplyUsed < GATEWAY_DEMAND_SUPPLY) return;
+        if (state.gatewaysExisting < 2) return;
 
         int cap = state.enemyIsProtoss && state.enemyCombatBuildings == 0 ? 6 : 4;
-        if (state.gatewaysExisting < 2 || state.gatewaysExisting >= cap) return;
+        if (state.gatewaysExisting >= cap) {
+            // Rich escape (owner 2026-11-09): a hoarding bank with every
+            // Gateway busy orders past the soft cap - 2600 unspent
+            // minerals with 8 free supply is the shape that proved the
+            // cap starves production instead of sizing it. A free
+            // Gateway still trains first; the absolute ceiling stays.
+            if (state.gatewaysExisting >= GATEWAY_ABSOLUTE_MAX) return;
+            if (state.gatewaysFree != 0) return;
+            if (state.minerals < GATEWAY_RICH_BANK_MINERALS) return;
+
+            goals.add(new ProductionGoal(
+                UnitProducible.of(AUnitType.Protoss_Gateway),
+                ProductionGoal.PRIORITY_NORMAL, 1, 0, TargetPlacement.anywhere()));
+
+            return;
+        }
 
         // Third Gateway (owner order 2026-11-04): no early third - only on
         // a saturated completed pair (both standing, none walking/warping),
@@ -745,6 +761,19 @@ public final class DynamicGoals {
 
     /** Rich-only rule: a new Gateway never starves tech or units. */
     private static final int GATEWAY_BANK_MINERALS = 400;
+
+    /**
+     * A hoarding bank orders past the soft Gateway cap (owner
+     * 2026-11-09, the HOARD_BANK_MINERALS shape): unspent minerals are
+     * the signal, not the size.
+     */
+    private static final int GATEWAY_RICH_BANK_MINERALS = 800;
+
+    /**
+     * Hard ceiling for the rich escape - further expansion past this is
+     * a new decision, not an automatic one.
+     */
+    private static final int GATEWAY_ABSOLUTE_MAX = 8;
 
     /** Third Gateway bank floor (owner 2026-11-04): saturated pair, 225+. */
     private static final int GATEWAY_THIRD_BANK_MINERALS = 225;
@@ -850,6 +879,21 @@ public final class DynamicGoals {
             && state.minerals >= ARMY_RICH_MINERALS && state.gatewaysFree > 0) {
             goals.add(new ProductionGoal(
                 UnitProducible.of(race.armyUnitTypeAdvanced()),
+                ProductionGoal.PRIORITY_MAINARMY,
+                1,
+                0,
+                TargetPlacement.anywhere()));
+        }
+
+        // Rich gas-less pump (owner 2026-11-09): the Dragoon pump above
+        // needs 50 gas - with a hoarding bank and no gas the line wants
+        // Zealots instead of idling the free Gateways. Same governor as
+        // the Dragoon pump (bank never starves tech, free Gateway is the
+        // signal), Zealot brakes below stay for the non-rich shape.
+        if (!state.inEarlyGame && !mixZealot && state.hasCore && state.gas < 50
+            && state.minerals >= ARMY_RICH_MINERALS && state.gatewaysFree > 0) {
+            goals.add(new ProductionGoal(
+                UnitProducible.of(race.armyUnitType()),
                 ProductionGoal.PRIORITY_MAINARMY,
                 1,
                 0,

@@ -41,6 +41,33 @@ public final class Regroup {
     }
 
     /**
+     * Strategy points name addresses, not walkable tiles (a choke center,
+     * a fight address inside a wall): issuing the raw point burns a
+     * builder-walk-style failure every frame plus the engine error the
+     * owner pasted (Dragoon to [55,56]). Snap to walkable ground first;
+     * null when nothing within reach is walkable, and the caller falls
+     * through to its next fallback instead of ordering into a wall.
+     */
+    /**
+     * Walkable-or-null contract for march points (owner 2026-11-09):
+     * strategy points name addresses, not walkable tiles - issuing the
+     * raw point burns an engine error every frame without moving.
+     * Public as a seam: the sim arena pins it without a game.
+     */
+    public static APosition walkableOrNull(APosition point) {
+        try {
+            if (point == null) return null;
+            if (point.isWalkable()) return point;
+
+            APosition snapped = point.makeWalkable(6, 1, null);
+
+            return snapped != null && snapped.isWalkable() ? snapped : null;
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
+
+    /**
      * March this unit while it has no target, through the fallbacks in
      * order. When nothing owns it the unit simply stands.
      */
@@ -66,6 +93,7 @@ public final class Regroup {
             return;
         }
         APosition regroup = strategy.regroupPointFor(unit);
+        regroup = walkableOrNull(regroup);
         if (regroup != null && unit.move(regroup, Actions.MOVE_ENGAGE, strategy.regroupTag().tag())) {
             FightTarget.markRepositioned(unit);
 
@@ -83,6 +111,7 @@ public final class Regroup {
         if (tactic == FightOrFlight.Tactic.FIGHT && ArmyContact.isOngoingFight()
             && (A.isUms() || Missions.isGlobalMissionAttack())) {
             APosition reinforce = ArmyContact.reinforcePointFor(unit);
+            reinforce = walkableOrNull(reinforce);
             if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
                 FightTarget.markRepositioned(unit);
 

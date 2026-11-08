@@ -86,10 +86,17 @@ public class GatewayDemandTest {
     }
 
     @Test
-    public void fourthGatewayIsTheCeiling() {
-        assertFalse(
+    public void richBankPastTheSoftCapDemandsAnother() {
+        assertTrue(
             hasGatewayGoal(contribute(state(30, 60, 1200, 4, 0))),
-            "four Gateways is enough for now - further expansion is a new decision");
+            "bank 1200 with all 4 Gateways busy: the 5th Gateway is wanted, the cap yields to the hoard");
+    }
+
+    @Test
+    public void eighthGatewayIsTheCeiling() {
+        assertFalse(
+            hasGatewayGoal(contribute(state(30, 60, 5000, 8, 0))),
+            "eight Gateways is enough for now - further expansion is a new decision");
     }
 
     @Test

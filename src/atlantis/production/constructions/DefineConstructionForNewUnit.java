@@ -84,6 +84,26 @@ public class DefineConstructionForNewUnit {
         }
 
         if (nearestConstruction == null && !newBuilding.type().isAddon()) {
+            // Orphan-warp fallback (owner 2026-11-09, live GAME_CDE27319):
+            // a Citadel warped 4+ tiles from its row's tile (resite
+            // between order and warp, engine nudge) and the 2.5 bound
+            // above refused the only match - the row sat unitless while
+            // its building stood unwatched. When exactly one unfinished
+            // row of this type exists AND it has no building linked yet,
+            // attribution is unambiguous (nothing else to misattribute
+            // to), so adopt it regardless of distance instead of
+            // orphaning the warp. Two same-type warps in flight keep the
+            // tight bound - that is the duplicate-worker case it owns.
+            Construction lone = loneUnitlessRow(candidates);
+            if (lone != null) {
+                atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.ADOPTED_CONSTRUCTION)
+                    .param("type", newBuilding.type().name())
+                    .param("result", "adopted-far")
+                    .log(atlantis.game.A.now(), atlantis.game.A.minSec());
+
+                return lone;
+            }
+
             ErrorLog.printMaxOncePerMinute(
                 "!!! No construction within reach of " + newBuilding
                     + " (" + candidates.size() + " unfinished of this type)"
@@ -91,5 +111,22 @@ public class DefineConstructionForNewUnit {
         }
 
         return nearestConstruction;
+    }
+
+    /**
+     * The unambiguous orphan: exactly one unfinished row of this type
+     * and it tracks no building yet. Null otherwise - with two rows
+     * (or a row that already owns a warp) distance decides, as before.
+     */
+    private static Construction loneUnitlessRow(ArrayList<Construction> candidates) {
+        try {
+            if (candidates == null || candidates.size() != 1) return null;
+
+            Construction row = candidates.get(0);
+
+            return row != null && row.buildingUnit() == null ? row : null;
+        } catch (Exception | Error ignored) {
+            return null;
+        }
     }
 }
