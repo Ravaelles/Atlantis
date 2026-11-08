@@ -165,13 +165,47 @@ public final class ClusterCohesion {
     }
 
     private static boolean moveBack(AUnit unit, APosition median, AUnit target) {
-        if (unit.move(median, Actions.MOVE_FORMATION, Behavior.DRESS.tag())) {
-            atlantis.combat.twins.CohesionTwin.recalled(unit, target, median);
+        APosition point = walkableNear(median);
+        if (point == null) return false;
+
+        if (unit.move(point, Actions.MOVE_FORMATION, Behavior.DRESS.tag())) {
+            atlantis.combat.twins.CohesionTwin.recalled(unit, target, point);
 
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * The rejoin point for the leash: the median when a ground unit can
+     * stand on it, else the nearest walkable tile in a bounded spiral.
+     * A component-wise median routinely lands on water or a cliff face,
+     * and ordering a move there is a refused order plus a HIGH stack
+     * trace every frame (measured live: Zealot #149 ordered at [116,33]
+     * for a whole game). Null when nothing walkable is near: the caller
+     * falls through to the other march legs instead of spamming.
+     */
+    private static APosition walkableNear(APosition median) {
+        if (median == null) return null;
+
+        try {
+            if (median.isWalkable()) return median;
+
+            for (int r = 1; r <= 5; r++) {
+                for (int dx = -r; dx <= r; dx++) {
+                    for (int dy = -r; dy <= r; dy++) {
+                        if (Math.max(Math.abs(dx), Math.abs(dy)) != r) continue;
+
+                        APosition candidate = APosition.create(median.tx() + dx, median.ty() + dy);
+                        if (candidate.isWalkable()) return candidate;
+                    }
+                }
+            }
+        } catch (RuntimeException ignored) {
+        }
+
+        return null;
     }
 
     private static boolean threatAdjacent(AUnit unit) {

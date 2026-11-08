@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
 import atlantis.combat.BattleCommander;
+import atlantis.combat.cluster.ClusterCohesion;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -11,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeOrderSink;
 import tests.fakes.FakeUnit;
+import tests.fakes.TileMapSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -174,8 +177,7 @@ public class StragglerRecallTest extends WorldStubForTests {
     }
 
     @Test
-    public void medianIgnoresTheOutlier() {
-        FakeUnit d1 = ours(AUnitType.Protoss_Zealot, 28, 20);
+    public void medianIgnoresTheOutlier() {        FakeUnit d1 = ours(AUnitType.Protoss_Zealot, 28, 20);
         FakeUnit d2 = ours(AUnitType.Protoss_Zealot, 29, 20);
         FakeUnit d3 = ours(AUnitType.Protoss_Zealot, 30, 20);
         FakeUnit stray = ours(AUnitType.Protoss_Zealot, 90, 20);
@@ -197,6 +199,41 @@ public class StragglerRecallTest extends WorldStubForTests {
             }
             finally {
                 Alpha.get().clear();
+            }
+        });
+    }
+
+    @Test
+    public void recallSkipsUnwalkableMedian() {
+        // Live 2026-11-07: the component-wise median landed on water
+        // and the leash ordered a Zealot at it every frame - a refused
+        // move plus a HIGH stack trace, never a rejoin. The recall aims
+        // at walkable ground near the median instead, and stays quiet
+        // when none is near.
+        FakeUnit d1 = ours(AUnitType.Protoss_Zealot, 28, 20);
+        FakeUnit d2 = ours(AUnitType.Protoss_Zealot, 29, 20);
+        FakeUnit d3 = ours(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit stray = ours(AUnitType.Protoss_Zealot, 50, 20);
+
+        world(3, fakeOurs(d1, d2, d3, stray), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            // Median x of [28,29,30,50] is 29: block exactly it.
+            TileMapSource.everythingFine().blockTile(29, 20).install();
+            try {
+                Alpha.gather();
+
+                assertTrue(ClusterCohesion.recallMarchStraggler(stray),
+                    "a blocked median must not cancel the rejoin: " + stray.lastCommand);
+                assertNotNull(stray.targetPosition, "the recall issues a move");
+                assertTrue(stray.targetPosition.isWalkable(),
+                    "the recall aims at walkable ground, not the water: " + stray.targetPosition);
+                assertTrue(stray.targetPosition.distTo(Alpha.get().median()) <= 5,
+                    "still the median's neighbourhood, not a random tile: " + stray.targetPosition);
+            }
+            finally {
+                Alpha.get().clear();
+                TileMapSource.uninstall();
             }
         });
     }
