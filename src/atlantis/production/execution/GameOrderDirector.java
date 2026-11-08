@@ -171,6 +171,18 @@ public class GameOrderDirector implements OrderDirector {
             return true;
         }
 
+        // Gateway first (owner 2026-11-09): below 40 supply a Pylon mint
+        // waits while a build-order Gateway is due but unbuilt, unless
+        // the bank covers both. Refused, not absorbed: unlike the cap
+        // above there is no in-flight Pylon covering the demand, so the
+        // twin must name the wait and the demand must retry next frame.
+        if (buildingType.isPylon()
+            && atlantis.production.requests.produce.ProduceBuilding.gatewayFirstBlocksPylon()) {
+            twinRefused(buildingType, "gateway-first");
+
+            return false;
+        }
+
         // Below 40 supply never more than 8 free (owner rule, ex legacy
         // PylonOverstockGate): a Pylon mint that would push free past
         // that waits - the demand retries next frame. Same guard name

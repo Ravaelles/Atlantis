@@ -94,6 +94,13 @@ public class NewConstructionRequest {
             return null;
         }
 
+        // Gateway first (owner order 2026-11-09): same single-door veto
+        // as the V2 mint above - a Pylon waits while a due BO Gateway
+        // is unbuilt, unless the bank covers both (250).
+        if (building.isPylon() && ProduceBuilding.gatewayFirstBlocksPylon()) {
+            return null;
+        }
+
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
 

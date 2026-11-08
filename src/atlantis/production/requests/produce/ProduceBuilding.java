@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -60,6 +61,43 @@ public class ProduceBuilding {
         }
 
         return inFlight >= 2;
+    }
+
+    /**
+     * BO order owns the opening (owner 2026-11-09): below 40 supply a
+     * Pylon mint waits while a build-order Gateway is due but unbuilt,
+     * unless the bank covers both (250). Jumping it with a Pylon spends
+     * the Gateway's minerals and delays it past the timing that holds
+     * (measured live B189: a support Pylon minted at 24 supply on a 232
+     * bank while the BO Gateway waited for 150 - the Pylon is affordable
+     * first, so the wallet alone would keep jumping the queue).
+     * The supply-blocked escape stays open: below one free supply the
+     * Pylon is emergency unblocking, not queue jumping.
+     */
+    public static final int GATEWAY_FIRST_BANK = 250;
+
+    public static boolean gatewayFirstBlocksPylon() {
+        try {
+            if (atlantis.game.A.supplyUsed() >= 40) return false;
+            if (atlantis.game.A.supplyFree() <= 1) return false;
+            if (atlantis.game.A.hasMinerals(GATEWAY_FIRST_BANK)) return false;
+
+            Queue queue = Queue.get();
+            if (queue == null) return false;
+
+            for (ProductionOrder order : queue.notFinished().list()) {
+                if (order == null || order.isDynamic()) continue;
+                if (order.unitType() != AUnitType.Protoss_Gateway) continue;
+                if (order.minSupply() > atlantis.game.A.supplyUsed()) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+        catch (RuntimeException | Error ignored) {
+            return false;
+        }
     }
 
     /**
