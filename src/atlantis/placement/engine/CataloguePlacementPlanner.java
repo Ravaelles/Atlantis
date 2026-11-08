@@ -89,6 +89,25 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private final java.util.Map<String, Integer> exitCache = new java.util.HashMap<>();
     private String lastRefusal = "-";
 
+    /**
+     * The building strategies ({@code Pylon/Gateway/Default}) run before
+     * the legacy ranked hunt (owner 2026-11-09, hard-wired). The hunt
+     * stays as the fallback for refused strategy tiles - and as the
+     * revert path: {@link #withoutStrategies()} restores the old
+     * behavior byte for byte with one call.
+     */
+    private boolean useStrategies = true;
+
+    /**
+     * Revert switch (owner 2026-11-09): the legacy ranked hunt decides
+     * alone, the strategies never run. One call, no other change.
+     */
+    public CataloguePlacementPlanner withoutStrategies() {
+        useStrategies = false;
+
+        return this;
+    }
+
     @Override
     public String lastRefusal() {
         return lastRefusal == null ? "-" : lastRefusal;
@@ -526,7 +545,83 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return hunted;
         }
 
+        // Owner 2026-11-09: the building strategies own the shape - the
+        // street-grid pick for this type runs before the legacy ranked
+        // hunt, through the same legality ladder a slot or hunted tile
+        // faces. A served strategy tile wins; a refused one falls
+        // through to the hunt below (which is also the revert path:
+        // with strategies off, the hunt decides alone).
+        if (useStrategies) {
+            PlacementReservation strategic =
+                serveStrategic(unitType, constraint, centre, targetFrame, excluded);
+            if (strategic != null) return strategic;
+        }
+
         return hunt(unitType, constraint, centre, targetFrame, excluded);
+    }
+
+    /**
+     * One strategy pick through the whole legality ladder: the
+     * strategy names the tile, {@code serveIfLegal} disposes. A
+     * successful answer is twinned with its source, a refused tile
+     * falls through to the legacy hunt (same as a refused slot), and
+     * a declared Cannon support hunts with the speculative support
+     * retracted on success - the slot path contract, unchanged.
+     */
+    private PlacementReservation serveStrategic(AUnitType unitType, TargetPlacement constraint, APosition centre,
+                                               int targetFrame, java.util.Set<String> excluded) {
+        atlantis.placement.strategy.BuildingPlacementStrategy strategy;
+        try {
+            strategy = atlantis.placement.strategy.BuildingPlacementStrategies.forType(unitType);
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+        if (strategy == null) return null;
+
+        APosition tile;
+        try {
+            double radius = constraint != null ? constraint.radius() : -1;
+            tile = strategy.find(
+                new atlantis.placement.strategy.BuildingPlacementStrategy.PlacementQuery(
+                    unitType, centre, radius, excluded,
+                    (slotTile, building) ->
+                        (excluded != null && excluded.contains(slotTile.tx() + ":" + slotTile.ty()))
+                            || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                            .check(slotTile, building)
+                            || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                            .check(slotTile, building)));
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+        if (tile == null) return null;
+
+        if (constraint != null
+            && constraint.mode() == TargetPlacement.Mode.NEIGHBOURHOOD && constraint.radius() >= 0
+            && APosition.create(tile.tx(), tile.ty()).distTo(centre) > constraint.radius()) {
+            return null;
+        }
+
+        int supportMark = supportThisPass.size();
+        PlacementReservation answer = serveIfLegal(
+            new atlantis.placement.core.BuildLocation(
+                tile.tx(), tile.ty(),
+                unitType.getTilesWidth(), unitType.getTilesHeights(),
+                0, 0, 0, false),
+            unitType, targetFrame, null);
+        if (answer == null) return null;
+
+        if (answer.isSuccessful()) {
+            SiteTwin.answered(unitType, tile, "strategy", answer, null);
+
+            return answer;
+        }
+
+        PlacementReservation hunted = hunt(unitType, constraint, centre,
+            targetFrame, excluded);
+        if (hunted != null && hunted.isSuccessful())
+            supportThisPass.subList(supportMark, supportThisPass.size()).clear();
+
+        return hunted;
     }
 
     /**
