@@ -117,6 +117,12 @@ public final class FormationHold {
      * slot falls through to the fight. Kiting outranks holding (owner
      * 2026-10-26): a chewed unit breaks to the fight instead of
      * holding its slot - safety of the single unit first.
+     *
+     * <p>Shielded Dragoons engage Zerglings (owner 2026-11-09): at 15+
+     * shields a Dragoon meets the Ling instead of forming up - below
+     * the kite gates (a threatened unit still kites), above the calm.
+     * The enemy-ranged gate above already fired, so this only answers
+     * melee-only boards.</p>
      */
     public static boolean shouldHold(AUnit unit, AUnit target, FightOrFlight.Tactic tactic) {
         return decide(unit, target, tactic) == HoldVerdict.HOLD;
@@ -162,10 +168,31 @@ public final class FormationHold {
             if (nearest != null && unit.distTo(nearest) <= CONTACT_TILES) return HoldVerdict.CONTACT;
             if (fightWouldKite(unit)) return HoldVerdict.KITE;
             if (needsKite(unit)) return HoldVerdict.KITE;
+            if (shieldedDragoonEngagesLing(unit, target)) return HoldVerdict.OTHER;
         } catch (Exception ignored) {
             return HoldVerdict.OTHER;
         }
         return HoldVerdict.HOLD;
+    }
+
+    /**
+     * Shielded Dragoons engage Zerglings (owner 2026-11-09): at 15+
+     * shields a Dragoon meets the Ling in front of it instead of
+     * marching at a formation slot. Below the kite gates (a threatened
+     * unit still kites first), above the calm - the fight loop kites
+     * as needed from there. The enemy-ranged gate above already fired,
+     * so this only answers melee-only boards.
+     */
+    public static boolean shieldedDragoonEngagesLing(AUnit unit, AUnit target) {
+        try {
+            if (unit == null || !unit.isAlive() || !unit.isDragoon()) return false;
+            if (unit.shields() < 15) return false;
+            if (target == null || !target.isAlive()) return false;
+
+            return target.isZergling();
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
