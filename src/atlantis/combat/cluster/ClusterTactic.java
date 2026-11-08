@@ -8,10 +8,11 @@ import atlantis.units.AUnit;
 
 /**
  * Cluster tactic arbitration (extracted from BattleCommander): one
- * gate decides FIGHT or FLEE per frame - breach, UMS opening and home
- * ground force FIGHT, otherwise the evaluator decides with a retreat
- * latch. Per-unit behavior never reads the latch directly; it only
- * receives the decided tactic.
+ * gate decides FIGHT or FLEE per frame. The holds below are a veto on
+ * fleeing, not an order to attack (owner 2026-11-09): a banned FLEE
+ * becomes a stand - whatever the evaluator says, the cluster does
+ * anything except run home. Per-unit behavior never reads the latch
+ * directly; it only receives the decided tactic.
  */
 public final class ClusterTactic {
 
@@ -28,94 +29,23 @@ public final class ClusterTactic {
     }
 
     public static FightOrFlight.Tactic decide() {
-        // Strong army never retreats (owner 2026-10-29): at double the
-        // enemy strength the cluster stands and fights. FLEE at 200% sat
-        // a finished army in the base, oscillating with the retreat
-        // instead of marching out.
-        if (strongArmyStands()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
+        // FLEE veto (owner 2026-11-09): these shapes never retreat home.
+        // The veto bans fleeing, it does not order an attack - a banned
+        // FLEE becomes a stand below, whatever the evaluator says. The
+        // blocking-army rule below stays a direct FIGHT: it actively
+        // fights through, it does not merely refuse to run.
+        boolean fleeBanned = strongArmyStands()
+            || ClusterBreach.breachForcesFight() || earlyUmsStandGround()
+            || holdsHomeGround()
+            || multiBaseHoldAgainstRetreat()
+            || naturalStandWithStrength()
+            || dragoonChokeStand()
+            || naturalChokeStand()
+            || twoBaseHoldNearMain();
 
         AUnit leader = Alpha.get().leader();
         AUnit assessor = nearestToFight(leader);
         double eval = assessor != null ? assessor.eval() : 0;
-
-        // Breach rule (owner): raiders in the base mean fight - always. Two
-        // workers chewing probes is not an evaluation the cluster can walk
-        // away from, however lopsided the numbers read (the evaluator is
-        // not even asked). The latch resets with it: a retreat ordered
-        // before the breach does not drag the cluster home. The only
-        // retreat on a breach is per-unit, below in act().
-        // Same for a UMS opening: with no base anywhere, an early retreat
-        // just feeds - stand the first 15 seconds and let the fight happen.
-        if (ClusterBreach.breachForcesFight() || earlyUmsStandGround()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Home ground holds: under two tiles from the main base the
-        // cluster stands instead of fleeing (owner: retreating into the
-        // mineral line donates the base). Individual kiting inside act()
-        // still applies - this gates only the cluster tactic.
-        if (holdsHomeGround()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Multi-base hold (owner 2026-11-08): past two bases the cluster
-        // never trades the natural for a retreat home - with the ball
-        // closer to the main than to the natural by ground, FLEE walks
-        // away from the base under attack instead of toward the fight.
-        if (multiBaseHoldAgainstRetreat()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Natural stand (owner 2026-11-08): 15+ combat units within 20
-        // ground tiles of the natural at 90%+ relative strength stand
-        // and fight - only FIGHT is allowed. The weak-early-Zerg veto
-        // below stays for genuinely outmatched openers; this owns the
-        // held-natural shape, so it runs before it.
-        if (naturalStandWithStrength()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Dragoon choke stand (owner 2026-11-09): 2+ Dragoons with the
-        // ball within 7 tiles of the main choke stand and fight - only
-        // FIGHT is allowed. Falling back through the choke with ranged
-        // units in hand donates the choke instead of holding it.
-        if (dragoonChokeStand()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Natural choke stand (owner 2026-11-09): 11+ combat units
-        // within 8 tiles of the natural choke stand and fight - only
-        // FIGHT is allowed. A committed force at the choke holds it;
-        // fleeing abandons the natural instead of defending it.
-        if (naturalChokeStand()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Two-base hold (owner 2026-11-09): with two or more bases the
-        // ball never flees within 30 ground tiles of the main - the
-        // retreat would walk away from everything it is supposed to
-        // defend. Only FIGHT is allowed.
-        if (twoBaseHoldNearMain()) {
-            fleeStartedAt = -1;
-
-            return FightOrFlight.Tactic.FIGHT;
-        }
 
         // Stardust rule (owner 2026-10-23): never run through a blocking
         // army. If armed enemies sit between the cluster and home, the
@@ -129,21 +59,52 @@ public final class ClusterTactic {
 
         // No early attacking vs Zerg without Dragoons while weak (owner
         // 2026-10-29): an early trade without ranged units donates the
-        // game. Force the retreat instead of letting the evaluator trade.
+        // game. Force the retreat instead of letting the evaluator trade -
+        // unless the shape bans fleeing, then the cluster stands instead.
         if (weakEarlyVsZergWithoutDragoons()) {
+            if (fleeBanned) {
+                fleeStartedAt = -1;
+
+                return FightOrFlight.Tactic.FIGHT;
+            }
             if (fleeStartedAt < 0) fleeStartedAt = A.now();
 
             return FightOrFlight.Tactic.FLEE;
         }
 
         FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
-        if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
-            fleeStartedAt = A.now();
+        if (tactic == FightOrFlight.Tactic.FLEE) {
+            if (fleeBanned) {
+                fleeStartedAt = -1;
+
+                return FightOrFlight.Tactic.FIGHT;
+            }
+            if (fleeStartedAt < 0) fleeStartedAt = A.now();
         }
         if (tactic == FightOrFlight.Tactic.FIGHT) {
             fleeStartedAt = -1;
         }
         return tactic;
+    }
+
+    /**
+     * True when the current shape bans fleeing (owner 2026-11-09): the
+     * cluster may do anything except run home. Public as a seam, pinned
+     * without a game - the veto reads here, {@link #decide()} enforces it.
+     */
+    public static boolean isFleeBanned() {
+        try {
+            return strongArmyStands()
+                || ClusterBreach.breachForcesFight() || earlyUmsStandGround()
+                || holdsHomeGround()
+                || multiBaseHoldAgainstRetreat()
+                || naturalStandWithStrength()
+                || dragoonChokeStand()
+                || naturalChokeStand()
+                || twoBaseHoldNearMain();
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**
@@ -220,9 +181,9 @@ public final class ClusterTactic {
     }
 
     /**
-     * 2+ Dragoons with the ball within 7 tiles of the main choke: FLEE
-     * is not an option there, only FIGHT. Public as a seam, pinned
-     * without a game.
+     * 2+ Dragoons with the ball within 7 tiles of the main choke: the
+     * veto bans fleeing there (a banned FLEE stands). Public as a seam,
+     * pinned without a game.
      */
     public static final int DRAGOON_CHOKE_STAND_DRAGOONS = 1;
     public static final double DRAGOON_CHOKE_STAND_DIST = 7;
@@ -242,9 +203,9 @@ public final class ClusterTactic {
     }
 
     /**
-     * 11+ combat units within 8 tiles of the natural choke: FLEE is
-     * not an option there, only FIGHT. Public as a seam, pinned
-     * without a game.
+     * 11+ combat units within 8 tiles of the natural choke: the veto
+     * bans fleeing there (a banned FLEE stands). Public as a seam,
+     * pinned without a game.
      */
     public static final int NATURAL_CHOKE_STAND_UNITS = 10;
     public static final double NATURAL_CHOKE_STAND_DIST = 8;
@@ -265,8 +226,8 @@ public final class ClusterTactic {
 
     /**
      * Two or more bases with the ball within 30 ground tiles of the
-     * main: FLEE is not an option there, only FIGHT. Public as a seam,
-     * pinned without a game.
+     * main: the veto bans fleeing there (a banned FLEE stands).
+     * Public as a seam, pinned without a game.
      */
     public static final int TWO_BASE_HOLD_BASES = 2;
     public static final double TWO_BASE_HOLD_DIST = 30;

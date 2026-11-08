@@ -242,6 +242,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
                 addToAlpha(goons);
                 Alpha.get().addUnit(zealot);
 
+                assertTrue(ClusterTactic.isFleeBanned(),
+                    "the veto names the shape, decide() only enforces it");
                 assertEquals(FightOrFlight.Tactic.FIGHT, ClusterTactic.decide(),
                     "ranged ball on the main choke holds it, however lopsided");
             });
@@ -268,6 +270,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
 
                 assertFalse(ClusterTactic.dragoonChokeStand(),
                     "fixture check: 20 tiles out the gate stays shut");
+                assertFalse(ClusterTactic.isFleeBanned(),
+                    "no shape bans fleeing here");
                 assertEquals(FightOrFlight.Tactic.FLEE, ClusterTactic.decide(),
                     "the same losing ball off the choke still retreats");
             });
@@ -291,6 +295,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
 
                 assertTrue(ClusterTactic.weakEarlyVsZergWithoutDragoons(),
                     "fixture check: the veto would fire here on its own");
+                assertTrue(ClusterTactic.isFleeBanned(),
+                    "the veto names the shape, decide() only enforces it");
                 assertEquals(FightOrFlight.Tactic.FIGHT, ClusterTactic.decide(),
                     "a committed force at the natural choke holds it");
             });
@@ -313,6 +319,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
 
                 assertFalse(ClusterTactic.naturalChokeStand(),
                     "fixture check: 24 tiles out the gate stays shut");
+                assertFalse(ClusterTactic.isFleeBanned(),
+                    "no shape bans fleeing here");
                 assertEquals(FightOrFlight.Tactic.FLEE, ClusterTactic.decide(),
                     "the same force off the choke still retreats");
             });
@@ -388,6 +396,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
 
                 assertTrue(ClusterTactic.weakEarlyVsZergWithoutDragoons(),
                     "fixture check: the veto would fire here on its own");
+                assertTrue(ClusterTactic.isFleeBanned(),
+                    "the veto names the shape, decide() only enforces it");
                 assertEquals(FightOrFlight.Tactic.FIGHT, ClusterTactic.decide(),
                     "two bases with the ball home hold instead of fleeing");
             });
@@ -413,6 +423,8 @@ public class ChokeStandNoFleeTest extends WorldStubForTests {
 
                 assertFalse(ClusterTactic.twoBaseHoldNearMain(),
                     "fixture check: 50 ground out the gate stays shut");
+                assertFalse(ClusterTactic.isFleeBanned(),
+                    "no shape bans fleeing here");
                 assertEquals(FightOrFlight.Tactic.FLEE, ClusterTactic.decide(),
                     "the same ball far from home still retreats");
             });
