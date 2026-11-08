@@ -164,7 +164,7 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
     }
 
     @Test
-    public void hookedActStaysSilentWithoutHunt() {
+    public void hookedActRelocatesIdleCorsairInsteadOfStanding() {
         enemyRaceInWorld = Race.Zerg;
 
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
@@ -177,8 +177,9 @@ public class SpecialistBehaviorsTest extends WorldStubForTests {
             ordersOf(corsair).clear();
             BattleCommander.act(corsair, FightOrFlight.Tactic.FIGHT, null, corsair);
 
-            assertFalse(movesToward(ordersOf(corsair), corsair, 32, 20),
-                "no hunt, no march toward the east: the hook adds hunts only");
+            assertFalse(ordersOf(corsair).isEmpty(),
+                "no hunt, no enemy known: the idle Corsair still gets an order, never #NO_COMMAND: "
+                    + ordersOf(corsair));
         });
     }
 

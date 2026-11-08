@@ -28,7 +28,7 @@ public final class CorsairSoloFlight {
             if (corsair.squad() != null) continue;
 
             BattleCommander.observeUnit(corsair);
-            CorsairHunt.act(corsair);
+            CorsairBrain.act(corsair);
         }
     }
 }

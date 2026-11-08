@@ -28,7 +28,7 @@ public final class SpecialistBehaviors {
         if (unit == null || !unit.isAlive()) return false;
 
         if (RunWhenAttacked.act(unit)) return true;
-        if (CorsairHunt.act(unit)) return true;
+        if (CorsairBrain.act(unit)) return true;
         if (ProduceScarabs.act(unit)) return true;
 
         return CastStorm.act(unit);
