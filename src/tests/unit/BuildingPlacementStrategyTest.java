@@ -180,4 +180,70 @@ public class BuildingPlacementStrategyTest extends WorldStubForTests {
                 "no pylon anywhere: never an unpowered tile, null instead");
         });
     }
+
+    @Test
+    public void secondPylonSeeksHalfwayToMainChoke() {
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit first = fake(AUnitType.Protoss_Pylon, 24, 20);
+
+        atlantis.map.choke.AChoke choke = org.mockito.Mockito.mock(atlantis.map.choke.AChoke.class);
+        org.mockito.Mockito.when(choke.center()).thenReturn(APosition.create(50, 20));
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> mocked =
+            org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class)) {
+            mocked.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(choke);
+
+            world(3, fakeOurs(main, first), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                AUnitType pylon = AUnitType.Protoss_Pylon;
+                APosition tile = new PylonPlacementStrategy().find(
+                    query(pylon, 20, 20, new HashSet<>()));
+
+                assertNotNull(tile, "the second pylon lands mid-way out");
+                assertTrue(tile.distTo(APosition.create(35, 20)) <= 6,
+                    "halfway between main (20,20) and choke (50,20): " + tile);
+                assertTrue(tile.distTo(first) >= 8,
+                    "not on top of the first pylon: " + tile);
+            });
+        }
+    }
+
+    @Test
+    public void pylonKeepsDistanceWhileFew() {
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit first = fake(AUnitType.Protoss_Pylon, 30, 20);
+        FakeUnit second = fake(AUnitType.Protoss_Pylon, 32, 22);
+
+        world(3, fakeOurs(main, first, second), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            AUnitType pylon = AUnitType.Protoss_Pylon;
+            APosition tile = new PylonPlacementStrategy().find(
+                query(pylon, 31, 21, new HashSet<>()));
+
+            assertNotNull(tile, "space exists elsewhere");
+            assertTrue(tile.distTo(first) >= 8 && tile.distTo(second) >= 8,
+                "two Pylons standing: the third keeps 8 tiles: " + tile);
+        });
+    }
+
+    @Test
+    public void sixthPylonMayCuddle() {
+        java.util.List<FakeUnit> ours = new java.util.ArrayList<>();
+        ours.add(fake(AUnitType.Protoss_Nexus, 20, 20));
+        for (int i = 0; i < 6; i++) {
+            ours.add(fake(AUnitType.Protoss_Pylon, 28 + i, 20));
+        }
+
+        world(3, fakeOurs(ours.toArray(new FakeUnit[0])), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            AUnitType pylon = AUnitType.Protoss_Pylon;
+            APosition tile = new PylonPlacementStrategy().find(
+                query(pylon, 30, 20, new HashSet<>()));
+
+            assertNotNull(tile, "six standing: density is fine again");
+        });
+    }
 }
