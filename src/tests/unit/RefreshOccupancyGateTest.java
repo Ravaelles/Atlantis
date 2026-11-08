@@ -75,6 +75,51 @@ public class RefreshOccupancyGateTest extends WorldStubForTests {
     }
 
     @Test
+    public void foreignWarpingBuildingBlocksOwnRow() {
+        // Live 2026-11-08 (D51A7434): a Gateway warped on the Pylon
+        // row's [93,103] site and the row waited 110 s for a warp the
+        // engine never allows. The row is not the warping building, so
+        // the site is hopeless and must resite promptly.
+        FakeUnit warping = fake(AUnitType.Protoss_Gateway, 12, 10);
+        warping.setCompleted(false);
+        atlantis.production.constructions.Construction row =
+            new atlantis.production.constructions.Construction(AUnitType.Protoss_Pylon);
+        row.setPositionToBuild(APosition.create(12, 10));
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 30, 30),
+            warping
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertTrue(
+                RefreshConstructionPosition.siteHopelesslyBlocked(row),
+                "someone else's warp on the site: resite, don't wait out the timeout");
+        });
+    }
+
+    @Test
+    public void ownWarpingBuildingNeverBlocks() {
+        FakeUnit warping = fake(AUnitType.Protoss_Gateway, 12, 10);
+        warping.setCompleted(false);
+        atlantis.production.constructions.Construction row =
+            new atlantis.production.constructions.Construction(AUnitType.Protoss_Gateway);
+        row.setPositionToBuild(APosition.create(12, 10));
+        row.setBuildingUnit(warping);
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 30, 30),
+            warping
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            assertFalse(
+                RefreshConstructionPosition.siteHopelesslyBlocked(row),
+                "the row's own warp is progress, never a reason to move");
+        });
+    }
+
+    @Test
     public void standingBuildingBlocks() {
         check(true, APosition.create(12, 10),
             "a standing building on the site is hopeless",

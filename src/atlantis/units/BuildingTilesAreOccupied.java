@@ -167,4 +167,34 @@ public class BuildingTilesAreOccupied {
         return false;
     }
 
+    /**
+     * A warping building on the footprint that is not the row's own:
+     * someone else is building here, and the row will never warp
+     * through them (measured live 2026-11-08: a Gateway warped on the
+     * Pylon row's site, 110 s of refused Builds on a banked supply
+     * block). The row's own warp never counts (its building id is
+     * excluded) - resiting off your own warp would chase endlessly.
+     */
+    public static boolean warpingForeignBuildingOn(
+        APosition position, AUnitType buildingType, AUnit ownBuilding
+    ) {
+        if (position == null || buildingType == null)
+            return false;
+
+        memo(atlantis.game.A.now());
+        int left = position.tx();
+        int top = position.ty();
+        int right = left + buildingType.getTilesWidth();
+        int bottom = top + buildingType.getTilesHeights();
+        int ownId = ownBuilding == null ? -1 : ownBuilding.id();
+
+        for (int[] r : memoFootprints) {
+            if (r[4] == ownId) continue;
+            if ((r[5] & 1) == 0 || (r[5] & 2) != 0) continue;
+            if (rectOverlaps(r, left, top, right, bottom)) return true;
+        }
+
+        return false;
+    }
+
 }

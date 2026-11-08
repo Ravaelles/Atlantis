@@ -568,11 +568,14 @@ public class RefreshConstructionPosition {
         // minutes, "Refresh Nexus position" spam for 4 minutes while miners
         // crossed the site) - the builder issues when the tile is free.
         // A warping building is the construction itself in progress, never
-        // a reason to move. The builder exclusion the old question needed
+        // a reason to move - unless it belongs to another row (the
+        // row-aware discriminator below): someone else warping on the
+        // site means the engine will never let this row start there.
+        // The builder exclusion the old question needed
         // dies with it: a unit never triggers a refresh anymore, so the
         // arriving builder cannot trip its own site.
         if (buildingType != null && !buildingType.isGasBuilding() && !buildPosition.isBuildableIncludeBuildings()) {
-            return siteHopelesslyBlocked(buildPosition, buildingType);
+            return siteHopelesslyBlocked(construction);
         }
 
         // Same question on a timer, for the case where the tile was free when it was
@@ -581,7 +584,7 @@ public class RefreshConstructionPosition {
         // updated in-game), so occupancy is asked directly again.
         return A.everyNthGameFrame(23)
             && buildPosition.isPositionVisible()
-            && siteHopelesslyBlocked(buildPosition, buildingType);
+            && siteHopelesslyBlocked(construction);
     }
 
     /**
@@ -594,6 +597,23 @@ public class RefreshConstructionPosition {
      */
     public static boolean siteHopelesslyBlocked(APosition site, AUnitType type) {
         return BuildingTilesAreOccupied.checkBuildingsOnly(site, type);
+    }
+
+    /**
+     * The row-aware refresh discriminator: the site-only rule above,
+     * plus a warping building that is not the row's own (measured live
+     * 2026-11-08: a Gateway warped on the Pylon row's [93,103] site and
+     * the row waited 110 s for a warp the engine never allows). The
+     * refresh path consults this, so a foreign warp re-sites promptly
+     * instead of ageing into the timeout cancel.
+     */
+    public static boolean siteHopelesslyBlocked(atlantis.production.constructions.Construction row) {
+        if (row == null || row.buildPosition() == null || row.buildingType() == null) return false;
+
+        if (siteHopelesslyBlocked(row.buildPosition(), row.buildingType())) return true;
+
+        return BuildingTilesAreOccupied.warpingForeignBuildingOn(
+            row.buildPosition(), row.buildingType(), row.buildingUnit());
     }
 
     /**
