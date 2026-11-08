@@ -15,6 +15,14 @@ public enum FleeReason {
     STAY_TACTIC,
 
     /**
+     * Standardized no-retreat (owner 2026-11-09,
+     * {@code ClusterTactic#neverRetreats}): two bases and a real army
+     * never march home, whatever the tactic says - the unit fights
+     * where it stands.
+     */
+    STAY_NEVER_RETREAT,
+
+    /**
      * Baseless UMS map: no home to run to, fall through and fight.
      */
     STAY_BASELESS,

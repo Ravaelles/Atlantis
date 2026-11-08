@@ -173,6 +173,13 @@ public final class RetreatFromLostFight {
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
     ) {
         if (tactic != FightOrFlight.Tactic.FLEE) return new Verdict(FleeReason.STAY_TACTIC, null);
+        // Standardized no-retreat (owner 2026-11-09): with two bases
+        // and a real army standing, no retreat leg runs - not the
+        // cluster rally, not the organized walk home. The unit fights
+        // where it stands, even on a FLEE tactic.
+        if (atlantis.combat.cluster.ClusterTactic.neverRetreats()) {
+            return new Verdict(FleeReason.STAY_NEVER_RETREAT, null);
+        }
         // Owner: ClusterFlee is banned on baseless UMS maps - with no
         // base anywhere a retreat (shared direction or per-unit) only
         // donates the duel, so the unit falls through and fights.

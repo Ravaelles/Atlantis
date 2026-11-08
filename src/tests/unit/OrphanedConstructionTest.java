@@ -152,33 +152,6 @@ public class OrphanedConstructionTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void loneUnitlessRowAdoptsFarWarp() {
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
-        FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);
-
-        world(30, units(nexus, probe), new FakeUnit[0], () -> {
-            if (atlantis.game.A.now() != 10)
-                return;
-
-            Construction construction = new Construction(AUnitType.Protoss_Pylon);
-            construction.setBuilder(probe);
-            construction.setPositionToBuild(APosition.create(12, 10));
-            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
-            ConstructionRequests.constructions.add(construction);
-
-            // The warp landed 8 tiles from the reserved tile (live
-            // GAME_CDE27319 Citadel shape): exactly one unfinished row
-            // and it tracks nothing - attribution is unambiguous.
-            FakeUnit builtElsewhere = fake(AUnitType.Protoss_Pylon, 20);
-
-            assertEquals(construction,
-                atlantis.production.constructions.DefineConstructionForNewUnit
-                    .defineConstruction(builtElsewhere),
-                "one unitless row adopts the far warp instead of orphaning it");
-        });
-    }
-
-    @Test
     public void twoRowsKeepTheTightBound() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);

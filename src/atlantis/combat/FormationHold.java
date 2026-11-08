@@ -98,8 +98,10 @@ public final class FormationHold {
      * approach defended positions; against an undefended building the
      * line walks in and kills. Cannons (and the like) keep today's
      * formation approach - this fires only for the undefended shape.
+     * Public as a seam: the regroup dress answers the same question
+     * before marching at slots.
      */
-    private static boolean noKnownEnemyToFormAgainst() {
+    public static boolean noKnownEnemyToFormAgainst() {
         try {
             if (atlantis.units.select.Select.enemy().combatUnits().notEmpty()) return false;
             if (atlantis.units.select.Select.enemy().combatBuildingsAntiLand().notEmpty()) return false;

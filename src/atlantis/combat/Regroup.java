@@ -5,6 +5,7 @@ import atlantis.combat.cluster.ClusterCohesion;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.cluster.HomeGround;
+import atlantis.combat.formation.FormationOrderLatch;
 import atlantis.combat.formation.MarchCohesion;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.GhostAdvance;
@@ -41,13 +42,13 @@ public final class Regroup {
     }
 
     /**
-     * Strategy points name addresses, not walkable tiles (a choke center,
-     * a fight address inside a wall): issuing the raw point burns a
-     * builder-walk-style failure every frame plus the engine error the
-     * owner pasted (Dragoon to [55,56]). Snap to walkable ground first;
-     * null when nothing within reach is walkable, and the caller falls
-     * through to its next fallback instead of ordering into a wall.
+     * Inside this distance of the anchor the line hovers instead of
+     * redressing: arrival owns the stand, slot updates stop marching
+     * it (attack-march hover pin). A Dragoon answers from weapon range
+     * plus margin, so the hold below can still engage from the hover.
      */
+    private static final double DRESS_ANCHOR_RADIUS = 6;
+
     /**
      * Walkable-or-null contract for march points (owner 2026-11-09):
      * strategy points name addresses, not walkable tiles - issuing the
@@ -74,6 +75,20 @@ public final class Regroup {
     public static void march(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
     ) {
+        // Formation dress (owner 2026-11-09): positioning owns
+        // overriding priority - the line dresses at its slots before
+        // any collapse/reinforce/hold leg is considered, and only
+        // units too far from the ball fall through to the distance
+        // legs below. Vanguard scouts and ghost creepers are on a
+        // mission, not lost, so the dress skips them like the leash
+        // does. FLEE owns its rally (slots answer null there anyway).
+        if (tactic == FightOrFlight.Tactic.FIGHT
+            && !GhostAdvance.isVanguard(unit)
+            && GhostAdvance.effectiveGhostPointFor(unit) == null
+            && dressInFormation(unit, tactic, anchor, leader)) {
+            return;
+        }
+
         // Median leash (owner 2026-11-07): a detached melee unit rejoins
         // the ball instead of marching alone to whichever point the chain
         // below would hand it this frame - strategy/dress/collapse/hold/
@@ -439,6 +454,71 @@ public final class Regroup {
      * anchor tile itself is never the destination - staging 5 short puts
      * the line inside sight on arrival and acquire takes over from there.
      */
+    /**
+     * The overriding positioning leg (owner 2026-11-09): march at the
+     * formation slot when the cluster forms up (3+ combat units, known
+     * pivot), instead of collapsing, reinforcing or holding first.
+     * Only for units already with the ball - far strays keep the leash
+     * below (marching them alone to slots is the NEXT #145 lone-march
+     * shape). The latch owns re-issue discipline; a denied latch holds
+     * instead of falling through (same contract as the no-contact
+     * hold, so the march never churns).
+     */
+    private static boolean dressInFormation(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
+    ) {
+        try {
+            if (unit == null || !unit.isAlive()) return false;
+            if (leader == null || !leader.isAlive()) return false;
+            // Attack marches march out: the dress owns home defense,
+            // not the push at the enemy - an assault column that
+            // dressed mid-field would hover instead of closing
+            // (motionless-raid pin: the base must be walked into).
+            AUnit main = HomeGround.resolve().main();
+            if (anchor == null || !ClusterRally.isHomeAnchor(anchor, main)) return false;
+            // Nothing to form against: an undefended building is walked
+            // into and killed, never dressed around (the buildings-only
+            // walk-in pin).
+            if (atlantis.combat.FormationHold.noKnownEnemyToFormAgainst()) return false;
+            // Arrived: hovering at the anchor beats chasing slot updates
+            // (the attack-march hover pin).
+            if (anchor != null && anchor.position() != null
+                && unit.distTo(anchor) <= DRESS_ANCHOR_RADIUS) return false;
+            // Recent contact only: the dress answers a maneuvering
+            // fight, not a static target - a motionless base is walked
+            // into and killed (the motionless-raid pin), and a quiet
+            // board keeps the old hover legs.
+            if (!atlantis.combat.ArmyContact.isOngoingFight()) return false;
+
+            APosition median = atlantis.battle.cluster.Alpha.get().median();
+            if (median != null && unit.distTo(median) > atlantis.combat.cluster.ClusterCohesion.STRAY_TILES) {
+                return false;
+            }
+
+            HasPosition slot = ClusterRally.formationSlotFor(unit, leader, anchor, tactic);
+            if (slot == null || slot.position() == null) return false;
+
+            APosition at = walkableOrNull(APosition.create(slot.position()));
+            if (at == null) return false;
+
+            if (!FormationOrderLatch.shouldIssue(unit, at)) {
+                FightTarget.markRepositioned(unit);
+
+                return true;
+            }
+
+            if (unit.move(at, Actions.MOVE_ENGAGE, atlantis.combat.Behavior.DRESS.tag())) {
+                FightTarget.markRepositioned(unit);
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
     private static APosition walkableCollapsePoint(AUnit unit, HasPosition anchor) {
         APosition target = anchor.position();
         if (target == null) return null;

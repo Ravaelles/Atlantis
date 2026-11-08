@@ -41,7 +41,8 @@ public final class ClusterTactic {
             || naturalStandWithStrength()
             || dragoonChokeStand()
             || naturalChokeStand()
-            || twoBaseHoldNearMain();
+            || twoBaseHoldNearMain()
+            || neverRetreats();
 
         AUnit leader = Alpha.get().leader();
         AUnit assessor = nearestToFight(leader);
@@ -101,7 +102,8 @@ public final class ClusterTactic {
                 || naturalStandWithStrength()
                 || dragoonChokeStand()
                 || naturalChokeStand()
-                || twoBaseHoldNearMain();
+                || twoBaseHoldNearMain()
+                || neverRetreats();
         } catch (Exception | Error ignored) {
             return false;
         }
@@ -242,6 +244,27 @@ public final class ClusterTactic {
             if (center == null || main == null || main.position() == null) return false;
 
             return center.groundDist(main.position()) <= TWO_BASE_HOLD_DIST;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Standardized no-retreat (owner 2026-11-09): with two or more bases
+     * and over ten combat units standing, NO retreat leg runs - not the
+     * cluster FLEE, not the per-unit organized walk home. Whatever the
+     * evaluator says, the army fights where it stands. Public as a seam,
+     * pinned without a game.
+     */
+    public static final int NEVER_RETREAT_BASES = 2;
+    public static final int NEVER_RETREAT_UNITS = 10;
+
+    public static boolean neverRetreats() {
+        try {
+            if (atlantis.units.select.Select.ourBasesWithUnfinished().count()
+                < NEVER_RETREAT_BASES) return false;
+
+            return atlantis.units.select.Count.ourCombatUnits() > NEVER_RETREAT_UNITS;
         } catch (Exception | Error ignored) {
             return false;
         }

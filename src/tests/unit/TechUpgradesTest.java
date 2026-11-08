@@ -134,16 +134,32 @@ public class TechUpgradesTest {
     @Test
     public void pvpFortificationsCapRush() {
         assertFalse(hasGoal(
+            contribute(state(60, 700, 200, 200, 700, true, 15, 2, 1, 1, false, true, 2, 4, 0)),
+            AUnitType.Protoss_Gateway),
+            "fortified enemies hold the cap at 4 while the bank stays below rich");
+    }
+
+    @Test
+    public void pvpFortificationsRichBankDemandsFifth() {
+        assertTrue(hasGoal(
             contribute(state(60, 800, 200, 200, 700, true, 15, 2, 1, 1, false, true, 2, 4, 0)),
             AUnitType.Protoss_Gateway),
-            "fortified enemies hold the cap at 4");
+            "even fortified, a hoarding bank with all Gateways busy wants the 5th");
     }
 
     @Test
     public void otherMatchupsCapFour() {
         assertFalse(hasGoal(
+            contribute(state(60, 700, 200, 200, 700, true, 15, 2, 1, 1, true, false, 0, 4, 0)),
+            AUnitType.Protoss_Gateway),
+            "vs Zerg the cap stays 4 while the bank stays below rich");
+    }
+
+    @Test
+    public void richBankBreaksTheSoftCap() {
+        assertTrue(hasGoal(
             contribute(state(60, 800, 200, 200, 700, true, 15, 2, 1, 1, true, false, 0, 4, 0)),
             AUnitType.Protoss_Gateway),
-            "vs Zerg the cap stays 4");
+            "vs Zerg too: hoard plus all-busy orders past 4");
     }
 }
