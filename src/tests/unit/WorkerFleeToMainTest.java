@@ -68,8 +68,7 @@ public class WorkerFleeToMainTest extends WorldStubForTests {
     }
 
     @Test
-    public void threeBasesKeepTheRegionRun() {
-        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+    public void threeBasesKeepTheRegionRun() {        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit natural = fake(AUnitType.Protoss_Nexus, 38, 20);
         FakeUnit third = fake(AUnitType.Protoss_Nexus, 20, 60);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 60, 20);
@@ -87,6 +86,72 @@ public class WorkerFleeToMainTest extends WorldStubForTests {
 
                 assertFalse(probe.isGatheringMinerals(),
                     "three bases: the field keeps the old region run");
+            });
+    }
+
+    @Test
+    public void nineTilesOutStillGathersHome() {
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit natural = fake(AUnitType.Protoss_Nexus, 38, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 29, 20);
+        probe.hp = 20;
+        FakeUnit[] lings = lingsAt(29, 20);
+
+        neutralInWorld = new FakeUnit[]{
+            fake(AUnitType.Resource_Mineral_Field, 23, 20).setNeutral()};
+
+        world(5, fakeOurs(main, natural, probe),
+            fakeEnemies(lings[0], lings[1], lings[2]), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                new WorkerDefenceRun(probe).handle();
+
+                assertTrue(probe.isGatheringMinerals(),
+                    "exactly 9 tiles out still takes the mineral road home");
+            });
+    }
+
+    @Test
+    public void pastFortyTilesKeepsTheFarLeash() {
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit natural = fake(AUnitType.Protoss_Nexus, 38, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 61, 20);
+        probe.hp = 20;
+        FakeUnit[] lings = lingsAt(61, 20);
+
+        neutralInWorld = new FakeUnit[]{
+            fake(AUnitType.Resource_Mineral_Field, 23, 20).setNeutral()};
+
+        world(5, fakeOurs(main, natural, probe),
+            fakeEnemies(lings[0], lings[1], lings[2]), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                new WorkerDefenceRun(probe).handle();
+
+                assertFalse(probe.isGatheringMinerals(),
+                    "41 tiles out: the mineral road is pointless, the far leash owns it");
+            });
+    }
+
+    @Test
+    public void nextToMainKeepsLocalFlee() {
+        FakeUnit main = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit natural = fake(AUnitType.Protoss_Nexus, 38, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 25, 20);
+        probe.hp = 20;
+        FakeUnit[] lings = lingsAt(25, 20);
+
+        neutralInWorld = new FakeUnit[]{
+            fake(AUnitType.Resource_Mineral_Field, 23, 20).setNeutral()};
+
+        world(5, fakeOurs(main, natural, probe),
+            fakeEnemies(lings[0], lings[1], lings[2]), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                new WorkerDefenceRun(probe).handle();
+
+                assertFalse(probe.isGatheringMinerals(),
+                    "5 tiles out it is already home: flee from the enemy, not to a mineral");
             });
     }
 }

@@ -406,17 +406,21 @@ public class WorkerDefenceRun extends Manager {
         AUnit main = Select.mainOrAnyBuilding();
 
         // Owner 2026-11-09: at two or fewer bases a fleeing worker is
-        // assigned straight to a random mineral near the main - no
-        // cross-map region run that strands it 40 tiles out past the
-        // natural. The gather order routes it home fastest, and a
-        // gathering worker is transparent to the fight managers (they
+        // assigned straight to a random mineral near the main - but only
+        // between 9 and 40 tiles out. Closer in it is already home and
+        // flees locally; further out the mineral run is pointless, so the
+        // old leash below owns the frame instead. The gather order routes
+        // it home fastest and is transparent to the fight managers (they
         // skip gathering units), so nothing re-drafts it on the way.
         if (main != null && Select.ourBasesWithUnfinished().count() <= 2) {
-            AUnit mineral = Select.minerals().inRadius(10, main).random();
-            if (mineral != null) {
-                worker.setTooltipTactical("RunToMainMinerals");
+            double distToMain = main.distTo(worker);
+            if (distToMain >= 9 && distToMain <= 40) {
+                AUnit mineral = Select.minerals().inRadius(10, main).random();
+                if (mineral != null) {
+                    worker.setTooltipTactical("RunToMainMinerals");
 
-                return worker.gather(mineral);
+                    return worker.gather(mineral);
+                }
             }
         }
 
