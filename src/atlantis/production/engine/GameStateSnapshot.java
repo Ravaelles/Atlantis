@@ -327,11 +327,14 @@ public final class GameStateSnapshot {
         snapshot.basesUnfinished = Count.basesWithUnfinished();
         snapshot.enemyIsTerran = Enemy.terran();
         snapshot.hasArchives = Have.a(AUnitType.Protoss_Templar_Archives);
+        snapshot.archivesPlanned = !Have.notEvenPlanned(AUnitType.Protoss_Templar_Archives);
         snapshot.weaponsLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Weapons);
         snapshot.armorLevel = atlantis.information.tech.ATech.getUpgradeLevel(bwapi.UpgradeType.Protoss_Ground_Armor);
         snapshot.enemyCombatBuildings = atlantis.information.enemy.EnemyInfo.combatBuildingsAntiLand();
         snapshot.highTemplar = Count.ht();
         snapshot.darkTemplar = Count.darkTemplars();
+        snapshot.darkTemplarProducedTotal = atlantis.game.util.CompletedUnitsHistory.completedCount(
+            AUnitType.Protoss_Dark_Templar);
         snapshot.hasSupportBay = Count.ofType(AUnitType.Protoss_Robotics_Support_Bay) > 0;
         snapshot.reavers = Count.reavers();
         snapshot.hasRobo = Count.ofTypeWithUnfinished(AUnitType.Protoss_Robotics_Facility) > 0;

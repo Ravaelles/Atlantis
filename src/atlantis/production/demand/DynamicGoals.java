@@ -234,13 +234,18 @@ public final class DynamicGoals {
 
     /**
      * Citadel of Adun (Protoss): the eyes get clearer before the templar
-     * line opens. Verbatim gates - supply 140+ with gas 180 behind it and
-     * an Observatory standing. Research coverage is execution-side, so no
-     * researched flag rides the snapshot.
+     * line opens. Default floor 110 supply with gas 180 behind it and
+     * an Observatory standing (owner 2026-11-09: a standalone Citadel
+     * changes little, so it waits); planned for the Archives it may
+     * come sooner - the templar line owns its timing through the
+     * Archives goal plus the scheduler prerequisites. Research coverage
+     * is execution-side, so no researched flag rides the snapshot.
      */
     private static void addCitadelGoal(List<ProductionGoal> goals, GameSnapshot state) {
         if (!We.protoss()) return;
-        if (state.supplyUsed < 140 || state.gas < 180) return;
+        if (state.supplyUsed <= 70) return;
+        if (!state.archivesPlanned && state.supplyUsed < 110) return;
+        if (state.gas < 180) return;
         if (!state.hasObservatory) return;
 
         goals.add(new ProductionGoal(
@@ -292,10 +297,17 @@ public final class DynamicGoals {
      * High Templar (Protoss): the storm casters the Archives trains, up to
      * a supply-tiered cap (2/3/4/6). Count-1 pump while short, same shape
      * as the Corsair and Observer pumps.
+     *
+     * <p>Owner 2026-11-09: only after three Dark Templar were produced in
+     * this game (historical completions, not standing units - the dead
+     * still count). The templar line proves itself in the dark first.
      */
+    public static final int HIGH_TEMPLAR_MIN_DARK_TEMPLAR = 3;
+
     private static void addHighTemplarGoal(List<ProductionGoal> goals, GameSnapshot state) {
         if (!We.protoss()) return;
         if (!state.hasArchives) return;
+        if (state.darkTemplarProducedTotal < HIGH_TEMPLAR_MIN_DARK_TEMPLAR) return;
 
         int want;
         if (state.supplyUsed <= 145) want = 2;
@@ -1214,6 +1226,23 @@ public final class DynamicGoals {
         public boolean hasForge;
 
         /**
+         * Templar Archives standing, warping or queued (Protoss; false
+         * blocks nothing by itself). A Citadel planned for the Archives
+         * keeps the old supply floor instead of the standalone 110 -
+         * the templar line owns its timing. Set post-construction like
+         * {@link #supplyProvidersComing}.
+         */
+        public boolean archivesPlanned = false;
+
+        /**
+         * Dark Templar ever completed this game (Protoss; history, not
+         * standing units - the dead still count). High Templar production
+         * waits for three of them. Set post-construction from
+         * {@code CompletedUnitsHistory} like {@link #supplyProvidersComing}.
+         */
+        public int darkTemplarProducedTotal = 0;
+
+        /**
          * Enemy pressure the Stargate branch answers to (Zerg air play).
          * Fed live from the discovered counts; zero when nothing is seen.
          */
@@ -1442,8 +1471,10 @@ public final class DynamicGoals {
             anchored.hasObservatory = hasObservatory;
             anchored.hasCitadel = hasCitadel;
             anchored.hasArchives = hasArchives;
+            anchored.archivesPlanned = archivesPlanned;
             anchored.highTemplar = highTemplar;
             anchored.darkTemplar = darkTemplar;
+            anchored.darkTemplarProducedTotal = darkTemplarProducedTotal;
             anchored.hasSupportBay = hasSupportBay;
             anchored.reavers = reavers;
             anchored.hasRobo = hasRobo;

@@ -9,15 +9,23 @@ import atlantis.units.select.Have;
 
 import static atlantis.units.AUnitType.Protoss_Citadel_of_Adun;
 import static atlantis.units.AUnitType.Protoss_Observatory;
+import static atlantis.units.AUnitType.Protoss_Templar_Archives;
 
 public class ProduceCitadelOfAdun {
     public static boolean produce() {
 
-        if (A.supplyUsed() <= 70) return false;
         if (Have.a(type())) return false;
         if (Count.ofType(Protoss_Observatory) == 0) return false;
 
-        if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now() % 41 == 0 && Have.notEvenPlanned(type())) {
+        // Default floor (owner 2026-11-09): a standalone Citadel changes
+        // little, so it waits for 110 supply. Planned for the Templar
+        // Archives it keeps the old floor - the templar line owns its
+        // timing (ProduceTemplarArchives queues it directly anyway).
+        boolean forArchives = !Have.notEvenPlanned(Protoss_Templar_Archives);
+        int floor = forArchives ? 70 : 110;
+        if (A.supplyUsed() <= floor) return false;
+
+        if (A.hasGas(180) && A.now() % 41 == 0 && Have.notEvenPlanned(type())) {
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }
 

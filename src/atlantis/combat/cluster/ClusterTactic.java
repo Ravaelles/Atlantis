@@ -87,6 +87,36 @@ public final class ClusterTactic {
             return FightOrFlight.Tactic.FIGHT;
         }
 
+        // Dragoon choke stand (owner 2026-11-09): 2+ Dragoons with the
+        // ball within 7 tiles of the main choke stand and fight - only
+        // FIGHT is allowed. Falling back through the choke with ranged
+        // units in hand donates the choke instead of holding it.
+        if (dragoonChokeStand()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
+        // Natural choke stand (owner 2026-11-09): 11+ combat units
+        // within 8 tiles of the natural choke stand and fight - only
+        // FIGHT is allowed. A committed force at the choke holds it;
+        // fleeing abandons the natural instead of defending it.
+        if (naturalChokeStand()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
+        // Two-base hold (owner 2026-11-09): with two or more bases the
+        // ball never flees within 30 ground tiles of the main - the
+        // retreat would walk away from everything it is supposed to
+        // defend. Only FIGHT is allowed.
+        if (twoBaseHoldNearMain()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
         // Stardust rule (owner 2026-10-23): never run through a blocking
         // army. If armed enemies sit between the cluster and home, the
         // cluster fights through instead - the latch does not apply,
@@ -184,6 +214,73 @@ public final class ClusterTactic {
             if (center == null || natural == null || natural.position() == null) return false;
 
             return center.groundDist(natural.position()) <= NATURAL_STAND_DIST;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * 2+ Dragoons with the ball within 7 tiles of the main choke: FLEE
+     * is not an option there, only FIGHT. Public as a seam, pinned
+     * without a game.
+     */
+    public static final int DRAGOON_CHOKE_STAND_DRAGOONS = 1;
+    public static final double DRAGOON_CHOKE_STAND_DIST = 7;
+
+    public static boolean dragoonChokeStand() {
+        try {
+            if (atlantis.units.select.Count.dragoons() <= DRAGOON_CHOKE_STAND_DRAGOONS) return false;
+
+            HasPosition center = Alpha.get().center();
+            atlantis.map.choke.AChoke choke = HomeGround.resolve().mainChoke();
+            if (center == null || choke == null || choke.center() == null) return false;
+
+            return center.distTo(choke.center()) <= DRAGOON_CHOKE_STAND_DIST;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * 11+ combat units within 8 tiles of the natural choke: FLEE is
+     * not an option there, only FIGHT. Public as a seam, pinned
+     * without a game.
+     */
+    public static final int NATURAL_CHOKE_STAND_UNITS = 10;
+    public static final double NATURAL_CHOKE_STAND_DIST = 8;
+
+    public static boolean naturalChokeStand() {
+        try {
+            if (atlantis.units.select.Count.ourCombatUnits() <= NATURAL_CHOKE_STAND_UNITS) return false;
+
+            HasPosition center = Alpha.get().center();
+            atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.natural();
+            if (center == null || choke == null || choke.center() == null) return false;
+
+            return center.distTo(choke.center()) < NATURAL_CHOKE_STAND_DIST;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Two or more bases with the ball within 30 ground tiles of the
+     * main: FLEE is not an option there, only FIGHT. Public as a seam,
+     * pinned without a game.
+     */
+    public static final int TWO_BASE_HOLD_BASES = 2;
+    public static final double TWO_BASE_HOLD_DIST = 30;
+
+    public static boolean twoBaseHoldNearMain() {
+        try {
+            if (atlantis.units.select.Select.ourBasesWithUnfinished().count()
+                < TWO_BASE_HOLD_BASES) return false;
+
+            HasPosition center = Alpha.get().center();
+            AUnit main = HomeGround.resolve().main();
+            if (center == null || main == null || main.position() == null) return false;
+
+            return center.groundDist(main.position()) <= TWO_BASE_HOLD_DIST;
         } catch (Exception | Error ignored) {
             return false;
         }

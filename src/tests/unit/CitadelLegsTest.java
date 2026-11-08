@@ -15,9 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Citadel + Leg Enhancements at the V2 goal layer (legacy
- * ProduceCitadelOfAdun / ResearchLegEnhancements, verbatim gates):
- * the Citadel wants supply 140+ with gas 180 and an Observatory
- * standing; Legs want the Citadel past supply 90 with 4+ zealots.
+ * ProduceCitadelOfAdun / ResearchLegEnhancements): the standalone
+ * Citadel wants 110+ supply with gas 180 and an Observatory standing
+ * (planned for the Archives it keeps the old 70 floor); Legs want the
+ * Citadel past supply 90 with 4+ zealots.
  * Research coverage is execution-side, so no researched flag rides
  * the snapshot.
  *
@@ -62,10 +63,38 @@ public class CitadelLegsTest {
     }
 
     @Test
+    public void standaloneCitadelWaitsFor110() {
+        assertTrue(hasGoal(contribute(state(120, 200, 6, true, false)),
+            AUnitType.Protoss_Citadel_of_Adun),
+            "110 with gas and eyes standing orders the standalone Citadel");
+        assertFalse(hasGoal(contribute(state(109, 200, 6, true, false)),
+            AUnitType.Protoss_Citadel_of_Adun),
+            "109 is not 110: the standalone Citadel waits");
+    }
+
+    @Test
     public void noEyesNoCitadel() {
         assertFalse(hasGoal(contribute(state(150, 200, 6, false, false)),
             AUnitType.Protoss_Citadel_of_Adun),
             "without the Observatory the Citadel waits");
+    }
+
+    @Test
+    public void archivesPlanLetsCitadelComeEarly() {
+        DynamicGoals.GameSnapshot planned = state(100, 200, 6, true, false);
+        planned.archivesPlanned = true;
+
+        assertTrue(hasGoal(contribute(planned), AUnitType.Protoss_Citadel_of_Adun),
+            "planned for the Archives, the Citadel may come before 110");
+    }
+
+    @Test
+    public void archivesPlanKeepsOldFloor() {
+        DynamicGoals.GameSnapshot planned = state(60, 200, 6, true, false);
+        planned.archivesPlanned = true;
+
+        assertFalse(hasGoal(contribute(planned), AUnitType.Protoss_Citadel_of_Adun),
+            "even for the Archives the old 70 floor holds");
     }
 
     @Test
