@@ -100,8 +100,39 @@ public class PylonConcurrencyCapSimTest extends WorldStubForTests {
     }
 
     @Test
-    public void richBankStillAllowsThePair() {
-        // Owner rule: above 300 minerals Pylon + Core stay affordable
+    public void deadLinkedBuildingStillCountsAsOutstanding() {
+        // A refused warp's order echo: IN_PROGRESS with a linked unit id
+        // that is already dead. The link is never cleared, so the row
+        // would stay invisible to every counter - live demand with no
+        // row and no unit. Counts as outstanding, like the unitless row.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe,
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            currentMinerals = 150;
+
+            Construction adopted = new Construction(AUnitType.Protoss_Pylon);
+            adopted.setPositionToBuild(atlantis.map.position.APosition.create(10, 10));
+            adopted.setStatus(
+                atlantis.production.constructions.ConstructionOrderStatus.IN_PROGRESS);
+            FakeUnit deadWarp = fake(AUnitType.Protoss_Pylon, 10, 10);
+            deadWarp.hp = 0;
+            adopted.setBuildingUnit(deadWarp);
+            ConstructionRequests.addConstruction(adopted);
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            assertNull(
+                NewConstructionRequest.requestConstructionOf(
+                    AUnitType.Protoss_Pylon, null, order),
+                "a dead linked unit is no arriving supply - the second Pylon waits");
+        });
+    }
+
+    @Test
+    public void richBankStillAllowsThePair() {        // Owner rule: above 300 minerals Pylon + Core stay affordable
         // together, so the cap gates concurrency, never the demand.
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(

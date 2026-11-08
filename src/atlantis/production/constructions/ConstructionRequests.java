@@ -117,18 +117,34 @@ public class ConstructionRequests {
      * demand - the arrival-to-warp window that re-fired build-order rows
      * live (duplicate Pylons/Gateways, 20261027_121013). No double count:
      * a unit is either linked (counted there) or missing (counted here).
+     *
+     * <p>A linked unit that is already dead counts as missing: the link
+     * is never cleared, so a refused warp's order echo (IN_PROGRESS, no
+     * builder, a dead unit id) would otherwise stay invisible to every
+     * counter - live demand with no row and no unit (2026-11-08, second
+     * Pylon minted behind a stuck first one with the bank below 300).
      */
     public static int countInProgressWithoutUnitOfType(AUnitType type) {
         int total = 0;
         for (Construction construction : constructions) {
             if (construction.status() == ConstructionOrderStatus.IN_PROGRESS
-                && construction.buildingUnit() == null
-                && construction.buildingType().equals(type)) {
+                && construction.buildingType().equals(type)
+                && !hasLiveBuilding(construction)) {
                 total++;
             }
         }
 
         return total;
+    }
+
+    private static boolean hasLiveBuilding(Construction construction) {
+        try {
+            AUnit building = construction.buildingUnit();
+
+            return building != null && building.isAlive();
+        } catch (RuntimeException ignored) {
+            return true;
+        }
     }
 
     public static int countNotFinishedWithHighPriority() {
