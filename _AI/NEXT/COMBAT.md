@@ -23,6 +23,13 @@ owner-called.
   (`RetreatLadderTest`, `RetreatFloorTest`, mutation-proven).
   Open: one losing-fight live game where the line holds the middle
   instead of running home.
+- **No-flee holds (owner 2026-11-08).** Sim-pinned decision gates:
+  past two bases the cluster holds when nearer the main than the
+  natural (`multiBaseHoldAgainstRetreat`); 15+ combat units within
+  20 ground tiles of the natural at 90%+ strength stand and fight
+  (`naturalStandWithStrength`, outranks the weak-early-Zerg veto).
+  Open: live proof - a game where the line holds the natural instead
+  of running home.
 - **ClusterFlee.** Sim pins cover homeward rally, organized retreat,
   fighting through a blocking army; 93 retained games show no
   blocking instance - unstick stays parked. Open: live

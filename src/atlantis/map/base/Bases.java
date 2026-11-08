@@ -40,6 +40,14 @@ public class Bases {
         );
     }
 
+    /**
+     * Test seam: the natural re-derives on a TTL, so a stub game would
+     * otherwise read the previous test's base.
+     */
+    public static void clearForTests() {
+        cache.clear();
+    }
+
     public static List<AUnit> existing() {
         return Select.ourBasesWithUnfinished().list();
     }

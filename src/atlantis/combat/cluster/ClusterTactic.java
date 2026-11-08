@@ -66,6 +66,27 @@ public final class ClusterTactic {
             return FightOrFlight.Tactic.FIGHT;
         }
 
+        // Multi-base hold (owner 2026-11-08): past two bases the cluster
+        // never trades the natural for a retreat home - with the ball
+        // closer to the main than to the natural by ground, FLEE walks
+        // away from the base under attack instead of toward the fight.
+        if (multiBaseHoldAgainstRetreat()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
+        // Natural stand (owner 2026-11-08): 15+ combat units within 20
+        // ground tiles of the natural at 90%+ relative strength stand
+        // and fight - only FIGHT is allowed. The weak-early-Zerg veto
+        // below stays for genuinely outmatched openers; this owns the
+        // held-natural shape, so it runs before it.
+        if (naturalStandWithStrength()) {
+            fleeStartedAt = -1;
+
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
         // Stardust rule (owner 2026-10-23): never run through a blocking
         // army. If armed enemies sit between the cluster and home, the
         // cluster fights through instead - the latch does not apply,
@@ -117,6 +138,55 @@ public final class ClusterTactic {
         if (center == null) return false;
 
         return center.distTo(main) < 2;
+    }
+
+    /**
+     * Past two bases, closer to the main than to the natural by ground:
+     * FLEE is not an option there - the ball is already homeward of the
+     * natural, so retreating abandons the base under attack instead of
+     * joining its fight. Public as a seam, pinned without a game.
+     */
+    public static final int MULTI_BASE_HOLD_BASES = 2;
+
+    public static boolean multiBaseHoldAgainstRetreat() {
+        try {
+            if (atlantis.units.select.Select.ourBasesWithUnfinished().count()
+                <= MULTI_BASE_HOLD_BASES) return false;
+
+            HasPosition center = Alpha.get().center();
+            AUnit main = HomeGround.resolve().main();
+            AUnit natural = atlantis.map.base.Bases.natural();
+            if (center == null || main == null || main.position() == null
+                || natural == null || natural.position() == null) return false;
+
+            return center.groundDist(main.position()) < center.groundDist(natural.position());
+        } catch (Exception | Error ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * 15+ combat units within 20 ground tiles of the natural at 90%+
+     * relative strength: FLEE is not an option there, only FIGHT.
+     * Public as a seam, pinned without a game.
+     */
+    public static final int NATURAL_STAND_UNITS = 15;
+    public static final double NATURAL_STAND_DIST = 20;
+    public static final int NATURAL_STAND_STRENGTH = 90;
+
+    public static boolean naturalStandWithStrength() {
+        try {
+            if (atlantis.units.select.Count.ourCombatUnits() <= NATURAL_STAND_UNITS) return false;
+            if (atlantis.information.generic.Army.strength() < NATURAL_STAND_STRENGTH) return false;
+
+            HasPosition center = Alpha.get().center();
+            AUnit natural = atlantis.map.base.Bases.natural();
+            if (center == null || natural == null || natural.position() == null) return false;
+
+            return center.groundDist(natural.position()) <= NATURAL_STAND_DIST;
+        } catch (Exception | Error ignored) {
+            return false;
+        }
     }
 
     /**
