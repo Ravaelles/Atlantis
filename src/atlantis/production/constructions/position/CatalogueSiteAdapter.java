@@ -191,48 +191,16 @@ public final class CatalogueSiteAdapter {
         // V3 S6 slice 2: the once-planned layout owns issuance - a free
         // reserved slot serves before the per-frame hunt, under the same
         // verdict, physics and reachability the hunted tile would face.
-        // A refused slot falls through to the hunt below, never declines -
-        // and joins that hunt's exclusion list, so the hunt cannot
-        // re-serve on verdict grounds what the slot path just refused.
+        // Owner 2026-11-08: a power-needing building that never orders
+        // support (Gateway) walks the slots until a powered one serves -
+        // the first slot dark no longer parks the pass when a later one
+        // stands in power. Refused slots join the hunt's exclusion list,
+        // so the hunt cannot re-serve on verdict grounds what the slot
+        // path just refused.
         Set<String> excluded = new HashSet<String>();
-        APosition slot = firstFreeSlot(building);
+        APosition slot = firstPoweredFreeSlot(building, builder, construction);
         if (slot != null) {
-            SitingVerdict slotVerdict = SitingVerdict.check(building, slot);
-            // Worker-cover is an assignment prediction ("no builder could
-            // be assigned here"), not a tile fact: with the demand's own
-            // builder committed and alive the assignment already happened
-            // (V2-direct assigns from the free pool even on covered
-            // tiles), so declining parks a waiting builder behind a
-            // prediction about itself. Measured live (TauCross 20261106):
-            // a powered Gateway slot declined 1511x on cover while its
-            // builder spun mine/manager, 80 s cancel, re-request, repeat -
-            // one Gateway in buildings.json all game. Uncommitted
-            // (proxy) searches keep declining: serving them would re-make
-            // the NEXT #145 builderless storm. Refused, unpowered and
-            // mineral tiles still decline, waiver or not.
-            boolean coverWaived = isCommittedBuilder(construction, builder)
-                && "worker-covered".equals(slotVerdict.twin);
-            if (!slotVerdict.accepted() && !coverWaived) {
-                SiteTwin.declined(building, slotVerdict.twin, "slot",
-                    constraint.nearTileX(), constraint.nearTileY());
-                if ("unpowered".equals(slotVerdict.twin)) {
-                    queueSlotSupportPylon(building, slot);
-                }
-                excluded.add(tileKey(slot.tx(), slot.ty()));
-            }
-            else if (!CanPhysicallyBuildHere.check(builder, building, slot)) {
-                SiteTwin.declined(building, "legacy-refused", "slot",
-                    constraint.nearTileX(), constraint.nearTileY());
-                excluded.add(tileKey(slot.tx(), slot.ty()));
-            }
-            else if (unreachableFromMain(slot)) {
-                SiteTwin.declined(building, "unreachable", "slot",
-                    constraint.nearTileX(), constraint.nearTileY());
-                excluded.add(tileKey(slot.tx(), slot.ty()));
-            }
-            else {
-                return answerWithTwin(slot, building, "slot", null, constraint);
-            }
+            return answerWithTwin(slot, building, "slot", null, constraint);
         }
 
         PlacementReservation reservation = propose(planner, builder, building, constraint, "funnel", excluded,
@@ -256,13 +224,58 @@ public final class CatalogueSiteAdapter {
     }
 
     /**
-     * The first reserved slot of this type no live building covers
-     * (V3 S6): standing and unfinished footprints both occupy, so a
-     * warping Pylon and a parked row equally hold their slot. Single
-     * implementation in {@link atlantis.placement.core.ReservedSlots};
-     * this is just the call-site predicate (same overlap rule the
-     * planner uses, so the two paths cannot disagree on occupancy).
+     * The first servable reserved slot of this type, oldest planned
+     * first (V3 S6, owner 2026-11-08): standing and unfinished
+     * footprints both occupy, so a warping Pylon and a parked row
+     * equally hold their slot. Each free slot faces the same verdict,
+     * physics and reachability the hunted tile would face; refused
+     * slots are skipped (and excluded from the hunt below by the
+     * caller passing them on) so a dark first slot no longer parks a
+     * Gateway whose later slot stands in power. Null when no slot
+     * serves - the hunt below owns the frame either way.
      */
+    private static APosition firstPoweredFreeSlot(AUnitType building, AUnit builder, Construction construction) {
+        try {
+            for (atlantis.placement.core.ReservedSlots.Slot slot :
+                atlantis.placement.core.ReservedSlots.slots()) {
+                if (slot == null || slot.tile == null || slot.type == null) continue;
+                if (building == null || !slot.type.equals(building)) continue;
+                try {
+                    if (atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(slot.tile, building)
+                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+                        .check(slot.tile, building)) continue;
+                } catch (Exception | Error ignored) {
+                    continue;
+                }
+
+                SitingVerdict slotVerdict = SitingVerdict.check(building, slot.tile);
+                // Worker-cover is an assignment prediction ("no builder could
+                // be assigned here"), not a tile fact: with the demand's own
+                // builder committed and alive the assignment already happened
+                // (V2-direct assigns from the free pool even on covered
+                // tiles), so declining parks a waiting builder behind a
+                // prediction about itself. Measured live (TauCross 20261106):
+                // a powered Gateway slot declined 1511x on cover while its
+                // builder spun mine/manager, 80 s cancel, re-request, repeat -
+                // one Gateway in buildings.json all game. Uncommitted
+                // (proxy) searches keep declining: serving them would re-make
+                // the NEXT #145 builderless storm. Refused, unpowered and
+                // mineral tiles still decline, waiver or not.
+                boolean coverWaived = isCommittedBuilder(construction, builder)
+                    && "worker-covered".equals(slotVerdict.twin);
+                if (!slotVerdict.accepted() && !coverWaived) continue;
+                if (!CanPhysicallyBuildHere.check(builder, building, slot.tile)) continue;
+                if (unreachableFromMain(slot.tile)) continue;
+
+                return slot.tile;
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return null;
+    }
+
     private static APosition firstFreeSlot(AUnitType building) {
         return atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
             building,
@@ -271,46 +284,6 @@ public final class CatalogueSiteAdapter {
                     .check(tile, type)
                 || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
                     .check(tile, type));
-    }
-
-    /**
-     * An unpowered slot orders its support the Stardust way: the power
-     * Pylon is part of the layout, so the slot names it instead of
-     * waiting for the supply pump to notice. Same high-priority queue
-     * the planner drain uses (no new ordering rules); the queue dedup
-     * still owns flood control, so a refused repeat twins nothing.
-     * The hint is the free Pylon slot covering the Gateway slot - a
-     * tile a siting Pylon can actually land on (a bare Gateway tile
-     * 16 tiles from any power is not). Only power-needing buildings.
-     */
-    private static void queueSlotSupportPylon(AUnitType building, APosition slot) {
-        if (building == null || slot == null || !building.needsPower()) return;
-        try {
-            APosition pylonSlot = atlantis.placement.core.ReservedSlots.supportPylonSlotFor(
-                slot, AUnitType.Protoss_Pylon,
-                (tile, type) ->
-                    atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
-                        .check(tile, type)
-                        || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
-                        .check(tile, type));
-            if (pylonSlot == null) return;
-
-            ProductionOrder support = AddToQueue.withHighPriority(
-                AUnitType.Protoss_Pylon, pylonSlot);
-            if (support == null) return;
-
-            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CATALOGUE_SITE)
-                .param("type", building.name())
-                .param("result", "supported")
-                .param("tx", slot.tx())
-                .param("ty", slot.ty())
-                .param("via", "slot")
-                .param("support", AUnitType.Protoss_Pylon.name())
-                .param("supportTx", pylonSlot.tx())
-                .param("supportTy", pylonSlot.ty())
-                .log(AGame.now(), atlantis.game.A.minSec());
-        } catch (Exception | Error ignored) {
-        }
     }
 
     /**
@@ -411,6 +384,15 @@ public final class CatalogueSiteAdapter {
                 UnitProducible.of(building), constraint, AGame.now(), excluded
             ));
             for (atlantis.placement.core.SupportRequest support : planner.drainSupportRequests()) {
+                // Support is cannon-only (owner 2026-11-08) and follows
+                // the same doors as a normal mint: the planner only
+                // declares for Cannons, and a refused repeat stays
+                // silent - no overdraft, no flood past the cap.
+                if (support == null || support.unitType() == null
+                    || !support.unitType().isPylon()) continue;
+                if (building == null || !building.isCannon()) continue;
+                if (!atlantis.game.A.canAfford(support.unitType())) continue;
+                if (atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight()) continue;
                 AddToQueue.withHighPriority(
                     support.unitType(),
                     APosition.create(support.tileX(), support.tileY()));

@@ -612,14 +612,14 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     /**
-     * V3 S6 slice 3: an unpowered reserved slot orders its support -
-     * the drought shape (228 unpowered declines, zero Pylons) dies
-     * here. The support Pylon rides the same high-priority queue the
-     * planner drain uses, so no new ordering rules; dedup still owns
-     * flood control.
+     * Owner 2026-11-08: an unpowered reserved slot orders NO support for
+     * a Gateway - the funnel support path died with the doctrine.
+     * Gateways sit on pre-planned power and never order Pylons; only a
+     * Cannon may. The slot declines like the hunt would, the queue stays
+     * clean of Pylon rows, and no supported twin fires.
      */
     @Test
-    public void anUnpoweredSlotQueuesItsSupportPylon() {
+    public void anUnpoweredSlotQueuesNoSupportForGateway() {
         atlantis.placement.core.TileAvailabilityGrid grid =
             new atlantis.placement.core.TileAvailabilityGrid(new Flat(40, 40));
         java.util.List<atlantis.placement.core.ReservedSlots.Slot> layout =
@@ -632,7 +632,6 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             if (slot.label.equals("G1")) g1 = slot;
         }
         assertNotNull(g1, "the layout owes G1");
-        final atlantis.placement.core.ReservedSlots.Slot first = g1;
 
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
@@ -654,45 +653,12 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                     failing, probe, AUnitType.Protoss_Gateway, construction);
 
                 assertNull(site, "no power, no tile - the slot declines like the hunt would");
-                boolean queued = false;
                 for (ProductionOrder row : Queue.get().allOrders().list()) {
-                    if (row.unitType() != null && row.unitType().isPylon()
-                        && row.aroundPosition() != null
-                        && row.priority() == atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH
-                        && Math.max(Math.abs(row.aroundPosition().tx() - first.tile.tx()),
-                            Math.abs(row.aroundPosition().ty() - first.tile.ty())) <= 6) {
-                        queued = true;
-                    }
+                    assertFalse(row.unitType() != null && row.unitType().isPylon(),
+                        "a Gateway never queues its support Pylon: " + row);
                 }
-                boolean covering = false;
-                boolean plannedPylon = false;
-                for (ProductionOrder row : Queue.get().allOrders().list()) {
-                    if (row.unitType() == null || !row.unitType().isPylon()) continue;
-                    if (row.aroundPosition() == null) continue;
-                    for (atlantis.placement.core.ReservedSlots.Slot slot : layout) {
-                        if (!slot.type.isPylon()) continue;
-                        if (slot.tile.tx() != row.aroundPosition().tx()
-                            || slot.tile.ty() != row.aroundPosition().ty()) continue;
-                        plannedPylon = true;
-                        for (atlantis.placement.core.ReservedSlots.Slot gateway : layout) {
-                            if (gateway.type.isPylon()) continue;
-                            if (Math.max(Math.abs(gateway.tile.tx() - slot.tile.tx()),
-                                Math.abs(gateway.tile.ty() - slot.tile.ty())) <= 6) {
-                                covering = true;
-                            }
-                        }
-                    }
-                }
-                assertTrue(plannedPylon,
-                    "the support Pylon lands on a planned Pylon slot, not a bare tile: "
-                        + Queue.get().allOrders().list());
-                assertTrue(covering,
-                    "that slot covers a Gateway slot (power is part of the layout): "
-                        + Queue.get().allOrders().list());
-                assertTrue(EventLog.toJsonLines().contains("\"result\":\"supported\""),
-                    "the support order is twinned: " + EventLog.toJsonLines());
-                assertTrue(EventLog.toJsonLines().contains("\"supportTx\""),
-                    "the twin names where the Pylon should land: " + EventLog.toJsonLines());
+                assertFalse(EventLog.toJsonLines().contains("\"result\":\"supported\""),
+                    "no supported twin for a Gateway: " + EventLog.toJsonLines());
             }
             finally {
                 atlantis.placement.core.ReservedSlots.clearForTests();
@@ -871,13 +837,13 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     /**
-     * B1 (owner #147, Pylon family): the expansion-power job of the
-     * deleted per-base Pylon producer lives here - siting a Gateway on
-     * an unpowered tile queues the support Pylon with high priority
-     * instead of serving the tile, so the new base gets power first.
+     * Owner 2026-11-08: siting a Gateway on an unpowered tile queues
+     * NOTHING - a Gateway never orders a Pylon, even when the planner
+     * drains a (stale or scripted) support request for it. Only a
+     * Cannon forwards the drain to the queue.
      */
     @Test
-    public void unpoweredSitingQueuesSupportPylon() {
+    public void unpoweredSitingQueuesNoSupportForGateway() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
@@ -895,6 +861,36 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
                     new atlantis.placement.core.SupportRequest(AUnitType.Protoss_Pylon, 25, 25)));
 
             APosition site = CatalogueSiteAdapter.siteFor(planner, probe, AUnitType.Protoss_Gateway, construction);
+
+            assertNull(site, "no tile served without power - and no support either");
+            for (ProductionOrder row : Queue.get().allOrders().list()) {
+                assertFalse(row.unitType() != null && row.unitType().isPylon(),
+                    "a Gateway never queues its support Pylon: " + row);
+            }
+        });
+    }
+
+    @Test
+    public void unpoweredSitingQueuesSupportForCannon() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        currentMinerals = 400;
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Photon_Cannon, 8);
+            Construction construction = constructionFor(AUnitType.Protoss_Photon_Cannon, order, APosition.create(20, 20));
+            ScriptedPlanner planner = new ScriptedPlanner(
+                atlantis.production.placement.PlacementReservation.failure(),
+                java.util.Collections.singletonList(
+                    new atlantis.placement.core.SupportRequest(
+                        AUnitType.Protoss_Pylon, "Protoss_Photon_Cannon", 25, 25)));
+
+            APosition site = CatalogueSiteAdapter.siteFor(planner, probe, AUnitType.Protoss_Photon_Cannon, construction);
 
             assertNull(site, "no tile served without power - support instead");
             boolean queued = false;

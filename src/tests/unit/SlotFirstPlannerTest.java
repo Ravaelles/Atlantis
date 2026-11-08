@@ -181,7 +181,7 @@ public class SlotFirstPlannerTest extends tests.acceptance.WorldStubForTests {
     }
 
     @Test
-    public void unpoweredSlotsDeclareSupport() {
+    public void unpoweredCannonSlotDeclaresSupport() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
         APosition main = terrain.baseTile(0);
 
@@ -210,10 +210,10 @@ public class SlotFirstPlannerTest extends tests.acceptance.WorldStubForTests {
                 planner.startPass();
 
                 PlacementReservation result = planner.reservePlacement(
-                    UnitProducible.of(AUnitType.Protoss_Gateway),
+                    UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
                     TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
 
-                assertFalse(result.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+                assertFalse(result.isSuccessful(), "no Pylon anywhere: no Cannon reservation");
                 java.util.List<atlantis.placement.core.SupportRequest> drained =
                     planner.drainSupportRequests();
                 assertFalse(drained.isEmpty(), "the unpowered slot declares its support Pylon");

@@ -477,40 +477,53 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         double slotRadius = constraint.radius();
         boolean slotBounded = constraint.mode() == TargetPlacement.Mode.NEIGHBOURHOOD && slotRadius >= 0;
 
-        BuildLocation planned = firstFreePlannedSlot(unitType, excluded);
-        if (planned != null
-            && (!slotBounded
-            || APosition.create(planned.tileX(), planned.tileY()).distTo(centre) <= slotRadius)) {
+        // V3 S6: the once-planned layout owns issuance on the single
+        // door too - the first free slot serves before the ranked hunt,
+        // through the same legality ladder a hunted tile faces, so the
+        // V2-direct path (which never funnels) issues from the layout.
+        // Owner 2026-11-08: a power-needing building that never orders
+        // support (Gateway) walks the slots until a powered one serves -
+        // the first slot dark no longer parks the pass when a later one
+        // stands in power. A refused slot falls through to the next
+        // slot, then to the hunt below, never declines.
+        // A slot outside a bounded neighbourhood falls through too: the
+        // sited door asked near its anchor, the layout lives at the main.
+        java.util.List<BuildLocation> plannedSlots = freePlannedSlots(unitType, excluded);
+        for (BuildLocation planned : plannedSlots) {
+            if (slotBounded
+                && APosition.create(planned.tileX(), planned.tileY()).distTo(centre) > slotRadius) {
+                continue;
+            }
             int supportMark = supportThisPass.size();
             PlacementReservation slotAnswer = serveIfLegal(planned, unitType, targetFrame, null);
-            if (slotAnswer != null) {
+            if (slotAnswer == null) continue;
+
+            if (slotAnswer.isSuccessful()) {
                 // The single door proves it issues from the layout: hunted
                 // tiles stay untwinned (as before), a served slot names
                 // itself, so a game log tells slot issues apart from hunts.
-                if (slotAnswer.isSuccessful()) {
-                    SiteTwin.answered(unitType,
-                        APosition.create(planned.tileX(), planned.tileY()),
-                        "slot-planner", slotAnswer, null);
+                SiteTwin.answered(unitType,
+                    APosition.create(planned.tileX(), planned.tileY()),
+                    "slot-planner", slotAnswer, null);
 
-                    return slotAnswer;
-                }
-
-                // An unpowered slot declares its support (inside
-                // serveIfLegal) but no longer ends the pass: the hunt below
-                // may know a powered tile near standing power, and serving
-                // it now beats waiting 600f for the support chain (measured
-                // live: Gateway slot dark 3500f while Pylon power stood a
-                // few tiles away). The speculative support is retracted when
-                // the hunt serves - power extends only while nothing
-                // powered exists. Refused slots still fall through as before
-                // (serveIfLegal null), and an empty hunt keeps the support.
-                PlacementReservation hunted = hunt(unitType, constraint, centre,
-                    targetFrame, excluded);
-                if (hunted != null && hunted.isSuccessful())
-                    supportThisPass.subList(supportMark, supportThisPass.size()).clear();
-
-                return hunted;
+                return slotAnswer;
             }
+
+            // An unpowered Cannon slot declares its support (inside
+            // serveIfLegal) but no longer ends the pass: the hunt below
+            // may know a powered tile near standing power, and serving
+            // it now beats waiting 600f for the support chain (measured
+            // live: Gateway slot dark 3500f while Pylon power stood a
+            // few tiles away). The speculative support is retracted when
+            // the hunt serves - power extends only while nothing
+            // powered exists. Refused slots still fall through as before
+            // (serveIfLegal null), and an empty hunt keeps the support.
+            PlacementReservation hunted = hunt(unitType, constraint, centre,
+                targetFrame, excluded);
+            if (hunted != null && hunted.isSuccessful())
+                supportThisPass.subList(supportMark, supportThisPass.size()).clear();
+
+            return hunted;
         }
 
         return hunt(unitType, constraint, centre, targetFrame, excluded);
@@ -594,33 +607,45 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     }
 
     /**
-     * The first free planned slot of this type as a catalogue-shaped
-     * candidate, or null. Occupancy is footprint overlap, standing and
-     * unfinished alike: a warping Pylon and a parked row both hold
-     * their slot, and a cancelled row frees it by ceasing to cover it
-     * (no bookkeeping that could desync). Pure order, no mutation.
+     * The free planned slots of this type as catalogue-shaped
+     * candidates, oldest planned first. Occupancy is footprint overlap,
+     * standing and unfinished alike: a warping Pylon and a parked row
+     * both hold their slot, and a cancelled row frees it by ceasing to
+     * cover it (no bookkeeping that could desync). Pure order, no
+     * mutation. The caller runs each through the legality ladder, so a
+     * dark Gateway slot is skipped for a later powered one instead of
+     * parking the pass (owner 2026-11-08).
      */
-    private BuildLocation firstFreePlannedSlot(AUnitType unitType, final java.util.Set<String> excluded) {
-        if (unitType == null) return null;
+    private java.util.List<BuildLocation> freePlannedSlots(AUnitType unitType, final java.util.Set<String> excluded) {
+        java.util.List<BuildLocation> out = new java.util.ArrayList<>();
+        if (unitType == null) return out;
 
         try {
-            APosition tile = atlantis.placement.core.ReservedSlots.firstFreeSlotOfType(
-                unitType,
-                (slotTile, building) ->
-                    (excluded != null && excluded.contains(slotTile.tx() + ":" + slotTile.ty()))
-                        || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
-                        .check(slotTile, building)
+            for (atlantis.placement.core.ReservedSlots.Slot slot :
+                atlantis.placement.core.ReservedSlots.slots()) {
+                if (slot == null || slot.tile == null || slot.type == null) continue;
+                if (!slot.type.equals(unitType)) continue;
+                if (excluded != null && excluded.contains(slot.tile.tx() + ":" + slot.tile.ty())) continue;
+                boolean busy;
+                try {
+                    busy = atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                        .check(slot.tile, unitType)
                         || atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
-                        .check(slotTile, building));
-            if (tile == null) return null;
+                        .check(slot.tile, unitType);
+                } catch (Exception | Error ignored) {
+                    continue;
+                }
+                if (busy) continue;
 
-            return new atlantis.placement.core.BuildLocation(
-                tile.tx(), tile.ty(),
-                unitType.getTilesWidth(), unitType.getTilesHeights(),
-                0, 0, 0, false);
+                out.add(new atlantis.placement.core.BuildLocation(
+                    slot.tile.tx(), slot.tile.ty(),
+                    unitType.getTilesWidth(), unitType.getTilesHeights(),
+                    0, 0, 0, false));
+            }
         } catch (Exception | Error ignored) {
-            return null;
         }
+
+        return out;
     }
 
     /**
@@ -697,6 +722,17 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (unreachableFromMain(APosition.create(candidate.tileX(), candidate.tileY()))) return null;
 
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
+                // Support is cannon-only (owner 2026-11-08): a Gateway (or
+                // any other power-needing building) never orders a Pylon -
+                // it sits on pre-planned power instead. An unpowered
+                // candidate is skipped so the hunt moves on to a powered
+                // tile; only a Cannon declares support and ends the pass
+                // with failure, keeping it for forwarding.
+                if (unitType == null || !unitType.isCannon()) {
+                    lastRefusal = "unpowered";
+                    return null;
+                }
+
                 // Race-specific support (e.g. a Pylon) is declared by the strategy;
                 // the composition root that ran this pass forwards it to
                 // production - the generic planner never learns the support

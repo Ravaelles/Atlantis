@@ -152,7 +152,39 @@ public class PlannerPowerReproTest extends WorldStubForTests {
     }
 
     @Test
-    public void unpoweredGatewayDeclaresSupportOnTauCross() {
+    public void unpoweredCannonDeclaresSupportOnTauCross() {
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        APosition main = terrain.baseTile(0);
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, main.tx() + 2, main.ty());
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, main.tx(), main.ty()),
+            probe
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
+            try {
+                CataloguePlacementPlanner planner = realPlanner(grid);
+                planner.startPass();
+
+                PlacementReservation result = planner.reservePlacement(
+                    UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
+                    TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
+
+                assertTrue(!result.isSuccessful(), "no Pylon anywhere: no Cannon reservation");
+                java.util.List<atlantis.placement.core.SupportRequest> drained =
+                    planner.drainSupportRequests();
+                assertTrue(!drained.isEmpty(), "the planner declares its support Pylon");
+            }
+            finally {
+                ReservedSlots.clearForTests();
+            }
+        });
+    }
+
+    @Test
+    public void unpoweredGatewayDeclaresNoSupportOnTauCross() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
         APosition main = terrain.baseTile(0);
 
@@ -175,7 +207,8 @@ public class PlannerPowerReproTest extends WorldStubForTests {
                 assertTrue(!result.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
                 java.util.List<atlantis.placement.core.SupportRequest> drained =
                     planner.drainSupportRequests();
-                assertTrue(!drained.isEmpty(), "the planner declares its support Pylon");
+                assertTrue(drained.isEmpty(),
+                    "a Gateway never orders a Pylon - it waits for planned power (owner 2026-11-08)");
             }
             finally {
                 ReservedSlots.clearForTests();

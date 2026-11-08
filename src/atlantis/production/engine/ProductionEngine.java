@@ -210,7 +210,7 @@ public final class ProductionEngine {
             supportDropLastTwin.put(reason, now);
 
             EventLog.key(LogKey.CATALOGUE_SITE)
-                .param("type", "Gateway")
+                .param("type", demanderName(support))
                 .param("result", "support-dropped")
                 .param("reason", reason)
                 .param("tx", support == null ? -1 : support.tileX())
@@ -221,6 +221,27 @@ public final class ProductionEngine {
                 .log(now, A.minSec());
         } catch (Exception | Error ignored) {
         }
+    }
+
+    /**
+     * Who asked for the support Pylon (owner 2026-11-08: a Cannon -
+     * Gateways never order Pylons). Short human name for the twin;
+     * unknown or legacy requests without a demander read Gateway.
+     */
+    private static String demanderName(SupportRequest support) {
+        try {
+            String id = support == null ? null : support.demanderTypeId();
+            if (id != null) {
+                if (id.contains("Cannon")) return "Cannon";
+                if (id.contains("Gateway")) return "Gateway";
+                if (id.contains("Nexus")) return "Nexus";
+                if (id.startsWith("Protoss_")) return id.substring("Protoss_".length());
+                return id;
+            }
+        } catch (Exception | Error ignored) {
+        }
+
+        return "Gateway";
     }
 
     private static void forwardOneSupport(PlacementPlanner planner, GameOrderDirector director, SupportRequest support, int now) {
@@ -270,7 +291,7 @@ public final class ProductionEngine {
         }
 
         EventLog.key(LogKey.CATALOGUE_SITE)
-            .param("type", "Gateway")
+            .param("type", demanderName(support))
             .param("result", "supported")
             .param("tx", gatewayTile.tx())
             .param("ty", gatewayTile.ty())

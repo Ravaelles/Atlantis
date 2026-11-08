@@ -98,9 +98,11 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
      * Protoss support is a Pylon: the one building that makes a good-but-unpowered
      * spot usable. Answered as data - the caller forwards it to production,
      * so the production engine places and builds it like any other goal.
+     * The demander travels with the request (owner 2026-11-08: only a
+     * Cannon demands support; the planner gates the rest).
      */
     @Override
     public SupportRequest requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
-        return new SupportRequest(AUnitType.Protoss_Pylon, tx, ty);
+        return new SupportRequest(AUnitType.Protoss_Pylon, buildableTypeId, tx, ty);
     }
 }

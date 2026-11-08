@@ -31,7 +31,7 @@ public class PlacementSupportTest {
     @Test
     public void strategyDeclaresSupportAsData() {
         SupportRequest request =
-            new ProtossPlacementStrategy(null).requestAvailabilitySupport(10, 20, "Protoss_Gateway");
+            new ProtossPlacementStrategy(null).requestAvailabilitySupport(10, 20, "Protoss_Photon_Cannon");
 
         assertNotNull(request, "a Pylon makes the spot usable - declared, not ordered");
         assertEquals(AUnitType.Protoss_Pylon, request.unitType());
@@ -46,7 +46,7 @@ public class PlacementSupportTest {
         planner.startPass();
 
         PlacementReservation result = planner.reservePlacement(
-            UnitProducible.of(AUnitType.Protoss_Pylon), TargetPlacement.anywhere(), 0);
+            UnitProducible.of(AUnitType.Protoss_Photon_Cannon), TargetPlacement.anywhere(), 0);
 
         assertFalse(result.isSuccessful(), "unpowered tile: no reservation, support instead");
         List<SupportRequest> drained = planner.drainSupportRequests();

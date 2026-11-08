@@ -28,9 +28,11 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
 /**
  * V3 single-door support half (owner order 2026-11-06): the planner
  * only DECLARES power support; the composition root forwards it.
- * An unpowered Gateway demand on TauCross must mint a Pylon
+ * An unpowered Cannon demand on TauCross must mint a Pylon
  * construction on a covering planned slot - exactly once, with
  * exactly one supported twin - and a re-offer must dedupe silently.
+ * (Gateway support died with the 2026-11-08 doctrine: Gateways sit on
+ * pre-planned power and never order Pylons; only Cannons do.)
  */
 @Tag("placement")
 public class ForwardPlannedSupportTest extends WorldStubForTests {
@@ -49,6 +51,22 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
         }
 
         return n;
+    }
+
+    private static int[] supportedPair() {
+        for (String line : EventLog.toJsonLines().split("\n")) {
+            if (!line.contains("\"result\":\"supported\"")) continue;
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile(
+                "\"tx\":(\\d+),\"ty\":(\\d+).*\"supportTx\":(\\d+),\"supportTy\":(\\d+)")
+                .matcher(line);
+            if (m.find()) {
+                return new int[]{
+                    Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)),
+                    Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4))};
+            }
+        }
+
+        return null;
     }
 
     private static int droppedTwins(String reason) {
@@ -91,9 +109,9 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
             planner.startPass();
 
             PlacementReservation failed = planner.reservePlacement(
-                UnitProducible.of(AUnitType.Protoss_Gateway),
+                UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
                 TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
-            assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+            assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Cannon reservation");
 
             ProductionEngine.forwardDrainedSupport(
                 planner, new atlantis.production.execution.GameOrderDirector(), 100);
@@ -107,7 +125,7 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
     }
 
     @Test
-    public void unpoweredGatewayDemandMintsCoveringPylonOnce() {
+    public void unpoweredCannonDemandMintsCoveringPylonOnce() {
         SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
         APosition main = terrain.baseTile(1);
         currentMinerals = 400;
@@ -141,9 +159,9 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
                 planner.startPass();
 
                 PlacementReservation failed = planner.reservePlacement(
-                    UnitProducible.of(AUnitType.Protoss_Gateway),
+                    UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
                     TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
-                assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+                assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Cannon reservation");
 
                 ProductionEngine.forwardDrainedSupport(
                     planner, new atlantis.production.execution.GameOrderDirector(), 100);
@@ -161,27 +179,24 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
 
                 final APosition at = support.buildPosition();
                 boolean onPlannedSlot = false;
-                boolean coversGateway = false;
                 for (ReservedSlots.Slot slot : layout) {
                     if (!slot.type.isPylon()) continue;
-                    if (slot.tile.tx() != at.tx() || slot.tile.ty() != at.ty()) continue;
-                    onPlannedSlot = true;
-                    for (ReservedSlots.Slot gateway : layout) {
-                        if (gateway.type.isPylon()) continue;
-                        if (Math.abs(gateway.tile.tx() - at.tx()) <= 6
-                            && Math.abs(gateway.tile.ty() - at.ty()) <= 6) {
-                            coversGateway = true;
-                        }
-                    }
+                    if (slot.tile.tx() == at.tx() && slot.tile.ty() == at.ty()) onPlannedSlot = true;
                 }
                 assertTrue(onPlannedSlot, "the support Pylon lands on a planned P slot: " + at);
-                assertTrue(coversGateway, "that slot covers a Gateway slot: " + at);
+                int[] pair = supportedPair();
+                assertTrue(pair != null,
+                    "the support twin names the demanding Cannon and its Pylon");
+                assertTrue(atlantis.map.position.PsiField.covers(
+                        pair[2], pair[3], pair[0], pair[1], 2, 2),
+                    "the support Pylon powers the demanding Cannon: "
+                        + java.util.Arrays.toString(pair));
                 assertEquals(1, supportedTwins(), "exactly one supported twin, no per-frame spam");
 
                 int before = atlantis.production.constructions.ConstructionRequests.constructions.size();
                 planner.startPass();
                 PlacementReservation stillFailing = planner.reservePlacement(
-                    UnitProducible.of(AUnitType.Protoss_Gateway),
+                    UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
                     TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 101);
                 assertTrue(!stillFailing.isSuccessful(), "the walking Pylon does not power yet");
                 ProductionEngine.forwardDrainedSupport(
@@ -243,9 +258,9 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
                 planner.startPass();
 
                 PlacementReservation failed = planner.reservePlacement(
-                    UnitProducible.of(AUnitType.Protoss_Gateway),
+                    UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
                     TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
-                assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+                assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Cannon reservation");
 
                 ProductionEngine.forwardDrainedSupport(
                     planner, new atlantis.production.execution.GameOrderDirector(), 100);
