@@ -16,9 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Templar chain at the V2 goal layer (legacy ProduceTemplarArchives,
  * ProduceHighTemplar, ResearchPsionicStorm, ProduceDarkTemplar):
- * Archives open vs Zerg on bank or supply, HT up to a supply cap,
- * Storm once a caster stands, DT up to a supply cap unless a
- * Reaver-less Support Bay outranks them.
+ * Archives open vs Zerg on bank or supply, HT up to a supply cap once
+ * three Dark Templar were produced in this game, Storm once a caster
+ * stands, DT up to a supply cap unless a Reaver-less Support Bay
+ * outranks them.
  *
  * <p>Pure snapshot state, no world.</p>
  */
@@ -34,6 +35,7 @@ public class TemplarChainTest {
         snapshot.hasArchives = archives;
         snapshot.highTemplar = ht;
         snapshot.darkTemplar = dt;
+        snapshot.darkTemplarProducedTotal = 3;
         snapshot.combatUnits = combat;
         snapshot.hasSupportBay = bay;
         snapshot.reavers = reavers;
@@ -117,5 +119,30 @@ public class TemplarChainTest {
         assertFalse(hasGoal(contribute(state(100, 250, 20, 200, true, 0, 0, true, 0)),
             AUnitType.Protoss_Dark_Templar),
             "the gas builds the Reaver first");
+    }
+
+    @Test
+    public void twoProducedDarkTemplarHoldHighTemplar() {
+        DynamicGoals.GameSnapshot snapshot = state(100, 250, 20, 200, true, 0, 2, false, 0);
+        snapshot.darkTemplarProducedTotal = 2;
+
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_High_Templar),
+            "two produced Dark Templar are not three: no High Templar yet");
+    }
+
+    @Test
+    public void standingDarkTemplarAloneOpenNothing() {
+        DynamicGoals.GameSnapshot snapshot = state(100, 250, 20, 200, true, 0, 2, false, 0);
+        snapshot.darkTemplarProducedTotal = 0;
+
+        assertFalse(hasGoal(contribute(snapshot), AUnitType.Protoss_High_Templar),
+            "history opens the caste, not the standing board");
+    }
+
+    @Test
+    public void thirdProducedDarkTemplarOpensHighTemplar() {
+        assertTrue(hasGoal(contribute(state(100, 250, 20, 200, true, 0, 0, false, 0)),
+            AUnitType.Protoss_High_Templar),
+            "three produced in the past open the High Templar, none standing required");
     }
 }

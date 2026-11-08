@@ -12,6 +12,13 @@ public class ProduceHighTemplar {
 
         if (Have.no(requiredBuilding())) return false;
 
+        // Owner 2026-11-09: High Templar only after three Dark Templar
+        // were produced in this game (history, not standing units).
+        if (atlantis.game.util.CompletedUnitsHistory.completedCount(
+            AUnitType.Protoss_Dark_Templar) < atlantis.production.demand.DynamicGoals.HIGH_TEMPLAR_MIN_DARK_TEMPLAR) {
+            return false;
+        }
+
         int maxHT = haveThisManyHT();
 
         return buildToHave(type(), maxHT);
