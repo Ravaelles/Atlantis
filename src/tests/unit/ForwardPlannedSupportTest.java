@@ -197,4 +197,69 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
             }
         });
     }
+
+    @Test
+    public void stuckPylonRowBlocksSecondSupportPylon() {
+        // Live B189F12D 2:14: the first Pylon row lost its builder and
+        // sat unstarted while a support Pylon minted behind it on a poor
+        // bank - the cap must see the builderless row, not just warping
+        // and not-started ones.
+        SnapshotTerrain terrain = new SnapshotTerrain(SnapshotTerrain.tauCross());
+        APosition main = terrain.baseTile(1);
+        currentMinerals = 150;
+
+        TileAvailabilityGrid planGrid = new TileAvailabilityGrid(terrain);
+        java.util.List<ReservedSlots.Slot> layout = ReservedSlots.planOn(
+            new BuildLocationCatalogue(planGrid),
+            main,
+            AUnitType.Protoss_Gateway, 10);
+        ReservedSlots.setSlotsForTests(layout);
+
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, main.tx() + 2, main.ty());
+        FakeUnit spare = fake(AUnitType.Protoss_Probe, main.tx() + 3, main.ty() + 1);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, main.tx(), main.ty()),
+            probe,
+            spare
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+
+            TileAvailabilityGrid grid = new TileAvailabilityGrid(terrain);
+            try {
+                // The stuck first Pylon: adopted then builder lost, row
+                // alive, no unit, no warp. Exactly the live shape.
+                atlantis.production.constructions.Construction stuck =
+                    new atlantis.production.constructions.Construction(AUnitType.Protoss_Pylon);
+                stuck.setPositionToBuild(APosition.create(main.tx() + 2, main.ty() + 2));
+                stuck.setStatus(atlantis.production.constructions.ConstructionOrderStatus.IN_PROGRESS);
+                atlantis.production.constructions.ConstructionRequests.addConstruction(stuck);
+
+                CataloguePlacementPlanner planner = new CataloguePlacementPlanner(
+                    grid,
+                    new atlantis.placement.race.ProtossPlacementStrategy(
+                        new atlantis.placement.core.PsiGating(
+                            new atlantis.placement.engine.EnginePowerSource())),
+                    null, true);
+                planner.startPass();
+
+                PlacementReservation failed = planner.reservePlacement(
+                    UnitProducible.of(AUnitType.Protoss_Gateway),
+                    TargetPlacement.inNeighbourhood(main.tx(), main.ty()), 100);
+                assertTrue(!failed.isSuccessful(), "no Pylon anywhere: no Gateway reservation");
+
+                ProductionEngine.forwardDrainedSupport(
+                    planner, new atlantis.production.execution.GameOrderDirector(), 100);
+
+                assertEquals(1,
+                    atlantis.production.constructions.ConstructionRequests.constructions.size(),
+                    "the stuck row blocks the second Pylon: still exactly one row");
+                assertEquals(0, supportedTwins(), "no supported twin on a refused support");
+                assertEquals(1, droppedTwins("pylon-cap"),
+                    "the refusal names the cap, not silence");
+            }
+            finally {
+                ReservedSlots.clearForTests();
+            }
+        });
+    }
 }

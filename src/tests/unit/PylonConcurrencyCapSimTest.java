@@ -14,6 +14,7 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
@@ -173,6 +174,30 @@ public class PylonConcurrencyCapSimTest extends WorldStubForTests {
                     AUnitType.Protoss_Pylon, null, order),
                 "with no Pylon in flight the legacy door keeps minting - "
                     + "the cap gates concurrency, not demand");
+        });
+    }
+
+    @Test
+    public void builderlessNotStartedRowStillCounts() {
+        // Live B189F12D 2:14: the first Pylon row lost its builder
+        // before adopting and the second Pylon minted one frame later
+        // on a poor bank - if a builderless NOT_STARTED row stops
+        // counting, the cap has a one-frame hole every builder loss.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe,
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            currentMinerals = 150;
+
+            Construction waiting = new Construction(AUnitType.Protoss_Pylon);
+            waiting.setPositionToBuild(atlantis.map.position.APosition.create(10, 10));
+            ConstructionRequests.addConstruction(waiting);
+
+            assertTrue(atlantis.production.requests.produce.ProduceBuilding.tooManyPylonsInFlight(),
+                "a builderless NOT_STARTED row is still outstanding demand");
         });
     }
 }
