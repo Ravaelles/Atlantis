@@ -52,6 +52,7 @@ public class PylonConcurrencyCapSimTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Probe, 22, 22)
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 1) return;
+            currentMinerals = 100;
 
             // The V2 door already minted this supply block's Pylon.
             Construction v2row = new Construction(AUnitType.Protoss_Pylon);
@@ -64,6 +65,64 @@ public class PylonConcurrencyCapSimTest extends WorldStubForTests {
                     AUnitType.Protoss_Pylon, null, order),
                 "one unfinished Pylon below 40 supply is the cap - the legacy"
                     + " door must refuse, not mint a second one behind V2's back");
+        });
+    }
+
+    @Test
+    public void builderlessInProgressPylonStillCounts() {
+        // Live 2026-11-07 (EC1669F3, GAME_761B4B7F): a Pylon adopted then
+        // builder lost sits IN_PROGRESS with no linked building - neither
+        // warping (no unit) nor not-started - and a second Pylon minted
+        // behind it at 24/25 with ~200 bank, delaying the Core past the
+        // Dragoon timing. The cap must see the adopted-but-unitless row.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe,
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            currentMinerals = 150;
+
+            Construction adopted = new Construction(AUnitType.Protoss_Pylon);
+            adopted.setPositionToBuild(atlantis.map.position.APosition.create(10, 10));
+            adopted.setStatus(
+                atlantis.production.constructions.ConstructionOrderStatus.IN_PROGRESS);
+            ConstructionRequests.addConstruction(adopted);
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            assertNull(
+                NewConstructionRequest.requestConstructionOf(
+                    AUnitType.Protoss_Pylon, null, order),
+                "an adopted Pylon with no building yet is still in flight - "
+                    + "no second Pylon below 40 supply on a poor bank");
+        });
+    }
+
+    @Test
+    public void richBankStillAllowsThePair() {
+        // Owner rule: above 300 minerals Pylon + Core stay affordable
+        // together, so the cap gates concurrency, never the demand.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe,
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 1) return;
+            currentMinerals = 400;
+
+            Construction adopted = new Construction(AUnitType.Protoss_Pylon);
+            adopted.setPositionToBuild(atlantis.map.position.APosition.create(10, 10));
+            adopted.setStatus(
+                atlantis.production.constructions.ConstructionOrderStatus.IN_PROGRESS);
+            ConstructionRequests.addConstruction(adopted);
+
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            assertNotNull(
+                NewConstructionRequest.requestConstructionOf(
+                    AUnitType.Protoss_Pylon, null, order),
+                "rich bank: the second Pylon is affordable next to the Core");
         });
     }
 

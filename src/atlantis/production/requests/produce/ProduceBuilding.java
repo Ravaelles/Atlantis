@@ -40,14 +40,24 @@ public class ProduceBuilding {
      * BO + dynamic Pylons; the goal is never more than 8 free supply
      * there, which in practice means one Pylon at a time). At 40+ the
      * pipeline pair stays: overlapping builds is how late-game supply
-     * keeps up. The cap counts warping + not-started, so a row whose need
-     * is already being built waits instead of re-siting. Stuck sites do
+     * keeps up. The cap counts warping + not-started + adopted-but-unitless
+     * rows, so a row whose need is already being built waits instead of
+     * re-siting. Stuck sites do
      * not deadlock this: overdue constructions are cancelled elsewhere
      * and the next row proceeds after the cancel.
+     *
+     * <p>An IN_PROGRESS row with no linked building counts too (live
+     * 2026-11-07: adopted then builder lost, second Pylon minted behind
+     * it at 24/25 with 218 bank). A rich bank (owner rule: above 300
+     * minerals) still allows the pair: Pylon + Core stay affordable
+     * together, so the cap gates concurrency, never the demand.
      */
     public static boolean tooManyPylonsInFlight() {
-        int inFlight = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon);
-        if (atlantis.game.A.supplyUsed() < 40) return inFlight >= 1;
+        int inFlight = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon)
+            + ConstructionRequests.countInProgressWithoutUnitOfType(AUnitType.Protoss_Pylon);
+        if (atlantis.game.A.supplyUsed() < 40) {
+            return inFlight >= 1 && !atlantis.game.A.hasMinerals(300);
+        }
 
         return inFlight >= 2;
     }
