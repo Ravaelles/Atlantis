@@ -119,10 +119,14 @@ public class ForwardPlannedSupportTest extends WorldStubForTests {
             AUnitType.Protoss_Gateway, 10);
         ReservedSlots.setSlotsForTests(layout);
 
+        // Two probes: the support mint needs a free builder, and the
+        // no-builder guard (correctly) refuses a one-worker world.
         FakeUnit probe = fake(AUnitType.Protoss_Probe, main.tx() + 2, main.ty());
+        FakeUnit spare = fake(AUnitType.Protoss_Probe, main.tx() + 3, main.ty() + 1);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, main.tx(), main.ty()),
-            probe
+            probe,
+            spare
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 2) return;
 

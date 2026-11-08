@@ -42,15 +42,18 @@ public final class ReservedSlots {
 
 
     /**
-     * Power cover in build tiles (Chebyshev on origins): a Gateway
-     * slot counts as covered when a Pylon slot sits this close. The
-     * engine applies 6 tiles from the Pylon's own tiles +1
-     * ({@code EnginePowerSource#PYLON_RADIUS_TILES}); one tile of
-     * margin is kept for the footprints (Gateway 4x3 vs Pylon 2x2
-     * shift the centers), so a covered slot is powered in the worst
-     * measured geometry, not just the best.
+     * Power cover by the engine's own psi rule, not tile steps: a Gateway
+     * slot counts as covered when a Pylon origin powers its footprint
+     * center ({@code PsiField}), the same address the engine enforces
+     * at build time. Chebyshev on origins used to stand here with one
+     * tile of margin, and it lied on the vertical rim: a Pylon five
+     * tiles below a Gateway reads covered (Chebyshev 5) while the
+     * engine reads dy=176px out (measured live: S1 [15,49] paired with
+     * G1 [12,54], Gateway unwarpable all game, support Pylon minted
+     * ahead of the BO Gateway).
      */
-    static final int POWER_COVER_TILES = 6;
+    static final int GATEWAY_TILES_W = 4;
+    static final int GATEWAY_TILES_H = 3;
 
     public static final class Slot {
         public final String label;
@@ -250,7 +253,9 @@ public final class ReservedSlots {
                 gatewayType, APosition.create(candidate.tileX(), candidate.tileY()))) continue;
 
             APosition cover = coveringPylonSlot(
-                candidate.tileX(), candidate.tileY(), pylonCandidates, taken, rect);
+                candidate.tileX(), candidate.tileY(),
+                gatewayType.getTilesWidth(), gatewayType.getTilesHeights(),
+                pylonCandidates, taken, rect);
             if (cover == null) continue;
 
             taken.add(new Rect(cover.tx(), cover.ty(),
@@ -268,13 +273,13 @@ public final class ReservedSlots {
      * nearest to the Gateway (stable tie-break), never overlapping
      * an already taken rect. Null when no free Pylon tile reaches.
      */
-    private static APosition coveringPylonSlot(int gx, int gy,
+    private static APosition coveringPylonSlot(int gx, int gy, int gw, int gh,
         List<BuildLocation> pylonCandidates, List<Rect> taken, Rect gatewayRect) {
         APosition best = null;
         int bestDist = Integer.MAX_VALUE;
         for (BuildLocation candidate : pylonCandidates) {
-            if (Math.max(Math.abs(candidate.tileX() - gx), Math.abs(candidate.tileY() - gy))
-                > POWER_COVER_TILES) continue;
+            if (!atlantis.map.position.PsiField.covers(
+                candidate.tileX(), candidate.tileY(), gx, gy, gw, gh)) continue;
 
             if (isEdgeTile(candidate.tileX(), candidate.tileY(),
                 candidate.tileWidth(), candidate.tileHeight())) continue;
@@ -329,13 +334,12 @@ public final class ReservedSlots {
             int coverDist = Integer.MAX_VALUE;
             for (int i = 0; i < supply.size(); i++) {
                 APosition tile = supply.get(i).tile;
-                if (Math.max(Math.abs(tile.tx() - g1.tx()), Math.abs(tile.ty() - g1.ty()))
-                    <= POWER_COVER_TILES) {
-                    int d = Math.abs(tile.tx() - main.tx()) + Math.abs(tile.ty() - main.ty());
-                    if (d < coverDist) {
-                        coverDist = d;
-                        cover = i;
-                    }
+                if (!atlantis.map.position.PsiField.covers(tile.tx(), tile.ty(),
+                    g1.tx(), g1.ty(), GATEWAY_TILES_W, GATEWAY_TILES_H)) continue;
+                int d = Math.abs(tile.tx() - main.tx()) + Math.abs(tile.ty() - main.ty());
+                if (d < coverDist) {
+                    coverDist = d;
+                    cover = i;
                 }
             }
             if (cover > 0) {
@@ -354,16 +358,17 @@ public final class ReservedSlots {
     }
 
     /**
-     * Whether a Gateway origin sits within power reach of given Pylon
-     * origins (Chebyshev, {@link #POWER_COVER_TILES}). Test seam: pins
+     * Whether a Gateway slot sits within power reach of given Pylon
+     * origins, by the engine's own psi rule ({@code PsiField} on the
+     * 4x3 footprint - the address the engine enforces). Test seam: pins
      * the layout doctrine without a game.
      */
     public static boolean coveredByPylonSlots(int tx, int ty, java.util.List<APosition> pylons) {
         if (pylons == null || pylons.isEmpty()) return false;
         for (APosition pylon : pylons) {
             if (pylon == null) continue;
-            if (Math.max(Math.abs(tx - pylon.tx()), Math.abs(ty - pylon.ty()))
-                <= POWER_COVER_TILES) {
+            if (atlantis.map.position.PsiField.covers(
+                pylon.tx(), pylon.ty(), tx, ty, GATEWAY_TILES_W, GATEWAY_TILES_H)) {
                 return true;
             }
         }
@@ -388,8 +393,8 @@ public final class ReservedSlots {
             for (Slot slot : slots) {
                 if (slot == null || slot.tile == null || slot.type == null) continue;
                 if (!slot.type.equals(pylonType)) continue;
-                if (Math.max(Math.abs(slot.tile.tx() - gatewaySlot.tx()),
-                    Math.abs(slot.tile.ty() - gatewaySlot.ty())) > POWER_COVER_TILES) continue;
+                if (!atlantis.map.position.PsiField.covers(slot.tile.tx(), slot.tile.ty(),
+                    gatewaySlot.tx(), gatewaySlot.ty(), GATEWAY_TILES_W, GATEWAY_TILES_H)) continue;
 
                 boolean busy;
                 try {

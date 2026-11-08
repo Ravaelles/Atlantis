@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -98,8 +99,8 @@ public class ReservedSlotsTest {
         }
         assertNotNull(s1, "S1 exists on start " + start);
         assertNotNull(g1, "G1 exists on start " + start);
-        assertTrue(Math.max(Math.abs(s1.tile.tx() - g1.tile.tx()),
-            Math.abs(s1.tile.ty() - g1.tile.ty())) <= 6,
+        assertTrue(ReservedSlots.coveredByPylonSlots(g1.tile.tx(), g1.tile.ty(),
+            java.util.Collections.singletonList(s1.tile)),
             "the BO opens Pylon into Gateway: S1 powers G1 with no support detour on start "
                 + start + ", S1=" + s1.tile + " G1=" + g1.tile);
     }
@@ -160,6 +161,22 @@ public class ReservedSlotsTest {
                 gateway.tile.tx(), gateway.tile.ty(), pylons),
                 gateway.label + " at " + gateway.tile + " must sit within power reach of a Pylon slot");
         }
+    }
+
+    @Test
+    public void verticalRimPairIsNotCovered() {
+        // Live 2026-11-07/08 vs Steamhammer (TauCross): S1 at [15,49]
+        // paired with G1 at [12,54] by Chebyshev-5, while the engine
+        // reads the Gateway center dy=176px out of the psi mask. The
+        // Gateway never warped; a support Pylon minted ahead of the BO
+        // Gateway instead. PsiField is pure tile math (no map, no game),
+        // so this pins the rule without a snapshot.
+        java.util.List<APosition> pylons = java.util.Collections.singletonList(
+            APosition.create(15, 49));
+        assertFalse(ReservedSlots.coveredByPylonSlots(12, 54, pylons),
+            "dy=176 out: a Chebyshev-5 pair is not engine power");
+        assertTrue(ReservedSlots.coveredByPylonSlots(14, 50, pylons),
+            "a truly covered site keeps serving");
     }
 
     @Test
