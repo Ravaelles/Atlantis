@@ -178,6 +178,18 @@ public class NewConstructionRequest {
             }
             return null;
         }
+
+        // Cross-order footprint overlap (owner 2026-11-08): same-tile
+        // dedupe misses different tiles with shared footprint columns
+        // (measured live: Gateway [92,103] minted on Pylon row [93,103],
+        // 110 s of refused Builds on a banked supply block). Refuse, the
+        // demand retries elsewhere - same as the duplicate path above.
+        if (newConstruction.buildPosition() != null
+            && ConstructionRequests.overlapsInFlightRow(
+            newConstruction.buildPosition(),
+            building.getTilesWidth(), building.getTilesHeights())) {
+            return null;
+        }
         else {
             // Assign the optimal builder only for a row that survives: the
             // assignment can steal a busy builder off a live row (exclusive

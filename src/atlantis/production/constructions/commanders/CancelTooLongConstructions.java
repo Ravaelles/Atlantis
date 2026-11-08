@@ -106,23 +106,41 @@ public class CancelTooLongConstructions {
             new atlantis.production.orders.production.queue.order.ProductionOrder(
                 type, (atlantis.map.position.HasPosition) null, 0);
 
-        atlantis.production.constructions.NewConstructionRequest.requestConstructionOf(
-            type, null, probeOrder);
-
-        // Only what the request above ADDED counts: a pre-existing sibling at
-        // a different site must never be mistaken for the replacement (it has
-        // its own builder and its own life).
+        // The old row must not shadow the fresh search: it still holds
+        // its cursed tile while the search runs, so a genuinely different
+        // site that merely touches the old footprint would read as a
+        // duplicate. Take it out for the request; a failed search puts it
+        // back, a successful one cancels it as today.
+        boolean takenOut = atlantis.production.constructions.ConstructionRequests.constructions.remove(old);
         Construction fresh = null;
-        for (Construction construction : atlantis.production.constructions.ConstructionRequests.constructions) {
-            if (before.contains(construction)) continue;
-            if (!construction.buildingType().equals(type)) continue;
-            if (construction.buildPosition() == null) continue;
-            fresh = construction;
+        try {
+            atlantis.production.constructions.NewConstructionRequest.requestConstructionOf(
+                type, null, probeOrder);
+
+            // Only what the request above ADDED counts: a pre-existing sibling at
+            // a different site must never be mistaken for the replacement (it has
+            // its own builder and its own life).
+            for (Construction construction : atlantis.production.constructions.ConstructionRequests.constructions) {
+                if (before.contains(construction)) continue;
+                if (!construction.buildingType().equals(type)) continue;
+                if (construction.buildPosition() == null) continue;
+                fresh = construction;
+            }
+        } catch (RuntimeException | Error requestFailed) {
+            if (takenOut) {
+                atlantis.production.constructions.ConstructionRequests.constructions.add(old);
+            }
+
+            throw requestFailed;
         }
         if (!shouldReplace(oldPosition, fresh, type)) {
             if (fresh != null) {
                 fresh.cancel(type + " re-place landed on the same site, keeping the original");
             }
+            if (takenOut) {
+                atlantis.production.constructions.ConstructionRequests.constructions.add(old);
+            }
+
             return false;
         }
 

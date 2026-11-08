@@ -458,6 +458,31 @@ public class ConstructionRequests {
     }
 
     /**
+     * True when another in-flight row's footprint intersects the candidate
+     * tile (any building type): a second mint on overlapping ground. Live
+     * 2026-11-08: Pylon [93,103] STARTED, Gateway [92,103] minted on top -
+     * the mint doors only saw same tiles and live units, never rows, so
+     * the builder spun 110 s on refused Builds with a banked supply
+     * block. Same-tile doubles stay with the dedupe above; touching
+     * edges are legal (packed bases rely on them).
+     */
+    public static boolean overlapsInFlightRow(APosition tile, int w, int h) {
+        if (tile == null) return false;
+
+        for (Construction row : notFinished()) {
+            if (row == null || row.buildPosition() == null || row.buildingType() == null) continue;
+            if (PrepareConstructionSite.footprintsOverlap(
+                tile.tx(), tile.ty(), w, h,
+                row.buildPosition().tx(), row.buildPosition().ty(),
+                row.buildingType().getTilesWidth(), row.buildingType().getTilesHeights())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * "Not yet constructing": no builder yet (NOT_STARTED) or builder
      * travelling (STARTING). Both count wherever demand is counted, so a
      * travelling builder is never mistaken for no demand - the sets match

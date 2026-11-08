@@ -136,6 +136,19 @@ public class GameOrderDirector implements OrderDirector {
             }
         }
 
+        // Cross-order footprint overlap (owner 2026-11-08): same-tile
+        // dedupe misses different tiles with shared footprint columns
+        // (measured live: Gateway [92,103] minted on Pylon row [93,103],
+        // 110 s of refused Builds on a banked supply block). Refuse, the
+        // demand retries elsewhere.
+        if (ConstructionRequests.overlapsInFlightRow(
+            APosition.create(placement.tileX(), placement.tileY()),
+            buildingType.getTilesWidth(), buildingType.getTilesHeights())) {
+            twinRefused(buildingType, "overlap-row");
+
+            return false;
+        }
+
         // Single-demand tech mints once: a second concurrent construction
         // of a tech building is always a duplicate (one Core per tech
         // path), never legit concurrency like Pylons or Gateways. The
