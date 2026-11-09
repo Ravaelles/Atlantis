@@ -45,9 +45,10 @@ calls it - this section is the plan the slices below execute.
   yet. HYDRATED 2026-11-09: `MissionHold.hold` reads the task anchor
   instead of the mission switch (same standoffs on every reachable
   path; `HoldMainChokeEnforcementTest` + task pins cover both
-  halves, no behavior change). Next: rally reads task.fleeRally
-  (retreat stops AT the choke line), then approach narrowing +
-  forbidden branches per mission.
+  halves, no behavior change). `RetreatFloor` twins the task rally
+  next to its rung (`taskRally`, pinned pure) - the divergence data
+  for the next slice, which makes the rally read `fleeRally` (needs
+  a StarEngine repro + game proof: retreat destinations change).
 
 ## Deletion queue (verified unused, one at a time)
 
