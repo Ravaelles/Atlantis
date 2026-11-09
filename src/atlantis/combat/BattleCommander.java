@@ -5,6 +5,8 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.battle.DuelMemory;
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.Missions;
+import atlantis.combat.behaviors.protoss.corsair.CorsairExploreEnemyMain;
+import atlantis.combat.behaviors.protoss.corsair.CorsairSoloFlight;
 import atlantis.combat.cluster.*;
 import atlantis.combat.retreating.RetreatFromLostFight;
 import atlantis.combat.strategy.BattleStrategies;
@@ -213,7 +215,7 @@ public class BattleCommander extends Commander {
         atlantis.combat.twins.ClusterTwin.clearForTests();
         atlantis.combat.twins.CohesionTwin.clearForTests();
         atlantis.combat.cluster.ClusterCohesion.clearForTests();
-        atlantis.combat.behaviors.CorsairExploreEnemyMain.clearForTests();
+        CorsairExploreEnemyMain.clearForTests();
         atlantis.combat.twins.FormationOrderTwin.clearForTests();
         ArmyContact.clearForTests();
         atlantis.combat.retreating.RetreatLadder.reset();
@@ -264,7 +266,7 @@ public class BattleCommander extends Commander {
         // Solo Corsairs never joined Alpha, so act() never ran for them.
         // Drive the hunt (and only the hunt) here - observe + CorsairHunt,
         // never the regroup march (owner #201).
-        atlantis.combat.behaviors.CorsairSoloFlight.drive();
+        CorsairSoloFlight.drive();
 
         return false;
     }

@@ -2,7 +2,7 @@ package tests.unit;
 
 import atlantis.combat.BattleCommander;
 import atlantis.combat.behaviors.CastStorm;
-import atlantis.combat.behaviors.CorsairHunt;
+import atlantis.combat.behaviors.protoss.corsair.CorsairHunt;
 import atlantis.combat.behaviors.ProduceScarabs;
 import atlantis.combat.behaviors.RunWhenAttacked;
 import atlantis.combat.cluster.FightOrFlight;

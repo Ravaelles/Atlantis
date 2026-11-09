@@ -1,5 +1,6 @@
 package atlantis.combat.behaviors;
 
+import atlantis.combat.behaviors.protoss.corsair.CorsairBrain;
 import atlantis.units.AUnit;
 
 /**
