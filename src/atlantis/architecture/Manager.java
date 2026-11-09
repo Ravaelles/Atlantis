@@ -57,6 +57,25 @@ public abstract class Manager extends BaseManager {
     }
 
     private Manager invokeFromParent(Manager parent) {
+        // Manager-level attribution (owner 2026-11-09, timeout hunt):
+        // the per-frame worker chain (WorkerManager x N workers x ~15
+        // sub-managers) dominates the profile but reads as one "Worker"
+        // row. Timing the single choke names the hot manager instead
+        // of guessing. Same maps, same end-of-game + periodic rows.
+        if (atlantis.config.AtlantisConfig.USE_CODE_PROFILER) {
+            String title = "Mgr." + getClass().getSimpleName();
+            atlantis.debug.profiler.CodeProfiler.startMeasuring(title);
+            try {
+                return invokeFromParentInner(parent);
+            } finally {
+                atlantis.debug.profiler.CodeProfiler.endMeasuring(title);
+            }
+        }
+
+        return invokeFromParentInner(parent);
+    }
+
+    private Manager invokeFromParentInner(Manager parent) {
         // Order-latency gate, ABOVE every manager: a unit with an order still in flight is
         // not asked anything at all. The engine registers a command after
         // getRemainingLatencyFrames(); until then every isAttacking()/isGathering()/order
