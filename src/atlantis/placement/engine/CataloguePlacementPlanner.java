@@ -454,7 +454,62 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         }
     }
 
+    private final SitingFailureMemo failureMemo = new SitingFailureMemo();
+
     private PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame,
+                                                  java.util.Set<String> excluded) {
+        SitingFailureMemo.Key memoKey = memoKeyOrNull(building, constraint, excluded);
+        if (memoKey != null) {
+            String refusal = failureMemo.recentRefusal(memoKey, atlantis.game.A.now());
+            if (refusal != null) {
+                lastRefusal = refusal;
+
+                return PlacementReservation.failure();
+            }
+        }
+
+        int supportMark = supportThisPass.size();
+        PlacementReservation answer = reservePlacementInner(building, constraint, targetFrame, excluded);
+        if (memoKey != null && (answer == null || !answer.isSuccessful())
+            && supportThisPass.size() == supportMark) {
+            failureMemo.noteFailure(memoKey, lastRefusal, atlantis.game.A.now());
+        }
+
+        return answer;
+    }
+
+    /**
+     * Memo key from the constraint alone - no game reads (the centre
+     * derivation scans bases, which would cost more than the memo
+     * saves). Empty exclusions only: funnel retries explore different
+     * space and bypass. Exact tiles bypass too: single-tile checks are
+     * cheap and builder traffic flips them constantly.
+     */
+    private SitingFailureMemo.Key memoKeyOrNull(
+        Producible building, TargetPlacement constraint, java.util.Set<String> excluded
+    ) {
+        try {
+            if (building == null || building.id() == null || constraint == null) return null;
+            if (excluded != null && !excluded.isEmpty()) return null;
+            if (constraint.mode() == TargetPlacement.Mode.EXACT_TILE) return null;
+
+            String area = "";
+            try {
+                area = constraint.areaName() == null ? "" : constraint.areaName();
+            } catch (Exception | Error ignored) {
+            }
+
+            return new SitingFailureMemo.Key(
+                building.id(),
+                constraint.tileX(), constraint.tileY(),
+                constraint.mode().name() + ":" + area,
+                (int) constraint.radius());
+        } catch (Exception | Error ignored) {
+            return null;
+        }
+    }
+
+    private PlacementReservation reservePlacementInner(Producible building, TargetPlacement constraint, int targetFrame,
                                                   java.util.Set<String> excluded) {
         AUnitType unitType = resolveUnitType(building);
         if (unitType == null) {
