@@ -159,7 +159,7 @@ public class CodeProfiler {
             StringBuilder top = new StringBuilder();
             int n = 0;
             for (Map.Entry<String, Integer> entry : totals.entrySet()) {
-                if (n++ >= 5) break;
+                if (n++ >= 12) break;
                 if (n > 1) top.append(",");
                 top.append(entry.getKey()).append("=").append(entry.getValue()).append("ms");
             }
