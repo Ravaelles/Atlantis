@@ -31,6 +31,13 @@ public class ClusterAnchor {
      * Absolute ban (owner order): a Protoss dragoon mass over 10 stages
      * at the middle on every matchup - the small-army home doctrines
      * above never hold a finished army back.
+     *
+     * <p>Owner 2026-11-09 (tech turtle): with a second base standing the
+     * line never falls back to the main choke - only the natural choke
+     * (or a base) answers, on every matchup. The focus already withdraws
+     * the main input then; the anchor must consult it there too, not
+     * just vs Protoss. The MainChoke answer stays on the old matchup
+     * doctrine (the unknown-natural shape is unobserved).</p>
      */
     public static HasPosition defendAnchor() {
         if (Enemy.protoss() || ProtossDefendFocusPoint.mainChokeBannedByDragoons()) {
@@ -38,7 +45,39 @@ public class ClusterAnchor {
             if (focus != null) return focus;
         }
 
+        if (isMultiBase()) {
+            HasPosition focus = ProtossDefendFocusPoint.focusPoint();
+            if (focus != null && !isMainChokeAnswer(focus)) return focus;
+        }
+
         return Select.mainOrAnyBuilding();
+    }
+
+    /**
+     * Two or more bases standing (same count the focus reads): the shape
+     * where the main choke is withdrawn and only the natural answers.
+     */
+    private static boolean isMultiBase() {
+        try {
+            return Select.ourWithUnfinished().bases().count() >= 2;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * The one focus answer the multibase branch does not take: the old
+     * main-choke standoff still belongs to the matchup doctrine above
+     * (vs Zerg the line hugs the main). Every other answer - natural,
+     * middle, sparta, breach, base - stages forward of the main.
+     */
+    private static boolean isMainChokeAnswer(HasPosition focus) {
+        try {
+            return focus instanceof atlantis.battle.advance.focus.AFocusPoint
+                && ((atlantis.battle.advance.focus.AFocusPoint) focus).name().contains("MainChoke");
+        } catch (RuntimeException ignored) {
+            return false;
+        }
     }
 
     public static HasPosition attackAnchor() {

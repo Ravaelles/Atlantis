@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.combat.cluster.ClusterAnchor;
+import atlantis.combat.cluster.ClusterAnchor;
 import atlantis.combat.focus.MiddleFocusChoke;
 import atlantis.combat.focus.ProtossDefendFocusPoint;
 import atlantis.map.position.APosition;
@@ -318,6 +319,44 @@ public class ProtossDefendFocusTest extends WorldStubForTests {
                     anchor instanceof AFocusPoint
                         && ((AFocusPoint) anchor).name().contains("NaturalChoke"),
                     "with a natural standing the line never falls back to the main choke: " + anchor);
+            });
+        }
+    }
+
+    @Test
+    public void smallArmyWithNaturalVsZergFallsToNaturalChokeNeverMain() {
+        enemyRaceInWorld = Race.Zerg;
+
+        atlantis.map.choke.AChoke mainChoke = org.mockito.Mockito.mock(atlantis.map.choke.AChoke.class);
+        org.mockito.Mockito.when(mainChoke.center()).thenReturn(atlantis.map.position.APosition.create(60, 20));
+        FakeChoke naturalChoke = new FakeChoke(atlantis.map.position.APosition.create(40, 40), 3);
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit natural = fake(AUnitType.Protoss_Nexus, 40, 44);
+        FakeUnit[] ours = new FakeUnit[]{
+            nexus, natural,
+            fake(AUnitType.Protoss_Zealot, 22, 21),
+            fake(AUnitType.Protoss_Zealot, 23, 21),
+            fake(AUnitType.Protoss_Zealot, 22, 22)};
+
+        try (org.mockito.MockedStatic<atlantis.map.choke.Chokes> chokes =
+                  org.mockito.Mockito.mockStatic(atlantis.map.choke.Chokes.class);
+              org.mockito.MockedStatic<atlantis.map.base.Bases> bases =
+                  org.mockito.Mockito.mockStatic(atlantis.map.base.Bases.class);
+              org.mockito.MockedStatic<MiddleFocusChoke> middle =
+                  org.mockito.Mockito.mockStatic(MiddleFocusChoke.class)) {
+            chokes.when(atlantis.map.choke.Chokes::mainChoke).thenReturn(mainChoke);
+            chokes.when(atlantis.map.choke.Chokes::natural).thenReturn(naturalChoke);
+            bases.when(atlantis.map.base.Bases::natural).thenReturn(natural);
+            middle.when(MiddleFocusChoke::get).thenReturn(null);
+
+            world(1, fakeOurs(ours), new FakeUnit[0], () -> {
+                HasPosition anchor = ClusterAnchor.defendAnchor();
+                assertNotNull(anchor, "defend has an answer with a small army and a natural");
+                assertTrue(
+                    anchor instanceof AFocusPoint
+                        && ((AFocusPoint) anchor).name().contains("NaturalChoke"),
+                    "tech turtle vs Zerg with a natural never falls back to the main choke: " + anchor);
             });
         }
     }
