@@ -25,6 +25,15 @@ import atlantis.util.log.LogKey;
 import static atlantis.production.dynamic.protoss.units.ProduceZealot.produceZealot;
 import static atlantis.units.AUnitType.*;
 
+/**
+ * Legacy dynamic producer (owner 2026-11-09): out of the live loop -
+ * production-v2 (DynamicGoals, scheduler, dispatcher, GameOrderDirector)
+ * owns both decisions and execution now. Kept for its unit-pinned bank
+ * rules; do not wire back into the game loop.
+ *
+ * @deprecated live production goes through V2, this is a reference only.
+ */
+@Deprecated
 public class ProduceDragoon {
     /**
      * See {@link ProduceZealot#reason}.

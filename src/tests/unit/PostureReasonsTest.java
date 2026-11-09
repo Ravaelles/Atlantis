@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * NEXT #197: the posture answers once, per frame, with a named reason.
@@ -287,5 +288,59 @@ public class PostureReasonsTest {
 
         assertEquals(ClusterMission.Posture.ATTACK, verdict.posture);
         assertEquals(PostureReason.TRAPPED_BY_MASS_ZEALOTS, verdict.reason);
+    }
+
+    @Test
+    public void techTurtleHoldsWithoutDragoon() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 6;
+        in.ourDragoons = 0;
+        in.strength = 200;
+        in.goingTech = true;
+        in.matchup = "vZ";
+
+        PostureReasons.Verdict verdict = PostureReasons.decide(in);
+
+        assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
+        assertEquals(PostureReason.TECH_TURTLE, verdict.reason);
+    }
+
+    @Test
+    public void techTurtleReleasesPast225() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 6;
+        in.ourDragoons = 0;
+        in.strength = 226;
+        in.goingTech = true;
+        in.matchup = "vZ";
+
+        assertFalse(PostureReasons.decide(in).reason == PostureReason.TECH_TURTLE,
+            "above 225 the normal attack reasons own the board");
+    }
+
+    @Test
+    public void techTurtleNeedsZeroDragoons() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 6;
+        in.ourDragoons = 1;
+        in.strength = 200;
+        in.goingTech = true;
+        in.matchup = "vZ";
+
+        assertFalse(PostureReasons.decide(in).reason == PostureReason.TECH_TURTLE,
+            "one Dragoon is teeth: no turtle");
+    }
+
+    @Test
+    public void noTechNoTurtle() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 6;
+        in.ourDragoons = 0;
+        in.strength = 200;
+        in.goingTech = false;
+        in.matchup = "vZ";
+
+        assertFalse(PostureReasons.decide(in).reason == PostureReason.TECH_TURTLE,
+            "not going tech: no turtle");
     }
 }

@@ -23,6 +23,15 @@ import atlantis.units.select.Count;
 
 import static atlantis.units.AUnitType.*;
 
+/**
+ * Legacy dynamic producer (owner 2026-11-09): out of the live loop -
+ * production-v2 (DynamicGoals, scheduler, dispatcher, GameOrderDirector)
+ * owns both decisions and execution now. Kept for its unit-pinned bank
+ * rules; do not wire back into the game loop.
+ *
+ * @deprecated live production goes through V2, this is a reference only.
+ */
+@Deprecated
 public class ProduceGateway {
     private static int unfinishedGateways;
     private static int freeGateways;

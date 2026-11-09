@@ -79,6 +79,21 @@ public final class PostureReasons {
      */
     public static final int FALLBACK_MAX_DRAGOONS = 1;
 
+    /**
+     * Tech turtle (owner 2026-11-09): going tech with no Dragoon yet
+     * and middling strength holds home instead of marching out - the
+     * line has no business outside the main and natural regions until
+     * the tech pays for teeth. Conservative on purpose.
+     */
+    public static final int TECH_TURTLE_MAX_DRAGOONS = 0;
+
+    /**
+     * Relative-strength ceiling for the tech turtle: at or below it a
+     * goonless teching line stays home; above it the normal attack
+     * reasons own the board.
+     */
+    public static final int TECH_TURTLE_STRENGTH = 225;
+
     private PostureReasons() {
     }
 
@@ -100,6 +115,11 @@ public final class PostureReasons {
         if (in.vsZerg && in.ourDragoons < 1 && in.strength < 150) {
             return new Verdict(PostureReason.ZEALOTS_HOLD_VS_ZERG, ClusterMission.Posture.DEFEND,
                 "Zealots hold vs Zerg (" + in.strength + "%, no dragoon)");
+        }
+
+        if (in.goingTech && in.ourDragoons <= TECH_TURTLE_MAX_DRAGOONS && in.strength <= TECH_TURTLE_STRENGTH) {
+            return new Verdict(PostureReason.TECH_TURTLE, ClusterMission.Posture.DEFEND,
+                "Tech turtle (no dragoon, " + in.strength + "%), hold home");
         }
 
         if (in.ours >= ClusterMission.ATTACK_ARMY_SIZE) {
@@ -199,6 +219,7 @@ public final class PostureReasons {
         in.eval = assessor == null ? 1.0 : assessor.eval();
         in.dragoonMatchup = vsZerg || vsTerran || protossWithoutRanged;
         in.wasAttacking = atlantis.battle.cluster.Missions.globalMission().isMissionAttack();
+        in.goingTech = atlantis.information.strategy.Strategy.get().isGoingTech();
         in.vsZerg = vsZerg;
         in.vsTerran = vsTerran;
         in.matchup = matchup;
@@ -246,6 +267,7 @@ public final class PostureReasons {
         public boolean vsZerg;
         public boolean dragoonMatchup;
         public boolean wasAttacking;
+        public boolean goingTech;
         public boolean vsTerran;
         public String matchup = "?";
     }

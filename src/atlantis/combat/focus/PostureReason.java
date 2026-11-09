@@ -57,6 +57,14 @@ public enum PostureReason {
     ZEALOTS_HOLD_VS_ZERG,
 
     /**
+     * Owner order 2026-11-09: going tech with no Dragoon yet and
+     * middling strength turtles home - the line has no business
+     * outside the main and natural regions until the tech pays for
+     * teeth. Ends and prevents attacks alike while the shape holds.
+     */
+    TECH_TURTLE,
+
+    /**
      * Owner order 2026-10-26: a dragoon pair kites instead of holding -
      * always vs Zerg, vs Protoss only with no known ranged enemy (an
      * unscouted map counts as ranged: never march blind into hydras).
