@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.dynamic.supply.SupplyPolicy;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -56,11 +57,11 @@ public class ProduceBuilding {
     public static boolean tooManyPylonsInFlight() {
         int inFlight = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon)
             + ConstructionRequests.countInProgressWithoutUnitOfType(AUnitType.Protoss_Pylon);
-        if (atlantis.game.A.supplyUsed() < 40) {
-            return inFlight >= 1 && !atlantis.game.A.hasMinerals(300);
-        }
 
-        return inFlight >= 2;
+        // (delegated 2026-11-09, S3: the bands live in SupplyPolicy -
+        // identical semantics, the counting stays here with the store).
+        return SupplyPolicy.tooManyPylonsInFlight(
+            inFlight, A.supplyUsed(), A.hasMinerals(SupplyPolicy.RICH_BANK_MINERALS));
     }
 
     /**

@@ -87,6 +87,18 @@ the buildings, not the plan:
 - #84 Wine Pylon issuance: pipeline healthy, stalls self-recover.
   Open: STARTED-twin naming on a legacy-minted warp (needs a
   non-V2 game - evaporates when V3 deletes the legacy door).
+- DONE 2026-11-09: Pylon cap bands own one home (SOLID S3 slice):
+  `production.dynamic.supply.SupplyPolicy` answers the
+  in-flight cap pure (1 below 40, pair at 40+, rich bank lifts
+  early - identical semantics, pinned `SupplyPolicyTest` 3/3);
+  `ProduceBuilding.tooManyPylonsInFlight` delegates, counting
+  stays with `ConstructionRequests`. Demand bands
+  (`NeedDynamicSupply`, already pure), the V2 emission guard
+  (`DynamicGoals`) and the sim-exit read stay separate - four
+  different decisions, not one; unifying thresholds would change
+  live-proven balance (owner call). Open as-is corner: rich bank
+  lifts the early cap entirely, not just to the pair (pinned
+  as-is, tightening is a balance call).
 
 ## Construction lifecycle
 
