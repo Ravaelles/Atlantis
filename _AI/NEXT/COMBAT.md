@@ -42,9 +42,12 @@ calls it - this section is the plan the slices below execute.
   (`ClusterTaskTest`); `TaskTwin` rows the enforced mission's task
   every frame (transition + 300f heartbeat, pinned in
   `TaskTwinTest`) - twin before gate, so enforcement reads nothing
-  yet. Next: wire one mission's task at a time (same discipline
-  as the HOLD_* slices); approach narrowing + forbidden branches
-  ride those slices, not this vocabulary.
+  yet. HYDRATED 2026-11-09: `MissionHold.hold` reads the task anchor
+  instead of the mission switch (same standoffs on every reachable
+  path; `HoldMainChokeEnforcementTest` + task pins cover both
+  halves, no behavior change). Next: rally reads task.fleeRally
+  (retreat stops AT the choke line), then approach narrowing +
+  forbidden branches per mission.
 
 ## Deletion queue (verified unused, one at a time)
 

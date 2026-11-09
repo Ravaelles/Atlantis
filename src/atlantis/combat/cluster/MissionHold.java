@@ -31,12 +31,15 @@ public final class MissionHold {
     }
 
     /**
-     * Hold the choke standoff the mission owns. A displaced unit walks
-     * back to it (marching in, never out); a dressed one holds position.
+     * Hold the standoff the task owns. A displaced unit walks back to
+     * it (marching in, never out); a dressed one holds position.
      * Always handled: falling through would leak into the march-out legs
-     * this veto exists to forbid. The standoff follows the mission: the
-     * natural choke for HOLD_NATURAL_CHOKE (slice 3b), the main choke
-     * otherwise.
+     * this veto exists to forbid. The standoff follows the task anchor
+     * (L2 drives the hold now, not the mission switch): the natural
+     * choke for NATURAL_CHOKE tasks, the main-choke standoff for
+     * everything else - identical grounds to the old mission switch
+     * on every path holdForMission can reach (HOLD_MAIN_CHOKE,
+     * HOLD_NATURAL_CHOKE, HOLD_MAIN), so this is a pure rerouting.
      */
     public static boolean hold(AUnit unit, HasPosition anchor) {
         if (unit == null || !unit.isAlive()) return true;
@@ -47,7 +50,8 @@ public final class MissionHold {
         if (atlantis.combat.cluster.EarlyHarass.shouldHarass(unit, null)) return false;
 
         try {
-            HasPosition standoff = ArmyMission.current() == ArmyMission.HOLD_NATURAL_CHOKE
+            ClusterTask task = ClusterTask.forMission(ArmyMission.current());
+            HasPosition standoff = task.anchor() == TaskAnchor.NATURAL_CHOKE
                 ? ClusterRally.naturalStandoffPoint()
                 : ClusterRally.chokeStandoffPoint();
             if (standoff != null && standoff.position() != null
