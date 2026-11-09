@@ -18,7 +18,7 @@ public class ProtossSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double asZealot(AUnit attacker) {
-        if (defender.hp() <= 20 && defender.isMissionDefend() && attacker.isZealot()) return 3.5;
+        if (defender.hp() <= 20 && attacker.isZealot()) return 3.5;
 
         return -1;
     }

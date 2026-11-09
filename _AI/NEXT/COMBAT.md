@@ -145,17 +145,28 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   plus the two always-false `isActiveManager` branches in
   `DragoonDontAvoid` (deleted, not ported - nothing could ever
   take them). Evidence: fast gate green.
-- [ ] Per-unit missions (`AUnit.mission()` / `Squad.mission()`,
-  investigated 2026-11-09, owner-approved track): `setMission`
-  has zero callers in src, so every live read sees the DEFEND
-  default - the unit-level counterpart of the global mirror.
-  Next: fold one live family at a time with pins, same
-  red-first discipline as the global ports: avoid/*
-  `isMissionDefend` reads, `ShouldRunTowardsBase`,
-  `EvalChokeTweaks`, `FollowAlphaLeader` focus,
-  `AUnit.isMissionAttackOrGlobalAttack` (both halves together).
-  Orphaned readers (ProduceDragoon/ProduceTemplarArchives) die
-  with the orphan chain (production workstream, not here).
+- [x] DONE 2026-11-09: live per-unit avoid-family fold
+  (always-DEFEND proof: `setMission` zero callers, every live
+  read sees DEFEND): `ZealotAlwaysAvoidEnemy` (3 always-true/
+  always-false gates), `ZealotDontAvoidEnemy` (sparta branch +
+  always-DEFEND gate deleted; `dontAvoidWhenCloseEnemyWorkers`
+  switched to the frame's `DecidedPosture` with mirror fallback,
+  pinned red-first both directions by
+  `ZealotDontAvoidFollowsDecidedPostureTest` on the mirror-driven
+  ChaseVeto/Latch template), `DragoonDontAvoid.whenMissionDefend`
+  gate, `ProtossSafetyMargin` middle conjunct,
+  `ShouldRunTowardsBase` dead `isMissionAttack` branch +
+  always-true `isMissionDefend` disjunct, `EvalChokeTweaks`
+  always-true `missionDefendOrSparta`, `FollowAlphaLeader`
+  always-null `focusPoint` (setter has zero callers - both dead
+  branches deleted, unused import + dead local removed).
+  Evidence: fast gate green (1255/0).
+- [ ] Per-unit missions remainder (`AUnit.mission()` /
+  `Squad.mission()`): `AUnit.isMissionAttackOrGlobalAttack`
+  (unit OR global - migrate both halves together with the global
+  mirror), orphaned readers (ProduceDragoon/
+  ProduceTemplarArchives die with the orphan chain, production
+  workstream).
 
 ## Mission command (#232, priority 0)
 

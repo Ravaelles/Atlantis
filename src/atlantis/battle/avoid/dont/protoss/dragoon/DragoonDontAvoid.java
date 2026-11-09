@@ -101,8 +101,6 @@ public class DragoonDontAvoid {
     }
 
     private static Decision whenMissionDefend(AUnit unit) {
-        if (!unit.isMissionDefend()) return Decision.INDIFFERENT;
-
 //        if (unit.shieldDamageAtMost(9)) {
 //            reason(unit, "MD:LowShieldDmg");
 //            return Decision.TRUE;

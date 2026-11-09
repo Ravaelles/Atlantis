@@ -1,17 +1,17 @@
 package atlantis.battle.avoid.dont.protoss;
 
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.DecidedPosture;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
 public class ZealotDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
         if (!unit.isZealot()) return false;
-        if (unit.isMissionSparta() && unit.distToFocusPoint() <= 2 && unit.hp() >= 18) return true;
         if (dontAvoidWhenCloseEnemyWorkers(unit)) return true;
 
         if (earlyZealotAvoidBecauseAlmostDead(unit)) return false;
@@ -43,7 +43,9 @@ public class ZealotDontAvoidEnemy {
     }
 
     private static boolean dontAvoidWhenCloseEnemyWorkers(AUnit unit) {
-        if (!unit.isMissionAttackOrGlobalAttack()) return false;
+        ClusterMission.Posture noted = DecidedPosture.currentOrNull();
+        boolean isAttack = noted != null ? noted == ClusterMission.Posture.ATTACK : unit.isMissionAttackOrGlobalAttack();
+        if (!isAttack) return false;
 
         Selection workers = unit.enemiesNear().workers();
         if (workers.empty()) return false;
@@ -65,7 +67,6 @@ public class ZealotDontAvoidEnemy {
 
     private static Decision whenEarlyDefendingChokeVZ(AUnit unit) {
         if (!Enemy.zerg()) return Decision.INDIFFERENT;
-        if (!unit.isMissionDefendOrSparta()) return Decision.INDIFFERENT;
         if (A.supplyUsed() >= 50) return Decision.INDIFFERENT;
 
         if (unit.nearestChokeDist() <= 3) return Decision.TRUE;
@@ -97,11 +98,7 @@ public class ZealotDontAvoidEnemy {
     private static boolean earlyZealotAvoidBecauseAlmostDead(AUnit unit) {
         if (!unit.isZealot()) return false;
 
-        if (unit.isMissionDefend()) {
-            return unit.hp() <= 25;
-        }
-
-        return Count.ourCombatUnits() <= 10 && unit.hp() <= 35;
+        return unit.hp() <= 25;
     }
 //    private static boolean earlyZealotAvoidBecauseAlmostDeadOrOverpowered(AUnit unit) {
 //        if (!unit.isZealot()) return false;
@@ -119,8 +116,6 @@ public class ZealotDontAvoidEnemy {
     }
 
     private static Decision whenMissionDefendDontAvoid(AUnit unit) {
-        if (!unit.isMissionDefendOrSparta()) return Decision.INDIFFERENT;
-
         if (Enemy.zerg()) {
             if (unit.hp() <= 30 && unit.isMelee()) return Decision.FALSE;
             if (unit.eval() <= 0.7) return Decision.FALSE;

@@ -1,7 +1,6 @@
 package atlantis.battle.detectors;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -36,21 +35,8 @@ public class FollowAlphaLeader extends Manager {
         if (leader == null || leader.isDead() || unit.isLeader()) return null;
 
         HasPosition basePoint = leader;
-        AFocusPoint focus = leader.mission().focusPoint();
-//        if (focus == null) return leader;
-//
-//        HasPosition towards = unit.squadCenter();
-//        if (towards == null) return leader;
-
-        if (focus != null) {
-//            basePoint = basePoint.translatePercentTowards(50, focus);
-            basePoint = basePoint.translateTilesTowards(10, focus);
-        }
 
         Selection enemies = EnemyUnits.discovered().inRadius(25, unit);
-
-        AUnit nearestEnemy = enemies.nearestTo(basePoint);
-        if (nearestEnemy != null && focus != null) basePoint = basePoint.translateTilesTowards(9, focus);
 
 //        AAdvancedPainter.paintCircleFilled(towards, 16, Color.Orange);
 

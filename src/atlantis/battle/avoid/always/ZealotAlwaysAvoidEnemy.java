@@ -44,11 +44,11 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
     private boolean badEvalEarly() {
         if (A.s >= 60 * 8) return false;
         if (A.s <= 30) return false;
-        if (unit.isMissionDefend() && (eval >= 0.8 || unit.distToMain() <= 6) && unit.hp() >= 34) return false;
+        if ((eval >= 0.8 || unit.distToMain() <= 6) && unit.hp() >= 34) return false;
 
-        if (eval <= 0.9 && !unit.isMissionSparta()) return t("BadEvalEarlyA");
+        if (eval <= 0.9) return t("BadEvalEarlyA");
 
-        double evalThreshold = unit.isMissionAttack() ? 1.2 : 1;
+        double evalThreshold = 1;
         if (eval < evalThreshold) return t("BadEvalEarlyB");
 
         return false;
@@ -87,8 +87,7 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean neverAvoidIfCannonInRange() {
-        return unit.isMissionDefend()
-            && Count.cannons() >= 1
+        return Count.cannons() >= 1
             && unit.shieldWound() >= 3
             && A.s <= 60 * 6
 //            && Army.strength() <= 135

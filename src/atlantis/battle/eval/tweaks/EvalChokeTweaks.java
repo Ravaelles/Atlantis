@@ -46,9 +46,7 @@ public class EvalChokeTweaks {
     }
 
     public static double chokePenalty(AUnit unit, AChoke choke, double distToChoke) {
-        boolean missionDefendOrSparta = unit.isMissionDefendOrSparta();
-
-        if (missionDefendOrSparta && unit.distToMain() <= 40) return 0;
+        if (unit.distToMain() <= 40) return 0;
 
         if (Count.ourCombatUnits() <= 30) {
             if (choke.width() <= 3.1) return -4;
@@ -63,7 +61,7 @@ public class EvalChokeTweaks {
 
         return -2
             + nearEnemyBuildings
-            + (missionDefendOrSparta ? -0.2 : 0)
+            + (-0.2)
             + (Army.strengthWithoutCB() <= 170 ? -0.5 : 0);
     }
 }

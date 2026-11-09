@@ -122,7 +122,6 @@ public class ShouldRunTowardsBase {
 
         if (Enemy.zerg() && unit.isDragoon() && unit.eval() <= 0.6) return false;
 
-        if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
 
         if (Enemy.zerg()) {
@@ -154,7 +153,7 @@ public class ShouldRunTowardsBase {
         if (!unit.hasPathTo(main)) return false;
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);
-        if (distToMain >= 40 || (distToMain > 7 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))
+        if (distToMain >= 40 || (distToMain > 7 && meleeEnemiesNearCount == 0))
             return true;
 
         if (A.seconds() >= 380) return false;
