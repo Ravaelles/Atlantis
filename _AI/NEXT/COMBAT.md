@@ -154,6 +154,12 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   DONE 2026-11-09: dead mission comments in avoid/ (commented
   blocks referencing deleted gates in Dragoon/Zealot/DTDontAvoid
   + the stale conjunct in AvoidReavers - comments only);
+  DONE 2026-11-09: dead `AUnit.micro()` (zero readers);
+  KEPT 2026-11-09: `ProtossDefendFocusPoint` sparta input -
+  `isGlobalMissionSparta` is hardcoded false in game but tests
+  simulate Sparta=true by static mock and pin the wall-in
+  (`MainChokeBanTest.fifteenCombatUnitsKeepSpartaWall` went red
+  on a fold attempt - reverted, suite worked as designed);
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),

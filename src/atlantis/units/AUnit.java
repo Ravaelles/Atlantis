@@ -2283,10 +2283,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return id() == Select.ourCombatUnits().first().id();
     }
 
-    public Mission micro() {
-        return squad().mission();
-    }
-
     public boolean squadIsAlpha() {
         if (squad == null) {
             return false;
