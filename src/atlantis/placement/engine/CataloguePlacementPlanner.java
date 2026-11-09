@@ -1046,26 +1046,25 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     }
 
     /**
-     * How long the builder needs to get there, in frames. Ground distance in tiles
-     * at the slowest worker speed, plus a small floor - an estimate, deliberately
-     * cheap: the ranker only needs the candidates ORDERED, and a path query per
-     * candidate is the cost the catalogue exists to avoid (§4.6).
+     * How long the builder needs to get there, in frames. Straight-line
+     * distance at the slowest worker speed, plus a small floor - an
+     * estimate, deliberately cheap: the ranker only needs the candidates
+     * ORDERED, and a path query per candidate is the cost the catalogue
+     * exists to avoid (§4.6). The old bwem branch ran native
+     * pathfinding per tile (measured live: seconds per full-map hunt);
+     * the sim branch always read Euclidean, so this converges live
+     * with the sim instead of forking it. Legality never rode this
+     * number (the ladder decides), only order.
      */
     private int builderTravelEstimate(AUnit builder, BuildLocation candidate) {
         if (builder == null) return 0;
 
         APosition dest = APosition.create(candidate.tileX(), candidate.tileY());
-        double tiles;
-        if (atlantis.map.AMap.bwem() == null) {
-            if (passBuilderPosition == null) passBuilderPosition = builder.position();
-            APosition from = passBuilderPosition;
-            tiles = (from == null || from.position() == null || dest == null)
-                ? 999
-                : atlantis.map.position.PositionUtil.distanceTo(from.position().p(), dest.position().p());
-        }
-        else {
-            tiles = builder.groundDist(dest);
-        }
+        if (passBuilderPosition == null) passBuilderPosition = builder.position();
+        APosition from = passBuilderPosition;
+        double tiles = (from == null || from.position() == null || dest == null)
+            ? 999
+            : atlantis.map.position.PositionUtil.distanceTo(from.position().p(), dest.position().p());
 
         // A Probe moves ~0.7 tiles/s at the default speed; 30 frames/s, so about
         // 43 frames per tile. Rounded up, with a 20-frame floor for "already there".

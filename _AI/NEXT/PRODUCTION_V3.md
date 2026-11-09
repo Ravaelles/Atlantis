@@ -550,3 +550,32 @@ draws the labels - a weird layout cannot break a game, only draw.
 - Slice 15 DONE 2026-11-07 (the Gateway blocked its own support): a same-pass reservation writes USED plus a one-tile BORDER ring, and the strict exact-tile read failed the covering Pylon sitting in its Gateway's ring (measured live: exact-fail:grid-blocked on clean ground). reserveExact now forgives the ring (USED, terrain BLOCKED and the terrain margin still refuse) - layout pairs are designed adjacent. Pin: border-adjacent exact still serves; placement 263/263, fast 1139/0, sims green; live proof next game.
 - Slice 16 DONE 2026-11-07 (layout obeys the mineral rule too): planned Pylon slots ignored the 5-tile mineral rule the hunt enforces, so support exacts died on mineral-crowded tiles with the Gateway waiting (measured live: exact-fail:mineral-gas on a 4.1-tile slot). planOn filters through the shared predicate (gateway + cover pool); the predicate itself is hardened fail-open like its siblings (stubbed worlds without neutrals read as no crowding, never NPE). Pins: layout formation green on TauCross; placement 263/263, fast 1139/0, sims green; live proof next game.
 - Slice 17 DONE 2026-11-07 (BO order Pylon-first holds): S1 is the supply slot covering G1 (was: nearest slot, which the mineral rule declined, parking the Gateway behind a support chain the BO never ordered). The first Pylon therefore powers the first Gateway straight off the BO. Pin: firstSupplyPylonCoversFirstGateway on TauCross; placement 264/264, fast 1139/0, sims green; live proof next game.
+
+## Perf follow-ups (owner order 2026-11-09, timeout hunt - measured, not implemented)
+
+Live PROFILER rows (durable, survive SIGKILL) named two hogs: per-worker
+defence traversal (WorkerDefenceRun gated 2026-11-09: empty 13-tile
+read skips the null tour, 30 s -> <1 s per game) and Placement.reserve
+storm windows (33 ms/frame sustained). Landed against the storms:
+SitingFailureMemo (identical failing hunt answers the stored refusal
+for 240 f, exclusions/support bypass) and the travel-estimate fix
+below. Open, in priority order:
+
+- DONE 2026-11-09 (travel estimate is arithmetic again): the ranker's
+  builder-travel estimate ran native BWEM pathfinding per uncached
+  candidate per pass (the refineCache clears every pass), seconds per
+  full-map hunt - while its own contract says the ranker only needs
+  order and the sim branch always read Euclidean. Live now reads
+  Euclidean like the sim (legality never rode the number, only order;
+  sim pins unchanged by construction). Verification: next-game
+  Placement.reserve deltas + placement domain green.
+- TODO (compute-once fields, then disk): per-tile Select scans and
+  mineral loops are the remaining hunt cost (standing-cover set,
+  mineral-distance field, region-id reachability instead of per-tile
+  engine hasPath). Shape: compute once per game (invalidate on
+  warp/cancel/new Pylon/terrain rescan), then persist the static
+  part per map next to the map snapshot
+  (src/tests/resources/taucross-snapshot.json vehicle): walkability,
+  mineral-distance, region connectivity keyed by map dims + checksum,
+  load-or-compute on game start with fallback to compute. Needs its
+  own pin (snapshot vehicle) + game proof before it mints anything.
