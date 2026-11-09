@@ -33,6 +33,17 @@ public class CodeProfiler {
     }
 
     /**
+     * Named-aspect entry for code that is not a Commander (the placement
+     * funnel, the scheduler): pair with {@link #endMeasuring(String)} in
+     * a try/finally. Same maps, same summary, no commander needed.
+     */
+    public static void startMeasuring(String title) {
+        if (!AtlantisConfig.USE_CODE_PROFILER) return;
+
+        measureAspect(title);
+    }
+
+    /**
      * Indicates that we've stopped handling <b>title</b>-related stuff. Now we can calculate how long
      * it took by comparing two timestamps.
      * <br />Used for determining total time that it took to handle given type of activity and
@@ -82,10 +93,11 @@ public class CodeProfiler {
             }
         }
 
-        Map<String, Integer> aspectTotalSorted = aspectLengthSorted();
-        for (String aspectTitle : aspectTotalSorted.keySet()) {
-            int value = aspectsLength.get(aspectTitle);
-            AConsole.println(String.format("%25s:  ", aspectTitle) + A.digit(value) + "s");
+        Map<String, Integer> aspectTotalSorted = aspectTotalSorted();
+        for (Map.Entry<String, Integer> entry : aspectTotalSorted.entrySet()) {
+            if (entry.getValue() >= MIN_MS_TO_INCLUDE) {
+                AConsole.println(String.format("%25s:  ", entry.getKey() + " (total)") + entry.getValue() + "ms");
+            }
         }
 
         if (aspectLengthSorted().isEmpty()) {

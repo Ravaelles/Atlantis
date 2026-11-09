@@ -51,6 +51,7 @@ public class GameSummary {
                     buildingsLine());
             BuildOrderAudit.printAudit();
             printPostGameDigest();
+            atlantis.debug.profiler.CodeProfiler.printSummary();
         } catch (Throwable ignored) {
         }
     }
@@ -62,6 +63,8 @@ public class GameSummary {
         String dir = workingDirectory();
 
         LongFrames.printSummary();
+
+        atlantis.debug.profiler.CodeProfiler.printSummary();
 
         AConsole.println(LogLevel.LOW, formatMatchOver(
             winner, Atlantis.KILLED, Atlantis.LOST, realSeconds, frame, dir));

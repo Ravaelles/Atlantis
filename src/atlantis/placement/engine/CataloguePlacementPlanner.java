@@ -77,6 +77,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private int passesSinceTerrainRefresh = 0;
     private static final int TERRAIN_REFRESH_EVERY = 30;
+    /**
+     * Profiler aspect for the whole door (owner 2026-11-09, timeout
+     * hunt): every public reserve call times itself, so the end-of-game
+     * summary names placement's share with no sampling.
+     */
+    static final String PLACEMENT_ASPECT = "Placement.reserve";
     private final GameContext gameContext;
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
@@ -428,14 +434,24 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     @Override
     public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame) {
-        return reservePlacement(building, constraint, targetFrame, java.util.Collections.<String>emptySet());
+        atlantis.debug.profiler.CodeProfiler.startMeasuring(PLACEMENT_ASPECT);
+        try {
+            return reservePlacement(building, constraint, targetFrame, java.util.Collections.<String>emptySet());
+        } finally {
+            atlantis.debug.profiler.CodeProfiler.endMeasuring(PLACEMENT_ASPECT);
+        }
     }
 
     @Override
     public PlacementReservation reservePlacementExcluding(Producible building, TargetPlacement constraint,
                                                           int targetFrame, java.util.Set<String> excludedTiles) {
-        return reservePlacement(building, constraint, targetFrame,
-            excludedTiles == null ? java.util.Collections.<String>emptySet() : excludedTiles);
+        atlantis.debug.profiler.CodeProfiler.startMeasuring(PLACEMENT_ASPECT);
+        try {
+            return reservePlacement(building, constraint, targetFrame,
+                excludedTiles == null ? java.util.Collections.<String>emptySet() : excludedTiles);
+        } finally {
+            atlantis.debug.profiler.CodeProfiler.endMeasuring(PLACEMENT_ASPECT);
+        }
     }
 
     private PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame,
