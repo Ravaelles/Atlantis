@@ -134,6 +134,35 @@ public class ApproachTest {
     }
 
     @Test
+    public void marchAtAContestedChokeWithoutCrushHolds() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
+        g.chokeNear = true;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 3;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.STAGE_MIDDLE), g),
+            "no superiority: never push a narrow choke");
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), g));
+    }
+
+    @Test
+    public void marchAtAnUncontestedChokeKeepsMarching() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
+        g.chokeNear = true;
+        g.enemiesNearChoke = 0;
+        g.oursNearChoke = 4;
+
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.STAGE_MIDDLE), g));
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), g));
+    }
+
+    @Test
     public void nullGeometryKeepsTheDefault() {
         assertEquals(BattleStrategy.CHOKE_HOLD,
             Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), null));

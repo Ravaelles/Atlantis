@@ -100,50 +100,59 @@ public final class Approach {
      * mission names (mirrored from the live pick, which never knew
      * the mission); the collapse needs bases like the live rule
      * (baseless fights kite, they never collapse onto a bait).
+     * Slice 5 (2026-11-09): the standoff for marches. A stage or
+     * attack at a contested choke without crush holds the standoff
+     * instead of pushing (mirrored from the live rule: never push a
+     * narrow choke without superiority); uncontested or crushing
+     * marches keep marching.
      */
     public static BattleStrategy forTask(ClusterTask task, Geometry geometry) {
+        // Order mirrors the live pick: breakout, collapse, standoff,
+        // duel, then the mission default (bait detachment stays with
+        // the live pick - its pins stand, it is not subsumed here).
         if (geometry != null) {
+            if (breakout(geometry) && isHold(task)) return BattleStrategy.OPEN_FIELD;
+
+            if (geometry.hasBases && geometry.chokeNear && geometry.enemiesNearChoke > 0) {
+                if (geometry.crushing()) {
+                    if (task == null || isHold(task)) return BattleStrategy.COLLAPSE;
+                }
+                else if (isMarch(task)) {
+                    return BattleStrategy.CHOKE_HOLD;
+                }
+            }
+
             if (geometry.isDuel() && geometry.isDragoon) return BattleStrategy.DUEL_KITE;
-
-            if (breakout(geometry)) {
-                if (task != null) {
-                    switch (task.mission()) {
-                        case HOLD_MAIN:
-                        case HOLD_MAIN_CHOKE:
-                        case HOLD_NATURAL_CHOKE:
-                        case HOLD_MIDDLE:
-                            return BattleStrategy.OPEN_FIELD;
-                        default:
-                            break;
-                    }
-                }
-                else {
-                    return BattleStrategy.OPEN_FIELD;
-                }
-            }
-
-            if (geometry.hasBases
-                && geometry.chokeNear
-                && geometry.enemiesNearChoke > 0
-                && geometry.crushing()) {
-                if (task != null) {
-                    switch (task.mission()) {
-                        case HOLD_MAIN:
-                        case HOLD_MAIN_CHOKE:
-                        case HOLD_NATURAL_CHOKE:
-                        case HOLD_MIDDLE:
-                            return BattleStrategy.COLLAPSE;
-                        default:
-                            break;
-                    }
-                }
-                else {
-                    return BattleStrategy.COLLAPSE;
-                }
-            }
         }
 
         return forTask(task);
+    }
+
+    private static boolean isHold(ClusterTask task) {
+        // Null holds like main (slice 1 default) - including here.
+        if (task == null) return true;
+
+        switch (task.mission()) {
+            case HOLD_MAIN:
+            case HOLD_MAIN_CHOKE:
+            case HOLD_NATURAL_CHOKE:
+            case HOLD_MIDDLE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isMarch(ClusterTask task) {
+        if (task == null) return false;
+
+        switch (task.mission()) {
+            case STAGE_MIDDLE:
+            case ATTACK_ENEMY_BASE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

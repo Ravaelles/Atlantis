@@ -254,6 +254,13 @@ own main/natural choke with 150%+ strength and fewer than 2 bases
 march out instead of parking - mirrored from the live pick,
 threshold reused from `BREAKOUT_STRENGTH`, not re-spelled).
 Pinned 3 rows, still shadow.
+Slice 5 LANDED 2026-11-09: the standoff for marches (a stage or
+attack at a contested choke without crush holds instead of
+pushing - the rule order now mirrors the live pick end to end:
+breakout, collapse, standoff, duel, mission default; bait
+detachment stays live). Pinned 2 rows, still shadow - the
+commander port (geometry captured once per frame, bait answered
+live) is the next slice with its own game proof.
 Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),
