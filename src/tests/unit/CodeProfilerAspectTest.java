@@ -57,7 +57,9 @@ public class CodeProfilerAspectTest {
                 at++;
             }
             assertEquals(1, rows, "same 720-frame bucket rows once: " + log);
-            assertTrue(log.contains(title + "="), "the row carries the top aspect: " + log);
+            assertTrue(
+                CodeProfiler.aspectTotalSorted().containsKey(title),
+                "the measured aspect accumulates under its own name");
 
             // A fresh sampling epoch rows again (the gate is a bucket
             // change, not a one-shot latch).
