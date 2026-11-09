@@ -5,7 +5,6 @@ import atlantis.architecture.Commander;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.Mission;
-import atlantis.battle.cluster.Missions;
 import atlantis.battle.cluster.Squad;
 import atlantis.combat.FrozenWatch;
 import atlantis.config.env.Env;
@@ -433,16 +432,20 @@ public class AAdvancedPainter extends APainter {
                 ? EnemyStrategy.get().toString() : "Unknown"),
             EnemyStrategy.isEnemyStrategyKnown() ? Yellow : Color.Red);
 
-        Mission mission = Missions.globalMission();
-        if (mission.isMissionDefend()) {
+        atlantis.combat.cluster.ArmyMission enforced = atlantis.combat.cluster.ArmyMission.current();
+        atlantis.combat.cluster.ClusterTask task =
+            atlantis.combat.cluster.ClusterTask.forMission(enforced);
+        if (task.posture() == atlantis.combat.cluster.ClusterMission.Posture.DEFEND) {
             color = Color.White;
         }
         else {
             color = Color.Orange;
         }
-        paintSideMessage("Global mission: " + mission.name() + " (" + Missions.historyCount() + ")", color);
+        paintSideMessage("Mission: "
+            + (enforced == null ? "-" : enforced.name())
+            + " / " + task.anchor().name(), color);
 
-        mission = Alpha.get().mission();
+        Mission mission = Alpha.get().mission();
         if (mission.isMissionDefend()) {
             color = Color.White;
         }
@@ -667,13 +670,11 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-//        APosition missionFocusPoint;
-        HasPosition missionFocusPoint = Missions.globalMission().focusPoint();
-//
-        paintCircle(missionFocusPoint, 22, Color.Teal);
-        paintCircle(missionFocusPoint, 20, Color.Teal);
-        paintCircle(missionFocusPoint, 18, Color.Teal);
-        paintTextCentered(missionFocusPoint, "FOCUS", Color.Teal);
+        // NOTE (owner 2026-11-09, slice 5): the old mission-focus
+        // painting died with the focus it drew - setFocusPoint has
+        // no callers, so focusPoint() is always null and these lines
+        // drew nothing. The task anchor already names the ground;
+        // slots paint themselves where they stand.
 
 //        // Main DEFEND focus point
 //        APosition position = MissionAttack.getInstance().focusPoint();

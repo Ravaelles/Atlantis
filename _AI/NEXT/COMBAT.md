@@ -120,6 +120,14 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   readers of the count). Breach detection itself untouched.
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
+  Readers migrated so far: posture inputs (`wasAttacking` reads the
+  latch), frame note (`DecidedPosture` shared by latch/veto/regroup),
+  painter (enforced mission + task anchor instead of the global
+  mirror; dead focus painting deleted - `setFocusPoint` has zero
+  callers). Left: per-unit `mission()` system (separate, needs its
+  own analysis), Terran/UMS/orphan-production readers (out of
+  scope per §5/D8/queued migration), `Missions.reset/history`
+  bookkeeping.
 
 ## Mission command (#232, priority 0)
 
