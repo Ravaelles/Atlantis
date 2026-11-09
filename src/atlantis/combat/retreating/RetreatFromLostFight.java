@@ -260,6 +260,18 @@ public final class RetreatFromLostFight {
                     CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
                 if (home == null) home = ClusterRally.regroupRallyPoint(unit);
             }
+            // Task rally (owner #232 slice): a natural-hold retreat
+            // re-forms AT the natural choke instead of falling through
+            // to the main. Reads the task, not the mission - when
+            // another mission owns NATURAL_CHOKE the same line holds.
+            // Main-choke holds already land there via the floor, so
+            // only the natural branch changes the destination.
+            if (atlantis.combat.cluster.ClusterTask.forMission(
+                atlantis.combat.cluster.ArmyMission.current()).anchor()
+                == atlantis.combat.cluster.TaskAnchor.NATURAL_CHOKE) {
+                HasPosition natural = ClusterRally.naturalStandoffPoint();
+                if (natural != null) home = natural;
+            }
             // Retreat with an escape route (owner 2026-10-26, tested
             // loss vs Protoss): the rally above is always home ground,
             // but the road there can run straight through the enemy

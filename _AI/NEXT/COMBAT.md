@@ -47,8 +47,7 @@ calls it - this section is the plan the slices below execute.
   path; `HoldMainChokeEnforcementTest` + task pins cover both
   halves, no behavior change). `RetreatFloor` twins the task rally
   next to its rung (`taskRally`, pinned pure) - the divergence data
-  for the next slice, which makes the rally read `fleeRally` (needs
-  a StarEngine repro + game proof: retreat destinations change).
+  for the next slice, which makes the rally read `fleeRally`.
 
 ## Deletion queue (verified unused, one at a time)
 
@@ -78,19 +77,20 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   `rushDefenseCombatBuildingsNeeded` x2, base `rushDefence` stub
   + its call (all zero callers; the DEFEND half already lives as
   RUSH_DEFENCE). Evidence: fast gate green.
-- [ ] `AGame`-UMS force-ATTACK (UMS bypasses posture; needs a UMS
-  vehicle - owner call).
+- [x] DONE 2026-11-09: decided KEEP (verified, owner-confirmed):
+  `AGame`-UMS force-ATTACK (mode setter is the right home for a
+  mode default; overwritten next frame except empty-Alpha readers -
+  porting would change UMS worker-avoid with no vehicle);
+  `DefendedPlace` (single-reader pure function with a pin is
+  healthy; the second-reader requirement is withdrawn);
+  Terran avoid subtree (leaves self-gate on race; deleting
+  contradicts open-for-Terran, CONVENTIONS §5).
 - [ ] `FormationOrderLatch` stays shared: 3 call sites with
   per-caller denial handling, one twin, keyed on the order itself.
   Follow-up (not this slice): thread the decided posture in
   instead of re-deriving it via `ClusterMission.postureFor` (P2).
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
-- [ ] `DefendedPlace` second reader or fold (needs the owner
-  doctrine: which kinds change formation slots) - blocked on that
-  decision.
-- [ ] Terran avoid subtree (dead-race cleanup needs the dispatch seam
-  decision first).
 
 ## Mission command (#232, priority 0)
 
@@ -99,9 +99,28 @@ pure `decide` + shadow twin (1a/1b), shadow sampling (2), choke
 enforcement gates (3a/3b/3c), fallbacks report upward (4),
 mission-transition gate (5 s hold-fire after withdraw, 2 s
 re-withdraw spacing; pinned red-first). Enforcement reads the
-gated mission. Open: live enforcement proof per slice (halted);
+gated mission. Task layer landed shadow-side: `ClusterTask` +
+`TaskAnchor` pure table (6/6), `TaskTwin` live rows, `MissionHold`
+reads the task anchor, `RetreatFloor` twins the task rally.
+Open: live enforcement proof per slice (halted);
 the #204 retreat-ladder proof below; Thundering/UMS vehicles are
 owner-called.
+
+### Next enforcement slice: rally reads task.fleeRally (APPROVED,
+owner 2026-11-09 - sim first, then fix, then game proof)
+Vehicle: TauCross snapshot harness (map geometry needed: two
+chokes, two bases). Failing shape first: 2-base Protoss line
+holding the natural choke (mission HOLD_NATURAL_CHOKE, FLEE
+tactic after a lost trade) rallied home toward the main ([21,18])
+instead of stopping AT the natural-choke line. Fix LANDED
+2026-11-09: the retreat home reads the task anchor - NATURAL_CHOKE
+tasks rally at the natural standoff; main-choke holds already land
+there via the floor, other missions keep today's rally. Pinned
+(`RetreatToNaturalChokeTest` red-then-green) + related retreat
+suites green (42/42). Live proof: one quiet game where a lost
+natural fight re-forms on the natural line. Out of scope: flee
+permission itself (FLEE vs STAND stays with ClusterTactic +
+breach), approach narrowing, forbidden branches.
 
 ## Retreat doctrine (#204 landed sim-side, proof pending)
 
