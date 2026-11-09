@@ -120,6 +120,13 @@ game logs as well as build output.
   MidGameStallReproTest suite-load timeout; ReengageGlideTest
   NoClassDefFoundError (infra, non-recurring); CutoffSwampedTest
   order flake (no global id reset; needs K-of-N/harness work).
+- Domain-run order dependence (measured 2026-11-09, 1812-test
+  production/placement/combat run: 1807/5): RequestBuildingNearTest
+  fails 2 methods in-domain but passes solo 6/6 both at fe0ecdf39 and
+  with the branch (worktree-proven); GatewayWaitsOnBlockedBaseTest
+  hangs >100 s solo (20 s cap violated) while failing fast in-domain.
+  Neither test reads branch-changed code. Same harness class as the
+  CutoffSwamped flake above - K-of-N work, no blind fix.
 
 ## Architecture migration — stages E–J
 

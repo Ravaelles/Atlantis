@@ -28,6 +28,29 @@ Next, one at a time with a game proof each: per-gate deletions
 (owner picks the family); Robotics/observer demand and the gateway
 threshold thicket stay with current owners until game proof.
 
+## Legacy dynamic commander coverage (owner question 2026-11-09)
+
+Live loop runs V2 only (`ProductionCommander`: `ProductionOrdersCommander`
++ `ConstructionsCommander`); `DynamicProductionCommander` (with
+`DynamicBuildingsCommander` + `ProtossDynamicUnitProductionCommander`) has no
+live parent - orphaned, issuing nothing. V2 covers every legacy product
+EXCEPT one proven gap (audited 2026-11-09 against `DynamicGoals`):
+covered: Gateway, Observatory (+Robo via scheduler prereq), Forge,
+cannons (fortification + hidden-unit response, still live via
+`ProtossStrategyResponse`), Stargate, Corsair, Observer pump, Citadel,
+Archives, High Templar, Storm, Dark Templar, Support Bay, Reaver,
+Shuttle (incl. scarabs: brewed from the Reaver by the live combat
+specialist `SpecialistBehaviors`, NEXT #198 - not a production goal by
+design), Tribunal, Arbiter, weapons/armor/singularity/legs, workers,
+supply, gas, expansion, Zealot/Dragoon pumps. Gap (no V2 goal, no live
+caller):
+- Forge-FE natural wall-in: `WallInGoal` is decided on the board but its
+  only emitter (`ProduceNaturalWallIn`) is orphaned, and its issuance
+  door (legacy queue) no longer issues. Vehicle: Forge-FE game.
+Verdict: the chain stays until the wall-in gap closes with a sim pin +
+game proof; `ProduceGateway`/`ProduceDragoon` deprecation stands (V2 owns
+those). No blind deletion.
+
 ## Migration #144-#147 (owner-sequenced; V2 is already the default)
 
 Landed: catalogue groundwork through A4g, B0 flow map, B1a/B1b
