@@ -198,6 +198,12 @@ public final class ProtossDefendFocusPoint {
                     boolean mainBanned = mainChokeBanned();
                     boolean holdsMainChoke = mainStand != null
                         && !(We.protoss() && Count.ourCombatUnits() >= MIDDLE_CHOKE_MIN_ARMY)
+                        // Owner 2026-11-09: with a natural standing the
+                        // line never falls back to the main choke - only
+                        // the natural choke (or a base) answers. Same
+                        // withdrawal shape as the 6-army rule above; the
+                        // SPARTA wall-in keeps its own input on purpose.
+                        && !(multiBase && naturalChoke != null)
                         && !mainBanned;
 
                     // Absolute middle (owner order 2026-11-07): past 15

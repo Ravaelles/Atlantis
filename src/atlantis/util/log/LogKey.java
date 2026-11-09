@@ -148,6 +148,15 @@ public enum LogKey {
      */
     V2_DISPATCH,
     /**
+     * A Citadel minted below the standalone floor (owner 2026-11-09):
+     * names whether the templar line owns it (Archives planned or
+     * warping) or the standalone gate was jumped. The scheduler
+     * prerequisite and the legacy direct queue both bypass the
+     * standalone goal, so without this twin the early Citadel reads
+     * as a violation instead of the Archives-bound exception it is.
+     */
+    CITADEL_PREREQ,
+    /**
      * A worker stood still past the anomaly threshold, with its state.
      */
     STUCK_WORKER,

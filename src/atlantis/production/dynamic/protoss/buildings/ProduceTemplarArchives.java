@@ -36,8 +36,12 @@ public class ProduceTemplarArchives {
     private static boolean requestProduce() {
         if (Have.notEvenPlanned(Protoss_Citadel_of_Adun)) {
             // Queue result is the value (explicit return, no print side-channel).
+            boolean queued = AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null;
+            if (queued) {
+                twinArchivesBoundCitadel();
+            }
 
-            return AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null;
+            return queued;
         }
         if (!Have.a(Protoss_Citadel_of_Adun)) return false;
 
@@ -46,6 +50,23 @@ public class ProduceTemplarArchives {
         }
 
         return false;
+    }
+
+    /**
+     * Names the Archives exception when the templar line orders its own
+     * Citadel below the standalone floor (owner 2026-11-09): the V2 mint
+     * door twins the same row at warp time (CITADEL_PREREQ), this names
+     * the legacy decision that queued it.
+     */
+    private static void twinArchivesBoundCitadel() {
+        try {
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CITADEL_PREREQ)
+                .param("type", Protoss_Citadel_of_Adun.name())
+                .param("supplyUsed", atlantis.game.A.supplyUsed())
+                .param("via", "templar-archives-queue")
+                .log(atlantis.game.A.now(), atlantis.game.A.minSec());
+        } catch (Exception | Error ignored) {
+        }
     }
 
     private static AUnitType type() {

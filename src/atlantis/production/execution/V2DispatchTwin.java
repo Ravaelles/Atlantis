@@ -12,8 +12,9 @@ import java.util.List;
  * DECISIONS.log; V2 answers here, in both DRY_RUN and LIVE, so a thin
  * game reads as few rows, not as silence.
  *
- * <p>Pure over the dispatch results: the engine calls it with the frame,
- * tests call it with numbers.</p>
+ * <p>Nearly pure over the dispatch results: identical re-offers heartbeat
+ * instead of rowing every frame (see below), so tests reset the clock
+ * with {@link #clearForTests} next to the log.</p>
  */
 public final class V2DispatchTwin {
 
@@ -25,12 +26,47 @@ public final class V2DispatchTwin {
 
         for (DispatchResult result : results) {
             if (result == null || result.item() == null || result.item().item() == null) continue;
+            if (isHeartbeatDuplicate(frame, result)) continue;
+
             EventLog.key(LogKey.V2_DISPATCH)
                 .param("item", result.item().item().id())
                 .param("start", result.item().startFrame())
                 .param("issued", result.issued())
                 .param("detail", result.detail())
                 .log(frame, frameToClock(frame));
+        }
+    }
+
+    /**
+     * Re-offer heartbeat (owner 2026-11-09): the dispatcher retries due
+     * items every frame, so a stuck mint (or a busy facility) used to
+     * row identically hundreds of times - the Citadel drought rowed
+     * "no placement" 250x. Identical rows (item, verdict, reason,
+     * start) twin once, then heartbeat every {@link #HEARTBEAT_FRAMES};
+     * anything changed twins immediately. Test seam below keeps the
+     * pure-function pins hermetic.
+     */
+    public static final int HEARTBEAT_FRAMES = 240;
+
+    private static final java.util.Map<String, Integer> lastTwinAt = new java.util.HashMap<>();
+
+    public static void clearForTests() {
+        lastTwinAt.clear();
+    }
+
+    private static boolean isHeartbeatDuplicate(int frame, DispatchResult result) {
+        try {
+            String key = result.item().item().id() + "|" + result.issued() + "|"
+                + result.detail() + "|" + result.item().startFrame();
+            Integer last = lastTwinAt.get(key);
+            if (last != null && frame - last < HEARTBEAT_FRAMES) return true;
+
+            if (lastTwinAt.size() > 400) lastTwinAt.clear();
+            lastTwinAt.put(key, frame);
+
+            return false;
+        } catch (Exception | Error ignored) {
+            return false;
         }
     }
 

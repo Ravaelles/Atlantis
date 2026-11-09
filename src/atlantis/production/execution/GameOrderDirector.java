@@ -262,6 +262,16 @@ public class GameOrderDirector implements OrderDirector {
 
         ConstructionRequests.addConstruction(construction);
 
+        // Archives-bound Citadel (owner 2026-11-09): below the standalone
+        // floor the mint is only legitimate with the templar line owning
+        // it - name which, so an early Citadel reads as the exception
+        // instead of a jumped gate. Single-demand dedup means this rows
+        // once per building, never per frame.
+        if (buildingType == AUnitType.Protoss_Citadel_of_Adun
+            && atlantis.game.A.supplyUsed() < 110) {
+            twinCitadelPrereq();
+        }
+
         return true;
     }
 
@@ -448,6 +458,33 @@ public class GameOrderDirector implements OrderDirector {
     }
 
     private static final java.util.Map<String, Integer> lastRefusedTwin = new java.util.HashMap<>();
+
+    /**
+     * Names the Archives exception when a Citadel mints below the
+     * standalone floor (owner 2026-11-09): the templar line planned,
+     * warping or standing - or neither, in which case the gate was
+     * jumped and the row says so.
+     */
+    private static void twinCitadelPrereq() {
+        try {
+            int now = atlantis.game.A.now();
+            boolean planned = !atlantis.units.select.Have.notEvenPlanned(
+                AUnitType.Protoss_Templar_Archives);
+            boolean warping = atlantis.units.select.Count.ourWithUnfinished(
+                AUnitType.Protoss_Templar_Archives) > 0;
+            boolean standing = atlantis.units.select.Count.ofType(
+                AUnitType.Protoss_Templar_Archives) > 0;
+
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CITADEL_PREREQ)
+                .param("type", AUnitType.Protoss_Citadel_of_Adun.name())
+                .param("supplyUsed", atlantis.game.A.supplyUsed())
+                .param("archivesPlanned", planned)
+                .param("archivesWarping", warping)
+                .param("archivesStanding", standing)
+                .log(now, atlantis.game.A.minSec());
+        } catch (Exception | Error ignored) {
+        }
+    }
 
     private static final java.util.Map<String, Integer> lastNoBuilderTwin = new java.util.HashMap<>();
 

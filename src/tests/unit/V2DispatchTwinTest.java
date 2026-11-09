@@ -41,6 +41,7 @@ public class V2DispatchTwinTest {
     @BeforeEach
     public void clearLog() {
         EventLog.clearForTests();
+        V2DispatchTwin.clearForTests();
     }
 
     @Test
@@ -104,5 +105,45 @@ public class V2DispatchTwinTest {
         public boolean requiresPlacement() {
             return false;
         }
+    }
+
+    @Test
+    public void identicalReoffersHeartbeatInsteadOfSpamming() {
+        List<DispatchResult> results = new ArrayList<DispatchResult>();
+        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, false), false, "no placement"));
+
+        V2DispatchTwin.emit(100, results);
+        V2DispatchTwin.emit(101, results);
+        V2DispatchTwin.emit(200, results);
+
+        assertEquals(1, countRows(EventLog.toJsonLines()),
+            "same item, verdict, reason and start inside the window: one row, not three");
+    }
+
+    @Test
+    public void changedVerdictRowsImmediately() {
+        List<DispatchResult> results = new ArrayList<DispatchResult>();
+        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, false), false, "no placement"));
+
+        List<DispatchResult> changed = new ArrayList<DispatchResult>();
+        changed.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, true), true, "builder committed"));
+
+        V2DispatchTwin.emit(100, results);
+        V2DispatchTwin.emit(101, changed);
+
+        assertEquals(2, countRows(EventLog.toJsonLines()),
+            "a changed verdict is news, not a repeat");
+    }
+
+    @Test
+    public void heartbeatRepeatsAfterTheWindow() {
+        List<DispatchResult> results = new ArrayList<DispatchResult>();
+        results.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, false), false, "no placement"));
+
+        V2DispatchTwin.emit(100, results);
+        V2DispatchTwin.emit(100 + V2DispatchTwin.HEARTBEAT_FRAMES, results);
+
+        assertEquals(2, countRows(EventLog.toJsonLines()),
+            "the heartbeat row proves the demand is still alive");
     }
 }
