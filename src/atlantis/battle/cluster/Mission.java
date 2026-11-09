@@ -25,14 +25,6 @@ public class Mission {
         return "Attack".equals(name);
     }
 
-    public boolean isMissionDefend() {
-        return "Defend".equals(name);
-    }
-
-    public String letter() {
-        return name.isEmpty() ? "?" : name.substring(0, 1);
-    }
-
     public AFocusPoint focusPoint() {
         return focusPoint;
     }
