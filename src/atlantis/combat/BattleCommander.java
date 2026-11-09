@@ -226,6 +226,7 @@ public class BattleCommander extends Commander {
         StickyTarget.clearForTests();
         atlantis.combat.targeting.ChaseVetoTwin.clearForTests();
         ArmyMission.clearForTests();
+        atlantis.combat.twins.TaskTwin.clearForTests();
         Regroup.clearForTests();
         atlantis.combat.formation.MarchCohesion.clearForTests();
     }
@@ -256,6 +257,13 @@ public class BattleCommander extends Commander {
         // the mission WOULD be. Reads nothing, steers nothing - the
         // divergence read comes later, from these rows.
         ArmyMission.sampleShadow(posture);
+
+        // Task twin (owner 2026-11-09, mission + task direction): the
+        // standing order derived from the enforced mission. Twin before
+        // gate - reads nothing, steers nothing yet.
+        if (ArmyMission.current() != null) {
+            atlantis.combat.twins.TaskTwin.sample(ArmyMission.current());
+        }
 
         atlantis.cherryvis.simple.ArmyBoard.publish(A.now(), posture, tactic, mission.text, anchor);
 

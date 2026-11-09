@@ -34,15 +34,17 @@ calls it - this section is the plan the slices below execute.
   one brain, solo+squad entries). Every branch names its parent
   mission.
 - Cross-cutting: twins (read-only) + latches (hysteresis).
-- **Task (defined 2026-11-09, shadow):** `ClusterTask` +
+- **Task (defined 2026-11-09, twinned live):** `ClusterTask` +
   `TaskAnchor`: the mission instantiated - anchor kind (never a
   tile; the rally code resolves points), posture, whether FLEE is
   allowed and which line it rallies to (null: the retreat ladder
   owns routing). Pure `forMission` table, pinned 6/6
-  (`ClusterTaskTest`); nothing reads it yet. Next: wire one
-  mission's task at a time (same discipline as the HOLD_* slices);
-  approach narrowing + forbidden branches ride those slices, not
-  this vocabulary.
+  (`ClusterTaskTest`); `TaskTwin` rows the enforced mission's task
+  every frame (transition + 300f heartbeat, pinned in
+  `TaskTwinTest`) - twin before gate, so enforcement reads nothing
+  yet. Next: wire one mission's task at a time (same discipline
+  as the HOLD_* slices); approach narrowing + forbidden branches
+  ride those slices, not this vocabulary.
 
 ## Deletion queue (verified unused, one at a time)
 

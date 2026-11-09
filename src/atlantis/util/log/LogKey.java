@@ -209,6 +209,14 @@ public enum LogKey {
      */
     MISSION_ENFORCED,
     /**
+     * Task computed from the enforced mission (owner 2026-11-09,
+     * mission + task direction): anchor kind, posture, whether FLEE
+     * is allowed and where it rallies. Transitions always row, steady
+     * tasks heartbeat - twin before gate (MDC P4), so the task proves
+     * itself live and stable before any enforcement reads it.
+     */
+    TASK,
+    /**
      * Zealot gas-bank brake (owner #203): the flood pump yields while gas
      * is banked for Dragoons. Transitions always row, steady holds
      * heartbeat - the warp rows name the release.
