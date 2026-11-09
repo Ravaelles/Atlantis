@@ -118,16 +118,25 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
 - [x] DONE 2026-11-09: dead breach-attack counter
   (`EnemyUnitBreachedBase` incremented on the global mirror, zero
   readers of the count). Breach detection itself untouched.
-- [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
-  `Missions` value type) - dies with the Missions mirror, slice 5.
-  Readers migrated so far: posture inputs (`wasAttacking` reads the
-  latch), frame note (`DecidedPosture` shared by latch/veto/regroup),
-  painter (enforced mission + task anchor instead of the global
-  mirror; dead focus painting deleted - `setFocusPoint` has zero
-  callers). Left: per-unit `mission()` system (separate, needs its
-  own analysis), Terran/UMS/orphan-production readers (out of
-  scope per §5/D8/queued migration), `Missions.reset/history`
-  bookkeeping.
+- [ ] `battle/cluster/Mission.java` dormant wrapper + `Missions`
+  mirror deletion (slice 5 core): after readers migrate (done:
+  posture inputs, latch/veto/regroup note, painter, dead
+  counters; left: per-unit system below (separate), Terran/UMS/
+  orphan-production readers (out of scope), `Missions.reset/
+  history` bookkeeping). Then delete both files at once, suite
+  green as the evidence.
+- [ ] Per-unit missions (`AUnit.mission()` / `Squad.mission()`,
+  investigated 2026-11-09, owner-approved): `setMission` has zero
+  callers in src, so every read sees the DEFEND default (or null
+  squadless) - the unit-level counterpart of the global mirror,
+  but a separate system with its own readers (avoid/*, run,
+  PreventAttacksInMissionDefend, ShouldRunTowardsBase,
+  EvalChokeTweaks, FollowAlphaLeader focus). DONE 2026-11-09:
+  `FixActions` needed no fold (dead file, zero live callers).
+  Next: fold one live family at a time with pins, same
+  red-first discipline as the global ports.
+  Orphaned readers (ProduceDragoon/ProduceTemplarArchives) die
+  with the orphan chain (production workstream, not here).
 
 ## Mission command (#232, priority 0)
 
@@ -144,7 +153,8 @@ the #204 retreat-ladder proof below; Thundering/UMS vehicles are
 owner-called.
 
 ### Rally reads task.fleeRally (APPROVED, LANDED sim-side
-2026-11-09; live proof OPEN - game10 ran without the shape)
+2026-11-09; live proof WAITS for a natural game - owner 2026-11-09:
+no dedicated hunting, the shape will be caught when it occurs)
 Vehicle: mocked-choke stub world (RetreatFloorTest precedent -
 deterministic distances, not flat stubs: real FakeChoke geometry
 at (60,20)/(44,40), two Nexus fakes, mission forced via
@@ -156,8 +166,9 @@ NATURAL_CHOKE tasks rally at the natural standoff; main-choke
 holds already land there via the floor, other missions keep
 today's rally. Pinned (`RetreatToNaturalChokeTest` red pre-fix
 destination, green post-fix) + related suites green (42/42).
-Live proof: the running game10 - a lost natural fight re-forming
-on the natural line (TASK + RETREAT_FLOOR taskRally rows decide).
+Live proof: one expanding game where a lost natural fight
+re-forms on the natural line (TASK + RETREAT_FLOOR taskRally rows
+decide; game10 ran without the shape - never expanded).
 Out of scope: flee permission itself (FLEE vs STAND stays with
 ClusterTactic + breach), approach narrowing, forbidden branches.
 
