@@ -306,7 +306,7 @@ public class ProduceZealot {
     }
 
     public static double minZealots() {
-        if (A.s <= 60 * 6.5 && Strategy.is(ProtossStrategies.PROTOSS_Zealot_into_Goon)) return 6;
+        if (A.s <= 60 * 6.5 && Strategy.is(ProtossStrategies.ZealotIntoGoon)) return 6;
 
         if (Enemy.terran()) return minZealotsVsTerran();
         if (Enemy.protoss()) return minZealotsVsProtoss();

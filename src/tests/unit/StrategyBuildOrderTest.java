@@ -97,7 +97,7 @@ public class StrategyBuildOrderTest {
         // BuildOrderFileNotFoundException for the Protoss-vs-Zerg strategy.
         ProtossStrategies.initialize();
 
-        AStrategy zealotIntoGoon = ProtossStrategies.PROTOSS_Zealot_into_Goon;
+        AStrategy zealotIntoGoon = ProtossStrategies.ZealotIntoGoon;
         assertNotNull(zealotIntoGoon.name(), "initialize() must name the strategy");
         assertTrue(zealotIntoGoon.name().contains(" "),
             "the build-order file names contain spaces; a constant-derived name has none: "
@@ -126,7 +126,7 @@ public class StrategyBuildOrderTest {
     public void unplayableStrategyRefusedLoudly() {
         ProtossStrategies.initialize();
 
-        AStrategy threeGate = ProtossStrategies.PROTOSS_3_Gate;
+        AStrategy threeGate = ProtossStrategies._3Gate;
         assertNotNull(threeGate.name());
         try {
             ABuildOrderLoader.getBuildOrderForStrategy(threeGate);

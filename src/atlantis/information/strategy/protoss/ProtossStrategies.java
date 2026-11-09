@@ -8,36 +8,36 @@ import atlantis.units.AUnitType;
 
 public class ProtossStrategies extends AStrategy {
     // Standard
-    public static final AStrategy PROTOSS_Zealot_Core_Dragoon = protossStrategy();
+    public static final AStrategy ZealotCoreDragoon = protossStrategy();
 
     // =========================================================
-    public static final AStrategy PROTOSS_Zealot_Core_Zealot = protossStrategy();
-    public static final AStrategy PROTOSS_Zealot_Core_Zealot_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_4Zealot_Core_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Zealot_into_Goon = protossStrategy();
-    public static final AStrategy PROTOSS_ZZ_Core = protossStrategy();
-    public static final AStrategy PROTOSS_ZZZ_Core = protossStrategy();
-    public static final AStrategy PROTOSS_ZZZZ_Core = protossStrategy();
+    public static final AStrategy Zealot_Core_Zealot = protossStrategy();
+    public static final AStrategy Zealot_Core_Zealot_vZ = protossStrategy();
+    public static final AStrategy _4Zealot_Core_vZ = protossStrategy();
+    public static final AStrategy ZealotIntoGoon = protossStrategy();
+    public static final AStrategy ZZCore = protossStrategy();
+    public static final AStrategy ZZZCore = protossStrategy();
+    public static final AStrategy ZZZZCore = protossStrategy();
     // Rush
-    public static final AStrategy PROTOSS_2_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_3_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_5_Gate_Zealot_vP = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_Zealot_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Speedzealot = protossStrategy();
-    public static final AStrategy PROTOSS_One_Base_Speedzealot = protossStrategy();
+    public static final AStrategy _2GateZealot_vP = protossStrategy();
+    public static final AStrategy _3GateZealot_vP = protossStrategy();
+    public static final AStrategy _5GateZealot_vP = protossStrategy();
+    public static final AStrategy _2GateZealot_vZ = protossStrategy();
+    public static final AStrategy Speedzealot = protossStrategy();
+    public static final AStrategy OneBaseSpeedzealot = protossStrategy();
     // Cheese
-    public static final AStrategy PROTOSS_3_Gate = protossStrategy();
+    public static final AStrategy _3Gate = protossStrategy();
     // Expansion
-    public static final AStrategy PROTOSS_12_Nexus = protossStrategy();
-    public static final AStrategy PROTOSS_Forge_FE_vZ = protossStrategy();
-    public static final AStrategy PROTOSS_Forge_FE_vP = protossStrategy();
+    public static final AStrategy _12Nexus = protossStrategy();
+    public static final AStrategy ForgeFE_vZ = protossStrategy();
+    public static final AStrategy ForgeFE_vP = protossStrategy();
     // Tech
-    public static final AStrategy PROTOSS_Core_Dragoon = protossStrategy();
-    public static final AStrategy PROTOSS_Dragoon_First = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_Range_Expand = protossStrategy();
-    public static final AStrategy PROTOSS_2_Gate_DT = protossStrategy();
-    public static final AStrategy PROTOSS_Carrier_Push = protossStrategy();
-    public static final AStrategy PROTOSS_Fast_DT = protossStrategy();
+    public static final AStrategy CoreDragoon = protossStrategy();
+    public static final AStrategy DragoonFirst = protossStrategy();
+    public static final AStrategy _2GateRangeExpand = protossStrategy();
+    public static final AStrategy _2GateDT = protossStrategy();
+    public static final AStrategy CarrierPush = protossStrategy();
+    public static final AStrategy FastDT = protossStrategy();
 
     public static AStrategy protossChooseStrategy() {
 //        if (true) return ProtossStrategies.PROTOSS_2_Gate_DT;
@@ -48,7 +48,7 @@ public class ProtossStrategies extends AStrategy {
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
 //            return ProtossStrategies.PROTOSS_2_Gate_DT;
-            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon; // <--
+            return ProtossStrategies.ZealotCoreDragoon; // <--
 //            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
@@ -59,14 +59,14 @@ public class ProtossStrategies extends AStrategy {
         }
 
         else if (Enemy.terran()) {
-            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+            return ProtossStrategies.ZealotCoreDragoon;
 //            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Zealot_into_Goon;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
         }
 
         else if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_Zealot_into_Goon;
+            return ProtossStrategies.ZealotIntoGoon;
 //            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //            return ProtossStrategies.PROTOSS_4Zealot_Core_vZ;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot_vZ;
@@ -77,7 +77,7 @@ public class ProtossStrategies extends AStrategy {
 //            return ProtossStrategies.PROTOSS_ZZZZ_Core;
         }
 
-        return ProtossStrategies.PROTOSS_Zealot_into_Goon;
+        return ProtossStrategies.ZealotIntoGoon;
 //        return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
@@ -106,49 +106,50 @@ public class ProtossStrategies extends AStrategy {
 
         // === Balanced ======================================
 
-        PROTOSS_Zealot_Core_Dragoon.setName("Zealot Core Dragoon").setGoingTech();
-        PROTOSS_Zealot_Core_Zealot.setName("Zealot Core Zealot");
-        PROTOSS_Zealot_Core_Zealot_vZ.setName("Zealot Core Zealot vZ");
-        PROTOSS_4Zealot_Core_vZ.setName("4Zealot Core vZ");
-        PROTOSS_Zealot_into_Goon.setName("Zealot into Goon");
-        PROTOSS_ZZ_Core.setName("ZZ Core"); // Zealot-Zealot-Core
-        PROTOSS_ZZZ_Core.setName("ZZZ Core"); // Zealot-Zealot-Zealot-Core
-        PROTOSS_ZZZZ_Core.setName("ZZZZ Core"); // ZZZZ-Core
+        ZealotCoreDragoon.setName("Zealot Core Dragoon").setGoingTech();
+        Zealot_Core_Zealot.setName("Zealot Core Zealot");
+        Zealot_Core_Zealot_vZ.setName("Zealot Core Zealot vZ");
+        _4Zealot_Core_vZ.setName("4Zealot Core vZ");
+        ZealotIntoGoon.setName("Zealot into Goon");
+        ZZCore.setName("ZZ Core"); // Zealot-Zealot-Core
+        ZZZCore.setName("ZZZ Core"); // Zealot-Zealot-Zealot-Core
+        ZZZZCore.setName("ZZZZ Core"); // ZZZZ-Core
 
         // === Rushes ========================================
 
-        PROTOSS_2_Gate_Zealot_vP.setName("2 Gate Zealot vP").setGoingRush();
-        PROTOSS_3_Gate_Zealot_vP.setName("3 Gate Zealot vP").setGoingRush();
-        PROTOSS_5_Gate_Zealot_vP.setName("5 Gate Zealot vP").setGoingRush();
+        _2GateZealot_vP.setName("2 Gate Zealot vP").setGoingRush();
+        _3GateZealot_vP.setName("3 Gate Zealot vP").setGoingRush();
+        _5GateZealot_vP.setName("5 Gate Zealot vP").setGoingRush();
 
-        PROTOSS_2_Gate_Zealot_vZ.setName("2 Gate Zealot vZ").setGoingRush();
+        _2GateZealot_vZ.setName("2 Gate Zealot vZ").setGoingRush();
 
-        PROTOSS_Speedzealot.setName("+1 Speedzealot").setGoingRush();
+        Speedzealot.setName("+1 Speedzealot").setGoingRush();
 
-        PROTOSS_One_Base_Speedzealot.setName("One Base Speedzealot").setGoingRush();
+        OneBaseSpeedzealot.setName("One Base Speedzealot").setGoingRush();
 
         // === Cheese ========================================
 
-        PROTOSS_3_Gate.setName("3 Gate").setGoingRush().setGoingCheese().setUnplayable();
+        _3Gate.setName("3 Gate").setGoingRush().setGoingCheese().setUnplayable();
 
         // === Expansion =====================================
 
-        PROTOSS_12_Nexus.setName("12 Nexus").setGoingExpansion().setUnplayable();
-        PROTOSS_Forge_FE_vZ.setName("Forge FE vZ").setGoingExpansion();
-        PROTOSS_Forge_FE_vP.setName("Forge FE vP").setGoingExpansion();
+        _12Nexus.setName("12 Nexus").setGoingExpansion().setUnplayable();
+        ForgeFE_vZ.setName("Forge FE vZ").setGoingExpansion();
+        ForgeFE_vP.setName("Forge FE vP").setGoingExpansion();
 
         // === Tech ==========================================
 
-        PROTOSS_Core_Dragoon.setName("Core Dragoon").setGoingTech();
-        PROTOSS_Dragoon_First.setName("Dragoon First").setGoingTech();
+        CoreDragoon.setName("Core Dragoon").setGoingTech();
+        ZealotIntoGoon.setName("Zealot into Goon").setGoingTech();
+        DragoonFirst.setName("Dragoon First").setGoingTech();
 
-        PROTOSS_2_Gate_Range_Expand.setName("2 Gate Range Expand").setGoingTech();
+        _2GateRangeExpand.setName("2 Gate Range Expand").setGoingTech();
 
-        PROTOSS_2_Gate_DT.setName("2 Gate DT").setGoingTech().setGoingHiddenUnits();
+        _2GateDT.setName("2 Gate DT").setGoingTech().setGoingHiddenUnits();
 
-        PROTOSS_Carrier_Push.setName("Carrier Push").setGoingTech().setGoingAirUnitsLate().setUnplayable();
+        CarrierPush.setName("Carrier Push").setGoingTech().setGoingAirUnitsLate().setUnplayable();
 
-        PROTOSS_Fast_DT.setName("Fast DT").setGoingTech().setGoingRush();
+        FastDT.setName("Fast DT").setGoingTech().setGoingRush();
     }
 
     // =========================================================
@@ -162,32 +163,32 @@ public class ProtossStrategies extends AStrategy {
         // === Dark Templar ========================================
 
         if (seconds < 400 && (citadel >= 1 || has(AUnitType.Protoss_Templar_Archives))) {
-            return ProtossStrategies.PROTOSS_2_Gate_DT;
+            return ProtossStrategies._2GateDT;
         }
 
         // === Three Gateway =======================================
 
         if (gateways >= 3 && seconds < 400) {
-            return ProtossStrategies.PROTOSS_3_Gate;
+            return ProtossStrategies._3Gate;
         }
 
         // === Two Gateway =========================================
 
         if (gateways == 2 && seconds < 290) {
-            return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
+            return ProtossStrategies._2GateZealot_vP;
         }
 
         // === 12 Nexus ============================================
 
         if (nexus == 2 && seconds < 290) {
-            return ProtossStrategies.PROTOSS_12_Nexus;
+            return ProtossStrategies._12Nexus;
         }
 
         // === Carrier Push ========================================
 
         int cannons = count(AUnitType.Protoss_Photon_Cannon);
         if (cannons >= 1 && nexus >= 2) {
-            return PROTOSS_Carrier_Push;
+            return CarrierPush;
         }
 
         // =========================================================

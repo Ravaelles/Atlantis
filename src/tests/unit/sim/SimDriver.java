@@ -77,7 +77,7 @@ public final class SimDriver {
         // the harness makes, Protoss-only like the whole scenario.
         atlantis.game.listeners.OnGameStarted.initializeAllStrategies();
         atlantis.information.strategy.Strategy.setTo(
-            atlantis.information.strategy.protoss.ProtossStrategies.PROTOSS_Zealot_into_Goon);
+            atlantis.information.strategy.protoss.ProtossStrategies.ZealotIntoGoon);
         tests.fakes.FakeUnitData.TRAIN.clear();
         tests.fakes.FakeUnitData.CANCEL.clear();
         trainSeen = tests.fakes.FakeUnitData.TRAIN.size();

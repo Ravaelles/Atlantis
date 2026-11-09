@@ -50,7 +50,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 
     @Override
     public AStrategy initBuildOrder() {
-        return ProtossStrategies.PROTOSS_Forge_FE_vZ;
+        return ProtossStrategies.ForgeFE_vZ;
     }
 
     @Test
