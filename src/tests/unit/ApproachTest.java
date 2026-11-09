@@ -78,6 +78,7 @@ public class ApproachTest {
     @Test
     public void holdCrushingAContestedChokeCollapses() {
         Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
         g.chokeNear = true;
         g.enemiesNearChoke = 2;
         g.oursNearChoke = 4;
@@ -94,6 +95,7 @@ public class ApproachTest {
     @Test
     public void holdWithoutCrushKeepsTheStandoff() {
         Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
         g.chokeNear = true;
         g.enemiesNearChoke = 2;
         g.oursNearChoke = 3;
@@ -106,6 +108,7 @@ public class ApproachTest {
     @Test
     public void uncontestedChokeKeepsTheDefault() {
         Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
         g.chokeNear = true;
         g.enemiesNearChoke = 0;
         g.oursNearChoke = 4;
@@ -118,6 +121,7 @@ public class ApproachTest {
     @Test
     public void attackKeepsMarchingEvenCrushing() {
         Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
         g.chokeNear = true;
         g.enemiesNearChoke = 2;
         g.oursNearChoke = 4;
@@ -135,5 +139,44 @@ public class ApproachTest {
             Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), null));
         assertEquals(BattleStrategy.OPEN_FIELD,
             Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), null));
+    }
+
+    @Test
+    public void baselessCollapseNeverHappens() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = false;
+        g.chokeNear = true;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 4;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), g),
+            "no bases: the live rule never collapses, it duels or holds");
+    }
+
+    @Test
+    public void dragoonDuelKitesWhateverTheMission() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = false;
+        g.combatants = 2;
+        g.isDragoon = true;
+
+        assertEquals(BattleStrategy.DUEL_KITE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), g));
+        assertEquals(BattleStrategy.DUEL_KITE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), g),
+            "the live pick never knew the mission either");
+    }
+
+    @Test
+    public void duelNeedsADragoon() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = false;
+        g.combatants = 2;
+        g.isDragoon = false;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), g),
+            "zealots want contact, not range");
     }
 }

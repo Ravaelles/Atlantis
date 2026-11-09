@@ -243,6 +243,12 @@ with the live pick), anything else keeps the slice-1 default;
 ATTACK/STAGE keep marching even crushing (attack shapes get their
 own slice once observed). Pinned 5 rows (`ApproachTest`), still
 shadow - nothing reads the overload yet.
+Slice 3 LANDED 2026-11-09: duel kiting (a dragoon in a tiny
+baseless fight kites whatever the mission names - the live pick
+never knew the mission either; zealots keep the default) plus
+the faithfulness guard (collapse needs bases like the live rule:
+baseless fights kite, never collapse). Pinned 3 rows, still
+shadow.
 Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),

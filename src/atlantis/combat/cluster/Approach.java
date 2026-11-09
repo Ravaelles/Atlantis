@@ -92,22 +92,34 @@ public final class Approach {
      * mission default above. ATTACK keeps OPEN_FIELD even crushing -
      * attack shapes get their own slice once observed. Bait
      * detachment itself stays with the live pick (its pins stand).
+     * Slice 3 (2026-11-09): duel kiting + the faithfulness guard.
+     * A dragoon in a tiny baseless fight kites the duel whatever the
+     * mission names (mirrored from the live pick, which never knew
+     * the mission); the collapse needs bases like the live rule
+     * (baseless fights kite, they never collapse onto a bait).
      */
     public static BattleStrategy forTask(ClusterTask task, Geometry geometry) {
-        if (geometry != null && geometry.chokeNear && geometry.enemiesNearChoke > 0 && geometry.crushing()) {
-            if (task != null) {
-                switch (task.mission()) {
-                    case HOLD_MAIN:
-                    case HOLD_MAIN_CHOKE:
-                    case HOLD_NATURAL_CHOKE:
-                    case HOLD_MIDDLE:
-                        return BattleStrategy.COLLAPSE;
-                    default:
-                        break;
+        if (geometry != null) {
+            if (geometry.isDuel() && geometry.isDragoon) return BattleStrategy.DUEL_KITE;
+
+            if (geometry.hasBases
+                && geometry.chokeNear
+                && geometry.enemiesNearChoke > 0
+                && geometry.crushing()) {
+                if (task != null) {
+                    switch (task.mission()) {
+                        case HOLD_MAIN:
+                        case HOLD_MAIN_CHOKE:
+                        case HOLD_NATURAL_CHOKE:
+                        case HOLD_MIDDLE:
+                            return BattleStrategy.COLLAPSE;
+                        default:
+                            break;
+                    }
                 }
-            }
-            else {
-                return BattleStrategy.COLLAPSE;
+                else {
+                    return BattleStrategy.COLLAPSE;
+                }
             }
         }
 
