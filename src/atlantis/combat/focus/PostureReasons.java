@@ -296,7 +296,7 @@ public final class PostureReasons {
         in.strength = atlantis.information.generic.Army.strength();
         in.eval = assessor == null ? 1.0 : assessor.eval();
         in.dragoonMatchup = vsZerg || vsTerran || protossWithoutRanged;
-        in.wasAttacking = atlantis.battle.cluster.Missions.globalMission().isMissionAttack();
+        in.wasAttacking = ClusterMission.Posture.ATTACK == atlantis.combat.focus.PostureLatch.previous();
         in.goingTech = atlantis.information.strategy.Strategy.get().isGoingTech();
         in.vsZerg = vsZerg;
         in.vsTerran = vsTerran;

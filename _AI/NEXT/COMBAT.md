@@ -98,7 +98,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   posture (noted once per frame by the commander loop) instead of
   re-deriving headcount posture per call; un-noted paths keep the
   old derivation. Pin red-first both directions (0/2 ignored,
-  2/2 honored); fast gate green, sim suite untouched by shape.
+  2/2 honored); `wasAttacking` now reads the latch's previous
+  decision instead of the global mirror (provably identical -
+  both track the previous decided posture; UMS frame-1 edge
+  documented in the commit). Fast gate green, sim suite untouched
+  by shape.
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
 
@@ -116,9 +120,8 @@ Open: live enforcement proof per slice (halted);
 the #204 retreat-ladder proof below; Thundering/UMS vehicles are
 owner-called.
 
-### Next enforcement slice: rally reads task.fleeRally (APPROVED,
-owner 2026-11-09 - LANDED sim-side 2026-11-09, live proof pending:
-game10 running)
+### Rally reads task.fleeRally (APPROVED, LANDED sim-side
+2026-11-09; live proof OPEN - game10 ran without the shape)
 Vehicle: mocked-choke stub world (RetreatFloorTest precedent -
 deterministic distances, not flat stubs: real FakeChoke geometry
 at (60,20)/(44,40), two Nexus fakes, mission forced via

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import static atlantis.combat.cluster.ClusterMission.Posture.ATTACK;
 import static atlantis.combat.cluster.ClusterMission.Posture.DEFEND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * NEXT #197: a flip holds long enough to march somewhere before the
@@ -80,5 +81,17 @@ public class PostureLatchTest {
     public void backwardsClockFrees() {
         assertEquals(DEFEND, PostureLatch.hold(DEFEND, 9, 10, ATTACK, 5000),
             "a new game resets the clock - never hold forever");
+    }
+
+    @Test
+    public void previousNamesTheLastDecidedPosture() {
+        assertNull(PostureLatch.previous(), "nothing decided yet");
+
+        PostureLatch.hold(ATTACK, 9, 100);
+        assertEquals(ATTACK, PostureLatch.previous(),
+            "the frame entry point records what it decided");
+
+        PostureLatch.hold(ATTACK, 9, 300);
+        assertEquals(ATTACK, PostureLatch.previous(), "steady frames keep it");
     }
 }

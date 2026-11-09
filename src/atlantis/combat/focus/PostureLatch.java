@@ -74,6 +74,16 @@ public final class PostureLatch {
         return answer;
     }
 
+    /**
+     * The previous frame's decided posture, for readers that need to
+     * know what we were doing (was-attacking gates), not what we are
+     * doing now. Null before the first decision - same answer as the
+     * global mission's DEFEND default there.
+     */
+    public static ClusterMission.Posture previous() {
+        return last;
+    }
+
     public static void resetForTests() {
         last = null;
         changedAt = 0;
