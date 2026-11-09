@@ -112,6 +112,27 @@ public final class RetreatFloor {
     }
 
     /**
+     * What the enforced mission wants the rally to be, for the twin row:
+     * the floor clamps to its ladder rungs while the task names its own
+     * line - the divergence between the two is what the next enforcement
+     * slice adjudicates, so both ride the same row. Null mission (or a
+     * mission without a rally) reads "-" - same convention as the other
+     * nullable twin fields. Pure over the given mission, pinned without
+     * a game.
+     */
+    public static String taskRallyNameFor(atlantis.combat.cluster.ArmyMission mission) {
+        try {
+            atlantis.combat.cluster.ClusterTask task =
+                atlantis.combat.cluster.ClusterTask.forMission(mission);
+            if (task == null || task.fleeRally() == null) return "-";
+
+            return task.fleeRally().name();
+        } catch (Exception | Error ignored) {
+            return "-";
+        }
+    }
+
+    /**
      * Slice 4: the floor reports its overrides upward - a clamped rally
      * is a re-decide (the retreat wanted deeper), not a silent sideways
      * stop. Change-gated per rung with a 300-frame heartbeat, same shape
@@ -132,6 +153,7 @@ public final class RetreatFloor {
                 .param("tx", at.tx())
                 .param("ty", at.ty())
                 .param("why", why)
+                .param("taskRally", taskRallyNameFor(atlantis.combat.cluster.ArmyMission.current()))
                 .param("transition", transition)
                 .log(now, atlantis.game.A.minSec());
         } catch (Exception ignored) {
