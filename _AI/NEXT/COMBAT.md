@@ -138,6 +138,10 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   distToFocusPoint` + `AUnit.focusPoint` + `Squad.focusPoint` -
   always null/0, zero readers - plus the unused `ClusterMission.
   toMission` posture bridge and 4 orphaned imports);
+  DONE 2026-11-09: dead `Mission` behavior stubs
+  (`handleManagerClass` always-null + `allowsToRetreat`
+  always-true, zero readers) with their 2 orphaned imports -
+  the dormant wrapper shrinks toward the core deletion;
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),

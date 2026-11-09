@@ -1,8 +1,6 @@
 package atlantis.battle.cluster;
 
-import atlantis.architecture.Manager;
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.units.AUnit;
 
 /**
  * What the army is for right now. Phase 0 of the combat cutover
@@ -51,14 +49,6 @@ public class Mission {
      * BATTLE CUTOVER: no manager produces units anymore, so no mission
      * handles one. Callers treat null as "dormant".
      */
-    public Manager handleManagerClass(AUnit unit) {
-        return null;
-    }
-
-    public boolean allowsToRetreat(AUnit unit) {
-        return true;
-    }
-
     @Override
     public boolean equals(Object other) {
         return other instanceof Mission && name.equals(((Mission) other).name);
