@@ -115,6 +115,9 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   behavior change beyond the already-landed noted paths; pins
   re-verified after the merge (27/27 with the latch, veto,
   reinforce and posture suites).
+- [x] DONE 2026-11-09: dead breach-attack counter
+  (`EnemyUnitBreachedBase` incremented on the global mirror, zero
+  readers of the count). Breach detection itself untouched.
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
 

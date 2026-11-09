@@ -1,26 +1,11 @@
 package atlantis.information.enemy;
 
-import atlantis.battle.cluster.Missions;
 import atlantis.units.AUnit;
 
 public class EnemyUnitBreachedBase {
-    private static AUnit _lastEnemy = null;
-    private static int _numOfBaseAttacks = 0;
 
     public static AUnit get() {
-        AUnit enemy = EnemyNearBases.enemyNearAnyOurBase(-1);
-
-        if (enemy != null && _lastEnemy == null && Missions.isGlobalMissionAttack()) {
-            _numOfBaseAttacks++;
-        }
-
-        _lastEnemy = enemy;
-
-        return enemy;
-    }
-
-    public static int numberOfAttacksOnBase() {
-        return _numOfBaseAttacks;
+        return EnemyNearBases.enemyNearAnyOurBase(-1);
     }
 
     public static boolean someone() {
