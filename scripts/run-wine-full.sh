@@ -613,8 +613,8 @@ else
   say "  WARNING: StarCraft not running within 45 s (see $LOG_DIR/chaoslauncher.log)"
 fi
 
-say "Step 3/3: watching for HELLO_ATLANTIS (grace 10s)..."
-END=$(( $(date +%s) + 10 ))
+say "Step 3/3: watching for HELLO_ATLANTIS (grace 30s)..."
+END=$(( $(date +%s) + 30 ))
 ATTACHED=0
 while [ "$(date +%s)" -lt "$END" ]; do
   if grep -q "HELLO_ATLANTIS" "$CLIENT_LOG" 2>/dev/null; then
