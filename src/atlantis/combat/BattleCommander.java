@@ -247,6 +247,7 @@ public class BattleCommander extends Commander {
             );
         ClusterMission.Posture posture = mission.posture;
         Missions.followPosture(posture);
+        atlantis.combat.formation.FormationOrderLatch.noteFramePosture(posture);
 
         FightOrFlight.Tactic tactic = ClusterTactic.decide();
         HasPosition anchor = ClusterAnchor.anchorFor(posture);

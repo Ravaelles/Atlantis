@@ -34,7 +34,24 @@ public final class FormationOrderLatch {
     private static int lastTy = Integer.MIN_VALUE;
     private static int lastFrame = -1000000;
 
+    /**
+     * The frame's decided posture, noted by the commander loop (P2:
+     * decisions flow down, readers never re-derive them). Until the
+     * first note of the frame the latch falls back to the re-derived
+     * headcount posture, so direct unit-test and non-combat paths keep
+     * today's behavior.
+     */
+    private static ClusterMission.Posture framePosture = null;
+
     private FormationOrderLatch() {
+    }
+
+    /**
+     * Names the decided posture for this frame. Called once per frame
+     * by the commander loop, next to the posture it just decided.
+     */
+    public static void noteFramePosture(ClusterMission.Posture posture) {
+        framePosture = posture;
     }
 
     /**
@@ -45,6 +62,7 @@ public final class FormationOrderLatch {
         lastTx = Integer.MIN_VALUE;
         lastTy = Integer.MIN_VALUE;
         lastFrame = -1000000;
+        framePosture = null;
     }
 
     /**
@@ -87,6 +105,8 @@ public final class FormationOrderLatch {
     }
 
     private static ClusterMission.Posture currentPosture() {
+        if (framePosture != null) return framePosture;
+
         try {
             return ClusterMission.postureFor(
                 Alpha.get().size(), EnemyUnitBreachedBase.get() != null);
