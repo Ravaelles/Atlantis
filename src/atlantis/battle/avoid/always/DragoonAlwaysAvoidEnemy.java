@@ -74,19 +74,6 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         }
 
         if (
-            Enemy.zerg()
-                && unit.hp() <= 50
-                && unit.isMissionAttack()
-                && unit.shotSecondsAgo(2.5)
-                && (
-                unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.4, unit).notEmpty()
-                    || unit.enemiesNear().melee().inRadius(3, unit).notEmpty()
-            )
-        ) {
-            return t("VeryWounded_vZ");
-        }
-
-        if (
             unit.eval() <= 1.1
                 && unit.shieldWound() >= 36
 //                && unit.shotSecondsAgo(1.5)

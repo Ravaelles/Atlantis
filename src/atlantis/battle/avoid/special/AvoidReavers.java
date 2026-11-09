@@ -20,21 +20,16 @@ public class AvoidReavers extends Manager {
             && !unit.isABuilding()
             && !ignoreType()
             && (reaver = enemyReaver()) != null
-            && (unit.eval() <= 3 || missionAttackAndTooWeak())
+            && unit.eval() <= 3
             && !muchMoreOurThanEnemies();
 //            && !unit.isZealot()
 //            && !unit.isDragoon()
 //            && !unit.isMissionDefend();
     }
 
-    private boolean missionAttackAndTooWeak() {
-        if (!unit.isMissionAttack()) return false;
-
-        int we = unit.friendsNear().combatUnits().inRadius(8, unit).size();
-        int them = unit.enemiesNear().combatUnits().inRadius(10, unit).size();
-
-        return we <= 10 && (we - them) <= 6;
-    }
+    // (deleted: isMissionAttack is always false - setMission has zero
+    // callers, every live read sees DEFEND - so missionAttackAndTooWeak
+    // could never return true; the eval<=3 disjunct stands alone.)
 
     private AUnit enemyReaver() {
         return unit.enemiesNear().reavers().inRadius(BASE_AVOID_RANGE + distBonus(), unit).nearestTo(unit);

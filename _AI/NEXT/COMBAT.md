@@ -161,6 +161,13 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   always-null `focusPoint` (setter has zero callers - both dead
   branches deleted, unused import + dead local removed).
   Evidence: fast gate green (1255/0).
+- [x] DONE 2026-11-09: per-unit avoid/run remainder folds
+  (same always-DEFEND/always-false proof, no behavior change):
+  `DragoonAlwaysAvoidEnemy` dead VeryWounded_vZ branch
+  (`isMissionAttack` conjunct), `AvoidReavers`
+  `missionAttackAndTooWeak` helper (always false - eval<=3
+  stands alone), `ARunningManager` always-true
+  `!isMissionSparta` conjunct. Evidence: fast gate green.
 - [ ] Per-unit missions remainder (`AUnit.mission()` /
   `Squad.mission()`): `AUnit.isMissionAttackOrGlobalAttack`
   (unit OR global - migrate both halves together with the global

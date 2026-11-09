@@ -124,7 +124,7 @@ public class ARunningManager {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.nameWithId());
         }
 
-        if (!unit.isMissionSparta() && unit.moveToMain(Actions.RUN_ENEMY)) {
+        if (unit.moveToMain(Actions.RUN_ENEMY)) {
             unit.setTooltip("CantRun-GoToMain");
 
             return true;
