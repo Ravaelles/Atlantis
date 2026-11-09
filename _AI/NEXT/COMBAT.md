@@ -209,14 +209,25 @@ decide; game10 ran without the shape - never expanded).
 Out of scope: flee permission itself (FLEE vs STAND stays with
 ClusterTactic + breach), approach narrowing, forbidden branches.
 
-### Approach narrowing per mission (APPROVED, not started -
-sim first: needs a geometry snapshot vehicle, then pins, then
-code)
+### Approach narrowing per mission (APPROVED, slice 1 LANDED
+2026-11-09 - vocabulary + snapshot boundary, shadow: nothing reads
+it yet)
 `BattleStrategies.pick` reads live state independently today
 (unit, choke proximity, crush). Target: `Approach.forTask(task,
 geometry) -> BattleStrategy`, pure over an explicit Geometry
 snapshot (choke-near-unit, crush ratio, contact state).
-Starting hypothesis from the MDC §2 table:
+LANDED 2026-11-09: `combat/cluster/Approach` (next to
+`ClusterTask`) + `ApproachTest` (6 pins): per-mission defaults
+from the MDC §2 table (HOLD_* -> CHOKE_HOLD, STAGE_MIDDLE +
+ATTACK -> OPEN_FIELD, null holds like main), `Geometry.capture`
+isolating every live read the current pick does (defensive,
+null-safe; pure `crushing()` reuses the documented
+`mayAdvance` 2.0 ratio, `isDuel()` the same baseless+headcount
+rule the live check uses). Shadow only - the narrowing slices
+widen `forTask(task, geometry)` one geometry shape at a time
+(contact shapes first: trapped-duel and bait keep their pins),
+commander port last. Evidence: fast gate green.
+Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),
 HOLD_MIDDLE -> CHOKE_HOLD,
