@@ -2,11 +2,7 @@ package atlantis.information.strategy.response;
 
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.GamePhase;
-import atlantis.map.scout.ScoutCommander;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
-import atlantis.util.log.ErrorLog;
 
 public abstract class RaceStrategyResponse {
 //    public boolean update() {
@@ -39,10 +35,10 @@ public abstract class RaceStrategyResponse {
 //        }
 
         // === Rush ========================================
-
-        if (enemyStrategy.isRushOrCheese() && GamePhase.isEarlyGame()) {
-            rushDefence(enemyStrategy);
-        }
+        // (ported: the defend half lives in PostureReasons as
+        // RUSH_DEFENCE now - one decider, every frame; the response
+        // chain below it was a no-op (ignored return, zero callers
+        // for the building counters) and is deleted, not ported)
 
         // === Expansion ========================================
         // (ported: the engage half lives in PostureReasons as
@@ -66,32 +62,7 @@ public abstract class RaceStrategyResponse {
 
     // =========================================================
 
-    protected boolean rushDefence(AStrategy enemyStrategy) {
-        ErrorLog.printMaxOncePerMinute("GENERIC RUSH - shouldn't be called, use race-specific");
-
-//        Missions.forceGlobalMissionDefend("Rush defence");
-//
-//        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
-
-        return false;
-    }
-
-    protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
-        return enemyStrategy.isGoingCheese() ? 3 : 2;
-    }
-
     public void handleAirUnitsDefence() {
-    }
-
-    // =========================================================
-
-    protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
-        if (Count.cannonsWithUnfinished() >= 2) return true;
-
-        if (enemyStrategy == null) return false;
-        if (ScoutCommander.hasAnyScoutBeenKilled()) return false;
-
-        return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
     }
 
     // =========================================================

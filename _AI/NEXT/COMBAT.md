@@ -71,6 +71,12 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   (RANGED_MASS_SO_COME_HOME, RUSH_DEFENCE,
   ENEMY_EXPANDING_SO_ENGAGE), pins red-first, writers deleted
   with their dead helpers. Evidence: fast gate per commit.
+- [x] DONE 2026-11-09: the dead rush-defence response chain:
+  `ProtossStrategyResponse.rushDefence` override (return ignored),
+  `shouldSkipAntiRushCombatBuilding`,
+  `rushDefenseCombatBuildingsNeeded` x2, base `rushDefence` stub
+  + its call (all zero callers; the DEFEND half already lives as
+  RUSH_DEFENCE). Evidence: fast gate green.
 - [ ] `AGame`-UMS force-ATTACK (UMS bypasses posture; needs a UMS
   vehicle - owner call).
 - [ ] `FormationOrderLatch` stays shared: 3 call sites with

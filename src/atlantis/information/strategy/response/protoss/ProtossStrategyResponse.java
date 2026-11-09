@@ -1,26 +1,15 @@
 package atlantis.information.strategy.response.protoss;
 
-import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.response.RaceStrategyResponse;
 import atlantis.units.AUnit;
 
 public class ProtossStrategyResponse extends RaceStrategyResponse {
 
     // === Rushes ======================================================
-
-    @Override
-    protected boolean rushDefence(AStrategy enemyStrategy) {
-        // The DEFEND half lived here as a global-mission force; the
-        // posture owns it now (RUSH_DEFENCE, owner 2026-11-09, one
-        // decider): early + rushed + not much stronger + no ignoring
-        // goon mass holds every frame instead of only on response
-        // ticks. What stays here is the building half (whether the
-        // anti-rush cannons still go up). The goon-mass ignore below
-        // died with the force: its exact numbers live in the posture
-        // rule now (RUSH_DEFENCE_GOON_RATIO), and two copies that can
-        // disagree are how the split started.
-        return !shouldSkipAntiRushCombatBuilding(enemyStrategy);
-    }
+    // (ported: the defend half lives in PostureReasons as RUSH_DEFENCE
+    // now - one decider, every frame. The response chain below it was
+    // a no-op (ignored return, zero callers for the building counters)
+    // and is deleted, not ported.)
 
     // =========================================================
 
@@ -40,12 +29,6 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
     }
 
     // =========================================================
-
-    @Override
-    protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
-        return 2;
-//        return enemyStrategy.isGoingCheese() ? 3 : 2;
-    }
 
     // === Air units ======================================================
 
