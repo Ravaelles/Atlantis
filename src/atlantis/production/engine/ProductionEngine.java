@@ -176,19 +176,24 @@ public final class ProductionEngine {
      * pure, the sim proves the wiring once per capability).
      */
     public static void forwardDrainedSupport(PlacementPlanner planner, GameOrderDirector director, int now) {
-        java.util.List<SupportRequest> drained;
+        atlantis.debug.profiler.CodeProfiler.startMeasuring("Placement.support");
         try {
-            drained = planner.drainSupportRequests();
-        } catch (Exception | Error ignored) {
-            return;
-        }
-        if (drained == null || drained.isEmpty()) return;
-
-        for (SupportRequest support : drained) {
+            java.util.List<SupportRequest> drained;
             try {
-                forwardOneSupport(planner, director, support, now);
+                drained = planner.drainSupportRequests();
             } catch (Exception | Error ignored) {
+                return;
             }
+            if (drained == null || drained.isEmpty()) return;
+
+            for (SupportRequest support : drained) {
+                try {
+                    forwardOneSupport(planner, director, support, now);
+                } catch (Exception | Error ignored) {
+                }
+            }
+        } finally {
+            atlantis.debug.profiler.CodeProfiler.endMeasuring("Placement.support");
         }
     }
 
