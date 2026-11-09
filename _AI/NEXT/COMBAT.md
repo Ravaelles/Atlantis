@@ -126,8 +126,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   KEPT: UMS force-ATTACK (mode setter is the right home -
   overwritten next frame except empty-Alpha worker-avoid readers,
   no UMS vehicle to prove a port);
-  left: painters' `Alpha.mission()` display + `focusPoint()`
-  reads (per-unit system, see below), `Missions.reset/history`
+  DONE 2026-11-09: painters' mirror reads (`Alpha.mission()`
+  line deleted as a constant duplicate of the enforced line,
+  focus text folded to its constant "NONE", squad abbrev to its
+  constant "Def" - display identical, no game behavior);
+  left: `Missions.reset/history`
   bookkeeping + `OnGameStarted` reset call,
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),

@@ -2,9 +2,7 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.Mission;
 import atlantis.battle.cluster.Squad;
 import atlantis.combat.FrozenWatch;
 import atlantis.config.env.Env;
@@ -445,15 +443,10 @@ public class AAdvancedPainter extends APainter {
             + (enforced == null ? "-" : enforced.name())
             + " / " + task.anchor().name(), color);
 
-        Mission mission = Alpha.get().mission();
-        if (mission.isMissionDefend()) {
-            color = Color.White;
-        }
-        else {
-            color = Color.Orange;
-        }
-        paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
-
+        // (deleted: the "Alpha mission" mirror line - setMission has
+        // zero callers so it always read DEFEND in White, duplicating
+        // the enforced Mission/task line above. It dies with the
+        // mirror in slice 5 core.)
 
         String shouldExpand = ShouldExpand.shouldExpand() ? "YES" : "NO";
         String reason = ShouldExpand.reason != null ? " (" + ShouldExpand.reason + ")" : "";
@@ -495,17 +488,11 @@ public class AAdvancedPainter extends APainter {
         // =========================================================
         // Focus point
 
-//        AFocusPoint focusPoint = MissionAttack.getInstance().focusPoint();
-        AFocusPoint focusPoint = Alpha.get().mission().focusPoint();
-        AUnit mainBase = Select.main();
-        String desc = "";
-        String focusPointString = focusPoint != null
-            ? (focusPoint.name() != null ? focusPoint.name() : focusPoint.toString())
-            : "NONE";
-        if (focusPoint != null && mainBase != null) {
-            desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
-        }
-        paintSideMessage("Focus point: " + focusPointString + desc, Color.Blue, 0);
+        // Focus point (dormant: setFocusPoint has zero callers, so
+        // the mission focus is always null and this line always read
+        // "NONE" - kept as the constant until slice 5 owns missions
+        // again).
+        paintSideMessage("Focus point: NONE", Color.Blue, 0);
 
         // =========================================================
 
@@ -1543,8 +1530,11 @@ public class AAdvancedPainter extends APainter {
         if (!Alpha.get().isEmpty()) {
             paintMessage("Squads: ", Color.White, x, y, true);
             Squad squad = Alpha.get();
+            // (dormant: setMission has zero callers, so the squad
+            // mission always reads DEFEND/"Def" - constant until
+            // slice 5 owns missions again).
             paintMessage(
-                squad.name() + ": " + squad.size() + "/" + squad.mission().name().substring(0, 3),
+                squad.name() + ": " + squad.size() + "/Def",
                 squad.isEmpty() ? Color.Red : Color.White,
                 x, y += 12, true
             );
