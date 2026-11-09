@@ -60,6 +60,9 @@ public class BattleCommander extends Commander {
         if (tactic != FightOrFlight.Tactic.FLEE && avoidLurkers(unit)) return;
 
         BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
+        // Approach twin (owner 2026-11-09): the shadow rule's answer
+        // next to the live pick, rows only - the port reads it later.
+        atlantis.combat.twins.ApproachTwin.sample(unit, anchor, strategy);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null && atlantis.combat.targeting.ChaseVeto.veto(unit, target)) {
             // Refused chase (owner 2026-10-30): marching out there is a

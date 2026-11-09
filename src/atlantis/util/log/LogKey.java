@@ -217,6 +217,15 @@ public enum LogKey {
      */
     TASK,
     /**
+     * Shadow approach (owner 2026-11-09, approach narrowing): what the
+     * task+geometry rule computed for this unit against the live pick
+     * answer, with the geometry flags for divergence attribution.
+     * Transitions always row, steady approaches heartbeat - twin before
+     * gate, so the shadow proves itself live and stable before the
+     * commander port reads it.
+     */
+    APPROACH,
+    /**
      * Zealot gas-bank brake (owner #203): the flood pump yields while gas
      * is banked for Dragoons. Transitions always row, steady holds
      * heartbeat - the warp rows name the release.

@@ -261,6 +261,13 @@ breakout, collapse, standoff, duel, mission default; bait
 detachment stays live). Pinned 2 rows, still shadow - the
 commander port (geometry captured once per frame, bait answered
 live) is the next slice with its own game proof.
+Twin LANDED 2026-11-09: `combat/twins/ApproachTwin` rows per unit
+the shadow answer next to the live pick (mission, approach, live,
+agree + choke/crush/duel flags for divergence attribution;
+change-rows, 300f heartbeat like the task twin). Hooked in
+`BattleCommander.act` right after the pick - rows only, the port
+reads it later. Pinned (`ApproachTwinTest`: repeat-silent,
+live-change transition, heartbeat).
 Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),
