@@ -71,7 +71,9 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
-        if (unit.isMissionDefendOrSparta()) {
+        // (folded: isMissionSparta is hardcoded false, so OrSparta
+        // is exactly isMissionDefend - same proof as the avoid folds).
+        if (unit.isMissionDefend()) {
             return (new DontAvoidEnemy(unit)).applies();
         }
 

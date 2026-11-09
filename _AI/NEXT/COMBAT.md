@@ -142,6 +142,10 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   (`handleManagerClass` always-null + `allowsToRetreat`
   always-true, zero readers) with their 2 orphaned imports -
   the dormant wrapper shrinks toward the core deletion;
+  DONE 2026-11-09: `isMissionDefendOrSparta` folded away (Sparta
+  hardcoded false, so the last live reader in `AvoidGroupOfEnemies`
+  reads `isMissionDefend`; the three now-dead defs deleted, the one
+  test call repointed to the defend check it always was);
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),

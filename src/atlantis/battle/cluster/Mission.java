@@ -29,10 +29,6 @@ public class Mission {
         return "Defend".equals(name);
     }
 
-    public boolean isMissionDefendOrSparta() {
-        return "Defend".equals(name);
-    }
-
     public String letter() {
         return name.isEmpty() ? "?" : name.substring(0, 1);
     }

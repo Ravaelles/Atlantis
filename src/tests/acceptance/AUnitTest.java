@@ -247,10 +247,12 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertFalse(fake(Protoss_Corsair).isRepairable());
 
         // Squadless combat follows the army: with Alpha attacking, no
-        // defend-or-sparta reads true even though the unit has no squad.
+        // defend reads true even though the unit has no squad.
+        // (OrSparta folded 2026-11-09: Sparta is hardcoded false, so the
+        // defend check below pins the same shape as the old call.)
         Alpha.get().setMission(Missions.ATTACK);
         try {
-            assertFalse(fake(AUnitType.Terran_Marine).isMissionDefendOrSparta());
+            assertFalse(fake(AUnitType.Terran_Marine).isMissionDefend());
         }
         finally {
             Alpha.get().setMission(null);

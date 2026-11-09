@@ -3233,12 +3233,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return mission().equals(Missions.DEFEND);
     }
 
-    public boolean isMissionDefendOrSparta() {
-        if (mission() == null) return false;
-
-        return isMissionDefend() || isMissionSparta();
-    }
-
     public boolean isMissionAttack() {
         if (mission() == null) return false;
 

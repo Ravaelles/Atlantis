@@ -119,10 +119,6 @@ public class Squad {
         return mission().equals(Missions.ATTACK);
     }
 
-    public boolean isMissionDefendOrSparta() {
-        return isMissionDefend();
-    }
-
     public AUnit squadScout() {
         // BATTLE CUTOVER: scout assignment is deleted - no scout attached.
 
