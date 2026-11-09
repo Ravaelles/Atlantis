@@ -1,6 +1,5 @@
 package atlantis.battle.cluster;
 
-import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -196,12 +195,6 @@ public class Squad {
 
     public void markLastAttackedNow() {
         lastAttacked = atlantis.game.A.now();
-    }
-
-    public AFocusPoint focusPoint() {
-        Mission mission = mission();
-
-        return mission != null ? mission.focusPoint() : null;
     }
 
     @Override

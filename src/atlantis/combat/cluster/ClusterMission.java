@@ -1,7 +1,5 @@
 package atlantis.combat.cluster;
 
-import atlantis.battle.cluster.Mission;
-import atlantis.battle.cluster.Missions;
 import atlantis.combat.focus.PostureLatch;
 import atlantis.combat.focus.PostureReasons;
 import atlantis.game.A;
@@ -63,10 +61,6 @@ public class ClusterMission {
      */
     public static void resetForTests() {
         PostureLatch.resetForTests();
-    }
-
-    public static Mission toMission(Posture posture) {
-        return posture == Posture.ATTACK ? Missions.ATTACK : Missions.DEFEND;
     }
 
     public enum Posture {

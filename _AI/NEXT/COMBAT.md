@@ -134,6 +134,10 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   field/increment, `isFirstMission`, `historyCount()` - zero
   readers; `reset()` stays for the live value until the core
   deletion);
+  DONE 2026-11-09: dead dormant-focus surface (`AUnit.
+  distToFocusPoint` + `AUnit.focusPoint` + `Squad.focusPoint` -
+  always null/0, zero readers - plus the unused `ClusterMission.
+  toMission` posture bridge and 4 orphaned imports);
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),

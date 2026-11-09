@@ -1,7 +1,6 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.avoid.margin.UnitRange;
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.cluster.Mission;
@@ -3396,28 +3395,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return isDragoon() || isVulture();
     }
 
-    public double distToFocusPoint() {
-        Mission mission = mission();
-        if (mission == null) {
-            return 0;
-        }
-
-        AFocusPoint focusPoint = mission.focusPoint();
-        if (focusPoint == null) {
-            return 0;
-        }
-
-        if (focusPoint.isAroundChoke()) {
-            // Chokes are ground concepts (NEXT #193); flyers keep the air
-            // mission distance, which is the only one that applies to them.
-            if (isFlying()) return focusPoint.distTo(this);
-
-            return PositionUtil.groundDistanceTo(this, focusPoint.choke().center());
-        }
-
-        return focusPoint.distTo(this);
-    }
-
     public double distToBase() {
         AUnit base = Select.ourBasesWithUnfinished().exclude(this).nearestTo(this);
         if (base == null) return 999;
@@ -4027,12 +4004,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public boolean noCommand() {
         return getLastCommandRaw() == null;
-    }
-
-    public AFocusPoint focusPoint() {
-        if (mission() == null) return null;
-
-        return mission().focusPoint();
     }
 
     public boolean isLeader() {
