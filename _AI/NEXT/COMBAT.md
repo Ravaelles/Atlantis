@@ -48,6 +48,15 @@ calls it - this section is the plan the slices below execute.
   halves, no behavior change). `RetreatFloor` twins the task rally
   next to its rung (`taskRally`, pinned pure) - the divergence data
   for the next slice, which makes the rally read `fleeRally`.
+  PROOF ATTEMPT 2026-11-09 (game10, 900 s TauCross PvZ, 14400 f):
+  no HOLD_NATURAL_CHOKE mission all game (never expanded), so the
+  changed path never fired live - zero live risk from the change,
+  but the natural-reform shape stays unproven. Verified instead:
+  TaskTwin transitions live + stable (8, no flap), RETREAT_FLOOR
+  rows carry taskRally, floors clamp MIDDLE rungs under HOLD_MAIN
+  / ATTACK with matching "-" rally, 15397 twin rows, no crash
+  (timeout kill as designed). STILL OPEN: one expanding game where
+  a lost natural fight re-forms on the natural line.
 
 ## Deletion queue (verified unused, one at a time)
 
@@ -85,10 +94,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   healthy; the second-reader requirement is withdrawn);
   Terran avoid subtree (leaves self-gate on race; deleting
   contradicts open-for-Terran, CONVENTIONS §5).
-- [ ] `FormationOrderLatch` stays shared: 3 call sites with
-  per-caller denial handling, one twin, keyed on the order itself.
-  Follow-up (not this slice): thread the decided posture in
-  instead of re-deriving it via `ClusterMission.postureFor` (P2).
+- [x] DONE 2026-11-09: `FormationOrderLatch` reads the decided
+  posture (noted once per frame by the commander loop) instead of
+  re-deriving headcount posture per call; un-noted paths keep the
+  old derivation. Pin red-first both directions (0/2 ignored,
+  2/2 honored); fast gate green, sim suite untouched by shape.
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
 
@@ -107,20 +117,23 @@ the #204 retreat-ladder proof below; Thundering/UMS vehicles are
 owner-called.
 
 ### Next enforcement slice: rally reads task.fleeRally (APPROVED,
-owner 2026-11-09 - sim first, then fix, then game proof)
-Vehicle: TauCross snapshot harness (map geometry needed: two
-chokes, two bases). Failing shape first: 2-base Protoss line
-holding the natural choke (mission HOLD_NATURAL_CHOKE, FLEE
-tactic after a lost trade) rallied home toward the main ([21,18])
-instead of stopping AT the natural-choke line. Fix LANDED
-2026-11-09: the retreat home reads the task anchor - NATURAL_CHOKE
-tasks rally at the natural standoff; main-choke holds already land
-there via the floor, other missions keep today's rally. Pinned
-(`RetreatToNaturalChokeTest` red-then-green) + related retreat
-suites green (42/42). Live proof: one quiet game where a lost
-natural fight re-forms on the natural line. Out of scope: flee
-permission itself (FLEE vs STAND stays with ClusterTactic +
-breach), approach narrowing, forbidden branches.
+owner 2026-11-09 - LANDED sim-side 2026-11-09, live proof pending:
+game10 running)
+Vehicle: mocked-choke stub world (RetreatFloorTest precedent -
+deterministic distances, not flat stubs: real FakeChoke geometry
+at (60,20)/(44,40), two Nexus fakes, mission forced via
+sampleShadow). Failing shape first: 2-base Protoss line holding
+the natural choke (HOLD_NATURAL_CHOKE, FLEE) rallied home toward
+the main ([21,18]) instead of stopping AT the natural line.
+Fix LANDED 2026-11-09: the retreat home reads the task anchor -
+NATURAL_CHOKE tasks rally at the natural standoff; main-choke
+holds already land there via the floor, other missions keep
+today's rally. Pinned (`RetreatToNaturalChokeTest` red pre-fix
+destination, green post-fix) + related suites green (42/42).
+Live proof: the running game10 - a lost natural fight re-forming
+on the natural line (TASK + RETREAT_FLOOR taskRally rows decide).
+Out of scope: flee permission itself (FLEE vs STAND stays with
+ClusterTactic + breach), approach narrowing, forbidden branches.
 
 ## Retreat doctrine (#204 landed sim-side, proof pending)
 
@@ -154,11 +167,6 @@ breach), approach narrowing, forbidden branches.
   walled-pocket engagement.
 - **#210 formation orders.** Latch landed (re-issues at most every
   10 frames; denied holders hold). Open: a calm-defense game.
-- **#206 army hides in the main.** Unobserved as a latch (home
-  deaths were pressure, home returns were ATTACK flips). Needs a
-  game where contact ends and the line must re-deploy; read the
-  anchor/hold/posture rows for the latch, then one rule with a
-  pin. Do NOT add a fourth home-pointer before that reading.
 
 ## Targeting and kiting (sim-pinned; live proof open)
 

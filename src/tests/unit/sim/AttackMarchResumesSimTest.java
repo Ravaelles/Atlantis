@@ -309,4 +309,71 @@ public class AttackMarchResumesSimTest extends AbstractTestWithUnits {
             tests.fakes.FakeMapTiles.installAsSource();
         }
     }
+
+    /**
+     * NEXT #206 (army-hides-in-the-main reading): after contact ends
+     * at home with an ATTACK mission, the line marches back out -
+     * no sit-home latch. Guard pin: a future home-pointer that
+     * parks the line would stall the march and fail the distance
+     * check below. Mirrors the mid-map resume shape above, from
+     * a home start instead.
+     */
+    @Test
+    public void homeLineMarchesOutAfterContactEnds() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10, 10);
+        FakeUnit a = dragoon(12, 10);
+        FakeUnit b = dragoon(13, 11);
+        FakeUnit c = dragoon(11, 12);
+        FakeUnit foe = foe(20, 12);
+        List<FakeUnit> ours = new ArrayList<>();
+        ours.add(a);
+        ours.add(b);
+        ours.add(c);
+
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[]{a, b, c, nexus}, new FakeUnit[]{foe}, arena);
+
+        useArenaWalkability(arena);
+        APosition anchor = APosition.create(60, 20);
+
+        double startDist = 0;
+        for (FakeUnit u : ours) startDist += u.distTo(anchor);
+        startDist /= ours.size();
+
+        try {
+            BattleCommander.clearForTests();
+            EventLog.clearForTests();
+            Missions.forceGlobalMissionAttack("test-home-remarch");
+            Alpha.gather();
+
+            for (int i = 0; i < TICKS; i++) {
+                world.tick(() -> {
+                    java.util.List<FakeUnit> foeList = new java.util.ArrayList<>();
+                    if (foe.hp > 0) foeList.add(foe);
+                    ZombiePolicies.chaseNearest(foeList, ours);
+                    for (FakeUnit u : ours) {
+                        if (u.hp <= 0) continue;
+                        BattleCommander.act(u, FightOrFlight.Tactic.FIGHT, anchor, a);
+                    }
+                    if (atlantis.game.A.now() >= 100) foe.hp = 0;
+                });
+            }
+
+            double endDist = 0;
+            for (FakeUnit u : ours) endDist += u.distTo(anchor);
+            endDist /= ours.size();
+
+            assertTrue(endDist < startDist - 5.0,
+                "contact ended at home and the mission is ATTACK: the line "
+                    + "marches back out instead of sitting home: "
+                    + startDist + " -> " + endDist);
+        } finally {
+            world.close();
+            BattleCommander.clearForTests();
+            EventLog.clearForTests();
+            Missions.reset();
+            tests.fakes.FakeMapTiles.installAsSource();
+        }
+    }
 }
