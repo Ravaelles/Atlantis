@@ -22,7 +22,23 @@ import atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits;
  */
 public final class ChaseVeto {
 
+    /**
+     * The frame's decided posture, noted by the commander loop (P2:
+     * decisions flow down, never re-derived). While null (unit tests
+     * that drive act() directly, or any path outside handle()) the
+     * veto keeps reading the global mirror, unchanged.
+     */
+    private static atlantis.combat.cluster.ClusterMission.Posture framePosture = null;
+
     private ChaseVeto() {
+    }
+
+    public static void noteFramePosture(atlantis.combat.cluster.ClusterMission.Posture posture) {
+        framePosture = posture;
+    }
+
+    public static void clearForTests() {
+        framePosture = null;
     }
 
     public static boolean veto(AUnit unit, AUnit target) {
@@ -32,8 +48,14 @@ public final class ChaseVeto {
             // Sieges are never chases.
             if (target.isABuilding()) return false;
 
-            // The attack marches; the veto guards home.
-            if (Missions.isGlobalMissionAttack()) return false;
+            // The attack marches; the veto guards home. Reads the
+            // decided posture when handle() noted one, else the mirror
+            // it has always read (untouched fallback for tests and
+            // non-combat callers).
+            boolean isAttack = framePosture != null
+                ? framePosture == atlantis.combat.cluster.ClusterMission.Posture.ATTACK
+                : Missions.isGlobalMissionAttack();
+            if (isAttack) return false;
 
             AUnit main = Select.main();
             if (main == null) return false;

@@ -103,6 +103,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   both track the previous decided posture; UMS frame-1 edge
   documented in the commit). Fast gate green, sim suite untouched
   by shape.
+- [x] DONE 2026-11-09: `ChaseVeto` reads the decided posture
+  (same note-per-frame shape as the latch; fallback untouched).
+  Pin red-first both directions; existing `ChaseVetoTest` green
+  unchanged (it drives the mirror, which the fallback still
+  honors).
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
 
