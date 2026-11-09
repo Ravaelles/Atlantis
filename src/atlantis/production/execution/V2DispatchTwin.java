@@ -41,9 +41,13 @@ public final class V2DispatchTwin {
      * Re-offer heartbeat (owner 2026-11-09): the dispatcher retries due
      * items every frame, so a stuck mint (or a busy facility) used to
      * row identically hundreds of times - the Citadel drought rowed
-     * "no placement" 250x. Identical rows (item, verdict, reason,
-     * start) twin once, then heartbeat every {@link #HEARTBEAT_FRAMES};
-     * anything changed twins immediately. Test seam below keeps the
+     * "no placement" 250x. Identical rows (item, verdict, reason)
+     * twin once, then heartbeat every {@link #HEARTBEAT_FRAMES};
+     * anything changed twins immediately. The plan start is deliberately
+     * NOT part of the key: the scheduler rebuilds the plan every frame,
+     * so a stuck-but-affordable demand slides its start forward daily
+     * and a start-keyed heartbeat would never catch it. The start still
+     * rides the row as a param. Test seam below keeps the
      * pure-function pins hermetic.
      */
     public static final int HEARTBEAT_FRAMES = 240;
@@ -57,7 +61,7 @@ public final class V2DispatchTwin {
     private static boolean isHeartbeatDuplicate(int frame, DispatchResult result) {
         try {
             String key = result.item().item().id() + "|" + result.issued() + "|"
-                + result.detail() + "|" + result.item().startFrame();
+                + result.detail();
             Integer last = lastTwinAt.get(key);
             if (last != null && frame - last < HEARTBEAT_FRAMES) return true;
 

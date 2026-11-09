@@ -121,6 +121,22 @@ public class V2DispatchTwinTest {
     }
 
     @Test
+    public void slidingStartStillHeartbeats() {
+        List<DispatchResult> at100 = new ArrayList<DispatchResult>();
+        at100.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, false), false, "no placement"));
+
+        List<DispatchResult> at101 = new ArrayList<DispatchResult>();
+        at101.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 101, false), false, "no placement"));
+
+        V2DispatchTwin.emit(100, at100);
+        V2DispatchTwin.emit(101, at101);
+
+        assertEquals(1, countRows(EventLog.toJsonLines()),
+            "the scheduler re-plans every frame, so a stuck demand slides its start: "
+                + "the start is plan trivia, not news - one row, not two");
+    }
+
+    @Test
     public void changedVerdictRowsImmediately() {
         List<DispatchResult> results = new ArrayList<DispatchResult>();
         results.add(new DispatchResult(new ProductionItem(new FakeProducible("Citadelo"), 100, false), false, "no placement"));
