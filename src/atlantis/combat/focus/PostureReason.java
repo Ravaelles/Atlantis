@@ -105,6 +105,15 @@ public enum PostureReason {
     RUSH_DEFENCE,
 
     /**
+     * Owner order, punish the expand (ported from the race response,
+     * owner 2026-11-09, one decider): an expanding enemy met early by
+     * 4+ of ours is engaged instead of watched - vs Zerg only behind
+     * 140% strength (lings eat unsupported zealots). Ends the blind
+     * wait; never holds (it starts attacks, it does not end them).
+     */
+    ENEMY_EXPANDING_SO_ENGAGE,
+
+    /**
      * A death under a ranged mass ends the attack early (ported from
      * OnOurUnitDestroyed, owner 2026-11-09 - one decider owns it now):
      * while attacking, before 7 minutes, at 85% or less against 2+

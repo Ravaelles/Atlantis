@@ -458,4 +458,77 @@ public class PostureReasonsTest {
         assertFalse(PostureReasons.decide(goons).reason == PostureReason.RUSH_DEFENCE,
             "goons outmassing the raiders 1.5x ignore the rush");
     }
+
+    private static PostureReasons.Input expansionBase() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 5;
+        in.strength = 100;
+        in.gameSeconds = 200;
+        in.enemyExpansion = true;
+        in.wasAttacking = false;
+        in.matchup = "vP";
+
+        return in;
+    }
+
+    @Test
+    public void expansionEngagesASmallLine() {
+        PostureReasons.Verdict verdict = PostureReasons.decide(expansionBase());
+
+        assertEquals(ClusterMission.Posture.ATTACK, verdict.posture);
+        assertEquals(PostureReason.ENEMY_EXPANDING_SO_ENGAGE, verdict.reason);
+    }
+
+    @Test
+    public void expansionNeedsAMinimumLine() {
+        PostureReasons.Input few = expansionBase();
+        few.ours = 3;
+
+        assertEquals(PostureReason.HOLD_GROUND, PostureReasons.decide(few).reason,
+            "3 units watch; 4 engage");
+    }
+
+    @Test
+    public void expansionVsZergNeedsTeeth() {
+        PostureReasons.Input weak = expansionBase();
+        weak.vsZerg = true;
+        weak.matchup = "vZ";
+        weak.strength = 139;
+        assertFalse(PostureReasons.decide(weak).reason == PostureReason.ENEMY_EXPANDING_SO_ENGAGE,
+            "unsupported zealots would donate to lings");
+
+        PostureReasons.Input teeth = expansionBase();
+        teeth.vsZerg = true;
+        teeth.matchup = "vZ";
+        teeth.strength = 150;
+        assertEquals(PostureReason.ENEMY_EXPANDING_SO_ENGAGE, PostureReasons.decide(teeth).reason,
+            "at 150 the zealot hold releases and the punish fires (writer gate 140, effective floor 150)");
+    }
+
+    @Test
+    public void expansionOnlyEarly() {
+        PostureReasons.Input late = expansionBase();
+        late.gameSeconds = 361;
+
+        assertFalse(PostureReasons.decide(late).reason == PostureReason.ENEMY_EXPANDING_SO_ENGAGE,
+            "past 6 minutes other doctrines own the board");
+    }
+
+    @Test
+    public void expansionNamesEvenBigMarches() {
+        PostureReasons.Input big = expansionBase();
+        big.ours = 9;
+
+        assertEquals(PostureReason.ENEMY_EXPANDING_SO_ENGAGE, PostureReasons.decide(big).reason,
+            "at 8+ the punish still names itself: the writer engaged at any size");
+    }
+
+    @Test
+    public void rushHoldsOverExpansion() {
+        PostureReasons.Input both = expansionBase();
+        both.enemyRushOrCheese = true;
+
+        assertEquals(PostureReason.RUSH_DEFENCE, PostureReasons.decide(both).reason,
+            "rushed and expanding foe: the hold wins (documented judgment call)");
+    }
 }

@@ -116,6 +116,23 @@ public final class PostureReasons {
     public static final int FALLBACK_MAX_DRAGOONS = 1;
 
     /**
+     * Early-game ceiling for the expansion punish (ported 1:1: the
+     * response answers expansions in the early game only).
+     */
+    public static final int ENEMY_EXPANSION_MAX_SECONDS = 360;
+
+    /**
+     * The line that engages an expansion (ported 1:1: 4+ of ours).
+     */
+    public static final int ENEMY_EXPANSION_MIN_ARMY = 4;
+
+    /**
+     * Vs Zerg the punish needs teeth (ported 1:1: 140% strength, or
+     * lings eat the visitors); other matchups engage at any strength.
+     */
+    public static final int ENEMY_EXPANSION_VS_ZERG_STRENGTH = 140;
+
+    /**
      * Tech turtle (owner 2026-11-09): going tech with no Dragoon yet
      * and middling strength holds home instead of marching out - the
      * line has no business outside the main and natural regions until
@@ -170,6 +187,13 @@ public final class PostureReasons {
                 && in.ourDragoons >= RUSH_DEFENCE_GOON_RATIO * in.enemyDragoons)) {
             return new Verdict(PostureReason.RUSH_DEFENCE, ClusterMission.Posture.DEFEND,
                 "Rush defence (early, " + in.strength + "%), hold home");
+        }
+
+        if (in.enemyExpansion && in.gameSeconds <= ENEMY_EXPANSION_MAX_SECONDS
+            && in.ours >= ENEMY_EXPANSION_MIN_ARMY
+            && (!in.vsZerg || in.strength >= ENEMY_EXPANSION_VS_ZERG_STRENGTH)) {
+            return new Verdict(PostureReason.ENEMY_EXPANDING_SO_ENGAGE, ClusterMission.Posture.ATTACK,
+                "Enemy expanding (" + in.ours + " units), engage");
         }
 
         if (in.ours >= ClusterMission.ATTACK_ARMY_SIZE) {
@@ -265,6 +289,7 @@ public final class PostureReasons {
         in.enemyDragoons = EnemyUnits.dragoons();
         in.enemyRanged = EnemyUnits.discovered().ranged().count();
         in.enemyRushOrCheese = atlantis.information.strategy.EnemyStrategy.get().isRushOrCheese();
+        in.enemyExpansion = atlantis.information.strategy.EnemyStrategy.get().isExpansion();
         in.ums = atlantis.game.A.isUms();
         in.minerals = A.minerals();
         in.gameSeconds = A.s;
@@ -315,6 +340,7 @@ public final class PostureReasons {
         public int enemyDragoons;
         public int enemyRanged;
         public boolean enemyRushOrCheese;
+        public boolean enemyExpansion;
         public boolean ums;
         public int minerals;
         public int gameSeconds;

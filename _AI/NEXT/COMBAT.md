@@ -62,12 +62,12 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   written; `ArmyStrength.muchStrongerPercent` folded to the
   constant 140 it always returned). Evidence: fast gate per commit.
 - [x] DONE 2026-11-09: legacy `Missions.forceGlobal*` writers
-  `OnOurUnitDestroyed` (ranged mass) + `ProtossStrategyResponse`
-  (rush defence) ported into `PostureReasons` as named reasons,
-  pins red-first, writers deleted with their dead helpers.
-  Evidence: fast gate per commit.
-- [ ] `RaceStrategyResponse` expansion trigger (ATTACK on expanding
-  enemy - needs a new enemy-expansion input; next port slice).
+  `OnOurUnitDestroyed` (ranged mass), `ProtossStrategyResponse`
+  (rush defence) + `RaceStrategyResponse` (expansion punish)
+  ported into `PostureReasons` as named reasons
+  (RANGED_MASS_SO_COME_HOME, RUSH_DEFENCE,
+  ENEMY_EXPANDING_SO_ENGAGE), pins red-first, writers deleted
+  with their dead helpers. Evidence: fast gate per commit.
 - [ ] `AGame`-UMS force-ATTACK (UMS bypasses posture; needs a UMS
   vehicle - owner call).
 - [ ] `FormationOrderLatch` stays shared: 3 call sites with

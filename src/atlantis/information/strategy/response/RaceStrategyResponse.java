@@ -1,9 +1,5 @@
 package atlantis.information.strategy.response;
 
-import atlantis.battle.cluster.Alpha;
-import atlantis.battle.cluster.Missions;
-import atlantis.game.player.Enemy;
-import atlantis.information.generic.Army;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -48,13 +44,10 @@ public abstract class RaceStrategyResponse {
             rushDefence(enemyStrategy);
         }
 
-        // === Expansion ===================================
-
-        if (enemyStrategy.isExpansion() && Alpha.count() >= 4 && GamePhase.isEarlyGame() && Missions.globalMission().isMissionDefendOrSparta()) {
-            if (!Enemy.zerg() || Army.strengthWithoutCB() >= 140) {
-                Missions.forceGlobalMissionAttack("Enemy is expanding, engage him");
-            }
-        }
+        // === Expansion ========================================
+        // (ported: the engage half lives in PostureReasons as
+        // ENEMY_EXPANDING_SO_ENGAGE now - one decider, every frame,
+        // no flap between change ticks; see the comment above)
 
         // === Tech ========================================
 
