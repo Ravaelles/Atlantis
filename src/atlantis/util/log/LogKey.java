@@ -74,6 +74,13 @@ public enum LogKey {
      */
     GAME_END,
     /**
+     * End-of-match block (owner 2026-11-09): result, kills/losses,
+     * real time, game time and working directory - the last thing the
+     * console and the structured log show. MEDIUM by construction:
+     * a verdict, not an error.
+     */
+    MATCH_SUMMARY,
+    /**
      * A ready building order refused before siting, with the refusing guard.
      */
     BUILD_REFUSED,

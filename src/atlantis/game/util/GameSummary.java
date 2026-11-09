@@ -2,6 +2,7 @@ package atlantis.game.util;
 
 import atlantis.Atlantis;
 import atlantis.debug.profiler.LongFrames;
+import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.UnitsArchive;
@@ -9,6 +10,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.util.log.LogLevel;
 import atlantis.util.log.PostGameDigest;
 
@@ -54,15 +57,17 @@ public class GameSummary {
 
     public static void print(boolean winner) {
         printed = true;
-        String result = "#####################################\n";
-        result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
-        result += "############ Lost: " + Atlantis.LOST + " ################\n";
-        result += "########## Killed: " + Atlantis.KILLED + " ################\n";
-        result += "#####################################\n";
+        int realSeconds = (int) RealTime.gameLengthInRealSeconds();
+        int frame = gameFrameOrMinusOne();
+        String dir = workingDirectory();
 
         LongFrames.printSummary();
 
-        AConsole.println(LogLevel.LOW, result);
+        AConsole.println(LogLevel.LOW, formatMatchOver(
+            winner, Atlantis.KILLED, Atlantis.LOST, realSeconds, frame, dir));
+        rowMatchSummary(
+            winner, Atlantis.KILLED, Atlantis.LOST, realSeconds, frame, dir,
+            Math.max(0, frame), clockOrUnknown());
 
         if (Atlantis.game() == null) {
             return;
@@ -88,6 +93,96 @@ public class GameSummary {
         UnitsArchive.paintKillLossResources();
         BuildOrderAudit.printAudit();
         printPostGameDigest();
+    }
+
+    /**
+     * End-of-match block (owner order 2026-11-09): the last thing the
+     * console and the structured log show, in one fixed shape. Pure:
+     * every input rides the signature, so the shape pins without a game.
+     */
+    public static String formatMatchOver(
+        boolean won, int killed, int lost, int realSeconds, int gameFrame, String dir
+    ) {
+        StringBuilder block = new StringBuilder("#####################################\n");
+        block.append("### Match over: ").append(won ? "VICTORY" : "DEFEAT").append("\n");
+        block.append("### Killed: ").append(killed).append(" / Lost: ").append(lost).append("\n");
+        block.append("### Real time: ").append(formatMinSec(realSeconds))
+            .append(" (").append(realSeconds).append("s)\n");
+        if (gameFrame >= 0) {
+            block.append("### Game time: ").append(formatMinSec(gameFrame / 24))
+                .append(" (frame ").append(gameFrame).append(")\n");
+        }
+        else {
+            block.append("### Game time: ? (frame ?)\n");
+        }
+        block.append("### Dir: ").append(dir == null ? "?" : dir).append("\n");
+        block.append("#####################################");
+
+        return block.toString();
+    }
+
+    /**
+     * Seconds as XmYs (180 -&gt; 3m0s). Non-negative by construction.
+     */
+    public static String formatMinSec(int totalSeconds) {
+        int safe = Math.max(0, totalSeconds);
+
+        return (safe / 60) + "m" + (safe % 60) + "s";
+    }
+
+    /**
+     * The process working directory. Assumption (owner-visible): the
+     * harness launches the bot with cwd inside the per-game directory
+     * (the scbw GAME_xxx layout), so this names the game folder. If a
+     * vehicle ever shows otherwise, plumb the dir explicitly instead.
+     */
+    static String workingDirectory() {
+        try {
+            String dir = System.getProperty("user.dir");
+
+            return dir == null ? "?" : dir;
+        } catch (Throwable ignored) {
+            return "?";
+        }
+    }
+
+    /**
+     * The structured-log half of the block (the console half is the
+     * println above): same fields as an EventLog row, so the log file
+     * carries what the eye reads. All explicit - no game reads, the
+     * caller gathers. Never throws.
+     */
+    public static void rowMatchSummary(
+        boolean won, int killed, int lost, int realSeconds, int gameFrame,
+        String dir, int frame, String clock
+    ) {
+        try {
+            EventLog.key(LogKey.MATCH_SUMMARY)
+                .param("result", won ? "VICTORY" : "DEFEAT")
+                .param("killed", killed)
+                .param("lost", lost)
+                .param("realSeconds", realSeconds)
+                .param("gameFrame", gameFrame)
+                .param("dir", dir)
+                .log(frame, clock);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static int gameFrameOrMinusOne() {
+        try {
+            return A.now();
+        } catch (Throwable ignored) {
+            return -1;
+        }
+    }
+
+    private static String clockOrUnknown() {
+        try {
+            return A.minSec();
+        } catch (Throwable ignored) {
+            return "?:??";
+        }
     }
 
     /**
