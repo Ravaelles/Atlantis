@@ -120,21 +120,40 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   readers of the count). Breach detection itself untouched.
 - [ ] `battle/cluster/Mission.java` dormant wrapper + `Missions`
   mirror deletion (slice 5 core): after readers migrate (done:
-  posture inputs, latch/veto/regroup note, painter, dead
-  counters; left: per-unit system below (separate), Terran/UMS/
-  orphan-production readers (out of scope), `Missions.reset/
-  history` bookkeeping). Then delete both files at once, suite
-  green as the evidence.
+  posture inputs, latch/veto/regroup note via shared
+  DecidedPosture, painter global line + dead focus painting,
+  dead breach-attack counter, dead rush-defence chain;
+  KEPT: UMS force-ATTACK (mode setter is the right home -
+  overwritten next frame except empty-Alpha worker-avoid readers,
+  no UMS vehicle to prove a port);
+  left: painters' `Alpha.mission()` display + `focusPoint()`
+  reads (per-unit system, see below), `Missions.reset/history`
+  bookkeeping + `OnGameStarted` reset call,
+  `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
+  the board, production workstream),
+  `BuildOrderRowParser.fromString` + `Requirements` mission branch
+  (BO MISSION= rows parse and gate on supply but nothing executes
+  them - deleting the parse would `AGame.exit()` on real BO files
+  that carry the directive; belongs to the production queue
+  workstream, not here),
+  `AUnit.isMissionAttackOrGlobalAttack` (unit OR global - migrate
+  both halves together with the per-unit system)).
+  Then delete both files at once, suite green as the evidence.
+- [x] DONE 2026-11-09: dead per-unit mission code:
+  `FixActions` idle helper + `ProtossContinueAttack` (never
+  instantiated) with its `PreventAttacksInMissionDefend` gate,
+  plus the two always-false `isActiveManager` branches in
+  `DragoonDontAvoid` (deleted, not ported - nothing could ever
+  take them). Evidence: fast gate green.
 - [ ] Per-unit missions (`AUnit.mission()` / `Squad.mission()`,
-  investigated 2026-11-09, owner-approved): `setMission` has zero
-  callers in src, so every read sees the DEFEND default (or null
-  squadless) - the unit-level counterpart of the global mirror,
-  but a separate system with its own readers (avoid/*, run,
-  PreventAttacksInMissionDefend, ShouldRunTowardsBase,
-  EvalChokeTweaks, FollowAlphaLeader focus). DONE 2026-11-09:
-  `FixActions` needed no fold (dead file, zero live callers).
+  investigated 2026-11-09, owner-approved track): `setMission`
+  has zero callers in src, so every live read sees the DEFEND
+  default - the unit-level counterpart of the global mirror.
   Next: fold one live family at a time with pins, same
-  red-first discipline as the global ports.
+  red-first discipline as the global ports: avoid/*
+  `isMissionDefend` reads, `ShouldRunTowardsBase`,
+  `EvalChokeTweaks`, `FollowAlphaLeader` focus,
+  `AUnit.isMissionAttackOrGlobalAttack` (both halves together).
   Orphaned readers (ProduceDragoon/ProduceTemplarArchives) die
   with the orphan chain (production workstream, not here).
 
@@ -171,6 +190,24 @@ re-forms on the natural line (TASK + RETREAT_FLOOR taskRally rows
 decide; game10 ran without the shape - never expanded).
 Out of scope: flee permission itself (FLEE vs STAND stays with
 ClusterTactic + breach), approach narrowing, forbidden branches.
+
+### Approach narrowing per mission (APPROVED, not started -
+sim first: needs a geometry snapshot vehicle, then pins, then
+code)
+`BattleStrategies.pick` reads live state independently today
+(unit, choke proximity, crush). Target: `Approach.forTask(task,
+geometry) -> BattleStrategy`, pure over an explicit Geometry
+snapshot (choke-near-unit, crush ratio, contact state).
+Starting hypothesis from the MDC §2 table:
+HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
+STAGE_MIDDLE -> OPEN_FIELD (march formed),
+HOLD_MIDDLE -> CHOKE_HOLD,
+ATTACK_ENEMY_BASE -> OPEN_FIELD default, COLLAPSE/CHOKE_HOLD/
+BAIT/DUEL narrowed by geometry slice-by-slice (contact shapes
+first: trapped-duel and bait keep their pins).
+Out of scope for slice 1: plug-vs-standoff (formation detail,
+stays where it is); forbidden branches ride the mission that
+owns them.
 
 ## Retreat doctrine (#204 landed sim-side, proof pending)
 
