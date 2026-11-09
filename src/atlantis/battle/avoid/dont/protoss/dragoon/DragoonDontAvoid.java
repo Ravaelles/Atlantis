@@ -41,7 +41,6 @@ public class DragoonDontAvoid {
 //        if (true) return true;
 
 //        Decision decision;
-////        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
 //        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
 
         if (dontAvoidCombatBuildings(unit)) return true;
@@ -81,16 +80,6 @@ public class DragoonDontAvoid {
 //            && AConsole.println("hasJustStoppedRunning (" + unit.lastStoppedRunningAgo() + ")");
     }
 
-//    private static Decision whenMissionSparta(AUnit unit) {
-//        if (!unit.isMissionSparta()) return Decision.INDIFFERENT;
-//
-//        if (unit.woundHp() <= 9) return Decision.TRUE;
-////        if (unit.isSafeFromMelee()) return Decision.TRUE;
-//
-//        return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
-
-    /// /        return Decision.INDIFFERENT;
-//    }
     private static boolean healthyAndSafe(AUnit unit) {
         return unit.woundHp() <= 9
 //            && unit.lastAttackFrameMoreThanAgo(30 * 5)

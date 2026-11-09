@@ -23,8 +23,7 @@ public class AvoidReavers extends Manager {
             && unit.eval() <= 3
             && !muchMoreOurThanEnemies();
 //            && !unit.isZealot()
-//            && !unit.isDragoon()
-//            && !unit.isMissionDefend();
+//            && !unit.isDragoon();
     }
 
     // (deleted: isMissionAttack is always false - setMission has zero

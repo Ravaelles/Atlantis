@@ -100,17 +100,6 @@ public class ZealotDontAvoidEnemy {
 
         return unit.hp() <= 25;
     }
-//    private static boolean earlyZealotAvoidBecauseAlmostDeadOrOverpowered(AUnit unit) {
-//        if (!unit.isZealot()) return false;
-//        if (!unit.isMissionDefend()) return false;
-//
-//        return Count.ourCombatUnits() <= 10
-//            && (unit.hp() <= 33 || unit.eval() < 0.8)
-//            && unit.isTargetRanged()
-//            && unit.distToTarget() <= 2
-//            && unit.friendsNear().ranged().inRadius(4.5, unit).atLeast(1);
-//    }
-
     private static boolean healthyOrNotAttackedLong(AUnit unit) {
         return unit.shieldDamageAtMost(9) || unit.lastAttackFrameMoreThanAgo(30 * 5);
     }

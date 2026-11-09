@@ -151,6 +151,9 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   zero production `setMission` callers, no test on the
   simulated-ATTACK path there - so it reads the dispatcher
   unconditionally);
+  DONE 2026-11-09: dead mission comments in avoid/ (commented
+  blocks referencing deleted gates in Dragoon/Zealot/DTDontAvoid
+  + the stale conjunct in AvoidReavers - comments only);
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),
