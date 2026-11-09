@@ -74,6 +74,23 @@ public final class PostureReasons {
      * attacking (it ends attacks, never prevents them).
      */
     public static final int FALLBACK_STRENGTH = 120;
+
+    /**
+     * Flee-or-trade cutoff for the ranged-mass rule below: the attack
+     * ends while the line is this weak or weaker (ported 1:1 from the
+     * OnOurUnitDestroyed gate it replaces).
+     */
+    public static final int RANGED_MASS_STRENGTH = 85;
+
+    /**
+     * The ranged-mass rule only answers the opening (ported 1:1).
+     */
+    public static final int RANGED_MASS_MAX_SECONDS = 60 * 7;
+
+    /**
+     * How many discovered ranged enemies make it a mass (ported 1:1).
+     */
+    public static final int RANGED_MASS_RAIDERS = 2;
     /**
      * Dragoons that still count as teeth for the fallback.
      */
@@ -105,6 +122,12 @@ public final class PostureReasons {
         if (in.enemyDragoons > 0 && in.ourDragoons < DRAGOON_MASS_COUNT && in.eval < HOLD_VS_DRAGOON_EVAL) {
             return new Verdict(PostureReason.ENEMY_DRAGOONS_SO_COME_HOME, ClusterMission.Posture.DEFEND,
                 "Enemy dragoons (" + in.ourDragoons + " goons, eval " + in.eval + "), coming home");
+        }
+
+        if (in.wasAttacking && !in.ums && in.gameSeconds <= RANGED_MASS_MAX_SECONDS
+            && in.strength <= RANGED_MASS_STRENGTH && in.enemyRanged >= RANGED_MASS_RAIDERS) {
+            return new Verdict(PostureReason.RANGED_MASS_SO_COME_HOME, ClusterMission.Posture.DEFEND,
+                "Ranged mass (" + in.enemyRanged + " raiders, " + in.strength + "%), coming home");
         }
 
         if (in.wasAttacking && in.ourDragoons <= FALLBACK_MAX_DRAGOONS && in.strength <= FALLBACK_STRENGTH) {
@@ -213,6 +236,8 @@ public final class PostureReasons {
         in.enemyKnown = Select.enemy().combatUnits().notEmpty();
         in.enemyZealots = EnemyUnits.zealots();
         in.enemyDragoons = EnemyUnits.dragoons();
+        in.enemyRanged = EnemyUnits.discovered().ranged().count();
+        in.ums = atlantis.game.A.isUms();
         in.minerals = A.minerals();
         in.gameSeconds = A.s;
         in.strength = atlantis.information.generic.Army.strength();
@@ -260,6 +285,8 @@ public final class PostureReasons {
         public boolean enemyKnown;
         public int enemyZealots;
         public int enemyDragoons;
+        public int enemyRanged;
+        public boolean ums;
         public int minerals;
         public int gameSeconds;
         public int strength;

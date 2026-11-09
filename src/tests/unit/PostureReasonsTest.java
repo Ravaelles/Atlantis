@@ -343,4 +343,63 @@ public class PostureReasonsTest {
         assertFalse(PostureReasons.decide(in).reason == PostureReason.TECH_TURTLE,
             "not going tech: no turtle");
     }
+
+    private static PostureReasons.Input rangedMassBase() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 6;
+        in.ourDragoons = 2;
+        in.strength = 80;
+        in.gameSeconds = 300;
+        in.wasAttacking = true;
+        in.enemyRanged = 2;
+        in.ums = false;
+        in.matchup = "vP";
+
+        return in;
+    }
+
+    @Test
+    public void rangedMassEndsTheAttack() {
+        PostureReasons.Verdict verdict = PostureReasons.decide(rangedMassBase());
+
+        assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
+        assertEquals(PostureReason.RANGED_MASS_SO_COME_HOME, verdict.reason);
+    }
+
+    @Test
+    public void rangedMassNamesItselfBeforeTheGeneralFallback() {
+        PostureReasons.Input in = rangedMassBase();
+        in.ourDragoons = 0;
+
+        assertEquals(PostureReason.RANGED_MASS_SO_COME_HOME, PostureReasons.decide(in).reason,
+            "the sharper cause wins over OUTGUNNED_SO_COME_HOME (both would fire)");
+    }
+
+    @Test
+    public void rangedMassNeedsTheWholeShape() {
+        PostureReasons.Input strong = rangedMassBase();
+        strong.strength = 86;
+        assertFalse(PostureReasons.decide(strong).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
+            "above 85 the general rules own the board");
+
+        PostureReasons.Input few = rangedMassBase();
+        few.enemyRanged = 1;
+        assertFalse(PostureReasons.decide(few).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
+            "one raider is not a mass");
+
+        PostureReasons.Input late = rangedMassBase();
+        late.gameSeconds = 421;
+        assertFalse(PostureReasons.decide(late).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
+            "past 7 minutes the line has other answers");
+
+        PostureReasons.Input peace = rangedMassBase();
+        peace.wasAttacking = false;
+        assertFalse(PostureReasons.decide(peace).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
+            "ends attacks, never prevents them");
+
+        PostureReasons.Input ums = rangedMassBase();
+        ums.ums = true;
+        assertFalse(PostureReasons.decide(ums).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
+            "UMS plays by its own rules");
+    }
 }

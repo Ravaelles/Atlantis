@@ -2,14 +2,11 @@ package atlantis.game.listeners;
 
 
 import atlantis.Atlantis;
-import atlantis.battle.cluster.Missions;
 import atlantis.config.env.Env;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
 import atlantis.game.event.Event;
 import atlantis.game.event.Events;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 
@@ -30,16 +27,13 @@ public class OnOurUnitDestroyed {
         }
 
         // =========================================================
-
-        if (
-            unit.isMissionAttack()
-                && A.s <= 60 * 7
-                && ArmyStrength.ourArmyRelativeStrength() <= 85
-                && !A.isUms()
-                && EnemyUnits.discovered().ranged().count() >= 2
-        ) {
-            Missions.forceGlobalMissionDefend("Far too weak to attack!");
-        }
+        // The "far too weak to attack" defend once lived here as a death
+        // event (forceGlobalMissionDefend on a dying attacker, early game,
+        // weak strength, 2+ discovered ranged enemies, no UMS). It now
+        // lives in PostureReasons as RANGED_MASS_SO_COME_HOME (owner
+        // 2026-11-09, one decider): the posture answers it every frame
+        // instead of only on death frames, which also kills the old flap
+        // between ATTACK rows and death-frame DEFEND rows.
 
         if (unit.isBunker()) Events.dispatch(Event.OUR_BUNKER_DESTROYED, unit);
     }

@@ -91,5 +91,16 @@ public enum PostureReason {
      * one dragoon left at 120% or less means coming home instead of
      * feeding. Ends attacks, never prevents them.
      */
-    OUTGUNNED_SO_COME_HOME
+    OUTGUNNED_SO_COME_HOME,
+
+    /**
+     * A death under a ranged mass ends the attack early (ported from
+     * OnOurUnitDestroyed, owner 2026-11-09 - one decider owns it now):
+     * while attacking, before 7 minutes, at 85% or less against 2+
+     * discovered ranged enemies (UMS excluded), the line comes home
+     * instead of feeding. Ordered before the general fallback: the
+     * sharper cause names itself; the fallback keeps the rest. Ends
+     * attacks, never prevents them.
+     */
+    RANGED_MASS_SO_COME_HOME
 }
