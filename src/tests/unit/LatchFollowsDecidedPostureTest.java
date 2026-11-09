@@ -28,6 +28,7 @@ public class LatchFollowsDecidedPostureTest extends WorldStubForTests {
     @AfterEach
     public void cleanLatch() {
         FormationOrderLatch.clearForTests();
+        atlantis.combat.cluster.DecidedPosture.clearForTests();
     }
 
     @Test
@@ -37,7 +38,7 @@ public class LatchFollowsDecidedPostureTest extends WorldStubForTests {
         world(3, fakeOurs(fake(AUnitType.Protoss_Nexus, 15, 15), zealot), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 2) return;
 
-            FormationOrderLatch.noteFramePosture(ClusterMission.Posture.ATTACK);
+            atlantis.combat.cluster.DecidedPosture.note(ClusterMission.Posture.ATTACK);
             AUnit unit = atlantis.units.select.Select.ourCombatUnits().first();
             APosition dest = APosition.create(30, 20);
 
@@ -56,7 +57,7 @@ public class LatchFollowsDecidedPostureTest extends WorldStubForTests {
         world(3, fakeOurs(army), new FakeUnit[]{}, () -> {
             if (atlantis.game.A.now() != 2) return;
 
-            FormationOrderLatch.noteFramePosture(ClusterMission.Posture.DEFEND);
+            atlantis.combat.cluster.DecidedPosture.note(ClusterMission.Posture.DEFEND);
             AUnit unit = atlantis.units.select.Select.ourCombatUnits().first();
             APosition dest = APosition.create(30, 20);
 

@@ -2,6 +2,8 @@ package atlantis.combat;
 
 import atlantis.battle.cluster.Missions;
 import atlantis.combat.cluster.ClusterCohesion;
+import atlantis.combat.cluster.ClusterMission;
+import atlantis.combat.cluster.DecidedPosture;
 import atlantis.combat.cluster.ClusterRally;
 import atlantis.combat.cluster.FightOrFlight;
 import atlantis.combat.cluster.HomeGround;
@@ -72,6 +74,20 @@ public final class Regroup {
      * March this unit while it has no target, through the fallbacks in
      * order. When nothing owns it the unit simply stands.
      */
+    /**
+     * The far legs belong to an attack march: on DEFEND the line
+     * holds (dress at home, no far reinforce, no collapse leg).
+     * Reads the decided posture when handle() noted one, else the
+     * global mirror it has always read (same note-per-frame shape
+     * as the latch and the chase veto).
+     */
+    private static boolean isAttackMarch() {
+        ClusterMission.Posture noted = DecidedPosture.currentOrNull();
+        if (noted != null) return noted == ClusterMission.Posture.ATTACK;
+
+        return Missions.isGlobalMissionAttack();
+    }
+
     public static void march(
         AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader, BattleStrategy strategy
     ) {
@@ -124,7 +140,7 @@ public final class Regroup {
         // of dressing home while half of it fights - measured live
         // F591FAC2 8:02-8:40). Ghosts and static slots wait below.
         if (tactic == FightOrFlight.Tactic.FIGHT && ArmyContact.isOngoingFight()
-            && (A.isUms() || Missions.isGlobalMissionAttack())) {
+            && (A.isUms() || isAttackMarch())) {
             APosition reinforce = ArmyContact.reinforcePointFor(unit);
             reinforce = walkableOrNull(reinforce);
             if (reinforce != null && unit.move(reinforce, Actions.MOVE_ENGAGE, Behavior.REINFORCE.tag())) {
@@ -173,7 +189,7 @@ public final class Regroup {
         // instead of a snake. FIGHT attack marches only (the scout runs
         // ahead by design); FLEE owns its rally, defense owns its holds.
         if (tactic == FightOrFlight.Tactic.FIGHT
-            && Missions.isGlobalMissionAttack()
+            && isAttackMarch()
             && !GhostAdvance.isVanguard(unit)
             && anchor != null) {
             APosition dressBack = MarchCohesion.holdPointFor(unit, anchor);
@@ -375,7 +391,7 @@ public final class Regroup {
         // line holds (veto guards home, slots own the wait) - marching a
         // defend anchor out abandons the base exactly like the vetoed
         // chase does (same mission read as ChaseVeto, opposite side).
-        if (!Missions.isGlobalMissionAttack()) return false;
+        if (!isAttackMarch()) return false;
         if (unit == null || anchor == null) return false;
         try {
             if (unit.distTo(anchor) <= COLLAPSE_BEYOND_SIGHT_TILES) return false;

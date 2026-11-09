@@ -201,7 +201,7 @@ public class BattleCommander extends Commander {
     public static void clearForTests() {
         atlantis.combat.focus.PostureLatch.resetForTests();
         atlantis.combat.formation.FormationOrderLatch.clearForTests();
-        atlantis.combat.targeting.ChaseVeto.clearForTests();
+        atlantis.combat.cluster.DecidedPosture.clearForTests();
         atlantis.battle.kite.CombatTuning.resetToDefaults();
         atlantis.combat.escape.EscapeTuning.resetToDefaults();
         atlantis.combat.strategy.GhostAdvance.clearForTests();
@@ -249,8 +249,7 @@ public class BattleCommander extends Commander {
             );
         ClusterMission.Posture posture = mission.posture;
         Missions.followPosture(posture);
-        atlantis.combat.formation.FormationOrderLatch.noteFramePosture(posture);
-        atlantis.combat.targeting.ChaseVeto.noteFramePosture(posture);
+        atlantis.combat.cluster.DecidedPosture.note(posture);
 
         FightOrFlight.Tactic tactic = ClusterTactic.decide();
         HasPosition anchor = ClusterAnchor.anchorFor(posture);

@@ -34,14 +34,14 @@ public class ChaseVetoFollowsDecidedPostureTest extends WorldStubForTests {
 
     @BeforeEach
     public void cleanBefore() {
-        ChaseVeto.clearForTests();
+        atlantis.combat.cluster.DecidedPosture.clearForTests();
         Missions.followPosture(ClusterMission.Posture.DEFEND);
         atlantis.util.log.EventLog.clearForTests();
     }
 
     @AfterEach
     public void cleanAfter() {
-        ChaseVeto.clearForTests();
+        atlantis.combat.cluster.DecidedPosture.clearForTests();
         Missions.followPosture(ClusterMission.Posture.DEFEND);
         atlantis.util.log.EventLog.clearForTests();
     }
@@ -57,7 +57,7 @@ public class ChaseVetoFollowsDecidedPostureTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 2) return;
 
             Missions.followPosture(ClusterMission.Posture.ATTACK);
-            ChaseVeto.noteFramePosture(ClusterMission.Posture.DEFEND);
+            atlantis.combat.cluster.DecidedPosture.note(ClusterMission.Posture.DEFEND);
 
             assertTrue(ChaseVeto.veto(zealot, foe),
                 "decided DEFEND vetoes the 9-tile march even while the mirror still says ATTACK");
@@ -75,7 +75,7 @@ public class ChaseVetoFollowsDecidedPostureTest extends WorldStubForTests {
             if (atlantis.game.A.now() != 2) return;
 
             Missions.followPosture(ClusterMission.Posture.DEFEND);
-            ChaseVeto.noteFramePosture(ClusterMission.Posture.ATTACK);
+            atlantis.combat.cluster.DecidedPosture.note(ClusterMission.Posture.ATTACK);
 
             assertFalse(ChaseVeto.veto(zealot, foe),
                 "decided ATTACK marches even while the mirror still says DEFEND");

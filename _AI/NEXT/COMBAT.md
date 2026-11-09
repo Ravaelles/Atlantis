@@ -108,6 +108,13 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   Pin red-first both directions; existing `ChaseVetoTest` green
   unchanged (it drives the mirror, which the fallback still
   honors).
+- [x] DONE 2026-11-09: one shared `DecidedPosture` frame note
+  instead of three parallel ones (`FormationOrderLatch`,
+  `ChaseVeto`, `Regroup.isAttackMarch` all read it; each keeps
+  its own fallback - headcount posture, global mirror). No
+  behavior change beyond the already-landed noted paths; pins
+  re-verified after the merge (27/27 with the latch, veto,
+  reinforce and posture suites).
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
 
