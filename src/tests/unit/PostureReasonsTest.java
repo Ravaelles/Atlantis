@@ -402,4 +402,60 @@ public class PostureReasonsTest {
         assertFalse(PostureReasons.decide(ums).reason == PostureReason.RANGED_MASS_SO_COME_HOME,
             "UMS plays by its own rules");
     }
+
+    private static PostureReasons.Input rushBase() {
+        PostureReasons.Input in = new PostureReasons.Input();
+        in.ours = 5;
+        in.ourDragoons = 0;
+        in.enemyDragoons = 0;
+        in.strength = 100;
+        in.gameSeconds = 200;
+        in.enemyRushOrCheese = true;
+        in.wasAttacking = false;
+        in.matchup = "vP";
+
+        return in;
+    }
+
+    @Test
+    public void rushDefenceHoldsEarly() {
+        PostureReasons.Verdict verdict = PostureReasons.decide(rushBase());
+
+        assertEquals(ClusterMission.Posture.DEFEND, verdict.posture);
+        assertEquals(PostureReason.RUSH_DEFENCE, verdict.reason);
+    }
+
+    @Test
+    public void rushDefenceBeatsTheHeadcountMarch() {
+        PostureReasons.Input big = rushBase();
+        big.ours = 9;
+
+        assertEquals(PostureReason.RUSH_DEFENCE, PostureReasons.decide(big).reason,
+            "a rusher with 9 units still holds: the writer forced DEFEND at any size");
+    }
+
+    @Test
+    public void rushDefenceNeedsTheWholeShape() {
+        PostureReasons.Input calm = rushBase();
+        calm.enemyRushOrCheese = false;
+        assertFalse(PostureReasons.decide(calm).reason == PostureReason.RUSH_DEFENCE,
+            "no rush, no answer");
+
+        PostureReasons.Input late = rushBase();
+        late.gameSeconds = 361;
+        assertFalse(PostureReasons.decide(late).reason == PostureReason.RUSH_DEFENCE,
+            "past 6 minutes other doctrines own the board");
+
+        PostureReasons.Input strong = rushBase();
+        strong.strength = 140;
+        assertFalse(PostureReasons.decide(strong).reason == PostureReason.RUSH_DEFENCE,
+            "much stronger means the rush failed: march");
+
+        PostureReasons.Input goons = rushBase();
+        goons.vsProtoss = true;
+        goons.ourDragoons = 3;
+        goons.enemyDragoons = 2;
+        assertFalse(PostureReasons.decide(goons).reason == PostureReason.RUSH_DEFENCE,
+            "goons outmassing the raiders 1.5x ignore the rush");
+    }
 }

@@ -83,6 +83,25 @@ public final class PostureReasons {
     public static final int RANGED_MASS_STRENGTH = 85;
 
     /**
+     * Early-game ceiling for the rush answer (ported 1:1: GamePhase
+     * early game is the first 6 minutes).
+     */
+    public static final int RUSH_DEFENCE_MAX_SECONDS = 360;
+
+    /**
+     * Below this relative strength the line is not "much stronger"
+     * (ported 1:1 from ArmyStrength.weAreMuchStronger, now a flat
+     * 140 after the RetreatManager fold).
+     */
+    public static final int RUSH_DEFENCE_MIN_STRONG = 140;
+
+    /**
+     * Goons that outmass the discovered enemy dragoons 1.5x ignore
+     * the rush (ported 1:1 from the response's shouldIgnore gate).
+     */
+    public static final double RUSH_DEFENCE_GOON_RATIO = 1.5;
+
+    /**
      * The ranged-mass rule only answers the opening (ported 1:1).
      */
     public static final int RANGED_MASS_MAX_SECONDS = 60 * 7;
@@ -143,6 +162,14 @@ public final class PostureReasons {
         if (in.goingTech && in.ourDragoons <= TECH_TURTLE_MAX_DRAGOONS && in.strength <= TECH_TURTLE_STRENGTH) {
             return new Verdict(PostureReason.TECH_TURTLE, ClusterMission.Posture.DEFEND,
                 "Tech turtle (no dragoon, " + in.strength + "%), hold home");
+        }
+
+        if (in.enemyRushOrCheese && in.gameSeconds <= RUSH_DEFENCE_MAX_SECONDS
+            && in.strength < RUSH_DEFENCE_MIN_STRONG
+            && !(in.vsProtoss && in.ourDragoons > 0
+                && in.ourDragoons >= RUSH_DEFENCE_GOON_RATIO * in.enemyDragoons)) {
+            return new Verdict(PostureReason.RUSH_DEFENCE, ClusterMission.Posture.DEFEND,
+                "Rush defence (early, " + in.strength + "%), hold home");
         }
 
         if (in.ours >= ClusterMission.ATTACK_ARMY_SIZE) {
@@ -237,6 +264,7 @@ public final class PostureReasons {
         in.enemyZealots = EnemyUnits.zealots();
         in.enemyDragoons = EnemyUnits.dragoons();
         in.enemyRanged = EnemyUnits.discovered().ranged().count();
+        in.enemyRushOrCheese = atlantis.information.strategy.EnemyStrategy.get().isRushOrCheese();
         in.ums = atlantis.game.A.isUms();
         in.minerals = A.minerals();
         in.gameSeconds = A.s;
@@ -286,6 +314,7 @@ public final class PostureReasons {
         public int enemyZealots;
         public int enemyDragoons;
         public int enemyRanged;
+        public boolean enemyRushOrCheese;
         public boolean ums;
         public int minerals;
         public int gameSeconds;

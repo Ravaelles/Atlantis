@@ -1,14 +1,8 @@
 package atlantis.information.strategy.response.protoss;
 
-import atlantis.battle.cluster.Missions;
-import atlantis.game.player.Enemy;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
-import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 
 public class ProtossStrategyResponse extends RaceStrategyResponse {
 
@@ -16,21 +10,16 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
 
     @Override
     protected boolean rushDefence(AStrategy enemyStrategy) {
-        if (GamePhase.isEarlyGame() && !ArmyStrength.weAreMuchStronger() && !shouldIgnoreRushBecauseWeHaveGoons()) {
-            Missions.forceGlobalMissionDefend("Rush defence");
-
-            return true;
-        }
-
+        // The DEFEND half lived here as a global-mission force; the
+        // posture owns it now (RUSH_DEFENCE, owner 2026-11-09, one
+        // decider): early + rushed + not much stronger + no ignoring
+        // goon mass holds every frame instead of only on response
+        // ticks. What stays here is the building half (whether the
+        // anti-rush cannons still go up). The goon-mass ignore below
+        // died with the force: its exact numbers live in the posture
+        // rule now (RUSH_DEFENCE_GOON_RATIO), and two copies that can
+        // disagree are how the split started.
         return !shouldSkipAntiRushCombatBuilding(enemyStrategy);
-    }
-
-    private boolean shouldIgnoreRushBecauseWeHaveGoons() {
-        if (!Enemy.protoss()) return false;
-
-        int goons = Count.dragoonsWithUnfinished();
-
-        return goons > 0 && goons >= 1.5 * EnemyUnits.dragoons();
     }
 
     // =========================================================

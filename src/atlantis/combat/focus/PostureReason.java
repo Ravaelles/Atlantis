@@ -94,6 +94,17 @@ public enum PostureReason {
     OUTGUNNED_SO_COME_HOME,
 
     /**
+     * Owner order, early rush answer (ported from the Protoss response,
+     * owner 2026-11-09, one decider): while rushed and not much
+     * stronger the line holds instead of marching into the raiders.
+     * Ends and prevents attacks alike while the shape holds; contact
+     * trap coincidence resolves to hold (the trap's open-ground kite
+     * assumes nothing else to defend - under an active rush the base
+     * is the objective). Judgment call, flagged for review.
+     */
+    RUSH_DEFENCE,
+
+    /**
      * A death under a ranged mass ends the attack early (ported from
      * OnOurUnitDestroyed, owner 2026-11-09 - one decider owns it now):
      * while attacking, before 7 minutes, at 85% or less against 2+

@@ -61,15 +61,26 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   refs), `battle/retreating/RetreatManager.java` (counter never
   written; `ArmyStrength.muchStrongerPercent` folded to the
   constant 140 it always returned). Evidence: fast gate per commit.
+- [x] DONE 2026-11-09: legacy `Missions.forceGlobal*` writers
+  `OnOurUnitDestroyed` (ranged mass) + `ProtossStrategyResponse`
+  (rush defence) ported into `PostureReasons` as named reasons,
+  pins red-first, writers deleted with their dead helpers.
+  Evidence: fast gate per commit.
+- [ ] `RaceStrategyResponse` expansion trigger (ATTACK on expanding
+  enemy - needs a new enemy-expansion input; next port slice).
+- [ ] `AGame`-UMS force-ATTACK (UMS bypasses posture; needs a UMS
+  vehicle - owner call).
+- [ ] `FormationOrderLatch` stays shared: 3 call sites with
+  per-caller denial handling, one twin, keyed on the order itself.
+  Follow-up (not this slice): thread the decided posture in
+  instead of re-deriving it via `ClusterMission.postureFor` (P2).
 - [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
   `Missions` value type) - dies with the Missions mirror, slice 5.
-- [ ] Legacy `Missions.forceGlobal*` writers, one each:
-  `RaceStrategyResponse`, `ProtossStrategyResponse`,
-  `OnOurUnitDestroyed`, `AGame`-UMS - re-home, then delete mirror.
-- [ ] `FormationOrderLatch` into its consumer; `DefendedPlace`
-  gains a second reader (formation slots) or folds into
-  `ProtossDefendFocusPoint`.
-- [ ] Terran avoid subtree after the dispatch seam owns dead races.
+- [ ] `DefendedPlace` second reader or fold (needs the owner
+  doctrine: which kinds change formation slots) - blocked on that
+  decision.
+- [ ] Terran avoid subtree (dead-race cleanup needs the dispatch seam
+  decision first).
 
 ## Mission command (#232, priority 0)
 
