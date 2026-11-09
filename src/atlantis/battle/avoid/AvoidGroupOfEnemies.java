@@ -71,13 +71,10 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
-        // (folded: isMissionSparta is hardcoded false, so OrSparta
-        // is exactly isMissionDefend - same proof as the avoid folds).
-        if (unit.isMissionDefend()) {
-            return (new DontAvoidEnemy(unit)).applies();
-        }
-
-        return false;
+        // (folded: setMission has zero production callers, so every
+        // live read sees DEFEND - the gate below always held in game.
+        // No test pins the simulated-ATTACK path here.)
+        return (new DontAvoidEnemy(unit)).applies();
     }
 
     protected double calculateRunDistance() {

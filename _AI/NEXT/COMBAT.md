@@ -146,6 +146,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   hardcoded false, so the last live reader in `AvoidGroupOfEnemies`
   reads `isMissionDefend`; the three now-dead defs deleted, the one
   test call repointed to the defend check it always was);
+  DONE 2026-11-09: last combat-side `isMissionDefend` gate
+  (`AvoidGroupOfEnemies.doNotAvoid` always held it in game -
+  zero production `setMission` callers, no test on the
+  simulated-ATTACK path there - so it reads the dispatcher
+  unconditionally);
   left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),
