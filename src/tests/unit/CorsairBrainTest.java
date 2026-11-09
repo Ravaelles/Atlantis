@@ -1,11 +1,11 @@
 package tests.unit;
 
-import atlantis.combat.behaviors.CorsairBrain;
-import atlantis.combat.behaviors.CorsairDanceToOverlord;
-import atlantis.combat.behaviors.CorsairExploreEnemyMain;
-import atlantis.combat.behaviors.CorsairHuntKnownOverlords;
-import atlantis.combat.behaviors.CorsairHuntMutas;
-import atlantis.combat.behaviors.CorsairRelocateWhenIdle;
+import atlantis.combat.behaviors.protoss.corsair.CorsairBrain;
+import atlantis.combat.behaviors.protoss.corsair.CorsairDanceToOverlord;
+import atlantis.combat.behaviors.protoss.corsair.CorsairExploreEnemyMain;
+import atlantis.combat.behaviors.protoss.corsair.CorsairHuntKnownOverlords;
+import atlantis.combat.behaviors.protoss.corsair.CorsairHuntMutas;
+import atlantis.combat.behaviors.protoss.corsair.CorsairRelocateWhenIdle;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
@@ -17,8 +17,6 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
  * The restored Corsair brain (owner 2026-11-09, port of the old

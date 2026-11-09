@@ -1,4 +1,4 @@
-package atlantis.combat.behaviors;
+package atlantis.combat.behaviors.protoss.corsair;
 
 import atlantis.units.AUnit;
 
@@ -17,7 +17,7 @@ public final class CorsairBrain {
     }
 
     public static boolean applies(AUnit unit) {
-        return unit != null && unit.isAlive() && unit.isCorsair();
+        return unit != null && unit.isCorsair() && unit.isAlive();
     }
 
     /**

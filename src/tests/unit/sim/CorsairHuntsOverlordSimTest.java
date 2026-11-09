@@ -1,6 +1,6 @@
 package tests.unit.sim;
 
-import atlantis.combat.behaviors.CorsairSoloFlight;
+import atlantis.combat.behaviors.protoss.corsair.CorsairSoloFlight;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Tag;

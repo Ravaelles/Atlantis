@@ -1,4 +1,4 @@
-package atlantis.combat.behaviors;
+package atlantis.combat.behaviors.protoss.corsair;
 
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;

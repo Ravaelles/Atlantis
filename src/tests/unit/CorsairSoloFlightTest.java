@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
-import atlantis.combat.behaviors.CorsairSoloFlight;
+import atlantis.combat.behaviors.protoss.corsair.CorsairSoloFlight;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -14,8 +14,6 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
-import static tests.unit.AbstractTestWithUnits.fakeOurs;
-import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 
 /**
  * Solo-Corsair driving (owner #201, root cause traced 2026-11-01):
