@@ -175,11 +175,14 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   stands alone), `ARunningManager` always-true
   `!isMissionSparta` conjunct. Evidence: fast gate green.
 - [ ] Per-unit missions remainder (`AUnit.mission()` /
-  `Squad.mission()`): `AUnit.isMissionAttackOrGlobalAttack`
-  (unit OR global - migrate both halves together with the global
-  mirror), orphaned readers (ProduceDragoon/
-  ProduceTemplarArchives die with the orphan chain, production
-  workstream).
+  `Squad.mission()`): `setMission` has zero callers in production
+  (`src/atlantis` - tests simulate ATTACK via `Alpha.setMission`,
+  so `isMissionAttack` reads true only there);
+  `AUnit.isMissionAttackOrGlobalAttack` (unit OR global - migrate
+  both halves together with the global mirror; `AUnit` itself must
+  not import `combat.*` - the noted-check stays at the call site),
+  orphaned readers (ProduceDragoon/ProduceTemplarArchives die with
+  the orphan chain, production workstream).
 
 ## Mission command (#232, priority 0)
 
@@ -233,6 +236,13 @@ rule the live check uses). Shadow only - the narrowing slices
 widen `forTask(task, geometry)` one geometry shape at a time
 (contact shapes first: trapped-duel and bait keep their pins),
 commander port last. Evidence: fast gate green.
+Slice 2 LANDED 2026-11-09: `forTask(task, geometry)` - a hold at
+a contested choke the line crushes answers COLLAPSE (the collapse
+trigger mirrored from the live pick; bait detachment itself stays
+with the live pick), anything else keeps the slice-1 default;
+ATTACK/STAGE keep marching even crushing (attack shapes get their
+own slice once observed). Pinned 5 rows (`ApproachTest`), still
+shadow - nothing reads the overload yet.
 Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),

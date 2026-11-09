@@ -85,6 +85,36 @@ public final class Approach {
     }
 
     /**
+     * Slice 2 (2026-11-09): the first geometry narrowing. A hold
+     * at a contested choke the line crushes joins the bait at the
+     * funnel mouth instead of standing the standoff (the collapse
+     * trigger, mirrored from the live pick); anything else keeps the
+     * mission default above. ATTACK keeps OPEN_FIELD even crushing -
+     * attack shapes get their own slice once observed. Bait
+     * detachment itself stays with the live pick (its pins stand).
+     */
+    public static BattleStrategy forTask(ClusterTask task, Geometry geometry) {
+        if (geometry != null && geometry.chokeNear && geometry.enemiesNearChoke > 0 && geometry.crushing()) {
+            if (task != null) {
+                switch (task.mission()) {
+                    case HOLD_MAIN:
+                    case HOLD_MAIN_CHOKE:
+                    case HOLD_NATURAL_CHOKE:
+                    case HOLD_MIDDLE:
+                        return BattleStrategy.COLLAPSE;
+                    default:
+                        break;
+                }
+            }
+            else {
+                return BattleStrategy.COLLAPSE;
+            }
+        }
+
+        return forTask(task);
+    }
+
+    /**
      * The snapshot boundary: every live read the current pick does,
      * in one place, defensive (no map data in tests - missing reads
      * are defaults, never exceptions). Pure code takes the record,

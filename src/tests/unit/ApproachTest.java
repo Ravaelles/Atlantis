@@ -74,4 +74,66 @@ public class ApproachTest {
 
         assertTrue(g.crushing(), "4v2 meets it: collapse");
     }
+
+    @Test
+    public void holdCrushingAContestedChokeCollapses() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.chokeNear = true;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 4;
+
+        assertEquals(BattleStrategy.COLLAPSE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_NATURAL_CHOKE), g),
+            "crush at a contested choke: join the bait instead of standing");
+        assertEquals(BattleStrategy.COLLAPSE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), g));
+        assertEquals(BattleStrategy.COLLAPSE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MIDDLE), g));
+    }
+
+    @Test
+    public void holdWithoutCrushKeepsTheStandoff() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.chokeNear = true;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 3;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_NATURAL_CHOKE), g),
+            "no crush: hold, don't push");
+    }
+
+    @Test
+    public void uncontestedChokeKeepsTheDefault() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.chokeNear = true;
+        g.enemiesNearChoke = 0;
+        g.oursNearChoke = 4;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN_CHOKE), g),
+            "nothing to collapse onto: the default stands");
+    }
+
+    @Test
+    public void attackKeepsMarchingEvenCrushing() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.chokeNear = true;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 4;
+
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), g),
+            "attack shapes get their own slice once observed");
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.STAGE_MIDDLE), g));
+    }
+
+    @Test
+    public void nullGeometryKeepsTheDefault() {
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), null));
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.ATTACK_ENEMY_BASE), null));
+    }
 }
