@@ -47,6 +47,7 @@ public class OnEveryFrame {
 
         CodeProfiler.endMeasuringTotalFrame();
         LongFrames.reportFrameLength(CodeProfiler.lastFrameLength());
+        CodeProfiler.samplePeriodic(A.now());
 
 
     }

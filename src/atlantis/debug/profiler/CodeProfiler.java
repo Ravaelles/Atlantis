@@ -3,6 +3,8 @@ package atlantis.debug.profiler;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import atlantis.util.AConsole;
 
@@ -136,6 +138,49 @@ public class CodeProfiler {
         }
 
         return results;
+    }
+
+    /**
+     * Durable attribution (owner 2026-11-09): top per-module totals as
+     * one EventLog row every 720 frames. The end-of-game summary dies
+     * with a SIGKILLed JVM; these rows are flushed to disk as the game
+     * runs, so a timeout kill still leaves the profile. Bucket-gated,
+     * bounded (top 5), never throws.
+     */
+    public static void samplePeriodic(int frame) {
+        try {
+            int bucket = frame / 720;
+            if (bucket == lastSampleBucket) return;
+            lastSampleBucket = bucket;
+
+            Map<String, Integer> totals = aspectTotalSorted();
+            if (totals.isEmpty()) return;
+
+            StringBuilder top = new StringBuilder();
+            int n = 0;
+            for (Map.Entry<String, Integer> entry : totals.entrySet()) {
+                if (n++ >= 5) break;
+                if (n > 1) top.append(",");
+                top.append(entry.getKey()).append("=").append(entry.getValue()).append("ms");
+            }
+
+            String clock;
+            try {
+                clock = A.minSec();
+            } catch (Throwable ignored) {
+                clock = "?:??";
+            }
+            EventLog.key(LogKey.PROFILER)
+                .param("top", top.toString())
+                .log(frame, clock);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static int lastSampleBucket = -1;
+
+    public static void clearForTests() {
+        lastSampleBucket = -1;
     }
 
     public static Map<String, Integer> aspectTotalSorted() {

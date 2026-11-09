@@ -74,6 +74,13 @@ public enum LogKey {
      */
     GAME_END,
     /**
+     * Periodic profiler sample (owner 2026-11-09, timeout hunt): top
+     * per-module totals every 720 frames, so even a SIGKILLed game (no
+     * OnGameEnd, no shutdown hook) leaves attribution. MEDIUM by
+     * construction: a verdict, not an error.
+     */
+    PROFILER,
+    /**
      * End-of-match block (owner 2026-11-09): result, kills/losses,
      * real time, game time and working directory - the last thing the
      * console and the structured log show. MEDIUM by construction:
