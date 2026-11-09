@@ -47,6 +47,13 @@ public class WorkerDefenceRun extends Manager {
     private static final int HOLD_GROUND_MIN_HP = 30;
 
     /**
+     * The longest handle-branch reach (reaver 11.4/12): anything at or
+     * below this is answered below, anything beyond it makes handle()
+     * a proven null tour. Stays strictly between 12 and NEAR_DIST.
+     */
+    static final double RUN_RELEVANT_RADIUS = 13;
+
+    /**
      * How far a helper will travel to answer a wounded fellow worker.
      */
     private static final double HELP_RADIUS = 2.2;
@@ -82,6 +89,17 @@ public class WorkerDefenceRun extends Manager {
 
     @Override
     public boolean applies() {
+        // No enemies within any handle branch's reach (owner 2026-11-09,
+        // timeout hunt): every branch below needs an enemy within 12
+        // tiles (reaver 11.4/12 is the longest; helping needs the
+        // victim's attacker within 4.5 of a friend within 2.2), while
+        // the cached selection holds 15 - so an empty 13-tile read
+        // proves handle() would tour and return null. The wounded
+        // in-peace worker was paying that full tour every frame.
+        // 12 < 13 < NEAR_DIST(15): the sandwich is the proof; same
+        // distTo on both sides, so no boundary float can slip through.
+        if (unit.enemiesNear(RUN_RELEVANT_RADIUS).empty()) return false;
+
         // Hold ground at home while the base is attacked: fleeing then is fatal
         // (B-19) - nothing would stand between the attackers and the base once
         // the army dies. But a WOUNDED worker must still leave: a Probe at 12 hp
