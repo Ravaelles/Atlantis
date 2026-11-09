@@ -1,5 +1,6 @@
 package atlantis.combat.cluster;
 
+import atlantis.combat.strategy.BattleStrategies;
 import atlantis.combat.strategy.BattleStrategy;
 import atlantis.combat.strategy.BattleSetup;
 import atlantis.combat.strategy.ChokeStandoff;
@@ -37,6 +38,8 @@ public final class Approach {
 
         /** Any bases finished or under construction. */
         public boolean hasBases;
+        /** How many (breakout doctrine counts them). */
+        public int basesCount;
         /** Ours + theirs combat units on the map. */
         public int combatants;
         /** A choke within standoff detection range of the unit. */
@@ -102,6 +105,23 @@ public final class Approach {
         if (geometry != null) {
             if (geometry.isDuel() && geometry.isDragoon) return BattleStrategy.DUEL_KITE;
 
+            if (breakout(geometry)) {
+                if (task != null) {
+                    switch (task.mission()) {
+                        case HOLD_MAIN:
+                        case HOLD_MAIN_CHOKE:
+                        case HOLD_NATURAL_CHOKE:
+                        case HOLD_MIDDLE:
+                            return BattleStrategy.OPEN_FIELD;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    return BattleStrategy.OPEN_FIELD;
+                }
+            }
+
             if (geometry.hasBases
                 && geometry.chokeNear
                 && geometry.enemiesNearChoke > 0
@@ -127,6 +147,20 @@ public final class Approach {
     }
 
     /**
+     * Home-choke breakout (owner 2026-10-29, mirrored from the live
+     * pick): at 150%+ strength with fewer than 2 bases the line never
+     * holds its own main or natural choke - it marches out instead of
+     * parking a finished army at home. The choke near the unit
+     * decides, like the live rule.
+     */
+    private static boolean breakout(Geometry g) {
+        if (!g.chokeNear || (!g.chokeIsMain && !g.chokeIsNatural)) return false;
+        if (g.basesCount >= 2) return false;
+
+        return g.armyStrength >= BattleStrategies.BREAKOUT_STRENGTH;
+    }
+
+    /**
      * The snapshot boundary: every live read the current pick does,
      * in one place, defensive (no map data in tests - missing reads
      * are defaults, never exceptions). Pure code takes the record,
@@ -138,6 +172,7 @@ public final class Approach {
 
         try {
             g.hasBases = atlantis.units.select.Count.bases() > 0;
+            g.basesCount = atlantis.units.select.Count.bases();
         } catch (Exception ignored) {
         }
         try {

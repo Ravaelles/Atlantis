@@ -249,6 +249,11 @@ never knew the mission either; zealots keep the default) plus
 the faithfulness guard (collapse needs bases like the live rule:
 baseless fights kite, never collapse). Pinned 3 rows, still
 shadow.
+Slice 4 LANDED 2026-11-09: home-choke breakout (holds at their
+own main/natural choke with 150%+ strength and fewer than 2 bases
+march out instead of parking - mirrored from the live pick,
+threshold reused from `BREAKOUT_STRENGTH`, not re-spelled).
+Pinned 3 rows, still shadow.
 Starting hypothesis from the MDC §2 table (unchanged):
 HOLD_MAIN / HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE -> CHOKE_HOLD,
 STAGE_MIDDLE -> OPEN_FIELD (march formed),

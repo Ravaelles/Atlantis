@@ -179,4 +179,62 @@ public class ApproachTest {
             Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN), g),
             "zealots want contact, not range");
     }
+
+    @Test
+    public void breakoutMarchesOutOfTheOwnChoke() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
+        g.basesCount = 1;
+        g.chokeNear = true;
+        g.chokeIsMain = true;
+        g.armyStrength = 150;
+
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN_CHOKE), g),
+            "150%+ with one base: never park a finished army at home");
+        assertEquals(BattleStrategy.OPEN_FIELD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_NATURAL_CHOKE), g));
+    }
+
+    @Test
+    public void breakoutNeedsStrengthAndOneBase() {
+        Approach.Geometry weak = new Approach.Geometry();
+        weak.hasBases = true;
+        weak.basesCount = 1;
+        weak.chokeNear = true;
+        weak.chokeIsNatural = true;
+        weak.armyStrength = 149;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_NATURAL_CHOKE), weak),
+            "below 150%: the choke strategies own it as before");
+
+        Approach.Geometry twoBases = new Approach.Geometry();
+        twoBases.hasBases = true;
+        twoBases.basesCount = 2;
+        twoBases.chokeNear = true;
+        twoBases.chokeIsMain = true;
+        twoBases.armyStrength = 200;
+
+        assertEquals(BattleStrategy.CHOKE_HOLD,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MAIN_CHOKE), twoBases),
+            "two bases: hold as before");
+    }
+
+    @Test
+    public void breakoutIgnoresForeignChokes() {
+        Approach.Geometry g = new Approach.Geometry();
+        g.hasBases = true;
+        g.basesCount = 1;
+        g.chokeNear = true;
+        g.chokeIsMain = false;
+        g.chokeIsNatural = false;
+        g.enemiesNearChoke = 2;
+        g.oursNearChoke = 4;
+        g.armyStrength = 200;
+
+        assertEquals(BattleStrategy.COLLAPSE,
+            Approach.forTask(ClusterTask.forMission(ArmyMission.HOLD_MIDDLE), g),
+            "a forward choke with crush still collapses at 200%");
+    }
 }
