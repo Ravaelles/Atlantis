@@ -130,8 +130,11 @@ the dispatch chain reads them; dead-race cleanup is its own slice).
   line deleted as a constant duplicate of the enforced line,
   focus text folded to its constant "NONE", squad abbrev to its
   constant "Def" - display identical, no game behavior);
-  left: `Missions.reset/history`
-  bookkeeping + `OnGameStarted` reset call,
+  DONE 2026-11-09: dead history bookkeeping (`historyCount`
+  field/increment, `isFirstMission`, `historyCount()` - zero
+  readers; `reset()` stays for the live value until the core
+  deletion);
+  left: `OnGameStarted` reset call (dies with the core),
   `GoalBoardAdvisor.sparta()` (reads hardcoded-false - port with
   the board, production workstream),
   `BuildOrderRowParser.fromString` + `Requirements` mission branch

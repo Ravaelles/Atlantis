@@ -18,7 +18,6 @@ public class Missions {
     public static final Mission DEFEND = new Mission("Defend");
 
     protected static Mission currentGlobalMission = DEFEND;
-    protected static int historyCount = 0;
 
     public static Mission globalMission() {
         return currentGlobalMission != null ? currentGlobalMission : DEFEND;
@@ -42,7 +41,6 @@ public class Missions {
     private static void setGlobalMission(Mission next, String reason) {
         Mission prev = currentGlobalMission;
         currentGlobalMission = next;
-        historyCount++;
         if (prev != null && prev.equals(next)) return;
 
         try {
@@ -84,17 +82,8 @@ public class Missions {
         return false;
     }
 
-    public static boolean isFirstMission() {
-        return historyCount == 0;
-    }
-
     public static void reset() {
         currentGlobalMission = DEFEND;
-        historyCount = 0;
-    }
-
-    public static int historyCount() {
-        return historyCount;
     }
 
     public static Mission fromString(String name) {
