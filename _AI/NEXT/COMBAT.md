@@ -34,10 +34,15 @@ calls it - this section is the plan the slices below execute.
   one brain, solo+squad entries). Every branch names its parent
   mission.
 - Cross-cutting: twins (read-only) + latches (hysteresis).
-- **Task (vocabulary open, owner 2026-11-09):** the concrete
-  assignment under a mission (which base, which squad). Named but
-  undefined until an architecture slice defines its contract -
-  no code uses the word yet by design.
+- **Task (defined 2026-11-09, shadow):** `ClusterTask` +
+  `TaskAnchor`: the mission instantiated - anchor kind (never a
+  tile; the rally code resolves points), posture, whether FLEE is
+  allowed and which line it rallies to (null: the retreat ladder
+  owns routing). Pure `forMission` table, pinned 6/6
+  (`ClusterTaskTest`); nothing reads it yet. Next: wire one
+  mission's task at a time (same discipline as the HOLD_* slices);
+  approach narrowing + forbidden branches ride those slices, not
+  this vocabulary.
 
 ## Deletion queue (verified unused, one at a time)
 
