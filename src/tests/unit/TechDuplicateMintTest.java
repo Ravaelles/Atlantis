@@ -72,7 +72,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
     }
 
     @Test
-    public void secondPylonWaitsForFirstToFinish() {
+    public void richBankAllowsThePairBelow40() {
         world(3, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21),
@@ -90,9 +90,33 @@ public class TechDuplicateMintTest extends WorldStubForTests {
             assertTrue(director.buildAt(
                 UnitProducible.of(AUnitType.Protoss_Pylon),
                 PlacementReservation.success(40, 40, 100), 8),
-                "dedup reports handled, but must not mint while the first Pylon is unfinished");
+                "bank 400 covers both warps: the rich-bank exception mints the pair");
+            assertEquals(2, liveOf(AUnitType.Protoss_Pylon),
+                "rich bank below 40 supply: two Pylons may warp side by side");
+        });
+    }
+
+    @Test
+    public void poorBankBlocksSecondPylonBelow40() {
+        world(3, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 2) return;
+            initSupply(25, 33);
+            currentMinerals = 200;
+            ConstructionRequests.constructions.clear();
+
+            GameOrderDirector director = new GameOrderDirector();
+            assertTrue(director.buildAt(
+                UnitProducible.of(AUnitType.Protoss_Pylon),
+                PlacementReservation.success(30, 30, 100), 8));
+            director.buildAt(
+                UnitProducible.of(AUnitType.Protoss_Pylon),
+                PlacementReservation.success(40, 40, 100), 8);
             assertEquals(1, liveOf(AUnitType.Protoss_Pylon),
-                "one Pylon in flight below 40 supply (legacy cap, ported to the mint door)");
+                "poor bank below 40 supply: one Pylon in flight (legacy cap, ported to the mint door)");
 
             ConstructionRequests.removeOrder(
                 ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Pylon).get(0));
@@ -103,6 +127,7 @@ public class TechDuplicateMintTest extends WorldStubForTests {
                 "no deadlock: once the first is gone the second mints");
         });
     }
+
 
     @Test
     public void gatewayPairStillMintsTwice() {
