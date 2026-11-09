@@ -1,6 +1,5 @@
 package atlantis.information.generic;
 
-import atlantis.battle.retreating.RetreatManager;
 import atlantis.util.cache.Cache;
 
 public class ArmyStrength {
@@ -63,20 +62,13 @@ public class ArmyStrength {
         cacheInteger.clear();
     }
 
+    /**
+     * The bar for "much stronger". The retreat counter that used to lift
+     * it died with RetreatManager (never written, constant 0) - the bar
+     * is the 140 it always was. Rewiring the lift is new behavior, not
+     * part of this deletion.
+     */
     private static int muchStrongerPercent() {
-        int base = 140;
-
-        if (RetreatManager.GLOBAL_RETREAT_COUNTER == 0) {
-            return base;
-        }
-        else if (RetreatManager.GLOBAL_RETREAT_COUNTER <= 2) {
-            return base + 10;
-        }
-        else if (RetreatManager.GLOBAL_RETREAT_COUNTER <= 4) {
-            return base + 20;
-        }
-        else {
-            return Math.min(165, base + 30 + RetreatManager.GLOBAL_RETREAT_COUNTER);
-        }
+        return 140;
     }
 }

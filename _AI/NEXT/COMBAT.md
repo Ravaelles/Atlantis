@@ -6,6 +6,64 @@ never the rows. Per-game evidence lives in
 `_AI/WINE-MACRO-DATUMS.md`, not here. Open decisions name their
 owner; blocked stays blocked until the owner decides.
 
+## Target architecture (owner direction 2026-11-09, research only)
+
+Layers talk only through high-level decisions (snapshot in, orders
+out; fallbacks report upward, never sideways; twin before gate;
+hysteresis on every boundary). No implementation until the owner
+calls it - this section is the plan the slices below execute.
+
+- **L0 Strategy (game level, exists, untouched).**
+  `information.strategy.*`: which build/tech, when to expand. Down
+  only fact flags (isGoingTech, rush/cheese, game phase). The word
+  stays here - L1 is not called Strategy (collision, researched
+  2026-11-09).
+- **L1 Mission (cluster job).** `ArmyMission`: HOLD_MAIN /
+  HOLD_MAIN_CHOKE / HOLD_NATURAL_CHOKE / HOLD_MIDDLE / STAGE_MIDDLE /
+  ATTACK_ENEMY_BASE. Pure `decide(Snapshot) -> Mission`; no live
+  reads inside. STAGE/HOLD_MIDDLE/ATTACK are shadow today - enforcing
+  them is the work, not renaming them.
+- **L2 Orders (tactical cluster level, derived, no new reads).**
+  `forMission(Mission, Geometry) -> {anchor, stance, approach}`:
+  anchor (where we stand), stance (HOLD / ENGAGE / WITHDRAW -
+  posture+tactic folded in; the posture->stance rename lands with
+  the derivation, not before), approach (CHOKE_HOLD / PLUG /
+  OPEN_FIELD / COLLAPSE / BAIT from mission+geometry).
+- **L3 Behavior (per-unit execution, exists, kept).** The `Behavior`
+  enum; dragoon/zealot/corsair splits stay here (Corsair precedent:
+  one brain, solo+squad entries). Every branch names its parent
+  mission.
+- Cross-cutting: twins (read-only) + latches (hysteresis).
+- **Task (vocabulary open, owner 2026-11-09):** the concrete
+  assignment under a mission (which base, which squad). Named but
+  undefined until an architecture slice defines its contract -
+  no code uses the word yet by design.
+
+## Deletion queue (verified unused, one at a time)
+
+Rule: zero live readers (grep src+tests, comments do not count),
+one coherent deletion per commit, fast gate green each. Live
+packages that only *look* dead stay: `battle/running/*` feeds
+`AUnit.runningManager` + `MoveAway`; `battle/avoid/*` feeds
+workers/builders/scouts/observers/repairers (Terran leaves stay -
+the dispatch chain reads them; dead-race cleanup is its own slice).
+
+- [x] DONE 2026-11-09: `combat/retreating/protoss/big_battle/`
+  pair (only each other + one commented ref), `battle/running/
+  fallback/RunAttackFallback.java` (`applies()=false` stub, zero
+  refs), `battle/retreating/RetreatManager.java` (counter never
+  written; `ArmyStrength.muchStrongerPercent` folded to the
+  constant 140 it always returned). Evidence: fast gate per commit.
+- [ ] `battle/cluster/Mission.java` dormant wrapper (lives as the
+  `Missions` value type) - dies with the Missions mirror, slice 5.
+- [ ] Legacy `Missions.forceGlobal*` writers, one each:
+  `RaceStrategyResponse`, `ProtossStrategyResponse`,
+  `OnOurUnitDestroyed`, `AGame`-UMS - re-home, then delete mirror.
+- [ ] `FormationOrderLatch` into its consumer; `DefendedPlace`
+  gains a second reader (formation slots) or folds into
+  `ProtossDefendFocusPoint`.
+- [ ] Terran avoid subtree after the dispatch seam owns dead races.
+
 ## Mission command (#232, priority 0)
 
 Full spec: `_AI/MISSION-DRIVEN-COMMAND.md`. Landed: vocabulary +
