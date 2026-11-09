@@ -41,17 +41,50 @@ kill_one() {
   if [ "$DRY_RUN" = "--dry-run" ]; then
     echo "[kill-leftovers] would kill: $1 ($pids)"
   else
+    # SIGTERM first: the bot JVM's shutdown hook flushes twins, writes
+    # the postgame digest and prints the end-of-match summary + profile -
+    # a SIGKILL straight away leaves timeout games with zero forensics
+    # (measured 2026-11-09: a 300 s timeout game ended mid-fight with no
+    # summary, no digest, no profile). Engine exes die on TERM or ignore
+    # it; survivors get SIGKILL after the grace window below.
+    # shellcheck disable=SC2086
+    kill $pids 2>/dev/null || true
+    echo "[kill-leftovers] terminating: $1 ($pids)"
+    SIGNALED=1
+  fi
+}
+
+kill_one_force() {
+  local pids; pids="$(find_pids "$1" | tr '\n' ' ')"
+  [ -n "${pids// /}" ] || return 0
+  if [ "$DRY_RUN" = "--dry-run" ]; then
+    echo "[kill-leftovers] would kill: $1 ($pids)"
+  else
     # shellcheck disable=SC2086
     kill -9 $pids 2>/dev/null || true
     echo "[kill-leftovers] killed: $1 ($pids)"
   fi
 }
 
+SIGNALED=0
 kill_one "StarCraft.exe"
 kill_one "ChaosLauncher.exe"
 kill_one "Chaoslauncher.exe"  # Wine sometimes reports the exe name with a lowercase l
 kill_one "BWAPILauncher"
 kill_one "Atlantis.jar"
+
+# One grace window for the whole box, not per process: the JVM hook
+# (flush + digest + summary + profile) takes seconds, the 15 s OnGameEnd
+# backstop bounds the worst case from the other side.
+if [ "$SIGNALED" = "1" ] && [ "$DRY_RUN" != "--dry-run" ]; then
+  sleep 8
+fi
+
+kill_one_force "StarCraft.exe"
+kill_one_force "ChaosLauncher.exe"
+kill_one_force "Chaoslauncher.exe"
+kill_one_force "BWAPILauncher"
+kill_one_force "Atlantis.jar"
 
 if [ "$DRY_RUN" = "--dry-run" ]; then
   echo "[kill-leftovers] would clear: /tmp/bwapi_socket_* /dev/shm/bwapi_shared_memory_*"
